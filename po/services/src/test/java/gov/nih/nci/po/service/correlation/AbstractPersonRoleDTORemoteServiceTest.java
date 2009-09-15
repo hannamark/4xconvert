@@ -122,7 +122,7 @@ import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
  *
  */
 public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractPersonRoleDTO,
-    CR extends CorrelationChangeRequest<?>> extends  AbstractStructrualRoleRemoteServiceTest<T, CR> {
+    CR extends CorrelationChangeRequest<?>> extends AbstractStructrualRoleRemoteServiceTest<T, CR> {
 
     @SuppressWarnings("unchecked")
     protected void fillInPersonRoleDate(AbstractPersonRoleDTO pr) throws Exception {
@@ -338,9 +338,9 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
                 assertEquals(2, results.size());
             }
         }
-        
+
         searchByStatus(searchCriteria, results);
-        
+
         // search by telco
         searchCriteria.setStatus(null);
         searchCriteria.setTelecomAddress(new DSet<Tel>());
@@ -375,7 +375,7 @@ public abstract class AbstractPersonRoleDTORemoteServiceTest<T extends AbstractP
         searchCriteria.getTelecomAddress().getItem().clear();
         testSearchOnSubClassSpecificFields(correlation1, id2, searchCriteria);
     }
-    
+
     protected void searchByStatus(T searchCriteria, List<T> results) {
         // search by status
         searchCriteria.setPostalAddress(null);

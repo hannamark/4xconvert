@@ -77,14 +77,14 @@ public class FundingMechanism extends AbstractCodeValue implements Comparable<Fu
     public FundingMechanismStatus getStatus() {
         return status;
     }
-    
+
     /**
-     * @param status current status 
+     * @param status current status
      */
     public void setStatus(FundingMechanismStatus status) {
         this.status = status;
     }
-    
+
     /**
      * @return category/group name
      */
@@ -94,7 +94,7 @@ public class FundingMechanism extends AbstractCodeValue implements Comparable<Fu
     public String getCategory() {
         return category;
     }
-    
+
     /**
      * @param category the group/category of the funding mechanism
      */
@@ -109,13 +109,12 @@ public class FundingMechanism extends AbstractCodeValue implements Comparable<Fu
         /**
          * Inactive codes.
          */
-        INACTIVE, 
+        INACTIVE,
         /**
          * Active codes.
          */
         ACTIVE;
     }
-
 
     /**
      * {@inheritDoc}
@@ -123,4 +122,5 @@ public class FundingMechanism extends AbstractCodeValue implements Comparable<Fu
     public int compareTo(FundingMechanism o) {
         return this.getCode().compareTo(o.getCode());
     }
+
 }

@@ -20,18 +20,24 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *      class="gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO"
- *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationRole" 
+ *      model-extends="gov.nih.nci.po.data.bo.AbstractOrganizationRole"
  *      extends="gov.nih.nci.services.correlation.AbstractBaseEnhancedOrganizationRoleDTO"
- *      serial-version-uid="1L"
+ *      serial-version-uid="2L"
  */
 @MappedSuperclass
-public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizationRole 
+public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizationRole
     implements Contactable, Mailable {
 
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 160;
 
     private String name;
+    private List<Email> email = new ArrayList<Email>();
+    private Set<Address> postalAddresses = new HashSet<Address>();
+    private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
+    private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
+    private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
+    private List<URL> url = new ArrayList<URL>(1);
 
     /**
      * @return the name
@@ -52,15 +58,7 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
     public void setName(String name) {
         this.name = name;
     }
-    
-    private List<Email> email = new ArrayList<Email>();
-    private Set<Address> postalAddresses = new HashSet<Address>();
-    private List<PhoneNumber> fax = new ArrayList<PhoneNumber>(1);
-    private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
-    private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
-    private List<URL> url = new ArrayList<URL>(1);
-    
-    
+
     /**
      * @return the email
      */
@@ -68,7 +66,7 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
     public List<Email> getEmail() {
         return this.email;
     }
-    
+
     /**
      * @param email the email to set
      */
@@ -125,7 +123,7 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
     public void setPhone(List<PhoneNumber> phone) {
         this.phone = phone;
     }
-    
+
     /**
      * @return the tty
      */
@@ -133,7 +131,7 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
     public List<PhoneNumber> getTty() {
         return this.tty;
     }
-    
+
     /**
      * @param tty the tty to set
      */

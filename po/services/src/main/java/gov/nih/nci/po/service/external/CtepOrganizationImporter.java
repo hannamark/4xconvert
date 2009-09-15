@@ -108,12 +108,12 @@ import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.jms.JMSException;
 import javax.naming.Context;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -135,17 +135,18 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     public static final String CTEP_ORG_ROOT = "Cancer Therapy Evaluation Program Organization Identifier";
 
     private final OrganizationServiceLocal orgService = PoRegistry.getOrganizationService();
-    private final IdentifiedOrganizationServiceLocal identifiedOrgService = PoRegistry.getInstance().
-        getServiceLocator().getIdentifiedOrganizationService();
-    private final HealthCareFacilityServiceLocal hcfService = PoRegistry.getInstance().
-        getServiceLocator().getHealthCareFacilityService();
-    private final ResearchOrganizationServiceLocal roService = PoRegistry.getInstance().
-        getServiceLocator().getResearchOrganizationService();
+    private final IdentifiedOrganizationServiceLocal identifiedOrgService =
+            PoRegistry.getInstance().getServiceLocator().getIdentifiedOrganizationService();
+    private final HealthCareFacilityServiceLocal hcfService =
+            PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityService();
+    private final ResearchOrganizationServiceLocal roService =
+            PoRegistry.getInstance().getServiceLocator().getResearchOrganizationService();
 
     private Organization persistedCtepOrg;
 
     /**
      * Constructor.
+     *
      * @param ctepContext the initial context providing access to ctep services.
      */
     public CtepOrganizationImporter(Context ctepContext) {
@@ -154,6 +155,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Get the organization representing ctep.
+     *
      * @return the org
      * @throws JMSException on error
      */
@@ -170,6 +172,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Imports the given org but will not update an existing entry.
+     *
      * @param ctepOrgId the org id.
      * @return the org
      * @throws JMSException on error
@@ -184,6 +187,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Method to import an organization based on its ctep id.
+     *
      * @param ctepOrgId the ctep id.
      * @throws JMSException on error
      * @return the organization record.
@@ -194,7 +198,6 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             // get org from ctep and convert to local data model
             OrganizationDTO ctepOrgDto = getCtepOrgService().getOrganizationById(ctepOrgId);
             printOrgDataToDebugLog(ctepOrgDto);
-            fixCountryCodeSystem(ctepOrgDto.getPostalAddress(), "organization");
             Ii assignedId = ctepOrgDto.getIdentifier();
             Organization ctepOrg = convertToLocalOrg(ctepOrgDto);
 
@@ -251,7 +254,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         IdentifiedOrganization identifiedOrg = new IdentifiedOrganization();
         identifiedOrg.setAssignedIdentifier(ctepOrgId);
         SearchCriteria<IdentifiedOrganization> sc =
-            new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(identifiedOrg);
+                new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(identifiedOrg);
         List<IdentifiedOrganization> identifiedOrgs = this.identifiedOrgService.search(sc);
         if (identifiedOrgs.isEmpty()) {
             return null;
@@ -271,7 +274,6 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         identifiedOrg.setStatus(RoleStatus.ACTIVE);
         this.identifiedOrgService.curate(identifiedOrg);
 
-        // save health care facility record, if it exists
         HealthCareFacility hcf = getCtepHealthCareFacility(ctepOrgId);
         if (hcf != null) {
             hcf.setPlayer(ctepOrg);
@@ -327,44 +329,67 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private void updateRoRoles(Organization org, ResearchOrganization ro) throws JMSException {
-        // we don't handle merge here, iterate over all of the ro's nullifying them out, except the last one,
-        // which we will update with ctep's data.
-        Iterator<ResearchOrganization> i = org.getResearchOrganizations().iterator();
-        boolean ctepDataSaved = false;
-        while (i.hasNext()) {
-            ResearchOrganization persistedRo = i.next();
-            if (i.hasNext()) {
-                persistedRo.setStatus(RoleStatus.NULLIFIED);
-                LOG.warn("Nullifying research organization role during import, curator must have added new data.");
-            } else {
-                persistedRo.setFundingMechanism(ro.getFundingMechanism());
-                persistedRo.setTypeCode(ro.getTypeCode());
-                copyCtepRoleToExistingRole(ro, persistedRo);
-                ctepDataSaved = true;
+        ResearchOrganization toSave = null;
+        if (ro.getId() != null) {
+            ResearchOrganization persistedRo = roService.getById(ro.getId());
+
+            toSave = updateFundingMechanism(ro, persistedRo);
+
+            toSave = updateTypeCode(ro, persistedRo);
+
+            if (copyCtepRoleToExistingRole(ro, persistedRo)) {
+                toSave = persistedRo;
             }
-            this.roService.curate(persistedRo);
-        }
-        if (!ctepDataSaved) {
+        } else {
             ro.setPlayer(org);
             ro.setStatus(RoleStatus.ACTIVE);
-            this.roService.curate(ro);
+            toSave = ro;
         }
+        // only save if something has actually changed, to avoid sending out unneeded JMS messages
+        if (toSave != null) {
+            this.roService.curate(toSave);
+        }
+
+    }
+
+    private ResearchOrganization updateTypeCode(ResearchOrganization ro, ResearchOrganization persistedRo) {
+        ResearchOrganization toSave = null;
+        Long persistedTypeCodeId = persistedRo.getTypeCode() != null ? persistedRo.getTypeCode().getId() : null;
+        Long typeCodeId = ro.getTypeCode() != null ? ro.getTypeCode().getId() : null;
+        if (!ObjectUtils.equals(persistedTypeCodeId, typeCodeId)) {
+            persistedRo.setTypeCode(ro.getTypeCode());
+            toSave = persistedRo;
+        }
+        return toSave;
+    }
+
+    private ResearchOrganization updateFundingMechanism(ResearchOrganization ro, ResearchOrganization persistedRo) {
+        ResearchOrganization toSave = null;
+        Long persistedFundingMechanismId =
+                persistedRo.getFundingMechanism() != null ? persistedRo.getFundingMechanism().getId() : null;
+        Long fundingMechanismId = ro.getFundingMechanism() != null ? ro.getFundingMechanism().getId() : null;
+        if (!ObjectUtils.equals(persistedFundingMechanismId, fundingMechanismId)) {
+            persistedRo.setFundingMechanism(ro.getFundingMechanism());
+            toSave = persistedRo;
+        }
+        return toSave;
     }
 
     private void updateHcfRole(Organization org, HealthCareFacility hcf) throws JMSException {
-        // handle HCF - ensure exactly 1 non-null HCF exists if ctep has this as a hcf
-        if (org.getHealthCareFacilities().isEmpty()) {
-            hcf.setPlayer(org);
-            hcf.setStatus(RoleStatus.ACTIVE);
-            this.hcfService.curate(hcf);
+        HealthCareFacility toSave = null;
+        if (hcf.getId() != null) {
+            HealthCareFacility persistedHcf = hcfService.getById(hcf.getId());
+            if (copyCtepRoleToExistingRole(hcf, persistedHcf)) {
+                toSave = persistedHcf;
+            }
         } else {
-            // can assume exactly one hcf here because our validator only allows 1 non null hcf to exist
-            // also, no need to reset the player, because as it is already linked to the persistent object
-            // it is set correctly
-            HealthCareFacility persistedHcf = org.getHealthCareFacilities().iterator().next();
-            copyCtepRoleToExistingRole(hcf, persistedHcf);
-            persistedHcf.setStatus(RoleStatus.ACTIVE);
-            this.hcfService.curate(persistedHcf);
+            hcf.setPlayer(org);
+            hcf.setStatus(org.getStatusCode() == EntityStatus.ACTIVE ? RoleStatus.ACTIVE : RoleStatus.PENDING);
+            toSave = hcf;
+        }
+        // only save if something has actually changed, to avoid sending out unneeded JMS messages
+        if (toSave != null) {
+            this.hcfService.curate(toSave);
         }
     }
 
@@ -384,47 +409,53 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      * @return true if data was different and therefore copied over, false if all data was already the same
      */
     private boolean copyCtepOrgToExistingOrg(Organization ctepOrg, Organization org) {
-        boolean change = false;
+        boolean changed = false;
         // doing this here instead of a 'copy' method in the org itself because all
         // of the relationships are not copied (change requests, roles, etc) The org
         // we are copying from is just the base fields. Also, the org from ctep
         // does not provide fax, phone, tty, url, so those fields are skipped.
         if (!StringUtils.equals(org.getName(), ctepOrg.getName())) {
             org.setName(ctepOrg.getName());
-            change = true;
+            changed = true;
         }
         if (!org.getPostalAddress().contentEquals(ctepOrg.getPostalAddress())) {
             org.getPostalAddress().copy(ctepOrg.getPostalAddress());
-            change = true;
+            changed = true;
         }
         if (!areEmailListsEqual(org.getEmail(), ctepOrg.getEmail())) {
             org.getEmail().clear();
             org.getEmail().addAll(ctepOrg.getEmail());
-            change = true;
+            changed = true;
         }
         org.setStatusCode(EntityStatus.ACTIVE);
-        return change;
+        return changed;
     }
 
     private boolean copyCtepRoleToExistingRole(AbstractEnhancedOrganizationRole ctepRole,
             AbstractEnhancedOrganizationRole role) {
-        boolean change = false;
+        boolean changed = false;
         if (!StringUtils.equals(role.getName(), ctepRole.getName())) {
             role.setName(ctepRole.getName());
-            change = true;
+            changed = true;
         }
         // we should really check if the sets of addresses are different, but there's no quick way to do that, so
         // deferring to PO-1197
         role.getPostalAddresses().clear();
         role.getPostalAddresses().addAll(ctepRole.getPostalAddresses());
-        change = true;
+        changed = true;
 
         if (!areEmailListsEqual(role.getEmail(), ctepRole.getEmail())) {
             role.getEmail().clear();
             role.getEmail().addAll(ctepRole.getEmail());
-            change = true;
+            changed = true;
         }
-        return change;
+
+        if (role.getPlayer().getStatusCode() == EntityStatus.ACTIVE && role.getStatus() != RoleStatus.ACTIVE) {
+            role.setStatus(RoleStatus.ACTIVE);
+            changed = true;
+        }
+
+        return changed;
     }
 
     private HealthCareFacility getCtepHealthCareFacility(Ii ctepOrgId) {
@@ -432,23 +463,18 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             HealthCareFacilityDTO hcfDto = getCtepOrgService().getHealthCareFacility(ctepOrgId);
             printHcf(hcfDto);
 
-            // null out the id and player id, as these are CTEP's references to primary id - we will
-            // use our local objects instead of CTEP's.
-            hcfDto.setIdentifier(null);
-            hcfDto.setPlayerIdentifier(null);
             return (HealthCareFacility) PoXsnapshotHelper.createModel(hcfDto);
         } catch (CTEPEntException e) {
             return null;
         }
     }
 
-    private void printHcf(HealthCareFacilityDTO hcfDto) {
+    private void printHcf(HealthCareFacilityDTO dto) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("hcf identifiers: ");
-            printIdentifierSet(hcfDto, "hcf");
-            LOG.debug("hcf.playerii.root: " + hcfDto.getPlayerIdentifier().getRoot());
-            LOG.debug("hcf.playerii.extension: " + hcfDto.getPlayerIdentifier().getExtension());
-            LOG.debug("hcf.status: " + (hcfDto.getStatus() != null ? hcfDto.getStatus().getCode() : NULL_STRING));
+            printIdentifierSet(dto, "hcf");
+            printII("hcf.player", dto.getPlayerIdentifier());
+            LOG.debug("hcf.status: " + (dto.getStatus() != null ? dto.getStatus().getCode() : NULL_STRING));
         }
     }
 
@@ -457,10 +483,6 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             ResearchOrganizationDTO roDto = getCtepOrgService().getResearchOrganization(ctepOrgId);
             printRo(roDto);
 
-            // null out the id and player id, as these are CTEP's references to primary id - we will
-            // use our local objects instead of CTEPs.
-            roDto.setIdentifier(null);
-            roDto.setPlayerIdentifier(null);
             return (ResearchOrganization) PoXsnapshotHelper.createModel(roDto);
         } catch (CTEPEntException e) {
             return null;
@@ -471,24 +493,31 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         if (LOG.isDebugEnabled()) {
             LOG.debug("ro identifiers: ");
             printIdentifierSet(dto, "ro");
-            LOG.debug("ro.playerii.root: " + dto.getPlayerIdentifier().getRoot());
-            LOG.debug("ro.playerii.extension: " + dto.getPlayerIdentifier().getExtension());
+            printII("ro.player", dto.getPlayerIdentifier());
             LOG.debug("ro.status: " + (dto.getStatus() != null ? dto.getStatus().getCode() : NULL_STRING));
             LOG.debug("ro.typeCode.code: " + dto.getTypeCode().getCode());
             St displayName = dto.getTypeCode().getDisplayName();
-            LOG.debug("ro.typeCode.displayName: " + ((displayName == null) ?  NULL_STRING : displayName.getValue()));
+            LOG.debug("ro.typeCode.displayName: " + ((displayName == null) ? NULL_STRING : displayName.getValue()));
             Cd funding = dto.getFundingMechanism();
-            LOG.debug("ro.fundingMech: " + ((funding == null) ?  NULL_STRING : funding.getCode()));
+            LOG.debug("ro.fundingMech: " + ((funding == null) ? NULL_STRING : funding.getCode()));
         }
     }
 
     private void printIdentifierSet(CorrelationDto dto, String prefix) {
         if (dto.getIdentifier() != null) {
             for (Ii ii : dto.getIdentifier().getItem()) {
-                LOG.debug(prefix + ".ii.identifierName: " + ii.getIdentifierName());
-                LOG.debug(prefix + ".ii.extension: " + ii.getExtension());
-                LOG.debug(prefix + ".ii.root: " + ii.getRoot());
+                printII(prefix, ii);
             }
+        }
+    }
+
+    private void printII(String prefix, Ii ii) {
+        if (ii != null) {
+            LOG.debug(prefix + ".ii.identifierName: " + ii.getIdentifierName());
+            LOG.debug(prefix + ".ii.extension: " + ii.getExtension());
+            LOG.debug(prefix + ".ii.root: " + ii.getRoot());
+        } else {
+            LOG.debug(prefix + ".ii: " + NULL_STRING);
         }
     }
 }

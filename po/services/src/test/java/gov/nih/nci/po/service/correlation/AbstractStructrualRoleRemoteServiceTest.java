@@ -95,6 +95,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.RoleStatusConverter;
 import gov.nih.nci.po.service.AbstractBeanTest;
@@ -210,7 +211,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         }
         T sc = getEmptySearchCriteria();
         search2StatusChange(sc);
-        
+
         List<T> results;
         //verify walking forward with a page size of 1
         LimitOffset page = new LimitOffset(1,-1);
@@ -283,9 +284,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         dto.setStatus(RoleStatusConverter.convertToCd(RoleStatus.SUSPENDED));
         service.updateCorrelation(dto);
     }
-    
-    
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void updateWithNoIdentifier() throws Exception {
         CorrelationService<T> service = getCorrelationService();
@@ -294,7 +293,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         dto.getIdentifier().getItem().clear();
         service.updateCorrelation(dto);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void updateWithWrongIdentifier() throws Exception {
         CorrelationService<T> service = getCorrelationService();
@@ -303,19 +302,21 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         dto.getIdentifier().getItem().clear();
         Ii wrongId = new Ii();
         wrongId.setExtension("999");
+        wrongId.setRoot(IdConverter.BASE_ROOT);
         dto.getIdentifier().getItem().add(wrongId);
         service.updateCorrelation(dto);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void updateStatusWithWrongIdentifier() throws Exception {
 
         Cd cd = new Cd();
         cd.setCode("suspended"); // maps to SUSPENDED
-        
+
         Ii wrongId = new Ii();
         wrongId.setExtension("999");
-        
+        wrongId.setRoot(IdConverter.BASE_ROOT);
+
         getCorrelationService().updateCorrelationStatus(wrongId, cd);
     }
 
@@ -357,7 +358,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
     }
 
     protected abstract T getEmptySearchCriteria();
-    
+
     protected void search2StatusChange(T sc) {
         sc.setStatus(RoleStatusConverter.convertToCd(RoleStatus.PENDING));
     }

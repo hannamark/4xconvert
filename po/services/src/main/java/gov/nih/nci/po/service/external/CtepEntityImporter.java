@@ -82,9 +82,6 @@
  */
 package gov.nih.nci.po.service.external;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
-import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.services.OrganizationService;
 import gov.nih.nci.coppa.services.PersonService;
 import gov.nih.nci.po.data.bo.Email;
@@ -98,16 +95,11 @@ import javax.naming.NamingException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.TransformerUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author Scott Miller
- *
  */
 public class CtepEntityImporter {
-    private static final Logger LOG = Logger.getLogger(CtepEntityImporter.class);
-
     static final int ISO_CNT_ALPHA2_LENGTH = 2;
     static final int ISO_CNT_ALPHA3_LENGTH = 3;
 
@@ -162,32 +154,6 @@ public class CtepEntityImporter {
      */
     protected void setCtepPersonService(PersonService ctepPersonService) {
         this.ctepPersonService = ctepPersonService;
-    }
-
-    /**
-     * CTEP doesn't currently set codeSystem when setting code for countries, so try to guess the intended codeSystem.
-     * See https://jira.5amsolutions.com/browse/PO-1180.
-     * @param postalAddress address to fix the country codeSystem
-     * @param objectType object that is the source of the address (eg, Organization or HealthCareProvider
-     */
-    protected void fixCountryCodeSystem(Ad postalAddress, String objectType) {
-        for (Adxp part : postalAddress.getPart()) {
-            String code = StringUtils.trimToNull(part.getCode());
-            if (AddressPartType.CNT.equals(part.getType()) && code != null
-                    && StringUtils.isBlank(part.getCodeSystem())) {
-                setCountryCodeSystem(part, code);
-                LOG.debug(String.format("%s country code is %s but codeSystem is blank, so guessing a codeSystem of %s",
-                        objectType, code, part.getCodeSystem()));
-            }
-        }
-    }
-
-    private void setCountryCodeSystem(Adxp part, String code) {
-        if (code.length() == ISO_CNT_ALPHA2_LENGTH) {
-            part.setCodeSystem("ISO 3166-1 alpha-2 code");
-        } else if (code.length() == ISO_CNT_ALPHA3_LENGTH) {
-            part.setCodeSystem("ISO 3166-1 alpha-3 code");
-        }
     }
 
     /**

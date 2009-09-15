@@ -173,7 +173,6 @@ public class CtepPersonImporter extends CtepEntityImporter {
             // get org from ctep and convert to local data model
             PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
             printPersonDataToDebugLog(ctepPersonDto);
-            fixCountryCodeSystem(ctepPersonDto.getPostalAddress(), "person");
             Ii assignedId = ctepPersonDto.getIdentifier();
             Person ctepPerson = convertToLocalPerson(ctepPersonDto);
 
@@ -346,9 +345,6 @@ public class CtepPersonImporter extends CtepEntityImporter {
                 crsDto.setScoperIdentifier(null);
 
                 // convert to local db model
-                for (Object address : crsDto.getPostalAddress().getItem()) {
-                    fixCountryCodeSystem((Ad) address, "CRS");
-                }
                 ClinicalResearchStaff crs = (ClinicalResearchStaff) PoXsnapshotHelper.createModel(crsDto);
 
                 // set fields that we need to, clear the fields not provided by ctep
@@ -396,9 +392,6 @@ public class CtepPersonImporter extends CtepEntityImporter {
                 hcpDto.setScoperIdentifier(null);
 
                 // convert to local db model
-                for (Object address : hcpDto.getPostalAddress().getItem()) {
-                    fixCountryCodeSystem((Ad) address, "HCP");
-                }
                 HealthCareProvider hcp = (HealthCareProvider) PoXsnapshotHelper.createModel(hcpDto);
 
                 // set fields that we need to, clear the fields not provided by ctep
@@ -502,15 +495,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // store ii's we will need
         Ii scoperIi = hcpDto.getScoperIdentifier();
 
-        // null out the ii's our converters cant handle because they are ctep id's and not our db ids.
+        // null out the ii's our converters can't handle because they are ctep id's and not our db ids.
         hcpDto.setIdentifier(null);
         hcpDto.setPlayerIdentifier(null);
         hcpDto.setScoperIdentifier(null);
 
         // convert to local db model
-        for (Object address : hcpDto.getPostalAddress().getItem()) {
-            fixCountryCodeSystem((Ad) address, "HCP");
-        }
         HealthCareProvider hcp = (HealthCareProvider) PoXsnapshotHelper.createModel(hcpDto);
 
         // set fields that we need to
@@ -540,9 +530,6 @@ public class CtepPersonImporter extends CtepEntityImporter {
         crsDto.setPlayerIdentifier(null);
 
         // convert to local db model
-        for (Object address : crsDto.getPostalAddress().getItem()) {
-            fixCountryCodeSystem((Ad) address, "CRS");
-        }
         ClinicalResearchStaff crs = (ClinicalResearchStaff) PoXsnapshotHelper.createModel(crsDto);
 
         // set fields that we need to
