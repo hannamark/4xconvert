@@ -123,7 +123,7 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
         List<Ii> authorizedStudySiteIds = (List<Ii>) ServletActionContext.getRequest().getSession()
-                .getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_SITES);
+                .getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDY_SITE_IDS);
         listOfSites = new ArrayList<SearchStudySiteResultDto>();
         studyProtocolId = ServletActionContext.getRequest().getParameter("studyProtocolId");
         Ii spid = IiConverter.convertToIi(studyProtocolId);

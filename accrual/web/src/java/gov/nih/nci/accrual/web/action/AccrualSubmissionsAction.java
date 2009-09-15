@@ -102,6 +102,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
     private List<SubmissionDto> listOfSubmissions = null;
+    private SubmissionDto submission = new SubmissionDto();
     
     /**
      * {@inheritDoc}
@@ -134,6 +135,38 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
        
        return actionResult;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+      public String displayNewSubmission() {
+        String actionResult = "showNewSubmission";
+            
+       return actionResult;
+    }
+      
+      /**
+       * {@inheritDoc}
+       */
+        public String addNew() {
+             String actionResult = "view_accrual_submissions";
+           
+              try {
+              
+              studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+              Ii spid = IiConverter.convertToIi(studyProtocolId);
+              SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
+                    listOfSubmissions = new ArrayList<SubmissionDto>();
+                    listOfSubmissions = service.getByStudyProtocol(spid);             
+                    ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
+                       
+               } catch (Exception e) {
+                    addActionError(e.getLocalizedMessage());
+                 // return "ERROR";
+              }
+             
+             return actionResult;
+      }
         /**
      * 
      * @return studyProtocolId
@@ -177,4 +210,20 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     public void setListOfSubmissions(List<SubmissionDto> listOfSubmissions) {
        this.listOfSubmissions = listOfSubmissions;
     }
+
+    /**
+     * 
+     * @return the submission
+     */
+    public SubmissionDto getSubmission() {
+        return submission;
+    }
+
+    /**
+      * @param submission the submission to set
+      * 
+      */
+    public void setSubmission(SubmissionDto submission) {
+        this.submission = submission;
+     }
 }

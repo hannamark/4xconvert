@@ -91,6 +91,10 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_AUTHORIZED_SITES = "authorizedSite";
     /** Attribute used to store the authorized user in session. */
     public static final String SESSION_ATTR_AUTHORIZED_USER = "authorizedUser";
+    /** Attribute used to store the authorized user in session. */
+    public static final String SESSION_ATTR_AUTHORIZED_TRIAL_IDS = "authorizedTrialIds";
+    /** Attribute used to store the authorized user in session. */
+    public static final String SESSION_ATTR_AUTHORIZED_STUDY_SITE_IDS = "authorizedStudySiteIds";
     /** Attribute used to store the role in session. */
     public static final String SESSION_ATTR_ROLE = "accrualRole";
     /** Role-name for the public role. */

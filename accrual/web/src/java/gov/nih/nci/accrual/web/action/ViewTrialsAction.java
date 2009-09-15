@@ -118,7 +118,7 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
             List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDIES);
+                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_TRIAL_IDS);
             listOfTrials = new ArrayList<SearchTrialResultDto>();
             listOfTrials = service.search(criteria, authorizedTrialIds);
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
@@ -145,7 +145,7 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
             List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().
-                    getSession().getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDIES);
+                    getSession().getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_TRIAL_IDS);
             listOfTrials = new ArrayList<SearchTrialResultDto>();
             listOfTrials = service.search(criteria, authorizedTrialIds);
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
@@ -168,7 +168,7 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
             List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDIES);
+                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_TRIAL_IDS);
             listOfTrials = new ArrayList<SearchTrialResultDto>();
             listOfTrials = service.search(criteria, authorizedTrialIds);
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);

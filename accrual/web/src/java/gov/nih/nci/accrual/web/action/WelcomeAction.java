@@ -114,12 +114,12 @@ public class WelcomeAction extends AbstractAccrualAction {
                 List<Ii> authorizedTrialIds = service.getAuthorizedTrials(StConverter.convertToSt(
                         ServletActionContext.getRequest().getRemoteUser()));
                 ServletActionContext.getRequest().getSession().setAttribute(
-                        AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDIES, authorizedTrialIds);
+                        AccrualConstants.SESSION_ATTR_AUTHORIZED_TRIAL_IDS, authorizedTrialIds);
 
                 List<Ii> authorizedStudySiteIds = studySiteService.getAuthorizedSites(StConverter.convertToSt(
                         ServletActionContext.getRequest().getRemoteUser()));
                 ServletActionContext.getRequest().getSession().setAttribute(
-                        AccrualConstants.SESSION_ATTR_AUTHORIZED_SITES, authorizedStudySiteIds);
+                        AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDY_SITE_IDS, authorizedStudySiteIds);
             } catch (RemoteException e) {
                 addActionError(e.getMessage());
                 return AccrualConstants.AR_LOGOUT;

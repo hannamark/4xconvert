@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.service.util;
 
+
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
