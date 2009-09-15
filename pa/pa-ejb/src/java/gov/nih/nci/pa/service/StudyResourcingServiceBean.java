@@ -486,4 +486,43 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
         enforceNoDuplicate(studyResourcingDTO);
     }
     
+    /**
+     * @param dto StudyResourcingDTO to create
+     * @return the created StudyResourcingDTO
+     * @throws PAException exception.
+     */
+    public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
+      if (PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
+         LOG.error(" The summary4ReportedResourceIndicator is not set");
+         throw new PAException(" The summary4ReportedResourceIndicator is not set ");
+      }
+      if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
+              && BlConverter.covertToBoolean(dto.getSummary4ReportedResourceIndicator())
+                      .equals(Boolean.FALSE)) {
+         return createStudyResourcing(dto);
+      } else {
+          return super.create(dto);
+      }
+    }
+
+    /**
+     * @param dto StudyResourcingDTO to update
+     * @return the updated StudyResourcingDTO
+     * @throws PAException exception.
+     */
+    public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
+       if (PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
+          LOG.error(" The summary4ReportedResourceIndicator is not set");
+          throw new PAException(" The summary4ReportedResourceIndicator is not set");
+       }
+       if (!PAUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())
+               && BlConverter.covertToBoolean(dto.getSummary4ReportedResourceIndicator())
+                      .equals(Boolean.FALSE)) {
+          return updateStudyResourcing(dto);
+       } else {
+            return super.update(dto);
+       }
+       
+    }
+    
 }

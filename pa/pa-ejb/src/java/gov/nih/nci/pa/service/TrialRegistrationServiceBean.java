@@ -549,11 +549,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           paServiceUtils.managePrincipalInvestigator(studyProtocolIi , leadOrganizationDTO , 
                   principalInvestigatorDTO , StudyTypeCode.INTERVENTIONAL);
           overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
-          studyOverallStatusService.create(overallStatusDTO);
           createStudyRelationship(studyProtocolIi , toStudyProtocolIi , studyProtocolDTO);
-      } else if (UPDAT.equalsIgnoreCase(operation)) {
-          studyOverallStatusService.update(overallStatusDTO);
-      }
+      } 
+   studyOverallStatusService.create(overallStatusDTO);
     }
 
     private Ii createStudyProtocolObjs(
