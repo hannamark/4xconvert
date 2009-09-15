@@ -186,9 +186,9 @@ pogrid.validation.post.http.list=${po-grid.jboss.server.port}
 # DO NOT MODIFY
 pogrid.validation.post.socket.list=${po-grid.jboss.server.jndi.port},${po-grid.jboss.service.rmiobject.port},${po-grid.jboss.jms.port},${po-grid.jboss.web.service.port}
 # DO NOT MODIFY
-pogrid-legacy.validation.pre.port.list=${po-grid-legacy.jboss.server.rmi.port},${po-grid-legacy.jboss.server.jndi.port},${po-grid-legacy.jboss.service.rmiobject.port},${po-grid-legacy.jboss.jms.port},${po-grid-legacy.jboss.server.port},${po-grid-legacy.jboss.web.service.port}
+pogrid-legacy.validation.pre.port.list=${po-grid-legacy.jboss.server.jndi.port},${po-grid-legacy.jboss.server.port}
 # DO NOT MODIFY
 pogrid-legacy.validation.post.http.list=${po-grid-legacy.jboss.server.port}
 # DO NOT MODIFY
-pogrid-legacy.validation.post.socket.list=${po-grid-legacy.jboss.server.jndi.port},${po-grid-legacy.jboss.service.rmiobject.port},${po-grid-legacy.jboss.jms.port},${po-grid-legacy.jboss.web.service.port}
+pogrid-legacy.validation.post.socket.list=${po-grid-legacy.jboss.server.jndi.port}
 
