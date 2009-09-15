@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
@@ -48,7 +50,9 @@ public class OrganizationalContactConverter
             poOcDto.setScoperIdentifier(dto.getOrganizationIdentifier());
             poOcDto.setTitle(StConverter.convertToSt(dto.getTitle()));
             if (!PAUtil.isIiNull(dto.getIdentifier())) {
-                poOcDto.setIdentifier(DSetConverter.convertIiToDset(dto.getIdentifier()));
+             Ii ii = dto.getIdentifier();
+             ii.setReliability(IdentifierReliability.ISS);
+             poOcDto.setIdentifier(DSetConverter.convertIiToDset(ii));
             }
         }
         return poOcDto;
