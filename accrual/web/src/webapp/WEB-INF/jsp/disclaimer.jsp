@@ -54,14 +54,15 @@ Do not return the completed form to this address.<br>
 </div>
 
 <s:hidden name="actionName" id="actionName"/>
- <div class="actionsrow">
- <del class="btnwrapper">
-                                        <ul class="btnrow">            
-<li><a href="#" class="btn" onclick="submitForm('accept');"><span class="btn_img"><span class="accept">I Agree</span></span></a></li> 
-<li><a href="#" class="btn" onclick="submitForm('decline');"><span class="btn_img"><span class="decline">I Decline</span></span></a></li>
-                                        </ul>    
-                                    </del>
-                                </div>
-
+        <div class="actionsrow">
+            <del class="btnwrapper">
+               <ul class="btnrow">
+                <li>
+                <s:a href="#" cssClass="btn" onclick="submitForm('accept')"><span class="btn_img"><span class="confirm">Accept</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick="submitForm('decline');"><span class="btn_img"><span class="cancel">Reject</span></span></s:a>
+                </li>
+               </ul>
+            </del>
+         </div>
 </s:form>
 </body>
