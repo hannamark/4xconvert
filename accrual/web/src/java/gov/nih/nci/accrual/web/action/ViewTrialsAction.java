@@ -79,11 +79,8 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-import gov.nih.nci.coppa.iso.Ii;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -117,17 +114,12 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         }
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-            List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_TRIAL_IDS);
-            listOfTrials = new ArrayList<SearchTrialResultDto>();
-            listOfTrials = service.search(criteria, authorizedTrialIds);
+            listOfTrials = service.search(criteria, getAuthorizedUser());
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
-
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return "ERROR";
         }
-
         return actionResult;
     }
 
@@ -144,10 +136,7 @@ public class ViewTrialsAction extends AbstractAccrualAction {
         }
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-            List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().
-                    getSession().getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_TRIAL_IDS);
-            listOfTrials = new ArrayList<SearchTrialResultDto>();
-            listOfTrials = service.search(criteria, authorizedTrialIds);
+            listOfTrials = service.search(criteria, getAuthorizedUser());
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
 
         } catch (Exception e) {
@@ -163,14 +152,10 @@ public class ViewTrialsAction extends AbstractAccrualAction {
      */
     @SuppressWarnings("unchecked")
     public String searchQuery() {
-        //String actionResult = "list_trials";
         String actionResult = "search_trials";
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-            List<Ii> authorizedTrialIds = (List<Ii>) ServletActionContext.getRequest().getSession().
-                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_TRIAL_IDS);
-            listOfTrials = new ArrayList<SearchTrialResultDto>();
-            listOfTrials = service.search(criteria, authorizedTrialIds);
+            listOfTrials = service.search(criteria, getAuthorizedUser());
             ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
 
         } catch (Exception e) {

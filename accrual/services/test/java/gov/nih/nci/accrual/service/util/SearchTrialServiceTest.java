@@ -86,16 +86,12 @@ import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
-import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -117,49 +113,47 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
     @Test
     public void searchUser1() throws Exception {
-        List<Ii> auth = bean.getAuthorizedTrials(StConverter.convertToSt(MockCsmUtil.users.get(0).getLoginName()));
-        search(auth, true);
+        search(MockCsmUtil.users.get(0).getLoginName(), true);
     }
 
     @Test
     public void searchUser2() throws Exception {
-        List<Ii> auth = bean.getAuthorizedTrials(StConverter.convertToSt(MockCsmUtil.users.get(1).getLoginName()));
-        search(auth, true);
+        search(MockCsmUtil.users.get(1).getLoginName(), true);
     }
 
     @Test
     public void searchUser3() throws Exception {
-        List<Ii> auth = bean.getAuthorizedTrials(StConverter.convertToSt(MockCsmUtil.users.get(2).getLoginName()));
-        search(auth, false);
+        search(MockCsmUtil.users.get(2).getLoginName(), false);
     }
 
-    public void search(List<Ii> auth, boolean shouldBeAuthorized) throws Exception {
+    public void search(String loginName, boolean shouldBeAuthorized) throws Exception {
+        St authUser = StConverter.convertToSt(loginName);
         int goodCount = shouldBeAuthorized ? 1: 0;
 
         // second study is inactive
-        bean.search(new SearchTrialCriteriaDto(), auth);
-        assertEquals(goodCount, bean.search(new SearchTrialCriteriaDto(), auth).size());
+        bean.search(new SearchTrialCriteriaDto(), authUser);
+        assertEquals(goodCount, bean.search(new SearchTrialCriteriaDto(), authUser).size());
 
         // get by assigned identifier
         SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
         crit.setAssignedIdentifier(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getIdentifier()));
-        assertEquals(goodCount, bean.search(crit, auth).size());
+        assertEquals(goodCount, bean.search(crit, authUser).size());
         crit.setAssignedIdentifier(BST);
-        assertEquals(0, bean.search(crit, auth).size());
+        assertEquals(0, bean.search(crit, authUser).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
-        assertEquals(goodCount, bean.search(crit, auth).size());
+        assertEquals(goodCount, bean.search(crit, authUser).size());
         crit.setOfficialTitle(BST);
-        assertEquals(0, bean.search(crit, auth).size());
+        assertEquals(0, bean.search(crit, authUser).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
-        assertEquals(goodCount, bean.search(crit, auth).size());
+        assertEquals(goodCount, bean.search(crit, authUser).size());
         crit.setLeadOrgTrialIdentifier(BST);
-        assertEquals(0, bean.search(crit, auth).size());
+        assertEquals(0, bean.search(crit, authUser).size());
     }
 
     @Test
@@ -177,7 +171,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
     @Test
     public void getStudyOverallStatus() throws Exception {
-        List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto(), new ArrayList<Ii>());
+        List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto(), BST);
         for (SearchTrialResultDto r : rList) {
             if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(0).getId())) {
                 assertEquals(StudyStatusCode.ACTIVE, StudyStatusCode.getByCode(r.getStudyStatusCode().getCode()));
@@ -187,29 +181,4 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
             }
         }
     }
-
-    @Test
-    public void getAuthorizedTrials() throws Exception {
-        // first user can access both trials
-        St lName1 = StConverter.convertToSt(MockCsmUtil.users.get(0).getLoginName());
-        List<Ii> authIis = bean.getAuthorizedTrials(lName1);
-        assertEquals(2, authIis.size());
-
-        // second user can only access 1 trial
-        St lName2 = StConverter.convertToSt(MockCsmUtil.users.get(1).getLoginName());
-        authIis = bean.getAuthorizedTrials(lName2);
-        assertEquals(1, authIis.size());
-
-        // third user has no access privileges
-        St lName3 = StConverter.convertToSt(MockCsmUtil.users.get(2).getLoginName());
-        authIis = bean.getAuthorizedTrials(lName3);
-        assertEquals(0, authIis.size());
-
-        // if access are are inactive none should be returned
-        for (StudySiteAccrualAccess ssaa : TestSchema.studySiteAccrualAccess) {
-            ssaa.setStatusCode(ActiveInactiveCode.INACTIVE);
-            TestSchema.addUpdObject(ssaa);
-        }
-        authIis = bean.getAuthorizedTrials(lName1);
-        assertEquals(0, authIis.size());  }
 }

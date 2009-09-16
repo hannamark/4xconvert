@@ -127,15 +127,7 @@ public class MockSearchStudySiteBean implements SearchStudySiteService {
     /**
      * {@inheritDoc}
      */
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi,List<Ii> authorizedStudySiteIds) throws RemoteException {
+    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, St authUser) throws RemoteException {
         return dtos.get(studyProtocolIi);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<Ii> getAuthorizedSites(St user) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

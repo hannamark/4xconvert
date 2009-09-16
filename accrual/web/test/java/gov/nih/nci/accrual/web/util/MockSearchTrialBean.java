@@ -124,7 +124,7 @@ public class MockSearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,List<Ii> authorizedTrialIds)
+    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, St authUser)
                                      throws RemoteException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
         for (SearchTrialResultDto dto : dtos) {
@@ -159,13 +159,5 @@ public class MockSearchTrialBean implements SearchTrialService {
             result = false;
         }
         return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<Ii> getAuthorizedTrials(St user) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

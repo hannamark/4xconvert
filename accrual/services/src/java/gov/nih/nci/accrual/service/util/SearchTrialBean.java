@@ -133,10 +133,10 @@ public class SearchTrialBean implements SearchTrialService {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, List<Ii> authorizedTrialIds)
+    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,  St authorizedUser)
             throws RemoteException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
-        if (criteria != null && authorizedTrialIds != null && !authorizedTrialIds.isEmpty()) {
+        if (criteria != null && !PAUtil.isStNull(authorizedUser)) {
             Session session = null;
             try {
                 session = AccrualHibernateUtil.getCurrentSession();
@@ -144,10 +144,7 @@ public class SearchTrialBean implements SearchTrialService {
                 String hql = generateStudyProtocolQuery(criteria);
                 query = session.createQuery(hql);
                 List<Long> queryList = query.list();
-                Set<Long> authIds = new HashSet<Long>();
-                for (Ii ii : authorizedTrialIds) {
-                    authIds.add(IiConverter.convertToLong(ii));
-                }
+                Set<Long> authIds = getAuthorizedTrials(authorizedUser);
                 for (Long id : queryList) {
                     if (authIds.contains(id)) {
                         result.add(getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(id)));
@@ -215,28 +212,28 @@ public class SearchTrialBean implements SearchTrialService {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<Ii> getAuthorizedTrials(St user) throws RemoteException {
+    private Set<Long> getAuthorizedTrials(St user) throws RemoteException {
+        Set<Long> result = new HashSet<Long>();
         User csmUser = AccrualCsmUtil.getInstance().getCSMUser(StConverter.convertToString(user));
-        List<Ii> result = new ArrayList<Ii>();
 
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select distinct sp.id "
-                + "from StudySiteAccrualAccess ssaa "
-                + "join ssaa.studySite ss "
-                + "join ss.studyProtocol sp "
-                + "where ssaa.csmUserId = :csmUserId "
-                + "  and ssaa.statusCode = '" + ActiveInactiveCode.ACTIVE.getName() + "' ";
-            query = session.createQuery(hql);
-            query.setParameter("csmUserId", csmUser.getUserId());
-            List<Long> queryList = query.list();
-            for (Long qObj : queryList) {
-                result.add(IiConverter.convertToStudyProtocolIi(qObj));
+        if (csmUser != null) {
+            Session session = null;
+            try {
+                session = AccrualHibernateUtil.getCurrentSession();
+                Query query = null;
+                String hql = "select distinct sp.id "
+                    + "from StudySiteAccrualAccess ssaa "
+                    + "join ssaa.studySite ss "
+                    + "join ss.studyProtocol sp "
+                    + "where ssaa.csmUserId = :csmUserId "
+                    + "  and ssaa.statusCode = '" + ActiveInactiveCode.ACTIVE.getName() + "' ";
+                query = session.createQuery(hql);
+                query.setParameter("csmUserId", csmUser.getUserId());
+                List<Long> queryList = query.list();
+                result.addAll(queryList);
+            } catch (HibernateException hbe) {
+                throw new RemoteException("Hibernate exception in SearchTrialBean.getAuthorizedTrials().", hbe);
             }
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in SearchTrialBean.getAuthorizedTrials().", hbe);
         }
         return result;
     }

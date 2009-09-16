@@ -87,6 +87,7 @@ import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -94,7 +95,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -116,26 +116,26 @@ public class MockServiceTest {
     public void searchTrial() throws Exception {
         // get all
         SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
-        List<Ii> authorizedTrialIds = new ArrayList<Ii>();
+        St authUser = new St();
         SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-        List<SearchTrialResultDto> r = service.search(crit,authorizedTrialIds);
+        List<SearchTrialResultDto> r = service.search(crit, authUser);
         assertEquals(MockSearchTrialBean.dtos.size(), r.size());
 
         // get by lead org id
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("DUKE"));
-        r = service.search(crit,authorizedTrialIds);
+        r = service.search(crit, authUser);
         assertEquals(1, r.size());
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("K"));
-        r = service.search(crit,authorizedTrialIds);
+        r = service.search(crit, authUser);
         assertEquals(2, r.size());
 
         // get by title
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(""));
         crit.setOfficialTitle(StConverter.convertToSt("Phase IV"));
-        r = service.search(crit,authorizedTrialIds);
+        r = service.search(crit, authUser);
         assertEquals(1, r.size());
         crit.setOfficialTitle(StConverter.convertToSt("Phase III"));
-        r = service.search(crit,authorizedTrialIds);
+        r = service.search(crit, authUser);
         assertTrue(r.isEmpty());
     }
 
@@ -143,12 +143,12 @@ public class MockServiceTest {
     public void searchStudySite() throws Exception {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         Ii crit = IiConverter.convertToStudyProtocolIi(1L);
-        List<Ii> authorizedStudySiteIds = new ArrayList<Ii>();
-        List<SearchStudySiteResultDto> r = service.search(crit,authorizedStudySiteIds);
+        St authUser = new St();
+        List<SearchStudySiteResultDto> r = service.search(crit, authUser);
         assertEquals(2, r.size());
 
         crit = IiConverter.convertToStudyProtocolIi(2L);
-        r = service.search(crit,authorizedStudySiteIds);
+        r = service.search(crit, authUser);
         assertEquals(1, r.size());
     }
 

@@ -81,7 +81,6 @@ import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
-import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -114,38 +113,37 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     @Override
     public String execute() {
         String actionResult = "participation_site_selection";
-      //check if users accepted the disclaimer if not show one
+        //check if users accepted the disclaimer if not show one
         String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
         if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
             return "show_Disclaimer_Page";
         }
         try {
-        SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
-        SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
-        List<Ii> authorizedStudySiteIds = (List<Ii>) ServletActionContext.getRequest().getSession()
-                .getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDY_SITE_IDS);
-        listOfSites = new ArrayList<SearchStudySiteResultDto>();
-        studyProtocolId = ServletActionContext.getRequest().getParameter("studyProtocolId");
-        Ii spid = IiConverter.convertToIi(studyProtocolId);
-        trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
+            SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
+            SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
+            listOfSites = new ArrayList<SearchStudySiteResultDto>();
+            studyProtocolId = ServletActionContext.getRequest().getParameter("studyProtocolId");
+            Ii spid = IiConverter.convertToIi(studyProtocolId);
+            trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
             // put an entry in the session
-        ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-        listOfSites = service.search(spid, authorizedStudySiteIds);
-        if (listOfSites != null)  {
-            ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
-           } else {
-        ServletActionContext.getRequest().setAttribute("listOfSites", new ArrayList<SearchStudySiteResultDto>());
-           }
-        /*if (listOfSites != null) {
+            ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
+            listOfSites = service.search(spid, getAuthorizedUser());
+            if (listOfSites != null)  {
+                ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
+            } else {
+                ServletActionContext.getRequest().setAttribute("listOfSites",
+                        new ArrayList<SearchStudySiteResultDto>());
+            }
+            /*if (listOfSites != null) {
           copyToWebDto(listOfSites);
         }*/
 
         } catch (Exception e) {
-              addActionError(e.getLocalizedMessage());
-           // return "ERROR";
+            addActionError(e.getLocalizedMessage());
+            // return "ERROR";
         }
 
-       return actionResult;
+        return actionResult;
     }
 
 

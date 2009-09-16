@@ -76,15 +76,8 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.util.StConverter;
-
-import java.rmi.RemoteException;
-import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -107,23 +100,8 @@ public class WelcomeAction extends AbstractAccrualAction {
 
             ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER,
                     ServletActionContext.getRequest().getRemoteUser());
-            SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-            SearchStudySiteService studySiteService = AccrualServiceLocator.getInstance().getSearchStudySiteService();
-
-            try {
-                List<Ii> authorizedTrialIds = service.getAuthorizedTrials(StConverter.convertToSt(
-                        ServletActionContext.getRequest().getRemoteUser()));
-                ServletActionContext.getRequest().getSession().setAttribute(
-                        AccrualConstants.SESSION_ATTR_AUTHORIZED_TRIAL_IDS, authorizedTrialIds);
-
-                List<Ii> authorizedStudySiteIds = studySiteService.getAuthorizedSites(StConverter.convertToSt(
-                        ServletActionContext.getRequest().getRemoteUser()));
-                ServletActionContext.getRequest().getSession().setAttribute(
-                        AccrualConstants.SESSION_ATTR_AUTHORIZED_STUDY_SITE_IDS, authorizedStudySiteIds);
-            } catch (RemoteException e) {
-                addActionError(e.getMessage());
-                return AccrualConstants.AR_LOGOUT;
-            }
+            AccrualServiceLocator.getInstance().getSearchTrialService();
+            AccrualServiceLocator.getInstance().getSearchStudySiteService();
             actionResult = "show_Disclaimer_Page";
         }
         return actionResult;

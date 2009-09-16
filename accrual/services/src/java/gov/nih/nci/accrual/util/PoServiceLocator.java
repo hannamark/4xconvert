@@ -83,8 +83,7 @@ import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
  * @author Larry Hebel
  * @since Sep 14, 2009
  */
-public class PoServiceLocator implements ServiceLocatorPoInterface
-{
+public final class PoServiceLocator implements ServiceLocatorPoInterface {
     private static final PoServiceLocator PO_REGISTRY = new PoServiceLocator();
     private ServiceLocatorPoInterface serviceLocator;
 
@@ -116,11 +115,10 @@ public class PoServiceLocator implements ServiceLocatorPoInterface
         this.serviceLocator = serviceLocator;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.accrual.web.util.ServiceLocatorPoInterface#getPatientService()
+    /**
+     * {@inheritDoc}
      */
-    public PatientCorrelationServiceRemote getPatientCorrelationService()
-    {
+    public PatientCorrelationServiceRemote getPatientCorrelationService() {
         return serviceLocator.getPatientCorrelationService();
     }
 

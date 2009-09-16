@@ -96,11 +96,11 @@ import javax.ejb.Remote;
 public interface SearchTrialService {
     /**
      * @param criteria search criteria
-     * @param authorizedTrialIds authorized trials
+     * @param authorizedUser user
      * @return list of trials fitting the criteria for which the user is authorized to submit accruals
      * @throws RemoteException exception
      */
-    List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, List<Ii> authorizedTrialIds)
+    List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, St authorizedUser)
             throws RemoteException;
     /**
      * @param studyProtocolIi protocol id
@@ -108,10 +108,4 @@ public interface SearchTrialService {
      * @throws RemoteException exception
      */
     SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException;
-    /**
-     * @param user user
-     * @return list of StudyProtocol Ii's for which the user is authorized to submit accruals
-     * @throws RemoteException exception
-     */
-    List<Ii> getAuthorizedTrials(St user) throws RemoteException;
 }

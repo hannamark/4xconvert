@@ -77,6 +77,8 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -106,5 +108,12 @@ public abstract class AbstractAccrualAction extends ActionSupport {
      */
     protected String getUserRole() {
         return (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_ROLE);
+    }
+
+    /**
+     * @return user login name as iso string
+     */
+    protected St getAuthorizedUser() {
+        return StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser());
     }
 }

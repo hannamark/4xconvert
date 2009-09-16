@@ -83,14 +83,11 @@ import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
  * @author Larry Hebel
  * @since Sep 14, 2009
  */
-public class PoJndiServiceLocator implements ServiceLocatorPoInterface
-{
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.accrual.web.util.ServiceLocatorPoInterface#getPatientService()
+public class PoJndiServiceLocator implements ServiceLocatorPoInterface {
+    /**
+     * {@inheritDoc}
      */
-    public PatientCorrelationServiceRemote getPatientCorrelationService()
-    {
+    public PatientCorrelationServiceRemote getPatientCorrelationService() {
         return (PatientCorrelationServiceRemote) JNDIUtil.lookupPo("/po/PatientCorrelationServiceBean/remote");
     }
 
