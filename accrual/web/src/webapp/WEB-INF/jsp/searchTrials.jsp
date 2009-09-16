@@ -17,7 +17,7 @@ function resetValues(){
    
 }
 function handleAction(){
-     document.forms[0].action="viewTrialssearchQuery.action";
+     document.forms[0].action="viewTrials.action";
      document.forms[0].submit();  
 }
 

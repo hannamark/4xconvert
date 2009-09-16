@@ -73,17 +73,15 @@
         <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
            <result name="viewTrials">viewTrials.action</result>
-           
         </action>
         
         <action name="viewProtocol" class="gov.nih.nci.accrual.web.action.ViewProtocolAction">
             <result name="list_protocols">/WEB-INF/jsp/listProtocols.jsp</result>
         </action>
         
-        <action name="viewTrials*" class="gov.nih.nci.accrual.web.action.ViewTrialsAction" method="{1}">
+        <action name="viewTrials*" class="gov.nih.nci.accrual.web.action.ViewTrialsAction">
             <interceptor-ref name="nci-commonsParams" />
-            <result name="search_trials">/WEB-INF/jsp/searchTrials.jsp</result>
-            
+            <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
         
         <action name="participationSiteSelection" class="gov.nih.nci.accrual.web.action.ParticipationSiteSelectionAction">
@@ -96,7 +94,6 @@
            <interceptor-ref name="nci-commonsParams" />
             <result name="view_accrual_submissions">/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
             <result name="showNewSubmission">/WEB-INF/jsp/newAccrualSubmission.jsp</result>
-                       
         </action>
          
     </package>

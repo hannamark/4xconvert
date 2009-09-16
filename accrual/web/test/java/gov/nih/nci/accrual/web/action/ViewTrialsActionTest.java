@@ -78,12 +78,14 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Rajani Kumar
@@ -92,10 +94,6 @@ import com.mockrunner.mock.web.MockHttpSession;
 
 public class ViewTrialsActionTest extends AbstractAccrualActionTest {
 
-	//private static final String AR_LIST_TRIALS = "list_trials";
-	private static final String AR_SEARCH_TRIALS = "search_trials";
-    
-	
     ViewTrialsAction action;
 
     @Before
@@ -110,33 +108,9 @@ public class ViewTrialsActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void executeTest() {
-       
-    	
         String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
         assertNotNull(strDisclaimer);
         assertEquals("accept", strDisclaimer);
-    	// show list of trials
-       // assertEquals(AR_LIST_TRIALS, action.execute());
-        assertEquals(AR_SEARCH_TRIALS, action.search());
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
-    
-    @Test
-    public void searchTest() {
-       
-    	
-        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        assertNotNull(strDisclaimer);
-        assertEquals("accept", strDisclaimer);
-    	// show list of trials
-        assertEquals(AR_SEARCH_TRIALS, action.search());
-    }
-    
-    @Test
-    public void searchQueryTest() {
-       
-    	// show list of trials
-        //assertEquals(AR_LIST_TRIALS, action.searchQuery());
-    	assertEquals(AR_SEARCH_TRIALS, action.searchQuery());
-    }
-
 }
