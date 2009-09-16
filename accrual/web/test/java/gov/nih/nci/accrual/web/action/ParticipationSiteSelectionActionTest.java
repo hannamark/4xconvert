@@ -79,12 +79,15 @@ package gov.nih.nci.accrual.web.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
+
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Rajani Kumar
@@ -92,10 +95,7 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class ParticipationSiteSelectionActionTest extends AbstractAccrualActionTest {
 
-	private static final String AR_PARTICIPATION_SITE_SELECTION = "participation_site_selection";
-	
-	
-	ParticipationSiteSelectionAction action;
+    ParticipationSiteSelectionAction action;
 
     @Before
     public void initAction() {
@@ -104,30 +104,26 @@ public class ParticipationSiteSelectionActionTest extends AbstractAccrualActionT
 
     @Test
     public void executeTest() {
-       
-    	MockHttpServletRequest request = new MockHttpServletRequest();
-    	MockHttpSession session = new MockHttpSession();
-        session.setAttribute("disclaimer", "accept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        session.setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER, AccrualConstants.DISCLAIMER_ACCEPTED);
+        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
         assertNotNull(strDisclaimer);
-        assertEquals("accept", strDisclaimer);
+        assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, strDisclaimer);
        // show participation site selection
-        assertEquals(AR_PARTICIPATION_SITE_SELECTION, action.execute());
-        
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+
     }
-    
+
     @Test
      public void listOfSitesPropertyTest(){
       assertNull(action.getListOfSites());
      }
-    
+
     @Test
     public void studyProtocolIdPropertyTest(){
      assertNull(action.getStudyProtocolId());
      action.setStudyProtocolId("123");
      assertNotNull(action.getStudyProtocolId());
     }
-    
+
    }

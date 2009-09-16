@@ -78,16 +78,21 @@ package gov.nih.nci.accrual.web.action;
 
 
 import gov.nih.nci.accrual.dto.SubmissionDto;
-
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 import org.apache.struts2.ServletActionContext;
 
 
@@ -96,134 +101,140 @@ import org.apache.struts2.ServletActionContext;
  * @since  Aug 31, 2009
  */
 public class AccrualSubmissionsAction extends AbstractAccrualAction {
-   
+
     private static final long serialVersionUID = -6859130106987908815L;
+
+    private static final String AR_NEW_SUBMISSION = "showNewSubmission";
+
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
     private List<SubmissionDto> listOfSubmissions = null;
     private SubmissionDto submission = new SubmissionDto();
-    
+    private String selectedRowIdentifier;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String execute() {
-        String actionResult = "view_accrual_submissions";
-      //check if users accepted the disclaimer if not show one
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
-            return "show_Disclaimer_Page";
-        }
         try {
-        
-        SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
-        studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
-        Ii spid = IiConverter.convertToIi(studyProtocolId);
-        trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
-         // put an entry in the session
-          ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-           SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
-              listOfSubmissions = new ArrayList<SubmissionDto>();
-              listOfSubmissions = service.getByStudyProtocol(spid);             
-              ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
-                 
-         } catch (Exception e) {
-              addActionError(e.getLocalizedMessage());
-           // return "ERROR";
+            trialSummary = searchTrialSvc.getTrialSummaryByStudyProtocolIi(spIi);
+            // put an entry in the session
+            ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
+            SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
+            listOfSubmissions = new ArrayList<SubmissionDto>();
+            listOfSubmissions = service.getByStudyProtocol(spIi);
+            ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
         }
-       
-       return actionResult;
+        return super.execute();
     }
-    
+
+    /**
+     * @return action result
+     */
+    public String displayNewSubmission() {
+        return AR_NEW_SUBMISSION;
+    }
+
+    /**
+     * @return action result
+     */
+    public String submit() {
+        try {
+            SubmissionDto dto = submissionSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            dto.setStatusCode(CdConverter.convertToCd(PendingCompletedCode.COMPLETED));
+            Ivl<Ts> ivl = dto.getStatusDateRange();
+            ivl.setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+            dto.setStatusDateRange(ivl);
+            submissionSvc.update(dto);
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+        }
+        return execute();
+    }
+
     /**
      * {@inheritDoc}
      */
-      public String displayNewSubmission() {
-        String actionResult = "showNewSubmission";
-            
-       return actionResult;
+    public String addNew() {
+        String actionResult = "view_accrual_submissions";
+
+        try {
+            listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
+            listOfSubmissions.add(submissionSvc.create(submission));
+            ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+            return super.execute();
+        }
+        return actionResult;
     }
-      
-      /**
-       * {@inheritDoc}
-       */
-        public String addNew() {
-             String actionResult = "view_accrual_submissions";
-           
-              try {
-              
-              studyProtocolId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
-              Ii spid = IiConverter.convertToIi(studyProtocolId);
-              SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
-                    listOfSubmissions = new ArrayList<SubmissionDto>();
-                    listOfSubmissions = service.getByStudyProtocol(spid);   
-                    listOfSubmissions.add(service.create(submission));
-                    ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
-                       
-               } catch (Exception e) {
-                    addActionError(e.getLocalizedMessage());
-                 // return "ERROR";
-              }
-             
-             return actionResult;
-      }
-        /**
-     * 
+    /**
+     *
      * @return studyProtocolId
      */
     public String getStudyProtocolId() {
-       return studyProtocolId;
-     }
-
+        return studyProtocolId;
+    }
     /**
-     * 
+     *
      * @param studyProtocolId String
      */
     public void setStudyProtocolId(String studyProtocolId) {
-      this.studyProtocolId = studyProtocolId;
+        this.studyProtocolId = studyProtocolId;
     }
-    
-     /**
-      * 
-      * @return trialSummary
-      */
-     public SearchTrialResultDto getTrialSummary() {
-       return trialSummary;
-      }
-
-     /**
-      * 
-      * @param trialSummary SearchTrialResultDto
-      */
-     public void setTrialSummary(SearchTrialResultDto trialSummary) {
+    /**
+     *
+     * @return trialSummary
+     */
+    public SearchTrialResultDto getTrialSummary() {
+        return trialSummary;
+    }
+    /**
+     *
+     * @param trialSummary SearchTrialResultDto
+     */
+    public void setTrialSummary(SearchTrialResultDto trialSummary) {
         this.trialSummary = trialSummary;
-      }
-    /**
-      * @return the listOfSubmissions
-      */
-    public List<SubmissionDto> getListOfSubmissions() {
-       return listOfSubmissions;
-     }
-    /**
-      * @param listOfSubmissions the listOfSubmissions to set
-      */
-    public void setListOfSubmissions(List<SubmissionDto> listOfSubmissions) {
-       this.listOfSubmissions = listOfSubmissions;
     }
-
     /**
-     * 
+     * @return the listOfSubmissions
+     */
+    public List<SubmissionDto> getListOfSubmissions() {
+        return listOfSubmissions;
+    }
+    /**
+     * @param listOfSubmissions the listOfSubmissions to set
+     */
+    public void setListOfSubmissions(List<SubmissionDto> listOfSubmissions) {
+        this.listOfSubmissions = listOfSubmissions;
+    }
+    /**
+     *
      * @return the submission
      */
     public SubmissionDto getSubmission() {
         return submission;
     }
-
     /**
-      * @param submission the submission to set
-      * 
-      */
+     * @param submission the submission to set
+     *
+     */
     public void setSubmission(SubmissionDto submission) {
         this.submission = submission;
-     }
+    }
+    /**
+     * @return the selectedRowIdentifier
+     */
+    public String getSelectedRowIdentifier() {
+        return selectedRowIdentifier;
+    }
+    /**
+     * @param selectedRowIdentifier the selectedRowIdentifier to set
+     */
+    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
+        this.selectedRowIdentifier = selectedRowIdentifier;
+    }
 }

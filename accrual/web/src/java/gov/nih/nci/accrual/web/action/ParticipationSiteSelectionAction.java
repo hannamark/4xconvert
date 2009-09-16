@@ -112,12 +112,6 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
     @SuppressWarnings("unchecked")
     @Override
     public String execute() {
-        String actionResult = "participation_site_selection";
-        //check if users accepted the disclaimer if not show one
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
-            return "show_Disclaimer_Page";
-        }
         try {
             SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
             SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
@@ -134,35 +128,11 @@ public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
                 ServletActionContext.getRequest().setAttribute("listOfSites",
                         new ArrayList<SearchStudySiteResultDto>());
             }
-            /*if (listOfSites != null) {
-          copyToWebDto(listOfSites);
-        }*/
-
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            // return "ERROR";
         }
-
-        return actionResult;
+        return super.execute();
     }
-
-
-   /* private void copyToWebDto(List<SearchStudySiteResultDto> listOfSites2) {
-       listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
-      for (SearchStudySiteResultDto site2 : listOfSites2) {
-         webDto = new SearchStudySiteResultWebDto();
-          webDto.setSsIi(IiConverter.convertToString(site2.getStudySiteIi()));
-          webDto.setOrgName(StConverter.convertToString(site2.getOrganizationName()));
-            listOfStudySites.add(webDto);
-
-      }
-
-      if (listOfStudySites != null)  {
-          ServletActionContext.getRequest().setAttribute("listOfStudySites", listOfStudySites);
-         } else {
-      ServletActionContext.getRequest().setAttribute("listOfStudySites", new ArrayList<SearchStudySiteResultWebDto>());
-         }
-    }*/
 
     /**
      *

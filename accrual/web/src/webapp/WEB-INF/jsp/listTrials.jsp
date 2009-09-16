@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 
 <h1><fmt:message key="accrual.list.trials.page.header"/></h1>
-   <p>Click on the Protocol Number to select the Trial Participation Site.</p>
-   
    <display:table class="data" summary="This table contains your trial search results.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SearchTrialResultDecorator"
       sort="list" pagesize="10" id="row" name="listOfTrials" requestURI="viewTrials.action" export="false"> 

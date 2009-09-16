@@ -76,6 +76,8 @@
 */
 
 package gov.nih.nci.accrual.web.action;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
+
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -83,25 +85,15 @@ import org.apache.struts2.ServletActionContext;
  * @since  Aug 13, 2009
  */
 public class DisclaimerAction extends AbstractAccrualAction {
-    
+
     private static final long serialVersionUID = 5729242514602833613L;
-  
-    /**
-     * 
-     * @return s
-     */
-    @Override
-    public String execute() {
-        return "show_Disclaimer_Page";
-    }
+
     /**
      * @return s
      */
     public String accept() {
-        ServletActionContext.getRequest().getSession().setAttribute("disclaimer", "accept");
-       return "viewTrials";
-       
+        ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER,
+                AccrualConstants.DISCLAIMER_ACCEPTED);
+        return super.execute();
     }
-    
-     
 }

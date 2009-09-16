@@ -85,21 +85,19 @@ package gov.nih.nci.accrual.web.util;
  */
 public final class AccrualConstants {
 
-    /** Attribute used to store the role in session. */
-    public static final String SESSION_ATTR_AUTHORIZED_STUDIES = "authorizedStudies";
-    /** Attribute used to store the role in session. */
-    public static final String SESSION_ATTR_AUTHORIZED_SITES = "authorizedSite";
     /** Attribute used to store the authorized user in session. */
     public static final String SESSION_ATTR_AUTHORIZED_USER = "authorizedUser";
-    /** Attribute used to store the authorized user in session. */
-    public static final String SESSION_ATTR_AUTHORIZED_TRIAL_IDS = "authorizedTrialIds";
-    /** Attribute used to store the authorized user in session. */
-    public static final String SESSION_ATTR_AUTHORIZED_STUDY_SITE_IDS = "authorizedStudySiteIds";
     /** Attribute used to store the role in session. */
     public static final String SESSION_ATTR_ROLE = "accrualRole";
     /** Role-name for the public role. */
     public static final String ROLE_PUBLIC = "Submitter";
+    /** Attribute used to store the role in session. */
+    public static final String SESSION_ATTR_DISCLAIMER = "accrualDisclaimer";
+    /** Role-name for the public role. */
+    public static final String DISCLAIMER_ACCEPTED = "Accepted";
 
     /** Action result for the global log out result. */
     public static final String AR_LOGOUT = "logout";
+    /** Action result for the show disclaimer. */
+    public static final String AR_DISCLAIMER = "show_Disclaimer_Page";
 }

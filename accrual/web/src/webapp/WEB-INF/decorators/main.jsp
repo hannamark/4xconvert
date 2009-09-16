@@ -5,7 +5,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><decorator:title default="NCI CTRP Viewer"/></title>    
+    <title><decorator:title default="NCI CTRP Accrual Site"/></title>    
     <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
     <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
     <decorator:head/>

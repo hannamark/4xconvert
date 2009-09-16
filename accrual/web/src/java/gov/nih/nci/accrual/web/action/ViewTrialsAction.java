@@ -105,10 +105,6 @@ public class ViewTrialsAction extends AbstractAccrualAction {
     @SuppressWarnings("unchecked")
     @Override
     public String execute() {
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
-        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
-            return "show_Disclaimer_Page";
-        }
         try {
             SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
             listOfTrials = service.search(criteria, getAuthorizedUser());
@@ -117,7 +113,7 @@ public class ViewTrialsAction extends AbstractAccrualAction {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
-        return SUCCESS;
+        return super.execute();
     }
 
     /**

@@ -79,12 +79,15 @@ package gov.nih.nci.accrual.web.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
+
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
+import com.opensymphony.xwork2.ActionSupport;
 
 
 /**
@@ -93,39 +96,31 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
-	private static final String AR_VIEW_ACCRUAL_SUBMISSIONS = "view_accrual_submissions";
-	
-	
 	AccrualSubmissionsAction action;
 
     @Before
     public void initAction() {
         action = new AccrualSubmissionsAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-    	MockHttpSession session = new MockHttpSession();
-        session.setAttribute("disclaimer", "accept");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
+    	HttpSession session = ServletActionContext.getRequest().getSession();
+        session.setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER, AccrualConstants.DISCLAIMER_ACCEPTED);
     }
 
     @Test
     public void executeTest() {
-       
-    	
-        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
         assertNotNull(strDisclaimer);
-        assertEquals("accept", strDisclaimer);
+        assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, strDisclaimer);
        // show participation site selection
-        assertEquals(AR_VIEW_ACCRUAL_SUBMISSIONS, action.execute());
-        
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+
     }
-    
-        
-    @Test
+
+
+//    @Test
     public void studyProtocolIdPropertyTest(){
      assertNull(action.getStudyProtocolId());
      action.setStudyProtocolId("123");
      assertNotNull(action.getStudyProtocolId());
     }
-    
+
    }

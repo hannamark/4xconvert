@@ -76,29 +76,57 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Hugh Reinhart
  * @since 4/16/2009
  */
-public abstract class AbstractAccrualAction extends ActionSupport {
+public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
 
+    Long spId;
+    Ii spIi;
+    SearchTrialService searchTrialSvc;
+    SubmissionService submissionSvc;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void prepare() {
+        searchTrialSvc = AccrualServiceLocator.getInstance().getSearchTrialService();
+        submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
+        String spString = ServletActionContext.getRequest().getParameter("studyProtocolId");
+        spId = spString == null ? null : Long.valueOf(spString);
+        spIi = IiConverter.convertToIi(spId);
+    }
     /**
      * Default implementation throws derived exception.
      * @return action result
      */
     @Override
     public String execute() {
-        if (getUserRole() == null) {
+        // make sure user authorized
+        if (!getUserRole().equals(AccrualConstants.ROLE_PUBLIC)) {
             return AccrualConstants.AR_LOGOUT;
+        }
+        //check if users accepted the disclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_DISCLAIMER);
+        if (strDesclaimer == null || !strDesclaimer.equals(AccrualConstants.DISCLAIMER_ACCEPTED)) {
+            return AccrualConstants.AR_DISCLAIMER;
         }
         return SUCCESS;
     }

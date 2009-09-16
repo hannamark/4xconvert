@@ -77,6 +77,8 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
+
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,8 +91,6 @@ import org.junit.Test;
 
 public class DisclaimerActionTest extends AbstractAccrualActionTest {
 
-	private static final String AR_SHOW_DISCLAIMER = "show_Disclaimer_Page";
-		
 	DisclaimerAction action;
 
     @Before
@@ -101,15 +101,13 @@ public class DisclaimerActionTest extends AbstractAccrualActionTest {
     @Test
     public void executeTest() {
         // show disclaimer page
-        assertEquals(AR_SHOW_DISCLAIMER, action.execute());
+        assertEquals(AccrualConstants.AR_DISCLAIMER, action.execute());
     }
 
     @Test
     public void acceptTest(){
         // user accepts the disclaimer and goes to home page
-        	action.accept();
-    	  	assertEquals("accept",ServletActionContext.getRequest().getSession().getAttribute("disclaimer"));
-    	
+        action.accept();
+      	assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER));
      }
-    
 }

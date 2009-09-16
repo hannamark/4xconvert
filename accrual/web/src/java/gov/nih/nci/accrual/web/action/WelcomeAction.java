@@ -77,7 +77,6 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.web.util.AccrualConstants;
-import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -93,17 +92,12 @@ public class WelcomeAction extends AbstractAccrualAction {
      */
     @Override
     public String execute() {
-        String actionResult = AccrualConstants.AR_LOGOUT;
         if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_PUBLIC)) {
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_PUBLIC);
-
             ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER,
                     ServletActionContext.getRequest().getRemoteUser());
-            AccrualServiceLocator.getInstance().getSearchTrialService();
-            AccrualServiceLocator.getInstance().getSearchStudySiteService();
-            actionResult = "show_Disclaimer_Page";
         }
-        return actionResult;
+        return super.execute();
     }
 }

@@ -71,32 +71,26 @@
     <package name="protected" namespace="/protected" extends="public">
          
         <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
+           <result>viewTrials.action</result>
            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
-           <result name="viewTrials">viewTrials.action</result>
         </action>
-        
+
         <action name="viewProtocol" class="gov.nih.nci.accrual.web.action.ViewProtocolAction">
-            <result name="list_protocols">/WEB-INF/jsp/listProtocols.jsp</result>
+            <result>/WEB-INF/jsp/listProtocols.jsp</result>
         </action>
-        
+
         <action name="viewTrials*" class="gov.nih.nci.accrual.web.action.ViewTrialsAction">
-            <interceptor-ref name="nci-commonsParams" />
             <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
-        
+
         <action name="participationSiteSelection" class="gov.nih.nci.accrual.web.action.ParticipationSiteSelectionAction">
-           <interceptor-ref name="nci-commonsParams" />
             <result name="participation_site_selection">/WEB-INF/jsp/participationSiteSelection.jsp</result>
-                       
         </action>
-        
+
         <action name="accrualSubmissions*" class="gov.nih.nci.accrual.web.action.AccrualSubmissionsAction" method="{1}">
-           <interceptor-ref name="nci-commonsParams" />
-            <result name="view_accrual_submissions">/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
+            <result>/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
             <result name="showNewSubmission">/WEB-INF/jsp/newAccrualSubmission.jsp</result>
         </action>
-         
+
     </package>
-    
-    
 </struts>
