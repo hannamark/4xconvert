@@ -3,3 +3,4 @@ VALUES (1776,'CDR0000587622',null,'systemic scleroderma','systemic scleroderma',
 
 UPDATE DISEASE SET STATUS_CODE = 'ACTIVE' WHERE IDENTIFIER = 1755 AND STATUS_CODE = 'INACTIVE';
 
+
