@@ -174,8 +174,18 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         }
         Map<Long, String> result = new LinkedHashMap<Long, String>();
         for (Object[] oArr : queryList) {
-            result.put((Long) oArr[0], (String) oArr[1]);
-        }
+                StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
+                .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteIi((Long) oArr[0]));
+                
+                RecruitmentStatusCode recruitmentStatus = null;
+               if (ssas != null) {
+                    recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
+                    if (recruitmentStatus.isEligibleForAccrual()) {                        
+                        result.put((Long) oArr[0], (String) oArr[1]);
+                    }
+                }
+            }
+        
         return result;
     }
 
@@ -330,16 +340,6 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     }
 
     private void validateElibibleForCreate(StudySiteAccrualAccessDTO access) throws PAException {
-        StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(
-                IiConverter.convertToStudySiteIi(access.getStudySiteId()));
-        RecruitmentStatusCode recruitmentStatus = null;
-        if (ssas != null) {
-            recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
-            if (!recruitmentStatus.isEligibleForAccrual()) {
-                throw new PAException("Access can only be granted for sites which are accruing.  Current status is '"
-                        + recruitmentStatus.getCode() + "'.");
-            }
-        }
         List<StudySiteAccrualAccess> aList = getBosByStudySite(access.getStudySiteId());
         for (StudySiteAccrualAccess a : aList) {
             if (a.getStudySite().getId().equals(access.getStudySiteId())
