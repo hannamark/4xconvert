@@ -194,6 +194,8 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(studyProtocol.getSubmissionNumber()));
         studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(studyProtocol.getUserLastCreated()));
         studyProtocolDTO.setProgramCodeText(StConverter.convertToSt(studyProtocol.getProgramCodeText()));
+        studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(
+                studyProtocol.getProprietaryTrialIndicator()));
         return studyProtocolDTO;
     }
 
@@ -307,6 +309,8 @@ public class StudyProtocolConverter {
            studyProtocol.setProgramCodeText(
                    StConverter.convertToString(studyProtocolDTO.getProgramCodeText()));
        }
+       studyProtocol.setProprietaryTrialIndicator(BlConverter.covertToBoolean(
+               studyProtocolDTO.getProprietaryTrialIndicator()));
        return studyProtocol;
    }
     

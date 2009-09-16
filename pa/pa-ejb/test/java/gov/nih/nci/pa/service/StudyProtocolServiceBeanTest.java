@@ -395,6 +395,7 @@ public class StudyProtocolServiceBeanTest {
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setProprietaryTrialIndicator(Boolean.FALSE);
         TestSchema.addUpdObject(sp);
         
         StudyProtocolDTO spDto = remoteEjb.getStudyProtocol(IiConverter.convertToIi(sp.getId()));

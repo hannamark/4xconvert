@@ -133,6 +133,7 @@ public class GeneralTrialDesignWebDTO {
     private String programCodeText;
     private String responsibleGenericContactName;
     private String centralContactTitle;
+    private String proprietarytrialindicator;
     /**
      * 
      * @return acronym acronym
@@ -699,6 +700,18 @@ public class GeneralTrialDesignWebDTO {
      */
     public void setCentralContactTitle(String centralContactTitle) {
         this.centralContactTitle = centralContactTitle;
+    }
+    /**
+     * @return the proprietarytrialindicator
+     */
+    public String getProprietarytrialindicator() {
+        return proprietarytrialindicator;
+    }
+    /**
+     * @param proprietarytrialindicator the proprietarytrialindicator to set
+     */
+    public void setProprietarytrialindicator(String proprietarytrialindicator) {
+        this.proprietarytrialindicator = proprietarytrialindicator;
     }
     
 }

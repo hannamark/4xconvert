@@ -410,7 +410,7 @@ public class TestSchema {
             sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
             sp.setIdentifier("NCI-2009-00001");
             sp.setSubmissionNumber(Integer.valueOf(1));
-
+            sp.setProprietaryTrialIndicator(Boolean.FALSE);
             addUpdObject(sp);
             sp.setId(sp.getId());
             studyProtocolIds.add(sp.getId());

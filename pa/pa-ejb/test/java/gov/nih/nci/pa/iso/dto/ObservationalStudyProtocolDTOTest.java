@@ -89,6 +89,7 @@ import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -123,7 +124,7 @@ public class ObservationalStudyProtocolDTOTest {
         ospDTO.setNumberOfGroups(IntConverter.convertToInt(4));
         ospDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
         ospDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
-       
+        ospDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
         return ospDTO;
     }
 

@@ -129,6 +129,7 @@ public class InterventionalStudyProtocolDTOTest {
         ispDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.I.getCode()));
         ispDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
         ispDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
+        ispDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
         return ispDTO;
     }
 

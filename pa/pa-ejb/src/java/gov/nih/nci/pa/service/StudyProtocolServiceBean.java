@@ -567,10 +567,11 @@ import org.hibernate.criterion.Example;
             StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(
                     getStudyProtocol(studyProtocolDTO.getIdentifier()));
             StudyProtocol newBo = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
-            if (!oldBo.getPrimaryCompletionDate().equals(newBo.getPrimaryCompletionDate())
+            if (!oldBo.getProprietaryTrialIndicator() 
+                    && (!oldBo.getPrimaryCompletionDate().equals(newBo.getPrimaryCompletionDate())
                     || !oldBo.getPrimaryCompletionDateTypeCode().equals(newBo.getPrimaryCompletionDateTypeCode())
                     || !oldBo.getStartDate().equals(newBo.getStartDate())
-                    || !oldBo.getStartDateTypeCode().equals(newBo.getStartDateTypeCode())) {
+                    || !oldBo.getStartDateTypeCode().equals(newBo.getStartDateTypeCode()))) {
                 dateRulesApply = true;
             }
         }

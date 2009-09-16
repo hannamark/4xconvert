@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Country;
@@ -90,6 +91,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -111,14 +113,18 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -206,6 +212,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
     @EJB
     StudyObjectiveServiceRemote studyObjectiveService = null;
+    @EJB
+    StudySiteOverallStatusServiceLocal studySiteOverallStatusService = null;
     private static final String CREATE = "Create";
     private static final String AMENDMENT = "Amendment";
     private static final String UPDAT = "Update";
@@ -1053,7 +1061,133 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             studyResourcingService.updateStudyResourcing(summary4studyResourcingDTO);
         }
     }
-
+    /**
+     * 
+     * @param studyProtocolDTO spDTO
+     * @param siteOverallStatusDTO siteStatusDto
+     * @param studyIndldeDTOs indDTO
+     * @param studyResourcingDTOs  grants 
+     * @param documentDTOs documents
+     * @param leadOrganizationDTO lead Org 
+     * @param leadOrganizationTrialIdentifier LeadOrgTrialId
+     * @param siteInvestigatorDTO    SitePi
+     * @param studySiteDTO participating Org
+     * @param localSiteIdentifier local id
+     * @param siteProgramCodeText siteProgramCodeText
+     * @param nctIdentifierSiteIdentifier nct
+     * @param summary4organizationDTO sum4 org
+     * @param summary4CategoryCode summary 4Category Code 
+     * @return Ii
+     * @throws PAException e
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Ii createInterventionalProprietaryStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO ,
+            StudySiteOverallStatusDTO siteOverallStatusDTO ,
+            List<StudyIndldeDTO> studyIndldeDTOs ,
+            List<StudyResourcingDTO> studyResourcingDTOs ,
+            List<DocumentDTO> documentDTOs ,
+            OrganizationDTO leadOrganizationDTO ,
+            St leadOrganizationTrialIdentifier ,
+            PersonDTO siteInvestigatorDTO ,
+            OrganizationDTO studySiteDTO ,
+            St localSiteIdentifier ,
+            St siteProgramCodeText ,
+            St nctIdentifierSiteIdentifier,
+            OrganizationDTO summary4organizationDTO ,
+            Cd summary4CategoryCode)
+    throws PAException {
+        Ii studyProtocolIi = null;
+        StudyTypeCode studyTypeCode = null;
+        //validate method needs to be here
+        try {
+            if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
+                studyProtocolIi =  studyProtocolService.createInterventionalStudyProtocol(
+                            (InterventionalStudyProtocolDTO) studyProtocolDTO);
+                studyTypeCode = StudyTypeCode.INTERVENTIONAL;
+            } else {
+                studyProtocolIi =  studyProtocolService.createObservationalStudyProtocol(
+                        (ObservationalStudyProtocolDTO) studyProtocolDTO);
+                studyTypeCode = StudyTypeCode.OBSERVATIONAL;
+            }
+            createMilestone(studyProtocolIi);
+            paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null),
+                    studyProtocolIi);    
+            paServiceUtils.createOrUpdate(studyResourcingDTOs, 
+                    IiConverter.convertToStudyResourcingIi(null), studyProtocolIi);    
+            paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
+            StudyResourcingDTO summary4studyResourcingDTO  = new StudyResourcingDTO();
+            summary4studyResourcingDTO.setTypeCode(summary4CategoryCode);
+            createSummaryFour(studyProtocolIi , summary4organizationDTO , summary4studyResourcingDTO);
+          
+            paServiceUtils.manageLeadOrganization(studyProtocolIi , leadOrganizationDTO ,
+                    leadOrganizationTrialIdentifier);
+            StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
+            nctIdentifierDTO.setLocalStudyProtocolIdentifier(nctIdentifierSiteIdentifier);
+            paServiceUtils.manageNCTIdentifier(studyProtocolIi, nctIdentifierDTO);
     
+            //create StudySite
+            Ii studySiteIi = createStudySite(studyProtocolIi, studySiteDTO, siteProgramCodeText, localSiteIdentifier);
+            siteOverallStatusDTO.setStudySiteIdentifier(studySiteIi);
+            studySiteOverallStatusService.create(siteOverallStatusDTO);
+            //set PI
+            createStudySiteContact(studySiteIi, studyProtocolIi, studySiteDTO, siteInvestigatorDTO, studyTypeCode);
+            //
+        } catch (Exception e) {
+            ejbContext.setRollbackOnly();
+            throw new PAException(e);
+        }
 
+        return studyProtocolIi;
+    }
+
+
+    private Ii createStudySite(Ii studyProtocolIi,
+            OrganizationDTO studySiteDTO , St siteProgramCodeText, St localSiteIdentifier) throws PAException {
+        
+        Long paHealthCareFacilityId = ocsr.createHealthCareFacilityCorrelations(
+                studySiteDTO.getIdentifier().getExtension());
+        StudySiteDTO sp = new StudySiteDTO();
+        sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        sp.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
+        sp.setIdentifier(null);
+        sp.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+        sp.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+        sp.setStudyProtocolIdentifier(studyProtocolIi);
+        sp.setProgramCodeText(siteProgramCodeText);
+        sp.setLocalStudyProtocolIdentifier(localSiteIdentifier);
+        sp = studySiteService.create(sp);
+        return sp.getIdentifier();
+    }
+    
+    private Ii createStudySiteContact(Ii studySiteIi , Ii studyProtocolIi, OrganizationDTO siteDto, PersonDTO piDto,
+            StudyTypeCode studyTypeCode) throws PAException {
+         Ii studySiteContactIi = null;
+         String orgPoIdentifier = siteDto.getIdentifier().getExtension();
+         String perIdentifier = piDto.getIdentifier().getExtension();
+         StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
+         studySiteContactDTO.setStudySiteIi(studySiteIi);
+         Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean().
+            createClinicalResearchStaffCorrelations(orgPoIdentifier, perIdentifier);
+         Long healthCareProviderIi = null;
+         if (studyTypeCode.equals(StudyTypeCode.INTERVENTIONAL)) {
+            healthCareProviderIi = new HealthCareProviderCorrelationBean().createHealthCareProviderCorrelationBeans(
+                orgPoIdentifier, perIdentifier);
+        }
+         studySiteContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid));
+        if (healthCareProviderIi != null) {
+            studySiteContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
+        }
+        studySiteContactDTO.setRoleCode(CdConverter.convertToCd(
+                    StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR));
+        
+        studySiteContactDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        studySiteContactDTO.setStatusCode(CdConverter.convertStringToCd(
+                FunctionalRoleStatusCode.PENDING.getCode()));
+        
+        
+        studySiteContactService.create(studySiteContactDTO);
+        return studySiteContactIi;
+    }
+    
 }

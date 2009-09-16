@@ -133,6 +133,7 @@ public class StudyProtocolDTO extends BaseDTO {
     private Int submissionNumber;
     private St programCodeText;
    private Ivl<Int> targetAccrualNumber;
+   private Bl proprietaryTrialIndicator;
     
     /**
      * 
@@ -651,6 +652,20 @@ public Ivl<Int> getTargetAccrualNumber() {
  */
 public void setTargetAccrualNumber(Ivl<Int> targetAccrualNumber) {
     this.targetAccrualNumber = targetAccrualNumber;
+}
+
+/**
+ * @return the proprietaryTrialIndicator
+ */
+public Bl getProprietaryTrialIndicator() {
+    return proprietaryTrialIndicator;
+}
+
+/**
+ * @param proprietaryTrialIndicator the proprietaryTrialIndicator to set
+ */
+public void setProprietaryTrialIndicator(Bl proprietaryTrialIndicator) {
+    this.proprietaryTrialIndicator = proprietaryTrialIndicator;
 }
     
     

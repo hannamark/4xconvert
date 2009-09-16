@@ -172,7 +172,7 @@ public class InterventionalStudyProtocolTest {
         isp.setFdaRegulatedIndicator(Boolean.FALSE);
         isp.setAllocationCode(AllocationCode.NA);
         isp.setDelayedpostingIndicator(Boolean.FALSE);
-        
+        isp.setProprietaryTrialIndicator(Boolean.FALSE);
         return isp;
     }
     

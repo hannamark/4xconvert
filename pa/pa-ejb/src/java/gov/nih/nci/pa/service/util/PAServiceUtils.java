@@ -573,8 +573,11 @@ public class PAServiceUtils {
             return null;
         }
         StudySiteDTO spDto =  new StudySiteDTO();
-        String poOrgId = PaRegistry.getOrganizationCorrelationService().getCtGovPOIdentifier();
-        long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(poOrgId);
+        OrganizationCorrelationServiceBean ocsr = new OrganizationCorrelationServiceBean();
+        String poOrgId = ocsr.getCtGovPOIdentifier();
+        long roId = ocsr.createResearchOrganizationCorrelations(poOrgId);
+        //String poOrgId = PaRegistry.getOrganizationCorrelationService().getCtGovPOIdentifier();
+        //long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(poOrgId);
         spDto.setStudyProtocolIdentifier(studyProtocolIi);
         spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
         spDto.setLocalStudyProtocolIdentifier(nctIdentifierDTO.getLocalStudyProtocolIdentifier());

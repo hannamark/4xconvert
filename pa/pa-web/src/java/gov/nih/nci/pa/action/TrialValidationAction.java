@@ -149,6 +149,7 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength",
         "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class TrialValidationAction extends ActionSupport {
+    private static final String FALSE = "FALSE";
     private static final long serialVersionUID = -6587531774808791496L;
     private static final int OFFICIAL_TITLE = 4000;
     private static final int OTHER_TEXT = 200;
@@ -176,10 +177,12 @@ public class TrialValidationAction extends ActionSupport {
             copy(spqDto);
             copyLO(cUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
                     spqDto.getLeadOrganizationId())));
-            copyPI(cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())));
+            if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
+                copyPI(cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())));
+                copyResponsibleParty(studyProtocolIi);
+                copySponsor(studyProtocolIi);
+            }
             copySummaryFour(PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi));
-            copyResponsibleParty(studyProtocolIi);
-            copySponsor(studyProtocolIi);
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         } catch (NullifiedRoleException e) {
@@ -338,12 +341,14 @@ public class TrialValidationAction extends ActionSupport {
             updateStudySite(studyProtocolIi, CdConverter
                     .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION), gtdDTO
                     .getLeadOrganizationIdentifier(), gtdDTO.getLocalProtocolIdentifier());
-            updateStudySite(studyProtocolIi,
+            if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
+               updateStudySite(studyProtocolIi,
                     CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR), gtdDTO.getSponsorIdentifier(),
                     null);
-            updateStudyContact(studyProtocolIi);
-            removeSponsorContact(studyProtocolIi);
-            createSponorContact(studyProtocolIi);
+               updateStudyContact(studyProtocolIi);
+               removeSponsorContact(studyProtocolIi);
+               createSponorContact(studyProtocolIi);
+            }
             StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
                     studyProtocolIi);
             if (summary4ResoureDTO == null) {
@@ -366,9 +371,6 @@ public class TrialValidationAction extends ActionSupport {
     private void enforceBusinessRules() {
         if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
             addFieldError("gtdDTO.LocalProtocolIdentifier", getText("Organization Trial ID must be Entered"));
-        }
-        if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
-            addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
         }
         if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
             addFieldError("gtdDTO.OfficialTitle", getText("OfficialTitle must be Entered"));
@@ -393,19 +395,24 @@ public class TrialValidationAction extends ActionSupport {
             addFieldError("gtdDTO.primaryPurposeOtherText",
                     getText("Primary Purpose Other other text must be entered"));
         }
-        if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-                && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
-            addFieldError("gtdDTO.responsibleGenericContactName",
-                            getText("Please choose Either Personal Contact or Generic Contact "));
-        }
-        if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
-            addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
-        }
-        if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
-            addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
-        }
-        if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
-            addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
+        if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
+            if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
+                addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
+            }
+            if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
+                    && PAUtil.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
+                addFieldError("gtdDTO.responsibleGenericContactName",
+                                getText("Please choose Either Personal Contact or Generic Contact "));
+            }
+            if (PAUtil.isEmpty(gtdDTO.getContactEmail())) {
+                addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
+            }
+            if (PAUtil.isNotEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
+                addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
+            }
+            if (PAUtil.isEmpty(gtdDTO.getContactPhone())) {
+                addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
+            }
         }
     }
 
@@ -454,6 +461,7 @@ public class TrialValidationAction extends ActionSupport {
         gtdDTO.setSubmissionNumber(IntConverter.convertToInteger(spDTO.getSubmissionNumber()));
         gtdDTO.setAmendmentReasonCode(CdConverter.convertCdToString(spDTO.getAmendmentReasonCode()));
         gtdDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
+        gtdDTO.setProprietarytrialindicator(BlConverter.convertToString(spDTO.getProprietaryTrialIndicator()));
     }
 
     private void copy(StudyProtocolQueryDTO spqDTO) {

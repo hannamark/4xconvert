@@ -86,8 +86,8 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -95,7 +95,6 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -627,8 +626,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            }
            where.append(" and sps.functionalCode ='"
                    + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");
-           where.append(" and sc.roleCode ='"
+/*           where.append(" and sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
+*/
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");
            addSubQueries(studyProtocolQueryCriteria, where);
         } catch (Exception e) {

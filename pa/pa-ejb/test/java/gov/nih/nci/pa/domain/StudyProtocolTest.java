@@ -267,6 +267,7 @@ public class StudyProtocolTest  {
         sp.setAmendmentDate(now);
         sp.setAmendmentNumber("amendmentNumber");
         sp.setSubmissionNumber(2);
+        sp.setProprietaryTrialIndicator(Boolean.FALSE);
         return sp;
     }
     
@@ -290,6 +291,7 @@ public class StudyProtocolTest  {
         isp.setBlindingSchemaCode(BlindingSchemaCode.DOUBLE_BLIND);
         isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER);
         isp.setNumberOfInterventionGroups(Integer.valueOf(5));
+        isp.setProprietaryTrialIndicator(Boolean.FALSE);
         return isp;
     }
     

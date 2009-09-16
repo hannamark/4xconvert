@@ -662,5 +662,20 @@ public class PAUtil {
                 append(File.separator).append(documentIdentifier).append('-').append(fileName);
         return sb.toString();
         
-    }    
+    }
+    /**
+     * @param date date
+     * @return boolean
+     */
+    public static boolean isDateCurrentOrPast(String date) {
+        boolean retValue = false;
+        Timestamp siteStatusDate = PAUtil.dateStringToTimestamp(date);
+        Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+        if (currentTimeStamp.before(siteStatusDate)) {
+            retValue = true;                
+        }
+        return retValue;
+    }
+
+
 }

@@ -92,6 +92,7 @@ function manageRespPartyLookUp(){
         <th colspan="2"> Lead Organization/Principal Investigator</th>
     </tr>
     <s:hidden name="gtdDTO.responsiblePersonIdentifier" id="gtdDTO.responsiblePersonIdentifier"/>
+    <s:hidden name="gtdDTO.proprietarytrialindicator" id="gtdDTO.proprietarytrialindicator"/>
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">

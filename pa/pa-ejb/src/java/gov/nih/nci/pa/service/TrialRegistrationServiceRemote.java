@@ -79,7 +79,9 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -90,6 +92,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -250,5 +253,41 @@ public interface TrialRegistrationServiceRemote {
         List<StudySiteAccrualStatusDTO> participatingSites,
         List<StudySiteDTO> pgCdUpdatedList)
      throws PAException;
+   
+   /**
+    * 
+    * @param studyProtocolDTO spDTO
+    * @param siteOverallStatusDTO siteStatusDto
+    * @param studyIndldeDTOs indDTO
+    * @param studyResourcingDTOs  grants 
+    * @param documentDTOs documents
+    * @param leadOrganizationDTO lead Org 
+    * @param leadOrganizationTrialIdentifier LeadOrgTrialId
+    * @param siteInvestigatorDTO    SitePi
+    * @param studySiteDTO participating Org
+    * @param localSiteIdentifier local id
+    * @param siteProgramCodeText siteProgramCodeText
+    * @param nctIdentifierSiteIdentifier nct
+    * @param summary4organizationDTO sum4 org
+    * @param summary4CategoryCode summary 4Category Code 
+    * @return Ii
+    * @throws PAException e
+    */
+    Ii createInterventionalProprietaryStudyProtocol(
+           StudyProtocolDTO studyProtocolDTO ,
+           StudySiteOverallStatusDTO siteOverallStatusDTO ,
+           List<StudyIndldeDTO> studyIndldeDTOs ,
+           List<StudyResourcingDTO> studyResourcingDTOs ,
+           List<DocumentDTO> documentDTOs ,
+           OrganizationDTO leadOrganizationDTO ,
+           St leadOrganizationTrialIdentifier ,
+           PersonDTO siteInvestigatorDTO ,
+           OrganizationDTO studySiteDTO ,
+           St localSiteIdentifier ,
+           St siteProgramCodeText ,
+           St nctIdentifierSiteIdentifier,
+           OrganizationDTO summary4organizationDTO ,
+           Cd summary4CategoryCode)
+   throws PAException;
 
 }

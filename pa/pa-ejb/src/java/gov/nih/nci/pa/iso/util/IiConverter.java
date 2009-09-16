@@ -347,6 +347,10 @@ public class IiConverter {
     /** The ii root value. */
     public static final String COUNTRY_ROOT = "2.16.840.1.113883.3.26.4.4.18";
 
+    private static final String STUDY_SITE_OVERALL_STATUS_IDENTIFIER_NAME = "Study site overall status identifier";
+
+    private static final String STUDY_SITE_OVERALL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.5.5";
+
 
     
     /**
@@ -854,6 +858,19 @@ public class IiConverter {
         ii.setIdentifierName(COUNTRY_IDENTIFIER_NAME);
         ii.setRoot(COUNTRY_ROOT);
         return ii;
+    }
+
+    /**
+     * Convert to StudySiteOverallStatus Ii.
+     * @param id id
+     * @return ii
+     */
+    public static Ii convertToStudySiteOverallStatusIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(STUDY_SITE_OVERALL_STATUS_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_SITE_OVERALL_STATUS_ROOT);
+        return ii;
+
     }
 
 }
