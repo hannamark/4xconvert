@@ -14,8 +14,16 @@ function handleAction(){
      document.forms[0].action="accrualSubmissionsaddNew.action";
      document.forms[0].submit();  
 }
-
 </SCRIPT>
+<script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<script type="text/javascript">
+        addCalendar("Cal1", "Select Date", "submission.cutOffDate.value", "addNew");
+        setWidth(90, 1, 15, 1);
+        setFormat("mm/dd/yyyy");
+</script>
+
+
 </head>
 
 <body>
@@ -31,24 +39,31 @@ function handleAction(){
           </label>
          </td>
          <td class="value">
-           <s:textfield id ="officialTitle" name="submission.label.value" maxlength="400" size="50" 
+           <s:textfield id ="label" name="submission.label.value" maxlength="400" size="50" 
             cssStyle="width:98%;max-width:250px" />
            </td>
       </tr> 
+    
       
-         
-      <tr>     
+       <tr>     
         <td scope="row" class="label">
           <label for="Submission Cut off Date">
               <fmt:message key="accrual.new.accrual.submission.submissionCutoffDate"/>                
           </label>
          </td>
-         <td class="value">
-           <s:textfield id ="officialTitle" name="submission.cutOffDate.value" maxlength="400" size="50" 
-            cssStyle="width:98%;max-width:250px" />
-           </td>
+                   
+           <td class="value"><s:textfield name="submission.cutOffDate.value"
+                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal1')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                            <s:param>submission.cutOffDate.value</s:param>
+                        </s:fielderror>                            
+                    </span>
+                </td>
+                
       </tr> 
-      
        <tr>     
         <td scope="row" class="label">
           <label for="Description">
@@ -56,7 +71,7 @@ function handleAction(){
           </label>
          </td>
          <td class="value">
-           <s:textfield id ="officialTitle" name="submission.description.value" maxlength="400" size="50" 
+           <s:textfield id ="description" name="submission.description.value" maxlength="400" size="50" 
             cssStyle="width:98%;max-width:250px" />
            </td>
       </tr> 

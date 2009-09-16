@@ -78,6 +78,7 @@ package gov.nih.nci.accrual.web.action;
 
 
 import gov.nih.nci.accrual.dto.SubmissionDto;
+
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -87,7 +88,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.struts2.ServletActionContext;
 
 
@@ -97,7 +97,6 @@ import org.apache.struts2.ServletActionContext;
  */
 public class AccrualSubmissionsAction extends AbstractAccrualAction {
    
-
     private static final long serialVersionUID = -6859130106987908815L;
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
@@ -157,7 +156,8 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
               Ii spid = IiConverter.convertToIi(studyProtocolId);
               SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
                     listOfSubmissions = new ArrayList<SubmissionDto>();
-                    listOfSubmissions = service.getByStudyProtocol(spid);             
+                    listOfSubmissions = service.getByStudyProtocol(spid);   
+                    listOfSubmissions.add(service.create(submission));
                     ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
                        
                } catch (Exception e) {
