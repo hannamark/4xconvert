@@ -159,6 +159,21 @@
              <param name="actionName">${actionName}</param>
              <param name="parse">true</param>
         </result>
-        </action>     
+    </action>
+    <action name="ajaxselectTrial*" class="gov.nih.nci.registry.action.SubmitProprietaryTrialAction" method="{1}">
+        <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+    </action>
+    <action name="submitProprietaryTrial*" class="gov.nih.nci.registry.action.SubmitProprietaryTrialAction" method="{1}">
+        <interceptor-ref name="methodValidationStack" />
+        <result name="success">/WEB-INF/jsp/submitProprietaryTrial.jsp</result>
+        <result name="input">/WEB-INF/jsp/submitProprietaryTrial.jsp</result>
+        <result name="error">/WEB-INF/jsp/submitProprietaryTrial.jsp</result>
+        <result name="review">/WEB-INF/jsp/reviewProprietaryTrial.jsp</result>
+        <result name="edit">/WEB-INF/jsp/submitProprietaryTrial.jsp</result>
+        <result name="redirect_to_search" type="redirect-action">
+             <param name="actionName">searchTrial.action</param>
+             <param name="parse">true</param>
+        </result>
+    </action>     
     </package>
 </struts>

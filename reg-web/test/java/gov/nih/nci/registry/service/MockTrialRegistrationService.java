@@ -5,7 +5,9 @@ package gov.nih.nci.registry.service;
 
 import java.util.List;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -16,6 +18,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
@@ -109,6 +112,22 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             List<StudySiteDTO> pgCdUpdatedList) throws PAException {
         // TODO Auto-generated method stub
         
+    }
+
+    public Ii createInterventionalProprietaryStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudySiteOverallStatusDTO siteOverallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            St leadOrganizationTrialIdentifier, PersonDTO siteInvestigatorDTO,
+            OrganizationDTO studySiteDTO, St localSiteIdentifier,
+            St siteProgramCodeText, St nctIdentifierSiteIdentifier,
+            OrganizationDTO summary4organizationDTO, Cd summary4CategoryCode)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 

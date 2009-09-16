@@ -435,6 +435,7 @@ public class TrialUtil {
             section801Indicator = true;
         }
         isoDto.setSection801Indicator(BlConverter.convertToBl(section801Indicator));
+        isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
         return isoDto;
     }
     
@@ -804,7 +805,7 @@ public class TrialUtil {
     * @return isoList
     */
    public List<StudyIndldeDTO>  convertISOINDIDEList(List<TrialIndIdeDTO> indList) {
-       if (indList != null && indList.isEmpty()) {
+       if (indList == null || indList.isEmpty()) {
            return null;
        }
        List<StudyIndldeDTO>  studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
@@ -883,7 +884,7 @@ public class TrialUtil {
     * @return isoList
     */
    public List<StudyResourcingDTO>  convertISOGrantsList(List<TrialFundingWebDTO> grantList) {
-       if (grantList != null && grantList.isEmpty()) {
+       if (grantList == null ||  grantList.isEmpty()) {
            return null;
        }
        List<StudyResourcingDTO>  grantsDTOList = new ArrayList<StudyResourcingDTO>();

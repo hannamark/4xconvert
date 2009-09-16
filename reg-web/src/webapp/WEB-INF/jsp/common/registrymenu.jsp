@@ -1,4 +1,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<link href="<%=request.getContextPath()%>/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
+<link href="<%=request.getContextPath()%>/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+
+<c:url value="/protected/ajaxselectTrialselectTypeOfTrial.action" var="selectTrial"/>
+<SCRIPT LANGUAGE="JavaScript">
+function selectTrialType(){
+	showPopWin('${selectTrial}', 900, 400, '', 'Select TrialType')
+}
+</script>
 		<li class="stdnav"><div>NCI CTRP</div>
 			<ul>
                 <c:choose>
@@ -21,10 +33,10 @@
 								</c:choose>
 								<c:choose>
                                     <c:when test="${requestScope.topic == 'submit_trial'}">
-                                       <li><a href="/registry/protected/submitTrial.action" class="selected">Register Trial</a></li>
+                                       <li><a href="#" onclick="selectTrialType();" class="selected">Register Trial</a></li>
                                     </c:when>
                                     <c:otherwise>
-                                       <li><a href="/registry/protected/submitTrial.action" >Register Trial</a></li>
+                                       <li><a href="#" onclick="selectTrialType();" >Register Trial</a></li>
                                     </c:otherwise>
                                 </c:choose>
                                 <c:choose>
