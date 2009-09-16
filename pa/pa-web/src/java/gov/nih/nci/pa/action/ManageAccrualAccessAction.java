@@ -275,7 +275,9 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
                 Set<User> uSet = accrualAccessSvc.getSubmitters();
                 for (User u : uSet) {
                     csmUsers.put(u.getUserId(), u);
-                    csmUserNames.put(u.getUserId(), StudySiteAccrualAccessServiceBean.getFullName(u));
+                    String emailId = u.getLoginName() != null ? u.getLoginName() : " ";
+                    csmUserNames.put(u.getUserId(), StudySiteAccrualAccessServiceBean.getFullName(u) 
+                            + " " + emailId);
                 }
                 // sort csmUserNames
                 List<Long> mapKeys = new ArrayList<Long>(csmUserNames.keySet());
