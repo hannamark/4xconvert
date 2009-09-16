@@ -284,7 +284,20 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         dto.setStatus(RoleStatusConverter.convertToCd(RoleStatus.SUSPENDED));
         service.updateCorrelation(dto);
     }
-
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateCorrelationWithNoISSIdentifier() throws Exception {
+        CorrelationService<T> service = getCorrelationService();
+        Ii id = service.createCorrelation(getSampleDto());
+        T dto = service.getCorrelation(id);
+        for (Ii ii : dto.getIdentifier().getItem()) {
+            if (id.equals(ii)) {
+                ii.setReliability(null);
+            }
+        }
+        service.updateCorrelation(dto);
+    }
+    
     @Test(expected = IllegalArgumentException.class)
     public void updateWithNoIdentifier() throws Exception {
         CorrelationService<T> service = getCorrelationService();
