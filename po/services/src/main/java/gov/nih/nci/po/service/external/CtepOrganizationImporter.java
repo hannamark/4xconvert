@@ -90,6 +90,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
@@ -109,10 +110,12 @@ import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.jms.JMSException;
 import javax.naming.Context;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -438,12 +441,13 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             role.setName(ctepRole.getName());
             changed = true;
         }
-        // we should really check if the sets of addresses are different, but there's no quick way to do that, so
-        // deferring to PO-1197
-        role.getPostalAddresses().clear();
-        role.getPostalAddresses().addAll(ctepRole.getPostalAddresses());
-        changed = true;
-
+        
+        if (!checkAddressSetsEqual(role.getPostalAddresses(), ctepRole.getPostalAddresses())) {
+            role.getPostalAddresses().clear();
+            role.getPostalAddresses().addAll(ctepRole.getPostalAddresses());
+            changed = true;
+        }
+        
         if (!areEmailListsEqual(role.getEmail(), ctepRole.getEmail())) {
             role.getEmail().clear();
             role.getEmail().addAll(ctepRole.getEmail());
@@ -456,6 +460,54 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
 
         return changed;
+    }
+    
+    private boolean checkAddressSetsEqual(Set<Address> dbAddresses, Set<Address> ctepAddresses) {
+        
+        // case #1 - both are either null or empty
+        if (CollectionUtils.isEmpty(dbAddresses) && CollectionUtils.isEmpty(ctepAddresses)) {
+            return true;
+        }
+        
+        // case #2 - either db or ctep is null, but not both
+        if (checkForNullAddressSets(dbAddresses, ctepAddresses)) {
+            return false;
+        }
+        
+        //case #3 - neither is null or empty
+        return compareNotEmptyAddressSets(dbAddresses, ctepAddresses);
+    }
+    
+    private boolean checkForNullAddressSets(Set<Address> dbAddresses, Set<Address> ctepAddresses) {
+        return (dbAddresses == null && ctepAddresses != null) || (dbAddresses != null && ctepAddresses == null);
+    }
+    
+    private boolean compareNotEmptyAddressSets(Set<Address> dbAddresses, Set<Address> ctepAddresses) {
+        if (!CollectionUtils.isEmpty(dbAddresses) && !CollectionUtils.isEmpty(ctepAddresses)) {
+            
+            if (dbAddresses.size() != ctepAddresses.size()) {
+                return false;
+            } else {    
+                for (Address ctepAd : ctepAddresses) {
+                    if (!isAddressPresent(ctepAd, dbAddresses)) {
+                        return false;
+                    }
+                }
+            }
+            
+        } 
+       
+        return true;
+    }
+    
+    private boolean isAddressPresent(Address ctepAd, Set<Address> dbAddresses) {
+        for (Address dbAd : dbAddresses) {
+            if (ctepAd.contentEquals(dbAd)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     private HealthCareFacility getCtepHealthCareFacility(Ii ctepOrgId) {
