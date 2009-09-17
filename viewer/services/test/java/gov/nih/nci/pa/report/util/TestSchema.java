@@ -81,8 +81,8 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyMilestone;
-import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
@@ -216,6 +216,7 @@ public class TestSchema {
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setUserLastCreated(usr.getLoginName());
         sp.setDateLastCreated(PAUtil.dateStringToTimestamp("1/1/2009"));
+        sp.setProprietaryTrialIndicator(false);
         studyProtocol.add(sp);
         addUpdObject(sp);
 
