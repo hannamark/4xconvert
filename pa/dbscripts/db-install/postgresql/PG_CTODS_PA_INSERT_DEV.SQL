@@ -5,7 +5,8 @@ DELETE FROM organization
 DELETE FROM person
 ;
 INSERT INTO study_protocol (identifier, assigned_identifier, official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE, status_code, submission_number)  
-    values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001','InterventionalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED', 'ACTIVE', 1);
+    values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001 test test test test test test test test test test test test test test test test test test test test test test test test',
+    'InterventionalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED', 'ACTIVE', 1);
 INSERT INTO study_protocol (identifier, assigned_identifier, official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE, status_code, submission_number)  
     values ( 2, 'NCI-2008-00002','Observation-NCI-2008-00001','ObservationalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED', 'ACTIVE', 1);
 
@@ -193,3 +194,18 @@ insert into study_contact (identifier,role_code,primary_indicator,address_line, 
     healthcare_provider_identifier,study_protocol_identifier, status_code, status_date_range_low, date_last_updated,user_last_updated ,clinical_research_staff_identifier)  
 values(2, 'STUDY_PRINCIPAL_INVESTIGATOR','true','2432','terra cot','herdon','de','11111',null,2,2,'ACTIVE','2008-09-01', current_timestamp , 'abstractor' ,1) 
 ;
+
+
+----------------- study site accrual access --------------------------------
+insert into study_site_accrual_access (csm_user_id, study_site_identifier, request_details, status_code, status_date_range_low)
+values ((select user_id from csm_user where login_name = 'submitter'), 3, 'details', 'ACTIVE', '1/1/2009');
+
+insert into study_site_accrual_access (csm_user_id, study_site_identifier, request_details, status_code, status_date_range_low)
+values ((select user_id from csm_user where login_name = 'submitter'), 5, 'details', 'ACTIVE', '1/1/2009');
+
+
+----------------- submission -------------------------------------------------
+insert into submission (label, description, cut_off_date, status_code, status_date_range_low, status_date_range_high, study_protocol_identifier)
+  values ('01', 'description', '9/30/2009', 'PENDING', '1/1/2009', null, 1);
+  
+  
