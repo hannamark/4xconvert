@@ -1,6 +1,7 @@
-package gov.nih.nci.po.service.external;
+package gov.nih.nci.po.service.external.manual;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.external.CtepMessageBean;
 import gov.nih.nci.po.service.external.CtepMessageBean.RecordType;
 import gov.nih.nci.po.service.external.CtepMessageBean.TransactionType;
 import gov.nih.nci.po.util.EmailLogger;

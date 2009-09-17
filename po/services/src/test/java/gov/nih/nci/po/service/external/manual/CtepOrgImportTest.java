@@ -80,17 +80,24 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.external;
+package gov.nih.nci.po.service.external.manual;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.external.CtepEntityImporter;
+import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -100,7 +107,8 @@ import org.junit.Test;
  * @author Scott Miller
  *
  */
-public class CtepPersonImportTest extends AbstractBeanTest {
+public class CtepOrgImportTest extends AbstractBeanTest {
+
     private CtepImportService importService;
 
     @Before
@@ -109,30 +117,29 @@ public class CtepPersonImportTest extends AbstractBeanTest {
     }
 
     @Test
-    public void testExampleData() throws Exception {
+    public void testExampleDataImport() throws Exception {
 
-        Logger.getLogger(this.getClass()).debug("*************** Testing HCP's **************\n\n");
-        String[] ids = {"22", "48", "75", "101", "134", "500", "811", "932", "49205"};
+        Logger.getLogger(this.getClass()).debug("*************** Testing HCF's **************\n\n");
+        String[] ids = {"AL009", "CA031", "CO052", "CA256", "CO001", "DC018", "FL036", "GA013", "HI006"};
         for (String id : ids) {
             Ii identifier = new Ii();
             identifier.setExtension(id);
-            importService.importCtepPerson(identifier);
+            importService.importCtepOrganization(identifier);
             Logger.getLogger(this.getClass()).debug("\n\n\n");
         }
 
-        Logger.getLogger(this.getClass()).debug("*************** Testing CRS's **************\n\n");
-        ids = new String[] {"55128", "75918", "79001", "79700", "85733", "146124"};
+        Logger.getLogger(this.getClass()).debug("*************** Testing RO's **************\n\n");
+        ids = new String[] {"CA011", "CALGB", "MD017", "NCIBDM", "NCIDER", "NY011", "WA008", "ACRIN", "BVL"};
         for (String id : ids) {
             Ii identifier = new Ii();
             identifier.setExtension(id);
-            importService.importCtepPerson(identifier);
+            importService.importCtepOrganization(identifier);
             Logger.getLogger(this.getClass()).debug("\n\n\n");
         }
 
-        assertEquals(15, getCountOfClass(Organization.class).longValue());
-        assertEquals(15, getCountOfClass(Person.class).longValue());
-        assertEquals(9, getCountOfClass(HealthCareProvider.class).longValue());
-        assertEquals(6, getCountOfClass(ClinicalResearchStaff.class).longValue());
+        assertEquals(19, getCountOfClass(Organization.class).longValue());
+        assertEquals(9, getCountOfClass(HealthCareFacility.class).longValue());
+        assertEquals(10, getCountOfClass(ResearchOrganization.class).longValue());
     }
 
     private Long getCountOfClass(Class<?> c) {

@@ -80,22 +80,18 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service.external;
+package gov.nih.nci.po.service.external.manual;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Email;
-import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -105,8 +101,7 @@ import org.junit.Test;
  * @author Scott Miller
  *
  */
-public class CtepOrgImportTest extends AbstractBeanTest {
-
+public class CtepPersonImportTest extends AbstractBeanTest {
     private CtepImportService importService;
 
     @Before
@@ -115,55 +110,34 @@ public class CtepOrgImportTest extends AbstractBeanTest {
     }
 
     @Test
-    public void testExampleDataImport() throws Exception {
+    public void testExampleData() throws Exception {
 
-        Logger.getLogger(this.getClass()).debug("*************** Testing HCF's **************\n\n");
-        String[] ids = {"AL009", "CA031", "CO052", "CA256", "CO001", "DC018", "FL036", "GA013", "HI006"};
+        Logger.getLogger(this.getClass()).debug("*************** Testing HCP's **************\n\n");
+        String[] ids = {"22", "48", "75", "101", "134", "500", "811", "932", "49205"};
         for (String id : ids) {
             Ii identifier = new Ii();
             identifier.setExtension(id);
-            importService.importCtepOrganization(identifier);
+            importService.importCtepPerson(identifier);
             Logger.getLogger(this.getClass()).debug("\n\n\n");
         }
 
-        Logger.getLogger(this.getClass()).debug("*************** Testing RO's **************\n\n");
-        ids = new String[] {"CA011", "CALGB", "MD017", "NCIBDM", "NCIDER", "NY011", "WA008", "ACRIN", "BVL"};
+        Logger.getLogger(this.getClass()).debug("*************** Testing CRS's **************\n\n");
+        ids = new String[] {"55128", "75918", "79001", "79700", "85733", "146124"};
         for (String id : ids) {
             Ii identifier = new Ii();
             identifier.setExtension(id);
-            importService.importCtepOrganization(identifier);
+            importService.importCtepPerson(identifier);
             Logger.getLogger(this.getClass()).debug("\n\n\n");
         }
 
-        assertEquals(19, getCountOfClass(Organization.class).longValue());
-        assertEquals(9, getCountOfClass(HealthCareFacility.class).longValue());
-        assertEquals(10, getCountOfClass(ResearchOrganization.class).longValue());
+        assertEquals(15, getCountOfClass(Organization.class).longValue());
+        assertEquals(15, getCountOfClass(Person.class).longValue());
+        assertEquals(9, getCountOfClass(HealthCareProvider.class).longValue());
+        assertEquals(6, getCountOfClass(ClinicalResearchStaff.class).longValue());
     }
 
     private Long getCountOfClass(Class<?> c) {
         String hql = " select count(*) from " + c.getName();
         return (Long) PoHibernateUtil.getCurrentSession().createQuery(hql).uniqueResult();
-    }
-
-    @Test
-    public void testEmailListEquals() {
-        List<Email> list1 = new ArrayList<Email>();
-        List<Email> list2 = new ArrayList<Email>();
-        assertTrue(CtepEntityImporter.areEmailListsEqual(list1, list2));
-
-        Email email1 = new Email("1@example.com");
-        Email email1copy = new Email("1@example.com");
-        Email email2 = new Email("2@example.com");
-        Email email2copy = new Email("2@example.com");
-
-        list1.add(email1);
-        assertFalse(CtepEntityImporter.areEmailListsEqual(list1, list2));
-
-        list2.add(email2);
-        assertFalse(CtepEntityImporter.areEmailListsEqual(list1, list2));
-
-        list1.add(email2copy);
-        list2.add(email1copy);
-        assertTrue(CtepEntityImporter.areEmailListsEqual(list1, list2));
     }
 }

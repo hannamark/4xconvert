@@ -84,10 +84,8 @@ package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.common.exceptions.CTEPEntException;
 import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.Address;
@@ -104,7 +102,6 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -128,7 +125,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public class CtepOrganizationImporter extends CtepEntityImporter {
-    private static final String NULL_STRING = "null";
+    
     private static final Logger LOG = Logger.getLogger(CtepOrganizationImporter.class);
     private static final String CTEP_EXTENSION = "CTEP";
 
@@ -203,11 +200,12 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             printOrgDataToDebugLog(ctepOrgDto);
             Ii assignedId = ctepOrgDto.getIdentifier();
             Organization ctepOrg = convertToLocalOrg(ctepOrgDto);
+            ctepOrg.setStatusCode(EntityStatus.PENDING);
 
             // search for org based on the ctep provided ii
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(assignedId);
             if (identifiedOrg == null) {
-                return createCtepOrg(ctepOrg, assignedId);
+                return createCtepOrg(ctepOrg, assignedId, RoleStatus.PENDING);
             }
             return updateCtepOrg(ctepOrg, identifiedOrg, assignedId);
         } catch (CTEPEntException e) {
@@ -265,7 +263,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return identifiedOrgs.get(0);
     }
 
-    private Organization createCtepOrg(Organization ctepOrg, Ii ctepOrgId) throws JMSException {
+    private Organization createCtepOrg(Organization ctepOrg, Ii ctepOrgId, RoleStatus roleStatus) throws JMSException {
         // create the local record
         this.orgService.curate(ctepOrg);
 
@@ -274,13 +272,13 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         identifiedOrg.setPlayer(ctepOrg);
         identifiedOrg.setScoper(getScoper(ctepOrg, ctepOrgId));
         identifiedOrg.setAssignedIdentifier(ctepOrgId);
-        identifiedOrg.setStatus(RoleStatus.ACTIVE);
+        identifiedOrg.setStatus(roleStatus);
         this.identifiedOrgService.curate(identifiedOrg);
 
         HealthCareFacility hcf = getCtepHealthCareFacility(ctepOrgId);
         if (hcf != null) {
             hcf.setPlayer(ctepOrg);
-            hcf.setStatus(RoleStatus.ACTIVE);
+            hcf.setStatus(roleStatus);
             hcf.getOtherIdentifiers().add(ctepOrgId);
             this.hcfService.curate(hcf);
         }
@@ -288,7 +286,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         ResearchOrganization ro = getCtepResearchOrganization(ctepOrgId);
         if (ro != null) {
             ro.setPlayer(ctepOrg);
-            ro.setStatus(RoleStatus.ACTIVE);
+            ro.setStatus(roleStatus);
             ro.getOtherIdentifiers().add(ctepOrgId);
             this.roService.curate(ro);
         }
@@ -521,19 +519,17 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
     }
 
-    private void printHcf(HealthCareFacilityDTO dto) {
+
+    private void printHcf(HealthCareFacilityDTO hcfDto) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("hcf identifiers: ");
-            printIdentifierSet(dto, "hcf");
-            printII("hcf.player", dto.getPlayerIdentifier());
-            LOG.debug("hcf.status: " + (dto.getStatus() != null ? dto.getStatus().getCode() : NULL_STRING));
+            LOG.debug(CtepUtils.toString(hcfDto));
         }
     }
 
     private ResearchOrganization getCtepResearchOrganization(Ii ctepOrgId) {
         try {
             ResearchOrganizationDTO roDto = getCtepOrgService().getResearchOrganization(ctepOrgId);
-            printRo(roDto);
+            print(roDto);
 
             return (ResearchOrganization) PoXsnapshotHelper.createModel(roDto);
         } catch (CTEPEntException e) {
@@ -541,35 +537,11 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
     }
 
-    private void printRo(ResearchOrganizationDTO dto) {
+    private void print(ResearchOrganizationDTO roDto) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("ro identifiers: ");
-            printIdentifierSet(dto, "ro");
-            printII("ro.player", dto.getPlayerIdentifier());
-            LOG.debug("ro.status: " + (dto.getStatus() != null ? dto.getStatus().getCode() : NULL_STRING));
-            LOG.debug("ro.typeCode.code: " + dto.getTypeCode().getCode());
-            St displayName = dto.getTypeCode().getDisplayName();
-            LOG.debug("ro.typeCode.displayName: " + ((displayName == null) ? NULL_STRING : displayName.getValue()));
-            Cd funding = dto.getFundingMechanism();
-            LOG.debug("ro.fundingMech: " + ((funding == null) ? NULL_STRING : funding.getCode()));
+            LOG.debug(CtepUtils.toString(roDto));
         }
+        
     }
 
-    private void printIdentifierSet(CorrelationDto dto, String prefix) {
-        if (dto.getIdentifier() != null) {
-            for (Ii ii : dto.getIdentifier().getItem()) {
-                printII(prefix, ii);
-            }
-        }
-    }
-
-    private void printII(String prefix, Ii ii) {
-        if (ii != null) {
-            LOG.debug(prefix + ".ii.identifierName: " + ii.getIdentifierName());
-            LOG.debug(prefix + ".ii.extension: " + ii.getExtension());
-            LOG.debug(prefix + ".ii.root: " + ii.getRoot());
-        } else {
-            LOG.debug(prefix + ".ii: " + NULL_STRING);
-        }
-    }
 }

@@ -291,7 +291,7 @@
                         <include>**/*TestDb.java</include>
                     </includes>
                     <excludes>
-                        <exclude>**/po/service/external/*</exclude>
+                        <exclude>**/po/service/external/manual/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -121,20 +121,44 @@ public class CtepMessageBean implements MessageListener {
     /**
      * CTEP message TRANSACTION_TYPE.
      */
-    enum TransactionType {
+    public enum TransactionType {
+        /**
+         * an insert.
+         */
         INSERT,
+        /**
+         * a delete.
+         */
         DELETE,
+        /**
+         * an update.
+         */
         UPDATE
     }
 
     /**
      * CTEP message RECORD_TYPE.
      */
-    enum RecordType {
+    public enum RecordType {
+        /**
+         * organization CUD.
+         */
         ORGANIZATION,
+        /**
+         * organization address CUD.
+         */
         ORGANIZATION_ADDRESS,
+        /**
+         * person CUD.
+         */
         PERSON,
+        /**
+         * person address CUD.
+         */
         PERSON_ADDRESS,
+        /**
+         * person telecom CUD.
+         */
         PERSON_CONTACT
     }
 
