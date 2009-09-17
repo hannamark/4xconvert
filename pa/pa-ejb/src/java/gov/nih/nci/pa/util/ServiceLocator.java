@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
@@ -338,5 +339,9 @@ public interface ServiceLocator {
      */
     StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService();
 
+    /**
+     * @return StudyInboxService
+     */
+    StudyInboxServiceLocal getStudyInboxService();
 }
 

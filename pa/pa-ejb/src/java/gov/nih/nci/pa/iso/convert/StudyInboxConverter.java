@@ -76,41 +76,54 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.domain.StudyInbox;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
-import java.util.List;
-
-import javax.ejb.Local;
-
 /**
- * @author Naveen Amiruddin
- * @since 08/13/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Anupama Sharma
+ * @since 09/08/2009
  */
-@Local
-public interface ProtocolQueryServiceLocal {
-    
-    /**
-     * 
-     * @param pSc StudyProtocolSearchCriteria
-     * @return list protocolDto   
-     * @throws PAException on error 
-     */
-    List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria pSc) throws PAException;
+public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyInbox> {
+  /**
+   * @param bo domain object
+   * @return dto
+   * @throws PAException exception
+   */
+  @Override
+  public StudyInboxDTO convertFromDomainToDto(StudyInbox bo)
+          throws PAException {
+      StudyInboxDTO dto = new StudyInboxDTO();
+      dto.setComments(StConverter.convertToSt(bo.getComments()));
+      dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+      dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
+      dto.setInboxDateRange((IvlConverter.convertTs().convertToIvl(bo.getOpenDate(), bo.getCloseDate())));
+      return dto;
+  }
 
-
-    /**
-     * 
-     * @param studyProtocolId protocol id
-     * @return StudyProtocolQueryDTO
-     * @throws PAException on error
-     */
-     StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) throws PAException;
-    
+  /**
+   * @param dto dto
+   * @return domain object
+   * @throws PAException exception
+   */
+  @Override
+  public StudyInbox convertFromDtoToDomain(StudyInboxDTO dto)
+          throws PAException {
+      StudyProtocol spBo = new StudyProtocol();
+      spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+      
+      StudyInbox bo = new StudyInbox();
+      bo.setComments(StConverter.convertToString(dto.getComments()));
+      bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+      bo.setOpenDate((IvlConverter.convertTs().convertLow(dto.getInboxDateRange())));
+      bo.setCloseDate(IvlConverter.convertTs().convertHigh(dto.getInboxDateRange()));
+      bo.setStudyProtocol(spBo);
+      return bo;
+  }
 }

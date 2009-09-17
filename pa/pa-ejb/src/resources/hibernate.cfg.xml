@@ -68,6 +68,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudySiteAccrualAccess"/>
         <mapping class="gov.nih.nci.pa.domain.MappingIdentifier"/>
         <mapping class="gov.nih.nci.pa.domain.StudySiteOverallStatus"/>
+        <mapping class="gov.nih.nci.pa.domain.StudyInbox"/>
+     
         <!-- mapping classes for Accrual -->
         <mapping class="gov.nih.nci.pa.domain.Patient" />
         <mapping class="gov.nih.nci.pa.domain.PerformedActivity" />
@@ -75,5 +77,5 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.PerformedSubjectMilestone" />
         <mapping class="gov.nih.nci.pa.domain.StudySubject" />
         <mapping class="gov.nih.nci.pa.domain.Submission" />
-    </session-factory>
+     </session-factory>
 </hibernate-configuration>

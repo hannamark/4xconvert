@@ -97,6 +97,8 @@ import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+import gov.nih.nci.pa.service.StudyInboxServiceBean;
+import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
@@ -182,9 +184,8 @@ public class MockServiceLocator implements ServiceLocator {
     private final StratumGroupServiceRemote stratumGroupService = new StratumGroupServiceBean();
     private final StudyMilestoneTasksServiceLocal studyMilestoneTasksService = new StudyMilestoneTasksServiceBean();
     private final StudySiteAccrualAccessServiceLocal studySiteAccrualAccessService = new MockStudySiteAccrualAccessService();
-    private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
-//    private final StudyRecruitmentStatusServiceRemote studyRecruitmentStatusService = new MockStudyRecruitmentSta
-
+   private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
+    private final StudyInboxServiceLocal studyInboxService = new StudyInboxServiceBean();
     /**
      * @return mock service
      */
@@ -487,7 +488,7 @@ public class MockServiceLocator implements ServiceLocator {
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
         return studySiteAccrualAccessService;
     }
-
+    
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
         return organizationCorrelationService;
     }
@@ -496,4 +497,10 @@ public class MockServiceLocator implements ServiceLocator {
         // TODO Auto-generated method stub
         return null;
     }
+	/**
+	 * @return the studyInboxService
+	 */
+	public StudyInboxServiceLocal getStudyInboxService() {
+		return studyInboxService;
+	}
 }

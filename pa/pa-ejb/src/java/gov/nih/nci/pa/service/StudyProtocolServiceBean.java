@@ -642,15 +642,19 @@ import org.hibernate.criterion.Example;
             sp.setStatusCode(ActStatusCode.ACTIVE);
         }
         sp.setStatusDate(new Timestamp((new Date()).getTime()));
-        sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
-        sp.setIdentifier(generateNciIdentifier(session));
+        if (CREATE.equals(operation) || sp.getAmendmentNumber() != null) {
+          sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
+        }
+        if (sp.getIdentifier() == null) {
+            sp.setIdentifier(generateNciIdentifier(session));
+        }
         if (ejbContext != null && CREATE.equals(operation)) {
             sp.setUserLastCreated(spDTO.getUserLastCreated() != null ? spDTO.getUserLastCreated().getValue()
                                                                      : ejbContext.getCallerPrincipal().getName());
             sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
         } 
     }
-
+    
     private Integer generateSubmissionNumber(String identifier , Session session) {
         String query = "select max(sp.submissionNumber) from StudyProtocol sp where "
             + "sp.identifier = '" + identifier + "' ";

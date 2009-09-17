@@ -52,6 +52,15 @@
                 <param name="actionName">studyProtocolshowCriteria</param>
             </result>
             <result name="design">/WEB-INF/jsp/designDetails.jsp</result>
+        </action> 
+        <action name="inboxProcessing*" class="gov.nih.nci.pa.action.InboxProcessingAction" method="{1}">
+            <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
+            <result>/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
+            <result name="criteriaReport">/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
+            <result name="criteriaProtected" type="redirect-action">
+                <param name="namespace">../protected</param>
+                <param name="actionName">inboxProcessingshowCriteria</param>
+            </result>
         </action>       
     </package>
 
@@ -255,7 +264,7 @@
             <result name="edit">/WEB-INF/jsp/trialHistoryEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/trialHistory.jsp</result>
         </action>
-        <action name="manageAccrualAccess*" class="gov.nih.nci.pa.action.ManageAccrualAccessAction" method="{1}">
+         <action name="manageAccrualAccess*" class="gov.nih.nci.pa.action.ManageAccrualAccessAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/manageAccrualAccessEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
         </action>
@@ -268,6 +277,14 @@
             <result name="display_org_created_genericcontact">/WEB-INF/jsp/nodecorate/responsibleGenericContact.jsp</result>
             <result name="create_org_contact_response">/WEB-INF/jsp/nodecorate/displayTitleList.jsp</result>
         </action>      
-        
+        <action name="inboxProcessing*" class="gov.nih.nci.pa.action.InboxProcessingAction" method="{1}">
+            <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
+            <result>/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
+             <result name="criteriaReport" type="redirect-action">
+                <param name="namespace">../report</param>
+                <param name="actionName">inboxProcessingshowCriteria</param>
+            </result>
+            <result name="criteriaProtected">/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
+        </action> 
 	</package>
 </struts>

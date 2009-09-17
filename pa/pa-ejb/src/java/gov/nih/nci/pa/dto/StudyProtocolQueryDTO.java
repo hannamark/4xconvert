@@ -128,9 +128,48 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String amendmentNumber;
     private Date amendmentDate;
     private SubmissionTypeCode submissionTypeCode;
+    private String updatedComments;
+    private Date updatedDate;
+    private Long studyInboxId;
 
 
    
+    /**
+     * @return the studyInboxId
+     */
+    public Long getStudyInboxId() {
+      return studyInboxId;
+    }
+    /**
+     * @param studyInboxId the studyInboxId to set
+     */
+    public void setStudyInboxId(Long studyInboxId) {
+      this.studyInboxId = studyInboxId;
+    }
+    /**
+     * @return the updatedComments
+     */
+    public String getUpdatedComments() {
+      return updatedComments;
+    }
+    /**
+     * @param updatedComments the updatedComments to set
+     */
+    public void setUpdatedComments(String updatedComments) {
+      this.updatedComments = updatedComments;
+    }
+    /**
+     * @return the updatedDate
+     */
+    public Date getUpdatedDate() {
+      return updatedDate;
+    }
+    /**
+     * @param updatedDate the updatedDate to set
+     */
+    public void setUpdatedDate(Date updatedDate) {
+      this.updatedDate = updatedDate;
+    }
     /**
      * @return the submissionTypeCode
      */

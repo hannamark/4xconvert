@@ -172,6 +172,7 @@ public class StudyProtocol extends AbstractEntity {
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
     private List<Submission> submissions = new ArrayList<Submission>();
+    private List<StudyInbox> studyInbox = new ArrayList<StudyInbox>();
 
     /**
      * @return accrualReportingMethodCode
@@ -997,5 +998,21 @@ public class StudyProtocol extends AbstractEntity {
     public void setProprietaryTrialIndicator(Boolean proprietaryTrialIndicator) {
         this.proprietaryTrialIndicator = proprietaryTrialIndicator;
     }
+    
+    /**
+     * @return the studyInbox
+     */
+    @OneToMany(mappedBy = "studyProtocol")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<StudyInbox> getStudyInbox() {
+        return studyInbox;
+    }
+    /**
+     * @param studyInbox the studyInbox to set
+     */
+    public void setStudyInbox(List<StudyInbox> studyInbox) {
+        this.studyInbox = studyInbox;
+    }
+
 
 }

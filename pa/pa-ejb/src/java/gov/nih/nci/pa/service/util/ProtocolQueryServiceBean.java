@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -143,7 +144,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     private static final int PI_INDEX = 4;
     private static final int LEAD_ORG_INDEX = 5;
     private static final int STUDY_SITE_INDEX = 6;
-
+    private static final int STUDY_INBOX_INDEX = 8;
+    
     /**
      * gets a list StudyProtocl by criteria.
      *
@@ -209,7 +211,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         return trialSummary;
 
     }
-
+    
     /**
      *
      * @param protocolQueryResult
@@ -230,6 +232,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         Organization organization = null;
         Person person = null;
         StudySite studySite = null;
+        StudyInbox studyInbox = null;
         // array of objects for each row
         Object[] searchResult = null;
         try {
@@ -253,6 +256,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 organization = (Organization) searchResult[LEAD_ORG_INDEX];
                 // get the StudySite
                 studySite = (StudySite) searchResult[STUDY_SITE_INDEX];
+                // get the StudyInbox
+                studyInbox = (StudyInbox) searchResult[STUDY_INBOX_INDEX];
 
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
@@ -313,6 +318,17 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 }
                 if (studySite != null) {
                     studyProtocolDto.setLocalStudyProtocolIdentifier(studySite.getLocalStudyProtocolIdentifier());
+                }
+                if (studyInbox != null) {
+                  if (studyInbox.getId() != null) {
+                    studyProtocolDto.setStudyInboxId(studyInbox.getId());
+                  }
+                  if (studyInbox.getComments() != null) {
+                    studyProtocolDto.setUpdatedComments(studyInbox.getComments());
+                  }
+                  if (studyInbox.getOpenDate() != null) {
+                    studyProtocolDto.setUpdatedDate(studyInbox.getOpenDate());
+                  }
                 }
                 // add to the list
                 studyProtocolDtos.add(studyProtocolDto);
@@ -467,7 +483,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StringBuffer hql = new StringBuffer();
         try {
             hql
-                    .append(" select sp , dws , sms , sos  , per , org , sps , sc from StudyProtocol as sp  "
+                    .append(" select sp , dws , sms , sos  , per , org , sps , sc, sinbx from StudyProtocol as sp  "
                             + "left outer join sp.documentWorkflowStatuses as dws  "
                             + "left outer join sp.studyMilestones as sms  "
                             + "left outer join sp.studyOverallStatuses as sos  "
@@ -476,7 +492,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join hcp.person as per "
                             + "left outer join sp.studySites as sps  "
                             + "left outer join sps.researchOrganization as ro "
-                            + "left outer join ro.organization as org ");
+                            + "left outer join ro.organization as org "
+                            + "left outer join sp.studyInbox as sinbx ");
+            
 
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
             hql.append(" order by dws.statusDateRangeLow asc");
@@ -623,6 +641,17 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
                                + " where sms.studyProtocol = sms1.studyProtocol )"
                                + " or sms.id is null ) ");
+           }
+           // sub-query for inbox processing to retrieve only the updated records for review
+           if (studyProtocolQueryCriteria.getInBoxProcessing() != null
+                   && studyProtocolQueryCriteria.getInBoxProcessing().booleanValue()) {
+             where.append(" and sinbx.id in (select distinct id from StudyInbox as sinbx1 "
+                   + " where sinbx.studyProtocol = sinbx1.studyProtocol and"
+                     + " sinbx1.closeDate is null)");
+           } else {
+               where.append(" and (sinbx.id in (select max(id) from StudyInbox as sinbx1 "
+                       + " where sinbx.studyProtocol = sinbx1.studyProtocol )"
+                         + " or sinbx.id is null)");   
            }
            where.append(" and sps.functionalCode ='"
                    + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");

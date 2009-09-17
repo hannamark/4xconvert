@@ -3,6 +3,7 @@
 	<ul>
 		<li><a href="#">Home</a></li>			
 		<li><a href="studyProtocolexecute.action" >Trial Search</a></li>
+		<li><a href="inboxProcessingexecute.action" >Inbox</a></li>
 		<c:if test="${pageContext.request.remoteUser != null}">	
 			<li><a href="logout.action">Logout</a></li>
 		</c:if>	

@@ -76,41 +76,75 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 
-import java.util.List;
+import java.sql.Timestamp;
 
-import javax.ejb.Local;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
+import org.hibernate.validator.Past;
 
 /**
- * @author Naveen Amiruddin
- * @since 08/13/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Anupama Sharma
+ * @since 09/08/2009
  */
-@Local
-public interface ProtocolQueryServiceLocal {
-    
-    /**
-     * 
-     * @param pSc StudyProtocolSearchCriteria
-     * @return list protocolDto   
-     * @throws PAException on error 
-     */
-    List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria pSc) throws PAException;
+@Entity
+@Table(name = "STUDY_INBOX")
+public class StudyInbox extends AbstractStudyEntity {
+  private static final long serialVersionUID = 1234509870L;
 
-
-    /**
-     * 
-     * @param studyProtocolId protocol id
-     * @return StudyProtocolQueryDTO
-     * @throws PAException on error
-     */
-     StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) throws PAException;
-    
+  private String comments;
+  private Timestamp openDate;
+  private Timestamp closeDate;
+  
+  
+  /**
+   * @return comments
+   */
+  @Column(name = "COMMENTS")
+  @Length(max = PAAttributeMaxLen.LONG_TEXT_LENGTH)
+  public String getComments() {
+    return comments;
+  }
+  /**
+   * @param comments comments
+   */
+  public void setComments(String comments) {
+    this.comments = comments;
+  }
+  /**
+   * @return openDate
+   */
+  @Column(name = "OPEN_DATE")
+  @NotNull
+  @Past
+  public Timestamp getOpenDate() {
+    return openDate;
+  }
+  /**
+   * @param openDate openDate
+   */
+  public void setOpenDate(Timestamp openDate) {
+    this.openDate = openDate;
+  }
+  /**
+   * @return closeDate
+   */
+  @Column(name = "CLOSE_DATE")
+  @Past
+  public Timestamp getCloseDate() {
+    return closeDate;
+  }
+  /**
+   * @param closeDate closeDate
+   */
+  public void setCloseDate(Timestamp closeDate) {
+    this.closeDate = closeDate;
+  }  
 }

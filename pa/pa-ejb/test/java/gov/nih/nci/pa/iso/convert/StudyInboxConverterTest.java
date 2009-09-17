@@ -76,41 +76,67 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.service.PAException;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.domain.StudyInbox;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.TestSchema;
 
-import java.util.List;
+import java.util.Date;
 
-import javax.ejb.Local;
+import org.hibernate.Session;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @author Naveen Amiruddin
- * @since 08/13/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
- */
-@Local
-public interface ProtocolQueryServiceLocal {
-    
-    /**
-     * 
-     * @param pSc StudyProtocolSearchCriteria
-     * @return list protocolDto   
-     * @throws PAException on error 
-     */
-    List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria pSc) throws PAException;
+public class StudyInboxConverterTest {
 
+    private Session sess;
 
-    /**
-     * 
-     * @param studyProtocolId protocol id
-     * @return StudyProtocolQueryDTO
-     * @throws PAException on error
-     */
-     StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) throws PAException;
-    
+    @Before
+    public void setUp() throws Exception {
+        TestSchema.reset1();
+        TestSchema.primeData();
+        sess = TestSchema.getSession();
+    }
+
+    @Test
+    public void convertFromDomainToDTO() throws Exception {
+        StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        StudyInbox bo = new StudyInbox();
+        bo.setId(123L);
+        bo.setComments("Comments");
+        bo.setStudyProtocol(sp);
+        bo.setOpenDate(now);
+        bo.setCloseDate(now);
+        StudyInboxDTO dto = (Converters.get(StudyInboxConverter.class).convertFromDomainToDto(bo));
+        assertStudyInbox(bo, dto);
+    }
+
+    private void assertStudyInbox(StudyInbox bo, StudyInboxDTO dto) {
+        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals(bo.getComments() , dto.getComments().getValue());
+        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        
+    }
+
+    @Test
+    public void convertFromDTOToDomain() throws Exception {
+        StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        StudyInboxDTO dto = new StudyInboxDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setComments(StConverter.convertToSt("Comments"));
+        dto.setInboxDateRange(IvlConverter.convertTs().convertToIvl(new Date().toString(), null));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(sp.getId()));
+        StudyInbox bo = (Converters.get(StudyInboxConverter.class).convertFromDtoToDomain(dto));
+        assertEquals("","");
+        assertStudyInbox(bo, dto);
+    }
+   
 }

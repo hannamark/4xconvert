@@ -84,6 +84,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -102,6 +103,7 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -126,6 +128,7 @@ import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServic
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
@@ -212,8 +215,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
     @EJB
     StudyObjectiveServiceRemote studyObjectiveService = null;
-    @EJB
+     @EJB
     StudySiteOverallStatusServiceLocal studySiteOverallStatusService = null;
+    @EJB
+    AbstractionCompletionServiceRemote abstractionCompletionService = null;
+    @EJB
+    StudyInboxServiceLocal studyInboxServiceLocal = null;
+    
     private static final String CREATE = "Create";
     private static final String AMENDMENT = "Amendment";
     private static final String UPDAT = "Update";
@@ -509,7 +517,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             sql = "Delete from STUDY_MILESTONE WHERE STUDY_PROTOCOL_IDENTIFIER  = "  + studyProtocolIi.getExtension();
             paServiceUtils.executeSql(sql);
             sql = "Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = "  
-                + toStudyProtocolIi.getExtension();
+                + studyProtocolIi.getExtension();
             paServiceUtils.executeSql(sql);
             sql = "Delete from STUDY_ONHOLD WHERE STUDY_PROTOCOL_IDENTIFIER  = "  + studyProtocolIi.getExtension();
             paServiceUtils.executeSql(sql);
@@ -559,7 +567,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
           createStudyRelationship(studyProtocolIi , toStudyProtocolIi , studyProtocolDTO);
       } 
-   studyOverallStatusService.create(overallStatusDTO);
+      studyOverallStatusService.create(overallStatusDTO);
+      if (UPDAT.equalsIgnoreCase(operation)) {
+          createInboxProcessingComments(documentDTOs, studyProtocolDTO);
+      }
     }
 
     private Ii createStudyProtocolObjs(
@@ -1140,7 +1151,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
 
         return studyProtocolIi;
     }
-
+    
 
     private Ii createStudySite(Ii studyProtocolIi,
             OrganizationDTO studySiteDTO , St siteProgramCodeText, St localSiteIdentifier) throws PAException {
@@ -1190,4 +1201,52 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         return studySiteContactIi;
     }
     
+    @SuppressWarnings({"PMD" })
+    private void createInboxProcessingComments(List<DocumentDTO> documentDTOs, StudyProtocolDTO studyProtocolDTO) 
+    throws PAException {
+      StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
+      studyInboxDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+      studyInboxDTO.setInboxDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+      boolean docUpdated = false;
+      boolean trialUpdateForReview = false;
+      StringBuffer stringBuffer = new StringBuffer();
+      DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
+               studyProtocolDTO.getIdentifier());
+      if (documentDTOs != null && !documentDTOs.isEmpty()) {
+        for (DocumentDTO doc : documentDTOs) {
+          if (DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode().equals(
+                  CdConverter.convertCdToString(doc.getTypeCode()))) {
+               docUpdated = true;
+               break;
+          }
+        }
+       }
+       if (docUpdated) {
+          stringBuffer.append("IRB Document was updated\n");
+          studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
+          trialUpdateForReview = true;
+       }
+      
+       String dwfs = isoDocWrkStatus.getStatusCode().getCode();
+       if (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED.getCode())
+             || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
+                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())) {
+         List<AbstractionCompletionDTO> errorList =
+               abstractionCompletionService.validateAbstractionCompletion(studyProtocolDTO.getIdentifier());
+           if (!errorList.isEmpty()) {
+            stringBuffer.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b>\n");
+            for (AbstractionCompletionDTO abDTO : errorList) {
+              stringBuffer.append(abDTO.getErrorType()).append(":").append(abDTO.getErrorDescription())
+                          .append(":").append(abDTO.getComment()).append("\n");
+            }
+           }
+           studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
+           trialUpdateForReview = true;
+       }
+       if (trialUpdateForReview) {
+        //create 
+        studyInboxServiceLocal.create(studyInboxDTO);
+       } 
+    }   
+
 }

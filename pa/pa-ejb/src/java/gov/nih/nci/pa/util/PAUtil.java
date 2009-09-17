@@ -582,7 +582,8 @@ public class PAUtil {
         }
         for (Ii tmp : map.keySet()) {
             if (tmp.getExtension().equals(key.getExtension())) {
-                value = tmp;
+              value = map.get(tmp);
+                break;
             }
         }
         return value;

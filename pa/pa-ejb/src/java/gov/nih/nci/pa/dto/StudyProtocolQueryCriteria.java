@@ -125,7 +125,23 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String studyMilestone;
 
     private String submissionType;
+    
+    //for Inbox Processing
+    private Boolean inBoxProcessing;
+    
     /**
+     * @return the inBoxProcessing
+     */
+     public Boolean getInBoxProcessing() {
+       return inBoxProcessing;
+     }
+     /**
+      * @param inBoxProcessing the inBoxProcessing to set
+      */
+     public void setInBoxProcessing(Boolean inBoxProcessing) {
+       this.inBoxProcessing = inBoxProcessing;
+     }
+     /**
      *
      * @return studyProtocolId
      */

@@ -124,6 +124,8 @@ public class Converters {
     private static StudyResourcingConverter studyResourcingConverter =   new StudyResourcingConverter();
     private static StudySiteOverallStatusConverter studySiteOverallStatusConverter = 
             new StudySiteOverallStatusConverter();
+    private static StudyInboxConverter studyInboxConverter = new StudyInboxConverter();
+   
 /**
      * @param clazz class
      * @param <TYPE> the converter type to get
@@ -210,6 +212,9 @@ public class Converters {
         if (clazz.equals(StudySiteOverallStatusConverter.class)) {
             return (TYPE) studySiteOverallStatusConverter;
         }
+        if (clazz.equals(StudyInboxConverter.class)) {
+            return (TYPE) studyInboxConverter;
+        }        
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }
 }
