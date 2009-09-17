@@ -111,6 +111,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         String spString = ServletActionContext.getRequest().getParameter("studyProtocolId");
         spId = spString == null ? null : Long.valueOf(spString);
         spIi = IiConverter.convertToIi(spId);
+        
     }
     /**
      * Default implementation throws derived exception.

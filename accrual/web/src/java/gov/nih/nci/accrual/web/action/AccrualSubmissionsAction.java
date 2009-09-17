@@ -81,6 +81,7 @@ import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.PendingCompletedCode;
@@ -118,9 +119,14 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     @Override
     public String execute() {
         try {
+        	
+        	if(spIi == null){
+        		spIi = (Ii)ServletActionContext.getRequest().getSession().getAttribute("spIi");
+        	}
             trialSummary = searchTrialSvc.getTrialSummaryByStudyProtocolIi(spIi);
             // put an entry in the session
             ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
+            ServletActionContext.getRequest().getSession().setAttribute("spIi", spIi);
             SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
             listOfSubmissions = new ArrayList<SubmissionDto>();
             listOfSubmissions = service.getByStudyProtocol(spIi);
@@ -149,27 +155,39 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             ivl.setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
             dto.setStatusDateRange(ivl);
             submissionSvc.update(dto);
+            
+            Ii spIi_session = (Ii)ServletActionContext.getRequest().getSession().getAttribute("spIi");
+            listOfSubmissions = new ArrayList<SubmissionDto>();
+        	listOfSubmissions = submissionSvc.getByStudyProtocol(spIi_session);
+        	ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
+            
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }
-        return execute();
+       // return execute();
+        return super.execute();
     }
 
     /**
      * {@inheritDoc}
      */
     public String addNew() {
-        String actionResult = "view_accrual_submissions";
-
-        try {
-            listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
+       
+    	try {
+        	
+            Ii spIi_session = (Ii)ServletActionContext.getRequest().getSession().getAttribute("spIi");
+            listOfSubmissions = new ArrayList<SubmissionDto>();
+        	listOfSubmissions = submissionSvc.getByStudyProtocol(spIi_session);
+            submission.setStudyProtocolIdentifier(spIi_session);
+            submission.setStatusCode(CdConverter.convertToCd(PendingCompletedCode.PENDING));
             listOfSubmissions.add(submissionSvc.create(submission));
             ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            return super.execute();
+            
         }
-        return actionResult;
+         return super.execute();
+        
     }
     /**
      *

@@ -93,6 +93,7 @@ public class SubmissionDto extends AbstractStudyDto {
     private static final long serialVersionUID = 5221603553357385670L;
 
     private Ts cutOffDate;
+    private Ts createdDate;
     private St description;
     private St label;
     private Cd statusCode;
@@ -110,6 +111,18 @@ public class SubmissionDto extends AbstractStudyDto {
     public void setCutOffDate(Ts cutOffDate) {
         this.cutOffDate = cutOffDate;
     }
+   /**
+     * @return the createdDate
+     */
+    public Ts getCreatedDate() {
+      return createdDate;
+    }
+    /**
+     * @param createdDate the createdDate to set
+     */
+    public void setCreatedDate(Ts createdDate) {
+       this.createdDate = createdDate;
+     }
     /**
      * @return the description
      */

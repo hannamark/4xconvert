@@ -102,7 +102,6 @@ public class ViewTrialsAction extends AbstractAccrualAction {
      * {@inheritDoc}
      */
 
-    @SuppressWarnings("unchecked")
     @Override
     public String execute() {
         try {

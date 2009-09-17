@@ -39,9 +39,11 @@
        <display:column titleKey="accrual.list.submissions.status" property="status" sortable="true" 
          headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.submit" headerClass="centered" class="action">
-                <s:a href="#" onclick="accessAdd(%{#attr.row.identifier.extension})">
+                
+                  <s:a href="#" onclick="accessAdd(%{#attr.row.identifier.extension})">
                     <img src="<%=request.getContextPath()%>/images/ico_upload.gif" alt="Submit" width="16" height="16" />
                 </s:a>
+              
        </display:column>
    </display:table>
 </s:form>

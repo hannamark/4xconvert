@@ -15,6 +15,8 @@
               <div class="row">
                  <span class="label">
                     <c:out value="${sessionScope.trialSummary.assignedIdentifier.value}"/>:
+                 </span>
+                  <span class="value">
                     <c:out value="${sessionScope.trialSummary.officialTitle.value}"/>
                   </span>
               </div>        
