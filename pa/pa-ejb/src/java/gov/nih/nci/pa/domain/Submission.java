@@ -106,6 +106,8 @@ public class Submission extends AbstractStudyEntity {
     private PendingCompletedCode statusCode;
     private Timestamp statusDateRangeLow;
     private Timestamp statusDateRangeHigh;
+    private String createUser;
+    private String submitUser;
 
     /**
      * @return the label
@@ -185,5 +187,31 @@ public class Submission extends AbstractStudyEntity {
      */
     public void setStatusCode(PendingCompletedCode statusCode) {
         this.statusCode = statusCode;
+    }
+    /**
+     * @return the createUser
+     */
+    @Column(name = "create_user")
+    public String getCreateUser() {
+        return createUser;
+    }
+    /**
+     * @param createUser the createUser to set
+     */
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
+    /**
+     * @return the submitUser
+     */
+    @Column(name = "submit_user")
+    public String getSubmitUser() {
+        return submitUser;
+    }
+    /**
+     * @param submitUser the submitUser to set
+     */
+    public void setSubmitUser(String submitUser) {
+        this.submitUser = submitUser;
     }
 }

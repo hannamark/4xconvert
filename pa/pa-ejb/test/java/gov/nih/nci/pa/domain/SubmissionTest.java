@@ -151,6 +151,7 @@ public class SubmissionTest {
         ss.setDescription("description");
         ss.setLabel("label");
         ss.setStatusCode(PendingCompletedCode.PENDING);
+        ss.setCreateUser("createUser");
         ss.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         ss.setStatusDateRangeHigh(new Timestamp(new Date().getTime()));
         ss.setId(null);

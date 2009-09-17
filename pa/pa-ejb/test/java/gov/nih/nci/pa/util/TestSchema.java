@@ -297,6 +297,7 @@ public class TestSchema {
                 Connection connection = session.connection();
                 try {
                     Statement statement = connection.createStatement();
+                    statement.executeUpdate("delete from submission");
                     statement.executeUpdate("delete from study_site_accrual_access");
                     statement.executeUpdate("delete from study_subject");
                     statement.executeUpdate("delete from patient");
