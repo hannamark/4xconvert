@@ -80,13 +80,14 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.PendingCompletedCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
@@ -118,15 +119,15 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
      */
     @Override
     public String execute() {
+        String selectedTrial = ServletActionContext.getRequest().getParameter("studyProtocolId");
+        if (selectedTrial != null) {
+            spIi = IiConverter.convertToStudyProtocolIi(Long.valueOf(selectedTrial));
+            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, spIi);
+        }
         try {
-        	
-        	if(spIi == null){
-        		spIi = (Ii)ServletActionContext.getRequest().getSession().getAttribute("spIi");
-        	}
             trialSummary = searchTrialSvc.getTrialSummaryByStudyProtocolIi(spIi);
             // put an entry in the session
             ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-            ServletActionContext.getRequest().getSession().setAttribute("spIi", spIi);
             SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
             listOfSubmissions = new ArrayList<SubmissionDto>();
             listOfSubmissions = service.getByStudyProtocol(spIi);
@@ -155,16 +156,12 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             ivl.setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
             dto.setStatusDateRange(ivl);
             submissionSvc.update(dto);
-            
-            Ii spIi_session = (Ii)ServletActionContext.getRequest().getSession().getAttribute("spIi");
             listOfSubmissions = new ArrayList<SubmissionDto>();
-        	listOfSubmissions = submissionSvc.getByStudyProtocol(spIi_session);
-        	ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
-            
+            listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
+            ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }
-       // return execute();
         return super.execute();
     }
 
@@ -172,23 +169,21 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
      * {@inheritDoc}
      */
     public String addNew() {
-       
-    	try {
-        	
-            Ii spIi_session = (Ii)ServletActionContext.getRequest().getSession().getAttribute("spIi");
+        try {
             listOfSubmissions = new ArrayList<SubmissionDto>();
-        	listOfSubmissions = submissionSvc.getByStudyProtocol(spIi_session);
-            submission.setStudyProtocolIdentifier(spIi_session);
+            listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
+            submission.setStudyProtocolIdentifier(spIi);
             submission.setStatusCode(CdConverter.convertToCd(PendingCompletedCode.PENDING));
+            submission.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
+                    new Timestamp(new Date().getTime()), null));
             listOfSubmissions.add(submissionSvc.create(submission));
             ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            
         }
-         return super.execute();
-        
+        return super.execute();
     }
+
     /**
      *
      * @return studyProtocolId

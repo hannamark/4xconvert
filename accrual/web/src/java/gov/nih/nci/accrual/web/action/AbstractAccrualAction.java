@@ -82,7 +82,6 @@ import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.apache.struts2.ServletActionContext;
@@ -97,7 +96,6 @@ import com.opensymphony.xwork2.Preparable;
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
 
-    Long spId;
     Ii spIi;
     SearchTrialService searchTrialSvc;
     SubmissionService submissionSvc;
@@ -108,10 +106,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     public void prepare() {
         searchTrialSvc = AccrualServiceLocator.getInstance().getSearchTrialService();
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
-        String spString = ServletActionContext.getRequest().getParameter("studyProtocolId");
-        spId = spString == null ? null : Long.valueOf(spString);
-        spIi = IiConverter.convertToIi(spId);
-        
+        spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_SPII);
     }
     /**
      * Default implementation throws derived exception.

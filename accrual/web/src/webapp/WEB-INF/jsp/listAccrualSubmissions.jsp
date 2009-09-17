@@ -9,7 +9,7 @@
 <s:head />
 <script type="text/javascript">
     function accessAdd(rowId){
-        input_box=confirm("Click OK to submit.  Cancel to Abort.   " + rowId);
+        input_box=confirm("Click OK to submit.  Cancel to Abort.   ");
         if (input_box==true){
             document.submissionForm.selectedRowIdentifier.value = rowId;
             document.submissionForm.action="accrualSubmissionssubmit.action";

@@ -28,5 +28,8 @@
     <module>
         <java>po-services-client-3.0-milestone2.jar</java>
     </module>
+    <module>
+        <java>coppa-commons-1.2.2.jar</java>
+    </module>
     <security-role><role-name>Submitter</role-name></security-role>
 </application>

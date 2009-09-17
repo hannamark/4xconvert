@@ -246,6 +246,7 @@ public class TestSchema {
         sp.setIdentifier("NCI-2009-00001");
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
         addUpdObject(sp);
         studyProtocols.add(sp);
 
@@ -259,6 +260,7 @@ public class TestSchema {
         sp.setIdentifier("NCI-2009-00002");
         sp.setStatusCode(ActStatusCode.INACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
         addUpdObject(sp);
         studyProtocols.add(sp);
 
@@ -272,6 +274,7 @@ public class TestSchema {
         sp.setIdentifier("NCI-2009-00002");
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(2));
+        sp.setProprietaryTrialIndicator(false);
         addUpdObject(sp);
         studyProtocols.add(sp);
 

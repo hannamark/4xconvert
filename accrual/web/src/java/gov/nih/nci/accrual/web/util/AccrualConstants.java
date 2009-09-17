@@ -95,6 +95,8 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_DISCLAIMER = "accrualDisclaimer";
     /** Role-name for the public role. */
     public static final String DISCLAIMER_ACCEPTED = "Accepted";
+    /** Role-name for the public role. */
+    public static final String SESSION_ATTR_SPII = "studyProtocolIi";
 
     /** Action result for the global log out result. */
     public static final String AR_LOGOUT = "logout";
