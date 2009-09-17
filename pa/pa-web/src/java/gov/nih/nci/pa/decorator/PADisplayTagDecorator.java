@@ -80,6 +80,9 @@ package gov.nih.nci.pa.decorator;
 
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+
+import java.util.Date;
+
 import org.displaytag.decorator.TableDecorator;
 
 /**
@@ -120,5 +123,18 @@ public class PADisplayTagDecorator extends TableDecorator {
             Long id = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getStudyProtocolId();
             return "<a href='#' onclick='generateTSR(" + id + ");'> View TSR </a>";
         }
+    }
+    /**
+     * 
+     * @return remove string
+     */
+    public String getRemove() {
+        Date updateDt = ((StudyProtocolQueryDTO) 
+                this.getCurrentRowObject()).getUpdatedDate();
+        if (updateDt != null) {
+            return "Remove";
+        } else {
+            return "";
+        } 
     }
 }

@@ -200,7 +200,7 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
      * @return StudyProtocolDTO
      * @throws PAException PAException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("PMD.NPathComplexity")
     public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         final int serialNumMin = 5;
         final int serialNumMax = 6;
@@ -244,8 +244,10 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
             queryList = query.list();
             studyResourcing = queryList.get(0);
             // set the values from paramter
-            studyResourcing.setTypeCode(SummaryFourFundingCategoryCode.getByCode(
+            if (studyResourcingDTO.getTypeCode() != null) {
+              studyResourcing.setTypeCode(SummaryFourFundingCategoryCode.getByCode(
                     studyResourcingDTO.getTypeCode().getCode()));
+            }
             studyResourcing.setOrganizationIdentifier(IiConverter.convertToString(
                     studyResourcingDTO.getOrganizationIdentifier()));
             studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));

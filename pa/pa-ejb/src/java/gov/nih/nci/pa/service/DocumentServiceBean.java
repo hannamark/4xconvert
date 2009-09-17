@@ -343,6 +343,7 @@ public class DocumentServiceBean extends
      * @return map 
      * @throws PAException on error
      */
+    @SuppressWarnings({"PMD" })
     @Override
     public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
         Map<Ii, Ii> map = super.copy(fromStudyProtocolIi, toStudyProtocolIi);
@@ -363,11 +364,12 @@ public class DocumentServiceBean extends
                         nciIdentifier);
                 File fromFile = new File(fromName);
                 File toFile = new File(toName);
-                boolean success = fromFile.renameTo(toFile);
-                if (!success) {
+                if (!toFile.exists()) {
+                 boolean success = fromFile.renameTo(toFile);
+                 if (!success) {
                     throw new PAException("Unable to rename the file from " + fromName + " to " + toName);
+                 }
                 }
-
             }
             session.delete(doc);
         }
