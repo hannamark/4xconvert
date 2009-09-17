@@ -832,6 +832,9 @@ public class TrialUtil {
            if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
                isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));
            }
+           if (PAUtil.isNotEmpty(dto.getIndIdeId())) {
+               isoDTO.setIdentifier(IiConverter.convertToIi(dto.getIndIdeId()));            
+           }
            studyIndldeDTOList.add(isoDTO);
        }
        return studyIndldeDTOList;
@@ -898,7 +901,10 @@ public class TrialUtil {
            isoDTO.setNihInstitutionCode(CdConverter.convertStringToCd(dto.getNihInstitutionCode()));
            isoDTO.setSerialNumber(StConverter.convertToSt(dto.getSerialNumber()));
            if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
-               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));
+               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));            
+           }
+           if (PAUtil.isNotEmpty(dto.getId())) {
+               isoDTO.setIdentifier(IiConverter.convertToIi(dto.getId()));            
            }
            grantsDTOList.add(isoDTO);
        }
