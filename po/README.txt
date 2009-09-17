@@ -1,4 +1,4 @@
- 
+
 1.    PO Source Code Structure and Build Process
 
 1.1    Source Tree Structure
@@ -32,6 +32,10 @@
 
   * Install maven (if needed)
     PO is not compatible with maven 2.1.0+, so you'll need to use 2.0.10 or earlier.
+
+  * Install postgres (if needed)
+    Postgres 8.3 should work with no issues.  With Postgres 8.4, you'll have the set max_prepared_transactions to 5 in postgresql.conf (on a Mac, that file is located in /Library/PostgreSQL/8.4/data/);
+    you'll need to restart Postgres after changing the value.
 
   * Install JBoss
     Download JEMS installer
