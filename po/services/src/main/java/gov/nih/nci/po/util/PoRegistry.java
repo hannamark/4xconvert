@@ -172,4 +172,5 @@ public final class PoRegistry {
     public static GenericCodeValueServiceLocal getGenericCodeValueService() {
         return getInstance().getServiceLocator().getGenericCodeValueService();
     }
+
 }

@@ -90,6 +90,7 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
+import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
@@ -178,5 +179,10 @@ public interface ServiceLocator {
      * @return the ctep import service
      */
     CtepImportService getCtepImportService();
+
+    /**
+     * @return the organiation change request service.
+     */
+    OrganizationCRServiceLocal getOrganizationCRService();
 
 }

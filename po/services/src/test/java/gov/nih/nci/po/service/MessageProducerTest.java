@@ -109,18 +109,20 @@ import javax.naming.NamingException;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+
 /**
  *
  */
 public class MessageProducerTest extends AbstractHibernateTestCase {
 
-    public static <T extends Curatable<?, ?>> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service, boolean isCreate)
+    public static <T extends PersistentObject> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service, boolean isCreate)
             throws JMSException {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         assertMessageCreated(id, isCreate, topic);
     }
 
-    private static <T extends Curatable<?, ?>> void assertMessageCreated(T id, boolean isCreate, Topic topic) throws JMSException {
+    private static <T extends PersistentObject> void assertMessageCreated(T id, boolean isCreate, Topic topic) throws JMSException {
         TopicStub topicStub = (TopicStub) topic;
         assertEquals(1, topicStub.messages.size());
         Message msg = topicStub.messages.remove(0);

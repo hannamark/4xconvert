@@ -90,6 +90,7 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
+import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
@@ -207,5 +208,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public CtepImportService getCtepImportService() {
         return (CtepImportService) JNDIUtil.lookup("po/CtepImportServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationCRServiceLocal getOrganizationCRService() {
+        return (OrganizationCRServiceLocal) JNDIUtil.lookup("po/OrganizationCRServiceBean/local");
     }
 }

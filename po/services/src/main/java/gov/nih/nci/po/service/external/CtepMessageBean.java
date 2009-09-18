@@ -84,6 +84,7 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.EmailLogger;
 
 import java.io.StringReader;
@@ -98,13 +99,12 @@ import org.apache.commons.digester.Digester;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-
 /**
- *
- * Ideally, this should have been a MDB, but JBoss has no docs on how to connect
- * to an external non-JBoss JMS topic.
+ * 
+ * Ideally, this should have been a MDB, but JBoss has no docs on how to connect to an external non-JBoss JMS topic.
+ * 
  * @see CtepMessageMBean
- *
+ * 
  * @author gax
  * 
 @MessageDriven(activationConfig =  {
@@ -164,7 +164,6 @@ public class CtepMessageBean implements MessageListener {
 
     private static final Logger LOG = Logger.getLogger(CtepMessageBean.class);
     private CtepImportService ctepImportService;
-    
 
     /**
      * @param ctepImportService injected.
@@ -229,10 +228,9 @@ public class CtepMessageBean implements MessageListener {
             String txt = textMessage.getText();
             digester.parse(new StringReader(txt));
         } catch (Exception ex) {
-           logError(textMessage, ex);
+            logError(textMessage, ex);
         }
     }
-
 
     private static Ii generateIi(RecordType msgType, String id) {
         Ii ii = new Ii();
@@ -247,16 +245,19 @@ public class CtepMessageBean implements MessageListener {
 
     /**
      * called my digester.
-     * @param trxTypeString  message TRANSACTION_TYPE.
+     * 
+     * @param trxTypeString message TRANSACTION_TYPE.
      * @param recordTypeString message RECORD_TYPE.
      * @param recordId message RECORD_ID.
      * @throws JMSException on error.
+     * @throws EntityValidationException if any validation errors occur
      */
-     // public for digester reflection call.
-    public void processRow(String trxTypeString, String recordTypeString, String recordId) throws JMSException {
+    // public for digester reflection call.
+    public void processRow(String trxTypeString, String recordTypeString, String recordId) throws JMSException,
+            EntityValidationException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("TRANSACTION_TYPE = %s, RECORD_TYPE = %s, RECORD_ID = %s",
-                trxTypeString, recordTypeString, recordId));
+            LOG.debug(String.format("TRANSACTION_TYPE = %s, RECORD_TYPE = %s, RECORD_ID = %s", trxTypeString,
+                    recordTypeString, recordId));
         }
         RecordType msgType;
         try {
@@ -264,7 +265,7 @@ public class CtepMessageBean implements MessageListener {
         } catch (IllegalArgumentException iae) {
             throw new IllegalArgumentException("Unsuported Record Type in message " + recordTypeString, iae);
         }
-        
+
         TransactionType trxType = null;
         try {
             trxType = TransactionType.valueOf(StringUtils.trim(trxTypeString));
@@ -278,25 +279,28 @@ public class CtepMessageBean implements MessageListener {
 
     /**
      * process on ROW element in a message.
+     * 
      * @param trxType message TRANSACTION_TYPE.
      * @param msgType message RECORD_TYPE.
      * @param id message RECORD_ID.
      * @throws JMSException on error.
+     * @throws EntityValidationException if any validation errors occur
      */
     // protected for testing.
-    protected void processMessage(TransactionType trxType, RecordType msgType, Ii id) throws JMSException {
+    protected void processMessage(TransactionType trxType, RecordType msgType, Ii id) throws JMSException,
+            EntityValidationException {
         switch (msgType) {
-            case ORGANIZATION:
-            case ORGANIZATION_ADDRESS:
-                ctepImportService.importCtepOrganization(id);
-                break;
-            case PERSON:
-            case PERSON_ADDRESS:
-            case PERSON_CONTACT:
-                ctepImportService.importCtepPerson(id);
-                break;
-            default:
-                LOG.error(String.format("Unexpected RecordType enum %s", msgType.name()));
+        case ORGANIZATION:
+        case ORGANIZATION_ADDRESS:
+            ctepImportService.importCtepOrganization(id);
+            break;
+        case PERSON:
+        case PERSON_ADDRESS:
+        case PERSON_CONTACT:
+            ctepImportService.importCtepPerson(id);
+            break;
+        default:
+            LOG.error(String.format("Unexpected RecordType enum %s", msgType.name()));
         }
     }
 }

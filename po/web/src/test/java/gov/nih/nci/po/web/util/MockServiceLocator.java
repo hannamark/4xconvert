@@ -100,6 +100,7 @@ import gov.nih.nci.po.service.IdentifiedPersonServiceStub;
 import gov.nih.nci.po.service.MockCtepImportService;
 import gov.nih.nci.po.service.MockOrganizationService;
 import gov.nih.nci.po.service.MockPersonService;
+import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceStub;
@@ -237,5 +238,12 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public PatientServiceLocal getPatientService() {
         return patService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationCRServiceLocal getOrganizationCRService() {
+        return null;
     }
 }

@@ -15,20 +15,29 @@ import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.HealthCareFacilityServiceBean;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceBean;
+import gov.nih.nci.po.service.MessageProducerTest;
+import gov.nih.nci.po.service.OrganizationCRServiceBean;
 import gov.nih.nci.po.service.OrganizationServiceBean;
+import gov.nih.nci.po.service.ResearchOrganizationServiceBean;
 import gov.nih.nci.po.service.external.stubs.CTEPOrgServiceStubBuilder;
 import gov.nih.nci.po.service.external.stubs.CTEPOrganizationServiceStub;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.jms.JMSException;
 import javax.naming.Context;
 
 import org.junit.Before;
@@ -42,10 +51,12 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
     private IdentifiedOrganizationServiceBean ioSvc;
     private HealthCareFacilityServiceLocal hcfSvc;
     private Organization ctep;
+    private OrganizationCRServiceBean oCRSvc;
 
     @Before
     public void setup() throws Exception {
         oSvc = EjbTestHelper.getOrganizationServiceBean();
+        oCRSvc = EjbTestHelper.getOrganizationCRServiceBean();
         ioSvc = EjbTestHelper.getIdentifiedOrganizationServiceBean();
         hcfSvc = EjbTestHelper.getHealthCareFacilityServiceBean();
 
@@ -135,6 +146,11 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      */
     @Test
     public void testOrgAndAllRolesAreSetToPendingOnCreate() throws Exception {
+        helperOrgAndAllRolesAreSetToPendingOnCreate();
+    }
+
+    private Organization helperOrgAndAllRolesAreSetToPendingOnCreate() throws Exception, JMSException,
+            EntityValidationException {
         // feed the proper CTEP service stub into our importer
         CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfStub();
         importer.setCtepOrgService(service);
@@ -145,11 +161,15 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         Organization importedOrg = importer.importOrganization(org.getIdentifier());
         assertNotNull(importedOrg);
 
+        MessageProducerTest.assertMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService(), true);
+
         assertNull("the ctep organization's id is erased before converting to a Organization (BO)", service.getOrg()
                 .getIdentifier());
         assertNotNull(service.getOrgId());
         IdentifiedOrganization io = getByCtepOrgId(service.getOrgId());
-        assertEquals(ctep, io.getScoper());
+        assertEquals(ctep.getId(), io.getScoper().getId());
+        MessageProducerTest.assertMessageCreated(io, (IdentifiedOrganizationServiceBean) importer
+                .getIdentifiedOrgService(), true);
 
         Organization persistedOrg = io.getPlayer();
         assertNotNull(persistedOrg);
@@ -160,6 +180,71 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
         HealthCareFacility persistedHCF = hcfs.get(0);
         assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
+        MessageProducerTest.assertMessageCreated(persistedHCF,
+                (HealthCareFacilityServiceBean) importer.getHcfService(), true);
+        return importedOrg;
+    }
 
+    /**
+     * If the Organization is ACTIVE, the changes to the organization should be created as a change request on the org,
+     * allowing the curator to curate them like normal.
+     * 
+     * @see https://jira.5amsolutions.com/browse/PO-1244
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testOrgAndAllRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization()
+            throws Exception {
+        Organization importedOrg = helperOrgAndAllRolesAreSetToPendingOnCreate();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        clearMessages();
+        //get the II for the HCF that was added during the 1st pass (creation)
+        Ii hcfPOID = getHCFII(importedOrg);
+        
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfWithNameUpdateStub(hcfPOID);
+        importer.setCtepOrgService(service);
+        OrganizationDTO org = service.getOrg();
+        assertNotNull(org);
+        assertNotNull(service.getOrgId());
+        Organization updatedOrg = importer.importOrganization(org.getIdentifier());
+        assertNotNull(updatedOrg);
+
+        MessageProducerTest
+                .assertMessageCreated(updatedOrg, (OrganizationServiceBean) importer.getOrgService(), false);
+
+        IdentifiedOrganization io = getByCtepOrgId(service.getOrgId());
+        assertEquals(ctep.getId(), io.getScoper().getId());
+        MessageProducerTest.assertMessageCreated(io, (IdentifiedOrganizationServiceBean) importer
+                .getIdentifiedOrgService(), false);
+
+        Organization persistedOrg = io.getPlayer();
+        assertNotNull(persistedOrg);
+        assertEquals(EntityStatus.PENDING, persistedOrg.getStatusCode());
+
+        List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+        assertEquals(1, hcfs.size());
+
+        HealthCareFacility persistedHCF = hcfs.get(0);
+        assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
+        MessageProducerTest.assertMessageCreated(persistedHCF,
+                (HealthCareFacilityServiceBean) importer.getHcfService(), false);
+    }
+
+    private Ii getHCFII(Organization importedOrg) {
+        List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+        assertEquals(1, hcfs.size());
+        HealthCareFacility persistedHCF = hcfs.get(0);
+        Ii hcfPOID = new IdConverter.HealthCareFacilityIdConverter().convertToIi(hcfs.get(0).getId());
+        return hcfPOID;
+    }
+
+    private void clearMessages() {
+        MessageProducerTest.clearMessages((OrganizationServiceBean) importer.getOrgService());
+        MessageProducerTest.clearMessages((IdentifiedOrganizationServiceBean) importer.getIdentifiedOrgService());
+        MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHcfService());
+        MessageProducerTest.clearMessages((ResearchOrganizationServiceBean) importer.getRoService());
     }
 }

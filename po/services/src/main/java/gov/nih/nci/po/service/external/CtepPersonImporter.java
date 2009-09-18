@@ -99,6 +99,7 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
@@ -121,7 +122,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Scott Miller
- *
+ * 
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public class CtepPersonImporter extends CtepEntityImporter {
@@ -140,15 +141,16 @@ public class CtepPersonImporter extends CtepEntityImporter {
     private final CtepOrganizationImporter orgImporter;
 
     private final PersonServiceLocal personService = PoRegistry.getPersonService();
-    private final IdentifiedPersonServiceLocal identifiedPersonService = PoRegistry.getInstance().
-        getServiceLocator().getIdentifiedPersonService();
-    private final HealthCareProviderServiceLocal hcpService = PoRegistry.getInstance().
-        getServiceLocator().getHealthCareProviderService();
-    private final ClinicalResearchStaffServiceLocal crsService = PoRegistry.getInstance().
-        getServiceLocator().getClinicalResearchStaffService();
+    private final IdentifiedPersonServiceLocal identifiedPersonService = PoRegistry.getInstance().getServiceLocator()
+            .getIdentifiedPersonService();
+    private final HealthCareProviderServiceLocal hcpService = PoRegistry.getInstance().getServiceLocator()
+            .getHealthCareProviderService();
+    private final ClinicalResearchStaffServiceLocal crsService = PoRegistry.getInstance().getServiceLocator()
+            .getClinicalResearchStaffService();
 
     /**
      * Constructor.
+     * 
      * @param ctepContext the initial context providing access to ctep services.
      * @param orgImporter the org importer.
      */
@@ -157,18 +159,20 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.orgImporter = orgImporter;
     }
 
-    private Organization getCtepOrganization() throws JMSException {
+    private Organization getCtepOrganization() throws JMSException, EntityValidationException {
         return this.orgImporter.getCtepOrganization();
     }
 
     /**
      * Method to import a person based on its ctep id.
+     * 
      * @param ctepPersonId the ctep id.
      * @throws JMSException on error
+     * @throws EntityValidationException if a validation error occurs
      * @return the organization record.
      */
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
-    public Person importPerson(Ii ctepPersonId) throws JMSException {
+    public Person importPerson(Ii ctepPersonId) throws JMSException, EntityValidationException {
         try {
             // get org from ctep and convert to local data model
             PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
@@ -230,8 +234,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         identifiedPerson.setAssignedIdentifier(new Ii());
         identifiedPerson.getAssignedIdentifier().setExtension(ctepPersonId.getExtension());
         identifiedPerson.getAssignedIdentifier().setRoot(ctepPersonId.getRoot());
-        SearchCriteria<IdentifiedPerson> sc =
-            new AnnotatedBeanSearchCriteria<IdentifiedPerson>(identifiedPerson);
+        SearchCriteria<IdentifiedPerson> sc = new AnnotatedBeanSearchCriteria<IdentifiedPerson>(identifiedPerson);
         List<IdentifiedPerson> identifiedPeople = this.identifiedPersonService.search(sc);
         if (identifiedPeople.isEmpty()) {
             return null;
@@ -239,7 +242,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         return identifiedPeople.get(0);
     }
 
-    private Person createCtepPerson(Person ctepPerson, Ii assignedId) throws JMSException {
+    private Person createCtepPerson(Person ctepPerson, Ii assignedId) throws JMSException, EntityValidationException {
         // create the local entity record
         this.personService.curate(ctepPerson);
 
@@ -277,7 +280,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void createIdentifiedPerson(Person ctepPerson, Ii assignedId) throws JMSException {
+    private void createIdentifiedPerson(Person ctepPerson, Ii assignedId) throws JMSException,
+            EntityValidationException {
         IdentifiedPerson identifiedPerson = new IdentifiedPerson();
         identifiedPerson.setPlayer(ctepPerson);
         identifiedPerson.setScoper(getCtepOrganization());
@@ -294,7 +298,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson, Ii unPrefixedIi)
-            throws JMSException {
+            throws JMSException, EntityValidationException {
         Person p = identifiedPerson.getPlayer();
 
         // copy updated data in to the local person
@@ -322,7 +326,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         return p;
     }
 
-    private void updateCrsRoles(Person p, ClinicalResearchStaffDTO crsDto) throws JMSException {
+    private void updateCrsRoles(Person p, ClinicalResearchStaffDTO crsDto) throws JMSException,
+            EntityValidationException {
         // we don't handle merge here, iterate over roles nullifying them out, except the last one,
         // which we will update with ctep's data.
         Iterator<ClinicalResearchStaff> i = p.getClinicalResearchStaff().iterator();
@@ -369,7 +374,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void updateHcpRoles(Person p, HealthCareProviderDTO hcpDto) throws JMSException {
+    private void updateHcpRoles(Person p, HealthCareProviderDTO hcpDto) throws JMSException, EntityValidationException {
         // we don't handle merge here, iterate over roles nullifying them out, except the last one,
         // which we will update with ctep's data.
         Iterator<HealthCareProvider> i = p.getHealthCareProviders().iterator();
@@ -418,7 +423,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private void updateOtherIdentifier(Person ctepPerson, IdentifiedPerson identifiedPerson,
-            IdentifiedPersonDTO newIdentifier) throws JMSException {
+            IdentifiedPersonDTO newIdentifier) throws JMSException, EntityValidationException {
         Ii newId = newIdentifier.getAssignedId();
         boolean found = searchForAndUpdateCtepIds(ctepPerson, identifiedPerson, newId);
         if (!found) {
@@ -428,13 +433,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private boolean searchForAndUpdateCtepIds(Person ctepPerson, IdentifiedPerson identifiedPerson, Ii newId)
-            throws JMSException {
+            throws JMSException, EntityValidationException {
         boolean found = false;
         for (IdentifiedPerson ip : ctepPerson.getIdentifiedPersons()) {
-            if (ip.getScoper().getId().equals(getCtepOrganization().getId())
-                    && ip != identifiedPerson) {
+            if (ip.getScoper().getId().equals(getCtepOrganization().getId()) && ip != identifiedPerson) {
                 // if the scopers match, the current record is either the person's
-                // db id in CTEP or the user friendly CTEP-ID.  So check if this
+                // db id in CTEP or the user friendly CTEP-ID. So check if this
                 // ip record is the same as the provided identifiedPErson record passed
                 // in, if not, then it is the CTEP-ID record and we should update
                 found = true;
@@ -451,8 +455,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
     private void updateOtherIdentifierIfChangOccurred(Ii newId, IdentifiedPerson ip) throws JMSException {
         Ii currentId = ip.getAssignedIdentifier();
-        if (!currentId.getExtension().equals(newId.getExtension())
-                || !currentId.getRoot().equals(newId.getRoot())
+        if (!currentId.getExtension().equals(newId.getExtension()) || !currentId.getRoot().equals(newId.getRoot())
                 || !RoleStatus.ACTIVE.equals(ip.getStatus())) {
             // if the extension, root, or status changed we need to update
             ip.setStatus(RoleStatus.ACTIVE);
@@ -461,11 +464,10 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-
     private void copyCtepPersonToExistingPerson(Person ctepPerson, Person p) {
         // doing this here instead of a 'copy' method in the person itself because all
-        // of the relationships are not copied (change requests, roles, etc)  The person
-        // we are copying from is just the base fields.  Also, the person from ctep
+        // of the relationships are not copied (change requests, roles, etc) The person
+        // we are copying from is just the base fields. Also, the person from ctep
         // does not set tty or url and the status is always active, so
         // those fields are skipped.
         p.setFirstName(ctepPerson.getFirstName());
@@ -491,7 +493,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void createHcp(HealthCareProviderDTO hcpDto, Person ctepPerson) throws JMSException {
+    private void createHcp(HealthCareProviderDTO hcpDto, Person ctepPerson) throws JMSException,
+            EntityValidationException {
         // store ii's we will need
         Ii scoperIi = hcpDto.getScoperIdentifier();
 
@@ -520,7 +523,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void createCrs(ClinicalResearchStaffDTO crsDto, Person ctepPerson) throws JMSException {
+    private void createCrs(ClinicalResearchStaffDTO crsDto, Person ctepPerson) throws JMSException,
+            EntityValidationException {
         // store ii's we will need
         Ii scoperIi = crsDto.getScoperIdentifier();
 

@@ -78,5 +78,14 @@ public class CTEPOrgServiceStubBuilder {
 
         return new CTEPOrganizationServiceStub(o, hcf, null);
     }
+    
+    public CTEPOrganizationServiceStub buildCreateHcfWithNameUpdateStub(Ii hcfPOId) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateHcfStub();
+        EnOn name = StringConverter.convertToEnOn("NAME2");
+        stub.getOrg().setName(name);
+        stub.getHcf().setName(name);
+        stub.getHcf().getIdentifier().getItem().add(hcfPOId);
+        return stub;
+    }
 
 }

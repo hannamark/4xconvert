@@ -91,6 +91,7 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
+import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
@@ -205,5 +206,9 @@ public class TestServiceLocator implements ServiceLocator {
      */
     public CtepImportService getCtepImportService() {
         return EjbTestHelper.getCtepImportService();
+    }
+
+    public OrganizationCRServiceLocal getOrganizationCRService() {
+        return EjbTestHelper.getOrganizationCRServiceBean();
     }
 }

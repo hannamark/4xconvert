@@ -85,6 +85,7 @@ package gov.nih.nci.po.service.external;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
 import java.util.Hashtable;
@@ -111,7 +112,6 @@ public class CtepImportServiceBean implements CtepImportService {
     private static Context ctepContext;
     private CtepOrganizationImporter orgImporter;
     private CtepPersonImporter personImporter;
-
     /**
      * Constructor.
      */
@@ -120,6 +120,7 @@ public class CtepImportServiceBean implements CtepImportService {
         initImporters();
     }
 
+    
     /**
      * Init the org and person importers.
      */
@@ -154,14 +155,14 @@ public class CtepImportServiceBean implements CtepImportService {
     /**
      * {@inheritDoc}
      */
-    public Organization importCtepOrganization(Ii orgId) throws JMSException {
+    public Organization importCtepOrganization(Ii orgId) throws JMSException, EntityValidationException {
         return orgImporter.importOrganization(orgId);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Person importCtepPerson(Ii personId) throws JMSException {
+    public Person importCtepPerson(Ii personId) throws JMSException, EntityValidationException {
         return personImporter.importPerson(personId);
     }
 

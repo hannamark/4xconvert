@@ -85,6 +85,7 @@ package gov.nih.nci.po.web.externalimport;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -160,8 +161,9 @@ public class CtepImportAction extends ActionSupport {
          * @param value CTEP identifier to lookup and import
          * @return COPPA-PO Object saved, otherwise null
          * @throws JMSException the JMS related exception encountered
+         * @throws EntityValidationException if any validation error occurs 
          */
-        Object invoke(Ii value) throws JMSException;
+        Object invoke(Ii value) throws JMSException, EntityValidationException;
 
         /**
          * @return the friendly name
@@ -183,7 +185,7 @@ public class CtepImportAction extends ActionSupport {
         /**
          * {@inheritDoc}
          */
-        public Object invoke(Ii value) throws JMSException {
+        public Object invoke(Ii value) throws JMSException, EntityValidationException {
             return PoRegistry.getInstance().getServiceLocator().
             getCtepImportService().importCtepPerson(value);
         }
@@ -214,7 +216,7 @@ public class CtepImportAction extends ActionSupport {
         /**
          * {@inheritDoc}
          */
-        public Object invoke(Ii value) throws JMSException {
+        public Object invoke(Ii value) throws JMSException, EntityValidationException {
             return PoRegistry.getInstance().getServiceLocator().
             getCtepImportService().importCtepOrganization(value);
         }
