@@ -27,8 +27,30 @@
 <div class="box">
 <s:form id="selectTypeOfTrial" name="selectTypeOfTrial" >
     <div class="box" align="center">
-    Is Trial Proprietary 
-       <s:radio name="selectedTrialType" id="selectedTrialType" list="#{'yes':'Yes', 'no':'No'}" onclick="loadSelectedTrialType();"/>
+    <table>
+    <tr>
+        <td>
+        Is your trial proprietary?  
+        <s:radio name="selectedTrialType" id="selectedTrialType" list="#{'yes':'Yes', 'no':'No'}" onclick="loadSelectedTrialType();"/>
+       </td>
+       </tr>
+       <tr>
+       <td colspan="2">&nbsp; </td>
+       </tr>
+       <tr>
+       <td colspan="2">&nbsp; </td>
+       </tr>
+       <tr>
+            <td colspan="2">
+               <fmt:message key="trial.docInstructionalText_one"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+               <fmt:message key="trial.docInstructionalText_two"/>
+            </td>
+        </tr>
+        </table>
 </div>
 </s:form>
 </div>

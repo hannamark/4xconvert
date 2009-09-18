@@ -562,8 +562,11 @@ public class TrialUtil {
      * @return iso
      */
     public StudyResourcingDTO convertToSummary4StudyResourcingDTO(TrialDTO trialDTO) {
-        StudyResourcingDTO isoDto = new StudyResourcingDTO();
-        isoDto.setTypeCode(CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode()));
+        StudyResourcingDTO isoDto = null; 
+        if (PAUtil.isNotEmpty(trialDTO.getSummaryFourFundingCategoryCode())) {
+            isoDto = new StudyResourcingDTO();
+            isoDto.setTypeCode(CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode()));
+        }
         return isoDto;
     }
     

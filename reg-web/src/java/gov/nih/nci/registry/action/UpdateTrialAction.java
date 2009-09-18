@@ -862,8 +862,11 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
            //summary4 info
             StudyResourcingDTO summary4studyResourcingDTO = RegistryServiceLocator.getStudyResourcingService()
                                               .getsummary4ReportedResource(studyProtocolIi); 
-            util.convertToSummary4StudyResourcingDTO(trialDTO, summary4studyResourcingDTO);
-            
+            if (summary4studyResourcingDTO != null) {
+                util.convertToSummary4StudyResourcingDTO(trialDTO, summary4studyResourcingDTO);
+            } else {
+                summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO); 
+            }
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             
             //Responsible party info update

@@ -598,7 +598,7 @@ function toggledisplay2 (it) {
         <tr>
               <td scope="row" class="label">
               <label for="submitTrial_protocolDoc">
-                     <fmt:message key="submit.trial.protocolDocument"/>
+                     <fmt:message key="submit.proprietary.trial.protocolDocument"/>
               </label>
              </td>
              <td class="value">

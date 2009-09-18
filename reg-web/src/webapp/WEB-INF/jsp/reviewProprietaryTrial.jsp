@@ -47,8 +47,13 @@ var winprint=window.open("","",sOption);
  
 <div class="box">
     <s:form > <s:actionerror/>
-    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>          
-    <div id="contentprint">        
+    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
+    <c:if test="${requestScope.protocolId != null}">
+        <div class="confirm_msg">
+          <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.protocolId}</strong>
+        </div>
+     </c:if>          
+   <div id="contentprint">        
     <table class="form">
          <tr>
             <th colspan="2"><fmt:message key="submit.proprietary.trial.trialIdentification"/></th>
@@ -272,18 +277,20 @@ var winprint=window.open("","",sOption);
             </div>
         </c:if>
         </div>
-        <div class="actionsrow">
-        <del class="btnwrapper">
-            <ul class="btnrow">
-                <li><a href="#"                
-                    class="btn" onclick="editTrial();"><span class="btn_img"> <span class="edit">Edit</span></span></a></li>
-               <li><a href="#"                
-                    class="btn" onclick="submitTrial();"><span class="btn_img"><span class="save">Submit</span></span></a></li>
-               <li><a href="#"                
-                    class="btn" onclick="printProtocol();"><span class="btn_img"><span class="print">Print</span></span></a></li>          
-            </ul>   
-        </del>
-        </div>
+          <c:if test="${requestScope.protocolId == null}">
+            <div class="actionsrow">
+                <del class="btnwrapper">
+                <ul class="btnrow">
+                    <li><a href="#"                
+                        class="btn" onclick="editTrial();"><span class="btn_img"> <span class="edit">Edit</span></span></a></li>
+                    <li><a href="#"                
+                        class="btn" onclick="submitTrial();"><span class="btn_img"><span class="save">Submit</span></span></a></li>
+                    <li><a href="#"                
+                        class="btn" onclick="printProtocol();"><span class="btn_img"><span class="print">Print</span></span></a></li>          
+                </ul>   
+                </del>
+            </div>
+        </c:if>
     </s:form>
    </div>
    </div>

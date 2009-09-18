@@ -62,6 +62,7 @@ import com.opensymphony.xwork2.ActionSupport;
     "PMD.TooManyMethods"  })
 public class SubmitProprietaryTrialAction extends ActionSupport implements
         ServletResponseAware {
+    private static final String SESSION_TRIAL_DTO = "trialDTO";
     /**
      * 
      */
@@ -143,7 +144,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
         }
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.INDIDE_LIST);
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.GRANT_LIST);
-        ServletActionContext.getRequest().getSession().setAttribute("trialDTO", trialDTO);
+        ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_DTO, trialDTO);
         return "review";
     }
 
@@ -307,7 +308,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
      */
     public String edit() {
         trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().
-            getSession().getAttribute("trialDTO");
+            getSession().getAttribute(SESSION_TRIAL_DTO);
         addSessionAttributes(trialDTO);
         return "edit";
     }
@@ -317,7 +318,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
      */
     public String create() {
         trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession().
-            getAttribute("trialDTO");
+            getAttribute(SESSION_TRIAL_DTO);
         TrialUtil util = new TrialUtil();
         try {
             StudyProtocolDTO studyProtocolDTO = convertToInterventionalStudyProtocolDTO(trialDTO);
@@ -363,9 +364,14 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                     studyResourcingDTOs, documentDTOs, leadOrganizationDTO, leadOrganizationTrialIdentifier, 
                     siteInvestigatorDTO, studySiteDTO, siteDTO, 
                     nctIdentifierSiteIdentifier, summary4organizationDTO, summary4CategoryCode);
-        TrialValidator.removeSessionAttributes();
-        ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
-        ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
+          //send a notification mail
+            RegistryServiceLocator.getMailManagerService().sendNotificationMail(studyProtocolIi);  
+            StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
+                    studyProtocolIi);
+            TrialValidator.removeSessionAttributes();
+            ServletActionContext.getRequest().setAttribute(SESSION_TRIAL_DTO, trialDTO);
+            ServletActionContext.getRequest().setAttribute("protocolId", 
+                    protocolDTO.getAssignedIdentifier().getExtension());
          
         } catch (PAException e) {
             LOG.error(e);
@@ -373,7 +379,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             addSessionAttributes(trialDTO);
             return ERROR;
         }
-        return "redirect_to_search";
+        return "review";
     }
     /**
      * 

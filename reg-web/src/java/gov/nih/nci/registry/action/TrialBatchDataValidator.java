@@ -155,11 +155,12 @@ public class TrialBatchDataValidator {
                 && batchDto.getSubmissionType().equalsIgnoreCase("U") 
            && PAUtil.isEmpty(batchDto.getNciTrialIdentifier())) {
             fieldErr.append("NCI Trial Identifier is required. \n");                
+            fieldErr.append(validateSponsorContactInfo(batchDto));
+            if (PAUtil.isEmpty(batchDto.getNctNumber())) {
+                fieldErr.append("NCT Number is required. \n");
+            }
         }
-        fieldErr.append(validateSponsorContactInfo(batchDto));
-        if (PAUtil.isEmpty(batchDto.getNctNumber())) {
-            fieldErr.append("NCT Number is required. \n");
-        }
+        
 
         return fieldErr;
     }

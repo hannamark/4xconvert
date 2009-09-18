@@ -274,11 +274,9 @@ public class BatchCreateProtocols {
             }
             
             StudyProtocolDTO studyProtocolDTO = null;
-            if (trialDTO.getTrialType().equals("Interventional")) {
-                studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
-            } else {
-                studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
-            }
+            studyProtocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            util.updateStudyProtcolDTO(studyProtocolDTO, trialDTO);
+            
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
             studyProtocolDTO.setIdentifier(studyProtocolIi);
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
@@ -294,10 +292,14 @@ public class BatchCreateProtocols {
                 .getsummary4ReportedResource(studyProtocolIi); 
             if (summary4studyResourcingDTO != null) {
                 util.convertToSummary4StudyResourcingDTO(trialDTO, summary4studyResourcingDTO);
+                summary4studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolIi);
             } else {
                 summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
+                if (summary4studyResourcingDTO != null) {
+                    summary4studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                }
             }
-            summary4studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            
             Ii responsiblePartyContactIi = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);
