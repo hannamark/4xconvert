@@ -129,6 +129,11 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
         // TODO Auto-generated method stub
         return null;
     }
+
+    public void reject(Ii studyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
     
 
 }
