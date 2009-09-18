@@ -259,6 +259,7 @@ function toggledisplay2 (it) {
                 </td>
                 <td>
                     <s:textfield name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                    <span class="info">(Mandatory if Exists)</span>
                 </td>                
           </tr>
            <tr>
@@ -372,7 +373,7 @@ function toggledisplay2 (it) {
                 </td>
             </tr>  
            <tr>
-             <td scope="row" class="label"><label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label></td>
+             <td scope="row" class="label"><label for="siteProgramCode"><fmt:message key="submit.proprietary.trial.sitePrgCode"/></label></td>
              <td class="value">
                 <s:textfield name="trialDTO.siteProgramCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg">
@@ -477,7 +478,7 @@ function toggledisplay2 (it) {
           </tr>
           <table class="form">
           <tr>
-                <th colspan="2"><fmt:message key="submit.trial.statusDates"/></th>
+                <th colspan="2"><fmt:message key="submit.proprietary.trial.statusDate"/></th>
           </tr>
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
@@ -531,7 +532,8 @@ function toggledisplay2 (it) {
             <td class="value"><s:textfield name="trialDTO.dateClosedforAccrual"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal3')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)  
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
+                    <span class="info"><fmt:message key="error.proprietary.submit.dateOpenReq" /></span>  
                 <span class="formErrorMsg"> 
                    <s:fielderror>
                    <s:param>trialDTO.dateClosedforAccrual</s:param>
@@ -586,7 +588,7 @@ function toggledisplay2 (it) {
         </tr>
         <tr>
             <td colspan="2">
-               <fmt:message key="submit.trial.docInstructionalText"/>
+               <fmt:message key="submit.proprietary.trial.docInstructionalText"/>
             </td>
         </tr>
         <tr>

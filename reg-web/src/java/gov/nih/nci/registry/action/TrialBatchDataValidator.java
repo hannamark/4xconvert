@@ -44,12 +44,12 @@ import org.hibernate.validator.InvalidValue;
  * This class is used to validate the spread sheet data.
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity",
-    "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+    "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.ExcessiveMethodLength" })
 public class TrialBatchDataValidator {
     private static final int IND_FIELD_COUNT = 5;
     private static final Logger LOG = Logger.getLogger(TrialBatchDataValidator.class);
     private static List<String> countryList = null;
-
+    private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     private static final int AUS_STATE_CODE_LEN = 3;
     private static final int ORG_FIELD = 8;
     private static final String DELEMITOR = ";";
@@ -60,7 +60,6 @@ public class TrialBatchDataValidator {
      * @param batchDto dto
      * @return str
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String validateBatchDTO(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         
@@ -100,6 +99,12 @@ public class TrialBatchDataValidator {
             if (PAUtil.isEmpty(batchDto.getResponsibleParty())) {
                 fieldErr.append("Responsible Party Not Provided.\n");
             }
+            if (PAUtil.isEmpty(batchDto.getTitle())) {
+                fieldErr.append("Trial Title is required.\n");
+            } else if (batchDto.getTitle().length() > TRIAL_TITLE_MAX_LENGTH) {
+                fieldErr.append("Trial Title must be 4000 characters max");
+            }
+
 
         }
         //Summary 4 Info validation
@@ -203,7 +208,6 @@ public class TrialBatchDataValidator {
      * @param batchDto
      * @return fieldErr
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     private StringBuffer validateIndIde(StudyProtocolBatchDTO batchDto) {
         //validate the IND/IDE
         StringBuffer fieldErr = new StringBuffer();
@@ -720,7 +724,6 @@ public class TrialBatchDataValidator {
      * @param dto d
      * @return list
      */
-    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public List<TrialIndIdeDTO> convertIndsToList(StudyProtocolBatchDTO dto) {
         List<TrialIndIdeDTO> indIdeList = new ArrayList<TrialIndIdeDTO>();
             if (isMultipleIndIde(dto)) {
@@ -757,21 +760,44 @@ public class TrialBatchDataValidator {
                 }
                 for (int i = 0; i < maxSize; i++) {
                     TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
-                    indldeDTO.setIndIde(indTypeMap.get(i).trim());
-                    indldeDTO.setNumber(indNumbereMap.get(i).trim());
-                    indldeDTO.setGrantor(indGrantorMap.get(i).trim());
-                    indldeDTO.setHolderType(indHolderTypeMap.get(i).trim());
+                    if (PAUtil.isNotEmpty(indTypeMap.get(i))) {
+                        indldeDTO.setIndIde(indTypeMap.get(i).trim());
+                    } else {
+                        indldeDTO.setIndIde("");
+                    }
+                    if (PAUtil.isNotEmpty(indNumbereMap.get(i))) {
+                        indldeDTO.setNumber(indNumbereMap.get(i).trim());
+                    } else {
+                        indldeDTO.setNumber("");
+                    }
+                    if (PAUtil.isNotEmpty(indGrantorMap.get(i))) {
+                        indldeDTO.setGrantor(indGrantorMap.get(i).trim());
+                    } else {
+                        indldeDTO.setGrantor("");
+                    }
+                    if (PAUtil.isNotEmpty(indHolderTypeMap.get(i))) {
+                        indldeDTO.setHolderType(indHolderTypeMap.get(i).trim());
+                    } else {
+                        indldeDTO.setHolderType("");
+                    }
                     String naString = "NA";
                     if (indldeDTO.getHolderType() != null) { 
-                        if (indldeDTO.getHolderType().equalsIgnoreCase("NIH")) {
+                        if (indldeDTO.getHolderType().equalsIgnoreCase("NIH") 
+                                && PAUtil.isNotEmpty(indNIHInstitutionMap.get(i))) {
                             indldeDTO.setProgramCode(indNIHInstitutionMap.get(i).trim());
                         }
-                        if (indldeDTO.getHolderType().equalsIgnoreCase("NCI")) {
+                        if (indldeDTO.getHolderType().equalsIgnoreCase("NCI")
+                                && PAUtil.isNotEmpty(indNCIDivisionMap.get(i))) {
                             indldeDTO.setProgramCode(indNCIDivisionMap.get(i).trim());
                         }
                     }
-                    indldeDTO.setExpandedAccess(indHasExpandedAccessMap.get(i).trim());
-                    if (!indHasExpandedAccessStatusMap.get(i).trim().equalsIgnoreCase(naString)) {
+                    if (PAUtil.isNotEmpty(indHasExpandedAccessMap.get(i))) {
+                        indldeDTO.setExpandedAccess(indHasExpandedAccessMap.get(i).trim());
+                    } else {
+                        indldeDTO.setExpandedAccess("");
+                    }
+                    if (PAUtil.isNotEmpty(indHasExpandedAccessStatusMap.get(i)) 
+                            && !indHasExpandedAccessStatusMap.get(i).trim().equalsIgnoreCase(naString)) {
                         indldeDTO.setExpandedAccessType(indHasExpandedAccessStatusMap.get(i).trim());
                     } else {
                         indldeDTO.setExpandedAccessType("");
@@ -854,10 +880,26 @@ public class TrialBatchDataValidator {
             }
             for (int i = 0; i < maxSize; i++) {
                 TrialFundingWebDTO fundingDTO = new TrialFundingWebDTO();
-                fundingDTO.setFundingMechanismCode(fundingMechanismCodeMap.get(i).trim());
-                fundingDTO.setNciDivisionProgramCode(grantNCIDivisionCodeMap.get(i).trim());
-                fundingDTO.setNihInstitutionCode(grantInstituteCodeMap.get(i).trim());
-                fundingDTO.setSerialNumber(grantSrNumberMap.get(i).trim());
+                if (PAUtil.isNotEmpty(fundingMechanismCodeMap.get(i))) {
+                    fundingDTO.setFundingMechanismCode(fundingMechanismCodeMap.get(i).trim());
+                } else {
+                    fundingDTO.setFundingMechanismCode("");
+                }
+                if (PAUtil.isNotEmpty(grantNCIDivisionCodeMap.get(i))) {
+                    fundingDTO.setNciDivisionProgramCode(grantNCIDivisionCodeMap.get(i).trim());
+                } else {
+                    fundingDTO.setNciDivisionProgramCode("");
+                }
+                if (PAUtil.isNotEmpty(grantInstituteCodeMap.get(i))) {
+                    fundingDTO.setNihInstitutionCode(grantInstituteCodeMap.get(i).trim());
+                } else {
+                    fundingDTO.setNihInstitutionCode("");
+                }
+                if (PAUtil.isNotEmpty(grantSrNumberMap.get(i))) {
+                    fundingDTO.setSerialNumber(grantSrNumberMap.get(i).trim());
+                } else {
+                    fundingDTO.setSerialNumber("");
+                }
                 grantList.add(fundingDTO);
             }
         } else {

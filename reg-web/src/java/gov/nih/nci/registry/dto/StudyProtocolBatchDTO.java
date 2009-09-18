@@ -144,7 +144,6 @@ public class StudyProtocolBatchDTO {
     private String section801Indicator;
     private String delayedPostingIndicator;
     private String dataMonitoringCommitteeAppointedIndicator;
-    private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     private static final int ORG_NAME_MAX_LENGTH = 160;
     private static final int PCTL = 200;
        
@@ -1331,8 +1330,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the title
      */
-    @NotEmpty(message = "Trial Title is required")  
-    @org.hibernate.validator.Length(message = "Trial Title must be 4000 characters max", max = TRIAL_TITLE_MAX_LENGTH)
     public String getTitle() {
         return title;
     }

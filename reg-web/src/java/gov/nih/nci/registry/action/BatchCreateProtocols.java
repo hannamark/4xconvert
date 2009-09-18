@@ -292,8 +292,11 @@ public class BatchCreateProtocols {
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = RegistryServiceLocator.getStudyResourcingService()
                 .getsummary4ReportedResource(studyProtocolIi); 
-            util.convertToSummary4StudyResourcingDTO(trialDTO, summary4studyResourcingDTO);
-            
+            if (summary4studyResourcingDTO != null) {
+                util.convertToSummary4StudyResourcingDTO(trialDTO, summary4studyResourcingDTO);
+            } else {
+                summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
+            }
             summary4studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolIi);
             Ii responsiblePartyContactIi = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {

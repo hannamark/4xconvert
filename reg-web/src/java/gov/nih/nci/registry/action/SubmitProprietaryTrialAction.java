@@ -15,10 +15,12 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -189,6 +191,11 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                     addFieldError("trialDTO.dateClosedforAccrual", getText("error.submit.invalidStatusDate"));
                 }
         }
+        if (PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())  
+            && PAUtil.isEmpty(trialDTO.getDateOpenedforAccrual())) {
+                addFieldError("trialDTO.dateOpenedforAccrual", 
+                        getText("error.proprietary.submit.dateOpenReq"));
+        }
         if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual())
                 && PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())) {
             Timestamp dateOpenedDateStamp = PAUtil.dateStringToTimestamp(trialDTO.getDateOpenedforAccrual());
@@ -327,8 +334,20 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             }
             St leadOrganizationTrialIdentifier = StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier());
             St nctIdentifierSiteIdentifier = StConverter.convertToSt(trialDTO.getNctIdentifier());
-            St localSiteIdentifier = StConverter.convertToSt(trialDTO.getLocalSiteIdentifier());
-            St siteProgramCodeText = StConverter.convertToSt(trialDTO.getSiteProgramCodeText());
+            StudySiteDTO siteDTO = new StudySiteDTO();
+            siteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getLocalSiteIdentifier()));
+            siteDTO.setProgramCodeText(StConverter.convertToSt(trialDTO.getSiteProgramCodeText()));
+            if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual()) 
+                    && PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())) {
+                siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(trialDTO.getDateOpenedforAccrual(),
+                        trialDTO.getDateClosedforAccrual()));
+            }
+            if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual()) 
+                    && PAUtil.isEmpty(trialDTO.getDateClosedforAccrual())) {
+                siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(trialDTO.getDateOpenedforAccrual(),
+                        null));
+            }
+            
             Cd summary4CategoryCode = CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode());
             PersonDTO siteInvestigatorDTO = new PersonDTO();
             siteInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi(trialDTO.getSitePiIdentifier()));
@@ -338,10 +357,11 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
+            
             Ii studyProtocolIi = RegistryServiceLocator.getTrialRegistrationService().
             createInterventionalProprietaryStudyProtocol(studyProtocolDTO, siteOverallStatusDTO, studyIndldeDTOs, 
                     studyResourcingDTOs, documentDTOs, leadOrganizationDTO, leadOrganizationTrialIdentifier, 
-                    siteInvestigatorDTO, studySiteDTO, localSiteIdentifier, siteProgramCodeText, 
+                    siteInvestigatorDTO, studySiteDTO, siteDTO, 
                     nctIdentifierSiteIdentifier, summary4organizationDTO, summary4CategoryCode);
         TrialValidator.removeSessionAttributes();
         ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
@@ -389,13 +409,13 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
          }
         return docDTOList;
     }
-    private InterventionalStudyProtocolDTO convertToInterventionalStudyProtocolDTO(BaseTrialDTO trailDto) {
+    private InterventionalStudyProtocolDTO convertToInterventionalStudyProtocolDTO(BaseTrialDTO trialDto) {
         InterventionalStudyProtocolDTO isoDto =  new InterventionalStudyProtocolDTO();
-        isoDto.setOfficialTitle(StConverter.convertToSt(trailDto.getOfficialTitle()));
-        isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trailDto.getPhaseCode())));
+        isoDto.setOfficialTitle(StConverter.convertToSt(trialDto.getOfficialTitle()));
+        isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDto.getPhaseCode())));
         isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(
-                PrimaryPurposeCode.getByCode(trailDto.getPrimaryPurposeCode())));
-        isoDto.setStudyProtocolType(StConverter.convertToSt(trailDto.getTrialType()));
+                PrimaryPurposeCode.getByCode(trialDto.getPrimaryPurposeCode())));
+        isoDto.setStudyProtocolType(StConverter.convertToSt(trialDto.getTrialType()));
         isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
         return isoDto;
     }

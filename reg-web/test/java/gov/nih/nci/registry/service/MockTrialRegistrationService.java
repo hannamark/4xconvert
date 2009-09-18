@@ -122,8 +122,8 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO,
             St leadOrganizationTrialIdentifier, PersonDTO siteInvestigatorDTO,
-            OrganizationDTO studySiteDTO, St localSiteIdentifier,
-            St siteProgramCodeText, St nctIdentifierSiteIdentifier,
+            OrganizationDTO studySiteDTO, StudySiteDTO siteDTO,
+            St nctIdentifierSiteIdentifier,
             OrganizationDTO summary4organizationDTO, Cd summary4CategoryCode)
             throws PAException {
         // TODO Auto-generated method stub

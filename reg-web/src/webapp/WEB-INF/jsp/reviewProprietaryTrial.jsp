@@ -240,7 +240,7 @@ var winprint=window.open("","",sOption);
           </td>
        </tr> 
        </c:if>
-       <c:if test="${fn:trim(trialDTO.dateOpenedforAccrual) != ''}">
+       <c:if test="${fn:trim(trialDTO.dateClosedforAccrual) != ''}">
        <tr>     
         <td scope="row" class="label">
             <label for="Primary Completion Date">
