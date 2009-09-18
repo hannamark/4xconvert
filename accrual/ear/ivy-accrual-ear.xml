@@ -11,11 +11,11 @@
     <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"           force="true" conf="runtime->master"/>
     <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.2"           force="true" conf="runtime->master"/>
     <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.0-SNAPSHOT"    force="true" conf="runtime->master"/>
-    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone2"  force="true" conf="runtime->master"/>
+    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone3"  force="true" conf="runtime->master"/>
 
     <!-- container -->
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="container->master"/>
-    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.0"           conf="container->default"/>
+    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.3"           conf="container->default"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="container->master"/>
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="container->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="container->master"/>

@@ -26,7 +26,7 @@
         <java>pa-ejb-client-3.0-SNAPSHOT.jar</java>
     </module>
     <module>
-        <java>po-services-client-3.0-milestone2.jar</java>
+        <java>po-services-client-3.0-milestone3.jar</java>
     </module>
     <module>
         <java>coppa-commons-1.2.2.jar</java>

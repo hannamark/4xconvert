@@ -111,6 +111,7 @@ import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
 import gov.nih.nci.pa.domain.StudyDisease;
+import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
@@ -214,6 +215,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(RegistryUser.class).
         addAnnotatedClass(StudyRelationship.class).
         addAnnotatedClass(StudySiteAccrualAccess.class).
+        addAnnotatedClass(StudyInbox.class).
 
 
         // hibernate properties

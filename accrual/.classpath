@@ -15,7 +15,7 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/test/junit-4.4.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/test/mockrunner-0.4.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/runtime/ognl-2.6.11.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/po-services-client-3.0-milestone2.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/po-services-client-3.0-milestone3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/pa-ejb-client-3.0-SNAPSHOT.jar" sourcepath="/CODE_PA/pa-ejb/src/java"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate-annotations-3.2.0.jar"/>
