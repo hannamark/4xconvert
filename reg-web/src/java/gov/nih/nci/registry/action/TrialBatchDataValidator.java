@@ -186,6 +186,11 @@ public class TrialBatchDataValidator {
             if (!containsReqGrantInfo(webDto)) {
                 fieldErr.append("All Grant values are required.\n");
             } 
+            //validate List of values
+            if (null == NciDivisionProgramCode.getByCode(webDto.getNciDivisionProgramCode())) {
+                fieldErr.append("Please enter valid value for NCI Division Code.\n");
+            }
+
         }
         return fieldErr;
     }
