@@ -34,20 +34,46 @@
          headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.createdDate" property="createdDate" sortable="true" 
          headerClass="sortable" headerScope="col"/>
+         <display:column titleKey="accrual.list.submissions.createUser" property="createUser" sortable="true" 
+         headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.submittedDate" property="submittedDate" sortable="true"
+         headerClass="sortable" headerScope="col"/>
+         <display:column titleKey="accrual.list.submissions.submitUser" property="submitUser" sortable="true" 
          headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.status" property="status" sortable="true" 
          headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.submit" headerClass="centered" class="action">
                 
-                  <s:a href="#" onclick="accessAdd(%{#attr.row.identifier.extension})">
+                  
+                  <s:if test="%{#attr.row.statusCode.code=='Pending'}">
+                      <s:a href="#" onclick="accessAdd(%{#attr.row.identifier.extension})">
                     <img src="<%=request.getContextPath()%>/images/ico_upload.gif" alt="Submit" width="16" height="16" />
-                </s:a>
+                    </s:a>
+                  </s:if>
+                 
               
        </display:column>
    </display:table>
 </s:form>
-   <div class="actionsrow">
+
+<%
+String overAllStat = "";
+%>
+   <s:iterator id="sub" value="listOfSubmissions" >  
+     <s:set name="stat" value="%{statusCode.code}"/>
+   
+    <s:if test="%{#stat=='Pending'}">
+      <%
+       overAllStat = "Pending";
+      %>
+    </s:if>
+   
+   </s:iterator>
+   
+   <%
+   if(!overAllStat.equals("Pending")){
+   %>
+     <div class="actionsrow">
        <del class="btnwrapper">
           <ul class="btnrow">
             <li>
@@ -58,4 +84,8 @@
           </ul>
        </del>
     </div>
+      
+     <%} %>
+   
+    
 </body>

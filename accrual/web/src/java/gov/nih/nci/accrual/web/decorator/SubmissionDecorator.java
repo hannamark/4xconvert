@@ -145,4 +145,20 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
         Cd status = ((SubmissionDto) this.getCurrentRowObject()).getStatusCode();
         return PAUtil.isCdNull(status) ? "" : CdConverter.convertCdToString(status);
     }
+    
+    /**
+     * @return createUser as a string
+     */
+    public String getCreateUser() {
+         St createUser = ((SubmissionDto) this.getCurrentRowObject()).getCreateUser();
+         return createUser == null ?  "" : StConverter.convertToString(createUser);
+    }
+    
+     /**
+     * @return submitUser as a string
+    */
+    public String getSubmitUser() {
+        St submitUser = ((SubmissionDto) this.getCurrentRowObject()).getSubmitUser();
+        return submitUser == null ?  "" : StConverter.convertToString(submitUser);
+    }
 }

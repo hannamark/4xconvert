@@ -112,6 +112,8 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
         dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(),
                 bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setCreateUser(StConverter.convertToSt(bo.getCreateUser()));
+        dto.setSubmitUser(StConverter.convertToSt(bo.getSubmitUser()));
         return dto;
     }
 
@@ -133,6 +135,8 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
             bo.setStatusDateRangeLow(IvlConverter.convertTs().convertLow(dto.getStatusDateRange()));
             bo.setStatusDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getStatusDateRange()));
         }
+        bo.setCreateUser(StConverter.convertToString(dto.getCreateUser()));
+        bo.setSubmitUser(StConverter.convertToString(dto.getSubmitUser()));
         return bo;
     }
 }

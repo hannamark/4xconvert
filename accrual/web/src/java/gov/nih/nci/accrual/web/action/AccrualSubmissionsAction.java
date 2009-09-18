@@ -88,6 +88,7 @@ import gov.nih.nci.pa.enums.PendingCompletedCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
@@ -155,6 +156,8 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             Ivl<Ts> ivl = dto.getStatusDateRange();
             ivl.setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
             dto.setStatusDateRange(ivl);
+            dto.setSubmitUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
+                getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             submissionSvc.update(dto);
             listOfSubmissions = new ArrayList<SubmissionDto>();
             listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
@@ -176,6 +179,8 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             submission.setStatusCode(CdConverter.convertToCd(PendingCompletedCode.PENDING));
             submission.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
                     new Timestamp(new Date().getTime()), null));
+            submission.setCreateUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
+              getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             listOfSubmissions.add(submissionSvc.create(submission));
             ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
         } catch (Exception e) {

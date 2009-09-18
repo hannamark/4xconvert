@@ -30,17 +30,25 @@ function handleAction(){
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <h1><fmt:message key="accrual.new.accrual.submission.page.header"/></h1>
   
-   <s:form name="addNew">
+   <s:form name="addNew" validate="true">
+   <s:actionerror/> 
+   <s:fielderror />
     <table class="form">
     <tr>     
         <td scope="row" class="label">
           <label for="Submission Title">
-              <fmt:message key="accrual.new.accrual.submission.submissionTitle"/>                
+              <fmt:message key="accrual.new.accrual.submission.submissionTitle"/> 
+              <span class="required">*</span>               
           </label>
          </td>
          <td class="value">
            <s:textfield id ="label" name="submission.label.value" maxlength="400" size="50" 
             cssStyle="width:98%;max-width:250px" />
+            <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>submission.label.value</s:param>
+                   </s:fielderror>                            
+                 </span>
            </td>
       </tr> 
     
@@ -48,7 +56,8 @@ function handleAction(){
        <tr>     
         <td scope="row" class="label">
           <label for="Submission Cut off Date">
-              <fmt:message key="accrual.new.accrual.submission.submissionCutoffDate"/>                
+              <fmt:message key="accrual.new.accrual.submission.submissionCutoffDate"/>   
+              <span class="required">*</span>             
           </label>
          </td>
                    
@@ -67,12 +76,18 @@ function handleAction(){
        <tr>     
         <td scope="row" class="label">
           <label for="Description">
-              <fmt:message key="accrual.new.accrual.submission.description"/>                
+              <fmt:message key="accrual.new.accrual.submission.description"/> 
+              <span class="required">*</span>               
           </label>
          </td>
          <td class="value">
            <s:textfield id ="description" name="submission.description.value" maxlength="400" size="50" 
             cssStyle="width:98%;max-width:250px" />
+            <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>submission.description.value</s:param>
+                   </s:fielderror>                            
+                 </span>
            </td>
       </tr> 
     

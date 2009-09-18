@@ -98,7 +98,34 @@ public class SubmissionDto extends AbstractStudyDto {
     private St label;
     private Cd statusCode;
     private Ivl<Ts> statusDateRange;
+    private St createUser;
+    private St submitUser;
 
+
+    /**
+     * @return the createUser
+     */
+     public St getCreateUser() {
+       return createUser;
+      }
+    /**
+     * @param createUser the createUser to set
+     */
+     public void setCreateUser(St createUser) {
+        this.createUser = createUser;
+     }
+    /**
+      * @return the submitUser
+      */
+     public St getSubmitUser() {
+        return submitUser;
+     }
+    /**
+     * @param submitUser the submitUser to set
+     */
+    public void setSubmitUser(St submitUser) {
+          this.submitUser = submitUser;
+     }
     /**
      * @return the cutOffDate
      */
