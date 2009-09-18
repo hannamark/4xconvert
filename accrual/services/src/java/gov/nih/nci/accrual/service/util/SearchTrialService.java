@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 
@@ -102,6 +103,13 @@ public interface SearchTrialService {
      */
     List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, St authorizedUser)
             throws RemoteException;
+    /**
+     * @param studyProtocolIi iso index of the study
+     * @param authorizedUser user
+     * @return if user is authorized to submit of given study
+     * @throws RemoteException exception
+     */
+    Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException;
     /**
      * @param studyProtocolIi protocol id
      * @return ProtocolQueryResultDto

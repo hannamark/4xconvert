@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Person;
@@ -91,6 +92,7 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -156,6 +158,14 @@ public class SearchTrialBean implements SearchTrialService {
             }
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException {
+        return BlConverter.convertToBl(getAuthorizedTrials(authorizedUser).
+                contains(IiConverter.convertToLong(studyProtocolIi)));
     }
 
     /**

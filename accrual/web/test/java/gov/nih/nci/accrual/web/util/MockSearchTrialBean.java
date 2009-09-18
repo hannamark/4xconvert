@@ -81,8 +81,10 @@ package gov.nih.nci.accrual.web.util;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -159,5 +161,12 @@ public class MockSearchTrialBean implements SearchTrialService {
             result = false;
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException {
+        return BlConverter.convertToBl(true);
     }
 }

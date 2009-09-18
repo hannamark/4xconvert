@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<c:set var="topic" scope="request" value="disclaimer"/> 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 

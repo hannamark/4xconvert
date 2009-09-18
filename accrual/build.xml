@@ -152,7 +152,7 @@
     <target name="accrual-web-war" depends="accrual-services-jar">
         <ant inheritAll="false" inheritRefs="false" antfile="${web.build.file}"
             dir="${web.dir}" >
-            <property name="application.url" location="${application.url}" />
+            <property name="application.url" value="${application.url}" />
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
 
             <target name="${web.build.target}${notask}"/>

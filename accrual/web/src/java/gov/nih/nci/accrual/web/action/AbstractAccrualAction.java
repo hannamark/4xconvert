@@ -82,7 +82,12 @@ import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
+import java.security.GeneralSecurityException;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -96,9 +101,10 @@ import com.opensymphony.xwork2.Preparable;
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
 
-    Ii spIi;
-    SearchTrialService searchTrialSvc;
-    SubmissionService submissionSvc;
+    /** SearchTrialService. */
+    protected SearchTrialService searchTrialSvc;
+    /** SubmissionService. */
+    protected SubmissionService submissionSvc;
 
     /**
      * {@inheritDoc}
@@ -106,7 +112,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     public void prepare() {
         searchTrialSvc = AccrualServiceLocator.getInstance().getSearchTrialService();
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
-        spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_SPII);
     }
     /**
      * Default implementation throws derived exception.
@@ -133,11 +138,33 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected String getUserRole() {
         return (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_ROLE);
     }
-
     /**
      * @return user login name as iso string
      */
     protected St getAuthorizedUser() {
         return StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser());
+    }
+    /**
+     * @return the spIi
+     */
+    public Ii getSpIi() {
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_SPII);
+    }
+    /**
+     * @param spIi the spIi to set
+     * @param spIi
+     * @throws GeneralSecurityException authorization exception
+     * @throws RemoteException exception
+     */
+    public void setSpIi(Ii spIi) throws GeneralSecurityException, RemoteException {
+        if (PAUtil.isIiNull(spIi)) {
+            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, null);
+        } else {
+            if (BlConverter.covertToBool(searchTrialSvc.isAuthorized(spIi, getAuthorizedUser()))) {
+                ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, spIi);
+            } else {
+                throw new GeneralSecurityException("Authorization exception in AbstractAccrualAction.setSpIi().");
+            }
+        }
     }
 }

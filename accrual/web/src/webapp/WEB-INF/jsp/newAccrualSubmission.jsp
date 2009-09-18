@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:set var="topic" scope="request" value="new_accrual_submission"/> 
+<c:set var="topic" scope="request" value="list_accrual_submission"/> 
 <head>
     <title><fmt:message key="accrual.new.accrual.submission.page.title"/></title>   
     <s:head/>
@@ -31,33 +31,26 @@ function handleAction(){
 <h1><fmt:message key="accrual.new.accrual.submission.page.header"/></h1>
   
    <s:form name="addNew" validate="true">
-   <s:actionerror/> 
-   <s:fielderror />
     <table class="form">
-    <tr>     
+    <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
+      <tr>     
         <td scope="row" class="label">
           <label for="Submission Title">
               <fmt:message key="accrual.new.accrual.submission.submissionTitle"/> 
-              <span class="required">*</span>               
+              <span class="required">*</span>
           </label>
-         </td>
-         <td class="value">
-           <s:textfield id ="label" name="submission.label.value" maxlength="400" size="50" 
-            cssStyle="width:98%;max-width:250px" />
-            <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>submission.label.value</s:param>
-                   </s:fielderror>                            
-                 </span>
-           </td>
+        </td>
+        <td class="value">
+            <s:textfield id ="label" name="submission.label.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px" />
+        </td>
       </tr> 
     
       
        <tr>     
         <td scope="row" class="label">
           <label for="Submission Cut off Date">
-              <fmt:message key="accrual.new.accrual.submission.submissionCutoffDate"/>   
-              <span class="required">*</span>             
+              <fmt:message key="accrual.new.accrual.submission.submissionCutoffDate"/>
+              <span class="required">*</span>
           </label>
          </td>
                    
@@ -65,11 +58,6 @@ function handleAction(){
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                            <s:param>submission.cutOffDate.value</s:param>
-                        </s:fielderror>                            
-                    </span>
                 </td>
                 
       </tr> 
@@ -77,31 +65,25 @@ function handleAction(){
         <td scope="row" class="label">
           <label for="Description">
               <fmt:message key="accrual.new.accrual.submission.description"/> 
-              <span class="required">*</span>               
+              <span class="required">*</span>
           </label>
          </td>
          <td class="value">
            <s:textfield id ="description" name="submission.description.value" maxlength="400" size="50" 
             cssStyle="width:98%;max-width:250px" />
-            <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>submission.description.value</s:param>
-                   </s:fielderror>                            
-                 </span>
-           </td>
       </tr> 
     
     </table>
     
      <div class="actionsrow">
             <del class="btnwrapper">
-               <ul class="btnrow">         
-                <li>           
+               <ul class="btnrow">
+                <li>
                 <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
                 <s:a href="#" cssClass="btn" onclick="cancel()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-                </li>                
+                </li>
                </ul>
             </del>
          </div>
-         </s:form>
+    </s:form>
 </body>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
-<c:set var="topic" scope="request" value="run_reports"/> 
+<c:set var="topic" scope="request" value="home"/> 
 <head>
     <title><fmt:message key="accrual.home.title"/></title>
     <s:head />
@@ -27,7 +27,7 @@ This Site enables you to report accrual information for a trial with NCI's Clini
         
 <ul class="padme10">
                 
-<li><a href="/accrual/public/welcome.action">Log In</a> to your account and</li> 
+<li><a href="/accrual/protected/welcome.action">Log In</a> to your account and</li> 
     <menu> 
          <li>Report Accruals on Multiple Trials</li>
          <li>Generate Basic Results report for <a href="http://www.clinicaltrials.gov/">ClinicalTrials.gov</a></li>

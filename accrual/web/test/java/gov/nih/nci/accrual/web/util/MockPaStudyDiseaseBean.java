@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hugh Reinhart
@@ -125,8 +126,9 @@ public class MockPaStudyDiseaseBean implements StudyDiseaseServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public void copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
+        return null;
     }
 
     /**

@@ -1,12 +1,12 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <page:applyDecorator name="main">
+<c:set var="topic" scope="request" value="login"/> 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 <c:url value="@application.url@/registerUser.action" var="createAccountUrl"/>
 <c:url value="@application.url@/registerUser.action?resetPassword=true" var="resetPasswordUrl"/>
 <body><h1>Login</h1>
-<c:set var="topic" scope="request" value="login"/> 
 <div class="box"> 
     <p style="margin:0; padding:0">Please log in to manage Accrual Submissions. 
              If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>. 

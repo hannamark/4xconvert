@@ -4,6 +4,7 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<c:set var="topic" scope="request" value=""/> 
 <head>
     <title><fmt:message key="contact.page.title"/></title>
     <s:head />
@@ -13,7 +14,6 @@
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
  <h1><fmt:message key="contact.page.header" /></h1>
- <c:set var="topic" scope="request" value=""/> 
     <!--Box-->
 
     <div class="box" id="filters">

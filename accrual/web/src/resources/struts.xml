@@ -7,8 +7,6 @@
 <struts>
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
-        
-        
         <interceptors>
             <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
             <interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
@@ -35,10 +33,9 @@
                 </interceptor-ref>
               </interceptor-stack>
         </interceptors>
-        
+
         <global-results>
-            <result name="applicationError">error.jsp</result>
-             <result name="ERROR">error.jsp</result>
+            <result name="error">error.jsp</result>
             <result name="logout" type="redirectAction">
                 <param name="namespace">/</param>
                 <param name="actionName">logout</param>
@@ -57,26 +54,16 @@
          <action name="contact">
            <result>/WEB-INF/jsp/accrualContact.jsp</result>
         </action> 
-        
     </package>
-    <package name="public" namespace="/public" extends="default">
+
+    <package name="protected" namespace="/protected" extends="default">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
-            <result name="show_Disclaimer_Page" type="redirectAction">
-                <param name="namespace">../protected</param>
-                <param name="actionName">disClaimerAction</param>
-            </result>
-        </action>
-    </package>
-        
-    <package name="protected" namespace="/protected" extends="public">
-         
-        <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
-           <result>viewTrials.action</result>
-           <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
+            <result name="show_Disclaimer_Page">disClaimerAction.action</result>
         </action>
 
-        <action name="viewProtocol" class="gov.nih.nci.accrual.web.action.ViewProtocolAction">
-            <result>/WEB-INF/jsp/listProtocols.jsp</result>
+        <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
+            <result>viewTrials.action</result>
+            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
         </action>
 
         <action name="viewTrials*" class="gov.nih.nci.accrual.web.action.ViewTrialsAction">
@@ -91,6 +78,5 @@
             <result>/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
             <result name="showNewSubmission">/WEB-INF/jsp/newAccrualSubmission.jsp</result>
         </action>
-
     </package>
 </struts>

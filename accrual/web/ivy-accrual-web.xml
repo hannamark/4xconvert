@@ -34,7 +34,7 @@
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="runtime->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="runtime->master"/>
     <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.2.3"           conf="runtime->default"/>
-    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.0-SNAPSHOT"    conf="compile->master"/>
+    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.0-milestone4"  conf="compile->master"/>
     <dependency org="objectweb"              name="asm"                     rev="3.1"             conf="runtime->master"/>
     <dependency org="objectweb"              name="asm-attrs"               rev="1.5.3"           conf="runtime->master"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.6.11"          conf="runtime->default"/>

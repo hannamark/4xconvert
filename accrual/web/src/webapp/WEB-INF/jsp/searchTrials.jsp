@@ -23,8 +23,6 @@ function handleAction(){
 
 </SCRIPT>
 </head>
-
-<c:set var="topic" scope="request" value="search_trials"/> 
 <body>
 
 <h1><fmt:message key="accrual.search.trials.page.header"/></h1>

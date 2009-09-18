@@ -83,6 +83,9 @@ import gov.nih.nci.accrual.convert.SubmissionConverter;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.pa.domain.Submission;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -96,4 +99,22 @@ import javax.interceptor.Interceptors;
 public class SubmissionBean
         extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
         implements SubmissionService {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubmissionDto create(SubmissionDto dto) throws RemoteException {
+        if (PAUtil.isStNull(dto.getLabel())) {
+            throw new RemoteException("Submission title is required.");
+        }
+        if (PAUtil.isTsNull(dto.getCutOffDate())) {
+            throw new RemoteException("Cut off date is required.");
+        }
+        if (PAUtil.isStNull(dto.getDescription())) {
+            throw new RemoteException("Description is required.");
+        }
+        return super.create(dto);
+    }
+
 }
