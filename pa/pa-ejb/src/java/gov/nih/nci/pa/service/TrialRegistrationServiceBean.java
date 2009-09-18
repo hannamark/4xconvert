@@ -1347,6 +1347,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       studyInboxDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
       studyInboxDTO.setInboxDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
       boolean docUpdated = false;
+      boolean docParticipatingUpdated = false;
       boolean trialUpdateForReview = false;
       StringBuffer stringBuffer = new StringBuffer();
       DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
@@ -1356,7 +1357,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           if (DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode().equals(
                   CdConverter.convertCdToString(doc.getTypeCode()))) {
                docUpdated = true;
-               break;
+          }
+          if (DocumentTypeCode.PARTICIPATING_SITES.getCode().equals(
+                  CdConverter.convertCdToString(doc.getTypeCode()))) {
+              docParticipatingUpdated = true;
           }
         }
        }
@@ -1364,6 +1368,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           stringBuffer.append("IRB Document was updated\n");
           studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
           trialUpdateForReview = true;
+       }
+       if (docParticipatingUpdated) {
+           stringBuffer.append("Participating Document was updated\n");
+           studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
+           trialUpdateForReview = true;
        }
       
        String dwfs = isoDocWrkStatus.getStatusCode().getCode();
