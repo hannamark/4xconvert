@@ -105,6 +105,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
@@ -466,5 +467,13 @@ public final class PaRegistry {
     public static StudyInboxServiceLocal getStudyInboxService() {
         return getInstance().getServiceLocator().getStudyInboxService();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public static TrialRegistrationServiceRemote getTrialRegistrationService() {
+        return getInstance().getServiceLocator().getTrialRegistrationService();
+    }
+    
 }
 

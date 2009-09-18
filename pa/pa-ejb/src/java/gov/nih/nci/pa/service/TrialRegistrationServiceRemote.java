@@ -287,5 +287,14 @@ public interface TrialRegistrationServiceRemote {
            OrganizationDTO summary4organizationDTO ,
            Cd summary4CategoryCode)
    throws PAException;
+    
+
+    /**
+     * Reject a protocol and rollback all the changes.
+     * @param studyProtocolIi study protocol identifier 
+     * @throws PAException on error
+     */
+    void reject(Ii studyProtocolIi) throws PAException;   
+    
 
 }

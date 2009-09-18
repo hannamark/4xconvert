@@ -105,6 +105,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
@@ -399,7 +400,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return OrganizationCorrelationServiceRemote
      */
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
-        return (OrganizationCorrelationServiceRemote) JNDIUtil.lookup("/pa/OrganizationCorrelationServiceBean/Remote");
+        return (OrganizationCorrelationServiceRemote) JNDIUtil.lookup("/pa/OrganizationCorrelationServiceBean/remote");
     }
 
     /**
@@ -408,7 +409,13 @@ public class JndiServiceLocator implements ServiceLocator {
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
         return (StudySiteAccrualAccessServiceLocal) JNDIUtil.lookup("/pa/StudySiteAccrualAccessServiceBean/local");
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public TrialRegistrationServiceRemote getTrialRegistrationService() {
+        return (TrialRegistrationServiceRemote) JNDIUtil.lookup("/pa/TrialRegistrationServiceBean/remote");
+    }    
     /**
      * {@inheritDoc}
      */

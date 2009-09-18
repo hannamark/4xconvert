@@ -59,7 +59,7 @@ This is the definition of a virtual module called bda-download that has a depend
 
     <!-- runtime -->
     <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"       	  conf="runtime->master"/>
-    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone2"  conf="runtime->master"/>
+    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone3"  conf="runtime->master"/>
     <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.2"       	  conf="runtime->master"/>
     <dependency org="opensymphony"           name="quartz"                   rev="1.6.5"           conf="runtime->master"/>
     <!-- container -->

@@ -281,7 +281,8 @@ public class TrialValidationAction extends ActionSupport {
             PoPaServiceBeanLookup.getMailManagerService()
             .sendAmendRejectEmail(studyProtocolIi, gtdDTO.getCommentText());
             //
-            PaRegistry.getStudyProtocolService().deleteStudyProtocol(studyProtocolIi);
+            //PaRegistry.getStudyProtocolService().deleteStudyProtocol(studyProtocolIi);
+            PaRegistry.getTrialRegistrationService().reject(studyProtocolIi);
             ServletActionContext.getRequest().getSession().removeAttribute(submissionNo);
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PROTOCOL_II);

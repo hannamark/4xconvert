@@ -105,6 +105,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
@@ -343,5 +344,11 @@ public interface ServiceLocator {
      * @return StudyInboxService
      */
     StudyInboxServiceLocal getStudyInboxService();
+
+    /**
+     * @return TrialRegistrationServiceRemote
+     */
+    TrialRegistrationServiceRemote getTrialRegistrationService();
+
 }
 

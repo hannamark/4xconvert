@@ -151,6 +151,15 @@ public class PAServiceUtils {
     }
     
     /**
+     * Executes an list of sql.
+     * @param sqls list of sqls
+     */
+    public void executeSql(List<String> sqls) {
+        for (String sql : sqls) {
+            executeSql(sql);
+        }
+    }    
+    /**
      * does a deep copy of protocol to a new protocol.
      * @param fromStudyProtocolIi study protocol ii
      * @throws PAException  on error 
@@ -573,11 +582,8 @@ public class PAServiceUtils {
             return null;
         }
         StudySiteDTO spDto =  new StudySiteDTO();
-        OrganizationCorrelationServiceBean ocsr = new OrganizationCorrelationServiceBean();
-        String poOrgId = ocsr.getCtGovPOIdentifier();
-        long roId = ocsr.createResearchOrganizationCorrelations(poOrgId);
-        //String poOrgId = PaRegistry.getOrganizationCorrelationService().getCtGovPOIdentifier();
-        //long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(poOrgId);
+        String poOrgId = PaRegistry.getOrganizationCorrelationService().getCtGovPOIdentifier();
+        long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(poOrgId);
         spDto.setStudyProtocolIdentifier(studyProtocolIi);
         spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
         spDto.setLocalStudyProtocolIdentifier(nctIdentifierDTO.getLocalStudyProtocolIdentifier());

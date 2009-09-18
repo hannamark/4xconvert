@@ -105,7 +105,7 @@ public enum StudySiteContactRoleCode implements CodedEnum<String> {
     /**Submitter. */
     SUBMITTER("Submitter"),
     /**Responsible party - Sponsor contact. */
-    RESPONSIBLE_PARTY_SPONSOR_CONTACT("Responsible party - Sponsor contact");    
+    RESPONSIBLE_PARTY_SPONSOR_CONTACT("Responsible Party - Sponsor Contact");    
     private String code;
     /**
      *

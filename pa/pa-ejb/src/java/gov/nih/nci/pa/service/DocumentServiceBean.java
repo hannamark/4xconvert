@@ -375,6 +375,7 @@ public class DocumentServiceBean extends
         }
         return map;
     }    
+
     private void updateObjectToInActive(DocumentDTO docDTO) throws PAException {
         Session session = null;
         Document doc = null;

@@ -145,6 +145,11 @@ public class StudyRelationshipServiceBean extends
                   .add(Expression.eq("sp.id", IiConverter.convertToLong(dto.getSourceStudyProtocolIdentifier())));
 
            }
+           if (!PAUtil.isIiNull(dto.getTargetStudyProtocolIdentifier())) {
+               criteria.createAlias("targetStudyProtocol", "sp2")
+                   .add(Expression.eq("sp2.id", IiConverter.convertToLong(dto.getTargetStudyProtocolIdentifier())));
+
+            }
            int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
            criteria.setMaxResults(maxLimit);
            criteria.setFirstResult(pagingParams.getOffset());

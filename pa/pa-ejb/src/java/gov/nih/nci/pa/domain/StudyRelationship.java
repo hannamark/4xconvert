@@ -115,10 +115,10 @@ public class StudyRelationship extends AbstractEntity {
     /** The sequence number. */
     private Integer sequenceNumber;
     
-    /** The source study protocol id. (toStudyProtocolIdentifier studyProtocolIdentifier*/
+    /** The source study protocol id. (toStudyProtocolIdentifier studyProtocolIdentifier (new)*/
     private StudyProtocol sourceStudyProtocol;
     
-    /** The target study protocol id. parent identifier from*/
+    /** The target study protocol id. parent identifier from (old)*/
     private StudyProtocol targetStudyProtocol;
     
         

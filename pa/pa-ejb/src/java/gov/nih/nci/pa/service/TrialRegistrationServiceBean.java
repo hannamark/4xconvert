@@ -82,14 +82,18 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -225,6 +229,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     private static final String CREATE = "Create";
     private static final String AMENDMENT = "Amendment";
     private static final String UPDAT = "Update";
+    private static final String REJECTION = "Reject";
     private static PAServiceUtils paServiceUtils = new PAServiceUtils();
     
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifer is null";
@@ -817,7 +822,15 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     private void validate(StudyProtocolDTO studyProtocolDTO ,
             StudyOverallStatusDTO overallStatusDTO , String operation) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
+        if (REJECTION.equalsIgnoreCase(operation)) {
+            DocumentWorkflowStatusDTO dws = docWrkFlowStatusService.getCurrentByStudyProtocol(
+                    studyProtocolDTO.getIdentifier());
+            if (!DocumentWorkflowStatusCode.SUBMITTED.getCode().equals(dws.getStatusCode().getCode())) {
+                errorMsg.append("Protocol can be rejected only when Document Workflow status is REJECTED");
+            }
+        } else {
+            studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
+        }
         if (AMENDMENT.equalsIgnoreCase(operation) || UPDAT.equalsIgnoreCase(operation)) {
             DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
                     studyProtocolDTO.getIdentifier());
@@ -1152,6 +1165,131 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         return studyProtocolIi;
     }
     
+    /**
+     * Reject a protocol and rollback all the changes.
+     * @param studyProtocolIi study protocol identifier 
+     * @throws PAException on error
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void reject(Ii studyProtocolIi) throws PAException {
+        try {
+            StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
+            validate(studyProtocolDto, null , REJECTION);
+            Ii targetSpIi = null;
+            Ii sourceSpIi = null;
+            StudyRelationshipDTO srDto = new StudyRelationshipDTO();
+            srDto.setTargetStudyProtocolIdentifier(studyProtocolIi);
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+            List<StudyRelationshipDTO> dtos = null;
+            try {
+                dtos = studyRelationshipService.search(srDto, limit);
+            } catch (TooManyResultsException e) {
+                throw new PAException(e);
+            }
+    
+            for (StudyRelationshipDTO dto : dtos) {
+                targetSpIi = dto.getTargetStudyProtocolIdentifier(); // target - original - 30599
+                sourceSpIi = dto.getSourceStudyProtocolIdentifier(); // newly created source - 30605 new 
+                break;
+            }
+            if (targetSpIi == null) {
+                throw new PAException("Study Relationshit not found for the Amended Protocol");
+               
+            }
+            StudyProtocolDTO sourceSpDto = studyProtocolService.getStudyProtocol(sourceSpIi);
+            // overwrite with the target
+            sourceSpDto.setIdentifier(targetSpIi);
+            sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+            studyProtocolService.updateStudyProtocol(sourceSpDto);
+            
+            Ii sourceIi = null;
+            List<StudyContactDTO> studyContactDtos = 
+                paServiceUtils.getStudyContact(sourceSpIi, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
+            StudyContactDTO scSourceDTO = null;
+            if (PAUtil.getFirstObj(studyContactDtos) != null) {
+                scSourceDTO = PAUtil.getFirstObj(studyContactDtos);
+            } else {
+                throw new PAException("Source Study Principal Investigator is not available");
+            }        
+            sourceIi = scSourceDTO.getIdentifier();
+            studyContactDtos = 
+                paServiceUtils.getStudyContact(targetSpIi, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
+            StudyContactDTO scTargetDTO = null;
+            if (PAUtil.getFirstObj(studyContactDtos) != null) {
+                scTargetDTO = PAUtil.getFirstObj(studyContactDtos);
+            } else {
+                throw new PAException("Target Study Principal Investigator is not available");
+            }
+            
+            // replace target with source
+            scSourceDTO.setIdentifier(scTargetDTO.getIdentifier());
+            scSourceDTO.setStudyProtocolIdentifier(targetSpIi);
+            studyContactService.delete(sourceIi);
+            studyContactService.update(scSourceDTO);
+    
+            List<StudySiteDTO> studySiteDtos = 
+                paServiceUtils.getStudySite(sourceSpIi, StudySiteFunctionalCode.LEAD_ORGANIZATION, true);
+            StudySiteDTO ssSourceDTO = null;
+            if (PAUtil.getFirstObj(studySiteDtos) != null) {
+                ssSourceDTO = PAUtil.getFirstObj(studySiteDtos);
+            } else {
+                throw new PAException("Source Lead Organization is not available");
+            }
+            sourceIi = ssSourceDTO.getIdentifier();
+            studySiteDtos = paServiceUtils.getStudySite(targetSpIi, StudySiteFunctionalCode.LEAD_ORGANIZATION, true);
+            StudySiteDTO ssTargetDTO = null;
+            if (PAUtil.getFirstObj(studySiteDtos) != null) {
+                ssTargetDTO = PAUtil.getFirstObj(studySiteDtos);
+            } else {
+                throw new PAException("Target Lead Organization is not available");
+            }
+            ssSourceDTO.setIdentifier(ssTargetDTO.getIdentifier());
+            ssSourceDTO.setStudyProtocolIdentifier(targetSpIi);
+            studySiteService.delete(sourceIi);
+            studySiteService.update(ssSourceDTO);
+            
+            paServiceUtils.executeSql(deleteAndReplace(sourceSpIi , targetSpIi));
+        } catch (Exception e) {
+            ejbContext.setRollbackOnly();
+            throw new PAException(e);
+        }
+        
+    }
+    
+    private List<String> deleteAndReplace(Ii sourceIi, Ii targetIi) {
+        String sqlUpd = targetIi.getExtension() + " WHERE STUDY_PROTOCOL_IDENTIFIER = " + sourceIi.getExtension();
+        List<String> sqls = new ArrayList<String>();
+        String targetId = targetIi.getExtension();
+        sqls.add("Delete from STUDY_MILESTONE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
+        sqls.add("UPDATE STUDY_MILESTONE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
+        sqls.add("Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
+        sqls.add("UPDATE DOCUMENT_WORKFLOW_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sourceIi.getExtension());
+        sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
+        sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId 
+                + " and TYPE_CODE = '" + DocumentTypeCode.TSR.getName() + "'");
+        sqls.add("UPDATE DOCUMENT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
+        sqls.add("UPDATE STUDY_ONHOLD SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
+        sqls.add("Delete from STUDY_OVERALL_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
+        sqls.add("UPDATE STUDY_OVERALL_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
+        sqls.add("Delete from STUDY_RECRUITMENT_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
+        sqls.add("UPDATE STUDY_RECRUITMENT_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
+
+        sqls.add("DELETE FROM STUDY_CONTACT WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId 
+                + " AND ROLE_CODE IN ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','CENTRAL_CONTACT')");
+        sqls.add("UPDATE STUDY_CONTACT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd 
+                + " AND ROLE_CODE IN ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','CENTRAL_CONTACT')");
+        sqls.add("DELETE FROM STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND FUNCTIONAL_CODE IN " 
+            + "('RESPONSIBLE_PARTY_SPONSOR')");
+        sqls.add("UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND FUNCTIONAL_CODE IN " 
+                + "('RESPONSIBLE_PARTY_SPONSOR')");
+        sqls.add("DELETE FRON STUDY_SITE_CONTACT WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND ROLE_CODE IN " 
+            + "('RESPONSIBLE_PARTY_SPONSOR_CONTACT')");
+        sqls.add("UPDATE STUDY_SITE_CONTACT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND ROLE_CODE IN " 
+               +  "('RESPONSIBLE_PARTY_SPONSOR_CONTACT')");
+        sqls.add("Delete from STUDY_RELATION WHERE TARGET_STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension());
+        sqls.add("Delete from STUDY_PROTOCOL WHERE IDENTIFIER  = " + sourceIi.getExtension());
+        return sqls;
+    }
 
     private Ii createStudySite(Ii studyProtocolIi,
             OrganizationDTO studySiteDTO , StudySiteDTO siteDTO) throws PAException {
