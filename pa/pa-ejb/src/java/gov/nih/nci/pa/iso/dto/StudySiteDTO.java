@@ -81,6 +81,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
@@ -106,6 +107,7 @@ public class StudySiteDTO extends OrganizationFunctionalRoleDTO {
     private Int targetAccrualNumber;
     private St reviewBoardOrganizationalAffiliation;
     private St programCodeText;
+    private Ivl<Ts> accrualDateRange;
     /**
      * @return the healthcareFacilityIi
      */
@@ -226,6 +228,18 @@ public class StudySiteDTO extends OrganizationFunctionalRoleDTO {
      */
     public void setProgramCodeText(St programCodeText) {
         this.programCodeText = programCodeText;
+    }
+    /**
+     * @return the accrualDateRange
+     */
+    public Ivl<Ts> getAccrualDateRange() {
+        return accrualDateRange;
+    }
+    /**
+     * @param accrualDateRange the accrualDateRange to set
+     */
+    public void setAccrualDateRange(Ivl<Ts> accrualDateRange) {
+        this.accrualDateRange = accrualDateRange;
     }
     
 }

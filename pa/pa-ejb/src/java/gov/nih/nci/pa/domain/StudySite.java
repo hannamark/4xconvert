@@ -102,6 +102,7 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 @Entity
 @Table(name = "STUDY_SITE")
+@SuppressWarnings({"PMD.TooManyFields" })
 public class StudySite extends OrganizationFunctionalRole {
     private static final long serialVersionUID = 1234567890L;
     private static final String MAPPED_BY_SS = "studySite";
@@ -121,6 +122,8 @@ public class StudySite extends OrganizationFunctionalRole {
     private List<StudySubject> studySubjects;
     private String reviewBoardOrganizationalAffiliation;
     private String programCodeText;
+    private Timestamp accrualDateRangeHigh;
+    private Timestamp accrualDateRangeLow;
 
     /**
      * @return the programCode
@@ -322,4 +325,31 @@ public class StudySite extends OrganizationFunctionalRole {
             String reviewBoardOrganizationalAffiliation) {
         this.reviewBoardOrganizationalAffiliation = reviewBoardOrganizationalAffiliation;
     }
+    /**
+     * @return the accrualDateRangeHigh closed date
+     */
+    @Column(name = "ACCRUAL_DATE_RANGE_HIGH")
+    public Timestamp getAccrualDateRangeHigh() {
+        return accrualDateRangeHigh;
+    }
+    /**
+     * @param accrualDateRangeHigh the accrualDateRangeHigh to set
+     */
+    public void setAccrualDateRangeHigh(Timestamp accrualDateRangeHigh) {
+        this.accrualDateRangeHigh = accrualDateRangeHigh;
+    }
+    /**
+     * @return the accrualDateRangeLow opened date
+     */
+    @Column(name = "ACCRUAL_DATE_RANGE_LOW")
+    public Timestamp getAccrualDateRangeLow() {
+        return accrualDateRangeLow;
+    }
+    /**
+     * @param accrualDateRangeLow the accrualDateRangeLow to set
+     */
+    public void setAccrualDateRangeLow(Timestamp accrualDateRangeLow) {
+        this.accrualDateRangeLow = accrualDateRangeLow;
+    }
+    
 }

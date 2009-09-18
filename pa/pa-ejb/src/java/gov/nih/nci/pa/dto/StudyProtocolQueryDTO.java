@@ -131,9 +131,20 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String updatedComments;
     private Date updatedDate;
     private Long studyInboxId;
-
-
+    private String isProprietaryTrial;
    
+    /**
+     * @return the isProprietaryTrial
+     */
+    public String getIsProprietaryTrial() {
+        return isProprietaryTrial;
+    }
+    /**
+     * @param isProprietaryTrial the isProprietaryTrial to set
+     */
+    public void setIsProprietaryTrial(String isProprietaryTrial) {
+        this.isProprietaryTrial = isProprietaryTrial;
+    }
     /**
      * @return the studyInboxId
      */

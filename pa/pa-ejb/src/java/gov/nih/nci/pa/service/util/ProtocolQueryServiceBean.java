@@ -298,6 +298,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                     } else {
                         studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.O);
                     }
+                    studyProtocolDto.setIsProprietaryTrial(
+                            studyProtocol.getProprietaryTrialIndicator().toString());
                 }
                 if (studyMilestone != null) {
                     studyProtocolDto.setStudyMilsetone(studyMilestone.getMilestoneCode());

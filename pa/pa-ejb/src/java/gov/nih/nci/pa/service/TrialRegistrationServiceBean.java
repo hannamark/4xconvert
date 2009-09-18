@@ -1037,8 +1037,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     private void updateParticipatingSites(
             List<StudySiteAccrualStatusDTO> participatingSites)
             throws PAException {
-        for (StudySiteAccrualStatusDTO sdto : participatingSites) {
-            studySiteAccrualStatusService.createStudySiteAccrualStatus(sdto);
+        if (participatingSites != null) {
+            for (StudySiteAccrualStatusDTO sdto : participatingSites) {
+                studySiteAccrualStatusService.createStudySiteAccrualStatus(sdto);
+            }
         }
     }
 
@@ -1083,8 +1085,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param leadOrganizationTrialIdentifier LeadOrgTrialId
      * @param siteInvestigatorDTO    SitePi
      * @param studySiteDTO participating Org
-     * @param localSiteIdentifier local id
-     * @param siteProgramCodeText siteProgramCodeText
+     * @param siteDTO local id,siteProgramCodeText and date range
      * @param nctIdentifierSiteIdentifier nct
      * @param summary4organizationDTO sum4 org
      * @param summary4CategoryCode summary 4Category Code 
@@ -1102,8 +1103,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             St leadOrganizationTrialIdentifier ,
             PersonDTO siteInvestigatorDTO ,
             OrganizationDTO studySiteDTO ,
-            St localSiteIdentifier ,
-            St siteProgramCodeText ,
+            StudySiteDTO siteDTO ,
             St nctIdentifierSiteIdentifier,
             OrganizationDTO summary4organizationDTO ,
             Cd summary4CategoryCode)
@@ -1138,7 +1138,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             paServiceUtils.manageNCTIdentifier(studyProtocolIi, nctIdentifierDTO);
     
             //create StudySite
-            Ii studySiteIi = createStudySite(studyProtocolIi, studySiteDTO, siteProgramCodeText, localSiteIdentifier);
+            Ii studySiteIi = createStudySite(studyProtocolIi, studySiteDTO, siteDTO);
             siteOverallStatusDTO.setStudySiteIdentifier(studySiteIi);
             studySiteOverallStatusService.create(siteOverallStatusDTO);
             //set PI
@@ -1154,7 +1154,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     
 
     private Ii createStudySite(Ii studyProtocolIi,
-            OrganizationDTO studySiteDTO , St siteProgramCodeText, St localSiteIdentifier) throws PAException {
+            OrganizationDTO studySiteDTO , StudySiteDTO siteDTO) throws PAException {
         
         Long paHealthCareFacilityId = ocsr.createHealthCareFacilityCorrelations(
                 studySiteDTO.getIdentifier().getExtension());
@@ -1165,8 +1165,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         sp.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         sp.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
         sp.setStudyProtocolIdentifier(studyProtocolIi);
-        sp.setProgramCodeText(siteProgramCodeText);
-        sp.setLocalStudyProtocolIdentifier(localSiteIdentifier);
+        sp.setProgramCodeText(siteDTO.getProgramCodeText());
+        sp.setLocalStudyProtocolIdentifier(siteDTO.getLocalStudyProtocolIdentifier());
+        sp.setAccrualDateRange(siteDTO.getAccrualDateRange());
         sp = studySiteService.create(sp);
         return sp.getIdentifier();
     }

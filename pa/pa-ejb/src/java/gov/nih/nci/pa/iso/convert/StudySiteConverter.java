@@ -144,6 +144,8 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
                 IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(), bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setProgramCodeText(StConverter.convertToSt(bo.getProgramCodeText()));
+        dto.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(bo.getAccrualDateRangeLow(),
+                bo.getAccrualDateRangeHigh()));
         return dto;
     }
 
@@ -154,6 +156,7 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
      * @throws PAException PAException
      */
     @Override
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public StudySite convertFromDtoToDomain(StudySiteDTO dto)
             throws PAException {
         StudyProtocol spBo = new StudyProtocol();
@@ -202,6 +205,10 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
                     dto.getReviewBoardApprovalStatusCode().getCode()));
         }
         bo.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
+        if (dto.getAccrualDateRange() != null) {
+            bo.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getAccrualDateRange()));
+            bo.setAccrualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getAccrualDateRange()));
+        }
         return bo;
     }
 

@@ -265,8 +265,7 @@ public interface TrialRegistrationServiceRemote {
     * @param leadOrganizationTrialIdentifier LeadOrgTrialId
     * @param siteInvestigatorDTO    SitePi
     * @param studySiteDTO participating Org
-    * @param localSiteIdentifier local id
-    * @param siteProgramCodeText siteProgramCodeText
+    * @param siteDTO will have local id, siteProgramCodeText and date range
     * @param nctIdentifierSiteIdentifier nct
     * @param summary4organizationDTO sum4 org
     * @param summary4CategoryCode summary 4Category Code 
@@ -283,8 +282,7 @@ public interface TrialRegistrationServiceRemote {
            St leadOrganizationTrialIdentifier ,
            PersonDTO siteInvestigatorDTO ,
            OrganizationDTO studySiteDTO ,
-           St localSiteIdentifier ,
-           St siteProgramCodeText ,
+           StudySiteDTO  siteDTO,
            St nctIdentifierSiteIdentifier,
            OrganizationDTO summary4organizationDTO ,
            Cd summary4CategoryCode)
