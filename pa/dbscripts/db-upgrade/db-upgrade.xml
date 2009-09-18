@@ -184,4 +184,8 @@
         <comment>execute pa_dev_23265_1.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_23265_1.sql"/>
     </changeSet>
+	<changeSet id="45" author="Vrushali">
+        <comment>execute pa_dev_23319_3.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.0/pa_dev_23319_3.sql"/>
+    </changeSet>
 </databaseChangeLog>
