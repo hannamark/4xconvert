@@ -16,7 +16,6 @@ import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -233,6 +232,50 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
                 (HealthCareFacilityServiceBean) importer.getHcfService(), false);
     }
 
+    
+    /**
+     * Verifies import and update w/ address change.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testHcfImportAndUpdateWithRoleAddressChange() throws Exception {
+        
+        // feed the proper CTEP service stub into our importer
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfStub();
+        importer.setCtepOrgService(service);
+        OrganizationDTO org = service.getOrg();
+                
+        // create the org.
+        Organization importedOrg = importer.importOrganization(org.getIdentifier());
+        MessageProducerTest.assertMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService(), true);
+       
+        List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+        HealthCareFacility persistedHCF = hcfs.get(0); 
+        Ii hcfPOID = new IdConverter.HealthCareFacilityIdConverter().convertToIi(persistedHCF.getId());
+        
+        MessageProducerTest.assertMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer.getHcfService(), true);
+        
+        // try an update w/ no difference in data again. now no status changes should occur
+        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfWithNoUpdatesStub(hcfPOID);
+        importer.setCtepOrgService(service);
+        org = service.getOrg();
+        importedOrg = importer.importOrganization(org.getIdentifier());
+        MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
+        MessageProducerTest.assertNoMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer.getHcfService());
+        
+        // redo import should cause an update message to go out on HCF
+        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfWithAddedAddressStub(hcfPOID, "mystreet", "mycity", "mystate",
+                "mypostal", getDefaultCountry());
+        importer.setCtepOrgService(service);
+        org = service.getOrg();
+        //MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHcfService());
+        importedOrg = importer.importOrganization(org.getIdentifier());
+        MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
+        MessageProducerTest.assertMessageCreated(persistedHCF, 
+                (HealthCareFacilityServiceBean) importer.getHcfService(), false);
+    }
+
     private Ii getHCFII(Organization importedOrg) {
         List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, hcfs.size());
@@ -247,4 +290,5 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHcfService());
         MessageProducerTest.clearMessages((ResearchOrganizationServiceBean) importer.getRoService());
     }
+
 }

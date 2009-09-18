@@ -5,10 +5,12 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.services.OrganizationService;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -77,6 +79,32 @@ public class CTEPOrgServiceStubBuilder {
         hcf.setPostalAddress(ads);
 
         return new CTEPOrganizationServiceStub(o, hcf, null);
+    }
+    
+    /**
+     * 
+     * @return the data that
+     * @throws Exception
+     */
+    public CTEPOrganizationServiceStub buildCreateHcfWithAddedAddressStub(Ii hcfId, String street, String city, String state,
+            String postalCode, Country country) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateHcfStub(); 
+        Address a = new Address(street, city, state, postalCode, country);
+        stub.getHcf().getPostalAddress().getItem()
+            .add(AddressConverter.SimpleConverter.convertToAd(a));
+        stub.getHcf().getIdentifier().getItem().add(hcfId);
+        return stub;
+    }
+    
+    /**
+     * 
+     * @return the data that
+     * @throws Exception
+     */
+    public CTEPOrganizationServiceStub buildCreateHcfWithNoUpdatesStub(Ii hcfId) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateHcfStub(); 
+        stub.getHcf().getIdentifier().getItem().add(hcfId);
+        return stub;
     }
     
     public CTEPOrganizationServiceStub buildCreateHcfWithNameUpdateStub(Ii hcfPOId) throws Exception {
