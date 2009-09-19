@@ -689,6 +689,10 @@ import org.hibernate.criterion.Example;
                 String title = "%" + StConverter.convertToString(dto.getOfficialTitle()) + "%";
                 exampleDO.setOfficialTitle(title);
             }
+            if (dto.getPublicTitle() != null) {
+                String title = "%" + StConverter.convertToString(dto.getPublicTitle()) + "%";
+                exampleDO.setPublicTitle(title);
+            }
             if (dto.getStatusCode() == null || dto.getStatusCode().getCode().equals(ActStatusCode.ACTIVE.getCode())) {
                 exampleDO.setStatusCode(ActStatusCode.ACTIVE);
             }
