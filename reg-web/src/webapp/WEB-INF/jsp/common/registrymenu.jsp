@@ -25,10 +25,10 @@ function selectTrialType(){
 				    <c:when test="${pageContext.request.remoteUser != null}">				    
 								<c:choose>
 									<c:when test="${requestScope.topic == 'my_account'}">
-									   <li><a href="registerUsershowMyAccount.action" class="selected">My Account</a></li> 
+									   <li><a href="/registry/protected/registerUsershowMyAccount.action" class="selected">My Account</a></li> 
 									</c:when>
 									<c:otherwise>
-									   <li><a href="registerUsershowMyAccount.action" >My Account</a></li>
+									   <li><a href="/registry/protected/registerUsershowMyAccount.action" >My Account</a></li>
 									</c:otherwise>
 								</c:choose>
 								<c:choose>
