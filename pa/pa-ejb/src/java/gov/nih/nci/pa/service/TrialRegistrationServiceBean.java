@@ -1263,7 +1263,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         sqls.add("Delete from STUDY_MILESTONE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE STUDY_MILESTONE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
-        sqls.add("UPDATE DOCUMENT_WORKFLOW_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sourceIi.getExtension());
+        sqls.add("UPDATE DOCUMENT_WORKFLOW_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId 
                 + " and TYPE_CODE = '" + DocumentTypeCode.TSR.getName() + "'");
@@ -1278,15 +1278,15 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 + " AND ROLE_CODE IN ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','CENTRAL_CONTACT')");
         sqls.add("UPDATE STUDY_CONTACT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd 
                 + " AND ROLE_CODE IN ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','CENTRAL_CONTACT')");
-        sqls.add("DELETE FROM STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND FUNCTIONAL_CODE IN " 
+        sqls.add("DELETE FROM STUDY_SITE WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND FUNCTIONAL_CODE IN " 
             + "('RESPONSIBLE_PARTY_SPONSOR')");
         sqls.add("UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND FUNCTIONAL_CODE IN " 
                 + "('RESPONSIBLE_PARTY_SPONSOR')");
-        sqls.add("DELETE FRON STUDY_SITE_CONTACT WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND ROLE_CODE IN " 
+        sqls.add("DELETE FROM STUDY_SITE_CONTACT WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND ROLE_CODE IN " 
             + "('RESPONSIBLE_PARTY_SPONSOR_CONTACT')");
         sqls.add("UPDATE STUDY_SITE_CONTACT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND ROLE_CODE IN " 
                +  "('RESPONSIBLE_PARTY_SPONSOR_CONTACT')");
-        sqls.add("Delete from STUDY_RELATION WHERE TARGET_STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension());
+        sqls.add("Delete from STUDY_RELATIONSHIP WHERE TARGET_STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension());
         sqls.add("Delete from STUDY_PROTOCOL WHERE IDENTIFIER  = " + sourceIi.getExtension());
         return sqls;
     }
