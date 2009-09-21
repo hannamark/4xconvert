@@ -148,7 +148,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     public String displayNewSubmission() {
         return AR_NEW_SUBMISSION;
     }
-    
+
     /**
       * @return action result
       */
@@ -270,5 +270,53 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
      */
     public void setSelectedRowIdentifier(String selectedRowIdentifier) {
         this.selectedRowIdentifier = selectedRowIdentifier;
+    }
+    /**
+     * @return submission label
+     */
+    public String getSubmissionLabel() {
+        return getWebString(getSubmission().getLabel());
+    }
+    /**
+     * @return submission description
+     */
+    public String getSubmissionDescription() {
+        return getWebString(getSubmission().getDescription());
+    }
+    /**
+     * @return submission cut off date as a string
+     */
+    public String getSubmissionCutOffDate() {
+        return getWebString(getSubmission().getCutOffDate());
+    }
+    /**
+     * @return submission status as a string
+     */
+    public String getSubmissionStatus() {
+        return CdConverter.convertCdToString(getSubmission().getStatusCode());
+    }
+    /**
+     * @return user who created
+     */
+    public String getSubmissionCreateUser() {
+        return getWebString(getSubmission().getCreateUser());
+    }
+    /**
+     * @return submission creation date as a string
+     */
+    public String getSubmissionCreatedDate() {
+        return getWebString(IvlConverter.convertTs().convertLowToString(getSubmission().getStatusDateRange()));
+    }
+    /**
+     * @return user who submitted
+     */
+    public String getSubmissionSubmitUser() {
+        return getWebString(getSubmission().getSubmitUser());
+    }
+    /**
+     * @return submission date as a string
+     */
+    public String getSubmissionSubmittedDate() {
+        return getWebString(IvlConverter.convertTs().convertHighToString(getSubmission().getStatusDateRange()));
     }
 }

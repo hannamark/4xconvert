@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:set var="topic" scope="request" value="list_accrual_submission"/> 
+<c:set var="topic" scope="request" value="list_accural_submissions"/> 
 <head>
     <title><fmt:message key="accrual.view.accrual.submission.page.title"/></title>   
     <s:head/>
@@ -50,10 +50,8 @@ function cancel(){
            </label>
          </td>
           <td class="value">
-            <s:text name="submission.cutOffDate.value" />
+            <s:text name="submissionCutOffDate" />
         </td>
-          
-                
       </tr> 
       
       <tr>     
@@ -63,7 +61,7 @@ function cancel(){
            </label>
          </td>
           <td class="value">
-            <s:text name="submission.statusCode.value" />
+            <s:text name="submissionStatus" />
         </td>
          
       </tr> 
@@ -75,7 +73,7 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-            <s:text name="submission.createdDate.value" />
+            <s:text name="submissionCreatedDate" />
         </td>
          
       </tr> 
@@ -87,7 +85,7 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-            <s:text name="submission.createUser.value" />
+            <s:text name="submissionCreateUser" />
         </td>
          
       </tr> 
@@ -99,7 +97,7 @@ function cancel(){
            </label>
          </td>
         <td class="value">
-            <s:text name="submission.submittedDate.value" />
+            <s:text name="submissionSubmittedDate" />
         </td>
          
       </tr> 
@@ -111,7 +109,7 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-            <s:text name="submission.submitUser.value" />
+            <s:text name="submissionSubmitUser" />
         </td>
          
       </tr> 

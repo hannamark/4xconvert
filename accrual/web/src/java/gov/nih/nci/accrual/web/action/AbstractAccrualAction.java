@@ -80,10 +80,14 @@ import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -166,5 +170,26 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
                 throw new GeneralSecurityException("Authorization exception in AbstractAccrualAction.setSpIi().");
             }
         }
+    }
+
+    /**
+     * @param obj the object to be passed to jsp
+     * @return string
+     */
+    protected String getWebString(Object obj) {
+        String result = null;
+        if (obj instanceof Ts) {
+            result = TsConverter.convertToString((Ts) obj);
+        }
+        if (obj instanceof St) {
+            result = StConverter.convertToString((St) obj);
+        }
+        if (obj instanceof Cd) {
+            result = CdConverter.convertCdToString((Cd) obj);
+        }
+        if (obj instanceof String) {
+            result = (String) obj;
+        }
+        return result == null ? "" : result;
     }
 }
