@@ -93,7 +93,6 @@ import gov.nih.nci.accrual.util.PoServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 
 import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 
 /**
@@ -102,22 +101,15 @@ import javax.ejb.Stateless;
  */
 
 @Stateless
-public class POPatientBean implements POPatientService
-{
+public class POPatientBean implements POPatientService {
 
     private static final Logger LOG  = Logger.getLogger(POPatientBean.class);
-    private SessionContext ejbContext;
 
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        ejbContext = ctx;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.accrual.service.util.POPatientService#create(gov.nih.nci.accrual.service.util.POPatientDto)
+    /**
+     * {@inheritDoc}
      */
-    public POPatientDto create(POPatientDto dto) throws RemoteException
-    {
+    @Resource
+    public POPatientDto create(POPatientDto dto) throws RemoteException {
         if (dto == null) {
             throw new RemoteException("Called create(null).");
         }
@@ -135,33 +127,25 @@ public class POPatientBean implements POPatientService
         patient.setStatus(dto.getStatus());
         patient.setTelecomAddress(dto.getTelecomAddress());
 
-        try
-        {
-            pcsr.createCorrelation(patient);
-        }
-        catch (CurationException ex)
-        {
+        try {
+            Ii newId = pcsr.createCorrelation(patient);
+            dto.setIdentifier(newId);
+        } catch (CurationException ex) {
             LOG.error(ex.toString(), ex);
-            throw new RemoteException(ex.toString());
-        }
-        catch (EntityValidationException ex)
-        {
+            throw new RemoteException(ex.toString(), ex);
+        } catch (EntityValidationException ex) {
             LOG.error(ex.toString(), ex);
-            throw new RemoteException(ex.toString());
-        }
-        finally
-        {
-            
+            throw new RemoteException(ex.toString(), ex);
+//        } finally {
         }
         
-        return null;
+        return dto;
     }
 
-    /** (non-Javadoc)
-     * @see gov.nih.nci.accrual.service.util.POPatientService#get(gov.nih.nci.accrual.service.util.Ii)
+    /**
+     * {@inheritDoc}
      */
-    public POPatientDto get(Ii ii) throws RemoteException
-    {
+    public POPatientDto get(Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called get() with Ii == null.");
         }
@@ -169,11 +153,10 @@ public class POPatientBean implements POPatientService
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.accrual.service.util.POPatientService#update(gov.nih.nci.accrual.service.util.POPatientDto)
+    /**
+     * {@inheritDoc}
      */
-    public POPatientDto update(POPatientDto dto) throws RemoteException
-    {
+    public POPatientDto update(POPatientDto dto) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
     }
