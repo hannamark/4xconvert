@@ -62,11 +62,11 @@ public class StudySiteAccrualStatusServiceClient extends StudySiteAccrualStatusS
               }
 
               System.out.println("Testing StudySiteAccrualStatus.getCurrentStudySiteAccrualStatusByStudyParticipation...");
-              StudySiteAccrualStatus current = client.getCurrentStudySiteAccrualStatusByStudyParticipation(id);
+              StudySiteAccrualStatus current = client.getCurrentStudySiteAccrualStatusByStudySite(id);
               System.out.println(current);
 
               System.out.println("Testing StudySiteAccrualStatus.getStudySiteAccrualStatusByStudyParticipation...");
-              StudySiteAccrualStatus[] rList = client.getStudySiteAccrualStatusByStudyParticipation(id);
+              StudySiteAccrualStatus[] rList = client.getStudySiteAccrualStatusByStudySite(id);
               System.out.println(rList);
 
               System.out.println("Testing StudySiteAccrualStatus.createStudySiteAccrualStatus...");
@@ -137,26 +137,26 @@ public class StudySiteAccrualStatusServiceClient extends StudySiteAccrualStatusS
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getStudySiteAccrualStatusByStudyParticipation");
-    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationRequest params = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationRequest();
-    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationRequestStudyParticipationId studyParticipationIdContainer = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationRequestStudyParticipationId();
-    studyParticipationIdContainer.setId(studyParticipationId);
-    params.setStudyParticipationId(studyParticipationIdContainer);
-    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationResponse boxedResult = portType.getStudySiteAccrualStatusByStudyParticipation(params);
+      configureStubSecurity((Stub)portType,"getStudySiteAccrualStatusByStudySite");
+    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteRequest params = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteRequest();
+    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteRequestStudySiteId studySiteIdContainer = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteRequestStudySiteId();
+    studySiteIdContainer.setId(studySiteId);
+    params.setStudySiteId(studySiteIdContainer);
+    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteResponse boxedResult = portType.getStudySiteAccrualStatusByStudySite(params);
     return boxedResult.getStudySiteAccrualStatus();
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getCurrentStudySiteAccrualStatusByStudyParticipation");
-    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationRequest params = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationRequest();
-    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationRequestStudyParticipationId studyParticipationIdContainer = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationRequestStudyParticipationId();
-    studyParticipationIdContainer.setId(studyParticipationId);
-    params.setStudyParticipationId(studyParticipationIdContainer);
-    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationResponse boxedResult = portType.getCurrentStudySiteAccrualStatusByStudyParticipation(params);
+      configureStubSecurity((Stub)portType,"getCurrentStudySiteAccrualStatusByStudySite");
+    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteRequest params = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteRequest();
+    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteRequestStudySiteId studySiteIdContainer = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteRequestStudySiteId();
+    studySiteIdContainer.setId(studySiteId);
+    params.setStudySiteId(studySiteIdContainer);
+    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteResponse boxedResult = portType.getCurrentStudySiteAccrualStatusByStudySite(params);
     return boxedResult.getStudySiteAccrualStatus();
     }
   }

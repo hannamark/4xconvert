@@ -80,11 +80,6 @@ public class PlannedActivityServiceImpl extends PlannedActivityServiceImplBase {
         return impl.getByStudyProtocol(id);
     }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        return impl.getCurrentByStudyProtocol(id);
-    }
-
   public gov.nih.nci.coppa.services.pa.PlannedActivity get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         return impl.get(id);
     }

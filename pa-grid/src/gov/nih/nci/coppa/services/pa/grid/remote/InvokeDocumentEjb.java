@@ -11,23 +11,16 @@ import java.util.List;
 /**
  * Wrapper class for invoking the Document remote EJB.
  */
-public class InvokeDocumentEjb implements DocumentServiceRemote {
-
-
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+public class InvokeDocumentEjb extends InvokeStudyPaServiceEjb<DocumentDTO> implements DocumentServiceRemote {
 
     /**
-     * {@inheritDoc}
+     * @param type
      */
-    public DocumentDTO get(Ii ii) throws PAException {
-        try {
-            return locator.getDocumentService().get(ii);
-        } catch (PAException pae) {
-            throw pae;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
+    public InvokeDocumentEjb() {
+        super(DocumentDTO.class);
     }
+
+    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * {@inheritDoc}
@@ -43,27 +36,4 @@ public class InvokeDocumentEjb implements DocumentServiceRemote {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void delete(DocumentDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public DocumentDTO create(DocumentDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public DocumentDTO update(DocumentDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

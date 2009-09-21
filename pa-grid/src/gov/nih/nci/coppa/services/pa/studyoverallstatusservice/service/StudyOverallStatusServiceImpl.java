@@ -83,7 +83,7 @@
 package gov.nih.nci.coppa.services.pa.studyoverallstatusservice.service;
 
 import gov.nih.nci.coppa.services.pa.StudyOverallStatus;
-import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyCurrentPaGridServiceImpl;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 
 import java.rmi.RemoteException;
@@ -97,8 +97,8 @@ public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImpl
       super();
   }
 
-  private GenericStudyPaGridServiceImpl<StudyOverallStatusDTO, StudyOverallStatus> impl
-      = new GenericStudyPaGridServiceImpl<StudyOverallStatusDTO,
+  private GenericStudyCurrentPaGridServiceImpl<StudyOverallStatusDTO, StudyOverallStatus> impl
+      = new GenericStudyCurrentPaGridServiceImpl<StudyOverallStatusDTO,
       StudyOverallStatus>(StudyOverallStatus.class, StudyOverallStatusDTO.class);
 
   public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

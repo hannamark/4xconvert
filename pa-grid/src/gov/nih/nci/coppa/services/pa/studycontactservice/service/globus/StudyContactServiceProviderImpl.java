@@ -50,12 +50,6 @@ public class StudyContactServiceProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolResponse();
-    boxedResult.setStudyContact(impl.getCurrentByStudyProtocol(params.getStudyProtocolId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetResponse();
     boxedResult.setStudyContact(impl.get(params.getId().getId()));

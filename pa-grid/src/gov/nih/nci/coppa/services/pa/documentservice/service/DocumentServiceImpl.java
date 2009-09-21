@@ -83,7 +83,7 @@ public class DocumentServiceImpl extends DocumentServiceImplBase {
 
   public void delete(gov.nih.nci.coppa.services.pa.Document document) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
-          documentService.delete(DocumentTransformer.INSTANCE.toDto(document));
+          documentService.delete(IITransformer.INSTANCE.toDto(document.getIdentifier()));
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);

@@ -8,7 +8,7 @@ import gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransformer;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 
-public class StudySiteAccrualStatusTransformerTest  extends AbstractTransformerTestBase
+public class StudySiteAccrualStatusTransformerTest extends AbstractTransformerTestBase
         <StudySiteAccrualStatusTransformer, StudySiteAccrualStatus, StudySiteAccrualStatusDTO> {
 
     @Override
@@ -17,7 +17,7 @@ public class StudySiteAccrualStatusTransformerTest  extends AbstractTransformerT
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         result.setStatusCode(new CDTransformerTest().makeDtoSimple());
         result.setStatusDate(new TSTransformerTest().makeDtoSimple());
-        result.setStudyParticipationIi(new IITransformerTest().makeDtoSimple());
+        result.setStudySiteIi(new IITransformerTest().makeDtoSimple());
         return result;
     }
 
@@ -27,7 +27,7 @@ public class StudySiteAccrualStatusTransformerTest  extends AbstractTransformerT
         result.setIdentifier(new IITransformerTest().makeXmlSimple());
         result.setStatusCode(new CDTransformerTest().makeXmlSimple());
         result.setStatusDate(new TSTransformerTest().makeXmlSimple());
-        result.setStudyParticipation(new IITransformerTest().makeXmlSimple());
+        result.setStudySite(new IITransformerTest().makeXmlSimple());
         return result;
     }
 
@@ -36,7 +36,7 @@ public class StudySiteAccrualStatusTransformerTest  extends AbstractTransformerT
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
         new TSTransformerTest().verifyDtoSimple(x.getStatusDate());
-        new IITransformerTest().verifyDtoSimple(x.getStudyParticipationIi());
+        new IITransformerTest().verifyDtoSimple(x.getStudySiteIi());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class StudySiteAccrualStatusTransformerTest  extends AbstractTransformerT
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());
         new CDTransformerTest().verifyXmlSimple(x.getStatusCode());
         new TSTransformerTest().verifyXmlSimple(x.getStatusDate());
-        new IITransformerTest().verifyXmlSimple(x.getStudyParticipation());
+        new IITransformerTest().verifyXmlSimple(x.getStudySite());
     }
 
 }

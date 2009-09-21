@@ -23,9 +23,9 @@ import org.apache.log4j.Logger;
  * @param <XML> represents the DTO (remote-ejb) type
  */
 
-public class GenericStudyPaGridServiceImpl<DTO extends StudyDTO, XML extends Object>
-    extends GenericPaGridServiceImpl<DTO, XML>
-    implements StudyPaGridService<DTO, XML> {
+public class GenericStudyPaGridServiceImpl<DTO extends StudyDTO, XML extends Object> extends
+        GenericPaGridServiceImpl<DTO, XML> implements StudyPaGridService<DTO, XML> {
+
     private static final Logger LOGGER = LogManager.getLogger(GenericStudyPaGridServiceImpl.class);
     private StudyPaService<DTO> service;
 
@@ -62,7 +62,7 @@ public class GenericStudyPaGridServiceImpl<DTO extends StudyDTO, XML extends Obj
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "cast" })
     public XML[] getByStudyProtocol(Id id) throws RemoteException {
         XML[] xmls = null;
         try {
@@ -76,18 +76,4 @@ public class GenericStudyPaGridServiceImpl<DTO extends StudyDTO, XML extends Obj
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public XML getCurrentByStudyProtocol(Id id) throws RemoteException {
-        try {
-            Ii iiIso = IITransformer.INSTANCE.toDto(id);
-            DTO dto = (DTO) getService().getCurrentByStudyProtocol(iiIso);
-            return (XML) getTransformer().toXml(dto);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
-    }
 }

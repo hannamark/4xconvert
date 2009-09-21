@@ -77,6 +77,18 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService=gov.n
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/bindings=gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.bindings
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/service=gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteService=gov.nih.nci.coppa.services.pa.studysiteservice.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/bindings=gov.nih.nci.coppa.services.pa.studysiteservice.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/service=gov.nih.nci.coppa.services.pa.studysiteservice.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/bindings=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/service=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService=gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/bindings=gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/service=gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
 http\://faults.pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa.faults
 uri\:iso.org\:21090=org.iso._21090
@@ -87,6 +99,7 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/type
 http\://enterpriseservices.nci.nih.gov/PAServices/types=gov.nih.nci.coppa.services.pa.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types=gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.types
 http\://common.coppa.nci.nih.gov=gov.nih.nci.coppa.common
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types=gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/types=gov.nih.nci.coppa.services.pa.armservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types=gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.stubs.types
 http\://pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa
@@ -98,6 +111,7 @@ http\://faults.common.coppa.nci.nih.gov=gov.nih.nci.coppa.common.faults
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types=gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types=gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types=gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.types
@@ -107,6 +121,7 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types=gov.
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types=gov.nih.nci.coppa.services.pa.studyindideservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types=gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types=gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.types
+http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types=gov.nih.nci.coppa.services.pa.studysiteservice.stubs.types
 
 
 

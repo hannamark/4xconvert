@@ -10,9 +10,7 @@ import java.rmi.RemoteException;
  * @param <DTO> DTO object
  * @param <XML> XML object
  */
-public interface StudyPaGridService<DTO extends BaseDTO, XML extends Object>
-    extends PaGridService<DTO, XML> {
-
+public interface StudyPaGridService<DTO extends BaseDTO, XML extends Object> extends PaGridService<DTO, XML> {
 
     /**
      * Copy by ID.
@@ -29,13 +27,5 @@ public interface StudyPaGridService<DTO extends BaseDTO, XML extends Object>
      * @throws RemoteException for unexpected errors
      */
     XML[] getByStudyProtocol(Id id) throws RemoteException;
-
-    /**
-     * Get current object by study protocol.
-     * @param id id of the study protocol.
-     * @return XML object.
-     * @throws RemoteException for unexpected errors
-     */
-    XML getCurrentByStudyProtocol(Id id) throws RemoteException;
 
 }

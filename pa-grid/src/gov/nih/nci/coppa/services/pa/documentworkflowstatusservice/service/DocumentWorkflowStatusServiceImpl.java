@@ -1,7 +1,7 @@
 package gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.service;
 
 import gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus;
-import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyCurrentPaGridServiceImpl;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 
 import java.rmi.RemoteException;
@@ -17,8 +17,8 @@ public class DocumentWorkflowStatusServiceImpl extends DocumentWorkflowStatusSer
         super();
     }
 
-    private final GenericStudyPaGridServiceImpl<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> impl
-            = new GenericStudyPaGridServiceImpl<DocumentWorkflowStatusDTO,
+    private final GenericStudyCurrentPaGridServiceImpl<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> impl
+            = new GenericStudyCurrentPaGridServiceImpl<DocumentWorkflowStatusDTO,
                 DocumentWorkflowStatus>(DocumentWorkflowStatus.class, DocumentWorkflowStatusDTO.class);
 
   public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

@@ -1,7 +1,7 @@
 package gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.service;
 
 import gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus;
-import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyCurrentPaGridServiceImpl;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 
 import java.rmi.RemoteException;
@@ -17,8 +17,8 @@ public class StudyRecruitmentStatusServiceImpl extends StudyRecruitmentStatusSer
       super();
   }
 
-  private GenericStudyPaGridServiceImpl<StudyRecruitmentStatusDTO, StudyRecruitmentStatus> impl
-  = new GenericStudyPaGridServiceImpl<StudyRecruitmentStatusDTO, StudyRecruitmentStatus>(StudyRecruitmentStatus.class, StudyRecruitmentStatusDTO.class);
+  private GenericStudyCurrentPaGridServiceImpl<StudyRecruitmentStatusDTO, StudyRecruitmentStatus> impl
+  = new GenericStudyCurrentPaGridServiceImpl<StudyRecruitmentStatusDTO, StudyRecruitmentStatus>(StudyRecruitmentStatus.class, StudyRecruitmentStatusDTO.class);
 
   /**
    * {@inheritDoc}

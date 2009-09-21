@@ -11,9 +11,17 @@ import java.util.List;
 /**
  * Wrapper class for invoking the StudyResourcing remote EJB.
  */
-public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
+public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResourcingDTO> implements
+        StudyResourcingServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+
+    /**
+     * Default constructor.
+     */
+    public InvokeStudyResourcingEjb() {
+        super(StudyResourcingDTO.class);
+    }
 
     /**
      * {@inheritDoc}
@@ -99,6 +107,12 @@ public class InvokeStudyResourcingEjb implements StudyResourcingServiceRemote {
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void validate(StudyResourcingDTO studyResourcingDTO) throws PAException {
     }
 
 }

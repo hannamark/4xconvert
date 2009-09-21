@@ -118,7 +118,7 @@ public final class StudySiteAccrualStatusTransformer
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
         result.setStatusDate(TSTransformer.INSTANCE.toDto(input.getStatusDate()));
-        result.setStudyParticipationIi(IITransformer.INSTANCE.toDto(input.getStudyParticipation()));
+        result.setStudySiteIi(IITransformer.INSTANCE.toDto(input.getStudySite()));
         return result;
     }
 
@@ -134,7 +134,7 @@ public final class StudySiteAccrualStatusTransformer
         result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
         result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
         result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
-        result.setStudyParticipation(IITransformer.INSTANCE.toXml(input.getStudyParticipationIi()));
+        result.setStudySite(IITransformer.INSTANCE.toXml(input.getStudySiteIi()));
         return result;
     }
 

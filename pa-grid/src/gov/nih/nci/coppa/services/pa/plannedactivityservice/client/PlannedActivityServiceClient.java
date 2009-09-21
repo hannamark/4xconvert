@@ -56,7 +56,6 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
 
                     getById(client);
                     getByStudyProtocol(client);
-                    getCurrentByStudyProtocol(client);
                     getPlannedEligibilityCriterion(client);
                     getPlannedEligibilityCriterionByStudyProtocol(client);
                     getByArm(client);
@@ -84,7 +83,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     private static void getByArm(PlannedActivityServiceClient client) throws RemoteException {
         System.out.println("Getting planned activity by Arm");
         Id armId = new Id();
-        armId.setExtension("1234");
+        armId.setExtension("180412");
         printResults(client.get(armId));
     }
 
@@ -93,13 +92,6 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
         Id id = new Id();
         id.setExtension("27426");
         printResults(client.getByStudyProtocol(id));
-    }
-
-    private static void getCurrentByStudyProtocol(PlannedActivityServiceClient client) throws RemoteException {
-        System.out.println("Getting current planned activity by study protocol");
-        Id id = new Id();
-        id.setExtension("27426");
-        printResults(client.getCurrentByStudyProtocol(id));
     }
 
     private static void getPlannedEligibilityCriterion(PlannedActivityServiceClient client) throws RemoteException {
@@ -126,7 +118,6 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
         } else {
             System.out.println("search found no results");
         }
-
     }
 
   public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByArm(gov.nih.nci.coppa.services.pa.Id armId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
@@ -237,18 +228,6 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     toStudyProtocolIdContainer.setId(toStudyProtocolId);
     params.setToStudyProtocolId(toStudyProtocolIdContainer);
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyResponse boxedResult = portType.copy(params);
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.PlannedActivity getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
-    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequest();
-    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = portType.getCurrentByStudyProtocol(params);
-    return boxedResult.getPlannedActivity();
     }
   }
 

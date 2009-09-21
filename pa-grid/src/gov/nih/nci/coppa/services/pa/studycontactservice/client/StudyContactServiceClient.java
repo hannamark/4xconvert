@@ -149,18 +149,6 @@ public class StudyContactServiceClient extends StudyContactServiceClientBase imp
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyContact getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
-    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolRequest();
-    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId();
-    studyProtocolIdContainer.setId(studyProtocolId);
-    params.setStudyProtocolId(studyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = portType.getCurrentByStudyProtocol(params);
-    return boxedResult.getStudyContact();
-    }
-  }
-
   public gov.nih.nci.coppa.services.pa.StudyContact get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");

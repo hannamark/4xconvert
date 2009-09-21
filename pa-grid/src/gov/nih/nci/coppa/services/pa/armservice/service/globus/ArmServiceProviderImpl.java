@@ -50,12 +50,6 @@ public class ArmServiceProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolResponse();
-    boxedResult.setArm(impl.getCurrentByStudyProtocol(params.getStudyProtocolId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.pa.armservice.stubs.CreateResponse create(gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.armservice.stubs.CreateResponse boxedResult = new gov.nih.nci.coppa.services.pa.armservice.stubs.CreateResponse();
     boxedResult.setArm(impl.create(params.getArm().getArm()));

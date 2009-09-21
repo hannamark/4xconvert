@@ -72,14 +72,14 @@ public class DocumentServiceClient extends DocumentServiceClientBase implements 
 
     private static void getTest(DocumentServiceClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("1");
+        id.setExtension("180414");
         Document result = client.get(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
     private static void getDocumentsByStudyProtocolTest(DocumentServiceClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("1");
+        id.setExtension("27426");
         Document[] result = client.getDocumentsByStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }

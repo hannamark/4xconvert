@@ -16,8 +16,8 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyIndldeTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOnholdTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOutcomeMeasureTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOverallStatusTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationContactTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteContactTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRecruitmentStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRegulatoryAuthorityTransformer;
@@ -37,8 +37,8 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
@@ -85,14 +85,14 @@ public class TransformerRegistryTest {
         trans = TransformerRegistry.INSTANCE.getTransformer(StudySiteAccrualStatusDTO.class);
         assertTrue(trans instanceof StudySiteAccrualStatusTransformer);
         //#8
-        trans = TransformerRegistry.INSTANCE.getTransformer(StudyParticipationContactDTO.class);
-        assertTrue(trans instanceof StudyParticipationContactTransformer);
+        trans = TransformerRegistry.INSTANCE.getTransformer(StudySiteContactDTO.class);
+        assertTrue(trans instanceof StudySiteContactTransformer);
         //#9
         trans = TransformerRegistry.INSTANCE.getTransformer(StudyOutcomeMeasureDTO.class);
         assertTrue(trans instanceof StudyOutcomeMeasureTransformer);
         //#10
-        trans = TransformerRegistry.INSTANCE.getTransformer(StudyParticipationDTO.class);
-        assertTrue(trans instanceof StudyParticipationTransformer);
+        trans = TransformerRegistry.INSTANCE.getTransformer(StudySiteDTO.class);
+        assertTrue(trans instanceof StudySiteTransformer);
         //#11
         trans = TransformerRegistry.INSTANCE.getTransformer(StudyOverallStatusDTO.class);
         assertTrue(trans instanceof StudyOverallStatusTransformer);

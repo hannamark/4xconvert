@@ -1,5 +1,192 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jndiConfig xmlns="http://wsrf.globus.org/jndi/config">
+  <service name="SERVICE-INSTANCE-PREFIX/StudySiteContactService">
+    <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studysitecontactservice.service.globus.resource.StudySiteContactServiceResourceConfiguration">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>performRegistration</name>
+          <!-- Set this to false to skip ServiceGroup registration -->
+          <value>PERFORM_REGISTRATION</value>
+        </parameter>
+        <parameter>
+          <name>registrationTemplateFile</name>
+          <!-- Set this to the relative path (from the container root, e.g GLOBUS_LOCATION for globus container) of the registration parameters template file (ignored if performRegistration is false) -->
+          <value>ETC-PATH/StudySiteContactService_registration.xml</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resource name="home" type="gov.nih.nci.coppa.services.pa.studysitecontactservice.service.globus.resource.StudySiteContactServiceResourceHome">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>resourceClass</name>
+          <value>gov.nih.nci.coppa.services.pa.studysitecontactservice.service.globus.resource.StudySiteContactServiceResource</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyName</name>
+          <value>{http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService}StudySiteContactServiceResultsKey</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyType</name>
+          <value>java.lang.String</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PAServices/serviceconfiguration" />
+    <resourceLink name="pAServicesHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PAServices/home" />
+    <resourceLink name="armServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ArmService/home" />
+    <resourceLink name="studyProtocolServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyProtocolService/home" />
+    <resourceLink name="studySiteAccrualStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteAccrualStatusService/home" />
+    <resourceLink name="studyResourcingServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyResourcingService/home" />
+    <resourceLink name="studyRegulatoryAuthorityServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRegulatoryAuthorityService/home" />
+    <resourceLink name="studyRecruitmentStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRecruitmentStatusService/home" />
+    <resourceLink name="studyParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyParticipationService/home" />
+    <resourceLink name="studyParticipationContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyParticipationContactService/home" />
+    <resourceLink name="studyOverallStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOverallStatusService/home" />
+    <resourceLink name="studyOutcomeMeasureServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOutcomeMeasureService/home" />
+    <resourceLink name="studyOnholdServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOnholdService/home" />
+    <resourceLink name="studyIndIdeServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyIndIdeService/home" />
+    <resourceLink name="studyDiseaseServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyDiseaseService/home" />
+    <resourceLink name="studyContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyContactService/home" />
+    <resourceLink name="plannedActivityServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PlannedActivityService/home" />
+    <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
+    <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
+    <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+  </service>
+  <service name="SERVICE-INSTANCE-PREFIX/StudySiteParticipationService">
+    <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.service.globus.resource.StudySiteParticipationServiceResourceConfiguration">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>performRegistration</name>
+          <!-- Set this to false to skip ServiceGroup registration -->
+          <value>PERFORM_REGISTRATION</value>
+        </parameter>
+        <parameter>
+          <name>registrationTemplateFile</name>
+          <!-- Set this to the relative path (from the container root, e.g GLOBUS_LOCATION for globus container) of the registration parameters template file (ignored if performRegistration is false) -->
+          <value>ETC-PATH/StudySiteParticipationService_registration.xml</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resource name="home" type="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.service.globus.resource.StudySiteParticipationServiceResourceHome">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>resourceClass</name>
+          <value>gov.nih.nci.coppa.services.pa.studysiteparticipationservice.service.globus.resource.StudySiteParticipationServiceResource</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyName</name>
+          <value>{http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService}StudySiteParticipationServiceResultsKey</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyType</name>
+          <value>java.lang.String</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PAServices/serviceconfiguration" />
+    <resourceLink name="pAServicesHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PAServices/home" />
+    <resourceLink name="armServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ArmService/home" />
+    <resourceLink name="studyProtocolServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyProtocolService/home" />
+    <resourceLink name="studySiteAccrualStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteAccrualStatusService/home" />
+    <resourceLink name="studyResourcingServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyResourcingService/home" />
+    <resourceLink name="studyRegulatoryAuthorityServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRegulatoryAuthorityService/home" />
+    <resourceLink name="studyRecruitmentStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRecruitmentStatusService/home" />
+    <resourceLink name="studyParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyParticipationService/home" />
+    <resourceLink name="studyParticipationContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyParticipationContactService/home" />
+    <resourceLink name="studyOverallStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOverallStatusService/home" />
+    <resourceLink name="studyOutcomeMeasureServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOutcomeMeasureService/home" />
+    <resourceLink name="studyOnholdServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOnholdService/home" />
+    <resourceLink name="studyIndIdeServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyIndIdeService/home" />
+    <resourceLink name="studyDiseaseServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyDiseaseService/home" />
+    <resourceLink name="studyContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyContactService/home" />
+    <resourceLink name="plannedActivityServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PlannedActivityService/home" />
+    <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
+    <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
+    <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
+  </service>
+  <service name="SERVICE-INSTANCE-PREFIX/StudySiteService">
+    <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studysiteservice.service.globus.resource.StudySiteServiceResourceConfiguration">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>performRegistration</name>
+          <!-- Set this to false to skip ServiceGroup registration -->
+          <value>PERFORM_REGISTRATION</value>
+        </parameter>
+        <parameter>
+          <name>registrationTemplateFile</name>
+          <!-- Set this to the relative path (from the container root, e.g GLOBUS_LOCATION for globus container) of the registration parameters template file (ignored if performRegistration is false) -->
+          <value>ETC-PATH/StudySiteService_registration.xml</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resource name="home" type="gov.nih.nci.coppa.services.pa.studysiteservice.service.globus.resource.StudySiteServiceResourceHome">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>resourceClass</name>
+          <value>gov.nih.nci.coppa.services.pa.studysiteservice.service.globus.resource.StudySiteServiceResource</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyName</name>
+          <value>{http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService}StudySiteServiceResultsKey</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyType</name>
+          <value>java.lang.String</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PAServices/serviceconfiguration" />
+    <resourceLink name="pAServicesHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PAServices/home" />
+    <resourceLink name="armServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ArmService/home" />
+    <resourceLink name="studyProtocolServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyProtocolService/home" />
+    <resourceLink name="studySiteAccrualStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteAccrualStatusService/home" />
+    <resourceLink name="studyResourcingServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyResourcingService/home" />
+    <resourceLink name="studyRegulatoryAuthorityServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRegulatoryAuthorityService/home" />
+    <resourceLink name="studyRecruitmentStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRecruitmentStatusService/home" />
+    <resourceLink name="studyParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyParticipationService/home" />
+    <resourceLink name="studyParticipationContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyParticipationContactService/home" />
+    <resourceLink name="studyOverallStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOverallStatusService/home" />
+    <resourceLink name="studyOutcomeMeasureServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOutcomeMeasureService/home" />
+    <resourceLink name="studyOnholdServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyOnholdService/home" />
+    <resourceLink name="studyIndIdeServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyIndIdeService/home" />
+    <resourceLink name="studyDiseaseServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyDiseaseService/home" />
+    <resourceLink name="studyContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyContactService/home" />
+    <resourceLink name="plannedActivityServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PlannedActivityService/home" />
+    <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
+    <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
+    <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyRelationshipService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyrelationshipservice.service.globus.resource.StudyRelationshipServiceResourceConfiguration">
       <resourceParams>
@@ -58,6 +245,9 @@
     <resourceLink name="plannedActivityServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PlannedActivityService/home" />
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/DocumentService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.documentservice.service.globus.resource.DocumentServiceResourceConfiguration">
@@ -117,6 +307,9 @@
     <resourceLink name="plannedActivityServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PlannedActivityService/home" />
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.service.globus.resource.DocumentWorkflowStatusServiceResourceConfiguration">
@@ -177,6 +370,9 @@
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/PlannedActivityService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.plannedactivityservice.service.globus.resource.PlannedActivityServiceResourceConfiguration">
@@ -238,6 +434,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyContactService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studycontactservice.service.globus.resource.StudyContactServiceResourceConfiguration">
@@ -300,6 +499,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyDiseaseService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studydiseaseservice.service.globus.resource.StudyDiseaseServiceResourceConfiguration">
@@ -363,6 +565,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyIndIdeService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyindideservice.service.globus.resource.StudyIndIdeServiceResourceConfiguration">
@@ -427,6 +632,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyOnholdService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyonholdservice.service.globus.resource.StudyOnholdServiceResourceConfiguration">
@@ -492,6 +700,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyOutcomeMeasureService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.service.globus.resource.StudyOutcomeMeasureServiceResourceConfiguration">
@@ -551,6 +762,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyOverallStatusService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyoverallstatusservice.service.globus.resource.StudyOverallStatusServiceResourceConfiguration">
@@ -611,6 +825,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyParticipationContactService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.service.globus.resource.StudyParticipationContactServiceResourceConfiguration">
@@ -672,6 +889,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyParticipationService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyparticipationservice.service.globus.resource.StudyParticipationServiceResourceConfiguration">
@@ -734,6 +954,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyRecruitmentStatusService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.service.globus.resource.StudyRecruitmentStatusServiceResourceConfiguration">
@@ -797,6 +1020,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyRegulatoryAuthorityService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.service.globus.resource.StudyRegulatoryAuthorityServiceResourceConfiguration">
@@ -861,6 +1087,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyResourcingService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyresourcingservice.service.globus.resource.StudyResourcingServiceResourceConfiguration">
@@ -926,6 +1155,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudySiteAccrualStatusService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service.globus.resource.StudySiteAccrualStatusServiceResourceConfiguration">
@@ -985,6 +1217,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudyProtocolService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.studyprotocolservice.service.globus.resource.StudyProtocolServiceResourceConfiguration">
@@ -1044,6 +1279,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/ArmService">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.armservice.service.globus.resource.ArmServiceResourceConfiguration">
@@ -1103,6 +1341,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/PAServices">
     <resource name="configuration" type="gov.nih.nci.coppa.services.pa.service.globus.resource.PAServicesResourceConfiguration">
@@ -1166,6 +1407,9 @@
     <resourceLink name="documentWorkflowStatusServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentWorkflowStatusService/home" />
     <resourceLink name="documentServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/DocumentService/home" />
     <resourceLink name="studyRelationshipServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudyRelationshipService/home" />
+    <resourceLink name="studySiteServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteService/home" />
+    <resourceLink name="studySiteParticipationServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteParticipationService/home" />
+    <resourceLink name="studySiteContactServiceHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySiteContactService/home" />
   </service>
 </jndiConfig>
 

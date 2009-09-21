@@ -29,10 +29,6 @@ public class StudyOutcomeMeasureServiceImpl extends StudyOutcomeMeasureServiceIm
     throw new RemoteException("Not yet implemented");
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      return impl.getCurrentByStudyProtocol(studyProtocolId);
-  }
-
   public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       return impl.get(id);
   }

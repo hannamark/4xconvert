@@ -7,13 +7,12 @@ import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper class for invoking the Arm remote EJB.
  */
-public class InvokeArmEjb
-    extends InvokeStudyPaServiceEjb<ArmDTO>
-    implements ArmServiceRemote {
+public class InvokeArmEjb extends InvokeStudyPaServiceEjb<ArmDTO> implements ArmServiceRemote {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
@@ -36,5 +35,12 @@ public class InvokeArmEjb
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi, Map<Ii, Ii> armMap) throws PAException {
+        return null;
     }
 }

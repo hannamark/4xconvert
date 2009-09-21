@@ -55,10 +55,9 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
                 if (args[0].equals("-url")) {
                     ArmServiceClient client = new ArmServiceClient(args[1]);
 
+                    getById(client);
                     getByPlannedActivity(client);
                     getByStudyProtocol(client);
-                    getById(client);
-                    getCurrentByStudyProtocol(client);
                 } else {
                     usage();
                     System.exit(1);
@@ -84,7 +83,7 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
     private static void getByStudyProtocol(ArmServiceClient client) throws RemoteException, PAFault {
         System.out.println("Getting ARM by Study Protocol");
         Id id = new Id();
-        id.setExtension("27453");
+        id.setExtension("27426");
         Arm[] arms = client.getByStudyProtocol(id);
         printResults(arms);
     }
@@ -92,16 +91,8 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
     private static void getById(ArmServiceClient client) throws RemoteException, PAFault {
         System.out.println("Getting ARM by ID");
         Id id = new Id();
-        id.setExtension("1");
+        id.setExtension("180412");
         Arm arm = client.get(id);
-        printResults(arm);
-    }
-
-    private static void getCurrentByStudyProtocol(ArmServiceClient client) throws RemoteException, PAFault {
-        System.out.println("Getting Current ARM by Study Protocol");
-        Id id = new Id();
-        id.setExtension("27453");
-        Arm arm = client.getCurrentByStudyProtocol(id);
         printResults(arm);
     }
 
@@ -117,130 +108,89 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
 
     }
 
-    public gov.nih.nci.coppa.services.pa.Arm get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "get");
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequest params =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequest();
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetResponse boxedResult = portType.get(params);
-            return boxedResult.getArm();
-        }
+  public gov.nih.nci.coppa.services.pa.Arm get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"get");
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequest();
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequestId idContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetResponse boxedResult = portType.get(params);
+    return boxedResult.getArm();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.Arm[] getByPlannedActivity(gov.nih.nci.coppa.services.pa.Id id)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getByPlannedActivity");
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequest params =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequest();
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityResponse boxedResult =
-                    portType.getByPlannedActivity(params);
-            return boxedResult.getArm();
-        }
+  public gov.nih.nci.coppa.services.pa.Arm[] getByPlannedActivity(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlannedActivity");
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequest();
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequestId idContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityResponse boxedResult = portType.getByPlannedActivity(params);
+    return boxedResult.getArm();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.Arm[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getByStudyProtocol");
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequest params =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequest();
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolResponse boxedResult =
-                    portType.getByStudyProtocol(params);
-            return boxedResult.getArm();
-        }
+  public gov.nih.nci.coppa.services.pa.Arm[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByStudyProtocol");
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequest();
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolResponse boxedResult = portType.getByStudyProtocol(params);
+    return boxedResult.getArm();
     }
+  }
 
-    public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,
-            gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "copy");
-            gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequest params =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequest();
-            gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestFromStudyProtocolId fromStudyProtocolIdContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestFromStudyProtocolId();
-            fromStudyProtocolIdContainer.setId(fromStudyProtocolId);
-            params.setFromStudyProtocolId(fromStudyProtocolIdContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestToStudyProtocolId toStudyProtocolIdContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestToStudyProtocolId();
-            toStudyProtocolIdContainer.setId(toStudyProtocolId);
-            params.setToStudyProtocolId(toStudyProtocolIdContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.CopyResponse boxedResult = portType.copy(params);
-        }
+  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"copy");
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequest();
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestFromStudyProtocolId fromStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestFromStudyProtocolId();
+    fromStudyProtocolIdContainer.setId(fromStudyProtocolId);
+    params.setFromStudyProtocolId(fromStudyProtocolIdContainer);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestToStudyProtocolId toStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequestToStudyProtocolId();
+    toStudyProtocolIdContainer.setId(toStudyProtocolId);
+    params.setToStudyProtocolId(toStudyProtocolIdContainer);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CopyResponse boxedResult = portType.copy(params);
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.Arm getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId)
-            throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "getCurrentByStudyProtocol");
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolRequest params =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolRequest();
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId studyProtocolIdContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId();
-            studyProtocolIdContainer.setId(studyProtocolId);
-            params.setStudyProtocolId(studyProtocolIdContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.GetCurrentByStudyProtocolResponse boxedResult =
-                    portType.getCurrentByStudyProtocol(params);
-            return boxedResult.getArm();
-        }
+  public gov.nih.nci.coppa.services.pa.Arm create(gov.nih.nci.coppa.services.pa.Arm arm) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"create");
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequest();
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequestArm armContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequestArm();
+    armContainer.setArm(arm);
+    params.setArm(armContainer);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.CreateResponse boxedResult = portType.create(params);
+    return boxedResult.getArm();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.Arm create(gov.nih.nci.coppa.services.pa.Arm arm) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "create");
-            gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequest params =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequest();
-            gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequestArm armContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.CreateRequestArm();
-            armContainer.setArm(arm);
-            params.setArm(armContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.CreateResponse boxedResult = portType.create(params);
-            return boxedResult.getArm();
-        }
+  public gov.nih.nci.coppa.services.pa.Arm update(gov.nih.nci.coppa.services.pa.Arm arm) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"update");
+    gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequest();
+    gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequestArm armContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequestArm();
+    armContainer.setArm(arm);
+    params.setArm(armContainer);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateResponse boxedResult = portType.update(params);
+    return boxedResult.getArm();
     }
+  }
 
-    public gov.nih.nci.coppa.services.pa.Arm update(gov.nih.nci.coppa.services.pa.Arm arm) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "update");
-            gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequest params =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequest();
-            gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequestArm armContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateRequestArm();
-            armContainer.setArm(arm);
-            params.setArm(armContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.UpdateResponse boxedResult = portType.update(params);
-            return boxedResult.getArm();
-        }
+  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"delete");
+    gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequest();
+    gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteResponse boxedResult = portType.delete(params);
     }
-
-    public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException,
-            gov.nih.nci.coppa.services.pa.faults.PAFault {
-        synchronized (portTypeMutex) {
-            configureStubSecurity((Stub) portType, "delete");
-            gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequest params =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequest();
-            gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequestId idContainer =
-                    new gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteResponse boxedResult = portType.delete(params);
-        }
-    }
+  }
 
 }

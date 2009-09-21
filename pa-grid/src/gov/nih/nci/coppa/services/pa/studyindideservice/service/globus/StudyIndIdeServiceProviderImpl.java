@@ -38,12 +38,6 @@ public class StudyIndIdeServiceProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetCurrentByStudyProtocolResponse();
-    boxedResult.setStudyIndlde(impl.getCurrentByStudyProtocol(params.getStudyProtocolId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyindideservice.stubs.GetResponse();
     boxedResult.setStudyIndlde(impl.get(params.getId().getId()));

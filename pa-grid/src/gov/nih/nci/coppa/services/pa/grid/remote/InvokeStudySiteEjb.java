@@ -3,23 +3,23 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 
 import java.util.List;
 
 /**
  * Wrapper class for invoking the StudyParticipant remote EJB.
  */
-public class InvokeStudyParticipationEjb extends InvokeStudyPaServiceEjb<StudyParticipationDTO> implements
-        StudyParticipationServiceRemote {
+public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> implements
+        StudySiteServiceRemote {
 
     /**
      * Const.
      */
-    public InvokeStudyParticipationEjb() {
-        super(StudyParticipationDTO.class);
+    public InvokeStudySiteEjb() {
+        super(StudySiteDTO.class);
     }
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
@@ -27,11 +27,11 @@ public class InvokeStudyParticipationEjb extends InvokeStudyPaServiceEjb<StudyPa
     /**
      * {@inheritDoc}
      */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii studyProtocolIi, StudyParticipationDTO dto)
+    public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi, StudySiteDTO dto)
             throws PAException {
         try {
-            List<StudyParticipationDTO> result =
-                    locator.getStudyParticipationService().getByStudyProtocol(studyProtocolIi, dto);
+            List<StudySiteDTO> result =
+                    locator.getStudySiteService().getByStudyProtocol(studyProtocolIi, dto);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -43,9 +43,9 @@ public class InvokeStudyParticipationEjb extends InvokeStudyPaServiceEjb<StudyPa
     /**
      * {@inheritDoc}
      */
-    public List<StudyParticipationDTO> getByStudyProtocol(Ii ii, List<StudyParticipationDTO> dto) throws PAException {
+    public List<StudySiteDTO> getByStudyProtocol(Ii ii, List<StudySiteDTO> dto) throws PAException {
         try {
-            List<StudyParticipationDTO> result = locator.getStudyParticipationService().getByStudyProtocol(ii, dto);
+            List<StudySiteDTO> result = locator.getStudySiteService().getByStudyProtocol(ii, dto);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -59,7 +59,7 @@ public class InvokeStudyParticipationEjb extends InvokeStudyPaServiceEjb<StudyPa
      */
     public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
         try {
-            locator.getStudyParticipationService().cascadeRoleStatus(ii, roleStatusCode);
+            locator.getStudySiteService().cascadeRoleStatus(ii, roleStatusCode);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

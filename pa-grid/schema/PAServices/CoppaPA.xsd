@@ -39,7 +39,11 @@
 
     <xs:complexType name="OrganizationFunctionalRoleType" abstract="true">
         <xs:complexContent>
-            <xs:extension base="COPPA-PA:FunctionalRoleType" />
+            <xs:extension base="COPPA-PA:FunctionalRoleType">
+                <xs:sequence>
+                    <xs:element name="functionalCode" type="ISO:CD" />
+                </xs:sequence>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
@@ -356,7 +360,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="StudyParticipation">
+    <xs:element name="StudySite">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="COPPA-PA:OrganizationFunctionalRoleType">
@@ -364,7 +368,6 @@
                         <xs:element name="healthcareFacility" type="ISO:II" />
                         <xs:element name="researchOrganization" type="ISO:II" />
                         <xs:element name="oversightCommittee" type="ISO:II" />
-                        <xs:element name="functionalCode" type="ISO:CD" />
                         <xs:element name="localStudyProtocolIdentifier" type="ISO:ST" />
                         <xs:element name="reviewBoardApprovalStatusCode" type="ISO:CD" />
                         <xs:element name="reviewBoardApprovalNumber" type="ISO:ST" />
@@ -376,7 +379,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="StudyParticipationContact">
+    <xs:element name="StudySiteContact">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="COPPA-PA:PersonFunctionalRoleType">
@@ -385,7 +388,7 @@
                         <xs:element name="primaryIndicator" type="ISO:BL" />
                         <xs:element name="roleCode" type="ISO:CD" />
                         <xs:element name="telecomAddresses" type="ISO:DSET_TEL" />
-                        <xs:element name="studyParticipation" type="ISO:II" />
+                        <xs:element name="studySite" type="ISO:II" />
                         <xs:element name="organizationalContact" type="ISO:II" />
                     </xs:sequence>
                 </xs:extension>
@@ -453,7 +456,7 @@
                     <xs:sequence>
                         <xs:element name="statusCode" type="ISO:CD" />
                         <xs:element name="statusDate" type="ISO:TS" />
-                        <xs:element name="studyParticipation" type="ISO:II" />
+                        <xs:element name="studySite" type="ISO:II" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

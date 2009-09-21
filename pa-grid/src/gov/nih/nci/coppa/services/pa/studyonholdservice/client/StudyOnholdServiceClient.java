@@ -56,7 +56,6 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
               // test....
               testGet(client);
               testGetByStudyProtocol(client);
-              testGetCurrentByStudyProtocol(client);
               testIsOnhold(client);
             } else {
                 usage();
@@ -98,14 +97,6 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
       }
   }
 
-  private static void testGetCurrentByStudyProtocol(StudyOnholdServiceClient client) throws RemoteException {
-      Id id = new Id();
-      id.setExtension("1");
-
-      System.out.println("Testing StudyOnhold.getCurrentByStudyProtocol()...");
-      System.out.println(client.getCurrentByStudyProtocol(id));
-  }
-
   private static void testIsOnhold(StudyOnholdServiceClient client) throws RemoteException {
       Id id = new Id();
       id.setExtension("1");
@@ -142,18 +133,6 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
     toStudyProtocolIdContainer.setId(toStudyProtocolId);
     params.setToStudyProtocolId(toStudyProtocolIdContainer);
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CopyResponse boxedResult = portType.copy(params);
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.StudyOnhold getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
-    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolRequest();
-    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId();
-    studyProtocolIdContainer.setId(studyProtocolId);
-    params.setStudyProtocolId(studyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = portType.getCurrentByStudyProtocol(params);
-    return boxedResult.getStudyOnhold();
     }
   }
 

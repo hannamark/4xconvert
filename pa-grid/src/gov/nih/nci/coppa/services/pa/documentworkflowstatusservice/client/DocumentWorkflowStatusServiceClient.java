@@ -72,21 +72,21 @@ public class DocumentWorkflowStatusServiceClient extends DocumentWorkflowStatusS
 
     private static void getTest(DocumentWorkflowStatusServiceClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("1");
+        id.setExtension("27427");
         DocumentWorkflowStatus result = client.get(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
     private static void getByStudyProtocolTest(DocumentWorkflowStatusServiceClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("1");
+        id.setExtension("27426");
         DocumentWorkflowStatus[] result = client.getByStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
     private static void getCurrentByStudyProtocolTest(DocumentWorkflowStatusServiceClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("1");
+        id.setExtension("27426");
         DocumentWorkflowStatus result = client.getCurrentByStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }

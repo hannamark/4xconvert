@@ -487,8 +487,8 @@
         <run-client serviceendpointname="StudySiteAccrualStatusService" class="gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.client.StudySiteAccrualStatusServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyParticipationContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyParticipationContactService Client">
-        <run-client serviceendpointname="StudyParticipationContactService" class="gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.client.StudyParticipationContactServiceClient" debug-suspend="n" />
+    <target name="runStudySiteContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudySiteContactService Client">
+        <run-client serviceendpointname="StudySiteContactService" class="gov.nih.nci.coppa.services.pa.studysitecontactservice.client.StudySiteContactServiceClient" debug-suspend="n" />
     </target>
 
     <target name="runStudyOnholdClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyOnholdService Client">
@@ -499,8 +499,8 @@
             <run-client serviceendpointname="StudyOutcomeMeasureService" class="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.client.StudyOutcomeMeasureServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyParticipationClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyParticipationService Client">
-          <run-client serviceendpointname="StudyParticipationService" class="gov.nih.nci.coppa.services.pa.studyparticipationservice.client.StudyParticipationServiceClient" debug-suspend="n" />
+    <target name="runStudySiteClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudySiteService Client">
+          <run-client serviceendpointname="StudySiteService" class="gov.nih.nci.coppa.services.pa.studysiteservice.client.StudySiteServiceClient" debug-suspend="n" />
     </target>
 
     <target name="runStudyDiseaseClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyDiseaseService Client">

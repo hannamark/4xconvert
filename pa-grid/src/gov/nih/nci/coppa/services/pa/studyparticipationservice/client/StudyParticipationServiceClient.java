@@ -1,13 +1,9 @@
 package gov.nih.nci.coppa.services.pa.studyparticipationservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
-import gov.nih.nci.coppa.services.pa.StudyParticipation;
 import gov.nih.nci.coppa.services.pa.studyparticipationservice.common.StudyParticipationServiceI;
-import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
 
-import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.globus.gsi.GlobusCredential;
@@ -53,8 +49,6 @@ public class StudyParticipationServiceClient extends StudyParticipationServiceCl
               StudyParticipationServiceClient client = new StudyParticipationServiceClient(args[1]);
               // place client calls here if you want to use this main as a
               // test....
-              getStudyPart(client);
-              getForStudyPart(client);
             } else {
                 usage();
                 System.exit(1);
@@ -68,140 +62,5 @@ public class StudyParticipationServiceClient extends StudyParticipationServiceCl
             System.exit(1);
         }
     }
-
-    private static void getForStudyPart(StudyParticipationServiceClient client) throws RemoteException {
-        Id id = new Id();
-        id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-        id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27426");
-        StudyParticipation[] stCont = client.getByStudyProtocol(id);
-        System.out.println("get by study protocol brought back set sized " + stCont.length);
-    }
-
-    private static void getStudyPart(StudyParticipationServiceClient client) throws RemoteException {
-        Id id = new Id();
-        id.setExtension("27435");
-        StudyParticipation stCont = client.get(id);
-        if (stCont == null) {
-            System.out.println("could not find StudyDisease");
-        } else {
-            System.out.println("StudyParticipant 27441 found.");
-        }
-    }
-
-  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipation studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getByStudyProtocolAndRole");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRoleRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRoleRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRoleRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRoleRequestStudyProtocolId();
-    studyProtocolIdContainer.setId(studyProtocolId);
-    params.setStudyProtocolId(studyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRoleRequestStudyParticipation studyParticipationContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRoleRequestStudyParticipation();
-    studyParticipationContainer.setStudyParticipation(studyParticipation);
-    params.setStudyParticipation(studyParticipationContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRoleResponse boxedResult = portType.getByStudyProtocolAndRole(params);
-    return boxedResult.getStudyParticipation();
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyParticipation[] studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getByStudyProtocolAndRoles");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRolesRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRolesRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRolesRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRolesRequestStudyProtocolId();
-    studyProtocolIdContainer.setId(studyProtocolId);
-    params.setStudyProtocolId(studyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRolesRequestStudyParticipation studyParticipationContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRolesRequestStudyParticipation();
-    studyParticipationContainer.setStudyParticipation(studyParticipation);
-    params.setStudyParticipation(studyParticipationContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolAndRolesResponse boxedResult = portType.getByStudyProtocolAndRoles(params);
-    return boxedResult.getStudyParticipation();
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.StudyParticipation[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getByStudyProtocol");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetByStudyProtocolResponse boxedResult = portType.getByStudyProtocol(params);
-    return boxedResult.getStudyParticipation();
-    }
-  }
-
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"copy");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CopyRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CopyRequestFromStudyProtocolId fromStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CopyRequestFromStudyProtocolId();
-    fromStudyProtocolIdContainer.setId(fromStudyProtocolId);
-    params.setFromStudyProtocolId(fromStudyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CopyRequestToStudyProtocolId toStudyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CopyRequestToStudyProtocolId();
-    toStudyProtocolIdContainer.setId(toStudyProtocolId);
-    params.setToStudyProtocolId(toStudyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CopyResponse boxedResult = portType.copy(params);
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.StudyParticipation getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetCurrentByStudyProtocolRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId studyProtocolIdContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetCurrentByStudyProtocolRequestStudyProtocolId();
-    studyProtocolIdContainer.setId(studyProtocolId);
-    params.setStudyProtocolId(studyProtocolIdContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = portType.getCurrentByStudyProtocol(params);
-    return boxedResult.getStudyParticipation();
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.StudyParticipation get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"get");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetRequestId idContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.GetResponse boxedResult = portType.get(params);
-    return boxedResult.getStudyParticipation();
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.StudyParticipation create(gov.nih.nci.coppa.services.pa.StudyParticipation studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"create");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CreateRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CreateRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CreateRequestStudyParticipation studyParticipationContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CreateRequestStudyParticipation();
-    studyParticipationContainer.setStudyParticipation(studyParticipation);
-    params.setStudyParticipation(studyParticipationContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.CreateResponse boxedResult = portType.create(params);
-    return boxedResult.getStudyParticipation();
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.StudyParticipation update(gov.nih.nci.coppa.services.pa.StudyParticipation studyParticipation) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"update");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.UpdateRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.UpdateRequestStudyParticipation studyParticipationContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.UpdateRequestStudyParticipation();
-    studyParticipationContainer.setStudyParticipation(studyParticipation);
-    params.setStudyParticipation(studyParticipationContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.UpdateResponse boxedResult = portType.update(params);
-    return boxedResult.getStudyParticipation();
-    }
-  }
-
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"delete");
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.DeleteRequest();
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.DeleteRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.DeleteResponse boxedResult = portType.delete(params);
-    }
-  }
 
 }

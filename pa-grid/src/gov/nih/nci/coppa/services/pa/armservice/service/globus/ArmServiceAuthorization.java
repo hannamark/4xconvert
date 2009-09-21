@@ -75,10 +75,6 @@ public class ArmServiceAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeGetCurrentByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-	}
-	   				
 	public void authorizeCreate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
@@ -112,9 +108,6 @@ public class ArmServiceAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("copy")){
 			authorizeCopy(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("getCurrentByStudyProtocol")){
-			authorizeGetCurrentByStudyProtocol(peerSubject, context, operation);
 			return true;
 		} else if(operation.getLocalPart().equals("create")){
 			authorizeCreate(peerSubject, context, operation);

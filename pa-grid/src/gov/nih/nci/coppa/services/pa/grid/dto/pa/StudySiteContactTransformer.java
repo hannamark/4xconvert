@@ -80,127 +80,106 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
+package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformerTest;
-import gov.nih.nci.coppa.services.pa.StudyParticipationContact;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationContactTransformer;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformer;
+import gov.nih.nci.coppa.services.pa.StudySiteContact;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 
-public class StudyParticipationContactTransformerTest
-    extends AbstractTransformerTestBase<StudyParticipationContactTransformer, StudyParticipationContact, StudyParticipationContactDTO> {
+/**
+ * Transforms StudySiteContact instances.
+ */
+public final class StudySiteContactTransformer
+    extends AbstractTransformer<StudySiteContact, StudySiteContactDTO>
+    implements Transformer<StudySiteContact, StudySiteContactDTO> {
 
-    @Override
-    public StudyParticipationContactDTO makeDtoSimple() {
-        StudyParticipationContactDTO result = new StudyParticipationContactDTO();
+    /**
+     * Public singleton.
+     */
+    public static final StudySiteContactTransformer INSTANCE = new StudySiteContactTransformer();
+
+    private StudySiteContactTransformer() { }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteContactDTO toDto(StudySiteContact input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+
+        StudySiteContactDTO result = new StudySiteContactDTO();
         //II
-        result.setIdentifier(new IITransformerTest().makeDtoSimple());
-        result.setClinicalResearchStaffIi(new IITransformerTest().makeDtoSimple());
-        result.setHealthCareProviderIi(new IITransformerTest().makeDtoSimple());
-        result.setOrganizationalContactIi(new IITransformerTest().makeDtoSimple());
-        result.setStudyParticipationIi(new IITransformerTest().makeDtoSimple());
-        result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
+        result.setClinicalResearchStaffIi((IITransformer.INSTANCE.toDto(input.getClinicalResearchStaff())));
+        result.setHealthCareProviderIi((IITransformer.INSTANCE.toDto(input.getHealthCareProvider())));
+        result.setOrganizationalContactIi((IITransformer.INSTANCE.toDto(input.getOrganizationalContact())));
+        result.setStudySiteIi((IITransformer.INSTANCE.toDto(input.getStudySite())));
+        result.setStudyProtocolIdentifier((IITransformer.INSTANCE.toDto(input.getStudyProtocolIdentifier())));
 
         //CD
-        result.setStatusCode(new CDTransformerTest().makeDtoSimple());
-        result.setRoleCode(new CDTransformerTest().makeDtoSimple());
+        result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
+        result.setRoleCode(CDTransformer.INSTANCE.toDto(input.getRoleCode()));
 
         //IVLTS
-        result.setStatusDateRange(new IVLTSTransformerTest().makeDtoSimple());
+        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toDto(input.getStatusDateRange()));
 
         //AD
-        result.setPostalAddress(new ADTransformerTest().makeDtoSimple());
+        result.setPostalAddress(ADTransformer.INSTANCE.toDto(input.getPostalAddress()));
 
         //BL
-        result.setPrimaryIndicator(new BLTransformerTest().makeDtoSimple());
-        result.setTelecomAddresses(new DSETTelTransformerTest().makeDtoSimple());
+        result.setPrimaryIndicator(BLTransformer.INSTANCE.toDto(input.getPrimaryIndicator()));
+        result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddresses()));
 
         return result;
     }
 
-    @Override
-    public StudyParticipationContact makeXmlSimple() {
-        StudyParticipationContact result = new StudyParticipationContact();
-
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteContact toXml(StudySiteContactDTO input) throws DtoTransformException {
+        if (input == null) {
+            return null;
+        }
+        StudySiteContact result = new StudySiteContact();
         //II
-        result.setIdentifier(new IITransformerTest().makeXmlSimple());
-        result.setClinicalResearchStaff(new IITransformerTest().makeXmlSimple());
-        result.setHealthCareProvider(new IITransformerTest().makeXmlSimple());
-        result.setOrganizationalContact(new IITransformerTest().makeXmlSimple());
-        result.setStudyParticipation(new IITransformerTest().makeXmlSimple());
-        result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
+        result.setClinicalResearchStaff((IITransformer.INSTANCE.toXml(input.getClinicalResearchStaffIi())));
+        result.setHealthCareProvider((IITransformer.INSTANCE.toXml(input.getHealthCareProviderIi())));
+        result.setOrganizationalContact((IITransformer.INSTANCE.toXml(input.getOrganizationalContactIi())));
+        result.setStudySite((IITransformer.INSTANCE.toXml(input.getStudySiteIi())));
+        result.setStudyProtocolIdentifier((IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier())));
 
         //CD
-        result.setStatusCode(new CDTransformerTest().makeXmlSimple());
-        result.setRoleCode(new CDTransformerTest().makeXmlSimple());
+        result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
+        result.setRoleCode(CDTransformer.INSTANCE.toXml(input.getRoleCode()));
 
         //IVLTS
-        result.setStatusDateRange(new IVLTSTransformerTest().makeXmlSimple());
+        result.setStatusDateRange(IVLTSTransformer.INSTANCE.toXml(input.getStatusDateRange()));
 
         //AD
-        result.setPostalAddress(new ADTransformerTest().makeXmlSimple());
+        result.setPostalAddress(ADTransformer.INSTANCE.toXml(input.getPostalAddress()));
 
         //BL
-        result.setPrimaryIndicator(new BLTransformerTest().makeXmlSimple());
-        result.setTelecomAddresses(new DSETTelTransformerTest().makeXmlSimple());
+        result.setPrimaryIndicator(BLTransformer.INSTANCE.toXml(input.getPrimaryIndicator()));
+        result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddresses()));
 
         return result;
     }
 
-    @Override
-    public void verifyDtoSimple(StudyParticipationContactDTO x) {
-        //II
-        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
-        new IITransformerTest().verifyDtoSimple(x.getClinicalResearchStaffIi());
-        new IITransformerTest().verifyDtoSimple(x.getHealthCareProviderIi());
-        new IITransformerTest().verifyDtoSimple(x.getOrganizationalContactIi());
-        new IITransformerTest().verifyDtoSimple(x.getStudyParticipationIi());
-        new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
-
-        //CD
-        new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
-        new CDTransformerTest().verifyDtoSimple(x.getRoleCode());
-
-        //IVLTS
-        new IVLTSTransformerTest().verifyDtoSimple(x.getStatusDateRange());
-
-        //AD
-        new ADTransformerTest().verifyDtoSimple(x.getPostalAddress());
-
-        //BL
-        new BLTransformerTest().verifyDtoSimple(x.getPrimaryIndicator());
-        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddresses());
-
-    }
-
-    @Override
-    public void verifyXmlSimple(StudyParticipationContact x) {
-        //II
-        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
-        new IITransformerTest().verifyXmlSimple(x.getClinicalResearchStaff());
-        new IITransformerTest().verifyXmlSimple(x.getHealthCareProvider());
-        new IITransformerTest().verifyXmlSimple(x.getOrganizationalContact());
-        new IITransformerTest().verifyXmlSimple(x.getStudyParticipation());
-        new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
-
-        //CD
-        new CDTransformerTest().verifyXmlSimple(x.getStatusCode());
-        new CDTransformerTest().verifyXmlSimple(x.getRoleCode());
-
-        //IVLTS
-        new IVLTSTransformerTest().verifyXmlSimple(x.getStatusDateRange());
-
-        //AD
-        new ADTransformerTest().verifyXmlSimple(x.getPostalAddress());
-
-        //BL
-        new BLTransformerTest().verifyXmlSimple(x.getPrimaryIndicator());
-        new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddresses());
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteContact[] createXmlArray(int arg0)
+            throws DtoTransformException {
+        return new StudySiteContact[arg0];
     }
 }

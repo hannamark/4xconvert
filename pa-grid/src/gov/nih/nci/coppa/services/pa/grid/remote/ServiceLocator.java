@@ -89,20 +89,21 @@ import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
+import gov.nih.nci.pa.service.StudyCurrentPaService;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyPaService;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyRelationshipServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 
 import javax.naming.NamingException;
 
@@ -155,11 +156,11 @@ public interface ServiceLocator {
     StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() throws NamingException;
 
     /**
-     * Gets the StudyParticipationContact service.
-     * @return the remote StudyParticipationContactService
+     * Gets the StudySiteContact service.
+     * @return the remote StudySiteContactService
      * @throws NamingException if unable to lookup.
      */
-    StudyParticipationContactServiceRemote getStudyParticipationContactService() throws NamingException;
+    StudySiteContactServiceRemote getStudySiteContactService() throws NamingException;
 
     /**
      * Gets the StudyOutcomeMeasure Service.
@@ -169,11 +170,11 @@ public interface ServiceLocator {
     StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService() throws NamingException;
 
     /**
-     * Gets the StudyParticipation Service.
-     * @return the remote StudyParticipationService.
+     * Gets the StudySite Service.
+     * @return the remote StudySiteService.
      * @throws NamingException if unable to lookup.
      */
-    StudyParticipationServiceRemote getStudyParticipationService() throws NamingException;
+    StudySiteServiceRemote getStudySiteService() throws NamingException;
 
     /**
      * Gets the StudyOverallStatus service.
@@ -250,5 +251,15 @@ public interface ServiceLocator {
     */
    @SuppressWarnings("unchecked")
    <S extends StudyDTO> StudyPaService getStudyPaService(Class<S> type) throws NamingException;
+
+   /**
+    * Gets a study current service.
+    * @param <S> StudyPa DTO type
+    * @param type Correlation DTO class
+    * @return StudyCurrentPaService
+    * @throws NamingException on error looking up the service
+    */
+   @SuppressWarnings("unchecked")
+   <S extends StudyDTO> StudyCurrentPaService getStudyCurrentPaService(Class<S> type) throws NamingException;
 
 }

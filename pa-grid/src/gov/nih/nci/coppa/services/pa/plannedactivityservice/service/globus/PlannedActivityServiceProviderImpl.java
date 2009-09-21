@@ -80,12 +80,6 @@ public class PlannedActivityServiceProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetCurrentByStudyProtocolResponse();
-    boxedResult.setPlannedActivity(impl.getCurrentByStudyProtocol(params.getId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetResponse();
     boxedResult.setPlannedActivity(impl.get(params.getId().getId()));

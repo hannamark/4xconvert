@@ -44,15 +44,15 @@ public class StudySiteAccrualStatusServiceProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationResponse getStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudyParticipationResponse();
-    boxedResult.setStudySiteAccrualStatus(impl.getStudySiteAccrualStatusByStudyParticipation(params.getStudyParticipationId().getId()));
+    public gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteResponse getStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteResponse();
+    boxedResult.setStudySiteAccrualStatus(impl.getStudySiteAccrualStatusByStudySite(params.getStudySiteId().getId()));
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationResponse getCurrentStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudyParticipationResponse();
-    boxedResult.setStudySiteAccrualStatus(impl.getCurrentStudySiteAccrualStatusByStudyParticipation(params.getStudyParticipationId().getId()));
+    public gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteResponse getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteResponse boxedResult = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteResponse();
+    boxedResult.setStudySiteAccrualStatus(impl.getCurrentStudySiteAccrualStatusByStudySite(params.getStudySiteId().getId()));
     return boxedResult;
   }
 

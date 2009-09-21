@@ -95,34 +95,35 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
+import gov.nih.nci.pa.service.StudyCurrentPaService;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyPaService;
-import gov.nih.nci.pa.service.StudyParticipationContactServiceRemote;
-import gov.nih.nci.pa.service.StudyParticipationServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyRelationshipServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -164,12 +165,12 @@ public final class JNDIServiceLocator implements ServiceLocator {
                     getInstance().getClass().getMethod("getStudyRecruitmentStatusService"));
             values.put(StudySiteAccrualStatusDTO.class,
                     getInstance().getClass().getMethod("getStudySiteAccrualStatusService"));
-            values.put(StudyParticipationContactDTO.class,
-                    getInstance().getClass().getMethod("getStudyParticipationContactService"));
+            values.put(StudySiteContactDTO.class,
+                    getInstance().getClass().getMethod("getStudySiteContactService"));
             values.put(StudyOutcomeMeasureDTO.class,
                     getInstance().getClass().getMethod("getStudyOutcomeMeasureService"));
-            values.put(StudyParticipationDTO.class,
-                    getInstance().getClass().getMethod("getStudyParticipationService"));
+            values.put(StudySiteDTO.class,
+                    getInstance().getClass().getMethod("getStudySiteService"));
             values.put(StudyOverallStatusDTO.class,
                     getInstance().getClass().getMethod("getStudyOverallStatusService"));
             values.put(StudyDiseaseDTO.class,
@@ -283,10 +284,10 @@ public final class JNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContactServiceRemote getStudyParticipationContactService()
+    public StudySiteContactServiceRemote getStudySiteContactService()
             throws NamingException {
-        StudyParticipationContactServiceRemote result =
-            (StudyParticipationContactServiceRemote) lookup("pa/StudyParticipationContactServiceBean/remote");
+        StudySiteContactServiceRemote result =
+            (StudySiteContactServiceRemote) lookup("pa/StudySiteContactServiceBean/remote");
         return result;
     }
 
@@ -303,10 +304,10 @@ public final class JNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationServiceRemote getStudyParticipationService()
+    public StudySiteServiceRemote getStudySiteService()
             throws NamingException {
-        StudyParticipationServiceRemote result =
-            (StudyParticipationServiceRemote) lookup("pa/StudyParticipationServiceBean/remote");
+        StudySiteServiceRemote result =
+            (StudySiteServiceRemote) lookup("pa/StudySiteServiceBean/remote");
         return result;
     }
 
@@ -423,15 +424,32 @@ public final class JNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public <S extends StudyDTO> StudyPaService<S> getStudyPaService(Class<S> type)
-            throws NamingException {
+    @SuppressWarnings("unchecked")
+    public <S extends StudyDTO> StudyPaService<S> getStudyPaService(Class<S> type) throws NamingException {
         Method serviceMethod = values.get(type);
         StudyPaService<S> service = null;
         try {
             service = (StudyPaService<S>) serviceMethod.invoke(this);
         } catch (Exception e) {
-            throw new InvokeCoppaServiceException("Unable to invoke method "
-                    + serviceMethod.getName(), e);
+            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
+        }
+        if (service == null) {
+            throw new IllegalArgumentException("Unable to locate service for type, " + type);
+        }
+        return service;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public <S extends StudyDTO> StudyCurrentPaService getStudyCurrentPaService(Class<S> type) throws NamingException {
+        Method serviceMethod = values.get(type);
+        StudyCurrentPaService<S> service = null;
+        try {
+            service = (StudyCurrentPaService<S>) serviceMethod.invoke(this);
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
         }
         if (service == null) {
             throw new IllegalArgumentException("Unable to locate service for type, " + type);

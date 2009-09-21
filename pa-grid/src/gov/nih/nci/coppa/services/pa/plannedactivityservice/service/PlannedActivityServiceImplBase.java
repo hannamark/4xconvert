@@ -135,6 +135,21 @@ public abstract class PlannedActivityServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.studyrelationshipservice.service.globus.resource.StudyRelationshipServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.pa.studysiteservice.service.globus.resource.StudySiteServiceResourceHome getStudySiteServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studySiteServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studysiteservice.service.globus.resource.StudySiteServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.service.globus.resource.StudySiteParticipationServiceResourceHome getStudySiteParticipationServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studySiteParticipationServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studysiteparticipationservice.service.globus.resource.StudySiteParticipationServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.studysitecontactservice.service.globus.resource.StudySiteContactServiceResourceHome getStudySiteContactServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studySiteContactServiceHome");
+		return (gov.nih.nci.coppa.services.pa.studysitecontactservice.service.globus.resource.StudySiteContactServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

@@ -39,10 +39,6 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
         return impl.getByStudyProtocol(id);
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyOnhold getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-      return impl.getCurrentByStudyProtocol(studyProtocolId);
-    }
-
   public gov.nih.nci.coppa.services.pa.BL isOnhold(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);

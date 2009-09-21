@@ -84,93 +84,98 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformer;
-import gov.nih.nci.coppa.services.pa.StudyParticipationContact;
-import gov.nih.nci.pa.iso.dto.StudyParticipationContactDTO;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
+import gov.nih.nci.coppa.services.pa.StudySite;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
 /**
- * Transforms StudyParticipationContact instances.
+ * Transforms StudySite instances.
  */
-public final class StudyParticipationContactTransformer
-    extends AbstractTransformer<StudyParticipationContact, StudyParticipationContactDTO>
-    implements Transformer<StudyParticipationContact, StudyParticipationContactDTO> {
+public final class StudySiteTransformer
+    extends AbstractTransformer<StudySite, StudySiteDTO>
+    implements Transformer<StudySite, StudySiteDTO> {
 
     /**
      * Public singleton.
      */
-    public static final StudyParticipationContactTransformer INSTANCE = new StudyParticipationContactTransformer();
+    public static final StudySiteTransformer INSTANCE = new StudySiteTransformer();
 
-    private StudyParticipationContactTransformer() { }
+    private StudySiteTransformer() { }
 
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContactDTO toDto(StudyParticipationContact input) throws DtoTransformException {
+    public StudySiteDTO toDto(StudySite input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
 
-        StudyParticipationContactDTO result = new StudyParticipationContactDTO();
+        StudySiteDTO result = new StudySiteDTO();
         //II
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
-        result.setClinicalResearchStaffIi((IITransformer.INSTANCE.toDto(input.getClinicalResearchStaff())));
-        result.setHealthCareProviderIi((IITransformer.INSTANCE.toDto(input.getHealthCareProvider())));
-        result.setOrganizationalContactIi((IITransformer.INSTANCE.toDto(input.getOrganizationalContact())));
-        result.setStudyParticipationIi((IITransformer.INSTANCE.toDto(input.getStudyParticipation())));
         result.setStudyProtocolIdentifier((IITransformer.INSTANCE.toDto(input.getStudyProtocolIdentifier())));
+        result.setHealthcareFacilityIi((IITransformer.INSTANCE.toDto(input.getHealthcareFacility())));
+        result.setOversightCommitteeIi((IITransformer.INSTANCE.toDto(input.getOversightCommittee())));
+        result.setResearchOrganizationIi((IITransformer.INSTANCE.toDto(input.getResearchOrganization())));
 
         //CD
+        result.setFunctionalCode(CDTransformer.INSTANCE.toDto(input.getFunctionalCode()));
+        result.setReviewBoardApprovalStatusCode(CDTransformer.INSTANCE.toDto(input.getReviewBoardApprovalStatusCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
-        result.setRoleCode(CDTransformer.INSTANCE.toDto(input.getRoleCode()));
+
+        //ST
+        result.setLocalStudyProtocolIdentifier(STTransformer.INSTANCE.toDto(input.getLocalStudyProtocolIdentifier()));
+        result.setReviewBoardApprovalNumber(STTransformer.INSTANCE.toDto(input.getReviewBoardApprovalNumber()));
+
+        //TS
+        result.setReviewBoardApprovalDate(TSTransformer.INSTANCE.toDto(input.getReviewBoardApprovalDate()));
 
         //IVLTS
         result.setStatusDateRange(IVLTSTransformer.INSTANCE.toDto(input.getStatusDateRange()));
 
-        //AD
-        result.setPostalAddress(ADTransformer.INSTANCE.toDto(input.getPostalAddress()));
-
-        //BL
-        result.setPrimaryIndicator(BLTransformer.INSTANCE.toDto(input.getPrimaryIndicator()));
-        result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddresses()));
-
+        //INT
+        result.setTargetAccrualNumber(INTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact toXml(StudyParticipationContactDTO input) throws DtoTransformException {
+    public StudySite toXml(StudySiteDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
-        StudyParticipationContact result = new StudyParticipationContact();
+        StudySite result = new StudySite();
         //II
         result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
-        result.setClinicalResearchStaff((IITransformer.INSTANCE.toXml(input.getClinicalResearchStaffIi())));
-        result.setHealthCareProvider((IITransformer.INSTANCE.toXml(input.getHealthCareProviderIi())));
-        result.setOrganizationalContact((IITransformer.INSTANCE.toXml(input.getOrganizationalContactIi())));
-        result.setStudyParticipation((IITransformer.INSTANCE.toXml(input.getStudyParticipationIi())));
         result.setStudyProtocolIdentifier((IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier())));
+        result.setHealthcareFacility((IITransformer.INSTANCE.toXml(input.getHealthcareFacilityIi())));
+        result.setOversightCommittee((IITransformer.INSTANCE.toXml(input.getOversightCommitteeIi())));
+        result.setResearchOrganization((IITransformer.INSTANCE.toXml(input.getResearchOrganizationIi())));
 
         //CD
+        result.setFunctionalCode(CDTransformer.INSTANCE.toXml(input.getFunctionalCode()));
+        result.setReviewBoardApprovalStatusCode(CDTransformer.INSTANCE.toXml(input.getReviewBoardApprovalStatusCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toXml(input.getStatusCode()));
-        result.setRoleCode(CDTransformer.INSTANCE.toXml(input.getRoleCode()));
+
+        //ST
+        result.setLocalStudyProtocolIdentifier(STTransformer.INSTANCE.toXml(input.getLocalStudyProtocolIdentifier()));
+        result.setReviewBoardApprovalNumber(STTransformer.INSTANCE.toXml(input.getReviewBoardApprovalNumber()));
+
+        //TS
+        result.setReviewBoardApprovalDate(TSTransformer.INSTANCE.toXml(input.getReviewBoardApprovalDate()));
 
         //IVLTS
         result.setStatusDateRange(IVLTSTransformer.INSTANCE.toXml(input.getStatusDateRange()));
 
-        //AD
-        result.setPostalAddress(ADTransformer.INSTANCE.toXml(input.getPostalAddress()));
-
-        //BL
-        result.setPrimaryIndicator(BLTransformer.INSTANCE.toXml(input.getPrimaryIndicator()));
-        result.setTelecomAddresses(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddresses()));
+        //INT
+        result.setTargetAccrualNumber(INTTransformer.INSTANCE.toXml(input.getTargetAccrualNumber()));
 
         return result;
     }
@@ -178,8 +183,8 @@ public final class StudyParticipationContactTransformer
     /**
      * {@inheritDoc}
      */
-    public StudyParticipationContact[] createXmlArray(int arg0)
+    public StudySite[] createXmlArray(int arg0)
             throws DtoTransformException {
-        return new StudyParticipationContact[arg0];
+        return new StudySite[arg0];
     }
 }

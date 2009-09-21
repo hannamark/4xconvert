@@ -20,11 +20,11 @@ public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusSe
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
+    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi)
             throws PAException {
         try {
             StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
-            return service.getCurrentStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
+            return service.getCurrentStudySiteAccrualStatusByStudySite(studySiteIi);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
@@ -50,12 +50,12 @@ public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusSe
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudyParticipation(Ii studyParticipationIi)
+    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi)
             throws PAException {
         try {
             StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
             List<StudySiteAccrualStatusDTO> result =
-                    service.getStudySiteAccrualStatusByStudyParticipation(studyParticipationIi);
+                    service.getStudySiteAccrualStatusByStudySite(studySiteIi);
             return result;
         } catch (PAException pae) {
             throw pae;

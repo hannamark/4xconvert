@@ -67,10 +67,6 @@ public class StudyOnholdServiceAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeGetCurrentByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-	}
-	   				
 	public void authorizeGet(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
@@ -106,9 +102,6 @@ public class StudyOnholdServiceAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("copy")){
 			authorizeCopy(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("getCurrentByStudyProtocol")){
-			authorizeGetCurrentByStudyProtocol(peerSubject, context, operation);
 			return true;
 		} else if(operation.getLocalPart().equals("get")){
 			authorizeGet(peerSubject, context, operation);

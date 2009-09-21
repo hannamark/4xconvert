@@ -42,34 +42,6 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
     /**
      * {@inheritDoc}
      */
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        try {
-            Ii iiDto = IITransformer.INSTANCE.toDto(studyParticipationId);
-            List<StudySiteAccrualStatusDTO> dtoList = ejb.getStudySiteAccrualStatusByStudyParticipation(iiDto);
-            return StudySiteAccrualStatusTransformer.INSTANCE.convert(dtoList);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        try {
-            Ii iiDto = IITransformer.INSTANCE.toDto(studyParticipationId);
-            StudySiteAccrualStatusDTO dto = ejb.getCurrentStudySiteAccrualStatusByStudyParticipation(iiDto);
-            return StudySiteAccrualStatusTransformer.INSTANCE.toXml(dto);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
   public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus createStudySiteAccrualStatus(gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
@@ -80,4 +52,33 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
   public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus updateStudySiteAccrualStatus(gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         throw new RemoteException("Not yet implemented");
     }
+
+  /**
+   * {@inheritDoc}
+   */
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+      try {
+          Ii iiDto = IITransformer.INSTANCE.toDto(studySiteId);
+          List<StudySiteAccrualStatusDTO> dtoList = ejb.getStudySiteAccrualStatusByStudySite(iiDto);
+          return StudySiteAccrualStatusTransformer.INSTANCE.convert(dtoList);
+      } catch (Exception e) {
+          logger.error(e.getMessage(), e);
+          throw FaultUtil.reThrowRemote(e);
+      }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+      try {
+          Ii iiDto = IITransformer.INSTANCE.toDto(studySiteId);
+          StudySiteAccrualStatusDTO dto = ejb.getCurrentStudySiteAccrualStatusByStudySite(iiDto);
+          return StudySiteAccrualStatusTransformer.INSTANCE.toXml(dto);
+      } catch (Exception e) {
+          logger.error(e.getMessage(), e);
+          throw FaultUtil.reThrowRemote(e);
+      }
+  }
+
 }

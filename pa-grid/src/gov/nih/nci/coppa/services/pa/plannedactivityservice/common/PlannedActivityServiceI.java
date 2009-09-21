@@ -46,8 +46,6 @@ public interface PlannedActivityServiceI {
    */
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
-
   public gov.nih.nci.coppa.services.pa.PlannedActivity get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.PlannedActivity create(gov.nih.nci.coppa.services.pa.PlannedActivity plannedActivity) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;

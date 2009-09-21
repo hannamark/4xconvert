@@ -18,9 +18,9 @@ public interface StudySiteAccrualStatusServiceI {
 
   public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus updateStudySiteAccrualStatus(gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudyParticipation(gov.nih.nci.coppa.services.pa.Id studyParticipationId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 

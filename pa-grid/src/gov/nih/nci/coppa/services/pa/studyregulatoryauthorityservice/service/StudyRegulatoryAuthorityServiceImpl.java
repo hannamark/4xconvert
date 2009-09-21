@@ -1,7 +1,7 @@
 package gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.service;
 
 import gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority;
-import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
+import gov.nih.nci.coppa.services.pa.grid.GenericStudyCurrentPaGridServiceImpl;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 
 import java.rmi.RemoteException;
@@ -11,8 +11,8 @@ import java.rmi.RemoteException;
  */
 public class StudyRegulatoryAuthorityServiceImpl extends StudyRegulatoryAuthorityServiceImplBase {
 
-    private GenericStudyPaGridServiceImpl<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority> impl =
-            new GenericStudyPaGridServiceImpl<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority>(
+    private GenericStudyCurrentPaGridServiceImpl<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority> impl =
+            new GenericStudyCurrentPaGridServiceImpl<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority>(
                     StudyRegulatoryAuthority.class, StudyRegulatoryAuthorityDTO.class);
 
     public StudyRegulatoryAuthorityServiceImpl() throws RemoteException {

@@ -71,11 +71,11 @@ public class StudySiteAccrualStatusServiceAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeGetStudySiteAccrualStatusByStudyParticipation(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+	public void authorizeGetStudySiteAccrualStatusByStudySite(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
 	   				
-	public void authorizeGetCurrentStudySiteAccrualStatusByStudyParticipation(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+	public void authorizeGetCurrentStudySiteAccrualStatusByStudySite(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
 	   
@@ -98,11 +98,11 @@ public class StudySiteAccrualStatusServiceAuthorization implements PDP {
 		} else if(operation.getLocalPart().equals("updateStudySiteAccrualStatus")){
 			authorizeUpdateStudySiteAccrualStatus(peerSubject, context, operation);
 			return true;
-		} else if(operation.getLocalPart().equals("getStudySiteAccrualStatusByStudyParticipation")){
-			authorizeGetStudySiteAccrualStatusByStudyParticipation(peerSubject, context, operation);
+		} else if(operation.getLocalPart().equals("getStudySiteAccrualStatusByStudySite")){
+			authorizeGetStudySiteAccrualStatusByStudySite(peerSubject, context, operation);
 			return true;
-		} else if(operation.getLocalPart().equals("getCurrentStudySiteAccrualStatusByStudyParticipation")){
-			authorizeGetCurrentStudySiteAccrualStatusByStudyParticipation(peerSubject, context, operation);
+		} else if(operation.getLocalPart().equals("getCurrentStudySiteAccrualStatusByStudySite")){
+			authorizeGetCurrentStudySiteAccrualStatusByStudySite(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

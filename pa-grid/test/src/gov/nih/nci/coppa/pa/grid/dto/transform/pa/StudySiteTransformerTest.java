@@ -89,16 +89,16 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
-import gov.nih.nci.coppa.services.pa.StudyParticipation;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyParticipationTransformer;
-import gov.nih.nci.pa.iso.dto.StudyParticipationDTO;
+import gov.nih.nci.coppa.services.pa.StudySite;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
-public class StudyParticipationTransformerTest
-    extends AbstractTransformerTestBase<StudyParticipationTransformer, StudyParticipation, StudyParticipationDTO> {
+public class StudySiteTransformerTest
+    extends AbstractTransformerTestBase<StudySiteTransformer, StudySite, StudySiteDTO> {
 
     @Override
-    public StudyParticipationDTO makeDtoSimple() {
-        StudyParticipationDTO result = new StudyParticipationDTO();
+    public StudySiteDTO makeDtoSimple() {
+        StudySiteDTO result = new StudySiteDTO();
         //II
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
@@ -128,8 +128,8 @@ public class StudyParticipationTransformerTest
     }
 
     @Override
-    public StudyParticipation makeXmlSimple() {
-        StudyParticipation result = new StudyParticipation();
+    public StudySite makeXmlSimple() {
+        StudySite result = new StudySite();
         //II
         result.setIdentifier(new IITransformerTest().makeXmlSimple());
         result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
@@ -158,7 +158,7 @@ public class StudyParticipationTransformerTest
     }
 
     @Override
-    public void verifyDtoSimple(StudyParticipationDTO x) {
+    public void verifyDtoSimple(StudySiteDTO x) {
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
@@ -174,7 +174,7 @@ public class StudyParticipationTransformerTest
     }
 
     @Override
-    public void verifyXmlSimple(StudyParticipation x) {
+    public void verifyXmlSimple(StudySite x) {
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
         new IITransformerTest().verifyXmlSimple(x.getResearchOrganization());

@@ -38,12 +38,6 @@ public class StudyOnholdServiceProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolResponse getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetCurrentByStudyProtocolResponse();
-    boxedResult.setStudyOnhold(impl.getCurrentByStudyProtocol(params.getStudyProtocolId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetResponse get(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetResponse();
     boxedResult.setStudyOnhold(impl.get(params.getId().getId()));
