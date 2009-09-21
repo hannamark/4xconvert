@@ -96,6 +96,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -659,9 +660,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
            }
            where.append(" and sps.functionalCode ='"
                    + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");
-/*           where.append(" and sc.roleCode ='"
-                   + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'");
-*/
+           where.append(" and (sc.roleCode ='"
+                   + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' or sc.studyProtocol is null) ");
+
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");
            addSubQueries(studyProtocolQueryCriteria, where);
         } catch (Exception e) {
