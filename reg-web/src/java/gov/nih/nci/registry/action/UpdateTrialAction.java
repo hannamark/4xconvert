@@ -743,7 +743,9 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 trialDTO.setRegIdAuthOrgList(regAuthList);
                 setRegIdAuthOrgList(regAuthList);
             }
-           
+            if (regulatoryAuthority != null) {
+              trialDTO.setRegulatoryAuthority(regulatoryAuthority);
+            }
             clearErrorsAndMessages();
             enforceBusinessRules();
             
