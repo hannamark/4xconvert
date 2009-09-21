@@ -89,88 +89,131 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
  * @author Larry Hebel
  *
  */
-public class POPatientDto extends BaseDTO
-{
+public class POPatientDto extends BaseDTO {
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     
-    private Ii _duplicateOf;
-    private DSet<Ii> _id;
-    private Ii _playerId;
-    private DSet _pAddr;
-    private Ii _scoperId;
-    private Cd _status;
-    private DSet<Tel> _tAddr;
+    private Ii duplicateOf;
+    private DSet<Ii> id;
+    private Ii playerId;
+    private DSet pAddr;
+    private Ii scoperId;
+    private Cd status;
+    private DSet<Tel> tAddr;
 
-    public Ii getDuplicateOf()
-    {
-        return _duplicateOf;
-    }
-
-    public DSet<Ii> getId()
-    {
-        return _id;
-    }
-    
-    public Ii getPlayerIdentifier()
-    {
-        return _playerId;
-    }
-    
-    public DSet getPostalAddress()
-    {
-        return _pAddr;
-    }
-    
-    public Ii getScoperIdentifier()
-    {
-        return _scoperId;
-    }
-    
-    public Cd getStatus()
-    {
-        return _status;
+    /**
+     * 
+     * @return Ii
+     */
+    public Ii getDuplicateOf() {
+        return duplicateOf;
     }
 
-    public DSet<Tel> getTelecomAddress()
-    {
-        return _tAddr;
+    /**
+     * 
+     * @return DSet
+     */
+    public DSet<Ii> getId() {
+        return id;
+    }
+    
+    /**
+     * 
+     * @return Ii
+     */
+    public Ii getPlayerIdentifier() {
+        return playerId;
+    }
+    
+    /**
+     * 
+     * @return DSet
+     */
+    public DSet getPostalAddress() {
+        return pAddr;
+    }
+    
+    /**
+     * 
+     * @return Ii
+     */
+    public Ii getScoperIdentifier() {
+        return scoperId;
+    }
+    
+    /**
+     * 
+     * @return Cd
+     */
+    public Cd getStatus() {
+        return status;
     }
 
-    public void setDuplicateOf(Ii obj)
-    {
-        _duplicateOf = obj;
+    /**
+     * 
+     * @return DSet
+     */
+    public DSet<Tel> getTelecomAddress() {
+        return tAddr;
     }
 
-    public void setId(DSet<Ii> id)
-    {
-        _id = id;
-    }
-    
-    public void setPlayerIdentifier(Ii obj)
-    {
-        _playerId = obj;
-    }
-    
-    public void setPostalAddress(DSet obj)
-    {
-        _pAddr = obj;
-    }
-    
-    public void setScoperIdentifier(Ii obj)
-    {
-        _scoperId = obj;
-    }
-    
-    public void setStatus(Cd code)
-    {
-        _status = code;
+    /**
+     * Set duplicate.
+     * 
+     * @param obj the duplicate
+     */
+    public void setDuplicateOf(Ii obj) {
+        duplicateOf = obj;
     }
 
-    public void setTelecomAddress(DSet<Tel> tAddr)
-    {
-        _tAddr = tAddr;
+    /**
+     * Set identifier.
+     * 
+     * @param obj the identifier
+     */
+    public void setId(DSet<Ii> obj) {
+        id = obj;
+    }
+    
+    /**
+     * 
+     * @param obj the player (Person)
+     */
+    public void setPlayerIdentifier(Ii obj) {
+        playerId = obj;
+    }
+    
+    /**
+     * 
+     * @param obj the address
+     */
+    public void setPostalAddress(DSet obj) {
+        pAddr = obj;
+    }
+    
+    /**
+     * 
+     * @param obj the scoper (organization)
+     */
+    public void setScoperIdentifier(Ii obj) {
+        scoperId = obj;
+    }
+    
+    /**
+     * 
+     * @param code the status
+     */
+    public void setStatus(Cd code) {
+        status = code;
+    }
+
+    /**
+     * 
+     * @param obj the address
+     */
+    public void setTelecomAddress(DSet<Tel> obj) {
+        tAddr = obj;
     }
 }
