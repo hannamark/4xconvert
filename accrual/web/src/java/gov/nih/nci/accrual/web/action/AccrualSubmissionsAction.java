@@ -109,6 +109,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     private static final long serialVersionUID = -6859130106987908815L;
 
     private static final String AR_NEW_SUBMISSION = "showNewSubmission";
+    private static final String AR_VIEW_SUBMISSION_DETAILS = "viewSubmissionDetails";
 
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
@@ -146,6 +147,18 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
      */
     public String displayNewSubmission() {
         return AR_NEW_SUBMISSION;
+    }
+    
+    /**
+      * @return action result
+      */
+    public String viewSubmissionDetails() {
+      try {
+           submission = submissionSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        } catch (Exception e) {
+             addActionError(e.getLocalizedMessage());
+        }
+      return AR_VIEW_SUBMISSION_DETAILS;
     }
 
     /**

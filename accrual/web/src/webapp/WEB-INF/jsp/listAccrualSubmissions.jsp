@@ -17,6 +17,12 @@
             document.submissionForm.submit();
         }
     }
+
+    function viewDetails(rowId){
+            document.submissionForm.selectedRowIdentifier.value = rowId;
+            document.submissionForm.action="accrualSubmissionsviewSubmissionDetails.action";
+            document.submissionForm.submit();
+     }
 </script>
 </head>
 <body>
@@ -26,8 +32,15 @@
     <display:table class="data" summary="This table contains list of Accrual Submissions.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SubmissionDecorator"
       sort="list" pagesize="10" id="row" name="listOfSubmissions" requestURI="accrualSubmissions.action" export="false"> 
-       <display:column titleKey="accrual.list.submissions.label" property="label" sortable="true" 
-         headerClass="sortable" headerScope="col"/>
+       
+       
+         <display:column titleKey="accrual.list.submissions.label" headerClass="centered" sortable="true" class="action">
+           
+                      <s:a href="#" onclick="viewDetails(%{#attr.row.identifier.extension})">
+                    ${row.label.value}
+                    </s:a>
+
+        </display:column>
        <display:column titleKey="accrual.list.submissions.description" property="description" sortable="true" 
          headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.cutOffDate" property="cutOffDate" sortable="true" 
@@ -43,16 +56,12 @@
        <display:column titleKey="accrual.list.submissions.status" property="status" sortable="true" 
          headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.submit" headerClass="centered" class="action">
-                
-                  
                   <s:if test="%{#attr.row.statusCode.code=='Pending'}">
                       <s:a href="#" onclick="accessAdd(%{#attr.row.identifier.extension})">
                     <img src="<%=request.getContextPath()%>/images/ico_upload.gif" alt="Submit" width="16" height="16" />
                     </s:a>
                   </s:if>
-                 
-              
-       </display:column>
+        </display:column>
    </display:table>
 </s:form>
 
