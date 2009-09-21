@@ -753,9 +753,11 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         } 
          //abstraction validation rule for participating site contact and central contact  
         if (!contactFound && !centralContactDefined) {
-                abstractionList.add(createError("Error", " ", "Participating Site Contact OR Central Contact"
-                  +  " information is mandatory. Complete Central Contact (General Trial Details screen)"
-                  +  " or each Participating Site Contact (Participating Sites screen)  information."));
+                abstractionList.add(createError("Error", "Select"
+                        +  " General Trial Details screen to complete Central Contact or Participating Sites screen to" 
+                        +  " complete Participating Site Contact information.", "Participating Site Contact" 
+                        +  " or Central Contact information is mandatory. Complete Central Contact"
+                        +  " or each Participating Site Contact information."));
         }
 
     }
