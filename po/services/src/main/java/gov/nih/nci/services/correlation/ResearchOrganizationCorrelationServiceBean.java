@@ -107,11 +107,11 @@ import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
+@Interceptors({AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
 @SecurityDomain("po")
-public class ResearchOrganizationCorrelationServiceBean
-    extends AbstractCorrelationServiceBean<ResearchOrganization, ResearchOrganizationCR, ResearchOrganizationDTO>
-    implements ResearchOrganizationCorrelationServiceRemote {
+public class ResearchOrganizationCorrelationServiceBean extends
+        AbstractCorrelationServiceBean<ResearchOrganization, ResearchOrganizationCR, ResearchOrganizationDTO> implements
+        ResearchOrganizationCorrelationServiceRemote {
 
     private ResearchOrganizationServiceLocal roService;
 
@@ -156,5 +156,23 @@ public class ResearchOrganizationCorrelationServiceBean
     @Override
     void copyIntoAbstractModel(ResearchOrganizationDTO proposedState, ResearchOrganizationCR cr) {
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractResearchOrganization.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void preUpdateValidation(ResearchOrganization target) {
+        if (target.isCtepOwned()) {
+            throw new IllegalArgumentException("Updates to CTEP-owned data is restricted!");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void preUpdateStatusValidation(ResearchOrganization target) {
+        preUpdateValidation(target);
     }
 }

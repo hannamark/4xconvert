@@ -82,10 +82,13 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoRegistry;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -131,4 +134,21 @@ public abstract class AbstractOrganizationRole extends AbstractRole implements P
         this.player = player;
     }
 
+    
+    /**
+     * @return true if owned by CTEP otherwise, false
+     */
+    @Transient
+    public boolean isCtepOwned() {
+        if (getOtherIdentifiers() == null) {
+            return false;
+        }
+        
+        for (Ii ii : getOtherIdentifiers()) {
+            if (CtepOrganizationImporter.CTEP_ORG_ROOT.equals(ii.getRoot())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

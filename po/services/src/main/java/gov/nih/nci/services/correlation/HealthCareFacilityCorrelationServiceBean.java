@@ -109,11 +109,11 @@ import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
+@Interceptors({AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, NullifiedRoleInterceptor.class })
 @SecurityDomain("po")
-public class HealthCareFacilityCorrelationServiceBean
-    extends AbstractCorrelationServiceBean<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityDTO>
-    implements HealthCareFacilityCorrelationServiceRemote {
+public class HealthCareFacilityCorrelationServiceBean extends
+        AbstractCorrelationServiceBean<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityDTO> implements
+        HealthCareFacilityCorrelationServiceRemote {
 
     private HealthCareFacilityServiceLocal hcfService;
     private HealthCareFacilityCRServiceLocal hcfCrService;
@@ -149,7 +149,6 @@ public class HealthCareFacilityCorrelationServiceBean
         return hcfCrService;
     }
 
-
     @Override
     void copyIntoAbstractModel(HealthCareFacilityDTO proposedState, HealthCareFacilityCR cr) {
         PoXsnapshotHelper.copyIntoAbstractModel(proposedState, cr, AbstractEnhancedOrganizationRole.class);
@@ -158,5 +157,23 @@ public class HealthCareFacilityCorrelationServiceBean
     @Override
     HealthCareFacilityCR newCR(HealthCareFacility t) {
         return new HealthCareFacilityCR(t);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void preUpdateValidation(HealthCareFacility target) {
+        if (target.isCtepOwned()) {
+            throw new IllegalArgumentException("Updates to CTEP-owned data is restricted!");
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void preUpdateStatusValidation(HealthCareFacility target) {
+        preUpdateValidation(target);
     }
 }

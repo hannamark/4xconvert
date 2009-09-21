@@ -156,4 +156,5 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractEnhancedOrganiz
             HealthCareFacilityDTO searchCriteria) throws NullifiedRoleException {
 
     }
+
 }

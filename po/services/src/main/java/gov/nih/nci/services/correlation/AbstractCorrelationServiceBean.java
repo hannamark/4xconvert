@@ -279,6 +279,7 @@ public abstract class AbstractCorrelationServiceBean
         if (pId != null) {
             T target = getLocalService().getById(pId);
             if (target != null) {
+                preUpdateValidation(target);
                 CR cr = newCR(target);
                 copyIntoAbstractModel(proposedState, cr);
                 cr.setId(null);
@@ -295,6 +296,15 @@ public abstract class AbstractCorrelationServiceBean
     }
 
     /**
+     * Override this method to perform custom pre-update validation. 
+     * @param target correlation to be update
+     */
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
+    protected void preUpdateValidation(T target) {
+        //no-op
+    }
+
+    /**
      * {@inheritDoc}
      */
     @SuppressWarnings(UNCHECKED)
@@ -305,7 +315,7 @@ public abstract class AbstractCorrelationServiceBean
         if (pId != null) {
             T target = getLocalService().getById(pId);
             if (target != null) {
-
+                preUpdateStatusValidation(target);
                 // lazy way to clone with stripped hibernate IDs.
                 DTO tmp = (DTO) PoXsnapshotHelper.createSnapshot(target);
                 CR cr = newCR(target);
@@ -319,6 +329,15 @@ public abstract class AbstractCorrelationServiceBean
         } else {
             throw new IllegalArgumentException("Correlation to be updated did not contain an identifier.");
         }    
+    }
+    
+    /**
+     * Override this method to perform custom pre-updateStatus validation. 
+     * @param target correlation to be update
+     */
+    @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
+    protected void preUpdateStatusValidation(T target) {
+        //no-op
     }
 
     abstract CR newCR(T t);

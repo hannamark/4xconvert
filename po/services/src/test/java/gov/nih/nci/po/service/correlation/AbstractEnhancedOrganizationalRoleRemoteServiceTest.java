@@ -1,10 +1,13 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Adxp;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
@@ -19,13 +22,16 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.RoleStatusConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
@@ -33,6 +39,8 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+
+import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 
@@ -286,4 +294,88 @@ public abstract
     abstract protected void testSearchOnSubClassSpecificFields(T correlation1, Ii id2, T searchCriteria)
             throws NullifiedRoleException;
 
+    
+    /**
+     * Should another system be allowed to imitate CTEP (or create data as though it was CTEP owned)? This test demonstrates
+     * that one could using remote ejb api.
+     * @throws Exception
+     */
+    @Test
+    public void imitateCTEPOnCreate() throws Exception {
+        T dto = getSampleDto();
+        dto.setIdentifier(new DSet<Ii>());
+        dto.getIdentifier().setItem(new HashSet<Ii>());
+        Ii ctepId = new Ii();
+        ctepId.setExtension("AAA");
+        ctepId.setIdentifierName("CTEP ID");
+        ctepId.setRoot("Cancer Therapy Evaluation Program Organization Identifier");
+        dto.getIdentifier().getItem().add(ctepId);
+        
+        CorrelationService<T> service = getCorrelationService();
+        Ii hcfPOId = service.createCorrelation(dto);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        T retrievedRole = service.getCorrelation(hcfPOId);
+        verifyDto(dto, retrievedRole);
+        assertNotNull(dto.getIdentifier());
+        assertNotNull(dto.getIdentifier().getItem());
+        boolean ctepdIdFound = false;
+        for (Ii ii : retrievedRole.getIdentifier().getItem()) {
+            if (ctepId.getExtension().equals(ii.getExtension())) {
+                ctepdIdFound = true;
+            }
+        }
+        assertTrue("Expected to find a CTEP ID (II) within identifier DSet",ctepdIdFound);
+    }
+    
+
+    @Test
+    public void updateCorrelationForCTEPOwnedIsDisallowed() throws Exception {
+        T dto = getSampleDto();
+        dto.setIdentifier(new DSet<Ii>());
+        dto.getIdentifier().setItem(new HashSet<Ii>());
+        Ii ctepId = new Ii();
+        ctepId.setExtension("AAA");
+        ctepId.setIdentifierName("CTEP ID");
+        ctepId.setRoot("Cancer Therapy Evaluation Program Organization Identifier");
+        dto.getIdentifier().getItem().add(ctepId);
+        
+        CorrelationService<T> service = getCorrelationService();
+        Ii poId = service.createCorrelation(dto);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        T dtoCreated = service.getCorrelation(poId);
+        
+        alter(dtoCreated);
+        try {
+            service.updateCorrelation(dtoCreated);
+        } catch (IllegalArgumentException e) {
+            assertEquals("Updates to CTEP-owned data is restricted!", e.getMessage());
+        }
+    }
+    @Test
+    public void updateCorrelationStatusForCTEPOwnedIsDisallowed() throws Exception {
+        T dto = getSampleDto();
+        dto.setIdentifier(new DSet<Ii>());
+        dto.getIdentifier().setItem(new HashSet<Ii>());
+        Ii ctepId = new Ii();
+        ctepId.setExtension("AAA");
+        ctepId.setIdentifierName("CTEP ID");
+        ctepId.setRoot("Cancer Therapy Evaluation Program Organization Identifier");
+        dto.getIdentifier().getItem().add(ctepId);
+        
+        CorrelationService<T> service = getCorrelationService();
+        Ii poId = service.createCorrelation(dto);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        alter(dto);
+        Cd newStatus = RoleStatusConverter.convertToCd(RoleStatus.NULLIFIED);
+        try {
+            service.updateCorrelationStatus(poId, newStatus); 
+        } catch (IllegalArgumentException e) {
+            assertEquals("Updates to CTEP-owned data is restricted!", e.getMessage());
+        }
+    }
 }
