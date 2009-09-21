@@ -260,6 +260,11 @@ function toggledisplay2 (it) {
                 <td>
                     <s:textfield name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                     <span class="info">(Mandatory if Exists)</span>
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>trialDTO.nctIdentifier</s:param>
+                       </s:fielderror>                            
+                     </span>
                 </td>                
           </tr>
            <tr>

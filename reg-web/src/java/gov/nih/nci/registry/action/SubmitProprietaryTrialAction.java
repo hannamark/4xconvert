@@ -157,7 +157,8 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                             getText(invalidValues[i].getMessage().trim()));
         }
         if (PAUtil.isEmpty(trialDTO.getNctIdentifier()) && PAUtil.isEmpty(protocolDocFileName)) {
-            addActionError("Provide either NCT Number or Protocol Trial Template.\n");
+            addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
+            addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");
         }
         TrialValidator validator = new TrialValidator();
         Map<String, String> errMap = new HashMap<String, String>();
