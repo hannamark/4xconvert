@@ -93,6 +93,7 @@ import gov.nih.nci.accrual.util.PoServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 
 import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 
 /**
@@ -105,10 +106,20 @@ public class POPatientBean implements POPatientService {
 
     private static final Logger LOG  = Logger.getLogger(POPatientBean.class);
 
+    private SessionContext ejbContext;
+
+    /**
+     * 
+     * @param ctx the context
+     */
+    @Resource
+    public void setSessionContext(SessionContext ctx) {
+        ejbContext = ctx;
+    }
+    
     /**
      * {@inheritDoc}
      */
-    @Resource
     public POPatientDto create(POPatientDto dto) throws RemoteException {
         if (dto == null) {
             throw new RemoteException("Called create(null).");
@@ -158,6 +169,8 @@ public class POPatientBean implements POPatientService {
      */
     public POPatientDto update(POPatientDto dto) throws RemoteException {
         // TODO Auto-generated method stub
+        String name = (ejbContext != null) ? ejbContext.getCallerPrincipal().getName() : "unknown";
+        LOG.info(name);
         return null;
     }
 
