@@ -170,7 +170,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             InterventionDTO iDto = interventionSvc.get(IiConverter.convertToIi(interventionIdentifier));
             setInterventionName(StConverter.convertToString(iDto.getName()));
             setInterventionOtherNames(otherNamesCSV(iDto.getIdentifier()));
-            setInterventionType(CdConverter.convertCdToString(iDto.getTypeCode()));
+            setInterventionType(CdConverter.convertCdToString(iDto.getCtGovTypeCode()));
         }
         return AR_EDIT;
     }
@@ -200,7 +200,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             InterventionWebDTO i = generateWebDto(paDto);
             setInterventionIdentifier(i.getIdentifier());
             setInterventionLeadIndicator(LEAD_TEXT.equals(i.getLeadIndicator()));
-            setInterventionType(i.getType());
+            setInterventionType(i.getCtGovType());
             setInterventionName(i.getName());
             setInterventionDescription(i.getDescription());
             setInterventionOtherNames(i.getOtherNames());
@@ -328,6 +328,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         webDto.setLeadIndicator(BlConverter.covertToBool(pa.getLeadProductIndicator()) ? LEAD_TEXT : null);
         webDto.setName(StConverter.convertToString(i.getName()));
         webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
+        webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
         return webDto;
     }
 

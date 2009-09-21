@@ -160,21 +160,21 @@ public class PlannedActivityServiceBean
     
     private boolean checkDuplicate(PlannedActivityDTO dto) throws PAException {
         boolean duplicate = false;
-            InterventionDTO iDto = interventionSrv.get(dto.getInterventionIdentifier());
-            String interventionName = iDto.getName().getValue();
+        InterventionDTO iDto = interventionSrv.get(dto.getInterventionIdentifier());
+        String interventionName = iDto.getName().getValue();
        
-            List<PlannedActivityDTO> paList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-            for (PlannedActivityDTO padto : paList) {
-            
-                if (!PAUtil.isIiNull(padto.getInterventionIdentifier())) {
-                    InterventionDTO interDto = interventionSrv.get(padto.getInterventionIdentifier());
-                    String interName = interDto.getName().getValue();
-           
-                   if (interName.equals(interventionName) 
-                     && padto.getSubcategoryCode().getCode().equals(dto.getSubcategoryCode().getCode()) 
-                     && ((padto.getTextDescription().getValue() == null && dto.getTextDescription().getValue() == null)
-                       || (padto.getTextDescription().getValue() != null && dto.getTextDescription().getValue() != null
-                            && padto.getTextDescription().getValue().equals(dto.getTextDescription().getValue())))) {
+        List<PlannedActivityDTO> paList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+         for (PlannedActivityDTO padto : paList) {
+          if (!PAUtil.isIiNull(padto.getInterventionIdentifier())) {
+               InterventionDTO interDto = interventionSrv.get(padto.getInterventionIdentifier());
+               String interName = interDto.getName().getValue();
+               if (interName.equals(interventionName) 
+                  && padto.getSubcategoryCode().getCode().equals(dto.getSubcategoryCode().getCode()) 
+                  && ((padto.getTextDescription().getValue() == null && dto.getTextDescription().getValue() == null)
+                    || (padto.getTextDescription().getValue() != null && dto.getTextDescription().getValue() != null
+                        && padto.getTextDescription().getValue().equals(dto.getTextDescription().getValue())))
+                  && padto.getLeadProductIndicator().getValue()
+                          .equals(dto.getLeadProductIndicator().getValue())) {
                        duplicate = true;
                    }
                 }
