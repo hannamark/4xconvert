@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.PatientService;
+import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -103,6 +104,10 @@ public interface ServiceLocatorAccInterface {
      * @return Patient correlation service
      */
     PatientService getPatientService();
+    /**
+     * @return Patient correlation service
+     */
+    POPatientService getPOPatientService();
     /**
      * @return Submission domain service
      */
