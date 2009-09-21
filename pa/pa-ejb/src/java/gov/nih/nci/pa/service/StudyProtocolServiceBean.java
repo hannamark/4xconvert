@@ -566,8 +566,12 @@ import org.hibernate.criterion.Example;
         if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
             StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(
                     getStudyProtocol(studyProtocolDTO.getIdentifier()));
+            boolean isProprietaryTrial = false;
+            if (oldBo.getProprietaryTrialIndicator() != null && oldBo.getProprietaryTrialIndicator()) {
+                isProprietaryTrial = true;
+            }
             StudyProtocol newBo = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
-            if (!oldBo.getProprietaryTrialIndicator() 
+            if (!isProprietaryTrial
                     && (!oldBo.getPrimaryCompletionDate().equals(newBo.getPrimaryCompletionDate())
                     || !oldBo.getPrimaryCompletionDateTypeCode().equals(newBo.getPrimaryCompletionDateTypeCode())
                     || !oldBo.getStartDate().equals(newBo.getStartDate())

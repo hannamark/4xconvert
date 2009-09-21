@@ -177,7 +177,8 @@ public class TrialValidationAction extends ActionSupport {
             copy(spqDto);
             copyLO(cUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
                     spqDto.getLeadOrganizationId())));
-            if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
+            if (gtdDTO.getProprietarytrialindicator() == null 
+                    || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
                 copyPI(cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())));
                 copyResponsibleParty(studyProtocolIi);
                 copySponsor(studyProtocolIi);
@@ -342,7 +343,8 @@ public class TrialValidationAction extends ActionSupport {
             updateStudySite(studyProtocolIi, CdConverter
                     .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION), gtdDTO
                     .getLeadOrganizationIdentifier(), gtdDTO.getLocalProtocolIdentifier());
-            if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
+            if (gtdDTO.getProprietarytrialindicator() == null 
+                   || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
                updateStudySite(studyProtocolIi,
                     CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR), gtdDTO.getSponsorIdentifier(),
                     null);
@@ -396,7 +398,8 @@ public class TrialValidationAction extends ActionSupport {
             addFieldError("gtdDTO.primaryPurposeOtherText",
                     getText("Primary Purpose Other other text must be entered"));
         }
-        if (gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
+        if (gtdDTO.getProprietarytrialindicator() == null 
+                || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
             if (PAUtil.isEmpty(gtdDTO.getSponsorIdentifier())) {
                 addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
             }
@@ -462,7 +465,9 @@ public class TrialValidationAction extends ActionSupport {
         gtdDTO.setSubmissionNumber(IntConverter.convertToInteger(spDTO.getSubmissionNumber()));
         gtdDTO.setAmendmentReasonCode(CdConverter.convertCdToString(spDTO.getAmendmentReasonCode()));
         gtdDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
-        gtdDTO.setProprietarytrialindicator(BlConverter.convertToString(spDTO.getProprietaryTrialIndicator()));
+        if (!PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())) {
+            gtdDTO.setProprietarytrialindicator(BlConverter.convertToString(spDTO.getProprietaryTrialIndicator()));
+        } 
     }
 
     private void copy(StudyProtocolQueryDTO spqDTO) {

@@ -986,7 +986,7 @@ public class StudyProtocol extends AbstractEntity {
      * @return the proprietaryTrialIndicator
      */
     @NotNull
-    @Column(updatable = false)
+    @Column(name = "PROPRIETARY_TRIAL_INDICATOR" , updatable = false)
     public Boolean getProprietaryTrialIndicator() {
         return proprietaryTrialIndicator;
     }
