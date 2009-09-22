@@ -103,7 +103,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.validator.NotNull;
 
 /**
  * An action plan and execution of a pre-clinical or clinical study including
@@ -985,7 +984,6 @@ public class StudyProtocol extends AbstractEntity {
     /**
      * @return the proprietaryTrialIndicator
      */
-    @NotNull
     @Column(name = "PROPRIETARY_TRIAL_INDICATOR" , updatable = false)
     public Boolean getProprietaryTrialIndicator() {
         return proprietaryTrialIndicator;

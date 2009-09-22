@@ -79,9 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -99,6 +97,8 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.List;
 
 import javax.ejb.Remote;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 
 /**
@@ -256,36 +256,37 @@ public interface TrialRegistrationServiceRemote {
    
    /**
     * 
-    * @param studyProtocolDTO spDTO
-    * @param siteOverallStatusDTO siteStatusDto
-    * @param studyIndldeDTOs indDTO
-    * @param studyResourcingDTOs  grants 
-    * @param documentDTOs documents
-    * @param leadOrganizationDTO lead Org 
-    * @param leadOrganizationTrialIdentifier LeadOrgTrialId
-    * @param siteInvestigatorDTO    SitePi
-    * @param studySiteDTO participating Org
-    * @param siteDTO will have local id, siteProgramCodeText and date range
-    * @param nctIdentifierSiteIdentifier nct
-    * @param summary4organizationDTO sum4 org
-    * @param summary4CategoryCode summary 4Category Code 
+    * @param studyProtocolDTO studyProtocolDTO
+    * @param studySiteOverallStatusDTO studySiteOverallStatusDTO
+    * @param studyIndldeDTOs studyIndldeDTOs
+    * @param studyResourcingDTOs studyResourcingDTOs
+    * @param documentDTOs documentDTOs
+    * @param leadOrganizationDTO leadOrganizationDTO
+    * @param studySiteInvestigatorDTO studySiteInvestigatorDTO
+    * @param leadOrganizationStudySiteDTO leadOrganizationStudySiteDTO
+    * @param studySiteOrganizationDTO studySiteOrganizationDTO
+    * @param studySiteDTO studySiteDTO
+    * @param nctIdentifierDTO nctIdentifierDTO
+    * @param summary4OrganizationDTO summary4OrganizationDTO
+    * @param summary4StudyResourcingDTO summary4StudyResourcingDTO
     * @return Ii
     * @throws PAException e
     */
-    Ii createInterventionalProprietaryStudyProtocol(
+   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+   Ii createProprietaryInterventionalStudyProtocol(
            StudyProtocolDTO studyProtocolDTO ,
-           StudySiteOverallStatusDTO siteOverallStatusDTO ,
+           StudySiteOverallStatusDTO studySiteOverallStatusDTO ,
            List<StudyIndldeDTO> studyIndldeDTOs ,
            List<StudyResourcingDTO> studyResourcingDTOs ,
            List<DocumentDTO> documentDTOs ,
            OrganizationDTO leadOrganizationDTO ,
-           St leadOrganizationTrialIdentifier ,
-           PersonDTO siteInvestigatorDTO ,
-           OrganizationDTO studySiteDTO ,
-           StudySiteDTO  siteDTO,
-           St nctIdentifierSiteIdentifier,
-           OrganizationDTO summary4organizationDTO ,
-           Cd summary4CategoryCode)
+           PersonDTO studySiteInvestigatorDTO ,
+           StudySiteDTO leadOrganizationStudySiteDTO ,
+           OrganizationDTO studySiteOrganizationDTO ,
+           StudySiteDTO studySiteDTO ,
+           StudySiteDTO nctIdentifierDTO,
+           OrganizationDTO summary4OrganizationDTO ,
+           StudyResourcingDTO summary4StudyResourcingDTO)
    throws PAException;
     
 
