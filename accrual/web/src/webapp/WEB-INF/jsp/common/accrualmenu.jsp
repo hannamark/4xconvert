@@ -13,10 +13,10 @@
             <c:when test="${pageContext.request.remoteUser != null}">
                  <c:choose>
                     <c:when test="${requestScope.topic == 'search_trials'}">
-                       <li><a href="viewTrials.action" class="selected">View Trials</a></li> 
+                       <li><a href="viewTrials.action" class="selected">Trial Search</a></li> 
                     </c:when>
                     <c:otherwise>
-                       <li><a href="viewTrials.action" >View Trials</a></li>
+                       <li><a href="viewTrials.action" >Trial Search</a></li>
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
