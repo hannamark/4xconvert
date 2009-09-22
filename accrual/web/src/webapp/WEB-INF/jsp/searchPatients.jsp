@@ -14,7 +14,7 @@ function handleSearchAction(){
     document.forms[0].submit();
 }
 function handleAddAction(){
-    document.forms[0].action="patients.action";
+    document.forms[0].action="patientsadd.action";
     document.forms[0].submit();
 }
 </SCRIPT>

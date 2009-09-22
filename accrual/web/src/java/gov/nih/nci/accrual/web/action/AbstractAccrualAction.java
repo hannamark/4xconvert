@@ -122,7 +122,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
     }
     /**
-     * Default implementation throws derived exception.
+     * Default execute method for action classes.
      * @return action result
      */
     @Override

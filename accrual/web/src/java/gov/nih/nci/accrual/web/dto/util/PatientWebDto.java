@@ -76,74 +76,133 @@
 *
 *
 */
+package gov.nih.nci.accrual.web.dto.util;
 
-package gov.nih.nci.accrual.service;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
-import java.rmi.RemoteException;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 29, 2009
+ * @since Sep 22, 2009
  */
-public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService> {
+public class PatientWebDto {
+    // from PatientDto
+    private String raceCode;
+    private String genderCode;
+    private String ethnicCode;
+    private String birthDate;
+    private String statusCode;
+    private String statusDateRangeLow;
 
-    @Override
-    @Before
-    public void instantiateServiceBean() throws Exception {
-        bean = new SubmissionBean();
-    }
+    private String paymentMethodCode;
 
-    @Test
-    public void get() throws Exception {
-        SubmissionDto dto = bean.get(IiConverter.convertToIi(TestSchema.submissions.get(0).getId()));
-        assertNotNull(dto);
-        try {
-            dto = bean.get(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
+    /**
+     * Default constructor.
+     */
+    public PatientWebDto() {
+        // default constructor
     }
-    @Test
-    public void create() throws Exception {
-        SubmissionDto dto = new SubmissionDto();
-        dto.setCutOffDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/3/2009")));
-        dto.setDescription(StConverter.convertToSt("des123"));
-        dto.setLabel(StConverter.convertToSt("label"));
-        dto.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.OPENED));
-        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl("1/1/2000", null));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        SubmissionDto r = bean.create(dto);
-        assertNotNull(r);
+    /**
+     * Construct using iso dto's from service tier.
+     * @param pIsoDto patient iso dto
+     * @param ssIsoDto study subject iso dto
+     */
+    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto) {
+        this.raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
+        this.genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
+        this.ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
+        this.birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
+        this.statusCode = CdConverter.convertCdToString(pIsoDto.getStatusCode());
+        this.statusDateRangeLow = TsConverter.convertToString(pIsoDto.getStatusDateRangeLow());
+
+        this.paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
     }
-    @Test
-    public void update() throws Exception {
-        String newLabel = "newLabel";
-        assertFalse(newLabel.equals(TestSchema.submissions.get(0).getLabel()));
-        SubmissionDto dto = bean.get(IiConverter.convertToIi(TestSchema.submissions.get(0).getId()));
-        dto.setLabel(StConverter.convertToSt(newLabel));
-        SubmissionDto r = bean.update(dto);
-        assertTrue(newLabel.equals(StConverter.convertToString(r.getLabel())));
+    /**
+     * @return the raceCode
+     */
+    public String getRaceCode() {
+        return raceCode;
     }
-    @Test
-    public void getByStudyProtocol() throws Exception {
-        List<SubmissionDto> rList = bean.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        assertTrue(0 < rList.size());
+    /**
+     * @param raceCode the raceCode to set
+     */
+    public void setRaceCode(String raceCode) {
+        this.raceCode = raceCode;
+    }
+    /**
+     * @return the genderCode
+     */
+    public String getGenderCode() {
+        return genderCode;
+    }
+    /**
+     * @param genderCode the genderCode to set
+     */
+    public void setGenderCode(String genderCode) {
+        this.genderCode = genderCode;
+    }
+    /**
+     * @return the ethnicCode
+     */
+    public String getEthnicCode() {
+        return ethnicCode;
+    }
+    /**
+     * @param ethnicCode the ethnicCode to set
+     */
+    public void setEthnicCode(String ethnicCode) {
+        this.ethnicCode = ethnicCode;
+    }
+    /**
+     * @return the birthDate
+     */
+    public String getBirthDate() {
+        return birthDate;
+    }
+    /**
+     * @param birthDate the birthDate to set
+     */
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+    /**
+     * @return the statusCode
+     */
+    public String getStatusCode() {
+        return statusCode;
+    }
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+    /**
+     * @return the statusDateRangeLow
+     */
+    public String getStatusDateRangeLow() {
+        return statusDateRangeLow;
+    }
+    /**
+     * @param statusDateRangeLow the statusDateRangeLow to set
+     */
+    public void setStatusDateRangeLow(String statusDateRangeLow) {
+        this.statusDateRangeLow = statusDateRangeLow;
+    }
+    /**
+     * @return the paymentMethodCode
+     */
+    public String getPaymentMethodCode() {
+        return paymentMethodCode;
+    }
+    /**
+     * @param paymentMethodCode the paymentMethodCode to set
+     */
+    public void setPaymentMethodCode(String paymentMethodCode) {
+        this.paymentMethodCode = paymentMethodCode;
     }
 }

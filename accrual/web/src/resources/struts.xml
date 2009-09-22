@@ -82,6 +82,7 @@
 
         <action name="patients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">
             <result>/WEB-INF/jsp/searchPatients.jsp</result>
+            <result name="detail">/WEB-INF/jsp/searchPatientsDetail.jsp</result>
         </action>
     </package>
 </struts>

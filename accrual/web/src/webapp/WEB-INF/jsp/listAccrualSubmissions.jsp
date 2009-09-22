@@ -56,7 +56,7 @@
        <display:column titleKey="accrual.list.submissions.status" property="status" sortable="true" 
          headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.submissions.submit" headerClass="centered" class="action">
-                  <s:if test="%{#attr.row.statusCode.code=='Pending'}">
+                  <s:if test="%{#attr.row.statusCode.code=='Opened'}">
                       <s:a href="#" onclick="accessAdd(%{#attr.row.identifier.extension})">
                     <img src="<%=request.getContextPath()%>/images/ico_upload.gif" alt="Submit" width="16" height="16" />
                     </s:a>
@@ -71,16 +71,16 @@ String overAllStat = "";
    <s:iterator id="sub" value="listOfSubmissions" >  
      <s:set name="stat" value="%{statusCode.code}"/>
    
-    <s:if test="%{#stat=='Pending'}">
+    <s:if test="%{#stat=='Opened'}">
       <%
-       overAllStat = "Pending";
+       overAllStat = "Opened";
       %>
     </s:if>
    
    </s:iterator>
    
    <%
-   if(!overAllStat.equals("Pending")){
+   if(!overAllStat.equals("Opened")){
    %>
      <div class="actionsrow">
        <del class="btnwrapper">

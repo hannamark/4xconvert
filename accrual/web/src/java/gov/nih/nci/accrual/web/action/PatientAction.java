@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 
@@ -92,9 +93,11 @@ import java.util.List;
 public class PatientAction extends AbstractAccrualAction {
 
     private static final long serialVersionUID = -6820189447703204634L;
+    private static final String AR_DETAIL = "detail";
 
     private SearchPatientsCriteriaWebDto criteria = null;
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
+    private PatientWebDto patient;
 
     /**
      * {@inheritDoc}
@@ -115,25 +118,42 @@ public class PatientAction extends AbstractAccrualAction {
         }
         return super.execute();
     }
-
+    /**
+     * Method initializes add patient work flow.
+     * @return action result
+     */
+    public String add() {
+        patient = new PatientWebDto();
+        return AR_DETAIL;
+    }
     /**
      * @return the criteria
      */
     public SearchPatientsCriteriaWebDto getCriteria() {
         return criteria;
     }
-
     /**
      * @param criteria the criteria to set
      */
     public void setCriteria(SearchPatientsCriteriaWebDto criteria) {
         this.criteria = criteria;
     }
-
     /**
      * @return the listOfStudySites
      */
     public List<SearchStudySiteResultWebDto> getListOfStudySites() {
         return listOfStudySites;
+    }
+    /**
+     * @return the patient
+     */
+    public PatientWebDto getPatient() {
+        return patient;
+    }
+    /**
+     * @param patient the patient to set
+     */
+    public void setPatient(PatientWebDto patient) {
+        this.patient = patient;
     }
 }

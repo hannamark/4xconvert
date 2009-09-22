@@ -101,7 +101,7 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      */
     public String getCutOffDate() {
         Ts cutOffDate = ((SubmissionDto) this.getCurrentRowObject()).getCutOffDate();
-        return cutOffDate == null ? "" : TsConverter.convertToString(cutOffDate);
+        return cutOffDate == null ? " " : TsConverter.convertToString(cutOffDate);
     }
 
     /**
@@ -109,7 +109,7 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      */
     public String getLabel() {
         St label = ((SubmissionDto) this.getCurrentRowObject()).getLabel();
-        return label == null ? "" : StConverter.convertToString(label);
+        return label == null ? " " : StConverter.convertToString(label);
     }
 
     /**
@@ -117,7 +117,7 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      */
     public String getDescription() {
         St description = ((SubmissionDto) this.getCurrentRowObject()).getDescription();
-        return description == null ?  "" : StConverter.convertToString(description);
+        return description == null ?  " " : StConverter.convertToString(description);
     }
 
     /**
@@ -126,7 +126,7 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
     public String getCreatedDate() {
         Timestamp createdDate = IvlConverter.convertTs().convertLow(
                 ((SubmissionDto) this.getCurrentRowObject()).getStatusDateRange());
-        return createdDate == null ? "" : PAUtil.normalizeDateString(createdDate.toString());
+        return createdDate == null ? " " : PAUtil.normalizeDateString(createdDate.toString());
     }
 
     /**
@@ -135,7 +135,7 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
     public String getSubmittedDate() {
         Timestamp submittedDate = IvlConverter.convertTs().convertHigh(
                 ((SubmissionDto) this.getCurrentRowObject()).getStatusDateRange());
-        return submittedDate == null ? "" : PAUtil.normalizeDateString(submittedDate.toString());
+        return submittedDate == null ? " " : PAUtil.normalizeDateString(submittedDate.toString());
     }
 
     /**
@@ -143,22 +143,22 @@ public class SubmissionDecorator extends AbstractStudyDecorator<SubmissionDto> {
      */
     public String getStatus() {
         Cd status = ((SubmissionDto) this.getCurrentRowObject()).getStatusCode();
-        return PAUtil.isCdNull(status) ? "" : CdConverter.convertCdToString(status);
+        return PAUtil.isCdNull(status) ? " " : CdConverter.convertCdToString(status);
     }
-    
+
     /**
      * @return createUser as a string
      */
     public String getCreateUser() {
          St createUser = ((SubmissionDto) this.getCurrentRowObject()).getCreateUser();
-         return createUser == null ?  "" : StConverter.convertToString(createUser);
+         return createUser == null ?  " " : StConverter.convertToString(createUser);
     }
-    
+
      /**
      * @return submitUser as a string
     */
     public String getSubmitUser() {
         St submitUser = ((SubmissionDto) this.getCurrentRowObject()).getSubmitUser();
-        return submitUser == null ?  "" : StConverter.convertToString(submitUser);
+        return submitUser == null ?  " " : StConverter.convertToString(submitUser);
     }
 }

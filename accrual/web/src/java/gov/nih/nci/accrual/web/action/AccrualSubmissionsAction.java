@@ -84,7 +84,7 @@ import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -98,7 +98,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
-
 
 /**
  * @author Rajani Kumar
@@ -167,7 +166,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     public String submit() {
         try {
             SubmissionDto dto = submissionSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-            dto.setStatusCode(CdConverter.convertToCd(PendingCompletedCode.COMPLETED));
+            dto.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.SUBMITTED));
             Ivl<Ts> ivl = dto.getStatusDateRange();
             ivl.setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
             dto.setStatusDateRange(ivl);
@@ -191,7 +190,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             listOfSubmissions = new ArrayList<SubmissionDto>();
             listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
             submission.setStudyProtocolIdentifier(getSpIi());
-            submission.setStatusCode(CdConverter.convertToCd(PendingCompletedCode.PENDING));
+            submission.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.OPENED));
             submission.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
                   new Timestamp(new Date().getTime()), null));
             submission.setCreateUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().

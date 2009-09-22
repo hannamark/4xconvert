@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.TsConverter;
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -97,12 +100,9 @@ public class AccrualUtil {
     private static class ValidYearMonthFormat {
         String pattern;
         int endIndex;
-        boolean lenient;
-
         public ValidYearMonthFormat(String pattern) {
             this.pattern = pattern;
             this.endIndex = pattern.length();
-            this.lenient = false;
         }
     }
 
@@ -164,6 +164,14 @@ public class AccrualUtil {
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern(yearMonthFormats[0].pattern);
         return sdf.format(outDate);
+    }
+
+    /**
+     * @param ts iso timestamp
+     * @return timestamp represented as a string in MM/YYYY format
+     */
+    public static String tsToYearMonthString(Ts ts) {
+        return normalizeYearMonthString(TsConverter.convertToString(ts));
     }
 
      /**
