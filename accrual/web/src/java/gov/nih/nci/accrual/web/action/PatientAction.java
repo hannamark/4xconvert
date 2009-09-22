@@ -73,70 +73,43 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.POPatientService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Sep 21, 2009
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface{
-    private final SearchTrialService searchTrial = new MockSearchTrialBean();
-    private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
+public class PatientAction extends AbstractAccrualAction {
+
+    private static final long serialVersionUID = -6820189447703204634L;
+
+    private SearchPatientsCriteriaWebDto criteria;
 
     /**
      * {@inheritDoc}
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return searchStudySite;
+    @Override
+    public String execute() {
+        criteria = new SearchPatientsCriteriaWebDto();
+        return super.execute();
     }
+
     /**
-     * {@inheritDoc}
+     * @return the criteria
      */
-    public SearchTrialService getSearchTrialService() {
-        return searchTrial;
+    public SearchPatientsCriteriaWebDto getCriteria() {
+        return criteria;
     }
+
     /**
-     * {@inheritDoc}
+     * @param criteria the criteria to set
      */
-    public PatientService getPatientService() {
-        // TODO Create mock service for web unit testing
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
-        // TODO Create mock service for web unit testing
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectService getStudySubjectService() {
-        // TODO Create mock service for web unit testing
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() {
-        // TODO Create mock service for web unit testing
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public POPatientService getPOPatientService() {
-        // TODO Auto-generated method stub
-        return null;
+    public void setCriteria(SearchPatientsCriteriaWebDto criteria) {
+        this.criteria = criteria;
     }
 }

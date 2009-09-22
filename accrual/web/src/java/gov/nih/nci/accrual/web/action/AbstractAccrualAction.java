@@ -190,6 +190,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         if (obj instanceof String) {
             result = (String) obj;
         }
-        return result == null ? "" : result;
+        return result == null ? " " : result;
     }
 }

@@ -79,5 +79,9 @@
             <result name="showNewSubmission">/WEB-INF/jsp/newAccrualSubmission.jsp</result>
             <result name="viewSubmissionDetails">/WEB-INF/jsp/viewAccrualSubmissionDetails.jsp</result>
         </action>
+
+        <action name="patients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">
+            <result>/WEB-INF/jsp/searchPatients.jsp</result>
+        </action>
     </package>
 </struts>

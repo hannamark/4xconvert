@@ -73,70 +73,66 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.web.util;
-
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.POPatientService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+package gov.nih.nci.accrual.web.dto.util;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Sep 21, 2009
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface{
-    private final SearchTrialService searchTrial = new MockSearchTrialBean();
-    private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
-
+public class SearchPatientsCriteriaWebDto {
+    private String assignedIdentifier;
+    private String studySite;
+    private String birthDate;
+    private String statusCode;
     /**
-     * {@inheritDoc}
+     * @return the assignedIdentifier
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return searchStudySite;
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
     }
     /**
-     * {@inheritDoc}
+     * @param assignedIdentifier the assignedIdentifier to set
      */
-    public SearchTrialService getSearchTrialService() {
-        return searchTrial;
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
     }
     /**
-     * {@inheritDoc}
+     * @return the studySite
      */
-    public PatientService getPatientService() {
-        // TODO Create mock service for web unit testing
-        return null;
+    public String getStudySite() {
+        return studySite;
     }
     /**
-     * {@inheritDoc}
+     * @param studySite the studySite to set
      */
-    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
-        // TODO Create mock service for web unit testing
-        return null;
+    public void setStudySite(String studySite) {
+        this.studySite = studySite;
     }
     /**
-     * {@inheritDoc}
+     * @return the birthDate
      */
-    public StudySubjectService getStudySubjectService() {
-        // TODO Create mock service for web unit testing
-        return null;
+    public String getBirthDate() {
+        return birthDate;
     }
     /**
-     * {@inheritDoc}
+     * @param birthDate the birthDate to set
      */
-    public SubmissionService getSubmissionService() {
-        // TODO Create mock service for web unit testing
-        return null;
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
     /**
-     * {@inheritDoc}
+     * @return the statusCode
      */
-    public POPatientService getPOPatientService() {
-        // TODO Auto-generated method stub
-        return null;
+    public String getStatusCode() {
+        return statusCode;
+    }
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 }

@@ -29,6 +29,14 @@
                                 <li><a href="accrualSubmissions.action" >Submissions</a></li>
                             </c:otherwise>
                         </c:choose>
+                        <c:choose>
+                            <c:when test="${requestScope.topic == 'list_patients'}">
+                                <li><a href="patients.action" class="selected">Patient Search</a></li> 
+                            </c:when>
+                            <c:otherwise>
+                                <li><a href="patients.action" >Patient Search</a></li>
+                            </c:otherwise>
+                        </c:choose>
                     </c:when>
                 </c:choose>
                 <li><a href="/accrual/logout.action" >Log Out</a></li>
