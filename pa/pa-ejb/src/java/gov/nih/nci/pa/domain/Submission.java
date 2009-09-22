@@ -79,7 +79,7 @@
 
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 
 import java.sql.Timestamp;
 
@@ -103,7 +103,7 @@ public class Submission extends AbstractStudyEntity {
     private String label;
     private String description;
     private Timestamp cutOffDate;
-    private PendingCompletedCode statusCode;
+    private AccrualSubmissionStatusCode statusCode;
     private Timestamp statusDateRangeLow;
     private Timestamp statusDateRangeHigh;
     private String createUser;
@@ -179,13 +179,13 @@ public class Submission extends AbstractStudyEntity {
      */
     @Column(name = "status_code")
     @Enumerated(EnumType.STRING)
-    public PendingCompletedCode getStatusCode() {
+    public AccrualSubmissionStatusCode getStatusCode() {
         return statusCode;
     }
     /**
      * @param statusCode the statusCode to set
      */
-    public void setStatusCode(PendingCompletedCode statusCode) {
+    public void setStatusCode(AccrualSubmissionStatusCode statusCode) {
         this.statusCode = statusCode;
     }
     /**

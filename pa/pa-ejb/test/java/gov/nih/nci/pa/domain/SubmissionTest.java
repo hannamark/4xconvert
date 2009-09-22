@@ -82,7 +82,7 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -150,7 +150,7 @@ public class SubmissionTest {
         ss.setCutOffDate(new Timestamp(new Date().getTime()));
         ss.setDescription("description");
         ss.setLabel("label");
-        ss.setStatusCode(PendingCompletedCode.PENDING);
+        ss.setStatusCode(AccrualSubmissionStatusCode.OPENED);
         ss.setCreateUser("createUser");
         ss.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         ss.setStatusDateRangeHigh(new Timestamp(new Date().getTime()));

@@ -10,17 +10,17 @@
     <s:head/>
 <SCRIPT LANGUAGE="JavaScript">
 function handleSearchAction(){
-    document.forms[0].action="viewTrials.action";
+    document.forms[0].action="patients.action";
     document.forms[0].submit();
 }
 function handleAddAction(){
-    document.forms[0].action="viewTrials.action";
+    document.forms[0].action="patients.action";
     document.forms[0].submit();
 }
 </SCRIPT>
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <h1><fmt:message key="patient.search.title"/></h1>
   <s:form name="searchPatient">
     <table class="form">
@@ -29,16 +29,18 @@ function handleAddAction(){
           <s:label><fmt:message key="patient.assignedIdentifier"/></s:label>
         </td>
         <td class="value">
-            <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
+            <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier" cssStyle="width:98%;max-width:192px" />
         </td>
       </tr> 
       <tr>
         <td class="label">
           <s:label><fmt:message key="patient.studySite"/></s:label>
         </td>
-        <td class="value">
-            <s:textfield id ="studySite" name="criteria.studySite" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
-        </td>
+         <td class="value">
+            <s:select id ="studySite" name="criteria.studySite"
+                list="listOfStudySites" listKey="ssIi" listValue="orgName"
+                headerKey="" headerValue="--Select--"/>
+         </td>
       </tr> 
       <tr>
         <td class="label">

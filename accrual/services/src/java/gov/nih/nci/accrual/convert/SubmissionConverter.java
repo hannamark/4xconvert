@@ -82,7 +82,7 @@ package gov.nih.nci.accrual.convert;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.Submission;
-import gov.nih.nci.pa.enums.PendingCompletedCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -129,7 +129,7 @@ public class SubmissionConverter extends AbstractConverter<SubmissionDto, Submis
         bo.setDescription(StConverter.convertToString(dto.getDescription()));
         bo.setLabel(StConverter.convertToString(dto.getLabel()));
         if (!PAUtil.isCdNull(dto.getStatusCode())) {
-            bo.setStatusCode(PendingCompletedCode.getByCode(dto.getStatusCode().getCode()));
+            bo.setStatusCode(AccrualSubmissionStatusCode.getByCode(dto.getStatusCode().getCode()));
         }
         if (dto.getStatusDateRange() != null) {
             bo.setStatusDateRangeLow(IvlConverter.convertTs().convertLow(dto.getStatusDateRange()));

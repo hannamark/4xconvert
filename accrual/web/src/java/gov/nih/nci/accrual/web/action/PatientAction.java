@@ -78,7 +78,12 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
+import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+
+import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
@@ -88,14 +93,26 @@ public class PatientAction extends AbstractAccrualAction {
 
     private static final long serialVersionUID = -6820189447703204634L;
 
-    private SearchPatientsCriteriaWebDto criteria;
+    private SearchPatientsCriteriaWebDto criteria = null;
+    private List<SearchStudySiteResultWebDto> listOfStudySites = null;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String execute() {
-        criteria = new SearchPatientsCriteriaWebDto();
+        if (criteria == null) {
+            criteria = new SearchPatientsCriteriaWebDto();
+        }
+        if (listOfStudySites == null) {
+            List<SearchStudySiteResultDto> isoList;
+            try {
+                isoList = searchStudySiteSvc.search(getSpIi(), getAuthorizedUser());
+            } catch (RemoteException e) {
+                return ERROR;
+            }
+            listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoList);
+        }
         return super.execute();
     }
 
@@ -111,5 +128,12 @@ public class PatientAction extends AbstractAccrualAction {
      */
     public void setCriteria(SearchPatientsCriteriaWebDto criteria) {
         this.criteria = criteria;
+    }
+
+    /**
+     * @return the listOfStudySites
+     */
+    public List<SearchStudySiteResultWebDto> getListOfStudySites() {
+        return listOfStudySites;
     }
 }

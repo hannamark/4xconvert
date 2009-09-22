@@ -87,19 +87,19 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @author Hugh Reinhart
  * @since Aug 29, 2009
  */
-public enum PendingCompletedCode implements CodedEnum<String> {
+public enum AccrualSubmissionStatusCode implements CodedEnum<String> {
 
     /** Pending. */
-    PENDING("Pending"),
+    OPENED("Opened"),
     /** Completed. */
-    COMPLETED("Completed");
+    SUBMITTED("Submitted");
 
     private String code;
     /**
      *
      * @param code
      */
-    private PendingCompletedCode(String code) {
+    private AccrualSubmissionStatusCode(String code) {
         this.code = code;
         register(this);
     }
@@ -130,15 +130,15 @@ public enum PendingCompletedCode implements CodedEnum<String> {
      * @param code code
      * @return PendingCompletedCode
      */
-    public static PendingCompletedCode getByCode(String code) {
-        return getByClassAndCode(PendingCompletedCode.class, code);
+    public static AccrualSubmissionStatusCode getByCode(String code) {
+        return getByClassAndCode(AccrualSubmissionStatusCode.class, code);
     }
 
     /**
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNames() {
-        PendingCompletedCode[] l = PendingCompletedCode.values();
+        AccrualSubmissionStatusCode[] l = AccrualSubmissionStatusCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();

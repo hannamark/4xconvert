@@ -77,6 +77,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
@@ -107,6 +108,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
 
     /** SearchTrialService. */
     protected SearchTrialService searchTrialSvc;
+    /** SearchStudySiteService. */
+    protected SearchStudySiteService searchStudySiteSvc;
     /** SubmissionService. */
     protected SubmissionService submissionSvc;
 
@@ -115,6 +118,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public void prepare() {
         searchTrialSvc = AccrualServiceLocator.getInstance().getSearchTrialService();
+        searchStudySiteSvc = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
     }
     /**

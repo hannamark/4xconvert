@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.util.AccrualUtil;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 21, 2009
@@ -121,7 +123,7 @@ public class SearchPatientsCriteriaWebDto {
      * @param birthDate the birthDate to set
      */
     public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
+        this.birthDate = AccrualUtil.normalizeYearMonthString(birthDate);
     }
     /**
      * @return the statusCode

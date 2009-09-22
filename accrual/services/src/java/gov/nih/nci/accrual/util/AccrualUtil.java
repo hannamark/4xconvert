@@ -79,6 +79,8 @@
 package gov.nih.nci.accrual.util;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -88,7 +90,83 @@ import java.util.Date;
  * @since 07/27/2009
  */
 public class AccrualUtil {
+
     /**
+     * Private class used to decode and normalize date strings.
+     */
+    private static class ValidYearMonthFormat {
+        String pattern;
+        int endIndex;
+        boolean lenient;
+
+        public ValidYearMonthFormat(String pattern) {
+            this.pattern = pattern;
+            this.endIndex = pattern.length();
+            this.lenient = false;
+        }
+    }
+
+    /**
+     * Static ordered list of valid date format patterns.
+     */
+    private static ValidYearMonthFormat[] yearMonthFormats;
+    static {
+        yearMonthFormats = new ValidYearMonthFormat[] {
+                new ValidYearMonthFormat("MM/yyyy"),
+                new ValidYearMonthFormat("MM-yyyy"),
+                new ValidYearMonthFormat("MM/dd/yyyy"),
+                new ValidYearMonthFormat("yyyy-MM-dd HH:mm:ss"),
+                new ValidYearMonthFormat("yyyy-MM-dd"),
+                new ValidYearMonthFormat("yyyy/MM/dd"),
+                new ValidYearMonthFormat("MM-dd-yyyy HH:mm:ss")
+        };
+    }
+
+    /**
+     * Convert an input string to a Date.
+     *
+     * @param inDate string to be normalized
+     * @return Date
+     */
+    private static Date yearMonthStringToDate(String inDate) {
+        if (inDate == null) {
+            return null;
+        }
+        Date outDate = null;
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        for (ValidYearMonthFormat fm : yearMonthFormats) {
+            sdf.applyPattern(fm.pattern);
+            sdf.setLenient(false);
+            try {
+                int endIndex = inDate.trim().length() < fm.endIndex ? inDate.trim().length() : fm.endIndex;
+                String dateToParse = inDate.trim().substring(0, endIndex);
+                outDate = sdf.parse(dateToParse);
+                break;
+            } catch (ParseException e) {
+               continue; //best effort to try the other date format(s).
+            }
+        }
+        return outDate;
+    }
+    /**
+     * Convert an input string to a normalized year month string.
+     * The output format is determined by the first element in
+     * the static yearMonthFormats array.
+     *
+     * @param inDate string to be normalized
+     * @return normalized string
+     */
+    public static String normalizeYearMonthString(String inDate) {
+        Date outDate = yearMonthStringToDate(inDate);
+        if (outDate == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern(yearMonthFormats[0].pattern);
+        return sdf.format(outDate);
+    }
+
+     /**
      * @param ts the incoming Timestamp
      * @return Timestamp without time and with day of month set to 1
      */

@@ -78,16 +78,43 @@
 */
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Rajani Kumar
  * @since  Aug 27, 2009
  */
 public class SearchStudySiteResultWebDto {
 
-   
-   
+
+
     private String ssIi;
     private String orgName;
+
+    /**
+     * @param isoList list of iso dto's
+     * @return list of web dto's
+     */
+    public static List<SearchStudySiteResultWebDto> getWebList(List<SearchStudySiteResultDto> isoList) {
+        List<SearchStudySiteResultWebDto> result = new ArrayList<SearchStudySiteResultWebDto>();
+        for (SearchStudySiteResultDto iso : isoList) {
+            result.add(new SearchStudySiteResultWebDto(iso));
+        }
+        return result;
+    }
+
+    /**
+     * @param iso iso dto
+     */
+    public SearchStudySiteResultWebDto(SearchStudySiteResultDto iso) {
+        this.ssIi = IiConverter.convertToString(iso.getStudySiteIi());
+        this.orgName = StConverter.convertToString(iso.getOrganizationName());
+    }
 
     /**
      * @return the ssIi
