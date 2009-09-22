@@ -113,26 +113,26 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
         // TODO Auto-generated method stub
         
     }
+    public void reject(Ii studyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 
-    public Ii createInterventionalProprietaryStudyProtocol(
+    public Ii createProprietaryInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO,
-            StudySiteOverallStatusDTO siteOverallStatusDTO,
+            StudySiteOverallStatusDTO studySiteOverallStatusDTO,
             List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO,
-            St leadOrganizationTrialIdentifier, PersonDTO siteInvestigatorDTO,
-            OrganizationDTO studySiteDTO, StudySiteDTO siteDTO,
-            St nctIdentifierSiteIdentifier,
-            OrganizationDTO summary4organizationDTO, Cd summary4CategoryCode)
-            throws PAException {
+            PersonDTO studySiteInvestigatorDTO,
+            StudySiteDTO leadOrganizationStudySiteDTO,
+            OrganizationDTO studySiteOrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
+            OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO) throws PAException {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    public void reject(Ii studyProtocolIi) throws PAException {
-        // TODO Auto-generated method stub
-        
     }
     
 

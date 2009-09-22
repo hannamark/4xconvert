@@ -3,9 +3,7 @@
  */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -334,8 +332,13 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                 summary4organizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi(
                     trialDTO.getSummaryFourOrgIdentifier()));
             }
-            St leadOrganizationTrialIdentifier = StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier());
-            St nctIdentifierSiteIdentifier = StConverter.convertToSt(trialDTO.getNctIdentifier());
+            StudySiteDTO leadOrganizationTrialIdentifierDTO = new StudySiteDTO();
+            leadOrganizationTrialIdentifierDTO.setLocalStudyProtocolIdentifier(
+                    StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier()));
+                    
+            StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
+            nctIdentifierDTO.setLocalStudyProtocolIdentifier(
+                    StConverter.convertToSt(trialDTO.getNctIdentifier()));
             StudySiteDTO siteDTO = new StudySiteDTO();
             siteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getLocalSiteIdentifier()));
             siteDTO.setProgramCodeText(StConverter.convertToSt(trialDTO.getSiteProgramCodeText()));
@@ -349,22 +352,24 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                 siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(trialDTO.getDateOpenedforAccrual(),
                         null));
             }
-            
-            Cd summary4CategoryCode = CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode());
+            StudyResourcingDTO studyResourcingDTO = new StudyResourcingDTO();
+            studyResourcingDTO.setTypeCode(
+                    CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode()));
             PersonDTO siteInvestigatorDTO = new PersonDTO();
             siteInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi(trialDTO.getSitePiIdentifier()));
-            OrganizationDTO studySiteDTO = new OrganizationDTO();
-            studySiteDTO.setIdentifier(IiConverter.convertToPoOrganizationIi(trialDTO.getSiteOrganizationIdentifier()));
+            OrganizationDTO studySiteOrgDTO = new OrganizationDTO();
+            studySiteOrgDTO.setIdentifier(IiConverter.convertToPoOrganizationIi(
+                    trialDTO.getSiteOrganizationIdentifier()));
             
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             
             Ii studyProtocolIi = RegistryServiceLocator.getTrialRegistrationService().
-            createInterventionalProprietaryStudyProtocol(studyProtocolDTO, siteOverallStatusDTO, studyIndldeDTOs, 
-                    studyResourcingDTOs, documentDTOs, leadOrganizationDTO, leadOrganizationTrialIdentifier, 
-                    siteInvestigatorDTO, studySiteDTO, siteDTO, 
-                    nctIdentifierSiteIdentifier, summary4organizationDTO, summary4CategoryCode);
+            createProprietaryInterventionalStudyProtocol(studyProtocolDTO, siteOverallStatusDTO, studyIndldeDTOs, 
+                    studyResourcingDTOs, documentDTOs, leadOrganizationDTO, siteInvestigatorDTO,
+                    leadOrganizationTrialIdentifierDTO, studySiteOrgDTO, siteDTO, 
+                    nctIdentifierDTO, summary4organizationDTO, studyResourcingDTO);
           //send a notification mail
             RegistryServiceLocator.getMailManagerService().sendNotificationMail(studyProtocolIi);  
             StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(

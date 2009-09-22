@@ -492,7 +492,7 @@ function toggledisplay2 (it) {
                 <td scope="row" class="label">
                     <label for="submitTrial_overallStatusWebDTO_statusCode"> <fmt:message key="submit.trial.currentTrialStatus"/><span class="required">*</span></label>
                 </td>
-                    <s:set name="statusCodeValues" value="@gov.nih.nci.registry.enums.TrialStatusCode@getDisplayNames()" />
+                    <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudySiteStatusCode@getDisplayNames()" />
                 <td>                                             
                     <s:select headerKey="" headerValue="--Select--" name="trialDTO.siteStatusCode" list="#statusCodeValues"  value="trialDTO.siteStatusCode" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
