@@ -227,7 +227,8 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         try {
             session = HibernateUtil.getCurrentSession();
             bo = convertFromDtoToDomain(dto);
-            bo.setUserLastUpdated((ejbContext != null) ? ejbContext.getCallerPrincipal().getName() : "not logged");
+            String userLastUpdated = getUserLastUpdated();
+            bo.setUserLastUpdated(userLastUpdated);
             bo.setDateLastUpdated(new Date());
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo.setUserLastCreated(bo.getUserLastUpdated());
@@ -269,5 +270,21 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             throw new PAException("Create method should be used to create new.");
         }
         return createOrUpdate(dto);
+    }
+    
+    private String getUserLastUpdated() {
+     String userUpdated = "not logged";
+     if (ejbContext != null) {
+      try {
+        if (ejbContext.getCallerPrincipal() != null) {
+             userUpdated =  ejbContext.getCallerPrincipal().getName(); 
+        }
+      } catch (IllegalStateException e) {
+          return userUpdated;
+      } catch (Exception e) {
+          return userUpdated;
+      }
+     }
+      return userUpdated;
     }
 }
