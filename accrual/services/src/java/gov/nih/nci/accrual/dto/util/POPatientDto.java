@@ -96,7 +96,6 @@ public class POPatientDto extends BaseDTO {
     private static final long serialVersionUID = 1L;
     
     private Ii duplicateOf;
-    private DSet<Ii> id;
     private Ii playerId;
     private DSet pAddr;
     private Ii scoperId;
@@ -109,14 +108,6 @@ public class POPatientDto extends BaseDTO {
      */
     public Ii getDuplicateOf() {
         return duplicateOf;
-    }
-
-    /**
-     * 
-     * @return DSet
-     */
-    public DSet<Ii> getId() {
-        return id;
     }
     
     /**
@@ -166,15 +157,6 @@ public class POPatientDto extends BaseDTO {
      */
     public void setDuplicateOf(Ii obj) {
         duplicateOf = obj;
-    }
-
-    /**
-     * Set identifier.
-     * 
-     * @param obj the identifier
-     */
-    public void setId(DSet<Ii> obj) {
-        id = obj;
     }
     
     /**
