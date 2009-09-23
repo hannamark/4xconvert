@@ -83,9 +83,11 @@ import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.accrual.dto.util.POPatientDto;
@@ -122,16 +124,15 @@ public class POPatientBean implements POPatientService {
      */
     public POPatientDto create(POPatientDto dto) throws RemoteException {
         if (dto == null) {
-            throw new RemoteException("Called create(null).");
+            throw new RemoteException("Called create(null)");
         }
 
-        // TODO Auto-generated method stub
         PoServiceLocator psl = PoServiceLocator.getInstance();
         PatientCorrelationServiceRemote pcsr = psl.getPatientCorrelationService();
         PatientDTO patient = new PatientDTO();
 
         patient.setDuplicateOf(dto.getDuplicateOf());
-        patient.setIdentifier(dto.getId());
+        patient.setIdentifier(null);
         patient.setPlayerIdentifier(dto.getPlayerIdentifier());
         patient.setPostalAddress(dto.getPostalAddress());
         patient.setScoperIdentifier(dto.getScoperIdentifier());
@@ -142,12 +143,11 @@ public class POPatientBean implements POPatientService {
             Ii newId = pcsr.createCorrelation(patient);
             dto.setIdentifier(newId);
         } catch (CurationException ex) {
-            LOG.error(ex.toString(), ex);
+            logError(ex);
             throw new RemoteException(ex.toString(), ex);
         } catch (EntityValidationException ex) {
-            LOG.error(ex.toString(), ex);
+            logError(ex);
             throw new RemoteException(ex.toString(), ex);
-//        } finally {
         }
         
         return dto;
@@ -158,20 +158,62 @@ public class POPatientBean implements POPatientService {
      */
     public POPatientDto get(Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
-            throw new RemoteException("Called get() with Ii == null.");
+            throw new RemoteException("Called get(null)");
         }
-        // TODO Auto-generated method stub
-        return null;
+
+        PoServiceLocator psl = PoServiceLocator.getInstance();
+        PatientCorrelationServiceRemote pcsr = psl.getPatientCorrelationService();
+        PatientDTO patient = null;
+        try {
+            patient = pcsr.getCorrelation(ii);
+        } catch (NullifiedRoleException ex) {
+            logError(ex);
+            throw new RemoteException(ex.toString(), ex);
+        }
+        
+        POPatientDto dto = new POPatientDto();
+        dto.setDuplicateOf(patient.getDuplicateOf());
+        dto.setIdentifier(DSetConverter.convertToIi(patient.getIdentifier()));
+        dto.setPlayerIdentifier(patient.getPlayerIdentifier());
+        dto.setPostalAddress(patient.getPostalAddress());
+        dto.setScoperIdentifier(patient.getScoperIdentifier());
+        dto.setStatus(patient.getStatus());
+        dto.setTelecomAddress(patient.getTelecomAddress());
+        return dto;
     }
 
     /**
      * {@inheritDoc}
      */
     public POPatientDto update(POPatientDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        String name = (ejbContext != null) ? ejbContext.getCallerPrincipal().getName() : "unknown";
-        LOG.info(name);
-        return null;
+        if (dto == null) {
+            throw new RemoteException("Called update(null)");
+        }
+
+        PoServiceLocator psl = PoServiceLocator.getInstance();
+        PatientCorrelationServiceRemote pcsr = psl.getPatientCorrelationService();
+        PatientDTO patient = new PatientDTO();
+
+        patient.setDuplicateOf(dto.getDuplicateOf());
+        patient.setIdentifier(DSetConverter.convertIiToDset(dto.getIdentifier()));
+        patient.setPlayerIdentifier(dto.getPlayerIdentifier());
+        patient.setPostalAddress(dto.getPostalAddress());
+        patient.setScoperIdentifier(dto.getScoperIdentifier());
+        patient.setStatus(dto.getStatus());
+        patient.setTelecomAddress(dto.getTelecomAddress());
+
+        try {
+            pcsr.updateCorrelation(patient);
+        } catch (EntityValidationException ex) {
+            logError(ex);
+            throw new RemoteException(ex.toString(), ex);
+        }
+
+        return dto;
     }
 
+    private void logError(Exception ex) {
+        String name = (ejbContext != null) ? ejbContext.getCallerPrincipal().getName() : "unknown";
+        LOG.error("Principal " + name + " " + ex.toString(), ex);
+    }
 }
