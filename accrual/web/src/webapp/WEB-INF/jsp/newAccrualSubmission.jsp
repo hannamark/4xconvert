@@ -11,9 +11,13 @@ function cancel(){
    
 }
 function handleAction(){
-     document.forms[0].action="accrualSubmissionsaddNew.action";
-     document.forms[0].submit();  
+
+	   	document.forms[0].action="accrualSubmissionsaddNew.action";
+        document.forms[0].submit();  
+       
 }
+
+
 </SCRIPT>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>

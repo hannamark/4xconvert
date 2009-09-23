@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -78,32 +78,96 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
- * @author Hugh Reinhart
- * @since 4/16/2009
+ * @author Rajani Kumar
+ *
  */
-public final class AccrualConstants {
+public class MockSubmissionServiceBean implements SubmissionService {
 
-    /** Attribute used to store the authorized user in session. */
-    public static final String SESSION_ATTR_AUTHORIZED_USER = "authorizedUser";
-    /** Attribute used to store the role in session. */
-    public static final String SESSION_ATTR_ROLE = "accrualRole";
-    /** Role-name for the public role. */
-    public static final String ROLE_PUBLIC = "Submitter";
-    /** Attribute used to store the role in session. */
-    public static final String SESSION_ATTR_DISCLAIMER = "accrualDisclaimer";
-    /** Role-name for the public role. */
-    public static final String DISCLAIMER_ACCEPTED = "Accepted";
-    /** Role-name for the public role. */
-    public static final String SESSION_ATTR_SPII = "studyProtocolIi";
+    /** mock data. */
+    public static List<SubmissionDto> dtos;
+    public static List<SearchTrialResultDto> trialDtos;
 
-    /** Action result for the global log out result. */
-    public static final String AR_LOGOUT = "logout";
-    /** Action result for the show disclaimer. */
-    public static final String AR_DISCLAIMER = "show_Disclaimer_Page";
-    /** Action result for the new submission. */
-    public static final String AR_NEW_SUBMISSION = "showNewSubmission";
-    /** Action result for the view submission details. */
-    public static final String AR_VIEW_SUBMISSION_DETAILS = "viewSubmissionDetails";
+    static {
+        dtos = new ArrayList<SubmissionDto>();
+        SubmissionDto r = new SubmissionDto();
+        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        r.setLabel(StConverter.convertToSt("Test label"));
+        r.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.OPENED));
+        r.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
+              new Timestamp(new Date().getTime()), null));
+        r.setCreateUser(StConverter.convertToSt("Test User"));
+        r.setSubmitUser(StConverter.convertToSt("Test User"));
+        r.setDescription(StConverter.convertToSt("Test Description"));
+        r.setCutOffDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        
+        dtos.add(r);
+
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException {
+        SearchTrialResultDto result = null;
+        for (SearchTrialResultDto dto : trialDtos) {
+            if (IiConverter.convertToLong(studyProtocolIi).equals(IiConverter.convertToLong(
+                    dto.getStudyProtocolIdentifier()))) {
+                result = dto;
+            }
+        }
+        return result;
+    }
+
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException {
+        return BlConverter.convertToBl(true);
+    }
+
+	public List<SubmissionDto> getByStudyProtocol(Ii ii) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public SubmissionDto create(SubmissionDto dto) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void delete(Ii ii) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public SubmissionDto get(Ii ii) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public SubmissionDto update(SubmissionDto dto) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

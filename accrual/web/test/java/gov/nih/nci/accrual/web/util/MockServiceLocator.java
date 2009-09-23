@@ -91,6 +91,7 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final SearchTrialService searchTrial = new MockSearchTrialBean();
     private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
+    private final SubmissionService submissionService = new MockSubmissionServiceBean();
 
     /**
      * {@inheritDoc}
@@ -129,8 +130,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      * {@inheritDoc}
      */
     public SubmissionService getSubmissionService() {
-        // TODO Create mock service for web unit testing
-        return null;
+        return submissionService;
     }
     /**
      * {@inheritDoc}

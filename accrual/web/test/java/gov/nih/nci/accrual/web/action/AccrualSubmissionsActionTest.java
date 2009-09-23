@@ -107,14 +107,26 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void executeTest() {
-        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
+        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().
+                               getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
         assertNotNull(strDisclaimer);
         assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, strDisclaimer);
        // show participation site selection
         assertEquals(ActionSupport.SUCCESS, action.execute());
 
     }
+    
+    @Test
+    public void displayNewSubmissionTest() {
+        assertEquals(AccrualConstants.AR_NEW_SUBMISSION, action.displayNewSubmission());
 
+    }
+
+    @Test
+    public void viewSubmissionDetailsTest() {
+        assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.viewSubmissionDetails());
+
+    }
 
 //    @Test
     public void studyProtocolIdPropertyTest(){
