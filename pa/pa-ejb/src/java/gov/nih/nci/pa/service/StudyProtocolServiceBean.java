@@ -646,9 +646,9 @@ import org.hibernate.criterion.Example;
             sp.setStatusCode(ActStatusCode.ACTIVE);
         }
         sp.setStatusDate(new Timestamp((new Date()).getTime()));
-        if (CREATE.equals(operation) || sp.getAmendmentNumber() != null) {
-          sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
-        }
+//        if (CREATE.equals(operation) && ActStatusCode.ACTIVE.equals(sp.getStatusCode())) {
+//          sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
+//        }
         if (sp.getIdentifier() == null) {
             sp.setIdentifier(generateNciIdentifier(session));
         }
@@ -659,12 +659,6 @@ import org.hibernate.criterion.Example;
         } 
     }
     
-    private Integer generateSubmissionNumber(String identifier , Session session) {
-        String query = "select max(sp.submissionNumber) from StudyProtocol sp where "
-            + "sp.identifier = '" + identifier + "' ";
-        Integer maxValue = (Integer) session.createQuery(query).list().get(0);
-        return (maxValue == null ? 1 : maxValue + 1);
-    }
 
     /**
      * {@inheritDoc}

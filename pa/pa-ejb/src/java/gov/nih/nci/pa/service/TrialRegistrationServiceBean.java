@@ -124,6 +124,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -690,8 +691,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             sql = "Delete from STUDY_ONHOLD WHERE STUDY_PROTOCOL_IDENTIFIER  = "  + studyProtocolIi.getExtension();
             paServiceUtils.executeSql(sql);
             createMilestone(studyProtocolIi);
-            
             studyProtocolDTO.setAmendmentReasonCode(null);
+            studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(
+                    paServiceUtils.generateSubmissionNumber(studyProtocolDTO.getAssignedIdentifier().getExtension())));
         }
 
         studyProtocolService.updateStudyProtocol(studyProtocolDTO);
@@ -715,9 +717,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             
         }
       
-        paServiceUtils.createOrUpdate(documentDTOs , IiConverter.convertToDocumentIi(null) , 
-                studyProtocolDTO.getIdentifier());
-      
         paServiceUtils.removeResponsibleParty(studyProtocolDTO.getIdentifier());
         paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO, 
                 sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
@@ -736,6 +735,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           createStudyRelationship(studyProtocolIi , toStudyProtocolIi , studyProtocolDTO);
       } 
       studyOverallStatusService.create(overallStatusDTO);
+      paServiceUtils.createOrUpdate(documentDTOs , IiConverter.convertToDocumentIi(null) , 
+              studyProtocolDTO.getIdentifier());
       if (UPDAT.equalsIgnoreCase(operation)) {
           createInboxProcessingComments(documentDTOs, studyProtocolDTO);
       }
@@ -780,6 +781,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             // size of ind/ide > 0 
         }
         studyProtocolDTO.setIdentifier(null);
+        studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
         if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
             studyProtocolIi =  studyProtocolService.createInterventionalStudyProtocol(
                         (InterventionalStudyProtocolDTO) studyProtocolDTO);
@@ -1259,14 +1261,20 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         sqls.add("Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE DOCUMENT_WORKFLOW_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
-        sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId 
-                + " and TYPE_CODE = '" + DocumentTypeCode.TSR.getName() + "'");
+        sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension() 
+                + " and TYPE_CODE = '" + DocumentTypeCode.TSR.getCode() + "'");
         sqls.add("UPDATE DOCUMENT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("UPDATE STUDY_ONHOLD SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("Delete from STUDY_OVERALL_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE STUDY_OVERALL_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("Delete from STUDY_RECRUITMENT_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE STUDY_RECRUITMENT_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
+
+        sqls.add("Delete from STUDY_INDLDE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
+        sqls.add("UPDATE STUDY_INDLDE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
+
+        sqls.add("Delete from STUDY_RESOURCING WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
+        sqls.add("UPDATE STUDY_RESOURCING SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
 
         sqls.add("DELETE FROM STUDY_CONTACT WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId 
                 + " AND ROLE_CODE IN ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','CENTRAL_CONTACT')");

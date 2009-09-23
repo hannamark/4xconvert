@@ -98,6 +98,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -362,14 +364,25 @@ public class DocumentServiceBean extends
                 fromName = PAUtil.getDocumentFilePath(doc.getId(), doc.getFileName() , nciIdentifier);
                 toName = PAUtil.getDocumentFilePath(Long.valueOf(toIi.getExtension()), doc.getFileName(),
                         nciIdentifier);
-                File fromFile = new File(fromName);
-                File toFile = new File(toName);
-                if (!toFile.exists()) {
-                 boolean success = fromFile.renameTo(toFile);
-                 if (!success) {
-                    throw new PAException("Unable to rename the file from " + fromName + " to " + toName);
-                 }
+                InputStream in;
+                try {
+                    in = new FileInputStream(fromName);
+                    OutputStream out = new FileOutputStream(toName);
+                    byte[] bytes = PAUtil.readInputStream(in);
+                    out.write(bytes);
+                } catch (IOException e) {
+                    throw new PAException("Error while copy file from " + fromName + " to " + toName , e);
                 }
+                
+//                File fromFile = new File(fromName);
+//                File toFile = new File(toName);
+//                
+//                if (!toFile.exists()) {
+//                 boolean success = fromFile.renameTo(toFile);
+//                 if (!success) {
+//                    throw new PAException("Unable to rename the file from " + fromName + " to " + toName);
+//                 }
+//                }
             }
             session.delete(doc);
         }

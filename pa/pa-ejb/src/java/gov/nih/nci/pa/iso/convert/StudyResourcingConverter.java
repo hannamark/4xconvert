@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * Convert StudyResourcing from domain to DTO.
@@ -121,6 +122,7 @@ public class StudyResourcingConverter  extends AbstractConverter<StudyResourcing
         srDTO.setSerialNumber(StConverter.convertToSt(studyResourcing.getSerialNumber()));
         srDTO.setStudyProtocolIdentifier(
                 IiConverter.convertToStudyProtocolIi(studyResourcing.getStudyProtocol().getId()));
+        srDTO.setActiveIndicator(BlConverter.convertToBl(studyResourcing.getActiveIndicator()));
         //@tdo: date range
         return srDTO;
     }
@@ -163,7 +165,10 @@ public class StudyResourcingConverter  extends AbstractConverter<StudyResourcing
         if (studyResourcingDTO.getSerialNumber() != null) {
             studyResourcing.setSerialNumber(studyResourcingDTO.getSerialNumber().getValue());
         }
+        studyResourcing.setActiveIndicator(BlConverter.covertToBoolean(studyResourcingDTO.getActiveIndicator()));
+        if (PAUtil.isBlNull(studyResourcingDTO.getActiveIndicator())) {
+            studyResourcing.setActiveIndicator(Boolean.TRUE);
+        }
         return studyResourcing;
     }
-
 }

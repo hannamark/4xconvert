@@ -647,5 +647,18 @@ public class PAServiceUtils {
        }  
     }
     
+
+    /**
+     * 
+     * @param identifier nci Identifier
+     * @return next submission number
+     */
+    public Integer generateSubmissionNumber(String identifier) {
+        Session session = HibernateUtil.getCurrentSession();
+        String query = "select max(sp.submissionNumber) from StudyProtocol sp where "
+            + "sp.identifier = '" + identifier + "' ";
+        Integer maxValue = (Integer) session.createQuery(query).list().get(0);
+        return (maxValue == null ? 1 : maxValue + 1);
+    }
     
 }

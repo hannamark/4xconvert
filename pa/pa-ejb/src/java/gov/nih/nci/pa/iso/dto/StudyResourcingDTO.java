@@ -102,6 +102,7 @@ public class StudyResourcingDTO extends StudyDTO {
     private Cd nihInstitutionCode;
     private St serialNumber;
     private St inactiveCommentText;
+    private Bl activeIndicator;
     /**
      * 
      * @return typeCode
@@ -213,5 +214,21 @@ public class StudyResourcingDTO extends StudyDTO {
      */
     public void setInactiveCommentText(St inactiveCommentText) {
         this.inactiveCommentText = inactiveCommentText;
-    }    
+    }
+    /**
+     * 
+     * @return Bl
+     */
+    public Bl getActiveIndicator() {
+        return activeIndicator;
+    }
+    /**
+     * 
+     * @param activeIndicator active indicator
+     */
+    public void setActiveIndicator(Bl activeIndicator) {
+        this.activeIndicator = activeIndicator;
+    }  
+    
+    
 }
