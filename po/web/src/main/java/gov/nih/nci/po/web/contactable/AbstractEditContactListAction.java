@@ -121,6 +121,7 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
     private Contactable contactable;
     private Entry entry;
     private String rootKey;
+    private boolean readonly;
 
     /**
      * @return session key of the Contactable to edit.
@@ -135,7 +136,20 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
     }
+    
+    /**
+     * @return whether display should be read-only or not.
+     */
+    public boolean isReadonly() {
+        return readonly;
+    }
 
+    /**
+     * @param readOnly true for read-only display.
+     */
+    public void setReadonly(boolean readOnly) {
+        this.readonly = readOnly;
+    }
     /**
      * @return SUCCESS.
      */
@@ -472,4 +486,5 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
             setEntry(tty);
         }
     }
+
 }

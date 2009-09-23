@@ -8,10 +8,12 @@
         </c:url>
         <li id="url-entry-${e.index}">          
             <a href="${value}" target="_blank"><s:property value="@java.net.URLDecoder@decode(value)" /></a>
-            | <a id="url-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'url-list')">Remove</a>            
+            <c:if test="${not readonly}">
+            | <a id="url-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'url-list')">Remove</a>
+            </c:if>
         </li>
     </s:iterator>
-
+<c:if test="${not readonly}">
     <c:url var="addAction" value="../../contactable/url/add.action">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
@@ -22,4 +24,5 @@
             </s:param>
         </s:textfield>
     </li>
+</c:if>
 </ul>

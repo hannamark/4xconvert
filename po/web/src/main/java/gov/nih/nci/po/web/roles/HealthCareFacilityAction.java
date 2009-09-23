@@ -109,7 +109,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  *
  */
 public class HealthCareFacilityAction 
-    extends AbstractOrganizationRoleAction<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityServiceLocal> 
+    extends AbstractCtepOwnedOrgRoleAction<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityServiceLocal> 
     implements Preparable {
 
     private static final long serialVersionUID = 1L;
@@ -131,7 +131,7 @@ public class HealthCareFacilityAction
         if (getRole() == null) {
             setRole(new HealthCareFacility());
         }
-        if (getRole().getPlayer() == null) { //if not set, then set to default
+        if (getRole().getPlayer() == null) { // if not set, then set to default
             getRole().setPlayer(getOrganization());
         }
     }
@@ -147,9 +147,9 @@ public class HealthCareFacilityAction
         setRootKey(PoHttpSessionUtil.addAttribute(getRole()));
         return result;
     }
-    
+
     /**
-     *
+     * 
      * {@inheritDoc}
      */
     @Validations(
@@ -162,8 +162,6 @@ public class HealthCareFacilityAction
     public String add() throws JMSException {
         return super.add();
     }
-    
-
 
     /**
      * {@inheritDoc}
@@ -180,7 +178,7 @@ public class HealthCareFacilityAction
         if (duplicateOf != null && duplicateOf.getId() != null) {
             role.setDuplicateOf(duplicateOf);
         }
-        
+
         return super.edit();
     }
 
@@ -235,6 +233,7 @@ public class HealthCareFacilityAction
     protected Class<HealthCareFacilitySortCriterion> getSortCriterion() {
         return HealthCareFacilitySortCriterion.class;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -250,36 +249,35 @@ public class HealthCareFacilityAction
     protected String getEditSuccessMessageKey() {
         return "healthCareFacility.update.success";
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public HealthCareFacility getRole() {
         return role;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void setRole(HealthCareFacility role) {
         this.role = role;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public HealthCareFacilityCR getCr() {
         return cr;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void setCr(HealthCareFacilityCR cr) {
         this.cr = cr;
     }
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -287,7 +285,7 @@ public class HealthCareFacilityAction
     public HealthCareFacilityCR getBaseCr() {
         return getCr();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -295,7 +293,7 @@ public class HealthCareFacilityAction
     public HealthCareFacility getBaseRole() {
         return getRole();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -303,7 +301,7 @@ public class HealthCareFacilityAction
     public void setBaseCr(HealthCareFacilityCR baseCr) {
         setCr(baseCr);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -327,7 +325,7 @@ public class HealthCareFacilityAction
     }
 
     /**
-     *
+     * 
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -335,11 +333,11 @@ public class HealthCareFacilityAction
     }
 
     /**
-     *
+     * 
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
     }
-    
+
 }

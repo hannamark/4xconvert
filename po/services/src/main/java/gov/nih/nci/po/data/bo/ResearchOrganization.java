@@ -85,6 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
+import gov.nih.nci.po.util.OnlyCtepOwnedMayBeActive;
 import gov.nih.nci.po.util.ResearchOrganizationTypeCodeValidator;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniqueResearchOrganization;
@@ -133,6 +134,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @VaildResearchOrganizationTypeWithFundingMechanism
 @UniqueResearchOrganization
 @ResearchOrganizationTypeCodeValidator.ResearchOrganizationTypeCode
+@OnlyCtepOwnedMayBeActive
 public class ResearchOrganization extends AbstractResearchOrganization implements Correlation {
 
     private static final String VALUE = "value";

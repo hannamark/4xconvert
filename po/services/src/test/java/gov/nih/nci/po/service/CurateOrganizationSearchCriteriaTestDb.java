@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
@@ -17,6 +18,7 @@ import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
 import gov.nih.nci.po.service.correlation.IdentifiedOrganizationServiceTest;
 import gov.nih.nci.po.service.correlation.OversightCommitteeServiceTest;
 import gov.nih.nci.po.service.correlation.ResearchOrganizationServiceTest;
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -168,11 +170,7 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         results = sc.getQuery("", false).list();
         assertEquals(1, results.size());
 
-        // exclude the role
-        ro.setStatus(RoleStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().update(ro);
-        results = sc.getQuery("", false).list();
-        assertEquals(0, results.size());
+        //ONLY CTEP-OWNED DATA MAY BE ACTIVE
 
         // add change request to the role.
         HealthCareFacilityDTO rodto = (HealthCareFacilityDTO) PoXsnapshotHelper.createSnapshot(ro);
@@ -186,12 +184,49 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         rocr.setProcessed(true);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
-        assertEquals(0, results.size());
+        assertEquals(1, results.size());
 
         // nullified role
         ro.setStatus(RoleStatus.NULLIFIED);
         PoHibernateUtil.getCurrentSession().update(ro);
         rocr.setProcessed(false);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void findByCtepOwnedHealthCareFacility() throws Exception {
+        
+        HealthCareFacilityServiceTest test = new HealthCareFacilityServiceTest();
+        test.setDefaultCountry(ost.getDefaultCountry());
+        test.setUpData();
+        
+        test.testSimpleCreateCtepOwnedAndGet();
+        HealthCareFacility ro = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class).uniqueResult();
+        assertEquals(RoleStatus.PENDING, ro.getStatus());
+        ro.getPlayer().setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(ro.getPlayer());
+        
+        List<Organization> results = sc.getQuery("", false).list();
+        assertEquals(3, results.size());
+        
+        // exclude the old org
+        assertEquals(3, PoHibernateUtil.getCurrentSession().createSQLQuery("update organization set status = 'ACTIVE'").executeUpdate());
+        results = sc.getQuery("", false).list();
+        assertEquals(1, results.size());
+        
+        // exclude the role
+        ro.setStatus(RoleStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(0, results.size());
+        
+        //NO UPDATES (Creation of Change Requests) ARE ALLOWED TO CTEP-OWNED DATA
+        
+        // nullified role
+        ro.setStatus(RoleStatus.NULLIFIED);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
         assertEquals(0, results.size());
@@ -275,12 +310,8 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         results = sc.getQuery("", false).list();
         assertEquals(2, results.size());
 
-        // exclude the role
-        ro.setStatus(RoleStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().update(ro);
-        results = sc.getQuery("", false).list();
-        assertEquals(1, results.size());
-
+        //ONLY CTEP-OWED DATA MAY BE ACTIVE
+        
         // add change request to the role.
         ResearchOrganizationDTO rodto = (ResearchOrganizationDTO) PoXsnapshotHelper.createSnapshot(ro);
         EjbTestHelper.getResearchOrganizationCorrelationServiceRemote().updateCorrelation(rodto);
@@ -293,12 +324,55 @@ public class CurateOrganizationSearchCriteriaTestDb extends AbstractHibernateTes
         rocr.setProcessed(true);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
-        assertEquals(1, results.size());
+        //since ro is PENDING
+        assertEquals(2, results.size());
 
         // nullified role
         ro.setStatus(RoleStatus.NULLIFIED);
         PoHibernateUtil.getCurrentSession().update(ro);
         rocr.setProcessed(false);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(1, results.size());
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void findByCtepOwnedResearchOrganization() throws Exception {
+        
+        ResearchOrganizationServiceTest test = new ResearchOrganizationServiceTest();
+        test.setDefaultCountry(ost.getDefaultCountry());
+        test.setUpData();
+        test.setupType();
+        test.testSimpleCreateCtepOwnedAndGet();
+        ResearchOrganization ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(ResearchOrganization.class).uniqueResult();
+        assertEquals(RoleStatus.PENDING, ro.getStatus());
+        ro.getPlayer().setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(ro.getPlayer());
+        
+        List<Organization> results = sc.getQuery("", false).list();
+        assertEquals(3, results.size());
+        
+        // exclude the old org
+        Organization o = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);
+        o.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(o);
+        results = sc.getQuery("", false).list();
+        assertEquals(2, results.size());
+        
+        // exclude the role
+        Ii ctepRoIi = new Ii();
+        ctepRoIi.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepRoIi.setIdentifierName("ro id name");
+        ctepRoIi.setExtension("CTEP");
+        ro.getOtherIdentifiers().add(ctepRoIi);
+        ro.setStatus(RoleStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().update(ro);
+        results = sc.getQuery("", false).list();
+        assertEquals(1, results.size());
+        
+        // nullified role
+        ro.setStatus(RoleStatus.NULLIFIED);
         PoHibernateUtil.getCurrentSession().update(ro);
         results = sc.getQuery("", false).list();
         assertEquals(1, results.size());

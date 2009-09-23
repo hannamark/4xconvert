@@ -8,10 +8,13 @@
         </c:url>
         <li id="fax-entry-${e.index}">
             ${value}
+            <c:if test="${not readonly}">
             | <a id="fax-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'fax-list')" >Remove</a>
+            </c:if>
         </li>
     </s:iterator>
 
+<c:if test="${not readonly}">
     <c:url var="addAction" value="../../contactable/fax/add.action">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
@@ -22,4 +25,5 @@
             </s:param>
         </s:textfield>
     </li>
+</c:if>
 </ul>

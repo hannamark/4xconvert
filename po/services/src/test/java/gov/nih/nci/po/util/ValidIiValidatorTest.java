@@ -88,6 +88,9 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.junit.Test;
 
 /**
@@ -95,6 +98,19 @@ import org.junit.Test;
  */
 public class ValidIiValidatorTest {
 
+    @Test
+    public void ensureNonIiTypesAreInvalid() {
+        ValidIiValidator val = new ValidIiValidator();
+        val.initialize(null);
+        val.apply(null);
+        
+        assertFalse(val.isValid("a"));
+        
+        Collection<String> col = new ArrayList<String>();
+        col.add("a");
+        assertFalse(val.isValid(col));
+    }
+    
     @Test
     public void testIt() throws Exception {
         ValidIiValidator val = new ValidIiValidator();

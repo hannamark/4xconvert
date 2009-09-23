@@ -409,10 +409,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
 
             Set nonIiSet = new HashSet();
             Ii ii = new Ii();
-            ii.setExtension("1234");
-            ii.setRoot("5678");
             nonIiSet.add(ii);
-            nonIiSet.add("Not an II");
             abstractRole.setOtherIdentifiers(nonIiSet);
             errors = service.validate(sr);
             assertEquals(1, errors.size());

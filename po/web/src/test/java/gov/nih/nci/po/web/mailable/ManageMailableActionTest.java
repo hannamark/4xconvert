@@ -1,10 +1,12 @@
 package gov.nih.nci.po.web.mailable;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.web.AbstractPoTest;
@@ -78,6 +80,13 @@ public class ManageMailableActionTest extends AbstractPoTest {
         assertNotNull(action.getRootKey());
         action.setRootKey(null);
         assertNull(action.getRootKey());
+    }
+    
+    @Test
+    public void testReadonlyProperty() {
+        assertFalse(action.isReadonly());
+        action.setReadonly(true);
+        assertTrue(action.isReadonly());
     }
 
     @Test

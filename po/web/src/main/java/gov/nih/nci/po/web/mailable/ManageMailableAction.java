@@ -27,6 +27,7 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
 
     private Mailable mailable;
     private String rootKey;
+    private boolean readonly;
     private Address address = new Address();
     private Integer index = -1;
 
@@ -157,7 +158,21 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
     }
+    
+    /**
+     * @return whether display should be read-only or not.
+     */
+    public boolean isReadonly() {
+        return readonly;
+    }
 
+    /**
+     * @param readOnly true for read-only display.
+     */
+    public void setReadonly(boolean readOnly) {
+        this.readonly = readOnly;
+    }
+    
     /**
      * @return addresses result
      */

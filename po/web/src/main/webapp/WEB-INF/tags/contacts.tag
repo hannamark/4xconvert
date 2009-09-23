@@ -2,6 +2,7 @@
 <%@ attribute name="contactableKeyBase" type="java.lang.String" required="true" %>
 <%@ attribute name="emailRequired" type="java.lang.Boolean" required="false" description="By default email is required"%>
 <%@ attribute name="phoneRequired" type="java.lang.Boolean" required="false" description="By default phone is not required"%>
+<%@ attribute name="readonly" type="java.lang.Boolean" required="false" description="Display read-only view, if not provied readonly is false"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
@@ -17,6 +18,13 @@
 </s:if>
 <s:else>
 <s:set name="phoneRequiredBool" value="true"/>
+</s:else>
+
+<s:if test="%{#attr.readonly == true}">
+<s:set name="readonlyBool" value="true"/>
+</s:if>
+<s:else>
+<s:set name="readonlyBool" value="false" />
 </s:else>
 <script type="text/javascript">
 <!--
@@ -67,6 +75,7 @@ function isTelecomFieldsBlank() {
    </s:fielderror>
     <c:url value="contactable/email/edit.action" var="viewEmailAction">
         <c:param name="rootKey" value="${rootKey}"/>
+        <c:param name="readonly" value="${readonlyBool}"/>
     </c:url>
     <div id="email-list">Loading...</div>
     <script>
@@ -81,6 +90,7 @@ function isTelecomFieldsBlank() {
    </s:fielderror>
     <c:url value="contactable/phone/edit.action" var="viewPhoneAction">
         <c:param name="rootKey" value="${rootKey}"/>
+        <c:param name="readonly" value="${readonlyBool}"/>
     </c:url>
     <div id="phone-list">Loading...</div>
     <script>
@@ -95,6 +105,7 @@ function isTelecomFieldsBlank() {
    </s:fielderror>
     <c:url value="contactable/fax/edit.action" var="viewFaxAction">
         <c:param name="rootKey" value="${rootKey}"/>
+        <c:param name="readonly" value="${readonlyBool}"/>
     </c:url>
     <div id="fax-list">Loading...</div>
     <script>
@@ -109,6 +120,7 @@ function isTelecomFieldsBlank() {
    </s:fielderror>
     <c:url value="contactable/tty/edit.action" var="viewTtyAction">
         <c:param name="rootKey" value="${rootKey}"/>
+        <c:param name="readonly" value="${readonlyBool}"/>
     </c:url>
     <div id="tty-list">Loading...</div>
     <script>
@@ -123,6 +135,7 @@ function isTelecomFieldsBlank() {
    </s:fielderror>
     <c:url value="contactable/url/edit.action" var="viewUrlAction">
         <c:param name="rootKey" value="${rootKey}"/>
+        <c:param name="readonly" value="${readonlyBool}"/>
     </c:url>
     <div id="url-list">Loading...</div>
     <script>

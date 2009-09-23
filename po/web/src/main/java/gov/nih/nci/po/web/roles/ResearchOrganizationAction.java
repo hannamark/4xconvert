@@ -111,7 +111,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * @author smatyas
  */
 public class ResearchOrganizationAction
-    extends AbstractOrganizationRoleAction<ResearchOrganization, ResearchOrganizationCR,
+    extends AbstractCtepOwnedOrgRoleAction<ResearchOrganization, ResearchOrganizationCR,
         ResearchOrganizationServiceLocal>
     implements Preparable {
 
@@ -375,5 +375,5 @@ public class ResearchOrganizationAction
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
     }
-    
+
 }

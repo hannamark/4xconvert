@@ -8,10 +8,12 @@
         </c:url>
         <li id="tty-entry-${e.index}">
             ${value}
+            <c:if test="${not readonly}">
             | <a id="tty-remove-${e.index}" href="javascript://noop/" onclick="clearErrorMessages(); return loadDiv('${removeAction}', 'tty-list')" >Remove</a>
+            </c:if>
         </li>
     </s:iterator>
-
+<c:if test="${not readonly}">
     <c:url var="addAction" value="../../contactable/tty/add.action">
         <c:param name="rootKey" value="${rootKey}"/>
     </c:url>
@@ -22,4 +24,5 @@
             </s:param>
         </s:textfield>
     </li>
+</c:if>
 </ul>

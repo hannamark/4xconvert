@@ -350,6 +350,7 @@ public abstract
         alter(dtoCreated);
         try {
             service.updateCorrelation(dtoCreated);
+            fail("Should throw an exception.");
         } catch (IllegalArgumentException e) {
             assertEquals("Updates to CTEP-owned data is restricted!", e.getMessage());
         }
@@ -374,6 +375,7 @@ public abstract
         Cd newStatus = RoleStatusConverter.convertToCd(RoleStatus.NULLIFIED);
         try {
             service.updateCorrelationStatus(poId, newStatus); 
+            fail("Should throw an exception.");
         } catch (IllegalArgumentException e) {
             assertEquals("Updates to CTEP-owned data is restricted!", e.getMessage());
         }

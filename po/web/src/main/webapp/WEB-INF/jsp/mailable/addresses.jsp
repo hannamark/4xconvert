@@ -9,6 +9,7 @@ No Postal Address(es) found.
     <div>
     <po:address address="${addy}" idSuffix="${e.index + 1}"/>
     </div>
+<c:if test="${not readonly}">
     <c:url var="removeAction" value="../../mailable/remove.action">
         <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="index" value="${e.index}"/>
@@ -29,11 +30,13 @@ No Postal Address(es) found.
             id="address-remove-${e.index}"/>
         </po:buttonRow>
     </div>        
+</c:if>
 </fieldset>
 </c:forEach>
+<c:if test="${not readonly}">
 <div>
     <c:url value="../../popup/address/input.action" var="addAddressUrl">
-       <c:param name="rootKey" value="${rootKey}"/>
+        <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="index" value="-1"/>
     </c:url>
     <po:buttonRow>
@@ -41,4 +44,5 @@ No Postal Address(es) found.
     <%-- po:button id="refresh_address" href="javascript://noop/" onclick="showPopupAddAddressCallback();" style="refresh" text="Refresh"/ --%>
     </po:buttonRow>
 </div>
+</c:if>
 <div class="clear"></div>

@@ -9,6 +9,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
@@ -18,7 +19,6 @@ import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.util.PrivateAccessor;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import org.junit.Test;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.opensymphony.xwork2.Action;
 
-public class ResearchOrganizationActionTest extends AbstractPoTest {
+public class ResearchOrganizationActionTest extends AbstractRoleActionTest {
     private ResearchOrganizationAction action;
 
     @Before
@@ -142,7 +142,6 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
     public void testGetAvailableStatusForAddForm() {
         List<RoleStatus> expected = new ArrayList<RoleStatus>();
         expected.add(RoleStatus.PENDING);
-        expected.add(RoleStatus.ACTIVE);
 
         action.getRole().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();
@@ -151,20 +150,25 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
         assertTrue(expected.containsAll(availableStatus));
     }
 
+
+    @Override
+    protected void verifyAvailStatusForEditForm(AbstractRole role, RoleStatus roleStatus) {
+        role.setId(1L);
+        PrivateAccessor.invokePrivateMethod(role, AbstractRole.class, "setPriorAsString",
+                new Object[] { roleStatus.name() });
+        Collection<RoleStatus> allowedTransitions = new ArrayList(roleStatus.getAllowedTransitions());
+        allowedTransitions.remove(RoleStatus.ACTIVE);
+        assertTrue(allowedTransitions.containsAll(getAction().getAvailableStatus()));
+        assertTrue(getAction().getAvailableStatus().containsAll(allowedTransitions));
+    }
+    
     @Test
     public void testGetAvailableStatusForEditForm() {
-        verifyAvailStatusForEditForm(RoleStatus.ACTIVE);
-        verifyAvailStatusForEditForm(RoleStatus.NULLIFIED);
-        verifyAvailStatusForEditForm(RoleStatus.PENDING);
-        verifyAvailStatusForEditForm(RoleStatus.SUSPENDED);
-    }
-
-    private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
-        action.getRole().setId(1L);
-        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractRole.class, "setPriorAsString",
-                new Object[] { roleStatus.name() });
-        assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
-        assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
+        ResearchOrganization role = action.getRole();
+        verifyAvailStatusForEditForm(role, RoleStatus.ACTIVE);
+        verifyAvailStatusForEditForm(role, RoleStatus.NULLIFIED);
+        verifyAvailStatusForEditForm(role, RoleStatus.PENDING);
+        verifyAvailStatusForEditForm(role, RoleStatus.SUSPENDED);
     }
 
     @Test
@@ -250,5 +254,10 @@ public class ResearchOrganizationActionTest extends AbstractPoTest {
             assertEquals("CR-ID-" + i, value);
             i++;
         }
+    }
+
+    @Override
+    AbstractRoleAction<?, ?, ?> getAction() {
+        return action;
     }
 }

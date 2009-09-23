@@ -127,7 +127,7 @@
         </div>
         <div class="boxouter">
             <h2>Address Information</h2>
-            <%@ include file="../../mailable/include.jsp" %>
+            <po:addresses />
         </div>
 
         <div class="boxouter_nobottom">

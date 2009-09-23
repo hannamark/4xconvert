@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
+<s:set name="isReadonly" value="role.ctepOwned" />
 <s:set name="isCreate" value="role.id == null" />
 <s:set name="isNotCreate" value="role.id != null" />
 <s:if test="%{isCreate}">
@@ -46,10 +47,16 @@
             <s:else>
                 <s:set name="formAction" value="'roles/organizational/ResearchOrganization/edit.action'" />
             </s:else>
+            <s:if test="%{isReadonly}">
+                <s:set name="formTheme" value="'css_xhtml_readonly'" />
+            </s:if>
+            <s:else>
+                <s:set name="formTheme" value="'css_xhtml'" />
+            </s:else>
             <h2><s:text name="researchOrganization"/> Role Information</h2>
             <div class="box_white">
                 <s:actionerror/>
-                <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
+                <s:form action="%{formAction}" theme="%{formTheme}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
                     <s:hidden key="cr"/>
                     <s:hidden key="organization"/>
                     <s:hidden key="rootKey"/>
@@ -71,30 +78,41 @@
                     <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
                     <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
                     <s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
-                    <s:select
-                       label="%{getText('researchOrganization.typeCode')}"
-                       name="role.typeCode"
-                       list="#researchOrgTypes"
-                       listKey="id"
-                       listValue="description"
-                       value="role.typeCode.id"
-                       headerKey="" headerValue="--Select a Type--"
-                       required="true" cssClass="required"
-                       onchange="return curateRoleForm_displayFundingMechanism(this.value);"/>
-                      <s:hidden key="role.fundingMechanism" id="curateRoleForm.role.fundingMechanism"/>
-                    <div id="curateRoleForm_displayFundingMechanism" class="inline">
-                        <%@ include file="selectFundingMechanism.jsp" %>
-                    </div>
-                    <s:select id="curateRoleForm.role.status"
-                       label="%{getText('researchOrganization.status')}"
-                       name="role.status"
-                       list="availableStatus"
-                       listKey="name()"
-                       listValue="name()"
-                       value="role.status"
-                       headerKey="" headerValue="--Select a Role Status--"
-                       required="true" cssClass="required"
-                       onchange="handleDuplicateOf();" />
+                    <s:if test="%{isReadonly}">
+                        <s:textfield label="%{getText('researchOrganization.typeCode')}" name="role.typeCode.description" required="true" cssClass="required"/>
+                        <s:textfield label="%{getText('researchOrganization.fundingMechanism')}" name="role.fundingMechanism.description" required="true" cssClass="required" />
+                    </s:if>
+                    <s:else>
+                        <s:select
+                           label="%{getText('researchOrganization.typeCode')}"
+                           name="role.typeCode"
+                           list="#researchOrgTypes"
+                           listKey="id"
+                           listValue="description"
+                           value="role.typeCode.id"
+                           headerKey="" headerValue="--Select a Type--"
+                           required="true" cssClass="required"
+                           onchange="return curateRoleForm_displayFundingMechanism(this.value);"/>
+                          <s:hidden key="role.fundingMechanism" id="curateRoleForm.role.fundingMechanism"/>
+                        <div id="curateRoleForm_displayFundingMechanism" class="inline">
+                            <%@ include file="selectFundingMechanism.jsp" %>
+                        </div>
+                    </s:else>
+                    <s:if test="%{isReadonly}">
+                        <s:textfield label="%{getText('researchOrganization.status')}" name="role.status" required="true" cssClass="required"/>
+                    </s:if>
+                    <s:else>
+                        <s:select id="curateRoleForm.role.status"
+                           label="%{getText('researchOrganization.status')}"
+                           name="role.status"
+                           list="availableStatus"
+                           listKey="name()"
+                           listValue="name()"
+                           value="role.status"
+                           headerKey="" headerValue="--Select a Role Status--"
+                           required="true" cssClass="required"
+                           onchange="handleDuplicateOf();" />
+                    </s:else>
                     <div id="duplicateOfdiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
                         <c:if test="${fn:length(availableDuplicateOfs) > 0}">
                             <po:field labelKey="researchOrganization.duplicateOf">
@@ -119,14 +137,14 @@
         </div>
         <div class="boxouter">
             <h2>Address Information</h2>
-            <%@ include file="../../../mailable/include.jsp" %>
+            <po:addresses readonly="${role.ctepOwned}"/>
         </div>
 
         <div class="boxouter_nobottom">
             <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false" />
+                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false" readonly="${role.ctepOwned}"/>
             </div>
         </div>
     </div>
@@ -159,7 +177,9 @@
     <div class="btnwrapper" style="margin-bottom:20px;">
     <%@include file="../../confirmThenSubmit.jsp" %>
     <po:buttonRow>
+       <s:if test="%{not isReadonly}">
        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');" style="save" text="Save"/>
+       </s:if>
        <c:url var="managePage" value="/protected/roles/organizational/ResearchOrganization/start.action">
            <c:param name="organization" value="${organization.id}"/>
        </c:url>

@@ -85,6 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
+import gov.nih.nci.po.util.OnlyCtepOwnedMayBeActive;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.ValidIi;
 
@@ -125,6 +126,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @RoleStatusChange
+@OnlyCtepOwnedMayBeActive
 @SuppressWarnings("PMD.UselessOverridingMethod")
 public class HealthCareFacility extends AbstractEnhancedOrganizationRole implements Correlation {
 

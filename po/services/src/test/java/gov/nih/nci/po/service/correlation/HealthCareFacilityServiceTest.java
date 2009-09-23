@@ -86,14 +86,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.HashSet;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -106,7 +109,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 /**
  * Service tests.
  */
-public class HealthCareFacilityServiceTest extends AbstractStructrualRoleServiceTest<HealthCareFacility> {
+public class HealthCareFacilityServiceTest extends AbstractOrganizationalRoleServiceTest<HealthCareFacility> {
 
     @Override
     HealthCareFacility getSampleStructuralRole() {
@@ -204,5 +207,17 @@ public class HealthCareFacilityServiceTest extends AbstractStructrualRoleService
         s.create(hcf);
         int c = s.getHotRoleCount(hcf.getPlayer());
         assertEquals(1, c);
+    }
+
+    @Override
+    protected HealthCareFacility getSampleCtepOwnedStructuralRole() {
+        HealthCareFacility r = getSampleStructuralRole();
+        r.setOtherIdentifiers(new HashSet<Ii>());
+        Ii ctepRoIi = new Ii();
+        ctepRoIi.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepRoIi.setIdentifierName("ro id name");
+        ctepRoIi.setExtension("CTEP");
+        r.getOtherIdentifiers().add(ctepRoIi);
+        return r;
     }
 }

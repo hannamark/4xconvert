@@ -287,7 +287,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     }
 
     /**
-     * @return the allowable EntityStatus values
+     * @return the allowable RoleStatus values
      */
     public Collection<RoleStatus> getAvailableStatus() {
         if (getBaseRole().getId() != null) {

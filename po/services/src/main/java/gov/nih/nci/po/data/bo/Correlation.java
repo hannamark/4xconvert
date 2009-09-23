@@ -21,5 +21,10 @@ public interface Correlation extends PersistentObject, Auditable, CuratableRole 
      * @return the other identifiers of this Correlation
      */
     Set<Ii> getOtherIdentifiers();
+    
+    /**
+     * @param ids the other identifiers of this Correlation.
+     */
+    void setOtherIdentifiers(Set<Ii> ids);
 
 }

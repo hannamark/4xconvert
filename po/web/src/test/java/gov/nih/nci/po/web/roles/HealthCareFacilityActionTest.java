@@ -88,6 +88,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
@@ -96,6 +97,7 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceStub;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PrivateAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -246,7 +248,6 @@ public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
     public void testGetAvailableStatusForAddForm() {
         List<RoleStatus> expected = new ArrayList<RoleStatus>();
         expected.add(RoleStatus.PENDING);
-        expected.add(RoleStatus.ACTIVE);
 
         action.getRole().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();
@@ -255,6 +256,17 @@ public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
         assertTrue(expected.containsAll(availableStatus));
     }
 
+    @Override
+    protected void verifyAvailStatusForEditForm(AbstractRole role, RoleStatus roleStatus) {
+        role.setId(1L);
+        PrivateAccessor.invokePrivateMethod(role, AbstractRole.class, "setPriorAsString",
+                new Object[] { roleStatus.name() });
+        Collection<RoleStatus> allowedTransitions = new ArrayList(roleStatus.getAllowedTransitions());
+        allowedTransitions.remove(RoleStatus.ACTIVE);
+        assertTrue(allowedTransitions.containsAll(getAction().getAvailableStatus()));
+        assertTrue(getAction().getAvailableStatus().containsAll(allowedTransitions));
+    }
+    
     @Test
     public void testGetAvailableStatusForEditForm() {
         HealthCareFacility role = action.getRole();

@@ -106,7 +106,7 @@ import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Action;
 
 /**
- *
+ * 
  * @author gax
  */
 public class AbstractEditContactListActionTest extends AbstractPoTest {
@@ -127,15 +127,23 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
         EmailAction instance = new EmailAction();
         assertNull(instance.getContactable());
         assertNull(instance.getRootKey());
-        try{
+        try {
             instance.prepare();
             fail("should no work w/o a ciKey");
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             // ok
         }
         instance.setRootKey(key);
         instance.prepare();
         assertSame(ci, instance.getContactable());
+    }
+
+    @Test
+    public void testReadonlyProperty() {
+        EmailAction action = new EmailAction();
+        assertFalse(action.isReadonly());
+        action.setReadonly(true);
+        assertTrue(action.isReadonly());
     }
 
     @Test
@@ -199,7 +207,7 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
         assertEquals(v, e.getValue());
 
         instance.setEmailEntry(e);
-        assertEquals(e,instance.getEmailEntry());
+        assertEquals(e, instance.getEmailEntry());
 
     }
 
@@ -222,7 +230,7 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
         assertEquals(v, e.getValue());
 
         instance.setPhoneEntry(e);
-        assertEquals(e,instance.getPhoneEntry());
+        assertEquals(e, instance.getPhoneEntry());
 
     }
 
@@ -244,7 +252,7 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
         assertEquals(v, e.getValue());
 
         instance.setFaxEntry(e);
-        assertEquals(e,instance.getFaxEntry());
+        assertEquals(e, instance.getFaxEntry());
 
     }
 
@@ -266,7 +274,7 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
         assertEquals(v, e.getValue());
 
         instance.setTtyEntry(e);
-        assertEquals(e,instance.getTtyEntry());
+        assertEquals(e, instance.getTtyEntry());
 
     }
 
@@ -288,6 +296,6 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
         assertEquals(v, e.getValue());
 
         instance.setUrlEntry(e);
-        assertEquals(e,instance.getUrlEntry());
+        assertEquals(e, instance.getUrlEntry());
     }
 }
