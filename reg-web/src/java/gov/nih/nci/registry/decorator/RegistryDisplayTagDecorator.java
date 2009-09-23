@@ -120,12 +120,18 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     public String getAmend() {
         String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
         String loginUser = ServletActionContext.getRequest().getRemoteUser();
+        String isProprietaryTrial = 
+                  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null 
+                         ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
         
         DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getStudyStatusCode();
         
+        if (isProprietaryTrial.equalsIgnoreCase("true")) {
+          return "";
+        }
         if ((dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE))
                 && loginUser.equalsIgnoreCase(userCreated)
@@ -146,12 +152,17 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     public String getUpdate() {
         String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
         String loginUser = ServletActionContext.getRequest().getRemoteUser();
-        
+        String isProprietaryTrial = 
+            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null 
+                   ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
+  
         DocumentWorkflowStatusCode dwfs = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getStudyStatusCode();
-        
+        if (isProprietaryTrial.equalsIgnoreCase("true")) {
+            return "";
+          }
         if ((dwfs.equals(DocumentWorkflowStatusCode.ACCEPTED)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
