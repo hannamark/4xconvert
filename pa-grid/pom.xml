@@ -92,16 +92,6 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>gov.nih.nci.coppa.po-grid</groupId>
-            <artifactId>CoreServices-stubs</artifactId>
-            <version>3.0m3</version>
-        </dependency>
-        <dependency>
-            <groupId>gov.nih.nci.coppa.po-grid</groupId>
-            <artifactId>CoreServices-common</artifactId>
-            <version>3.0m3</version>
-        </dependency>
     </dependencies>
     <repositories>
         <repository>

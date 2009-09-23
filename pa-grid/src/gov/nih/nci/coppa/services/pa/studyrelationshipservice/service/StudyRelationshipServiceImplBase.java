@@ -150,11 +150,6 @@ public abstract class StudyRelationshipServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.studysitecontactservice.service.globus.resource.StudySiteContactServiceResourceHome)resource;
 	}
 	
-	public gov.nih.nci.coppa.services.pa.trialregistrationservice.service.globus.resource.TrialRegistrationServiceResourceHome getTrialRegistrationServiceResourceHome() throws Exception {
-		ResourceHome resource = getResourceHome("trialRegistrationServiceHome");
-		return (gov.nih.nci.coppa.services.pa.trialregistrationservice.service.globus.resource.TrialRegistrationServiceResourceHome)resource;
-	}
-	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();
