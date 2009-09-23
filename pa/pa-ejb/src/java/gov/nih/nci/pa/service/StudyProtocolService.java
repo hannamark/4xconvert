@@ -182,5 +182,11 @@ public interface StudyProtocolService {
     List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) 
         throws PAException, TooManyResultsException;
     
+    /**
+     * validates all the attributes of study protocol. 
+     * @param studyProtocolDTO study protocol Dto
+     * @throws PAException error on any validation
+     */
+    void validate(StudyProtocolDTO studyProtocolDTO) throws PAException;
 
 }

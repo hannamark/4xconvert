@@ -105,7 +105,7 @@ public class StudyRegulatoryAuthorityServiceBeanTest {
   public void setUp() throws Exception {
     TestSchema.reset1();
     TestSchema.primeData();
-    pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+    pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     Country c = CountryTest.createCountryObj();
     TestSchema.addUpdObject(c);
     assertNotNull(c.getId());

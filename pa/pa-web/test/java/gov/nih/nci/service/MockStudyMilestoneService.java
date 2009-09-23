@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Vrushali
  *
  */
-public class MockStudyMilestoneService implements StudyMilestoneServiceRemote {
+public class MockStudyMilestoneService extends MockAbstractBaseIsoService <StudyMilestoneDTO> implements StudyMilestoneServiceRemote {
     static List<StudyMilestoneDTO> mileList;
     static {
         mileList = new ArrayList<StudyMilestoneDTO>();

@@ -100,7 +100,7 @@ import java.util.Map;
  * @author Hugh Reinhart
  *
  */
-public class MockStudyOnholdService implements StudyOnholdServiceRemote {
+public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOnholdDTO> implements StudyOnholdServiceRemote {
 
     public static List<StudyOnhold> list;
     static StudyOnholdConverter converter = new StudyOnholdConverter();

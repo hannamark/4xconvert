@@ -81,6 +81,7 @@ package gov.nih.nci.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.iso.convert.InterventionConverter;
+import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
@@ -93,7 +94,7 @@ import java.util.List;
  * @author hreinhart
  *
  */
-public class MockInterventionService implements InterventionServiceRemote {
+public class MockInterventionService extends MockAbstractBaseIsoService <InterventionDTO> implements InterventionServiceRemote {
 
     public static List<Intervention> list;
     static InterventionConverter converter = new InterventionConverter();

@@ -128,7 +128,7 @@ public class StudyMilestoneServiceTest {
         bean.validateAbstractions = false;
         TestSchema.reset1();
         TestSchema.primeData();
-        spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
      }
 
     private void compareDataAttributes(StudyMilestoneDTO dto1, StudyMilestoneDTO dto2) throws Exception {

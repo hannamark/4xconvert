@@ -106,7 +106,7 @@ public class StudyResourcingServiceBeanTest {
     public void setUp() throws Exception {
         TestSchema.reset();
         TestSchema.primeData();
-        pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     }
     
     @Test

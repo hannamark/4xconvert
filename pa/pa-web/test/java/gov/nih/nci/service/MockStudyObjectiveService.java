@@ -16,7 +16,7 @@ import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
  * @author Vrushali
  *
  */
-public class MockStudyObjectiveService implements StudyObjectiveServiceRemote {
+public class MockStudyObjectiveService extends MockAbstractBaseIsoService <StudyObjectiveDTO> implements StudyObjectiveServiceRemote {
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)

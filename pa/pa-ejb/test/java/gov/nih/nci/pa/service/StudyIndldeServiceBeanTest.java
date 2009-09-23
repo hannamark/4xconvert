@@ -110,7 +110,7 @@ public class StudyIndldeServiceBeanTest {
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
-        pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     }
 
     @Test

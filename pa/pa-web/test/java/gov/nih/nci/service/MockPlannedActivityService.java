@@ -102,7 +102,8 @@ import java.util.Map;
  * 
  * @author hreinhart
  */
-public class MockPlannedActivityService implements PlannedActivityServiceRemote {
+public class MockPlannedActivityService extends MockAbstractBaseIsoService <PlannedActivityDTO> 
+    implements PlannedActivityServiceRemote {
 
     /** The list. */
     public static List<PlannedActivity> list;

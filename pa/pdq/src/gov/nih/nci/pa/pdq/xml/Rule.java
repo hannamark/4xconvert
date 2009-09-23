@@ -132,6 +132,7 @@ public enum Rule {
         diseaseList.add("Cancer grade");
         diseaseList.add("Genetic condition");
         diseaseList.add("Secondary related condition");
+        diseaseList.add("Other health status");
     }
 
     /**

@@ -90,6 +90,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +100,8 @@ import java.util.Map;
  * @author hreinhart
  *
  */
-public class MockStudySiteService implements gov.nih.nci.pa.service.StudySiteServiceRemote {
+public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySiteDTO> 
+    implements StudySiteServiceRemote {
 
     public static List<StudySite> list;
     static StudySiteConverter converter = new StudySiteConverter();

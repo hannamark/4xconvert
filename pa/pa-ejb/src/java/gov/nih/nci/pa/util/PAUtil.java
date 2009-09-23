@@ -159,12 +159,12 @@ public class PAUtil {
         if (isIiNull(toValidate)) {
             sb.append("Ii is null");
         }
-        if (source.getIdentifierName().equals(toValidate.getIdentifierName())) {
+        if (!source.getIdentifierName().equals(toValidate.getIdentifierName())) {
             sb.append(" Identifier Name does not match for " + source.getIdentifierName() 
-                    +  ", Exptected is " + source.getIdentifierName());
+                    +  ", Exptected is " + toValidate.getIdentifierName());
         }
-        if (source.getRoot().equals(toValidate.getRoot())) {
-            sb.append(" Root does not match for " + source.getIdentifierName() + ", Exptected is " + source.getRoot());
+        if (!source.getRoot().equals(toValidate.getRoot())) {
+            sb.append(" Root does not match for " + source.getRoot() + ", Exptected is " + toValidate.getRoot());
         }
         if (sb.length() > 0) {
             throw new PAException(sb.toString());

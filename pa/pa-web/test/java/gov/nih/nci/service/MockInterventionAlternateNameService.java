@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +94,8 @@ import java.util.List;
  * @author hreinhart
  *
  */
-public class MockInterventionAlternateNameService implements
+public class MockInterventionAlternateNameService 
+    extends MockAbstractBaseIsoService <InterventionAlternateNameDTO> implements 
         InterventionAlternateNameServiceRemote {
     
     public static List<InterventionAlternateName> list;
@@ -181,6 +183,11 @@ public class MockInterventionAlternateNameService implements
             throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public void validate(InterventionAlternateNameDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

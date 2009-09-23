@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -19,7 +20,7 @@ import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
  * @author Vrushali
  *
  */
-public class MockStudyOutcomeMeasureService implements
+public class MockStudyOutcomeMeasureService  extends MockAbstractBaseIsoService <StudyOutcomeMeasureDTO> implements
         StudyOutcomeMeasureServiceRemote {
         static List<StudyOutcomeMeasureDTO> list ;
         static {

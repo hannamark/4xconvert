@@ -116,7 +116,7 @@ public class StudyOverallStatusServiceTest {
         bean.studyProtocolService = sps;
         TestSchema.reset1();
         TestSchema.primeData();
-        pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         
     }    
     

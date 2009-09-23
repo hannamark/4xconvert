@@ -121,7 +121,7 @@ public class StudyOnholdServiceTest {
         TestSchema.reset1();
         TestSchema.primeData();
         spId = TestSchema.studyProtocolIds.get(0);
-        spIi = IiConverter.convertToIi(spId);
+        spIi = IiConverter.convertToStudyProtocolIi(spId);
     }
     
     @Test

@@ -85,6 +85,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+
+import org.hibernate.validator.NotNull;
 /**
  *
  * @author Kalpana Guthikonda
@@ -106,6 +108,7 @@ public class Document extends AbstractStudyEntity {
      */
     @Column(name = "TYPE_CODE")
     @Enumerated(EnumType.STRING)
+    @NotNull ()
     public DocumentTypeCode getTypeCode() {
         return typeCode;
     }
@@ -122,6 +125,7 @@ public class Document extends AbstractStudyEntity {
      * @return activeIndicator
      */
     @Column(name = "ACTIVE_INDICATOR")
+    @NotNull
     public Boolean getActiveIndicator() {
         return activeIndicator;
     }
@@ -139,6 +143,7 @@ public class Document extends AbstractStudyEntity {
      * @return fileName
      */
     @Column(name = "FILE_NAME")
+    @NotNull()
     public String getFileName() {
         return fileName;
     }

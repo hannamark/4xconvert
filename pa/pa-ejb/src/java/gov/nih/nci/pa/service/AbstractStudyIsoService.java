@@ -187,6 +187,30 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         return map;
     }
  
+    /**
+     * A common validation method.
+     * @param dto Dto object
+     * @throws PAException on error
+     */
+    @Override
+    public void validate(DTO dto) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        try {
+            super.validate(dto);
+        } catch (PAException pa) {
+            sb.append(pa.getMessage());
+        }
+        try {
+        PAUtil.isValidIi(dto.getStudyProtocolIdentifier() , IiConverter.convertToStudyProtocolIi(null));
+        } catch (PAException pa) {
+            sb.append(pa.getMessage());
+        }        
+        if (sb.length() > 0) {
+            throw new PAException("Validation Exception " + sb.toString());
+        }
+        
+    }
+    
     private void createMappingIdentifier(Map<Ii, Ii> map, Ii studyProtocolIi) {
         Session session = HibernateUtil.getCurrentSession(); 
         Ii value = null;

@@ -527,6 +527,18 @@ import org.hibernate.criterion.Example;
             throw new PAException(e);
         }
     }
+    
+    /**
+     * 
+     * @param studyProtocolDTO study protocol Dto
+     * @throws PAException error on any validation
+     */
+    public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
+        sb.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null , " : "");
+        
+    }
 
     private String generateNciIdentifier(Session session) {
         Calendar today = Calendar.getInstance();

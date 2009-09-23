@@ -119,7 +119,7 @@ public class StudySiteContactServiceTest {
         TestSchema.reset1();
         TestSchema.primeData();
         protocolId = TestSchema.studyProtocolIds.get(0);
-        protocolIi = IiConverter.convertToIi(protocolId);
+        protocolIi = IiConverter.convertToStudyProtocolIi(protocolId);
         siteId = TestSchema.studySiteIds.get(0);
         siteIi = IiConverter.convertToIi(siteId);
         contactId = TestSchema.studySiteContactIds.get(0);

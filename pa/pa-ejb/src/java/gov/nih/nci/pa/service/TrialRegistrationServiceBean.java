@@ -84,7 +84,6 @@ import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -99,7 +98,6 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -129,7 +127,6 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -137,12 +134,13 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.domain.StudyProtocol;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -158,6 +156,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+import org.hibernate.Session;
 
 /**
  * @author Naveen Amiruddin
@@ -249,7 +248,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * all activities to test a particular hypothesis that is the basis of the study
      * regarding the effectiveness of a particular treatment, drug, device,
      * procedure, or care plan. This includes prevention, observational,
-     * therapeutic, and other types of studies that involve subjects.:
+     * therapeutic, and other types of studies that involve subjects.:{@link URL}. 
      * <ul>
      * <li>
      * </ul>
@@ -259,9 +258,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param studyIndldeDTOs list of Study Ind/ides
      * @param studyResourcingDTOs list of nih grants
      * @param documentDTOs list of documents
-     * @param leadOrganizationDTO Pead organization
+     * @param leadOrganizationDTO lead organization
      * @param principalInvestigatorDTO Principal Investigator
-     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param sponsorOrganizationDTO Sponsor Organization
      * @param leadOrganizationSiteIdentifierDTO local protocol identifier
      * @param nctIdentifierSiteIdentifierDTO nct Identifier
      * @param studyContactDTO phone and email info when Pi is responsible
@@ -522,7 +521,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             paServiceUtils.createOrUpdate(studyResourcingDTOs, 
                     IiConverter.convertToStudyResourcingIi(null), studyProtocolIi);    
             paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
-            createSummaryFour(studyProtocolIi , summary4OrganizationDTO , summary4StudyResourcingDTO);
+            paServiceUtils.manageSummaryFour(studyProtocolIi , summary4OrganizationDTO , summary4StudyResourcingDTO);
           
             paServiceUtils.manageLeadOrganization(studyProtocolIi , leadOrganizationDTO ,
                     leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier());
@@ -567,8 +566,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             }
     
             for (StudyRelationshipDTO dto : dtos) {
-                targetSpIi = dto.getTargetStudyProtocolIdentifier(); // target - original - 30599
-                sourceSpIi = dto.getSourceStudyProtocolIdentifier(); // newly created source - 30605 new 
+                targetSpIi = dto.getTargetStudyProtocolIdentifier(); // same == target == original - 30599
+                sourceSpIi = dto.getSourceStudyProtocolIdentifier(); // old == copy == source - 30605 copied 
                 break;
             }
             if (targetSpIi == null) {
@@ -579,8 +578,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             // overwrite with the target
             sourceSpDto.setIdentifier(targetSpIi);
             sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-            studyProtocolService.updateStudyProtocol(sourceSpDto);
-            
+            //studyProtocolService.updateStudyProtocol(sourceSpDto);
+            Session session = HibernateUtil.getCurrentSession();
+            StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(sourceSpDto);
+            session.update(sp);
             Ii sourceIi = null;
             List<StudyContactDTO> studyContactDtos = 
                 paServiceUtils.getStudyContact(sourceSpIi, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
@@ -726,7 +727,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
       
        // update summary4
-      updateSummary4ResourcingDTO(summary4organizationDTO , summary4studyResourcingDTO);
+       paServiceUtils.manageSummaryFour(studyProtocolIi , summary4organizationDTO , summary4studyResourcingDTO);
       if (AMENDMENT.equalsIgnoreCase(operation)) {
           St localStudyProtocolIdentifier = null;
           if (leadOrganizationSiteIdentifierDTO != null) {
@@ -802,7 +803,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         paServiceUtils.createOrUpdate(studyResourcingDTOs, 
                 IiConverter.convertToStudyResourcingIi(null), studyProtocolIi);    
         paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
-        createSummaryFour(studyProtocolIi , summary4organizationDTO , summary4studyResourcingDTO);
+        paServiceUtils.manageSummaryFour(studyProtocolIi , summary4organizationDTO , summary4studyResourcingDTO);
         St localStudyProtocolIdentifier = null;
         if (leadOrganizationSiteIdentifierDTO != null) {
             localStudyProtocolIdentifier = leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier();
@@ -825,55 +826,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         srDto.setTargetStudyProtocolIdentifier(fromStudyProtocolIi);
         srDto.setTypeCode(CdConverter.convertToCd(StudyRelationshipTypeCode.MOD));
         studyRelationshipService.create(srDto);
-    }
-
-    private void createSummaryFour(Ii studyProtocolIi , OrganizationDTO organizationDto ,
-            StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
-        SummaryFourFundingCategoryCode summaryFourFundingCategoryCode = null;
-        if (organizationDto != null && organizationDto.getIdentifier() != null) {
-            if (summary4studyResourcingDTO != null && !PAUtil.isCdNull(summary4studyResourcingDTO.getTypeCode())) {
-                summaryFourFundingCategoryCode = SummaryFourFundingCategoryCode.getByCode(
-                        summary4studyResourcingDTO.getTypeCode().getCode());
-            }
-            CorrelationUtils corrUtils = new CorrelationUtils();
-            String orgPoIdentifier = organizationDto.getIdentifier().getExtension();
-            if (orgPoIdentifier  == null) {
-                throw new PAException(" Organization PO Identifier is null");
-            }
-           
-            if (studyProtocolIi == null) {
-                throw new PAException(PROTOCOL_ID_NULL);
-            }
-            StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
-            if (spDTO == null) {
-                throw new PAException(NO_PROTOCOL_FOUND + studyProtocolIi);
-            }
-            // Step 1 : get the PO Organization
-            OrganizationDTO poOrg = null;
-            try {
-                poOrg = PoRegistry.getOrganizationEntityService()
-                    .getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-            } catch (NullifiedEntityException e) {
-                // Map m = e.getNullifiedEntities();
-                // LOG.error("This Organization is no longer available instead use
-                // ");
-                throw new PAException("This Organization is no longer available instead use ", e);
-            }
-            // Step 3 : check for pa org, if not create one
-            Organization paOrg = corrUtils.getPAOrganizationByIi(
-                    IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-            if (paOrg == null) {
-                paOrg = corrUtils.createPAOrganization(poOrg);
-            }
-            StudyResourcingDTO summary4ResoureDTO = new StudyResourcingDTO();
-            summary4ResoureDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
-            summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
-            if (summaryFourFundingCategoryCode != null) {
-                summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summaryFourFundingCategoryCode));
-            }
-            summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
-            studyResourcingService.createStudyResourcing(summary4ResoureDTO);
-        }
     }
 
     private void createSponsor(Ii studyProtocolIi , OrganizationDTO sponsorOrganizationDto) throws PAException {
@@ -935,7 +887,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         if (studyContactDTO == null && studySiteContactDTO == null) {
             sb.append("Either StudyContactDTO or studySiteContactDTO should not be null ,");
         }
-
         // validates for attributes
         sb.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null , " : "");
         sb.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
@@ -951,11 +902,12 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             sb.append(PAUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier())
                     ? "Local StudyProtocol Identifier cannot be null , " : "");
         }
-        sb.append(PAUtil.isIiNull(leadOrganizationDTO.getIdentifier()) ? "Lead Organization cannot be null , " : "");
+        sb.append(PAUtil.isIiNull(leadOrganizationDTO.getIdentifier()) 
+                ? "Lead Organization Identifier cannot be null , " : "");
         sb.append(PAUtil.isIiNull(principalInvestigatorDTO.getIdentifier())
-                ? "Principal Investigator cannot be null , " : "");
+                ? "Principal Investigator  Identifier cannot be null , " : "");
         sb.append(PAUtil.isIiNull(sponsorOrganizationDTO.getIdentifier())
-                ? "Sponsor Organization cannot be null , " : "");
+                ? "Sponsor Organization  Identifier cannot be null , " : "");
         if (studyContactDTO != null) {
             sb.append(DSetConverter.getFirstElement(studyContactDTO.getTelecomAddresses(), PAConstants.EMAIL) == null
                     ? EMAIL_NOT_NULL : "");
@@ -971,10 +923,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
         if (overallStatusDTO != null) {
             sb.append(PAUtil.isCdNull(overallStatusDTO.getStatusCode())
-                    ? "Current Trial Status cannot be null , " : "");
+                    ? "Current Trial Status Code cannot be null , " : "");
             sb.append(PAUtil.isTsNull(overallStatusDTO.getStatusDate())
                     ? "Current Trial Status Date cannot be null , " : "");
         }
+        
         if (sb.length() > 0) {
             throw new PAException("Validation Exception " + sb.toString());
         }
@@ -1227,35 +1180,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     }
 
 
-    private void updateSummary4ResourcingDTO(OrganizationDTO organizationDto,
-            StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
-        if (organizationDto != null && organizationDto.getIdentifier() != null) {
-            CorrelationUtils corrUtils = new CorrelationUtils();
-            String orgPoIdentifier = organizationDto.getIdentifier()
-                    .getExtension();
-            if (orgPoIdentifier == null) {
-                throw new PAException(" Organization PO Identifier is null");
-            }
-            // Step 1 : get the PO Organization
-            OrganizationDTO poOrg = null;
-            try {
-                poOrg = PoRegistry.getOrganizationEntityService().getOrganization(
-                                IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-            } catch (NullifiedEntityException e) {
-                throw new PAException(
-                        "This Organization is no longer available instead use ", e);
-            }
-            // Step 3 : check for pa org, if not create one
-            Organization paOrg = corrUtils.getPAOrganizationByIi(IiConverter
-                    .convertToPoOrganizationIi(orgPoIdentifier));
-
-            if (paOrg == null) {
-                paOrg = corrUtils.createPAOrganization(poOrg);
-            }
-            summary4studyResourcingDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
-            studyResourcingService.updateStudyResourcing(summary4studyResourcingDTO);
-        }
-    }
     private List<String> deleteAndReplace(Ii sourceIi, Ii targetIi) {
         String sqlUpd = targetIi.getExtension() + " WHERE STUDY_PROTOCOL_IDENTIFIER = " + sourceIi.getExtension();
         List<String> sqls = new ArrayList<String>();

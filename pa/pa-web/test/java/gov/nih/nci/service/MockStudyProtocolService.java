@@ -104,7 +104,7 @@ import java.util.List;
  * @author hreinhart
  *
  */
-public class MockStudyProtocolService implements StudyProtocolServiceRemote {
+public class MockStudyProtocolService    implements StudyProtocolServiceRemote {
 
     public static List<StudyProtocol> list;
     public static List<InterventionalStudyProtocol> isplist;
@@ -241,5 +241,10 @@ public class MockStudyProtocolService implements StudyProtocolServiceRemote {
             TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        // TODO Auto-generated method stub
+        
     }
 }

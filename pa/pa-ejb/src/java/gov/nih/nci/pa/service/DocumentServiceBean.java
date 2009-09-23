@@ -417,12 +417,6 @@ public class DocumentServiceBean extends
         }
     }
     
-    private void validate(DocumentDTO docDto) throws PAException {
-        if (docDto == null) {
-            throw new PAException("Document DTO is null. ");
-        }
-        PAUtil.isValidIi(docDto.getStudyProtocolIdentifier() , IiConverter.convertToDocumentIi(null));
-    }
     /**
      * @param docDTO DocumentDTO
      * @return Boolean

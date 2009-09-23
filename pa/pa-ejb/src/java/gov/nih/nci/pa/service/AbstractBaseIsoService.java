@@ -97,6 +97,8 @@ import javax.ejb.SessionContext;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.validator.ClassValidator;
+import org.hibernate.validator.InvalidValue;
 
 /**
  * @author Hugh Reinhart
@@ -272,6 +274,27 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         return createOrUpdate(dto);
     }
     
+    /**
+     * A common validation method.
+     * @param dto Dto object
+     * @throws PAException on error
+     */
+    public void validate(DTO dto) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        sb.append(dto == null ? "DTO cannot be null , " : "");
+        BO bo = convertFromDtoToDomain(dto);
+        InvalidValue[] invalidValues = null;
+        ClassValidator<BO> classValidator = new ClassValidator(bo.getClass());
+        invalidValues = classValidator.getInvalidValues(bo);
+        for (int i = 0; i < invalidValues.length; i++) {
+            sb.append(invalidValues[i].getPropertyName()).append(' ');
+            sb.append(invalidValues[i].getMessage().trim()).append('\n');
+        }
+        if (sb.length() > 0) {
+            throw new PAException("Validation Exception " + sb.toString());
+        }
+        
+    }    
     private String getUserLastUpdated() {
      String userUpdated = "not logged";
      if (ejbContext != null) {

@@ -84,6 +84,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -91,6 +92,7 @@ import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -110,6 +112,7 @@ import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyPaService;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
@@ -118,6 +121,8 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -136,7 +141,7 @@ import org.hibernate.Session;
  */
 
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength", 
-    "PMD.TooManyMethods" , "PMD.ExcessiveParameterList" })
+    "PMD.TooManyMethods" , "PMD.ExcessiveParameterList" , "PMD.ExcessiveMethodLength" })
 public class PAServiceUtils {
     
     private static final String UNCHECKED = "unchecked";
@@ -395,6 +400,72 @@ public class PAServiceUtils {
             }
         }
     }    
+    /**
+     * 
+     * @param studyProtocolIi study protocol identifier
+     * @param organizationDto organization Dto
+     * @param summary4studyResourcingDTO summary four Resourcing Dto
+     * @throws PAException on error
+     */
+    public void manageSummaryFour(Ii studyProtocolIi , OrganizationDTO organizationDto ,
+            StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
+        if (organizationDto != null && organizationDto.getIdentifier() != null) {
+            SummaryFourFundingCategoryCode summaryFourFundingCategoryCode = null;
+        
+            if (summary4studyResourcingDTO != null && !PAUtil.isCdNull(summary4studyResourcingDTO.getTypeCode())) {
+                summaryFourFundingCategoryCode = SummaryFourFundingCategoryCode.getByCode(
+                        summary4studyResourcingDTO.getTypeCode().getCode());
+            }
+            CorrelationUtils corrUtils = new CorrelationUtils();
+            String orgPoIdentifier = organizationDto.getIdentifier().getExtension();
+            if (orgPoIdentifier  == null) {
+                throw new PAException(" Organization PO Identifier is null");
+            }
+           
+            // Step 1 : get the PO Organization
+            OrganizationDTO poOrg = null;
+            try {
+                poOrg = PoRegistry.getOrganizationEntityService()
+                    .getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+            } catch (NullifiedEntityException e) {
+                // Map m = e.getNullifiedEntities();
+                // LOG.error("This Organization is no longer available instead use
+                // ");
+                throw new PAException("This Organization is no longer available instead use ", e);
+            }
+            // Step 3 : check for pa org, if not create one
+            Organization paOrg = corrUtils.getPAOrganizationByIi(
+                    IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+            if (paOrg == null) {
+                paOrg = corrUtils.createPAOrganization(poOrg);
+            }
+            
+            StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getsummary4ReportedResource(
+                    studyProtocolIi);
+            if (summary4ResoureDTO == null) {
+                // summary 4 record does not exist,so create a new one
+                summary4ResoureDTO = new StudyResourcingDTO();
+                summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                if (summaryFourFundingCategoryCode != null) {
+                    summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summaryFourFundingCategoryCode));
+                }
+                summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
+                PaRegistry.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
+            } else {
+                // summary 4 record does exist,so so do an update
+                summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                if (summaryFourFundingCategoryCode != null) {
+                    summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summaryFourFundingCategoryCode));
+                }
+                summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
+                PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
+            }
+        }
+        
+        
+    }
     
     /**
      * 

@@ -112,8 +112,8 @@ public class StudyDiseaseServiceTest {
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
-        spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
-        dIi = IiConverter.convertToIi(TestSchema.diseaseIds.get(1));
+        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        dIi = IiConverter.convertToStudyDiseaseIi(TestSchema.diseaseIds.get(1));
     }
 
     private void compareDataAttributes(StudyDisease bo1, StudyDisease bo2) {

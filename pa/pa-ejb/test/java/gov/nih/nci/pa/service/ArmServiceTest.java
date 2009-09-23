@@ -119,7 +119,7 @@ public class ArmServiceTest {
         TestSchema.reset1();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.armIds.get(0));
-        spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         intIi = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
      }    
     @Test 

@@ -128,7 +128,7 @@ public class StudySiteServiceTest {
         TestSchema.reset1();
         TestSchema.primeData();
         studyId = TestSchema.studyProtocolIds.get(0);
-        studyIi = IiConverter.convertToIi(studyId);
+        studyIi = IiConverter.convertToStudyProtocolIi(studyId);
         siteId = TestSchema.studySiteIds.get(0);
         siteIi = IiConverter.convertToIi(siteId);
         facilityId = TestSchema.healthCareFacilityIds.get(0);

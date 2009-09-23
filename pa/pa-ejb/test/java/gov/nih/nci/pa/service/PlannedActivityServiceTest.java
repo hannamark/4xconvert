@@ -123,7 +123,7 @@ public class PlannedActivityServiceTest {
         TestSchema.reset1();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
-        spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         armIi = IiConverter.convertToIi(TestSchema.armIds.get(0));
         remoteBean.interventionSrv = remoteIntervention;
      }    

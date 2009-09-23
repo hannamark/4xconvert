@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
+import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -99,7 +100,7 @@ import java.util.Map;
  * @author hreinhart
  *
  */
-public class MockStudyOverallStatusService implements StudyOverallStatusServiceRemote {
+public class MockStudyOverallStatusService   extends MockAbstractBaseIsoService <StudyOverallStatusDTO> implements StudyOverallStatusServiceRemote {
 
     ArrayList<StudyOverallStatus> sosList;
     

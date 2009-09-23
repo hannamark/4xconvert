@@ -113,4 +113,11 @@ public interface BasePaService<DTO> {
      * @throws PAException exception
      */
     void delete(Ii ii) throws PAException;
+    
+    /**
+     * A common validation method.
+     * @param dto Dto object
+     * @throws PAException on error
+     */
+    void validate(DTO dto) throws PAException;    
 }
