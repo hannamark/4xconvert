@@ -95,7 +95,7 @@ import java.util.Date;
  * @since 07/22/2007
  */
 
-@SuppressWarnings({ "PMD.TooManyFields" })
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolQueryDTO implements Serializable {
     static final long serialVersionUID = 283476876L;
 
@@ -132,7 +132,22 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Date updatedDate;
     private Long studyInboxId;
     private String isProprietaryTrial;
-   
+    private String trialCategory;
+    
+   /**
+    * @return the trialCategory
+    */
+    public String getTrialCategory() {
+     if (this.isProprietaryTrial.equalsIgnoreCase("true")) {
+         trialCategory = "Proprietary Trial";
+         return trialCategory;
+      } else {
+        trialCategory = "Non Proprietary Trial";
+        return trialCategory;
+      }
+    }
+
+
     /**
      * @return the isProprietaryTrial
      */

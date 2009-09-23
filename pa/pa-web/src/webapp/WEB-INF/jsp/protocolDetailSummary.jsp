@@ -70,7 +70,14 @@
 					<span class="value"><c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/></span>
 				</div>
 			</div>
-				
+			<div class="float33">
+                <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+                    <div class="row">
+                        <span class="label"><fmt:message key="studyProtocol.trialCategory"/></span>
+                        <span class="value"><c:out value="${sessionScope.trialSummary.trialCategory }" /></span>
+                    </div>
+                </c:if>
+            </div>	
 			<div class="clear"></div>
 							
    </div>

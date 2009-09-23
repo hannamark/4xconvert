@@ -658,6 +658,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           List<StudySiteAccrualStatusDTO> participatingSites,
           List<StudySiteDTO> pgCdUpdatedList , String operation) throws PAException {
         
+        if (!PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator()) 
+             && studyProtocolDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
+            throw new PAException("Proprietary trials Update or Amendment not supported. ");
+        }
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         Ii toStudyProtocolIi = null;
         validate(studyProtocolDTO, overallStatusDTO , operation);
@@ -1269,13 +1273,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         sqls.add("UPDATE STUDY_OVERALL_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("Delete from STUDY_RECRUITMENT_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE STUDY_RECRUITMENT_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
-
+        
         sqls.add("Delete from STUDY_INDLDE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE STUDY_INDLDE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
 
         sqls.add("Delete from STUDY_RESOURCING WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE STUDY_RESOURCING SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
-
+        
         sqls.add("DELETE FROM STUDY_CONTACT WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId 
                 + " AND ROLE_CODE IN ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','CENTRAL_CONTACT')");
         sqls.add("UPDATE STUDY_CONTACT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd 
@@ -1389,9 +1393,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
               stringBuffer.append(abDTO.getErrorType()).append(":").append(abDTO.getErrorDescription())
                           .append(":").append(abDTO.getComment()).append("\n");
             }
-           }
-           studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
-           trialUpdateForReview = true;
+            studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
+            trialUpdateForReview = true;
+           } 
        }
        if (trialUpdateForReview) {
         //create 

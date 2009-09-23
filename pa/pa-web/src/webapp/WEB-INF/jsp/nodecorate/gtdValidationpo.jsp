@@ -6,12 +6,12 @@
 <script language="JavaScript">
 
 function lookup4loadresponsibleparty1(){
-   try{		
-		var orgid = document.getElementById('trialValidationquery_gtdDTO_sponsorIdentifier').value;
-	} catch(err) {
-		orgid = document.getElementById('generalTrialDesignquery_gtdDTO_sponsorIdentifier').value;	
-	}
-	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
+   try{     
+        var orgid = document.getElementById('trialValidationquery_gtdDTO_sponsorIdentifier').value;
+    } catch(err) {
+        orgid = document.getElementById('generalTrialDesignquery_gtdDTO_sponsorIdentifier').value;  
+    }
+    showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
 }
 function lookup4loadleadorg(){
        showPopWin('${lookupOrgUrl}', 900, 400, loadLeadOrgDiv, 'Select Organization');
@@ -26,18 +26,18 @@ function lookup4loadSummary4Sponsor(){
     showPopWin('${lookupOrgUrl}', 900, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
 }   
 function loadLeadOrgDiv() { 
-	var url = 'ajaxTrialValidationdisplayLeadOrganization.action?orgId='+orgid;
-	var div = document.getElementById('loadOrgField');   
-	div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-	callAjax(url, div); 
+    var url = 'ajaxTrialValidationdisplayLeadOrganization.action?orgId='+orgid;
+    var div = document.getElementById('loadOrgField');   
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+    callAjax(url, div); 
 }
-function loadLeadPersDiv() {	
+function loadLeadPersDiv() {    
     var url = 'ajaxTrialValidationdisplayLeadPrincipalInvestigator.action?persId='+persid;
     var div = document.getElementById('loadPersField');   
     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
     callAjax(url, div);    
 }
-function loadSponsorDiv() {		
+function loadSponsorDiv() {     
     var url = 'ajaxTrialValidationdisplaySelectedSponsor.action?orgId='+orgid;
     document.getElementById('gtdDTO.responsiblePersonIdentifier').value = '';
     document.getElementById('gtdDTO.responsibleGenericContactName').value = '';//unset the responsible personname
@@ -69,7 +69,7 @@ function createOrgGenericContactDiv() {
     document.getElementById('gtdDTO.responsiblePersonName').value = ''; // unset the responsible personname
 }
 function lookup4loadresponsiblepartygenericcontact(){
-	var orgid = document.getElementById('sponsorIdentifier').value;
+    var orgid = document.getElementById('sponsorIdentifier').value;
     showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Responsible Party', 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
 function manageRespPartyLookUp(){
@@ -106,7 +106,7 @@ function manageRespPartyLookUp(){
             </div>      
         </td>
     </tr>
-
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
@@ -137,7 +137,7 @@ function manageRespPartyLookUp(){
     <tr>
         <td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
         <td>
-        	<s:radio id="gtdDTO.responsiblePartyType"  name="gtdDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
+            <s:radio id="gtdDTO.responsiblePartyType"  name="gtdDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
         </td>
         </tr> 
          <c:choose>
@@ -212,3 +212,4 @@ function manageRespPartyLookUp(){
                  </span>
             </td>           
         </tr>             
+</c:if>

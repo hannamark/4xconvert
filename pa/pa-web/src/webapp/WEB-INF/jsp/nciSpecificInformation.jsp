@@ -57,6 +57,7 @@ function setorgid(orgid){
     <s:form action="nciSpecificInformationupdate">
     <h2><fmt:message key="nciSpecificInformation.title" /></h2>
     	<table class="form" >
+    	<c:if test="${sessionScope.trialSummary.isProprietaryTrial != 'true'}">
 			    <tr>
 			    	  <td scope="row" class="label">
 			               <label for="accrualReportingMethodCode"><fmt:message key="studyProtocol.accrualReportingMethodCode"/><span class="required">*</span></label>
@@ -74,7 +75,8 @@ function setorgid(orgid){
                              </span>
 	                       
 	                  </td>   			            
-			     </tr>           
+			     </tr> 
+			 </c:if>              
 			     <tr>
 			          <td scope="row" class="label">
 			               <label for="summary4TypeCode"><fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></label>

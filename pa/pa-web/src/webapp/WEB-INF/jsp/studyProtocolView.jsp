@@ -61,6 +61,16 @@
                 <c:out value="${sessionScope.trialSummary.leadOrganizationName }"/> 
             </td>
             </tr> 
+            <tr>
+            <td scope="row" class="label">
+                <label for="leadOrg"> 
+                    <fmt:message key="studyProtocol.proprietaryTrial"/>
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${sessionScope.trialSummary.isProprietaryTrial }"/> 
+            </td>
+            </tr> 
             <tr>     
             <td scope="row" class="label">
                 <label for="officialTitle">

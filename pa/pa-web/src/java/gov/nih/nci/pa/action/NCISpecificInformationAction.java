@@ -163,7 +163,9 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     public String update() {
         // Step1 : check for any errors
-        if (PAUtil.isEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
+        if ((PAUtil.isBlNull(getStudyProtocol().getProprietaryTrialIndicator())
+              || !getStudyProtocol().getProprietaryTrialIndicator().getValue().booleanValue())
+              && PAUtil.isEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
             addFieldError("nciSpecificInformationWebDTO.accrualReportingMethodCode",
                     getText("error.studyProtocol.accrualReportingMethodCode"));
         }

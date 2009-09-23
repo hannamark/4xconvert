@@ -184,6 +184,7 @@ public class TrialValidationAction extends ActionSupport {
                 copySponsor(studyProtocolIi);
             }
             copySummaryFour(PaRegistry.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi));
+            copyNctNummber(studyProtocolIi);
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         } catch (NullifiedRoleException e) {
@@ -467,7 +468,7 @@ public class TrialValidationAction extends ActionSupport {
         gtdDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         if (!PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())) {
             gtdDTO.setProprietarytrialindicator(BlConverter.convertToString(spDTO.getProprietaryTrialIndicator()));
-        } 
+        }  
     }
 
     private void copy(StudyProtocolQueryDTO spqDTO) {
@@ -930,5 +931,34 @@ public class TrialValidationAction extends ActionSupport {
             return true;
         }
         return false;
+    }
+    
+    private void copyNctNummber(Ii studyProtocolIi) throws PAException {
+        StudySiteDTO spDto = getStudySite(studyProtocolIi,
+                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        if (spDto != null) {
+            gtdDTO.setNctIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
+        }
+    }
+    private StudySiteDTO getStudySite(Ii studyProtocolIi , StudySiteFunctionalCode spCode)
+    throws PAException {
+        if (studyProtocolIi == null) {
+            throw new PAException(" StudyProtocol Ii is null");
+        }
+        StudySiteDTO spDto = new StudySiteDTO();
+        Cd cd = CdConverter.convertToCd(spCode);
+        spDto.setFunctionalCode(cd);
+
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
+            .getByStudyProtocol(studyProtocolIi, spDto);
+        if (spDtos != null && spDtos.size() == 1) {
+            return spDtos.get(0);
+        } else if (spDtos != null && spDtos.size() > 1) {
+            throw new PAException(" Found more than 1 record for a protocol id = "
+                    + studyProtocolIi.getExtension() + " for a given status " + cd.getCode());
+
+        }
+        return null;
+
     }
 }

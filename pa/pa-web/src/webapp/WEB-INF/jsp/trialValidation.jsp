@@ -90,7 +90,17 @@
 
      <h2>Trial Details</h2>
     <table class="form">
-    <tr>
+          <tr>
+            <td scope="row" class="label">
+                <label for="nciAccessionNumber">                
+                    <fmt:message key="studyProtocol.nciIdentifier"/>
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
+            </td>
+       </tr>
+        <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">
                     <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/><span class="required">*</span>
@@ -106,6 +116,26 @@
 
         </td>
     </tr>
+     <tr>
+        <td scope="row" class="label">
+           <label for="nciIdentifier">
+                    NCT Number
+           </label>
+         </td>
+         <td class="value">
+            <c:out value="${gtdDTO.nctIdentifier}" /> 
+        </td>
+    </tr>
+    <tr>
+            <td scope="row" class="label">
+                <label for="leadOrg"> 
+                    <fmt:message key="studyProtocol.proprietaryTrial"/>
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${gtdDTO.proprietarytrialindicator }"/> 
+            </td>
+    </tr> 
     <tr>
        <td scope="row" class="label">
           <label for="officialTitle">
