@@ -4,6 +4,8 @@ DELETE FROM organization
 ;
 DELETE FROM person
 ;
+DELETE FROM patient;
+
 INSERT INTO study_protocol (identifier, assigned_identifier, official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE, status_code, submission_number)  
     values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001 test test test test test test test test test test test test test test test test test test test test test test test test',
     'InterventionalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED', 'ACTIVE', 1);
@@ -206,6 +208,11 @@ values ((select user_id from csm_user where login_name = 'submitter'), 5, 'detai
 
 ----------------- submission -------------------------------------------------
 insert into submission (label, description, cut_off_date, status_code, status_date_range_low, status_date_range_high, study_protocol_identifier)
-  values ('01', 'description', '9/30/2009', 'PENDING', '1/1/2009', null, 1);
-  
+  values ('01', 'description', '9/30/2009', 'OPENED', '1/1/2009', null, 1);
+insert into patient (identifier, assigned_identifier, race_code, sex_code, ethnic_code, birth_date, status_code, status_date_range_low)
+	values (1,'PO001', 'HAWAIIAN', 'FEMALE', 'NOT_HISPANIC', '1/1/1988', 'ACTIVE', '6/1/2009');
+insert into study_subject (identifier, patient_identifier, study_protocol_identifier, study_site_identifier, payment_method_code, 
+            status_code, status_date_range_low, assigned_identifier)
+	values (1, 1, 1, 3, 'PRIVATE', 'ACTIVE', '6/1/2009', 'Patient 001');
+
   

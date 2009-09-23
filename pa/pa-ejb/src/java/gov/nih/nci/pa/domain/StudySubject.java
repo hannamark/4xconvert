@@ -101,11 +101,25 @@ public class StudySubject extends Subject {
 
     private static final long serialVersionUID = -6946617177385690791L;
 
+    private String assignedIdentifier;
     private PaymentMethodCode paymentMethodCode;
     private Patient patient;
     private StudySite studySite;
     private Disease disease;
 
+    /**
+     * @return the assignedIdentifier
+     */
+    @Column(name = "ASSIGNED_IDENTIFIER")
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
     /**
      * @return the paymentMethodCode
      */
