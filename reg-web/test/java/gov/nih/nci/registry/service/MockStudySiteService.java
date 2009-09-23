@@ -14,13 +14,12 @@ import gov.nih.nci.pa.service.StudySiteServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Vrushali
  *
  */
-public class MockStudySiteService extends MockAbstractRoleIsoService implements
+public class MockStudySiteService extends MockAbstractRoleIsoService<StudySiteDTO> implements
         StudySiteServiceRemote {
      static List<StudySiteDTO> list;
      static{
@@ -50,76 +49,7 @@ public class MockStudySiteService extends MockAbstractRoleIsoService implements
         return matchDtosList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.RolePaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii, java.util.List)
-     */
-    public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi,
-            List<StudySiteDTO> dto) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
-     */
-    public Map<Ii , Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
-            throws PAException {
-        // TODO Auto-generated method stub
-    	return null;
-
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
-     */
-    public List<StudySiteDTO> getByStudyProtocol(Ii ii)
-            throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
-     */
-    public StudySiteDTO getCurrentByStudyProtocol(
-            Ii studyProtocolIi) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#create(java.lang.Object)
-     */
-    public StudySiteDTO create(StudySiteDTO dto)
-            throws PAException {
-        // TODO Auto-generated method stub
-        return new StudySiteDTO();
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.coppa.iso.Ii)
-     */
-    public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.coppa.iso.Ii)
-     */
-    public StudySiteDTO get(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#update(java.lang.Object)
-     */
-    public StudySiteDTO update(StudySiteDTO dto)
-            throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 
 }

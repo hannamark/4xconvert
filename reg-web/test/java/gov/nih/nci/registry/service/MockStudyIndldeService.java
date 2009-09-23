@@ -20,7 +20,7 @@ import java.util.Map;
  * @author Vrushali
  *
  */
-public class MockStudyIndldeService implements StudyIndldeServiceRemote {
+public class MockStudyIndldeService extends MockAbstractBaseIsoService<StudyIndldeDTO> implements StudyIndldeServiceRemote {
     static List<StudyIndldeDTO> listLndDtos = new ArrayList<StudyIndldeDTO>();
     static {
         StudyIndldeDTO indDto = new StudyIndldeDTO();
@@ -60,50 +60,5 @@ public class MockStudyIndldeService implements StudyIndldeServiceRemote {
         return matchIndList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
-     */
-    public StudyIndldeDTO getCurrentByStudyProtocol(Ii studyProtocolIi)
-            throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#create(java.lang.Object)
-     */
-    public StudyIndldeDTO create(StudyIndldeDTO dto) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.coppa.iso.Ii)
-     */
-    public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.coppa.iso.Ii)
-     */
-    public StudyIndldeDTO get(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#update(java.lang.Object)
-     */
-    public StudyIndldeDTO update(StudyIndldeDTO dto) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void validate(StudyIndldeDTO studyIndldeDTO) throws PAException {
-        // TODO Auto-generated method stub
-        
-    }
 
 }

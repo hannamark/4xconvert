@@ -19,7 +19,7 @@ import gov.nih.nci.pa.service.PAException;
  * @author Vrushali
  *
  */
-public class MockDocumentService implements DocumentServiceRemote {
+public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO> implements DocumentServiceRemote {
 
     static List<DocumentDTO> docList; 
     static {

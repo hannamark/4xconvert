@@ -21,7 +21,7 @@ import java.util.Map;
  * @author Vrushali
  *
  */
-public class MockStudyOverallStatusService implements
+public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<StudyOverallStatusDTO> implements
         StudyOverallStatusServiceRemote {
     static List<StudyOverallStatusDTO> list;
     static {
