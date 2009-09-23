@@ -592,14 +592,14 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     /**
      * @return {@link HealthCareFacilityServiceLocal} bean
      */
-    protected HealthCareFacilityServiceLocal getHcfService() {
+    protected HealthCareFacilityServiceLocal getHCFService() {
         return hcfService;
     }
 
     /**
      * @return {@link ResearchOrganizationServiceLocal} bean
      */
-    protected ResearchOrganizationServiceLocal getRoService() {
+    protected ResearchOrganizationServiceLocal getROService() {
         return roService;
     }
 

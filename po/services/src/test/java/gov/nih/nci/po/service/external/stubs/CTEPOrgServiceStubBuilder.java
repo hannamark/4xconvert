@@ -13,10 +13,13 @@ import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
+import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
@@ -34,12 +37,17 @@ public class CTEPOrgServiceStubBuilder {
 
     public static final CTEPOrgServiceStubBuilder INSTANCE = new CTEPOrgServiceStubBuilder();
 
-    /**
-     * 
-     * @return the data that
-     * @throws Exception
-     */
-    public CTEPOrganizationServiceStub buildCreateHcfStub() throws Exception {
+    public CTEPOrganizationServiceStub buildCreateHCFStub() throws Exception {
+        CTEPOrganizationServiceStub common = createGeneric();
+        return new CTEPOrganizationServiceStub(common.getOrg(), common.getHcf(), null);
+    }
+
+    public CTEPOrganizationServiceStub buildCreateROStub() throws URISyntaxException {
+        CTEPOrganizationServiceStub common = createGeneric();
+        return new CTEPOrganizationServiceStub(common.getOrg(), null, common.getRo());
+    }
+
+    private CTEPOrganizationServiceStub createGeneric() throws URISyntaxException {
         Ii id = new Ii();
         id.setExtension("AAA");
         id.setIdentifierName("CTEP ID");
@@ -78,42 +86,92 @@ public class CTEPOrgServiceStubBuilder {
         hcf.setName(name);
         hcf.setPostalAddress(ads);
 
-        return new CTEPOrganizationServiceStub(o, hcf, null);
+        ResearchOrganizationDTO ro = new ResearchOrganizationDTO();
+        ro.setIdentifier(new DSet<Ii>());
+        ro.getIdentifier().setItem(new LinkedHashSet<Ii>());
+        ro.getIdentifier().getItem().add(id);
+        ro.setStatus(status);
+        ro.setName(name);
+        ro.setPostalAddress(ads);
+        Cd funding = new Cd();
+        funding.setCode("B09");
+        ro.setFundingMechanism(funding);
+        Cd type = new Cd();
+        type.setCode("CCR");
+        ro.setTypeCode(type);
+
+        return new CTEPOrganizationServiceStub(o, hcf, ro);
     }
-    
+
     /**
      * 
      * @return the data that
      * @throws Exception
      */
-    public CTEPOrganizationServiceStub buildCreateHcfWithAddedAddressStub(Ii hcfId, String street, String city, String state,
-            String postalCode, Country country) throws Exception {
-        CTEPOrganizationServiceStub stub = buildCreateHcfStub(); 
-        Address a = new Address(street, city, state, postalCode, country);
-        stub.getHcf().getPostalAddress().getItem()
-            .add(AddressConverter.SimpleConverter.convertToAd(a));
-        stub.getHcf().getIdentifier().getItem().add(hcfId);
-        return stub;
-    }
-    
-    /**
-     * 
-     * @return the data that
-     * @throws Exception
-     */
-    public CTEPOrganizationServiceStub buildCreateHcfWithNoUpdatesStub(Ii hcfId) throws Exception {
-        CTEPOrganizationServiceStub stub = buildCreateHcfStub(); 
-        stub.getHcf().getIdentifier().getItem().add(hcfId);
-        return stub;
-    }
-    
-    public CTEPOrganizationServiceStub buildCreateHcfWithNameUpdateStub(Ii hcfPOId) throws Exception {
-        CTEPOrganizationServiceStub stub = buildCreateHcfStub();
-        EnOn name = StringConverter.convertToEnOn("NAME2");
-        stub.getOrg().setName(name);
-        stub.getHcf().setName(name);
-        stub.getHcf().getIdentifier().getItem().add(hcfPOId);
+    public CTEPOrganizationServiceStub buildCreateHCFWithAddedAddressStub(Ii hcfId, String street, String city,
+            String state, String postalCode, Country country) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateHCFStub();
+        buildCreateWithAddedAddressStub(stub.getHcf(), hcfId, street, city, state, postalCode, country);
         return stub;
     }
 
+    /**
+     * 
+     * @return the data that
+     * @throws Exception
+     */
+    public CTEPOrganizationServiceStub buildCreateROWithAddedAddressStub(Ii roId, String street, String city,
+            String state, String postalCode, Country country) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateROStub();
+        buildCreateWithAddedAddressStub(stub.getRo(), roId, street, city, state, postalCode, country);
+        return stub; 
+    }
+
+    private void buildCreateWithAddedAddressStub(AbstractEnhancedOrganizationRoleDTO dto, Ii roId, String street,
+            String city, String state, String postalCode, Country country) {
+        addAdress(dto, street, city, state, postalCode, country);
+        addIdentifier(dto, roId);
+    }
+
+    private void addIdentifier(AbstractEnhancedOrganizationRoleDTO ro, Ii roId) {
+        ro.getIdentifier().getItem().add(roId);
+    }
+
+    private void addAdress(AbstractEnhancedOrganizationRoleDTO dto, String street, String city, String state,
+            String postalCode, Country country) {
+        Address a = new Address(street, city, state, postalCode, country);
+        dto.getPostalAddress().getItem().add(AddressConverter.SimpleConverter.convertToAd(a));
+    }
+
+    public CTEPOrganizationServiceStub buildCreateHCFWithNoUpdatesStub(Ii hcfId) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateHCFStub();
+        addIdentifier(stub.getHcf(), hcfId);
+        return stub;
+    }
+
+    public CTEPOrganizationServiceStub buildCreateROWithNoUpdatesStub(Ii roId) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateROStub();
+        addIdentifier(stub.getRo(), roId);
+        return stub;
+    }
+
+    public CTEPOrganizationServiceStub buildCreateHCFWithNameUpdateStub(Ii hcfPOId) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateHCFStub();
+        buildCreateWithNameUpdateStub(hcfPOId, stub.getHcf(), stub.getOrg());
+        return stub;
+    }
+
+    public CTEPOrganizationServiceStub buildCreateROWithNameUpdateStub(Ii roPOId) throws Exception {
+        CTEPOrganizationServiceStub stub = buildCreateROStub();
+        buildCreateWithNameUpdateStub(roPOId, stub.getRo(), stub.getOrg());
+        return stub;
+    }
+
+    private void buildCreateWithNameUpdateStub(Ii roPOId, AbstractEnhancedOrganizationRoleDTO dto,
+            OrganizationDTO org) {
+        EnOn name = StringConverter.convertToEnOn("NAME2");
+        org.setName(name);
+        dto.setName(name);
+        addIdentifier(dto, roPOId);
+    }
 }

@@ -23,7 +23,6 @@ import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceBean;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceBean;
@@ -31,10 +30,10 @@ import gov.nih.nci.po.service.MessageProducerTest;
 import gov.nih.nci.po.service.OrganizationCRServiceBean;
 import gov.nih.nci.po.service.OrganizationServiceBean;
 import gov.nih.nci.po.service.ResearchOrganizationServiceBean;
+import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
 import gov.nih.nci.po.service.correlation.ResearchOrganizationServiceTest;
 import gov.nih.nci.po.service.external.stubs.CTEPOrgServiceStubBuilder;
 import gov.nih.nci.po.service.external.stubs.CTEPOrganizationServiceStub;
-import gov.nih.nci.po.util.JNDIUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -156,14 +155,34 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      * @throws Exception
      */
     @Test
-    public void testOrgAndAllRolesAreSetToPendingOnCreate() throws Exception {
-        helperOrgAndAllRolesAreSetToPendingOnCreate();
+    public void testOrgAndAllHCFRolesAreSetToPendingOnCreate() throws Exception {
+        helperOrgAndAllHCFRolesAreSetToPendingOnCreate();
     }
 
-    private Organization helperOrgAndAllRolesAreSetToPendingOnCreate() throws Exception, JMSException,
+    /**
+     * Verifies Org & RO is set to PENDING upon create, https://jira.5amsolutions.com/browse/PO-1243
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testOrgAndAllRORolesAreSetToPendingOnCreate() throws Exception {
+        helperOrgAndAllRORolesAreSetToPendingOnCreate();
+    }
+
+    private Organization helperOrgAndAllRORolesAreSetToPendingOnCreate() throws Exception, JMSException,
             EntityValidationException {
         // feed the proper CTEP service stub into our importer
-        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfStub();
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROStub();
+        return helperOrgAndAllRolesAreSetToPendingOnCreate(service);
+    }
+
+    private Organization helperOrgAndAllHCFRolesAreSetToPendingOnCreate() throws Exception, JMSException,
+            EntityValidationException {
+        return helperOrgAndAllRolesAreSetToPendingOnCreate(CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFStub());
+    }
+
+    private Organization helperOrgAndAllRolesAreSetToPendingOnCreate(CTEPOrganizationServiceStub service)
+            throws Exception, JMSException, EntityValidationException {
         importer.setCtepOrgService(service);
         OrganizationDTO org = service.getOrg();
         assertNotNull(org);
@@ -186,13 +205,24 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         assertNotNull(persistedOrg);
         assertEquals(EntityStatus.PENDING, persistedOrg.getStatusCode());
 
-        List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
-        assertEquals(1, hcfs.size());
+        if (service.getHcf() != null) {
+            List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+            assertEquals(1, hcfs.size());
 
-        HealthCareFacility persistedHCF = hcfs.get(0);
-        assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
-        MessageProducerTest.assertMessageCreated(persistedHCF,
-                (HealthCareFacilityServiceBean) importer.getHcfService(), true);
+            HealthCareFacility persistedHCF = hcfs.get(0);
+            assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
+            MessageProducerTest.assertMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
+                    .getHCFService(), true);
+        }
+        if (service.getRo() != null) {
+            List<ResearchOrganization> ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+            assertEquals(1, ros.size());
+
+            ResearchOrganization persistedRO = ros.get(0);
+            assertEquals(RoleStatus.PENDING, persistedRO.getStatus());
+            MessageProducerTest.assertMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
+                    .getROService(), true);
+        }
         return importedOrg;
     }
 
@@ -205,9 +235,10 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      * @throws Exception
      */
     @Test
-    public void testOrgAndAllRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization()
+    public void testOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization()
             throws Exception {
-        Organization importedOrg = helperOrgAndAllRolesAreSetToPendingOnCreate();
+        
+        Organization importedOrg = helperOrgAndAllHCFRolesAreSetToPendingOnCreate();
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
@@ -216,7 +247,39 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         Ii hcfPOID = getHCFII(importedOrg);
 
         CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE
-                .buildCreateHcfWithNameUpdateStub(hcfPOID);
+                .buildCreateHCFWithNameUpdateStub(hcfPOID);
+        
+        helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(
+                importedOrg, service);
+    }
+
+    /**
+     * If the Organization is ACTIVE, the changes to the organization should be created as a change request on the org,
+     * allowing the curator to curate them like normal.
+     * 
+     * @see https://jira.5amsolutions.com/browse/PO-1244
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testOrgAndAllRORolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization()
+            throws Exception {
+        Organization importedOrg = helperOrgAndAllRORolesAreSetToPendingOnCreate();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        clearMessages();
+        // get the II for the HCF that was added during the 1st pass (creation)
+        Ii roPOID = getROII(importedOrg);
+
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROWithNameUpdateStub(roPOID);
+        
+        helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(importedOrg, service);
+    }
+    
+    private void helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(
+            Organization importedOrg, CTEPOrganizationServiceStub service) throws JMSException,
+            EntityValidationException {
         importer.setCtepOrgService(service);
         OrganizationDTO org = service.getOrg();
         assertNotNull(org);
@@ -235,13 +298,24 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         assertNotNull(persistedOrg);
         assertEquals(EntityStatus.PENDING, persistedOrg.getStatusCode());
 
-        List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
-        assertEquals(1, hcfs.size());
+        if (service.getHcf() != null) {
+            List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+            assertEquals(1, hcfs.size());
 
-        HealthCareFacility persistedHCF = hcfs.get(0);
-        assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
-        MessageProducerTest.assertMessageCreated(persistedHCF,
-                (HealthCareFacilityServiceBean) importer.getHcfService(), false);
+            HealthCareFacility persistedHCF = hcfs.get(0);
+            assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
+            MessageProducerTest.assertMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
+                    .getHCFService(), false);
+        }
+        if (service.getRo() != null) {
+            List<ResearchOrganization> ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+            assertEquals(1, ros.size());
+
+            ResearchOrganization persistedRO = ros.get(0);
+            assertEquals(RoleStatus.PENDING, persistedRO.getStatus());
+            MessageProducerTest.assertMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
+                    .getROService(), false);
+        }
     }
 
     /**
@@ -250,10 +324,10 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      * @throws Exception
      */
     @Test
-    public void testHcfImportAndUpdateWithRoleAddressChange() throws Exception {
+    public void testHCFImportAndUpdateWithRoleAddressChange() throws Exception {
 
         // feed the proper CTEP service stub into our importer
-        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfStub();
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFStub();
         importer.setCtepOrgService(service);
         OrganizationDTO org = service.getOrg();
 
@@ -266,19 +340,19 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         Ii hcfPOID = new IdConverter.HealthCareFacilityIdConverter().convertToIi(persistedHCF.getId());
 
         MessageProducerTest.assertMessageCreated(persistedHCF,
-                (HealthCareFacilityServiceBean) importer.getHcfService(), true);
+                (HealthCareFacilityServiceBean) importer.getHCFService(), true);
 
         // try an update w/ no difference in data again. now no status changes should occur
-        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfWithNoUpdatesStub(hcfPOID);
+        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFWithNoUpdatesStub(hcfPOID);
         importer.setCtepOrgService(service);
         org = service.getOrg();
         importedOrg = importer.importOrganization(org.getIdentifier());
         MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
         MessageProducerTest.assertNoMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
-                .getHcfService());
+                .getHCFService());
 
         // redo import should cause an update message to go out on HCF
-        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHcfWithAddedAddressStub(hcfPOID, "mystreet", "mycity",
+        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFWithAddedAddressStub(hcfPOID, "mystreet", "mycity",
                 "mystate", "mypostal", getDefaultCountry());
         importer.setCtepOrgService(service);
         org = service.getOrg();
@@ -286,7 +360,52 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         importedOrg = importer.importOrganization(org.getIdentifier());
         MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
         MessageProducerTest.assertMessageCreated(persistedHCF,
-                (HealthCareFacilityServiceBean) importer.getHcfService(), false);
+                (HealthCareFacilityServiceBean) importer.getHCFService(), false);
+    }
+    
+    /**
+     * Verifies import and update w/ address change.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testROImportAndUpdateWithRoleAddressChange() throws Exception {
+        
+        // feed the proper CTEP service stub into our importer
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROStub();
+        importer.setCtepOrgService(service);
+        OrganizationDTO org = service.getOrg();
+        
+        // create the org.
+        Organization importedOrg = importer.importOrganization(org.getIdentifier());
+        MessageProducerTest.assertMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService(), true);
+        
+        List<ResearchOrganization> ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+        ResearchOrganization persistedRO = ros.get(0);
+        Ii roPOID = new IdConverter.ResearchOrganizationIdConverter().convertToIi(persistedRO.getId());
+        
+        MessageProducerTest.assertMessageCreated(persistedRO,
+                (ResearchOrganizationServiceBean) importer.getROService(), true);
+        
+        // try an update w/ no difference in data again. now no status changes should occur
+        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROWithNoUpdatesStub(roPOID);
+        importer.setCtepOrgService(service);
+        org = service.getOrg();
+        importedOrg = importer.importOrganization(org.getIdentifier());
+        MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
+        MessageProducerTest.assertNoMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
+                .getROService());
+        
+        // redo import should cause an update message to go out on HCF
+        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROWithAddedAddressStub(roPOID, "mystreet", "mycity",
+                "mystate", "mypostal", getDefaultCountry());
+        importer.setCtepOrgService(service);
+        org = service.getOrg();
+        // MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHcfService());
+        importedOrg = importer.importOrganization(org.getIdentifier());
+        MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
+        MessageProducerTest.assertMessageCreated(persistedRO,
+                (ResearchOrganizationServiceBean) importer.getROService(), false);
     }
 
     private Ii getHCFII(Organization importedOrg) {
@@ -297,11 +416,19 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         return hcfPOID;
     }
 
+    private Ii getROII(Organization importedOrg) {
+        List<ResearchOrganization> ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
+        assertEquals(1, ros.size());
+        ResearchOrganization persistedRO = ros.get(0);
+        Ii hcfPOID = new IdConverter.ResearchOrganizationIdConverter().convertToIi(ros.get(0).getId());
+        return hcfPOID;
+    }
+
     private void clearMessages() {
         MessageProducerTest.clearMessages((OrganizationServiceBean) importer.getOrgService());
         MessageProducerTest.clearMessages((IdentifiedOrganizationServiceBean) importer.getIdentifiedOrgService());
-        MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHcfService());
-        MessageProducerTest.clearMessages((ResearchOrganizationServiceBean) importer.getRoService());
+        MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHCFService());
+        MessageProducerTest.clearMessages((ResearchOrganizationServiceBean) importer.getROService());
     }
 
     /**
@@ -317,10 +444,10 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      * @throws Exception
      */
     @Test
-    public void verifyScenario5() throws Exception {
-        //1
+    public void verifyScenario5ForHCF() throws Exception {
+        // 1
         final Country c = getDefaultCountry();
-        final ResearchOrganizationServiceBean rb = roSvc;
+        final ResearchOrganizationServiceBean getService = roSvc;
         ResearchOrganizationServiceTest test = new ResearchOrganizationServiceTest() {
             @Override
             public Country getDefaultCountry() {
@@ -329,7 +456,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
             @Override
             protected AbstractCuratableServiceBean<ResearchOrganization> getService() {
-                return rb;
+                return getService;
             }
         };
         test.setUpData();
@@ -345,8 +472,8 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        //2
-        Organization org2 = helperOrgAndAllRolesAreSetToPendingOnCreate();
+        // 2
+        Organization org2 = helperOrgAndAllHCFRolesAreSetToPendingOnCreate();
         HealthCareFacility hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(
                 HealthCareFacility.class).uniqueResult();
         assertEquals(RoleStatus.PENDING, hcf.getStatus());
@@ -354,12 +481,12 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         clearMessages();
-        
-        //3
+
+        // 3
         ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(ResearchOrganization.class)
                 .uniqueResult();
-        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(
-                HealthCareFacility.class).uniqueResult();
+        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class)
+                .uniqueResult();
         org2.setStatusCode(EntityStatus.NULLIFIED);
         org2.setDuplicateOf(ro.getPlayer());
 
@@ -367,16 +494,88 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         MessageProducerTest.assertMessageCreated(org2, oSvc, false);
         HealthCareFacilityServiceBean hcfSBUsedDuringCurate = getHealthCareFacilityServiceBean();
         MessageProducerTest.assertMessageCreated(hcf, hcfSBUsedDuringCurate, false);
-        
-        
+
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        //4
+        // 4
         hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class)
                 .uniqueResult();
         ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(ResearchOrganization.class)
                 .uniqueResult();
         assertEquals(ro.getPlayer(), hcf.getPlayer());
+    }
+    /**
+     * CTEP Integration - Scenario 5 - CTEP adds a new Structural Role on an existing Organization
+     * 
+     * <pre>
+     * 1. Org1 has a HCF (exists already in system)
+     * 2. Org2 w/ RO is created via import (JMS messages sent out)
+     * 3. Curator nullifies Org2 and specifies Org1 as duplicate thereby merging Org2's RO into Org1 (JMS messages are sent out)
+     * 4. Org1 remains with both an RO and HCF
+     * </pre>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void verifyScenario5ForRO() throws Exception {
+        // 1
+        final Country c = getDefaultCountry();
+        final HealthCareFacilityServiceBean getService = (HealthCareFacilityServiceBean) hcfSvc;
+        HealthCareFacilityServiceTest test = new HealthCareFacilityServiceTest(){
+            @Override
+            public Country getDefaultCountry() {
+                return c;
+            }
+            
+            @Override
+            protected AbstractCuratableServiceBean<HealthCareFacility> getService() {
+                return getService;
+            }
+        };
+        test.setUpData();
+        test.testSimpleCreateCtepOwnedAndGet();
+        HealthCareFacility hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(
+                HealthCareFacility.class).uniqueResult();
+        Organization org1 = hcf.getPlayer();
+        assertNotNull(org1);
+        assertEquals(RoleStatus.PENDING, hcf.getStatus());
+        assertTrue(hcf.isCtepOwned());
+        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // 2
+        Organization org2 = helperOrgAndAllRORolesAreSetToPendingOnCreate();
+        ResearchOrganization ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(
+                ResearchOrganization.class).uniqueResult();
+        assertEquals(RoleStatus.PENDING, ro.getStatus());
+        assertTrue(ro.isCtepOwned());
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        clearMessages();
+        
+        // 3
+        ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(ResearchOrganization.class)
+        .uniqueResult();
+        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class)
+        .uniqueResult();
+        org2.setStatusCode(EntityStatus.NULLIFIED);
+        org2.setDuplicateOf(ro.getPlayer());
+        
+        oSvc.curate(org2);
+        MessageProducerTest.assertMessageCreated(org2, oSvc, false);
+        ResearchOrganizationServiceBean roSBUsedDuringCurate = getResearchOrganizationServiceBean();
+        MessageProducerTest.assertMessageCreated(ro, roSBUsedDuringCurate, false);
+        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // 4
+        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class)
+        .uniqueResult();
+        ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(ResearchOrganization.class)
+        .uniqueResult();
+        assertEquals(hcf.getPlayer(), hcf.getPlayer());
     }
 }

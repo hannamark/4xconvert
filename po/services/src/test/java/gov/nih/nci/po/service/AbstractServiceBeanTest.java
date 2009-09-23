@@ -28,4 +28,7 @@ public abstract class AbstractServiceBeanTest extends AbstractBeanTest {
     public HealthCareFacilityServiceBean getHealthCareFacilityServiceBean() {
         return (HealthCareFacilityServiceBean) JNDIUtil.lookup("po/HealthCareFacilityServiceBean/local");
     }
+    public ResearchOrganizationServiceBean getResearchOrganizationServiceBean() {
+        return (ResearchOrganizationServiceBean) JNDIUtil.lookup("po/ResearchOrganizationServiceBean/local");
+    }
 }
