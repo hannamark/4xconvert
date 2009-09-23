@@ -90,6 +90,7 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.zip.DataFormatException;
@@ -106,6 +107,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
     @Override
     public StudySubjectDto convertFromDomainToDto(StudySubject bo) throws DataFormatException {
         StudySubjectDto dto = new StudySubjectDto();
+        dto.setAssignedIdentifier(StConverter.convertToSt(bo.getAssignedIdentifier()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setPatientIdentifier(IiConverter.convertToIi(bo.getPatient().getId()));
         dto.setPaymentMethodCode(CdConverter.convertToCd(bo.getPaymentMethodCode()));
@@ -126,6 +128,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
     @Override
     public StudySubject convertFromDtoToDomain(StudySubjectDto dto) throws DataFormatException {
         StudySubject bo = new StudySubject();
+        bo.setAssignedIdentifier(StConverter.convertToString(dto.getAssignedIdentifier()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setPatient(fKeySetter(Patient.class, dto.getPatientIdentifier()));
         if (!PAUtil.isCdNull(dto.getPaymentMethodCode())) {

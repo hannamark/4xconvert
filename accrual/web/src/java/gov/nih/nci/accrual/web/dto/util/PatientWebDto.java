@@ -81,7 +81,10 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 
@@ -98,7 +101,16 @@ public class PatientWebDto {
     private String statusCode;
     private String statusDateRangeLow;
 
+    // from StudySubjectDto
+    private String identifier;
     private String paymentMethodCode;
+    private String assignedIdentifier;
+
+//    // from PerformedStudySubjectMilestone
+//    private String registrationDate;
+
+    // from StudySite...Organization
+    private String organizationName;
 
     /**
      * Default constructor.
@@ -111,15 +123,19 @@ public class PatientWebDto {
      * @param pIsoDto patient iso dto
      * @param ssIsoDto study subject iso dto
      */
-    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto) {
-        this.raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
-        this.genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
-        this.ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
-        this.birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
-        this.statusCode = CdConverter.convertCdToString(pIsoDto.getStatusCode());
-        this.statusDateRangeLow = TsConverter.convertToString(pIsoDto.getStatusDateRangeLow());
+    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, St organizationName) {
+        raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
+        genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
+        ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
+        birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
+        statusCode = CdConverter.convertCdToString(pIsoDto.getStatusCode());
+        statusDateRangeLow = TsConverter.convertToString(pIsoDto.getStatusDateRangeLow());
 
-        this.paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
+        identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
+        paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
+        assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
+
+        this.organizationName = StConverter.convertToString(organizationName);
     }
     /**
      * @return the raceCode
@@ -204,5 +220,41 @@ public class PatientWebDto {
      */
     public void setPaymentMethodCode(String paymentMethodCode) {
         this.paymentMethodCode = paymentMethodCode;
+    }
+    /**
+     * @return the assignedIdentifier
+     */
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+//    /**
+//     * @return the registrationDate
+//     */
+//    public String getRegistrationDate() {
+//        return registrationDate;
+//    }
+//    /**
+//     * @param registrationDate the registrationDate to set
+//     */
+//    public void setRegistrationDate(String registrationDate) {
+//        this.registrationDate = registrationDate;
+//    }
+    /**
+     * @return the organizationName
+     */
+    public String getOrganizationName() {
+        return organizationName;
+    }
+    /**
+     * @param organizationName the organizationName to set
+     */
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
     }
 }

@@ -78,13 +78,18 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 
 /**
  * @author Hugh Reinhart
@@ -93,10 +98,10 @@ import java.util.List;
 public class PatientAction extends AbstractAccrualAction {
 
     private static final long serialVersionUID = -6820189447703204634L;
-    private static final String AR_DETAIL = "detail";
 
     private SearchPatientsCriteriaWebDto criteria = null;
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
+    private List<PatientWebDto> listOfPatients;
     private PatientWebDto patient;
 
     /**
@@ -107,24 +112,34 @@ public class PatientAction extends AbstractAccrualAction {
         if (criteria == null) {
             criteria = new SearchPatientsCriteriaWebDto();
         }
-        if (listOfStudySites == null) {
-            List<SearchStudySiteResultDto> isoList;
-            try {
-                isoList = searchStudySiteSvc.search(getSpIi(), getAuthorizedUser());
-            } catch (RemoteException e) {
-                return ERROR;
+        listOfPatients = new ArrayList<PatientWebDto>();
+
+        try {
+            List<SearchStudySiteResultDto> isoStudySiteList = null;
+            if (listOfStudySites == null) {
+                isoStudySiteList = searchStudySiteSvc.search(getSpIi(), getAuthorizedUser());
+                listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoStudySiteList);
             }
-            listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoList);
+            for (SearchStudySiteResultDto ss : isoStudySiteList) {
+                List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(ss.getStudySiteIi());
+                for (StudySubjectDto sub : subList) {
+                    PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
+                    listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrganizationName()));
+                }
+            }
+        } catch (RemoteException e) {
+            return ERROR;
         }
+        ServletActionContext.getRequest().setAttribute("listOfPatients", getListOfPatients());
         return super.execute();
     }
     /**
-     * Method initializes add patient work flow.
-     * @return action result
+     * {@inheritDoc}
      */
-    public String add() {
+    @Override
+    public String create() {
         patient = new PatientWebDto();
-        return AR_DETAIL;
+        return super.create();
     }
     /**
      * @return the criteria
@@ -143,6 +158,18 @@ public class PatientAction extends AbstractAccrualAction {
      */
     public List<SearchStudySiteResultWebDto> getListOfStudySites() {
         return listOfStudySites;
+    }
+    /**
+     * @return the listOfPatients
+     */
+    public List<PatientWebDto> getListOfPatients() {
+        return listOfPatients;
+    }
+    /**
+     * @param listOfPatients the listOfPatients to set
+     */
+    public void setListOfPatients(List<PatientWebDto> listOfPatients) {
+        this.listOfPatients = listOfPatients;
     }
     /**
      * @return the patient

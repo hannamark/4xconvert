@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.convert.PatientConverter;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Patient;
@@ -95,6 +96,8 @@ import java.util.zip.DataFormatException;
 
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -104,6 +107,8 @@ import org.hibernate.Session;
  * @author Hugh Reinhart
  * @since Aug 18, 2009
  */
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
 public class PatientBean implements PatientService {
 
     private static final Logger LOG  = Logger.getLogger(PatientBean.class);

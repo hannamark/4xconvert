@@ -114,7 +114,6 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     private String studyProtocolId = null;
     private List<SubmissionDto> listOfSubmissions = null;
     private SubmissionDto submission = new SubmissionDto();
-    private String selectedRowIdentifier;
 
     /**
      * {@inheritDoc}
@@ -257,18 +256,6 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
      */
     public void setSubmission(SubmissionDto submission) {
         this.submission = submission;
-    }
-    /**
-     * @return the selectedRowIdentifier
-     */
-    public String getSelectedRowIdentifier() {
-        return selectedRowIdentifier;
-    }
-    /**
-     * @param selectedRowIdentifier the selectedRowIdentifier to set
-     */
-    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
-        this.selectedRowIdentifier = selectedRowIdentifier;
     }
     /**
      * @return submission label

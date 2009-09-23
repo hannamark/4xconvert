@@ -83,10 +83,13 @@ import gov.nih.nci.coppa.iso.Ii;
 
 import java.rmi.RemoteException;
 
+import javax.ejb.Remote;
+
 /**
  * @author Hugh Reinhart
  * @since Aug 18, 2009
  */
+@Remote
 public interface PatientService {
     /**
      * @param ii index of object

@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.dto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
@@ -91,12 +92,25 @@ import gov.nih.nci.coppa.iso.Ts;
 public class StudySubjectDto extends AbstractStudyDto {
     private static final long serialVersionUID = 2286849965392968341L;
 
+    private St assignedIdentifier;
     private Ii patientIdentifier;
     private Ii studySiteIdentifier;
     private Ii diseaseIdentifier;
     private Cd paymentMethodCode;
     private Cd statusCode;
     private Ivl<Ts> statusDateRange;
+    /**
+     * @return the assignedIdentifier
+     */
+    public St getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(St assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
     /**
      * @return the patientIdentifier
      */

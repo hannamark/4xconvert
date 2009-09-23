@@ -76,7 +76,9 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
@@ -106,12 +108,30 @@ import com.opensymphony.xwork2.Preparable;
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
 
+    /** String value for currentAction property when doing a create. */
+    private static final String CA_CREATE = "create";
+    /** String value for currentAction property when doing a create. */
+    private static final String CA_RETRIEVE = "retrieve";
+    /** String value for currentAction property when doing a create. */
+    private static final String CA_UPDATE = "update";
+    /** Action result returned to display the detail page. */
+    private static final String AR_DETAIL = "detail";
+
+    /** Bean to store current action. */
+    private String currentAction;
+    /** Bean to store row id selected from list view. */
+    private String selectedRowIdentifier;
+
     /** SearchTrialService. */
     protected SearchTrialService searchTrialSvc;
     /** SearchStudySiteService. */
     protected SearchStudySiteService searchStudySiteSvc;
     /** SubmissionService. */
     protected SubmissionService submissionSvc;
+    /** StudySubjectService. */
+    protected StudySubjectService studySubjectSvc;
+    /** PatientService. */
+    protected PatientService patientSvc;
 
     /**
      * {@inheritDoc}
@@ -120,6 +140,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         searchTrialSvc = AccrualServiceLocator.getInstance().getSearchTrialService();
         searchStudySiteSvc = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
+        studySubjectSvc = AccrualServiceLocator.getInstance().getStudySubjectService();
+        patientSvc = AccrualServiceLocator.getInstance().getPatientService();
     }
     /**
      * Default execute method for action classes.
@@ -139,7 +161,55 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         }
         return SUCCESS;
     }
+    /**
+     * Method called to begin create workflow.
+     * @return action result to display detail page
+     */
+    public String create() {
+        setCurrentAction(CA_CREATE);
+        return AR_DETAIL;
+    }
+    /**
+     * Method called to begin retrieve workflow.
+     * @return action result to display detail page
+     */
+    public String retrieve() {
+        setCurrentAction(CA_RETRIEVE);
+        return AR_DETAIL;
+    }
+    /**
+     * Method called to begin update workflow.
+     * @return action result to display detail page
+     */
+    public String update() {
+        setCurrentAction(CA_UPDATE);
+        return AR_DETAIL;
+    }
 
+    /**
+     * @return the currentAction
+     */
+    public String getCurrentAction() {
+        return currentAction;
+    }
+    /**
+     * @param currentAction the currentAction to set
+     */
+    public void setCurrentAction(String currentAction) {
+        this.currentAction = currentAction;
+    }
+    /**
+     * @return the selectedRowIdentifier
+     */
+    public String getSelectedRowIdentifier() {
+        return selectedRowIdentifier;
+    }
+    /**
+     * @param selectedRowIdentifier the selectedRowIdentifier to set
+     */
+    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
+        this.selectedRowIdentifier = selectedRowIdentifier;
+    }
     /**
      * @return the role from the session
      */
@@ -175,7 +245,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
             }
         }
     }
-
     /**
      * @param obj the object to be passed to jsp
      * @return string
