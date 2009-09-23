@@ -1,5 +1,7 @@
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.util.JNDIUtil;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -21,5 +23,9 @@ public abstract class AbstractServiceBeanTest extends AbstractBeanTest {
     @AfterClass
     public static void tearDownJNDI() {
         contextBuilder.clear();
+    }
+    
+    public HealthCareFacilityServiceBean getHealthCareFacilityServiceBean() {
+        return (HealthCareFacilityServiceBean) JNDIUtil.lookup("po/HealthCareFacilityServiceBean/local");
     }
 }

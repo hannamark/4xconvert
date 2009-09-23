@@ -84,14 +84,7 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.CuratableEntity;
-import gov.nih.nci.po.data.bo.CuratableRole;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.FundingMechanism;
-import gov.nih.nci.po.data.bo.HealthCareFacility;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -100,7 +93,6 @@ import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 import java.util.Map;
 
