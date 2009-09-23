@@ -98,6 +98,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
@@ -399,5 +400,25 @@ public class Organization extends AbstractOrganization
      */
     public void setComments(String comments) {
         this.comments = comments;
+    }
+    
+    /**
+     * Checks if HCF or RO associated w/ this org are from ctep.
+     * @return boolean
+     */
+    @Transient
+    public boolean isAssociatedWithCtepRoles() {
+        for (ResearchOrganization ro : getResearchOrganizations()) {
+            if (ro.isCtepOwned()) {
+                return true;
+            }
+        }
+         
+        for (HealthCareFacility hcf : getHealthCareFacilities()) {
+            if (hcf.isCtepOwned()) {
+                return true;
+            }
+        }    
+        return false;
     }
 }

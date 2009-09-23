@@ -75,12 +75,21 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     public String start() {
         organization = PoRegistry.getOrganizationService().getById(organization.getId());
         initializeCollections(organization);
+        initializeCtepRoles(organization);
         setRootKey(PoHttpSessionUtil.addAttribute(organization));
         if (!organization.getChangeRequests().isEmpty()) {
             cr = organization.getChangeRequests().iterator().next();
         }
         findAndSetCr(cr.getId());
         return CURATE_RESULT;
+    }
+    
+    private void initializeCtepRoles(Organization org) {
+      //need this for duplicate validation check
+      org.getHealthCareFacilities().size();
+      org.getResearchOrganizations().size();
+      org.isAssociatedWithCtepRoles();
+      
     }
 
     private void initializeCollections(Contactable contactable) {
@@ -92,11 +101,18 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     }
 
     /**
+     * Curate method w/ struts validation.
      * @return success
      * @throws JMSException if an error occurred while publishing the announcement
      */
-    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization") })
+    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization"),
+            @CustomValidator(type = "duplicateOfNullifiedOrg", fieldName = "duplicateOf", 
+                    message = "A duplicate Organization must be provided.")
+            })
     public String curate() throws JMSException {
+        // PO-1196 - We are using a struts validator to make sure that when an org with associated ctep roles
+        // is nullified, it must have a duplicateOf set. The reason we are using a struts validator instead of a 
+        // hibernate validator is the comment below.
         // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
         // set organization.duplicateOf.id directly, so we're setting it manually
         if (duplicateOf != null && duplicateOf.getId() != null) {

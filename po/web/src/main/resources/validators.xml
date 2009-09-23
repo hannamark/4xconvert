@@ -19,5 +19,6 @@
 
     <!-- Custom validators -->
     <validator name="hibernate" class="com.fiveamsolutions.nci.commons.web.struts2.validator.HibernateValidator" />
-    <validator name="searchcriteria" class="gov.nih.nci.po.web.util.validator.SearchCriteriaValidator" />    
+    <validator name="searchcriteria" class="gov.nih.nci.po.web.util.validator.SearchCriteriaValidator" />
+    <validator name="duplicateOfNullifiedOrg" class="gov.nih.nci.po.web.util.validator.DuplicateOfNullifiedOrgValidator" />    
 </validators>
