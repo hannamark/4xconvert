@@ -330,8 +330,9 @@ var winprint=window.open("","",sOption);
         <display:column title="Number" property="indldeNumber"  headerClass="sortable" style="width:75px"/>
         <display:column title="Grantor" property="grantor"  headerClass="sortable" style="width:75px"/>
         <display:column title="Holder" property="holderType"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Program Code" property="programCode"  headerClass="sortable" style="width:75px"/>
-        <display:column title="Expanded Access" property="expandedAccessIndicator"  headerClass="sortable" style="width:75px"/>
+        <display:column title="NIH Inst Holder Code" property="nihInstHolder"  headerClass="sortable"  style="width:75px"/>
+        <display:column title="NCI Div Prog Holder Code" property="nciDivProgHolder" headerClass="sortable"  style="width:75px"/>
+         <display:column title="Expanded Access" property="expandedAccessIndicator"  headerClass="sortable" style="width:75px"/>
         <display:column title="Expanded Access Type" property="expandedAccessStatus"  headerClass="sortable" style="width:75px"/>
         </display:table>
       </div>

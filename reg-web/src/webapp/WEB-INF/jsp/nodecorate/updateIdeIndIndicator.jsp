@@ -1,6 +1,6 @@
     <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
     <script language="JavaScript">
-   
+   window.onload = setControls;
    function trim(val) {
         var ret = val.replace(/^\s+/, '');
         ret = ret.replace(/\s+$/, '');
@@ -86,6 +86,14 @@
             addOption(document.getElementById('SubCatUpdate'),"CDRH", "CDRH");
         }
     }
+    
+    function setControls() {
+     var length = '${fn:length(indIdeUpdateDtos)}';
+     for (i=0; i<=length;i++) {
+       var str = "holderTypeUpdate"+i;
+       setProgramCodesUpdate(document.getElementById(str),i);
+     }
+    }
    
     </script>
     <s:set name="phaseCodeValuesNIH" value="@gov.nih.nci.pa.enums.NihInstituteCode@getDisplayNames()" />
@@ -106,47 +114,48 @@
                 <th>Expanded Access Type (if applicable)</th>
                 <th></th>
              </tr>
-             <s:iterator id="indIdeUpdateDtos" value="indIdeUpdateDtos" status="indidestats">
-          <tr>
-            
-                <td style="white-space:nowrap;">                            
-                <s:select id="group3Update" name="indIdeUpdateDtos[%{#indidestats.index}].indldeType" value="%{indIdeUpdateDtos[#indidestats.index].indldeType}" list="#{'IND':'IND', 'IDE':'IDE'}" onclick="SelectSubCatUpdate(this);"/>
-         </td>
-          <td>
-               <s:textfield id="indIdesDTOs.indldeNumberUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].indldeNumber" value="%{indIdeUpdateDtos[#indidestats.index].indldeNumber}" size="10" /> 
-          </td>
-          <td> 
-             <s:if test="%{indIdeUpdateDtos[#indidestats.index].indldeType == 'IND'}">
+               <s:iterator id="indIdeUpdateDtos" value="indIdeUpdateDtos" status="indidestats">
+                <tr>
+                 <td style="white-space:nowrap;">                            
+                  <s:select id="group3Update" name="indIdeUpdateDtos[%{#indidestats.index}].indldeType" value="%{indIdeUpdateDtos[#indidestats.index].indldeType}" list="#{'IND':'IND', 'IDE':'IDE'}" onclick="SelectSubCatUpdate(this);"/>
+                 </td>
+                 <td>
+                  <s:textfield id="indIdesDTOs.indldeNumberUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].indldeNumber" value="%{indIdeUpdateDtos[#indidestats.index].indldeNumber}" size="10" /> 
+                 </td>
+                 <td> 
+                  <s:if test="%{indIdeUpdateDtos[#indidestats.index].indldeType == 'IND'}">
                    <s:select id="SubCatUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDER':'CDER', 'CBER':'CBER'}" cssStyle="width:75px" ></s:select>
-            </s:if>
-          <s:else>
-                 <s:select id="SubCatUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDRH':'CDRH'}" cssStyle="width:75px" ></s:select>
-          </s:else>
-           </td>   
-            <td>
-              <s:select id="holderTypeUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].holderType"  value="%{indIdeUpdateDtos[#indidestats.index].holderType}" headerKey="" headerValue="-Select-" cssStyle="width:75px" onclick="setProgramCodesUpdate(this,%{#indidestats.index});"
+                  </s:if>
+                  <s:else>
+                    <s:select id="SubCatUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDRH':'CDRH'}" cssStyle="width:75px" ></s:select>
+                  </s:else>
+                 </td>   
+                 <td>
+                 <s:select id="holderTypeUpdate%{#indidestats.index}" name="indIdeUpdateDtos[%{#indidestats.index}].holderType"  value="%{indIdeUpdateDtos[#indidestats.index].holderType}" headerKey="" headerValue="-Select-" cssStyle="width:75px" onclick="setProgramCodesUpdate(this,%{#indidestats.index});"
                    list="#{'Investigator':'Investigator','Organization':'Organization','Industry':'Industry','NIH':'NIH','NCI':'NCI'}" />
-             </td>
-             <td>
-              <s:div id="programcodenihidUpdate%{#indidestats.index}" cssStyle="display:''"><s:select id="programcodenihselectedvalueUpdate%{#indidestats.index}" headerKey="" headerValue="-Select-" cssStyle="width:300px" name="indIdeUpdateDtos[%{#indidestats.index}].nihInstHolder" value="%{indIdeUpdateDtos[#indidestats.index].nihInstHolder}" list="#phaseCodeValuesNIH" /></s:div>
-              <s:div id="programcodenciidUpdate%{#indidestats.index}" cssStyle="display:none"><s:select id="programcodenciselectedvalueUpdate%{#indidestats.index}" headerKey="" headerValue="-Select-" cssStyle="width:300px" name="indIdeUpdateDtos[%{#indidestats.index}].nciDivProgHolder" value="%{indIdeUpdateDtos[#indidestats.index].nciDivProgHolder}" list="#phaseCodeValuesNCI" /></s:div>
-              <s:div id="programcodeidUpdate%{#indidestats.index}" cssStyle="display:none"><s:select id="programcodenoneselectedUpdate%{#indidestats.index}" list="#{'-Select-':'-Select-'}"  cssStyle="width:300px"/></s:div>
-              </td>
-              <td>
-                     <s:select id="group4Update%{#indidestats.index}" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessIndicator"  value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessIndicator}"  list="#{'No':'No', 'Yes':'Yes'}" onclick="checkIndicatorUpdate(%{#indidestats.index});"  />
-                  </td>
+                </td>
                 <td>
-                 <s:div id="show%{#indidestats.index}" cssStyle="display:''">
-                       <s:select id="expanded_status_update" headerKey="" headerValue="-Select-" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessStatus" value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessStatus}" list="#expandedAccessStatusCodeValues" />
-                  </s:div> 
-                   <s:hidden  name="indIdeUpdateDtos[%{#indidestats.index}].id" value="%{id}"/>     
-                  </td> 
-               </tr> 
-               
-                
-                
-             </s:iterator>
-                      
+                 <s:div id="programcodenihidUpdate%{#indidestats.index}" cssStyle="display:''">
+                  <s:select id="programcodenihselectedvalueUpdate%{#indidestats.index}" headerKey="" headerValue="-Select-" cssStyle="width:300px" name="indIdeUpdateDtos[%{#indidestats.index}].nihInstHolder" value="%{indIdeUpdateDtos[#indidestats.index].nihInstHolder}" list="#phaseCodeValuesNIH" />
+                </s:div>
+                <s:div id="programcodenciidUpdate%{#indidestats.index}" cssStyle="display:none">
+                  <s:select id="programcodenciselectedvalueUpdate%{#indidestats.index}" headerKey="" headerValue="-Select-" cssStyle="width:300px" name="indIdeUpdateDtos[%{#indidestats.index}].nciDivProgHolder" value="%{indIdeUpdateDtos[#indidestats.index].nciDivProgHolder}" list="#phaseCodeValuesNCI" />
+                </s:div>
+                <s:div id="programcodeidUpdate%{#indidestats.index}" cssStyle="display:none">
+                  <s:select id="programcodenoneselectedUpdate%{#indidestats.index}" list="#{'-Select-':'-Select-'}"  cssStyle="width:300px"/>
+                </s:div>
+               </td>
+               <td>
+                <s:select id="group4Update%{#indidestats.index}" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessIndicator"  value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessIndicator}"  list="#{'No':'No', 'Yes':'Yes'}" onclick="checkIndicatorUpdate(%{#indidestats.index});"  />
+               </td>
+               <td>
+               <s:div id="show%{#indidestats.index}" cssStyle="display:''">
+                  <s:select id="expanded_status_update" headerKey="" headerValue="-Select-" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessStatus" value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessStatus}" list="#expandedAccessStatusCodeValues" />
+               </s:div> 
+               <s:hidden  name="indIdeUpdateDtos[%{#indidestats.index}].id" value="%{id}"/>     
+              </td> 
+              </tr>                 
+             </s:iterator>                    
          </tbody>
 </table>
 </c:if>
