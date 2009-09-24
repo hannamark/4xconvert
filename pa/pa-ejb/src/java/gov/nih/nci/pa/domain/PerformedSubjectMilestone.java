@@ -93,6 +93,7 @@ public class PerformedSubjectMilestone extends PerformedAdministrativeActivity {
     private static final long serialVersionUID = 552072830898807202L;
 
     private Timestamp informedConsentDate;
+    private Timestamp registrationDate;
 
     /**
      * @return the informedConsentDate
@@ -106,5 +107,18 @@ public class PerformedSubjectMilestone extends PerformedAdministrativeActivity {
      */
     public void setInformedConsentDate(Timestamp informedConsentDate) {
         this.informedConsentDate = informedConsentDate;
+    }
+    /**
+     * @return the registrationDate
+     */
+    @Column(name = "registration_date")
+    public Timestamp getRegistrationDate() {
+        return registrationDate;
+    }
+    /**
+     * @param registrationDate the registrationDate to set
+     */
+    public void setRegistrationDate(Timestamp registrationDate) {
+        this.registrationDate = registrationDate;
     }
 }

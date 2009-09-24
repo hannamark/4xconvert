@@ -78,122 +78,97 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.PaymentMethodCode;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.util.TestSchema;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import org.hibernate.validator.NotNull;
+import org.hibernate.Session;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 14, 2009
- *
+ * @since Sep 24, 2009
  */
-@Entity
-@Table(name = "study_subject")
-public class StudySubject extends Subject {
+public class PerformedActivityTest {
+    Session sess;
 
-    private static final long serialVersionUID = -6946617177385690791L;
+    @Before
+    public void setUp() throws Exception {
+        sess = TestSchema.getSession();
+        TestSchema.reset1();
+        TestSchema.primeData();
+    }
+    @Test
+    public void getTest() {
+        addTest();
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        assertNotNull(sp);
+        List<PerformedActivity> paList = sp.getPerformedActivities();
+        assertFalse(paList.isEmpty());
+        Long paId = paList.get(0).getId();
+        sess.flush();
+        PerformedActivity pa = (PerformedActivity) sess.get(PerformedActivity.class, paId);
+        assertNotNull(pa);
+    }
+    @Test
+    public void addTest() {
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        assertNotNull(sp);
+        int oldCount = sp.getPerformedActivities().size();
+        Intervention inv = new Intervention();
+        inv.setId(TestSchema.interventionIds.get(0));
+        PerformedActivity pa = new PerformedActivity();
+        pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
+        pa.setDateLastUpdated(new Date());
+        pa.setStudyProtocol(sp);
+        pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT);
+        pa.setUserLastUpdated("Joe");
+        sess.saveOrUpdate(pa);
+        sess.flush();
+        sess.clear();
+        sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        assertEquals(oldCount + 1, sp.getPerformedActivities().size());
+    }
+    @Test
+    public void updateTest() {
+        String tName = "new name";
+        Intervention inv = (Intervention) sess.get(Intervention.class, TestSchema.interventionIds.get(0));
+        assertFalse(tName.equals(inv.getName()));
+        inv.setName("new name");
+        sess.saveOrUpdate(inv);
+        sess.flush();
+        sess.clear();
+        Intervention inv2 = (Intervention) sess.get(Intervention.class, TestSchema.interventionIds.get(0));
+        assertTrue(tName.equals(inv2.getName()));
+    }
+    @Test
+    public void studySubjectAssociationTest() {
+        addTest();
+        Long spId = TestSchema.studyProtocolIds.get(0);
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, spId);
+        assertNotNull(sp);
+        List<PerformedActivity> paList = sp.getPerformedActivities();
+        assertFalse(paList.isEmpty());
+        Long paId = paList.get(0).getId();
+        sess.flush();
+        PerformedActivity pa = (PerformedActivity) sess.get(PerformedActivity.class, paId);
+        assertNotNull(pa);
 
-    private String assignedIdentifier;
-    private PaymentMethodCode paymentMethodCode;
-    private Patient patient;
-    private StudySite studySite;
-    private Disease disease;
-    private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
+        StudySubject ssub = StudySubjectTest.createStudySubjectObj();
+        pa.setStudySubject(ssub);
+        sess.saveOrUpdate(pa);
+        sess.flush();
 
-    /**
-     * @return the assignedIdentifier
-     */
-    @Column(name = "ASSIGNED_IDENTIFIER")
-    public String getAssignedIdentifier() {
-        return assignedIdentifier;
-    }
-    /**
-     * @param assignedIdentifier the assignedIdentifier to set
-     */
-    public void setAssignedIdentifier(String assignedIdentifier) {
-        this.assignedIdentifier = assignedIdentifier;
-    }
-    /**
-     * @return the paymentMethodCode
-     */
-    @Column(name = "payment_method_code")
-    @Enumerated(EnumType.STRING)
-    public PaymentMethodCode getPaymentMethodCode() {
-        return paymentMethodCode;
-    }
-    /**
-     * @param paymentMethodCode the paymentMethodCode to set
-     */
-    public void setPaymentMethodCode(PaymentMethodCode paymentMethodCode) {
-        this.paymentMethodCode = paymentMethodCode;
-    }
-    /**
-     * @return the patient
-     */
-    @ManyToOne
-    @JoinColumn(name = "patient_identifier", updatable = false)
-    @NotNull
-    public Patient getPatient() {
-        return patient;
-    }
-    /**
-     * @param patient the patient to set
-     */
-    public void setPatient(Patient patient) {
-        this.patient = patient;
-    }
-    /**
-     * @return the studySite
-     */
-    @ManyToOne
-    @JoinColumn(name = "study_site_identifier", updatable = false)
-    public StudySite getStudySite() {
-        return studySite;
-    }
-    /**
-     * @param studySite the studySite to set
-     */
-
-    public void setStudySite(StudySite studySite) {
-        this.studySite = studySite;
-    }
-    /**
-     * @return the disease
-     */
-    @ManyToOne
-    @JoinColumn(name = "disease_identifier", updatable = false)
-    public Disease getDisease() {
-        return disease;
-    }
-    /**
-     * @param disease the disease to set
-     */
-    public void setDisease(Disease disease) {
-        this.disease = disease;
-    }
-    /**
-     * @return the performedActivities
-     */
-    @OneToMany(mappedBy = "studySubject")
-    public List<PerformedActivity> getPerformedActivities() {
-        return performedActivities;
-    }
-    /**
-     * @param performedActivities the performedActivities to set
-     */
-    public void setPerformedActivities(List<PerformedActivity> performedActivities) {
-        this.performedActivities = performedActivities;
+        pa = (PerformedActivity) sess.get(PerformedActivity.class, paId);
+        ssub = pa.getStudySubject();
+        assertNotNull(ssub);
     }
 }

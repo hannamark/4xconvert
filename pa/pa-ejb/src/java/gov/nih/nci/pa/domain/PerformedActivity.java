@@ -85,6 +85,8 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -101,6 +103,7 @@ public class PerformedActivity extends Activity {
 
     private Timestamp actualDateRangeLow;
     private Timestamp actualDateRangeHigh;
+    private StudySubject studySubject;
     /**
      * @return the actualDateRangeLow
      */
@@ -124,5 +127,19 @@ public class PerformedActivity extends Activity {
      */
     public void setActualDateRangeHigh(Timestamp actualDateRangeHigh) {
         this.actualDateRangeHigh = actualDateRangeHigh;
+    }
+    /**
+     * @return the studySubject
+     */
+    @ManyToOne
+    @JoinColumn(name = "STUDY_SUBJECT_IDENTIFIER", updatable = false)
+    public StudySubject getStudySubject() {
+        return studySubject;
+    }
+    /**
+     * @param studySubject the studySubject to set
+     */
+    public void setStudySubject(StudySubject studySubject) {
+        this.studySubject = studySubject;
     }
 }
