@@ -84,14 +84,15 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
+import gov.nih.nci.pa.util.LabelValueBean;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -106,7 +107,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     private List<StudySiteAccrualAccessDTO> accessList;
     private StudySiteAccrualAccessDTO access;
     private Map<Long, User> csmUsers = null;
-    private Map<Long, String> csmUserNames = null;
+    private List<LabelValueBean> csmUserNames = null;
     private Map<Long, String> sites = null;
     private String email;
     private String phone;
@@ -271,23 +272,21 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         if (csmUsers == null) {
             try {
                 csmUsers = new HashMap<Long, User>();
-                csmUserNames = new HashMap<Long, String>();
+                csmUserNames = new ArrayList<LabelValueBean>();
                 Set<User> uSet = accrualAccessSvc.getSubmitters();
+                
+                List<LabelValueBean> lvBeanList = new ArrayList<LabelValueBean>();
                 for (User u : uSet) {
                     csmUsers.put(u.getUserId(), u);
                     String emailId = u.getLoginName() != null ? u.getLoginName() : " ";
-                    csmUserNames.put(u.getUserId(), StudySiteAccrualAccessServiceBean.getFullName(u) 
-                            + " " + emailId);
+                    LabelValueBean lvBean = new LabelValueBean();
+                    lvBean.setId(u.getUserId());
+                    lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(u) + " " + emailId);
+                    lvBeanList.add(lvBean);
                 }
-                // sort csmUserNames
-                List<Long> mapKeys = new ArrayList<Long>(csmUserNames.keySet());
-                List<String> mapValues = new ArrayList<String>(csmUserNames.values());
-                csmUserNames.clear();
-                TreeSet<String> sortedSet = new TreeSet<String>(mapValues);
-                Object[] sortedArray = sortedSet.toArray();
-                int size = sortedArray.length;
-                for (int i = 0; i < size; i++) {
-                    csmUserNames.put(mapKeys.get(mapValues.indexOf(sortedArray[i])), (String) sortedArray[i]);
+                Collections.sort(lvBeanList);
+                for (LabelValueBean bean : lvBeanList) {
+                csmUserNames.add(bean);
                 }
             } catch (PAException e) {
                 addActionError("Error getting csm users.");
@@ -299,7 +298,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     /**
      * @return the csmUserNames
      */
-    public Map<Long, String> getCsmUserNames() {
+    public List<LabelValueBean> getCsmUserNames() {
         if (csmUserNames == null) {
             getCsmUsers();
         }

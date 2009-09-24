@@ -89,9 +89,9 @@
                       <td class="label"><s:label><fmt:message key="manageAccrualAccess.userName"/></s:label><span class="required">*</span></td>
                       <td class="value" style="width: 250px">
                         <s:if test="%{currentAction == 'create'}">
-                            <s:set name="csmUserNameValues" value="csmUserNames" />
+<%--                            <s:set name="csmUserNameValues" value="csmUserNames" />--%>
                             <s:select id="csmUserId" headerKey="" headerValue="--Select--" name="access.csmUserId" 
-                                   list="#csmUserNameValues" onchange="loadEmailDiv();loadPhoneDiv();"/>
+                                   list="csmUserNames" listKey="id" listValue="name" onchange="loadEmailDiv();loadPhoneDiv();"/>
                         </s:if><s:else>
                             <s:textfield name="access.userName" cssStyle="width:200px;float:left" readonly="true" cssClass="readonly"/>
                         </s:else>
