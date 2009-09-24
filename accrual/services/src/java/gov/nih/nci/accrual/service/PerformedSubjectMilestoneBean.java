@@ -81,10 +81,23 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.PerformedSubjectMilestoneConverter;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
@@ -96,5 +109,49 @@ public class PerformedSubjectMilestoneBean
         extends AbstractBaseAccrualStudyBean<PerformedSubjectMilestoneDto,
                 PerformedSubjectMilestone, PerformedSubjectMilestoneConverter>
         implements PerformedSubjectMilestoneService {
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called getByStudySubject() with Ii == null.");
+        }
+        getLogger().info("EnteringgetByStudySubject().");
+
+        Session session = null;
+        List<PerformedSubjectMilestone> queryList = new ArrayList<PerformedSubjectMilestone>();
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+
+            // step 1: form the hql
+            String hql = "select psm "
+                       + "from PerformedSubjectMilestone psm "
+                       + "join psm.studySubject ssub "
+                       + "where ssub.id = :studySubjectId "
+                       + "order by psm.id ";
+
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            query.setParameter("studySubjectId", IiConverter.convertToLong(ii));
+
+            // step 3: query the result
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
+        }
+        ArrayList<PerformedSubjectMilestoneDto> resultList = new ArrayList<PerformedSubjectMilestoneDto>();
+        for (PerformedSubjectMilestone bo : queryList) {
+            try {
+                resultList.add(convertFromDomainToDto(bo));
+            } catch (DataFormatException e) {
+                throw new RemoteException("Iso conversion exception in getByStudySubject().", e);
+            }
+        }
+        getLogger().info("Leaving getByStudySubject, returning " + resultList.size() + " object(s).  ");
+        return resultList;
+    }
 
 }

@@ -79,6 +79,10 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.coppa.iso.Ii;
+
+import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.ejb.Remote;
 
@@ -89,5 +93,10 @@ import javax.ejb.Remote;
 @Remote
 public interface PerformedSubjectMilestoneService
         extends BaseAccrualStudyService<PerformedSubjectMilestoneDto> {
-
+    /**
+     * @param ii studySubject index
+     * @return list of dto's
+     * @throws RemoteException exception
+     */
+    List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException;
 }

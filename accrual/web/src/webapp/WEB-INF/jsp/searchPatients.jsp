@@ -121,10 +121,8 @@ function handleDelete(rowId){
        <display:column titleKey="patient.assignedIdentifier" property="assignedIdentifier"
          sortable="true" headerClass="sortable" headerScope="col"
          href="patientsretrieve.action" paramId="studySubjectId" paramProperty="assignedIdentifier"/> 
-<%--
        <display:column titleKey="patient.registrationDate" property="registrationDate" 
          sortable="true" headerClass="sortable" headerScope="col"/> 
---%>
        <display:column titleKey="patient.organizationName" property="organizationName" 
          sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="patient.update" headerClass="centered" class="action">

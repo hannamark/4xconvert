@@ -167,6 +167,7 @@ public class PerformedSubjectMilestoneDto extends PerformedActivityDto {
     private static final long serialVersionUID = -6242622585942263421L;
 
     private Ts informedConsentDate;
+    private Ts registrationDate;
 
     /**
      * @return the informedConsentDate
@@ -179,5 +180,17 @@ public class PerformedSubjectMilestoneDto extends PerformedActivityDto {
      */
     public void setInformedConsentDate(Ts informedConsentDate) {
         this.informedConsentDate = informedConsentDate;
+    }
+    /**
+     * @return the registrationDate
+     */
+    public Ts getRegistrationDate() {
+        return registrationDate;
+    }
+    /**
+     * @param registrationDate the registrationDate to set
+     */
+    public void setRegistrationDate(Ts registrationDate) {
+        this.registrationDate = registrationDate;
     }
 }

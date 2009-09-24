@@ -214,5 +214,7 @@ insert into patient (identifier, assigned_identifier, race_code, sex_code, ethni
 insert into study_subject (identifier, patient_identifier, study_protocol_identifier, study_site_identifier, payment_method_code, 
             status_code, status_date_range_low, assigned_identifier)
 	values (1, 1, 1, 3, 'PRIVATE', 'ACTIVE', '6/1/2009', 'Patient 001');
+insert into performed_activity (identifier, study_protocol_identifier, performed_activity_type, study_subject_identifier, registration_date)
+        values (1, 1, 'PerformedSubjectMilestone', 1,'6/1/2009');
 
   

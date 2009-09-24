@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.PatientService;
@@ -132,6 +133,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected StudySubjectService studySubjectSvc;
     /** PatientService. */
     protected PatientService patientSvc;
+    /** PerformedSubjectMilestoneService. */
+    protected PerformedSubjectMilestoneService performedSubjectMilestoneSvc;
 
     /**
      * {@inheritDoc}
@@ -142,6 +145,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
         studySubjectSvc = AccrualServiceLocator.getInstance().getStudySubjectService();
         patientSvc = AccrualServiceLocator.getInstance().getPatientService();
+        performedSubjectMilestoneSvc = AccrualServiceLocator.getInstance().getPerformedSubjectMilestoneService();
     }
     /**
      * Default execute method for action classes.

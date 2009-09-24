@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -107,6 +108,7 @@ public class PerformedActivity extends Activity {
     /**
      * @return the actualDateRangeLow
      */
+    @Column(name = "actual_date_range_low")
     public Timestamp getActualDateRangeLow() {
         return actualDateRangeLow;
     }
@@ -119,6 +121,7 @@ public class PerformedActivity extends Activity {
     /**
      * @return the actualDateRangeHigh
      */
+    @Column(name = "actual_date_range_high")
     public Timestamp getActualDateRangeHigh() {
         return actualDateRangeHigh;
     }

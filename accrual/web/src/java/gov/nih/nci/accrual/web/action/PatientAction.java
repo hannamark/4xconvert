@@ -78,13 +78,17 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
-
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,25 +116,9 @@ public class PatientAction extends AbstractAccrualAction {
         if (criteria == null) {
             criteria = new SearchPatientsCriteriaWebDto();
         }
-        listOfPatients = new ArrayList<PatientWebDto>();
-
         try {
-            List<SearchStudySiteResultDto> isoStudySiteList = null;
-            if (listOfStudySites == null) {
-                isoStudySiteList = searchStudySiteSvc.search(getSpIi(), getAuthorizedUser());
-                listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoStudySiteList);
-            }
-            for (SearchStudySiteResultDto ss : isoStudySiteList) {
-                List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(ss.getStudySiteIi());
-                for (StudySubjectDto sub : subList) {
-                    PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
-                    //sub.setAssignedIdentifier(StConverter.convertToSt(criteria.getAssignedIdentifier()));
-                    //sub.setStatusCode(CdConverter.convertStringToCd(criteria.getStatusCode()));
-                    //ss.setOrganizationName(StConverter.convertToSt(criteria.getStudySite()));
-                    //pat.setBirthDate(TsConverter.convertToTs(criteria.getBirthDate()));
-                    listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrganizationName()));
-                }
-            }
+            loadListOfStudySites();
+            loadListOfPatients();
         } catch (RemoteException e) {
             return ERROR;
         }
@@ -186,5 +174,32 @@ public class PatientAction extends AbstractAccrualAction {
      */
     public void setPatient(PatientWebDto patient) {
         this.patient = patient;
+    }
+
+    private void loadListOfStudySites() throws RemoteException {
+        List<SearchStudySiteResultDto> isoStudySiteList = null;
+        if (listOfStudySites == null) {
+            isoStudySiteList = searchStudySiteSvc.search(getSpIi(), getAuthorizedUser());
+            listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoStudySiteList);
+        }
+    }
+
+    private void loadListOfPatients() throws RemoteException {
+        listOfPatients = new ArrayList<PatientWebDto>();
+        for (SearchStudySiteResultWebDto ss : listOfStudySites) {
+            List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(IiConverter.convertToIi(ss.getSsIi()));
+            for (StudySubjectDto sub : subList) {
+                PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
+                List<PerformedSubjectMilestoneDto> smList =
+                        performedSubjectMilestoneSvc.getByStudySubject(sub.getIdentifier());
+                String registrationDate = null;
+                for (PerformedSubjectMilestoneDto sm : smList) {
+                    if (!PAUtil.isTsNull(sm.getRegistrationDate())) {
+                        registrationDate = TsConverter.convertToString(sm.getRegistrationDate());
+                    }
+                }
+                listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), registrationDate));
+            }
+        }
     }
 }

@@ -81,7 +81,6 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -107,7 +106,7 @@ public class PatientWebDto {
     private String assignedIdentifier;
 
 //    // from PerformedStudySubjectMilestone
-//    private String registrationDate;
+    private String registrationDate;
 
     // from StudySite...Organization
     private String organizationName;
@@ -122,9 +121,10 @@ public class PatientWebDto {
      * Construct using iso dto's from service tier.
      * @param pIsoDto patient iso dto
      * @param ssIsoDto study subject iso dto
-     * @param organizationName  organization name St
+     * @param orgName organization name
+     * @param regDate registration date
      */
-    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, St organizationName) {
+    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName, String regDate) {
         raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
         genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
         ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
@@ -136,7 +136,8 @@ public class PatientWebDto {
         paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
         assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
 
-        this.organizationName = StConverter.convertToString(organizationName);
+        organizationName = orgName;
+        registrationDate = regDate;
     }
     /**
      * @return the raceCode
@@ -234,18 +235,6 @@ public class PatientWebDto {
     public void setAssignedIdentifier(String assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
-//    /**
-//     * @return the registrationDate
-//     */
-//    public String getRegistrationDate() {
-//        return registrationDate;
-//    }
-//    /**
-//     * @param registrationDate the registrationDate to set
-//     */
-//    public void setRegistrationDate(String registrationDate) {
-//        this.registrationDate = registrationDate;
-//    }
     /**
      * @return the organizationName
      */
@@ -258,7 +247,7 @@ public class PatientWebDto {
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
     }
-    
+
    /**
      * @return the identifier
      */
@@ -271,4 +260,16 @@ public class PatientWebDto {
      public void setIdentifier(String identifier) {
        this.identifier = identifier;
      }
+    /**
+     * @return the registrationDate
+     */
+    public String getRegistrationDate() {
+        return registrationDate;
+    }
+    /**
+     * @param registrationDate the registrationDate to set
+     */
+    public void setRegistrationDate(String registrationDate) {
+        this.registrationDate = registrationDate;
+    }
 }
