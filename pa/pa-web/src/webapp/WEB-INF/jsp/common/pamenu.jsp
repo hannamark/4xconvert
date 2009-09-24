@@ -52,8 +52,11 @@
                                 <li><a href="irb.action">Human Subject Safety</a></li>
                                 <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                            </ul>
-                        </li>    
-    					<li><a href="studyOverallStatus.action" >Trial Status</a></li>
+                        </li>
+                         <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+                            <li><a href="studyOverallStatus.action" >Trial Status</a></li>
+                        </c:if>    
+    					
     					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
                         <li><a href="participatingOrganizations.action">Participating Sites</a></li>
                         <li><a href="collaborators.action">Collaborators</a></li>

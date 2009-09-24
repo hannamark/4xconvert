@@ -193,6 +193,7 @@
         
     </tr>
     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
     <tr>
         <th colspan="2"> Central Contact</th>
     </tr> 
@@ -254,7 +255,7 @@
                  </span>
             </td>           
         </tr>             
-    
+    </c:if>
     </table>  
          <div class="actionsrow">
             <del class="btnwrapper">

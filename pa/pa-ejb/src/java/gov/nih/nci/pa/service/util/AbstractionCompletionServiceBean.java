@@ -221,75 +221,153 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     List<AbstractionCompletionDTO> abstractionWarnList = new ArrayList<AbstractionCompletionDTO>();
     
     StudyProtocolDTO studyProtocolDTO = studyProtocolService .getStudyProtocol(studyProtocolIi); 
-   
-    enforceIdentifierLength(studyProtocolDTO, abstractionList);
-    enforceGeneralTrailDetails(studyProtocolDTO, abstractionList);
-    enforceNCISpecificInfo(studyProtocolDTO, abstractionList);
-    enforceRegulatoryInfo(studyProtocolIi, abstractionList);
-    enforceIRBInfo(studyProtocolDTO, abstractionList, abstractionWarnList);
-    enforceTrialINDIDE(studyProtocolDTO, abstractionList);
-    enforceTrialStatus(studyProtocolDTO, abstractionList);
-    enforceRecruitmentStatus(studyProtocolIi, abstractionList);
-
-    List<DocumentDTO> isoList = documentServiceLocal.getDocumentsByStudyProtocol(studyProtocolIi);
-    String protocolDoc = null;
-    String irbDoc = null;
-    if (!(isoList.isEmpty())) {
-      for (DocumentDTO dto : isoList) {
-        if (dto.getTypeCode().getCode().equalsIgnoreCase(
-            DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())) {
-          protocolDoc = dto.getTypeCode().getCode().toString();
-        } else if (dto.getTypeCode().getCode().equalsIgnoreCase(
-            DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode())) {
-          irbDoc = dto.getTypeCode().getCode().toString();
+    if (!PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
+            && BlConverter.covertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator())) {
+        abstractionCompletionRuleForProprietary(studyProtocolDTO, abstractionList, abstractionWarnList);
+    } else {
+        enforceIdentifierLength(studyProtocolDTO, abstractionList);
+        enforceGeneralTrailDetails(studyProtocolDTO, abstractionList);
+        enforceNCISpecificInfo(studyProtocolDTO, abstractionList);
+        enforceRegulatoryInfo(studyProtocolIi, abstractionList);
+        enforceIRBInfo(studyProtocolDTO, abstractionList, abstractionWarnList);
+        enforceTrialINDIDE(studyProtocolDTO, abstractionList);
+        enforceTrialStatus(studyProtocolDTO, abstractionList);
+        enforceRecruitmentStatus(studyProtocolIi, abstractionList);
+    
+        List<DocumentDTO> isoList = documentServiceLocal.getDocumentsByStudyProtocol(studyProtocolIi);
+        String protocolDoc = null;
+        String irbDoc = null;
+        if (!(isoList.isEmpty())) {
+          for (DocumentDTO dto : isoList) {
+            if (dto.getTypeCode().getCode().equalsIgnoreCase(
+                DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())) {
+              protocolDoc = dto.getTypeCode().getCode().toString();
+            } else if (dto.getTypeCode().getCode().equalsIgnoreCase(
+                DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode())) {
+              irbDoc = dto.getTypeCode().getCode().toString();
+            }
+          }
         }
-      }
+        enforceDocument(protocolDoc, irbDoc, abstractionList);
+    
+        if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
+          InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
+          ispDTO = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
+          enforceInterventional(ispDTO, abstractionList);
+          if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
+            List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
+            if (aList.size() != ispDTO.getNumberOfInterventionGroups().getValue()) {
+             abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design under Scientific"
+                  + " Data menu.", "Number of interventional trial arm records must be the same"
+                  + " as Number of Arms assigned in Interventional Trial Design."));
+            }
+          }
+        } else if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("ObservationalStudyProtocol")) {
+          ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
+          ospDTO = studyProtocolService.getObservationalStudyProtocol(studyProtocolIi); 
+          enforceObservational(ospDTO, abstractionList);
+          if (ospDTO.getNumberOfGroups().getValue() != null) {
+            List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
+            if (aList.size() != ospDTO.getNumberOfGroups().getValue()) {
+              abstractionList.add(createError("Error", "Select Groups from Observational Trial Design under Scientific "
+                  + "Data menu.", "Number of Observational study group records must be the same"
+                  + " as Number of Groups assigned in Observational Study Design."));
+            }
+          }
+        }
+        enforceTrialDescriptionDetails(studyProtocolDTO, abstractionList);
+        enforceOutcomeMeasure(studyProtocolIi, abstractionList);
+        enforceInterventions(studyProtocolIi, abstractionList, abstractionWarnList);
+        enforceTreatingSite(studyProtocolIi, abstractionList);
+        enforceStudyContactNullification(studyProtocolIi, abstractionWarnList);
+        enforceStudySiteNullification(studyProtocolIi, abstractionWarnList);
+        enforceStudySiteContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
+        enforceArmGroup(studyProtocolIi, studyProtocolDTO, abstractionList);
+        enforceTrialFunding(studyProtocolIi, abstractionList);
+        enforceDisease(studyProtocolIi, abstractionList);
+        enforceArmInterventional(studyProtocolIi, abstractionList);
+        enforceEligibility(studyProtocolIi, abstractionList);
+        enforceCollaborator(studyProtocolIi, abstractionList);
     }
-    enforceDocument(protocolDoc, irbDoc, abstractionList);
-
-    if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
-      InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
-      ispDTO = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
-      enforceInterventional(ispDTO, abstractionList);
-      if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
-        List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
-        if (aList.size() != ispDTO.getNumberOfInterventionGroups().getValue()) {
-         abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design under Scientific"
-              + " Data menu.", "Number of interventional trial arm records must be the same"
-              + " as Number of Arms assigned in Interventional Trial Design."));
-        }
-      }
-    } else if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("ObservationalStudyProtocol")) {
-      ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
-      ospDTO = studyProtocolService.getObservationalStudyProtocol(studyProtocolIi); 
-      enforceObservational(ospDTO, abstractionList);
-      if (ospDTO.getNumberOfGroups().getValue() != null) {
-        List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
-        if (aList.size() != ospDTO.getNumberOfGroups().getValue()) {
-          abstractionList.add(createError("Error", "Select Groups from Observational Trial Design under Scientific "
-              + "Data menu.", "Number of Observational study group records must be the same"
-              + " as Number of Groups assigned in Observational Study Design."));
-        }
-      }
-    }
-    enforceTrialDescriptionDetails(studyProtocolDTO, abstractionList);
-    enforceOutcomeMeasure(studyProtocolIi, abstractionList);
-    enforceInterventions(studyProtocolIi, abstractionList, abstractionWarnList);
-    enforceTreatingSite(studyProtocolIi, abstractionList);
-    enforceStudyContactNullification(studyProtocolIi, abstractionWarnList);
-    enforceStudySiteNullification(studyProtocolIi, abstractionWarnList);
-    enforceStudySiteContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
-    enforceArmGroup(studyProtocolIi, studyProtocolDTO, abstractionList);
-    enforceTrialFunding(studyProtocolIi, abstractionList);
-    enforceDisease(studyProtocolIi, abstractionList);
-    enforceArmInterventional(studyProtocolIi, abstractionList);
-    enforceEligibility(studyProtocolIi, abstractionList);
-    enforceCollaborator(studyProtocolIi, abstractionList);
     abstractionList.addAll(abstractionWarnList);
     return abstractionList;
   }
   
-  private void enforceStudyContactNullification(
+  private void abstractionCompletionRuleForProprietary(StudyProtocolDTO studyProtocolDTO,
+          List<AbstractionCompletionDTO> abstractionList, List<AbstractionCompletionDTO> abstractionWarnList) 
+  throws PAException {
+      
+      Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
+      enforceIdentifierLength(studyProtocolDTO, abstractionList);
+      enforceGeneralTrailDetails(studyProtocolDTO, abstractionList);
+
+      enforceInterventions(studyProtocolIi, abstractionList, abstractionWarnList);
+      enforceStudySiteNullification(studyProtocolIi, abstractionWarnList);
+      enforceStudySiteContactNullification(studyProtocolIi, abstractionWarnList, abstractionList);
+      enforceTrialFunding(studyProtocolIi, abstractionList);
+      enforceDisease(studyProtocolIi, abstractionList);
+      //check duplicate for IND
+      List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolIi);
+      if (!(siList.isEmpty())) {
+          checkDuplicateINDIDE(siList, abstractionList);
+      }
+      enforceStudySiteRuleForProprietary(abstractionList, studyProtocolIi);    
+
+    } //method
+
+/**
+ * @param abstractionList
+ * @param studyProtocolIi
+ * @throws PAException
+ */
+private void enforceStudySiteRuleForProprietary(
+        List<AbstractionCompletionDTO> abstractionList, Ii studyProtocolIi)
+        throws PAException {
+    StudySiteDTO srDTO = new StudySiteDTO();
+      srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+      List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
+      if (spList == null || spList.isEmpty()) {
+       abstractionList.add(createError("Error", "Select Participating Sites from "
+            + " Administrative Data menu.",  "No Participating Sites exists for the trial."));
+        return;
+      }
+     //treating site for the study
+      for (StudySiteDTO spartDto : spList) {
+        List<StudySiteContactDTO> spContactDtos =
+                  studySiteContactService.getByStudySite(spartDto.getIdentifier());
+          boolean piFound = false;
+          for (StudySiteContactDTO spContactDto : spContactDtos) {
+              if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode()
+                          .equalsIgnoreCase(spContactDto.getRoleCode().getCode())
+                  || StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode()
+                          .equalsIgnoreCase(spContactDto.getRoleCode().getCode())) {
+                  piFound = true;
+              }
+          } //for
+          Organization orgBo = getPoOrg(spartDto);
+          if (!piFound) {
+              // Error Message ID Does Not Match Participating Site PO ID#
+              abstractionList.add(createError("Error",
+                      "Select Participating Sites from Administrative Data menu.",
+                      "Participating site # " + orgBo.getIdentifier()
+                      + " Must have an Investigator"));
+
+          }
+        // No investigator duplicates must exist on the same treating site for the same trial.
+          if (piFound && hasDuplicate(getPIForTreatingSite(spContactDtos))) {
+                      abstractionList.add(createError("Error", "Select Participating Sites from "
+                      + " Administrative Data menu.",  "Treating site can not have duplicate investigator."));
+                      break;
+          } 
+      }
+      //No participating site duplicates playing same role must exist on the same trial
+      if (hasDuplicate(getTreatingSiteOrg(spList))) {
+             abstractionList.add(createError("Error", "Select Participating Sites from "
+                 + " Administrative Data menu.",  "Trial can not have dupicate Treating Site."));
+      }
+}
+
+private void enforceStudyContactNullification(
           Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionWarnList) throws PAException {
       
       List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolIi);
@@ -552,26 +630,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
   throws PAException {
     List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
     if (!(siList.isEmpty())) {
-      for (int i = 0; i < siList.size(); i++) {
-        int j = 0;
-        if (siList.size() > 1 && (!(i == 0))) {
-          if (siList.get(j).getGrantorCode().getCode().toString().equalsIgnoreCase(
-                   siList.get(i).getGrantorCode().getCode().toString())
-                && siList.get(j).getHolderTypeCode().getCode().toString().equalsIgnoreCase(
-                    siList.get(i).getHolderTypeCode().getCode().toString())
-                && siList.get(j).getIndldeNumber().getValue().toString().equalsIgnoreCase(
-                        siList.get(i).getIndldeNumber().getValue().toString())
-                && siList.get(j).getIndldeTypeCode().getCode().toString().equalsIgnoreCase(
-                            siList.get(i).getIndldeTypeCode().getCode().toString())) {
-           abstractionList.add(createError("Error", "Select Trial IND/IDE under Regulatory Information"
-                + " from Administrative Data menu.", "Trial IND/IDE should not have Duplicate values."));
-            if (i == siList.size()) { //NOPMD
-            } else {
-              j++;
-            }
-          } // if
-        } // if
-      } // for
+      checkDuplicateINDIDE(siList, abstractionList);  
       if (!BlConverter.covertToBool(studyProtocolDto.getFdaRegulatedIndicator())) {
           abstractionList.add(createError("Error", "Select Regulatory Information from Administrative Data menu.",
                   "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records."));
@@ -594,8 +653,32 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     } // if
   } // method
 
+ @SuppressWarnings({"PMD" })
+  private void checkDuplicateINDIDE(List<StudyIndldeDTO> siList,
+        List<AbstractionCompletionDTO> abstractionList) {
+      for (int i = 0; i < siList.size(); i++) {
+          int j = 0;
+          if (siList.size() > 1 && (!(i == 0))) {
+            if (siList.get(j).getGrantorCode().getCode().toString().equalsIgnoreCase(
+                     siList.get(i).getGrantorCode().getCode().toString())
+                  && siList.get(j).getHolderTypeCode().getCode().toString().equalsIgnoreCase(
+                      siList.get(i).getHolderTypeCode().getCode().toString())
+                  && siList.get(j).getIndldeNumber().getValue().toString().equalsIgnoreCase(
+                          siList.get(i).getIndldeNumber().getValue().toString())
+                  && siList.get(j).getIndldeTypeCode().getCode().toString().equalsIgnoreCase(
+                              siList.get(i).getIndldeTypeCode().getCode().toString())) {
+             abstractionList.add(createError("Error", "Select Trial IND/IDE under Regulatory Information"
+                  + " from Administrative Data menu.", "Trial IND/IDE should not have Duplicate values."));
+              if (i == siList.size()) { //NOPMD
+              } else {
+                j++;
+              }
+            } // if
+          } // if
+        } // for
+  }
 
-  private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
+private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
   throws PAException {
       
     List<StudyRegulatoryAuthorityDTO> sraDTOList = studyRegulatoryAuthorityService.getByStudyProtocol(studyProtocolIi);

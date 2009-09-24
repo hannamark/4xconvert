@@ -41,13 +41,21 @@
                         <span class="value"><c:out value="${sessionScope.trialSummary.amendmentNumber }"/></span>
                     </div>
                 </c:if>
+                       <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+                    <div class="row">
+                        <span class="label"><fmt:message key="studyProtocol.trialCategory"/></span>
+                        <span class="value"><c:out value="${sessionScope.trialSummary.trialCategory }" /></span>
+                    </div>
+                </c:if>
 			</div>
 							
 			<div class="float33">
+				<c:if test="${sessionScope.trialSummary.piFullName != null }">
 				<div class="row">
 					<span class="label"><fmt:message key="studyProtocol.principalInvestigator"/>:</span> 
 					<span class="value"><a href="javascript:displayPi();"> <c:out value="${sessionScope.trialSummary.piFullName }"/></a></span>
 				</div>
+				</c:if>
 				<div class="row">
 					 <span class="label">Trial Submitter:</span> 
 					<span class="value"><a href="javascript:displaySubmitter();"><c:out value="${sessionScope.trialSummary.userLastCreated }"/></a></span> 
@@ -61,23 +69,17 @@
 			</div>
 							
 			<div class="float33">
+			   <c:if test="${sessionScope.trialSummary.studyStatusCode.code != null}">
 				<div class="row">
 					<span class="label"> <fmt:message key="studyProtocol.studyStatus"/>:</span> 
 					<span class="value"><c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/></span>
 				</div>
+				</c:if>
 				<div class="row">
 					<span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/></span> 
 					<span class="value"><c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/></span>
 				</div>
 			</div>
-			<div class="float33">
-                <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
-                    <div class="row">
-                        <span class="label"><fmt:message key="studyProtocol.trialCategory"/></span>
-                        <span class="value"><c:out value="${sessionScope.trialSummary.trialCategory }" /></span>
-                    </div>
-                </c:if>
-            </div>	
 			<div class="clear"></div>
 							
    </div>
