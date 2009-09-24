@@ -101,7 +101,9 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
@@ -139,8 +141,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
-import gov.nih.nci.pa.domain.StudyProtocol;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -551,7 +551,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void reject(Ii studyProtocolIi) throws PAException {
         try {
-            StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
+            StudyProtocolDTO studyProtocolDto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
             validate(studyProtocolDto, null , REJECTION);
             Ii targetSpIi = null;
             Ii sourceSpIi = null;
@@ -574,14 +574,20 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 throw new PAException("Study Relationshit not found for the Amended Protocol");
                
             }
-            StudyProtocolDTO sourceSpDto = studyProtocolService.getStudyProtocol(sourceSpIi);
+            InterventionalStudyProtocolDTO sourceSpDto = 
+                studyProtocolService.getInterventionalStudyProtocol(sourceSpIi);
             // overwrite with the target
-            sourceSpDto.setIdentifier(targetSpIi);
             sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
             //studyProtocolService.updateStudyProtocol(sourceSpDto);
             Session session = HibernateUtil.getCurrentSession();
-            StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(sourceSpDto);
-            session.update(sp);
+            InterventionalStudyProtocol source = 
+                InterventionalStudyProtocolConverter.convertFromDTOToDomain(sourceSpDto);
+            Long id = IiConverter.convertToLong(targetSpIi);
+            InterventionalStudyProtocol target = 
+                (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class, id);
+            source.setId(target.getId());
+            target = source;
+            session.merge(target);
             Ii sourceIi = null;
             List<StudyContactDTO> studyContactDtos = 
                 paServiceUtils.getStudyContact(sourceSpIi, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
