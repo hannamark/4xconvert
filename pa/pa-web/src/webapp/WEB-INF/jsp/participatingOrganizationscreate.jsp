@@ -309,6 +309,7 @@
 	  <!-----------------------------------------------End Contact Tab------------------->
 			</div>
 			</td></tr>
+			<s:hidden name="proprietaryTrialIndicator" id="proprietaryTrialIndicator"></s:hidden>
     </table>
 </div>
 </body>

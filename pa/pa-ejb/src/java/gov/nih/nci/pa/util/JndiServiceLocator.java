@@ -104,6 +104,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
@@ -421,5 +422,11 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public StudyInboxServiceLocal getStudyInboxService() {
         return (StudyInboxServiceLocal) JNDIUtil.lookup("/pa/StudyInboxServiceBean/local");
+    }
+    /**
+     * @return StudySiteOverallStatusServiceLocal
+     */
+    public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
+        return (StudySiteOverallStatusServiceLocal) JNDIUtil.lookup("/pa/StudySiteOverallStatusServiceBean/local");
     }
 }

@@ -104,6 +104,7 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
@@ -473,6 +474,13 @@ public final class PaRegistry {
      */
     public static TrialRegistrationServiceRemote getTrialRegistrationService() {
         return getInstance().getServiceLocator().getTrialRegistrationService();
+    }
+    /**
+     * 
+     * @return StudySiteOverallStatusServiceLocal
+     */
+    public static StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
+        return getInstance().getServiceLocator().getStudySiteOverallStatusService();
     }
     
 }

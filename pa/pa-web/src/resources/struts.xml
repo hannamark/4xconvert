@@ -93,6 +93,10 @@
             <result name="display_spContacts">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
             <result name="input">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
             <result name="error">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
+            <result name="proprietaryList">/WEB-INF/jsp/proprietaryParticipatingOrg.jsp</result>
+            <result name="proprietaryCreate">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
+            <result name="proprietaryEdit">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
+            <result name="error_proprietary">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
          </action>  
 
         <action name="collaborators*" class="gov.nih.nci.pa.action.CollaboratorsAction" method="{1}">
@@ -126,6 +130,7 @@
         	<result name="input">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
         	<result name="error">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result> 
         	<result name="error_edit">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>
+        	<result name="displayPerson">/WEB-INF/jsp/nodecorate/sitePrincipalInvestigator.jsp</result>
          </action>       		
   		<!-- needs to be refactored -->
 		<action name="ajaxgetAuthOrgs*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">

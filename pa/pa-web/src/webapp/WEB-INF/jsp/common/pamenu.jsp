@@ -24,10 +24,18 @@
 				</ul>
 			</li>
 			<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
-			<li><div>Validation</div>
+			<div>Validation</div>
                 <ul>
                     <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
-                    <li><a href="studyOverallStatus.action" >Trial Status</a></li>
+                    <c:choose>
+                    <c:when test="${sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+                        <li><a href="participatingOrganizations.action?trialType=proprietary">Participating Sites</a></li>
+                    </c:when>
+                    <c:otherwise>
+                        <li><a href="studyOverallStatus.action" >Trial Status</a></li>
+                    </c:otherwise>
+                    </c:choose>
+                 
                     <li><a href="trialFundingquery.action" >Trial Funding</a></li>
                     <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                     <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>

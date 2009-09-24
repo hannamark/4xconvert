@@ -30,4 +30,17 @@ public interface StudySiteOverallStatusServiceLocal {
      * @throws PAException e
      */
     List<StudySiteOverallStatusDTO> getByStudySite(Ii studySiteIi) throws PAException;
+    /**
+     * 
+     * @param studySiteIdentifier ii
+     * @return dto
+     * @throws PAException e
+     */
+    StudySiteOverallStatusDTO getCurrentByStudySite(Ii studySiteIdentifier) throws PAException;
+    /**
+     * 
+     * @param dto dto to validate 
+     * @throws PAException e
+     */
+    void validate(StudySiteOverallStatusDTO dto) throws PAException;
 }

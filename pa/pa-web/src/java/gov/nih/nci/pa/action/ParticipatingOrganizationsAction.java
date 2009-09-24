@@ -81,8 +81,11 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
@@ -94,9 +97,11 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -107,8 +112,10 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -119,6 +126,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -151,6 +159,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
 @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity",
         "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.NPathComplexity", "PMD.InefficientStringBuffering" })
 public class ParticipatingOrganizationsAction extends ActionSupport implements Preparable {
+    private static final String REC_STATUS_DATE = "recStatusDate";
     private static final long serialVersionUID = 123412653L;
     static final String ACT_FACILITY_SAVE = "facilitySave";
     static final String ACT_EDIT = "edit";
@@ -160,6 +169,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private StudySiteContactServiceRemote sPartContactService;
     OrganizationCorrelationServiceRemote oCService;
     CorrelationUtilsRemote cUtils;
+    private StudyProtocolServiceRemote studyProtocolService;
+    private StudySiteOverallStatusServiceLocal studySiteOverallStatusService;
     private Ii spIi;
     List<PaOrganizationDTO> organizationList = null;
     private OrganizationDTO selectedOrgDTO = null;
@@ -176,6 +187,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private PaOrganizationDTO orgFromPO = new PaOrganizationDTO();
     private String currentAction = "create";
     private String targetAccrualNumber;
+    private String proprietaryTrialIndicator = "false";
+    private String siteLocalTrialIdentifier;
+    private String siteProgramCodeText;
+    private String dateOpenedForAccrual;
+    private String dateClosedForAccrual;
+    private Long studySiteIdentifier;
+    
     //
     private static final String DISPLAY_SP_CONTACTS = "display_StudyPartipants_Contacts";
     private static final String DISPLAY_PRIM_CONTACTS = "display_primContacts";
@@ -199,17 +217,29 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
+        studyProtocolService =  PaRegistry.getStudyProtocolService();
+        studySiteOverallStatusService = PaRegistry.getStudySiteOverallStatusService();
     }
 
     /**
      * @return Action result.
-     * @throws PAException on error
      *
      */
     @Override
-    public String execute() throws PAException {
+    public String execute() {
+        String retString = SUCCESS;
+        try {
         loadForm();
-        return SUCCESS;
+        
+        if (proprietaryTrialIndicator != null
+                && proprietaryTrialIndicator.equalsIgnoreCase("true")) {
+            retString =  "proprietaryList";
+        }
+        } catch (PAException e) {
+            LOG.error(e);
+            addActionError(e.getMessage());
+        }
+        return retString;
     }
 
     /**
@@ -242,7 +272,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     public String facilityUpdate() throws PAException {
         setRecStatus(ServletActionContext.getRequest().getParameter("recStatus"));
-        setRecStatusDate(ServletActionContext.getRequest().getParameter("recStatusDate"));
+        setRecStatusDate(ServletActionContext.getRequest().getParameter(REC_STATUS_DATE));
         setTargetAccrualNumber(ServletActionContext.getRequest().getParameter("targetAccrualNumber"));
         facilitySaveOrUpdate();
         if (hasFieldErrors()) {
@@ -386,10 +416,16 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         sPartService.delete(IiConverter.convertToIi(cbValue));
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         loadForm();
+        if (proprietaryTrialIndicator != null
+                && proprietaryTrialIndicator.equalsIgnoreCase("true")) {
+            return "proprietaryList";
+        }
+
         return ParticipatingOrganizationsAction.ACT_DELETE;
     }
 
     private void loadForm() throws PAException {
+        loadProprietaryIndicator();
         organizationList = new ArrayList<PaOrganizationDTO>();
         StudySiteDTO srDTO = new StudySiteDTO();
         srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
@@ -489,10 +525,24 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
     /**
+     * @throws PAException
+     */
+    private void loadProprietaryIndicator() throws PAException {
+        StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
+        if (!PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
+            && studyProtocolDTO.getProprietaryTrialIndicator().getValue()) {
+            setProprietaryTrialIndicator("true");
+        } else {
+            setProprietaryTrialIndicator("false");
+        }
+    }
+
+    /**
      * @return the organizationList
      * @throws PAException on error.
      */
     public String displayOrg() throws PAException {
+        loadProprietaryIndicator();
         //gov.nih.nci.pa.dto.OrganizationDTO paOrgDTO = new gov.nih.nci.pa.dto.OrganizationDTO();
         PaOrganizationDTO paOrgDTO = new PaOrganizationDTO();
         clearErrorsAndMessages();
@@ -944,7 +994,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             addFieldError("recStatus", getText("error.participatingStatus"));
         }
         if (PAUtil.isEmpty(getRecStatusDate())) {
-            addFieldError("recStatusDate", getText("error.participatingStatusDate"));
+            addFieldError(REC_STATUS_DATE, getText("error.participatingStatusDate"));
         }
         if (PAUtil.isEmpty(orgFromPO.getName())) {
             addFieldError("editOrg.name", "Please choose an organization");
@@ -952,7 +1002,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (!PAUtil.isEmpty(getRecStatusDate())) {
             Timestamp newDate = PAUtil.dateStringToTimestamp(getRecStatusDate());
             if (newDate.after(new Timestamp(new Date().getTime()))) {
-                addFieldError("recStatusDate", getText("error.participatingStatusDateCheck"));
+                addFieldError(REC_STATUS_DATE, getText("error.participatingStatusDateCheck"));
             } 
         }
     }
@@ -1173,4 +1223,341 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
     }
+    /**
+     * 
+     * @return s
+     */
+    public String proprietaryEdit() {
+        setCurrentAction(ACT_EDIT);
+        StudySiteDTO spDto;
+        try {
+            selectedPersTO = null;
+            selectedOrgDTO = null;
+            spDto = sPartService.get(IiConverter.convertToIi(cbValue));
+            studySiteIdentifier = cbValue;
+            editOrg = new Organization();
+            editOrg = cUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
+            orgFromPO = new PaOrganizationDTO();
+            orgFromPO.setName(editOrg.getName());
+
+            siteLocalTrialIdentifier = StConverter.convertToString(
+                    spDto.getLocalStudyProtocolIdentifier());
+            siteProgramCodeText = StConverter.convertToString(spDto.getProgramCodeText());
+            dateOpenedForAccrual = IvlConverter.convertTs().convertLowToString(spDto.getAccrualDateRange());
+            dateClosedForAccrual = IvlConverter.convertTs().convertHighToString(spDto.getAccrualDateRange());
+            
+            //get the person info
+            personContactWebDTO = new PaPersonDTO();
+            StudySiteContactDTO criteriaDTO = new StudySiteContactDTO();
+            criteriaDTO.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR));
+            List<StudySiteContactDTO> resultDTOList = sPartContactService.getByStudyProtocol(
+                    spDto.getStudyProtocolIdentifier(), criteriaDTO);
+            Ii crsIi = null;
+            for (StudySiteContactDTO dto : resultDTOList) {
+                if (dto.getStudySiteIi().getExtension().equals(studySiteIdentifier.toString())) {
+                    crsIi = dto.getClinicalResearchStaffIi();
+                }
+            }
+            Person per = cUtils.getPAPersonByIi(crsIi);
+            personContactWebDTO.setSelectedPersId(Long.valueOf(per.getIdentifier()));
+            personContactWebDTO.setFullName(per.getFullName());
+            
+            //get siteOverallStatus;
+            StudySiteOverallStatusDTO siteStatusDTO = studySiteOverallStatusService.getCurrentByStudySite(
+                    IiConverter.convertToStudySiteOverallStatusIi(studySiteIdentifier));
+            statusCode =  siteStatusDTO.getStatusCode().getCode();
+            recStatusDate = TsConverter.convertToString(siteStatusDTO.getStatusDate());
+        } catch (PAException e) {
+            LOG.equals(e);
+        }
+        
+
+     return "proprietaryEdit";   
+    }
+    /**
+     * 
+     * @return s
+     */
+    public String proprietaryCreate() {
+        try {
+            loadProprietaryIndicator();
+        } catch (PAException e) {
+            LOG.error(e);
+            addActionError(e.getMessage());
+        }
+        return "proprietaryCreate";
+    }
+    /**
+     * @return the siteLocalTrialIdentifier
+     */
+    public String getSiteLocalTrialIdentifier() {
+        return siteLocalTrialIdentifier;
+    }
+
+    /**
+     * @param siteLocalTrialIdentifier the siteLocalTrialIdentifier to set
+     */
+    public void setSiteLocalTrialIdentifier(String siteLocalTrialIdentifier) {
+        this.siteLocalTrialIdentifier = siteLocalTrialIdentifier;
+    }
+
+    /**
+     * @return the siteProgramCodeText
+     */
+    public String getSiteProgramCodeText() {
+        return siteProgramCodeText;
+    }
+
+    /**
+     * @param siteProgramCodeText the siteProgramCodeText to set
+     */
+    public void setSiteProgramCodeText(String siteProgramCodeText) {
+        this.siteProgramCodeText = siteProgramCodeText;
+    }
+
+    /**
+     * @return the dateOpenedForAccrual
+     */
+    public String getDateOpenedForAccrual() {
+        return dateOpenedForAccrual;
+    }
+
+    /**
+     * @param dateOpenedForAccrual the dateOpenedForAccrual to set
+     */
+    public void setDateOpenedForAccrual(String dateOpenedForAccrual) {
+        this.dateOpenedForAccrual = dateOpenedForAccrual;
+    }
+
+    /**
+     * @return the dateClosedForAccrual
+     */
+    public String getDateClosedForAccrual() {
+        return dateClosedForAccrual;
+    }
+
+    /**
+     * @param dateClosedForAccrual the dateClosedForAccrual to set
+     */
+    public void setDateClosedForAccrual(String dateClosedForAccrual) {
+        this.dateClosedForAccrual = dateClosedForAccrual;
+    }
+
+    /**
+     * @return the proprietaryTrialIndicator
+     */
+    public String getProprietaryTrialIndicator() {
+        return proprietaryTrialIndicator;
+    }
+
+    /**
+     * @param proprietaryTrialIndicator the proprietaryTrialIndicator to set
+     */
+    public void setProprietaryTrialIndicator(String proprietaryTrialIndicator) {
+        this.proprietaryTrialIndicator = proprietaryTrialIndicator;
+    }
+    
+    /**
+     * @return the studySiteIdentifier
+     */
+    public Long getStudySiteIdentifier() {
+        return studySiteIdentifier;
+    }
+
+    /**
+     * @param studySiteIdentifier the studySiteIdentifier to set
+     */
+    public void setStudySiteIdentifier(Long studySiteIdentifier) {
+        this.studySiteIdentifier = studySiteIdentifier;
+    }
+
+    /**
+     * 
+     * @return s
+     */
+    public String displayPerson() {
+        String perId = ServletActionContext.getRequest().getParameter("perId");
+        PersonDTO criteria = new PersonDTO();
+        criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(perId)));
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+        PersonDTO perDTO;
+        try {
+            perDTO = PoRegistry.getPersonEntityService().search(criteria, limit).get(0);
+            // convert the PO DTO to the pa domain
+            personContactWebDTO = EnPnConverter.convertToPaPersonDTO(perDTO);
+            personContactWebDTO.setSelectedPersId(personContactWebDTO.getId());
+        } catch (PAException e) {
+            LOG.error(e);
+            addActionError(e.getMessage());
+        } catch (TooManyResultsException e) {
+            LOG.error(e);
+            addActionError(e.getMessage());
+        }
+        return "displayPerson";
+    }
+    /**
+     * 
+     * @return s
+     */
+   public String proprietarySave() {
+       clearErrorsAndMessages();
+       enforceBusinessRulesForProprietary();
+       if (hasErrors()) {
+           return "error_proprietary";
+       }
+       try {
+           save();
+       } catch (PAException e) {
+           LOG.error(e);
+           addActionError(e.getMessage());
+       }
+       return execute();
+   }
+
+    private void save() throws PAException {
+        StudySiteDTO siteDTO = new StudySiteDTO();
+        String poOrgId = editOrg.getIdentifier();
+        Long paHealthCareFacilityId = oCService.createHealthCareFacilityCorrelations(poOrgId);
+        siteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        siteDTO.setHealthcareFacilityIi(IiConverter.convertToIi(paHealthCareFacilityId));
+        if (currentAction.equalsIgnoreCase("create")) {
+            siteDTO.setIdentifier(null);
+        } else {
+            siteDTO.setIdentifier(IiConverter.convertToStudySiteIi(studySiteIdentifier));
+        }
+        siteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+        siteDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+        siteDTO.setStudyProtocolIdentifier(spIi);
+        siteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(siteLocalTrialIdentifier));
+        siteDTO.setProgramCodeText(StConverter.convertToSt(siteProgramCodeText));
+        if (PAUtil.isNotEmpty(dateOpenedForAccrual) 
+                && PAUtil.isNotEmpty(dateClosedForAccrual)) {
+            siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dateOpenedForAccrual,
+                    dateClosedForAccrual));
+        }
+        if (PAUtil.isNotEmpty(dateOpenedForAccrual) 
+                && PAUtil.isEmpty(dateClosedForAccrual)) {
+            siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(dateOpenedForAccrual,
+                    null));
+        }
+        if (currentAction.equalsIgnoreCase("create")) {
+          StudySiteDTO studySiteDTO = sPartService.create(siteDTO);
+          studySiteIdentifier = IiConverter.convertToLong(studySiteDTO.getIdentifier());
+        } else {
+            sPartService.update(siteDTO);
+        }
+        //save studySiteOverallStatus always create new
+        StudySiteOverallStatusDTO siteOverallStatusDTO = new StudySiteOverallStatusDTO();
+        siteOverallStatusDTO.setStatusCode(CdConverter.convertStringToCd(statusCode));
+        siteOverallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
+        siteOverallStatusDTO.setStudySiteIdentifier(IiConverter.
+                convertToStudySiteIi(studySiteIdentifier));
+        studySiteOverallStatusService.create(siteOverallStatusDTO);
+        
+        //save the PI check if PI is there
+        List<StudySiteContactDTO> contactDTOList = sPartContactService.getByStudySite(
+                IiConverter.convertToStudySiteIi(studySiteIdentifier));
+        if (contactDTOList.isEmpty()) {
+            ParticipatingOrganizationsTabWebDTO orgsTabWebDTO = new ParticipatingOrganizationsTabWebDTO();
+            orgsTabWebDTO.setStudyParticipationId(studySiteIdentifier);
+            orgsTabWebDTO.setFacilityOrganization(editOrg);
+            
+            selectedPersTO = new PersonDTO(); 
+            selectedPersTO.setIdentifier(IiConverter.convertToPoPersonIi(
+                    personContactWebDTO.getSelectedPersId().toString()));
+            
+            createStudyParticationContactRecord(orgsTabWebDTO, false,
+                StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode(), null);
+        } else {
+            updateStudyParticationContactRecord(contactDTOList, poOrgId,
+                    personContactWebDTO.getSelectedPersId().toString());
+                    
+        }
+    }
+
+    private void updateStudyParticationContactRecord(
+            List<StudySiteContactDTO> contactDTOList, String poOrgId,
+            String selectedPersId) throws PAException {
+        
+        StudyProtocolQueryDTO studyProtocolQueryDto = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
+            .getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        String trialType = studyProtocolQueryDto.getStudyProtocolType();
+        
+        StudySiteContactDTO participationContactDTO = contactDTOList.get(0);
+            Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean().
+        createClinicalResearchStaffCorrelations(poOrgId, selectedPersId);
+        Long healthCareProviderIi = null;
+        if (trialType.startsWith("Interventional")) {
+            healthCareProviderIi = new HealthCareProviderCorrelationBean().createHealthCareProviderCorrelationBeans(
+                    poOrgId, selectedPersId);
+        }
+        participationContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid.toString()));
+        participationContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
+        
+        sPartContactService.update(participationContactDTO);
+    }
+
+    private void enforceBusinessRulesForProprietary() {
+        if (PAUtil.isEmpty(editOrg.getIdentifier())) {
+            addFieldError("editOrg.identifier", getText("error.orgId.required"));
+        }
+        if (PAUtil.isEmpty(siteLocalTrialIdentifier)) {
+            addFieldError("siteLocalTrialIdentifier", getText("error.siteLocalTrialIdentifier.required"));
+        }
+        if (PAUtil.isEmpty(personContactWebDTO.getSelectedPersId().toString())) {
+            addFieldError("personContactWebDTO.selectedPersId", getText("error.selectedPersId.required"));
+        }
+        if (PAUtil.isEmpty(statusCode)) {
+            addFieldError("statusCode", getText("error.statusCode.required"));
+        } 
+        String err = "error.submit.invalidDate";      // validate date and its format
+        if (!PAUtil.isValidDate(recStatusDate)) {
+            addFieldError(REC_STATUS_DATE, getText(err));
+        } else if (PAUtil.isDateCurrentOrPast(recStatusDate)) {
+                addFieldError(REC_STATUS_DATE, getText("error.submit.invalidStatusDate"));
+        }
+        if (PAUtil.isNotEmpty(dateOpenedForAccrual)) {
+                if (!PAUtil.isValidDate(dateOpenedForAccrual)) {
+                    addFieldError("dateOpenedForAccrual", getText(err));
+                } else if (PAUtil.isDateCurrentOrPast(dateOpenedForAccrual)) {
+                    addFieldError("dateOpenedForAccrual", getText("error.submit.invalidStatusDate"));
+                }
+        }
+        if (PAUtil.isNotEmpty(dateClosedForAccrual)) {
+                if (!PAUtil.isValidDate(dateClosedForAccrual)) {
+                    addFieldError("dateClosedForAccrual", getText(err));
+                } else if (PAUtil.isDateCurrentOrPast(dateClosedForAccrual)) {
+                    addFieldError("dateClosedForAccrual", getText("error.submit.invalidStatusDate"));
+                }
+        }
+        if (PAUtil.isNotEmpty(dateClosedForAccrual)  
+            && PAUtil.isEmpty(dateOpenedForAccrual)) {
+                addFieldError("dateOpenedForAccrual", 
+                        getText("error.proprietary.dateOpenReq"));
+        }
+        if (PAUtil.isNotEmpty(dateOpenedForAccrual)
+                && PAUtil.isNotEmpty(dateClosedForAccrual)) {
+            Timestamp dateOpenedDateStamp = PAUtil.dateStringToTimestamp(dateOpenedForAccrual);
+            Timestamp dateClosedDateStamp = PAUtil.dateStringToTimestamp(dateClosedForAccrual);
+            if (dateClosedDateStamp.before(dateOpenedDateStamp)) {
+                addFieldError("dateClosedForAccrual", 
+                        getText("error.proprietary.dateClosedAccrualBigger"));                
+            }
+        }
+        if (studySiteIdentifier != null && PAUtil.isNotEmpty(statusCode) 
+                && PAUtil.isNotEmpty(recStatusDate)) {
+            StudySiteOverallStatusDTO siteOverallStatusDTO = new StudySiteOverallStatusDTO();
+            siteOverallStatusDTO.setStatusCode(CdConverter.convertStringToCd(statusCode));
+            siteOverallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
+            siteOverallStatusDTO.setStudySiteIdentifier(IiConverter.
+                    convertToStudySiteIi(studySiteIdentifier));
+            try {
+                studySiteOverallStatusService.validate(siteOverallStatusDTO);
+            } catch (PAException e) {
+                addActionError(e.getMessage());
+            }
+        }
+
+    }
+    
 }

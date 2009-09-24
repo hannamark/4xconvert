@@ -1,4 +1,5 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <table  class="form">
 		<tr>
 		    <td scope="row" class="label"><s:label for="editOrg.name">Organization Name:</s:label><span class="required">*</span>
@@ -25,6 +26,7 @@
 			     </s:if>
 			 </td> 
 		</tr>
+		<c:if test="${proprietaryTrialIndicator == 'false'}">
 		<tr>
 		    <td scope="row" class="label"><s:label for="editOrg.city">City:</s:label><span class="required">*</span></td>
 		    <td class="value" colspan="2">
@@ -52,5 +54,6 @@
 		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
 		    </td>
 		</tr>
+    </c:if>
     <s:hidden name="editOrg.identifier" id="editOrg.identifier" ></s:hidden>
 </table>

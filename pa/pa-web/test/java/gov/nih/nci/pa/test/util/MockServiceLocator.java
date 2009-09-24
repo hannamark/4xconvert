@@ -112,6 +112,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceBean;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
@@ -506,6 +507,11 @@ public class MockServiceLocator implements ServiceLocator {
 	}
 
     public TrialRegistrationServiceRemote getTrialRegistrationService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
         // TODO Auto-generated method stub
         return null;
     }

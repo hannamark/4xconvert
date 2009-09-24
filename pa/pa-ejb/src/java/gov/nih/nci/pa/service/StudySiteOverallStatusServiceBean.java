@@ -50,31 +50,7 @@ public  class StudySiteOverallStatusServiceBean  implements
         Session session = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            // enforce business rules
-           StudySiteOverallStatusDTO oldStatus = getCurrentByStudySite(dto.getStudySiteIdentifier());
-
-           StudyStatusCode oldCode = null;
-            Timestamp oldDate = null;
-
-            if (oldStatus != null) {
-                oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
-                oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
-            }
-            StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
-            Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
-            if (newCode == null) {
-                throw new PAException("Study status must be set.  ");
-            }
-            if (newDate == null) {
-                throw new PAException("Study status date must be set.  ");
-            }
-            if ((oldCode != null) && !oldCode.canTransitionTo(newCode)) {
-                throw new PAException("Illegal site status transition from " + oldCode.getCode()
-                        + " to " + newCode.getCode() + ".  ");
-            }
-            if ((oldDate != null) && newDate.before(oldDate)) {
-                throw new PAException("New current site status date should be bigger/same as old date.  ");
-            }
+            validate(dto);
 
             StudySiteOverallStatus bo = Converters.get(StudySiteOverallStatusConverter.class).
                 convertFromDtoToDomain(dto);
@@ -87,7 +63,47 @@ public  class StudySiteOverallStatusServiceBean  implements
         }
         return resultDto;
     }
-    private StudySiteOverallStatusDTO getCurrentByStudySite(
+    /**
+     * @param dto dto to validate
+     * @throws PAException e
+     */
+    public void validate(StudySiteOverallStatusDTO dto) throws PAException {
+         StringBuffer sb = new StringBuffer();
+         // enforce business rules
+         StudySiteOverallStatusDTO oldStatus = getCurrentByStudySite(dto.getStudySiteIdentifier());
+         StudyStatusCode oldCode = null;
+         Timestamp oldDate = null;
+        if (oldStatus != null) {
+            oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
+            oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
+        }
+        StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
+        Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
+        if (newCode == null) {
+            sb.append("Study status must be set.  ");
+        }
+        if (newDate == null) {
+            sb.append("Study status date must be set.  ");
+        }
+        if ((oldCode != null) && isTrialStatusOrDateChanged(dto, dto.getStudySiteIdentifier()) 
+                && !oldCode.canTransitionTo(newCode)) {
+            sb.append("Illegal site status transition from " + oldCode.getCode()
+                    + " to " + newCode.getCode() + ".  ");
+        }
+        if ((oldDate != null) && newDate.before(oldDate)) {
+            sb.append("New current site status date should be bigger/same as old date.  ");
+        }
+        if (sb.length() > 1) {
+            throw new PAException(sb.toString());
+        }
+    }
+    /**
+     * 
+     * @param studySiteIdentifier ii
+     * @return dto
+     * @throws PAException e
+     */
+    public StudySiteOverallStatusDTO getCurrentByStudySite(
             Ii studySiteIdentifier) throws PAException {
         List<StudySiteOverallStatusDTO> dtoList = getByStudySite(studySiteIdentifier);
         StudySiteOverallStatusDTO result = null;
@@ -144,5 +160,25 @@ public  class StudySiteOverallStatusServiceBean  implements
                 + resultList.size() + " object(s).");
         return resultList;
     }
+    private boolean isTrialStatusOrDateChanged(StudySiteOverallStatusDTO newStatusDto,
+            Ii studySiteIdentifier) throws PAException {
+
+        boolean statusOrDateChanged = true;
+        StudySiteOverallStatusDTO  currentDBdto = getCurrentByStudySite(studySiteIdentifier);
+        StudyStatusCode currentStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
+        Timestamp currentStatusDate = PAUtil.dateStringToTimestamp(currentDBdto.getStatusDate().toString());
+        
+        boolean codeChanged = (StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode()) == null)
+                ? (currentStatusCode != null) 
+                        : !StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode()).equals(currentStatusCode);
+        boolean statusDateChanged = (currentStatusDate == null) 
+                ? (PAUtil.dateStringToTimestamp(newStatusDto.getStatusDate().toString()) != null) 
+                : !currentStatusDate.equals(PAUtil.dateStringToTimestamp(newStatusDto.getStatusDate().toString()));
+        if (!codeChanged && !statusDateChanged) {
+            statusOrDateChanged = false;
+        }
+        return statusOrDateChanged;
+    }
+
 
 }

@@ -677,6 +677,29 @@ public class PAUtil {
         }
         return retValue;
     }
-
+    /**
+     * check if the date is of valid format.
+     * @param dateString dateString
+     * @return boolean
+     */
+    @SuppressWarnings({"PMD" })
+    public static boolean isValidDate(String dateString) {
+        if (PAUtil.isEmpty(dateString)) {
+            return false;
+        }
+        //set the format to use as a constructor argument   
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");        
+        if (dateString.trim().length() != dateFormat.toPattern().length())  {    
+            return false;
+        }
+        dateFormat.setLenient(false);       
+        try {      
+            //parse the date    
+            dateFormat.parse(dateString.trim());   
+        } catch (ParseException pe) {    
+            return false;    
+        }    
+        return true;  
+   }
 
 }
