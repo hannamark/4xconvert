@@ -125,6 +125,7 @@ public class Converters {
     private static StudySiteOverallStatusConverter studySiteOverallStatusConverter = 
             new StudySiteOverallStatusConverter();
     private static StudyInboxConverter studyInboxConverter = new StudyInboxConverter();
+    private static StudyCheckoutConverter studyCheckoutConverter = new StudyCheckoutConverter();
    
 /**
      * @param clazz class
@@ -214,7 +215,10 @@ public class Converters {
         }
         if (clazz.equals(StudyInboxConverter.class)) {
             return (TYPE) studyInboxConverter;
-        }        
+        }   
+        if (clazz.equals(StudyCheckoutConverter.class)) {
+            return (TYPE) studyCheckoutConverter;
+        }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }
 }

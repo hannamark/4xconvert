@@ -14,6 +14,11 @@
     <display:column titleKey="studyProtocol.studyOnholdReasons" property="onHoldReasons"  headerClass="sortable"/>
     <display:column titleKey="studyProtocol.studyOnholdDates" property="offHoldDates" headerClass="sortable"/>
     <display:column titleKey="studyProtocol.submissionType" property="submissionTypeCode"  headerClass="sortable"/>
+   	<display:column titleKey="studyProtocol.checkOutBy"  sortable="true" headerClass="sortable">
+    	<s:if test="%{#attr.row.studyCheckoutBy != null}">
+    		<c:out value="${row.studyCheckoutBy}"/>
+    	</s:if>
+    </display:column>
     <c:if test="${(sessionScope.role == 'Abstractor')}">
         <display:column class="title" 
             titleKey="studyProtocol.action" 

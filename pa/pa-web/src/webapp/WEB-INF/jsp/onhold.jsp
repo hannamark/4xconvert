@@ -43,6 +43,7 @@ function handleEdit(rowId){
                 <display:column property="reasonText" sortable="false" titleKey="onhold.reason.text"/>
                 <display:column property="dateLow" sortable="false" titleKey="onhold.date.low"/>
                 <display:column property="dateHigh" sortable="false" titleKey="onhold.date.high"/>
+                <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
                 <display:column titleKey="onhold.edit" headerClass="centered" class="action">
                     <c:if test="${(row.dateHigh==null)}">
                     <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
@@ -51,12 +52,15 @@ function handleEdit(rowId){
                     </s:a>
                     </c:if>
                 </display:column>
+                </c:if>
              </display:table>
         </td></tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
+    <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+     </c:if>   
         <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
             <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
         </c:if>    

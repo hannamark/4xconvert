@@ -278,11 +278,13 @@
          <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
+                <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
                     <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted'}">
                         <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
                         <li><a href="#" class="btn" onclick="handleActionAccept();"><span class="btn_img"><span class="save">Accept</span></span></a></li>
                         <li><a href="#" class="btn" onclick="handleActionReject();"><span class="btn_img"><span class="save">Reject</span></span></a></li>
                     </c:if>
+                  </c:if>  
                 </ul>   
             </del>
 

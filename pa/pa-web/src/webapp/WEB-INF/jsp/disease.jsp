@@ -75,6 +75,7 @@ function handleCreate(){
                     titleKey="disease.parentPreferredName" headerClass="sortable" />
                 <display:column property="lead" sortable="true"
                     titleKey="disease.lead" headerClass="sortable" />
+                <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
                 <display:column titleKey="disease.edit" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleEdit(%{#attr.row.studyDiseaseIdentifier})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
@@ -87,14 +88,17 @@ function handleCreate(){
                             alt="Delete" width="16" height="16" />
                     </s:a>
                 </display:column>
+                </c:if> 
             </display:table>
         </td>
         </tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
+        <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
+        </c:if>        
         <li>
             <a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img">
                 <span class="back">Back</span></span></a>

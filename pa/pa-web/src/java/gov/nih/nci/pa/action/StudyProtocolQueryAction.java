@@ -81,7 +81,9 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
@@ -89,6 +91,7 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +118,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
+    private boolean checkoutStatus = false;
     /**
      * @return res
      * @throws PAException exception
@@ -154,6 +158,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         }
         try {
             records = new ArrayList<StudyProtocolQueryDTO>();
+            criteria.setUserLastCreated(ServletActionContext.getRequest().getUserPrincipal().getName());
             records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
             return SUCCESS;
         } catch (Exception e) {
@@ -227,6 +232,16 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode())); 
             
+            Principal userPrincipal = ServletActionContext.getRequest().getUserPrincipal();
+            String loginName = userPrincipal.getName();
+            
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    Constants.LOGGED_USER_NAME, loginName);
+            
+            if (studyProtocolQueryDTO.getStudyCheckoutBy() != null && loginName != null 
+                    && studyProtocolQueryDTO.getStudyCheckoutBy().equalsIgnoreCase(loginName)) {
+                setCheckoutStatus(true);
+            }
             return "view";
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
@@ -276,6 +291,38 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         }
         return action;
     }
+    
+    /**
+     * @return res
+     * @throws PAException exception
+     */
+    public String checkout() throws PAException {        
+        try {
+            StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry
+                                        .getProtocolQueryService()
+                                        .getTrialSummaryByStudyProtocolId(studyProtocolId);
+
+            Principal userPrincipal = ServletActionContext.getRequest().getUserPrincipal();
+            String loginName = userPrincipal.getName();
+
+            StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
+            scoDTO.setStudyProtocolIdentifier(
+                    IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()));
+            scoDTO.setUserIdentifier(StConverter.convertToSt(loginName));
+            
+            if (checkoutStatus) {
+                PaRegistry.getStudyCheckoutService().create(scoDTO);        
+            } else if (studyProtocolQueryDTO.getStudyCheckoutId() != null) {
+                PaRegistry.getStudyCheckoutService().delete(
+                        IiConverter.convertToIi(studyProtocolQueryDTO.getStudyCheckoutId()));       
+            }
+            view();            
+            return "view";
+        } catch (PAException e) {
+            addActionError(e.getLocalizedMessage());
+            return ERROR;
+        }
+    }
 
     /**
      * @return the servletResponse
@@ -294,5 +341,21 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     
     private boolean userRoleInSession() {
         return (null != ServletActionContext.getRequest().getSession().getAttribute(Constants.USER_ROLE));
+    }
+
+    /**
+     * Checks if is checkout status.
+     * @return true, if is checkout status
+     */
+    public boolean isCheckoutStatus() {
+        return checkoutStatus;
+    }
+
+    /**
+     * Sets the checkout status.
+     * @param checkoutStatus the new checkout status
+     */
+    public void setCheckoutStatus(boolean checkoutStatus) {
+        this.checkoutStatus = checkoutStatus;
     }
 }

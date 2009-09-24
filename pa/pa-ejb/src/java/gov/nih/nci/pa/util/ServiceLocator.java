@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StratumGroupServiceRemote;
+import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
@@ -350,12 +351,16 @@ public interface ServiceLocator {
      * @return TrialRegistrationServiceRemote
      */
     TrialRegistrationServiceRemote getTrialRegistrationService();
-
+    
     /**
      * 
      * @return StudySiteOverallStatusServiceLocal
      */
     StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService();
-
+    
+    /**
+     * @return StudyCheckoutService
+     */
+    StudyCheckoutServiceLocal getStudyCheckoutService(); 
 }
 

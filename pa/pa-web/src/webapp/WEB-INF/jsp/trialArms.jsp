@@ -68,6 +68,7 @@ function handleCreateGroup(){
                     titleKey="arms.description"
                     headerClass="sortable" />
                 <display:column property="interventions" titleKey="arms.interventions"/>
+                <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
                 <display:column titleKey="arms.edit" headerClass="centered" class="action">
                     <s:if test="%{currentAction == 'listArm'}">
                     <s:a href="#" onclick="handleEditArm(%{#attr.row.identifier})">
@@ -88,6 +89,7 @@ function handleCreateGroup(){
                             alt="Delete" width="16" height="16" />
                     </s:a>
                 </display:column>
+                </c:if>
             </display:table>
             
             
@@ -96,6 +98,7 @@ function handleCreateGroup(){
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
+    <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
         <s:if test="%{currentAction == 'listArm'}">
             <li><a href="#" class="btn" onclick="this.blur();handleCreateArm();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
@@ -103,6 +106,7 @@ function handleCreateGroup(){
             <li><a href="#" class="btn" onclick="this.blur();handleCreateGroup();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
         </s:elseif>
+     </c:if>   
         <li><a href="trialInterventions.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="back">Back</span></span></a></li>

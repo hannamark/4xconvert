@@ -132,6 +132,8 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Date updatedDate;
     private Long studyInboxId;
     private String isProprietaryTrial;
+    private String studyCheckoutBy;
+    private Long studyCheckoutId;
     private String trialCategory;
     
    /**
@@ -146,8 +148,7 @@ public class StudyProtocolQueryDTO implements Serializable {
         return trialCategory;
       }
     }
-
-
+    
     /**
      * @return the isProprietaryTrial
      */
@@ -583,10 +584,28 @@ public class StudyProtocolQueryDTO implements Serializable {
     public Date getAmendmentDate() {
         return amendmentDate;
     }
-
-    
-    
-    
-
-
+    /**
+     * @return the studyCheckoutBy
+     */
+    public String getStudyCheckoutBy() {
+        return studyCheckoutBy;
+    }
+    /**
+     * @param studyCheckoutBy the studyCheckoutBy to set
+     */
+    public void setStudyCheckoutBy(String studyCheckoutBy) {
+        this.studyCheckoutBy = studyCheckoutBy;
+    }
+    /**
+     * @return the studyCheckoutId
+     */
+    public Long getStudyCheckoutId() {
+        return studyCheckoutId;
+    }
+    /**
+     * @param studyCheckoutId the studyCheckoutId to set
+     */
+    public void setStudyCheckoutId(Long studyCheckoutId) {
+        this.studyCheckoutId = studyCheckoutId;
+    }
 }

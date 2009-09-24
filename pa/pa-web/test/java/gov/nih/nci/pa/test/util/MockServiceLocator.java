@@ -94,6 +94,8 @@ import gov.nih.nci.pa.service.RegulatoryAuthorityServiceBean;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StratumGroupServiceBean;
 import gov.nih.nci.pa.service.StratumGroupServiceRemote;
+import gov.nih.nci.pa.service.StudyCheckoutServiceBean;
+import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
@@ -186,8 +188,10 @@ public class MockServiceLocator implements ServiceLocator {
     private final StratumGroupServiceRemote stratumGroupService = new StratumGroupServiceBean();
     private final StudyMilestoneTasksServiceLocal studyMilestoneTasksService = new StudyMilestoneTasksServiceBean();
     private final StudySiteAccrualAccessServiceLocal studySiteAccrualAccessService = new MockStudySiteAccrualAccessService();
-   private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
+    private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
     private final StudyInboxServiceLocal studyInboxService = new StudyInboxServiceBean();
+    private final StudyCheckoutServiceLocal studyCheckoutService = new StudyCheckoutServiceBean();
+    
     /**
      * @return mock service
      */
@@ -514,5 +518,9 @@ public class MockServiceLocator implements ServiceLocator {
     public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public StudyCheckoutServiceLocal getStudyCheckoutService() {
+        return studyCheckoutService;
     }
 }

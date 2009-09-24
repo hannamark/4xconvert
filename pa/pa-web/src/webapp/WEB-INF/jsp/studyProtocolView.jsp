@@ -13,6 +13,15 @@
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 	}
+	function handleAction(){
+	var studyProtocolId;
+	studyProtocolId='${sessionScope.trialSummary.studyProtocolId }';
+	input_box=confirm("Click OK to save changes or Cancel to Abort.");
+	if (input_box==true){
+	 		document.forms[0].action="studyProtocolcheckout.action?studyProtocolId="+studyProtocolId;
+	 		document.forms[0].submit(); 
+	 }
+} 
 	</SCRIPT>
 </head>
 
@@ -80,17 +89,33 @@
             <td class="value">
                  <c:out value="${sessionScope.trialSummary.officialTitle }"/> 
             </td>
-            </tr>       
+            </tr> 
+             <tr>     
+            <td scope="row" class="label">
+                <label for="checkOutStatus">
+                    <fmt:message key="studyProtocol.checkOutStatus"/>
+                </label>
+            </td>
+            <td class="value">
+            	<c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null)
+            						|| (sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)}">
+                 <s:select  name="checkoutStatus" list="#{'false':'Check-In', 'true':'Check-Out'}" />
+                 </c:if>
+                 <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName != sessionScope.trialSummary.studyCheckoutBy}">
+                 		<b><c:out value="${sessionScope.trialSummary.studyCheckoutBy }"/> </b>
+                 </c:if>
+            </td>
+            </tr>     
             </table>  
-<!--        
+        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null) || (sessionScope.trialSummary.studyCheckoutBy == sessionScope.loggedUserName)}">
  <div class="actionsrow">
 	<del class="btnwrapper">
 		<ul class="btnrow">
-			<li><a href="studyProtocolEdit.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="edit">Edit</span></span></a></li>
+			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
 		</ul>	
 	</del>
 </div>
--->
+</c:if>
                   
     </s:form>
    </div>

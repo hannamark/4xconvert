@@ -76,128 +76,50 @@
 * 
 * 
 */
-package gov.nih.nci.pa.action;
+package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.dto.PaPersonDTO;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
+import gov.nih.nci.pa.domain.StudyCheckout;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
-import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
-import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.services.entity.NullifiedEntityException;
-import gov.nih.nci.services.person.PersonDTO;
-
-import org.apache.struts2.ServletActionContext;
-
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.Preparable;
 
 /**
- * 
- * @author Harsha
- * @since 01/23/2009 
+ * @author Kalpana Guthikonda
+ * @since 09/18/2009
  */
-public class DisplayInfoAction extends ActionSupport implements Preparable {
-    private static final long serialVersionUID = 1263639653650385803L;
-    PaPersonDTO persWebDTO = new PaPersonDTO();
-    CorrelationUtilsRemote cUtils;
-    /**
-     * 
-     */
-    public void prepare() {
-        cUtils = new CorrelationUtils();
+public class StudyCheckoutConverter extends AbstractConverter<StudyCheckoutDTO, StudyCheckout> {
+  /**
+   * @param bo domain object
+   * @return dto
+   * @throws PAException exception
+   */
+  @Override
+  public StudyCheckoutDTO convertFromDomainToDto(StudyCheckout bo)
+          throws PAException {
+      StudyCheckoutDTO dto = new StudyCheckoutDTO();
+      dto.setUserIdentifier(StConverter.convertToSt(bo.getUserIdentifier()));
+      dto.setIdentifier(IiConverter.convertToStudyOnHoldIi(bo.getId()));
+      dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
+      return dto;
+  }
 
-    }
-
-    /**
-     * 
-     * @return String success or failure
-     */
-    public String query() {
-        try {
-            StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
-                    .getSession().getAttribute(Constants.TRIAL_SUMMARY);
-            String user = studyProtocolQueryDTO.getUserLastCreated();
-            RegistryUser userInfo = PaRegistry.getRegisterUserService().getUser(user);
-            persWebDTO.setFirstName(userInfo.getFirstName());
-            persWebDTO.setLastName(userInfo.getLastName());
-            persWebDTO.setEmail(user);
-            persWebDTO.setMiddleName(userInfo.getMiddleName());
-            persWebDTO.setCity(userInfo.getCity());
-            persWebDTO.setState(userInfo.getState());
-            persWebDTO.setCountry(userInfo.getCountry());
-            persWebDTO.setZip(userInfo.getPostalCode());
-            persWebDTO.setTelephone(userInfo.getPhone());
-            return SUCCESS;
-        } catch (PAException pax) {
-            return ERROR;
-        }
-    }
-
-    /**
-     * 
-     * @return String success or failure
-     */
-    public String queryPiInfo() {
-        try {
-            StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
-                    .getSession().getAttribute(Constants.TRIAL_SUMMARY);
-            Person userInfo = cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO.getPiId()));
-            PersonDTO poPerson = PoRegistry.getPersonEntityService().getPerson(
-                    IiConverter.convertToPoPersonIi(userInfo.getIdentifier()));
-            persWebDTO = EnPnConverter.convertToPaPersonDTO(poPerson);
-            persWebDTO.setTelephone(null);
-            return SUCCESS;
-        } catch (PAException e) {
-            return ERROR;
-        } catch (NullifiedEntityException e) {
-            return ERROR;
-        }
-    }
-    
-    /**
-     * 
-     * @return String success or failure
-     */
-    public String checkoutUser() {
-        try {
-            StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
-                    .getSession().getAttribute(Constants.TRIAL_SUMMARY);          
-            
-            RegistryUser userInfo = PaRegistry.getRegisterUserService()
-                                    .getUser(studyProtocolQueryDTO.getStudyCheckoutBy());
-            persWebDTO.setFirstName(userInfo.getFirstName());
-            persWebDTO.setLastName(userInfo.getLastName());
-            persWebDTO.setEmail(studyProtocolQueryDTO.getStudyCheckoutBy());
-            persWebDTO.setMiddleName(userInfo.getMiddleName());
-            persWebDTO.setCity(userInfo.getCity());
-            persWebDTO.setState(userInfo.getState());
-            persWebDTO.setCountry(userInfo.getCountry());
-            persWebDTO.setZip(userInfo.getPostalCode());
-            persWebDTO.setTelephone(userInfo.getPhone());
-            return SUCCESS;
-        } catch (PAException pax) {
-            return ERROR;
-        }
-    }
-
-    /**
-     * @return the persWebDTO
-     */
-    public PaPersonDTO getWebDTO() {
-        return persWebDTO;
-    }
-
-    /**
-     * @param personWebDTO the persWebDTO to set
-     */
-    public void setWebDTO(PaPersonDTO personWebDTO) {
-        this.persWebDTO = personWebDTO;
-    }
+  /**
+   * @param dto dto
+   * @return domain object
+   * @throws PAException exception
+   */
+  @Override
+  public StudyCheckout convertFromDtoToDomain(StudyCheckoutDTO dto)
+          throws PAException {
+      StudyProtocol spBo = new StudyProtocol();
+      spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+      
+      StudyCheckout bo = new StudyCheckout();
+      bo.setUserIdentifier(StConverter.convertToString(dto.getUserIdentifier()));
+      bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+      bo.setStudyProtocol(spBo);
+      return bo;
+  }
 }

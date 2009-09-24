@@ -118,6 +118,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
+import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
@@ -253,6 +254,7 @@ public class TestSchema {
             addAnnotatedClass(MappingIdentifier.class).
             addAnnotatedClass(StudySiteAccrualAccess.class).
             addAnnotatedClass(StudyInbox.class).
+            addAnnotatedClass(StudyCheckout.class).
            
             // Accrual classes
             addAnnotatedClass(Patient.class).
@@ -675,6 +677,11 @@ public class TestSchema {
             rega.setAuthorityName("Authority");
             addUpdObject(rega);
             regAuthIds.add(rega.getId());
+            
+            StudyCheckout scheckout = new StudyCheckout();
+            scheckout.setStudyProtocol(sp);
+            scheckout.setUserIdentifier("Abstractor");
+            addUpdObject(scheckout);
 
             HibernateUtil.getCurrentSession().clear();
         }

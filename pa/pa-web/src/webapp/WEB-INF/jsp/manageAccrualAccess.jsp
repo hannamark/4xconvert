@@ -45,20 +45,31 @@ function handleEdit(rowId){
                 <display:column property="siteName" sortable="false" titleKey="manageAccrualAccess.siteName"/>
                 <display:column property="siteRecruitmentStatus" sortable="false" titleKey="manageAccrualAccess.siteRecruitmentStatus"/>
                 <display:column property="statusCode.code" sortable="false" titleKey="manageAccrualAccess.statusCode"/>
+                <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
                 <display:column titleKey="magageAccrualAccess.edit" headerClass="centered" class="action">
                     <s:a href="#" onclick="handleEdit(%{#attr.row.id})">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>
                 </display:column>
+                </c:if>
              </display:table>
         </td></tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
+        <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+        </c:if>
         <li><a href="onhold.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-        <li><a href="generalTrialDesignquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li> 
+        <c:choose>
+        <c:when test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+        <li><a href="trialDocumentquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+        </c:when>
+        <c:otherwise>
+        <li><a href="generalTrialDesignquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+        </c:otherwise>
+        </c:choose>
     </ul>
     </del></div>
 </s:form></div>

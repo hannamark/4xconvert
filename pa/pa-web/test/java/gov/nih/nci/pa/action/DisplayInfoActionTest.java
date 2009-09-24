@@ -58,4 +58,8 @@ public class DisplayInfoActionTest extends AbstractPaActionTest {
         sess.setAttribute(Constants.TRIAL_SUMMARY, ts);
         assertEquals("success",action.query());
     }
+    @Test
+    public void testcheckoutUser() {
+        assertEquals("success",action.checkoutUser());
+    }
 }

@@ -37,6 +37,7 @@ function resetValues(){
     document.getElementById("studyMilestone").value="";
     document.getElementById("searchOnHold").checked=false;
     document.getElementById("submissionType").value="";
+    document.getElementById("studyLockedBy").checked=false;
 }
 </SCRIPT>
 <body>
@@ -164,6 +165,13 @@ function resetValues(){
                     <s:checkbox id="searchOnHold" name="criteria.searchOnHold" />
                     <input type="hidden" id="searchOnHold" value="false">
                     
+                </td> 
+                <td scope="row" class="label">
+                    <label for="studyLockedBy"> <fmt:message key="studyProtocol.searchOnCheckout"/></label>                        
+                </td>
+                <td>
+                    <s:checkbox id="studyLockedBy" name="criteria.studyLockedBy" />
+                    <input type="hidden" id="studyLockedBy" value="false">                    
                 </td> 
                 </tr>
                 <tr>

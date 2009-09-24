@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
@@ -146,6 +147,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     private static final int LEAD_ORG_INDEX = 5;
     private static final int STUDY_SITE_INDEX = 6;
     private static final int STUDY_INBOX_INDEX = 8;
+    private static final int STUDY_CHECKOUT_INDEX = 9;
     
     /**
      * gets a list StudyProtocl by criteria.
@@ -234,6 +236,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         Person person = null;
         StudySite studySite = null;
         StudyInbox studyInbox = null;
+        StudyCheckout studyCheckout = null;
         // array of objects for each row
         Object[] searchResult = null;
         try {
@@ -259,6 +262,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 studySite = (StudySite) searchResult[STUDY_SITE_INDEX];
                 // get the StudyInbox
                 studyInbox = (StudyInbox) searchResult[STUDY_INBOX_INDEX];
+                studyCheckout = (StudyCheckout) searchResult[STUDY_CHECKOUT_INDEX];
 
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
@@ -334,6 +338,10 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                   if (studyInbox.getOpenDate() != null) {
                     studyProtocolDto.setUpdatedDate(studyInbox.getOpenDate());
                   }
+                }
+                if (studyCheckout != null) {
+                    studyProtocolDto.setStudyCheckoutBy(studyCheckout.getUserIdentifier());
+                    studyProtocolDto.setStudyCheckoutId(studyCheckout.getId());
                 }
                 // add to the list
                 studyProtocolDtos.add(studyProtocolDto);
@@ -488,7 +496,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StringBuffer hql = new StringBuffer();
         try {
             hql
-                    .append(" select sp , dws , sms , sos  , per , org , sps , sc, sinbx from StudyProtocol as sp  "
+                 .append(" select sp , dws , sms , sos  , per , org , sps , sc, sinbx, " 
+                            + "scheckout from StudyProtocol as sp  "
                             + "left outer join sp.documentWorkflowStatuses as dws  "
                             + "left outer join sp.studyMilestones as sms  "
                             + "left outer join sp.studyOverallStatuses as sos  "
@@ -498,7 +507,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             + "left outer join sp.studySites as sps  "
                             + "left outer join sps.researchOrganization as ro "
                             + "left outer join ro.organization as org "
-                            + "left outer join sp.studyInbox as sinbx ");
+                            + "left outer join sp.studyInbox as sinbx "
+                            + "left outer join sp.studyCheckout as scheckout ");
             
 
             hql.append(generateWhereClause(studyProtocolQueryCriteria));
@@ -658,6 +668,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                        + " where sinbx.studyProtocol = sinbx1.studyProtocol )"
                          + " or sinbx.id is null)");   
            }
+           studyCheckoutWhereClause(where);
            where.append(" and sps.functionalCode ='"
                    + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");
            where.append(" and (sc.roleCode ='"
@@ -672,6 +683,12 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             LOG.debug("Leaving generateWhereClause ");
         }
         return where.toString();
+    }
+
+    private void studyCheckoutWhereClause(StringBuffer where) {
+                   where.append(" and (scheckout.id in (select max(id) from StudyCheckout as scheckout1 "
+                           + " where scheckout.studyProtocol = scheckout1.studyProtocol )"
+                             + " or scheckout.id is null)");
     }
 
     /**
@@ -720,6 +737,13 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                    && studyProtocolQueryCriteria.getSubmissionType().equalsIgnoreCase(SubmissionTypeCode.O.getCode())) {
                 where.append(" and sp.submissionNumber = 1 and sp.amendmentNumber is null and "
                       + " sp.amendmentDate is null)");
+           }
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getStudyLockedBy())
+                   && studyProtocolQueryCriteria.getStudyLockedBy().equals("true")) {
+                where.append(" and sp.id in(select sp3.id from StudyProtocol as sp3 "
+                      + " left outer join sp3.studyCheckout as spco "
+                      + " where spco.userIdentifier='" + studyProtocolQueryCriteria.getUserLastCreated() 
+                      + "')");
            }
     }
 }

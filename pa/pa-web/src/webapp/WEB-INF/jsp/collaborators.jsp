@@ -58,6 +58,7 @@ function handleCreate(){
 			    <display:column property="functionalRole"
 					titleKey="participatingOrganizations.functionalRole"
 					class="sortable" />
+				<c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">	
 				<display:column titleKey="participatingOrganizations.edit"
 					headerClass="centered" class="action">
 					<s:a href="#" onclick="handleEdit(%{#attr.row.id})">
@@ -72,14 +73,17 @@ function handleCreate(){
 							alt="Un-link" width="16" height="16" />
 					</s:a>
 				</display:column>
+				</c:if>
 			</display:table>
 			</td>
 		</tr>
 	</table>
 	<div class="actionsrow"><del class="btnwrapper">
 	<ul class="btnrow">
+	<c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
 		<li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
 			class="btn_img"><span class="add">Add </span></span></a></li>
+	</c:if>			
 		<li><a href="participatingOrganizations.action" class="btn"
 			onclick="this.blur();"><span class="btn_img"><span
 			class="back">Back</span></span></a></li>
