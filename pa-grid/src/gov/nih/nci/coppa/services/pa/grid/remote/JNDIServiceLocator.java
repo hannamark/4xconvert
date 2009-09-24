@@ -124,6 +124,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -153,42 +154,29 @@ public final class JNDIServiceLocator implements ServiceLocator {
              * Cache the Method instead of the actual Remote instance as it would be very difficult to handle
              * NamingException, etc..
              */
-            values.put(ArmDTO.class, getInstance().getClass().getMethod(
-                    "getArmService"));
-            values.put(StudyProtocolDTO.class,
-                    getInstance().getClass().getMethod("getStudyProtocolService"));
-            values.put(StudyResourcingDTO.class,
-                    getInstance().getClass().getMethod("getStudyResourcingService"));
-            values.put(StudyRegulatoryAuthorityDTO.class,
-                    getInstance().getClass().getMethod("getStudyRegulatoryAuthorityService"));
-            values.put(StudyRecruitmentStatusDTO.class,
-                    getInstance().getClass().getMethod("getStudyRecruitmentStatusService"));
-            values.put(StudySiteAccrualStatusDTO.class,
-                    getInstance().getClass().getMethod("getStudySiteAccrualStatusService"));
-            values.put(StudySiteContactDTO.class,
-                    getInstance().getClass().getMethod("getStudySiteContactService"));
-            values.put(StudyOutcomeMeasureDTO.class,
-                    getInstance().getClass().getMethod("getStudyOutcomeMeasureService"));
-            values.put(StudySiteDTO.class,
-                    getInstance().getClass().getMethod("getStudySiteService"));
-            values.put(StudyOverallStatusDTO.class,
-                    getInstance().getClass().getMethod("getStudyOverallStatusService"));
-            values.put(StudyDiseaseDTO.class,
-                    getInstance().getClass().getMethod("getStudyDiseaseService"));
-            values.put(StudyOnholdDTO.class,
-                    getInstance().getClass().getMethod("getStudyOnholdService"));
-            values.put(StudyContactDTO.class,
-                    getInstance().getClass().getMethod("getStudyContactService"));
-            values.put(StudyIndldeDTO.class,
-                    getInstance().getClass().getMethod("getStudyIndldeService"));
-            values.put(StudyRelationshipDTO.class,
-                    getInstance().getClass().getMethod("getStudyRelationshipService"));
-            values.put(DocumentWorkflowStatusDTO.class,
-                    getInstance().getClass().getMethod("getDocumentWorkflowStatusService"));
-            values.put(DocumentDTO.class,
-                    getInstance().getClass().getMethod("getDocumentService"));
-            values.put(PlannedActivityDTO.class,
-                    getInstance().getClass().getMethod("getPlannedActivityService"));
+            values.put(ArmDTO.class, getInstance().getClass().getMethod("getArmService"));
+            values.put(StudyProtocolDTO.class, getInstance().getClass().getMethod("getStudyProtocolService"));
+            values.put(StudyResourcingDTO.class, getInstance().getClass().getMethod("getStudyResourcingService"));
+            values.put(StudyRegulatoryAuthorityDTO.class, getInstance().getClass().getMethod(
+                    "getStudyRegulatoryAuthorityService"));
+            values.put(StudyRecruitmentStatusDTO.class, getInstance().getClass().getMethod(
+                    "getStudyRecruitmentStatusService"));
+            values.put(StudySiteAccrualStatusDTO.class, getInstance().getClass().getMethod(
+                    "getStudySiteAccrualStatusService"));
+            values.put(StudySiteContactDTO.class, getInstance().getClass().getMethod("getStudySiteContactService"));
+            values.put(StudyOutcomeMeasureDTO.class, getInstance().getClass()
+                    .getMethod("getStudyOutcomeMeasureService"));
+            values.put(StudySiteDTO.class, getInstance().getClass().getMethod("getStudySiteService"));
+            values.put(StudyOverallStatusDTO.class, getInstance().getClass().getMethod("getStudyOverallStatusService"));
+            values.put(StudyDiseaseDTO.class, getInstance().getClass().getMethod("getStudyDiseaseService"));
+            values.put(StudyOnholdDTO.class, getInstance().getClass().getMethod("getStudyOnholdService"));
+            values.put(StudyContactDTO.class, getInstance().getClass().getMethod("getStudyContactService"));
+            values.put(StudyIndldeDTO.class, getInstance().getClass().getMethod("getStudyIndldeService"));
+            values.put(StudyRelationshipDTO.class, getInstance().getClass().getMethod("getStudyRelationshipService"));
+            values.put(DocumentWorkflowStatusDTO.class, getInstance().getClass().getMethod(
+                    "getDocumentWorkflowStatusService"));
+            values.put(DocumentDTO.class, getInstance().getClass().getMethod("getDocumentService"));
+            values.put(PlannedActivityDTO.class, getInstance().getClass().getMethod("getPlannedActivityService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -207,6 +195,7 @@ public final class JNDIServiceLocator implements ServiceLocator {
 
     /**
      * Get the singleton instance of the service locator.
+     *
      * @return the singleton locator
      */
     public static JNDIServiceLocator getInstance() {
@@ -249,7 +238,7 @@ public final class JNDIServiceLocator implements ServiceLocator {
      */
     public StudyResourcingServiceRemote getStudyResourcingService() throws NamingException {
         StudyResourcingServiceRemote result =
-            (StudyResourcingServiceRemote) lookup("pa/StudyResourcingServiceBean/remote");
+                (StudyResourcingServiceRemote) lookup("pa/StudyResourcingServiceBean/remote");
         return result;
     }
 
@@ -258,7 +247,7 @@ public final class JNDIServiceLocator implements ServiceLocator {
      */
     public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException {
         StudyRegulatoryAuthorityServiceRemote result =
-            (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
+                (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
         return result;
     }
 
@@ -267,55 +256,49 @@ public final class JNDIServiceLocator implements ServiceLocator {
      */
     public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() throws NamingException {
         StudyRecruitmentStatusServiceRemote result =
-            (StudyRecruitmentStatusServiceRemote) lookup("pa/StudyRecruitmentStatusServiceBean/remote");
+                (StudyRecruitmentStatusServiceRemote) lookup("pa/StudyRecruitmentStatusServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService()
-    throws NamingException {
+    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() throws NamingException {
         StudySiteAccrualStatusServiceRemote result =
-            (StudySiteAccrualStatusServiceRemote) lookup("pa/StudySiteAccrualStatusServiceBean/remote");
+                (StudySiteAccrualStatusServiceRemote) lookup("pa/StudySiteAccrualStatusServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudySiteContactServiceRemote getStudySiteContactService()
-            throws NamingException {
+    public StudySiteContactServiceRemote getStudySiteContactService() throws NamingException {
         StudySiteContactServiceRemote result =
-            (StudySiteContactServiceRemote) lookup("pa/StudySiteContactServiceBean/remote");
+                (StudySiteContactServiceRemote) lookup("pa/StudySiteContactServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService()
-            throws NamingException {
+    public StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService() throws NamingException {
         StudyOutcomeMeasureServiceRemote result =
-            (StudyOutcomeMeasureServiceRemote) lookup("pa/StudyOutcomeMeasureServiceBean/remote");
+                (StudyOutcomeMeasureServiceRemote) lookup("pa/StudyOutcomeMeasureServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudySiteServiceRemote getStudySiteService()
-            throws NamingException {
-        StudySiteServiceRemote result =
-            (StudySiteServiceRemote) lookup("pa/StudySiteServiceBean/remote");
+    public StudySiteServiceRemote getStudySiteService() throws NamingException {
+        StudySiteServiceRemote result = (StudySiteServiceRemote) lookup("pa/StudySiteServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyOverallStatusServiceRemote getStudyOverallStatusService()
-            throws NamingException {
+    public StudyOverallStatusServiceRemote getStudyOverallStatusService() throws NamingException {
         StudyOverallStatusServiceRemote result =
                 (StudyOverallStatusServiceRemote) lookup("pa/StudyOverallStatusServiceBean/remote");
         return result;
@@ -324,96 +307,82 @@ public final class JNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public StudyDiseaseServiceRemote getStudyDiseaseService()
-            throws NamingException {
-        StudyDiseaseServiceRemote result =
-            (StudyDiseaseServiceRemote) lookup("pa/StudyDiseaseServiceBean/remote");
+    public StudyDiseaseServiceRemote getStudyDiseaseService() throws NamingException {
+        StudyDiseaseServiceRemote result = (StudyDiseaseServiceRemote) lookup("pa/StudyDiseaseServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyOnholdServiceRemote getStudyOnholdService()
-        throws NamingException {
-        StudyOnholdServiceRemote result =
-            (StudyOnholdServiceRemote) lookup("pa/StudyOnholdServiceBean/remote");
+    public StudyOnholdServiceRemote getStudyOnholdService() throws NamingException {
+        StudyOnholdServiceRemote result = (StudyOnholdServiceRemote) lookup("pa/StudyOnholdServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyContactServiceRemote getStudyContactService()
-            throws NamingException {
-        StudyContactServiceRemote result =
-            (StudyContactServiceRemote) lookup("pa/StudyContactServiceBean/remote");
+    public StudyContactServiceRemote getStudyContactService() throws NamingException {
+        StudyContactServiceRemote result = (StudyContactServiceRemote) lookup("pa/StudyContactServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyIndldeServiceRemote getStudyIndldeService()
-            throws NamingException {
-        StudyIndldeServiceRemote result =
-            (StudyIndldeServiceRemote) lookup("pa/StudyIndldeServiceBean/remote");
+    public StudyIndldeServiceRemote getStudyIndldeService() throws NamingException {
+        StudyIndldeServiceRemote result = (StudyIndldeServiceRemote) lookup("pa/StudyIndldeServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyRelationshipServiceRemote getStudyRelationshipService()
-    throws NamingException {
+    public StudyRelationshipServiceRemote getStudyRelationshipService() throws NamingException {
         StudyRelationshipServiceRemote result =
-            (StudyRelationshipServiceRemote) lookup("pa/StudyRelationshipServiceBean/remote");
+                (StudyRelationshipServiceRemote) lookup("pa/StudyRelationshipServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService()
-            throws NamingException {
+    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() throws NamingException {
         DocumentWorkflowStatusServiceRemote result =
-            (DocumentWorkflowStatusServiceRemote) lookup("pa/DocumentWorkflowStatusServiceBean/remote");
+                (DocumentWorkflowStatusServiceRemote) lookup("pa/DocumentWorkflowStatusServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public DocumentServiceRemote getDocumentService()
-            throws NamingException {
-        DocumentServiceRemote result =
-            (DocumentServiceRemote) lookup("pa/DocumentServiceBean/remote");
+    public DocumentServiceRemote getDocumentService() throws NamingException {
+        DocumentServiceRemote result = (DocumentServiceRemote) lookup("pa/DocumentServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public PlannedActivityServiceRemote getPlannedActivityService()
-    throws NamingException {
+    public PlannedActivityServiceRemote getPlannedActivityService() throws NamingException {
         PlannedActivityServiceRemote result =
-            (PlannedActivityServiceRemote) lookup("pa/PlannedActivityServiceBean/remote");
+                (PlannedActivityServiceRemote) lookup("pa/PlannedActivityServiceBean/remote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public <Z extends BaseDTO> BasePaService<Z> getBasePaService(Class<Z> type)
-            throws NamingException {
+    @SuppressWarnings("unchecked")
+    public <Z extends BaseDTO> BasePaService<Z> getBasePaService(Class<Z> type) throws NamingException {
         Method serviceMethod = values.get(type);
         BasePaService<Z> service = null;
         try {
             service = (BasePaService<Z>) serviceMethod.invoke(this);
         } catch (Exception e) {
 
-            throw new InvokeCoppaServiceException("Unable to invoke method "
-                    + serviceMethod.getName(), e);
+            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
         }
         if (service == null) {
             throw new IllegalArgumentException("Unable to locate service for type, " + type);
@@ -455,5 +424,12 @@ public final class JNDIServiceLocator implements ServiceLocator {
             throw new IllegalArgumentException("Unable to locate service for type, " + type);
         }
         return service;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TrialRegistrationServiceRemote getTrialRegistrationService() throws NamingException {
+        return (TrialRegistrationServiceRemote) lookup("/pa/TrialRegistrationServiceBean/remote");
     }
 }

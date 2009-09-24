@@ -72,6 +72,16 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="SiteType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="COPPA-PA:BaseType">
+                <xs:sequence>
+                    <xs:element name="studySiteIdentifier" type="ISO:II" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="StudyType" abstract="true">
         <xs:complexContent>
             <xs:extension base="COPPA-PA:BaseType">
@@ -390,6 +400,19 @@
                         <xs:element name="telecomAddresses" type="ISO:DSET_TEL" />
                         <xs:element name="studySite" type="ISO:II" />
                         <xs:element name="organizationalContact" type="ISO:II" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="StudySiteOverallStatus">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PA:SiteType">
+                    <xs:sequence>
+                        <xs:element name="statusCode" type="ISO:CD" />
+                        <xs:element name="statusDate" type="ISO:TS" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

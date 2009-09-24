@@ -104,6 +104,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 
 import javax.naming.NamingException;
 
@@ -262,4 +263,10 @@ public interface ServiceLocator {
    @SuppressWarnings("unchecked")
    <S extends StudyDTO> StudyCurrentPaService getStudyCurrentPaService(Class<S> type) throws NamingException;
 
+   /**
+    * Gets the TrialRegistrationService service.
+    * @return the remote TrialRegistrationService service
+    * @throws NamingException if unable to lookup.
+    */
+   TrialRegistrationServiceRemote getTrialRegistrationService() throws NamingException;
 }

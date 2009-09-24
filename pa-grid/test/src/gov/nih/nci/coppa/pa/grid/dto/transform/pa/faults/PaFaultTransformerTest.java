@@ -82,10 +82,13 @@
  */
 package gov.nih.nci.coppa.pa.grid.dto.transform.pa.faults;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.PAFaultTransformer;
+import gov.nih.nci.pa.service.PAException;
 
 import org.junit.Test;
 
@@ -93,7 +96,13 @@ public class PaFaultTransformerTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testToDto() throws DtoTransformException {
-        PAFaultTransformer.INSTANCE
-            .toDto(CoppaFaultHelper.toFault(new PAFault(), new UnsupportedOperationException()));
+        PAFaultTransformer.INSTANCE.toDto(CoppaFaultHelper.toFault(new PAFault(), new UnsupportedOperationException()));
+    }
+
+    @Test
+    public void testToXml() throws DtoTransformException {
+        assertNull(PAFaultTransformer.INSTANCE.toXml(null));
+        PAFault fault = PAFaultTransformer.INSTANCE.toXml(new PAException("unit test exception"));
+        assertEquals("unit test exception", fault.getDescription()[0].get_value());
     }
 }

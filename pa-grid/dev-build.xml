@@ -367,7 +367,7 @@
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="94" totallinerate="94" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="94" totallinerate="95" />
     </target>
 
     <!--
@@ -521,10 +521,13 @@
 
     <target name="runStudyRelationshipClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRelationshipService Client">
        <run-client serviceendpointname="StudyRelationshipService" class="gov.nih.nci.coppa.services.pa.studyrelationshipservice.client.StudyRelationshipServiceClient" debug-suspend="n" />
-  </target>
+    </target>
 
     <target name="runPlannedActivityClient" depends="checkGlobus, defineClasspaths" description="Run the sample PlannedActivityService Client">
        <run-client serviceendpointname="PlannedActivityService" class="gov.nih.nci.coppa.services.pa.plannedactivityservice.client.PlannedActivityServiceClient" debug-suspend="n" />
-  </target>
+    </target>
 
+    <target name="runTrialRegistrationClient" depends="checkGlobus, defineClasspaths" description="Run the sample TrialRegistrationService Client">
+       <run-client serviceendpointname="TrialRegistrationService" class="gov.nih.nci.coppa.services.pa.trialregistrationservice.client.TrialRegistrationServiceClient" debug-suspend="n" />
+    </target>
 </project>
