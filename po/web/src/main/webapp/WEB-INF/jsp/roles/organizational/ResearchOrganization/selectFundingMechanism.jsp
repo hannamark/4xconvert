@@ -7,7 +7,7 @@
    name="role.fundingMechanismSelect"
    list="researchOrganizationType.fundingMechanisms"
    listKey="id"
-   listValue="code"
+   listValue="code + ' - ' + description"
    value="role.fundingMechanism.id" 
    headerKey="" headerValue="--Select a Funding Mechanism--" 
    onchange="$('curateRoleForm.role.fundingMechanism').value = this.value;"/> 
