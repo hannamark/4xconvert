@@ -101,16 +101,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <property name="grid.resource.dir" value="${working.dir}/${grid.dist.relative.dir}" />
     <property name="grid.application.dir" value="${working.dir}/grid-application" />
     <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
-  
+
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
 
-	<property name="po-grid.dir.dist" value="${basedir}/${po-grid.dist.relative.dir}" />
+    <property name="po-grid.dir.dist" value="${basedir}/${po-grid.dist.relative.dir}" />
     <property name="po-grid.dir.src" value="${basedir}/${po-grid.dist.relative.dir}" />
     <property name="po-grid.dir.target" value="wsrf.war" />
     <property name="po-grid.introduce.skeleton.service.name" value="CoreServices"/>
 
-	<property name="po-grid-legacy.dir.dist" value="${basedir}/${po-grid-legacy.dist.relative.dir}" />
+    <property name="po-grid-legacy.dir.dist" value="${basedir}/${po-grid-legacy.dist.relative.dir}" />
     <property name="po-grid-legacy.dir.src" value="${basedir}/${po-grid-legacy.dist.relative.dir}" />
     <property name="po-grid-legacy.dir.target" value="wsrf.war" />
     <property name="po-grid-legacy.introduce.skeleton.service.name" value="CoreServices"/>
@@ -477,7 +477,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
         <unzip dest="${jboss.home}/server/${po-grid.jboss.server.name}/deploy/${po-grid.dir.target}" src="${po-grid.dir.src}/${po-grid.artifact.file}" />
     </target>
-	
+
     <!-- Installs the po-grid-legacy application to JBOSS -->
     <target name="install:po-grid-legacy:application" description="Deploy Coppa PO Grid Legacy application to JBOSS" unless="exclude.po-grid-legacy">
       <echo message="Entirely removing existing wsrf.war deployment"/>
@@ -508,7 +508,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           appserver.external.http.host="${pogrid.jboss.external.http.host}"
         />
     </target>
-	
+
     <!-- Configures installed po-grid application -->
     <target name="install:po-grid-legacy:configure" description="Configure po-grid-legacy service based on properties" unless="exclude.po-grid-legacy">
         <grid-appserver-configure
@@ -588,7 +588,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             jboss.java.opts="${jboss.java.opts}"
             />
   </target>
-	
+
   <target name="install:jboss:configure:po-grid" unless="exclude.po-grid">
         <!-- create a new template bindings file from template (using ports for po-grid -->
               <copy file="${bda-utils.resource.dir}/template-binding.xml"
@@ -660,7 +660,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                   jboss.java.opts="${jboss.java.opts}"
                   />
   </target>
-	
+
   <target name="install:jboss:configure:po-grid-legacy" unless="exclude.po-grid-legacy">
         <!-- create a new template bindings file from template (using ports for po-grid -->
               <copy file="${bda-utils.resource.dir}/template-binding.xml"
@@ -823,9 +823,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       />
   </target>
   <target name="install:validation:pre-install:ports" unless="exclude.po-ear">
-  	<runtarget target="install:validation:pre-install:ports:poear"/>
-  	<runtarget target="install:validation:pre-install:ports:pogrid"/>
-  	<runtarget target="install:validation:pre-install:ports:pogrid-legacy"/>
+      <runtarget target="install:validation:pre-install:ports:poear"/>
+      <runtarget target="install:validation:pre-install:ports:pogrid"/>
+      <runtarget target="install:validation:pre-install:ports:pogrid-legacy"/>
   </target>
   <target name="install:validation:pre-install:ports:poear">
     <validate-ports-preinstall />
@@ -837,9 +837,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <validate-ports-preinstall validation.pre.port.list="${pogrid-legacy.validation.pre.port.list}" />
   </target>
   <target name="install:validation:post-install">
-	 <runtarget target="install:validation:post-install:poear"/>
-	 <runtarget target="install:validation:post-install:pogrid"/>
-	 <runtarget target="install:validation:post-install:pogrid-legacy"/>
+     <runtarget target="install:validation:post-install:poear"/>
+     <runtarget target="install:validation:post-install:pogrid"/>
+     <runtarget target="install:validation:post-install:pogrid-legacy"/>
   </target>
   <target name="install:validation:post-install:poear" unless="exclude.po-ear">
     <if>
@@ -858,12 +858,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       </not>
       <then>
         <validate-post-install
-        	validation.post.socket.list="${pogrid.validation.post.socket.list}"
-        	validation.post.http.list="${pogrid.validation.post.http.list}"
-        	propertyfile.backup.location="${user.home}" 
-        	jboss.server.name="${po-grid.jboss.server.name}" 
-        	application.url="${pogrid.application.url}"
-        	/>
+            validation.post.socket.list="${pogrid.validation.post.socket.list}"
+            validation.post.http.list="${pogrid.validation.post.http.list}"
+            propertyfile.backup.location="${user.home}"
+            jboss.server.name="${po-grid.jboss.server.name}"
+            application.url="${pogrid.application.url}"
+            />
       </then>
     </if>
   </target>
@@ -874,12 +874,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       </not>
       <then>
         <validate-post-install
-        	validation.post.socket.list="${pogrid-legacy.validation.post.socket.list}"
-        	validation.post.http.list="${pogrid-legacy.validation.post.http.list}"
-        	propertyfile.backup.location="${user.home}" 
-        	jboss.server.name="${po-grid-legacy.jboss.server.name}" 
-        	application.url="${pogrid-legacy.application.url}"
-        	/>
+            validation.post.socket.list="${pogrid-legacy.validation.post.socket.list}"
+            validation.post.http.list="${pogrid-legacy.validation.post.http.list}"
+            propertyfile.backup.location="${user.home}"
+            jboss.server.name="${po-grid-legacy.jboss.server.name}"
+            application.url="${pogrid-legacy.application.url}"
+            />
       </then>
     </if>
   </target>
@@ -1012,88 +1012,86 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="install:jboss:po-grid:pre-configure" unless="exclude.po-grid">
-        <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
-        <delete dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
-        <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
-        <unzip src="${po-grid.dir.dist}/${po-grid.artifact.file}" dest="${temp.dir}/${po-grid.dist.relative.dir}"/>
-        <unzip src="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${po-grid.introduce.skeleton.service.name}-common"/>
-    <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
-        <var name="file.list"
-            value="${po-grid.introduce.skeleton.service.name}-common/jndi.properties"/>
+      <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
+      <delete dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
+      <mkdir dir="${temp.dir}/${po-grid.dist.relative.dir}"/>
+      <unzip src="${po-grid.dir.dist}/${po-grid.artifact.file}" dest="${temp.dir}/${po-grid.dist.relative.dir}"/>
+      <unzip src="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-config.jar" dest="${temp.dir}/${po-grid.introduce.skeleton.service.name}-config"/>
+      <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+      <var name="file.list" value="${po-grid.introduce.skeleton.service.name}-config/jndi.properties"/>
 
-        <for list="${file.list}" param="file.relative.name">
-            <sequential>
-                <propertyregex property="file.name"
-                    input="@{file.relative.name}"
-                    regexp="^.*\/(.*)"
-                    select="\1"
-                    override="true"
-                    />
-                <propertyregex property="relative.dir"
-                    input="@{file.relative.name}"
-                    regexp="^(.*)\/.*"
-                    select="\1"
-                    override="true"
-                    />
-                <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
-                <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
-                <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
-                    <filterset>
-                        <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
-                        <filter token="pogrid.jndi.principal" value="${pogrid.jndi.principal}"/>
-                        <filter token="pogrid.jndi.credentials" value="${pogrid.jndi.credentials}"/>
-                    </filterset>
-                </copy>
-                <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
-            </sequential>
-        </for>
-    <move file="${po-grid.dir.dist}/${po-grid.artifact.file}" tofile="${po-grid.dir.dist}/${po-grid.artifact.file}.orig"/>
-      <jar destfile="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-common.jar"
-                  basedir="${temp.dir}/${po-grid.introduce.skeleton.service.name}-common" compress="false"/>
+      <for list="${file.list}" param="file.relative.name">
+          <sequential>
+              <propertyregex property="file.name"
+                  input="@{file.relative.name}"
+                  regexp="^.*\/(.*)"
+                  select="\1"
+                  override="true"
+                  />
+              <propertyregex property="relative.dir"
+                  input="@{file.relative.name}"
+                  regexp="^(.*)\/.*"
+                  select="\1"
+                  override="true"
+                  />
+              <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+              <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+              <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+                  <filterset>
+                      <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+                      <filter token="pogrid.jndi.principal" value="${pogrid.jndi.principal}"/>
+                      <filter token="pogrid.jndi.credentials" value="${pogrid.jndi.credentials}"/>
+                  </filterset>
+              </copy>
+              <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+          </sequential>
+      </for>
+      <move file="${po-grid.dir.dist}/${po-grid.artifact.file}" tofile="${po-grid.dir.dist}/${po-grid.artifact.file}.orig"/>
+      <jar destfile="${temp.dir}/${po-grid.dist.relative.dir}/WEB-INF/lib/${po-grid.introduce.skeleton.service.name}-config.jar"
+           basedir="${temp.dir}/${po-grid.introduce.skeleton.service.name}-config" compress="false"/>
 
-    <zip basedir="${temp.dir}/${po-grid.dist.relative.dir}" compress="true" file="${po-grid.dir.dist}/${po-grid.artifact.file}" update="false"/>
+      <zip basedir="${temp.dir}/${po-grid.dist.relative.dir}" compress="true" file="${po-grid.dir.dist}/${po-grid.artifact.file}" update="false"/>
   </target>
   <target name="install:jboss:po-grid-legacy:pre-configure" unless="exclude.po-grid-legacy">
-        <mkdir dir="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
-        <delete dir="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
-        <mkdir dir="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
-        <unzip src="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" dest="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
-        <unzip src="${temp.dir}/${po-grid-legacy.dist.relative.dir}/WEB-INF/lib/${po-grid-legacy.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${po-grid-legacy.introduce.skeleton.service.name}-common"/>
-    <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
-        <var name="file.list"
-            value="${po-grid-legacy.introduce.skeleton.service.name}-common/jndi.properties"/>
+      <mkdir dir="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
+      <delete dir="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
+      <mkdir dir="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
+      <unzip src="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" dest="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
+      <unzip src="${temp.dir}/${po-grid-legacy.dist.relative.dir}/WEB-INF/lib/${po-grid-legacy.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${po-grid-legacy.introduce.skeleton.service.name}-common"/>
+      <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+      <var name="file.list" value="${po-grid-legacy.introduce.skeleton.service.name}-common/jndi.properties"/>
 
-        <for list="${file.list}" param="file.relative.name">
-            <sequential>
-                <propertyregex property="file.name"
-                    input="@{file.relative.name}"
-                    regexp="^.*\/(.*)"
-                    select="\1"
-                    override="true"
-                    />
-                <propertyregex property="relative.dir"
-                    input="@{file.relative.name}"
-                    regexp="^(.*)\/.*"
-                    select="\1"
-                    override="true"
-                    />
-                <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
-                <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
-                <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
-                    <filterset>
-                        <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
-                        <filter token="pogrid-legacy.jndi.principal" value="${pogrid-legacy.jndi.principal}"/>
-                        <filter token="pogrid-legacy.jndi.credentials" value="${pogrid-legacy.jndi.credentials}"/>
-                    </filterset>
-                </copy>
-                <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
-            </sequential>
-        </for>
-    <move file="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" tofile="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}.orig"/>
+      <for list="${file.list}" param="file.relative.name">
+          <sequential>
+              <propertyregex property="file.name"
+                  input="@{file.relative.name}"
+                  regexp="^.*\/(.*)"
+                  select="\1"
+                  override="true"
+                  />
+              <propertyregex property="relative.dir"
+                  input="@{file.relative.name}"
+                  regexp="^(.*)\/.*"
+                  select="\1"
+                  override="true"
+                  />
+              <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+              <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+              <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+                  <filterset>
+                      <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+                      <filter token="pogrid-legacy.jndi.principal" value="${pogrid-legacy.jndi.principal}"/>
+                      <filter token="pogrid-legacy.jndi.credentials" value="${pogrid-legacy.jndi.credentials}"/>
+                  </filterset>
+              </copy>
+              <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+          </sequential>
+      </for>
+      <move file="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" tofile="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}.orig"/>
       <jar destfile="${temp.dir}/${po-grid-legacy.dist.relative.dir}/WEB-INF/lib/${po-grid-legacy.introduce.skeleton.service.name}-common.jar"
                   basedir="${temp.dir}/${po-grid-legacy.introduce.skeleton.service.name}-common" compress="false"/>
 
-    <zip basedir="${temp.dir}/${po-grid-legacy.dist.relative.dir}" compress="true" file="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" update="false"/>
+      <zip basedir="${temp.dir}/${po-grid-legacy.dist.relative.dir}" compress="true" file="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" update="false"/>
   </target>
 
   <!-- Generic targets to call appropriate upgrade path targets, just change the depends to use alternate upgrade path -->
