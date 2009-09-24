@@ -36,4 +36,13 @@ public interface GenericCodeValueServiceLocal {
      * @return the list CodeValue instances found otherwise, null
      */
     <T extends CodeValue> List<T> list(Class<T> clz);
+
+    /**
+     * @param <T> the type
+     * @param clz the type to lookup
+     * @param orderBy the field to orderBy, or null to leave default ordering.
+     * @return the list CodeValue instances found otherwise, null
+     */
+    <T extends CodeValue> List<T> list(Class<T> clz, String orderBy);
+
 }

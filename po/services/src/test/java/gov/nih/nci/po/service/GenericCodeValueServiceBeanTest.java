@@ -13,8 +13,10 @@ import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.lang.reflect.Constructor;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -31,6 +33,7 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
 
     private static final String CODE = "TT";
     private static final String DESC = "Test Type";
+    private static final String ORDER_BY = "description";
     private final GenericCodeValueServiceBean svcBean = new GenericCodeValueServiceBean();
 
     @Before
@@ -68,6 +71,34 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
         }
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testOrderedList() throws Exception {
+        String[][] researchOrgTypeData = {{"BB", "B"}, {"CC", "C"}, {"AA", "A"}}; 
+       
+        Session session = PoHibernateUtil.getCurrentSession();
+        for (String[] sArr : researchOrgTypeData) {
+            session.save(new ResearchOrganizationType(sArr[0], sArr[1]));
+        }
+        
+        List<ResearchOrganizationType> orderedList = svcBean.list(ResearchOrganizationType.class, ORDER_BY);
+        List<ResearchOrganizationType> unorderedList = svcBean.list(ResearchOrganizationType.class);
+        assertEquals(unorderedList.size(), orderedList.size());
+        TreeSet<ResearchOrganizationType> ts = new TreeSet(new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((ResearchOrganizationType)o1).getDescription().compareTo(((ResearchOrganizationType)o2).getDescription());
+            }
+        });
+        ts.addAll(unorderedList);
+
+        Iterator<ResearchOrganizationType> orderedListIterator = orderedList.iterator(),
+            tsIterator = ts.iterator();
+        while(orderedListIterator.hasNext()) {
+          assertEquals(orderedListIterator.next(), tsIterator.next());
+        }
+        
+    }
+    
     private void testIt(Class<? extends CodeValue> clz) {
         try{
             svcBean.getByCode(clz, "foo");
@@ -89,5 +120,6 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
         Iterator<? extends CodeValue> iterator = list.iterator();
         CodeValue next = iterator.next();
         assertEquals(CODE, next.getCode());
-    }
+        
+   }
 }

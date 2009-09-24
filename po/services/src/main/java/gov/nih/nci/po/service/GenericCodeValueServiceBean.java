@@ -50,8 +50,23 @@ public class GenericCodeValueServiceBean implements GenericCodeValueServiceLocal
      */
     @SuppressWarnings("unchecked")
     public <T extends CodeValue> List<T> list(Class<T> clz) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        Query q = s.createQuery("FROM " + clz.getName());
-        return q.list();
+        return list(clz, null);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends CodeValue> List<T> list(Class<T> clz, String orderBy) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        StringBuilder querySb  = new StringBuilder("FROM ");
+        querySb.append(clz.getName());
+        if (orderBy != null) {
+            querySb.append(" ORDER BY ");
+            querySb.append(orderBy);
+        }
+        Query q = s.createQuery(querySb.toString());
+        return q.list();       
+    }
+    
 }

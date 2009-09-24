@@ -77,7 +77,7 @@
                     --></script>
                     <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
                     <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
-                    <s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass)" />
+                    <s:set name="researchOrgTypes" value="#genericCodeValueService.list(#codeValueClass, 'description')" />
                     <s:if test="%{isReadonly}">
                         <s:textfield label="%{getText('researchOrganization.typeCode')}" name="role.typeCode.description" required="true" cssClass="required"/>
                         <s:textfield label="%{getText('researchOrganization.fundingMechanism')}" name="role.fundingMechanism.description" required="true" cssClass="required" />
