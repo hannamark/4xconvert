@@ -124,6 +124,8 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
     public void create() throws Exception {
         SubmissionDto dto = new SubmissionDto();
         dto.setCutOffDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("6/3/2009")));
+       // assertFalse("check cutoff date is current or past",PAUtil.isDateCurrentOrPast(TsConverter.
+       // 		      convertToString(dto.getCutOffDate())));
         dto.setDescription(StConverter.convertToSt("des123"));
         dto.setLabel(StConverter.convertToSt("label"));
         dto.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.OPENED));

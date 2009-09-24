@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.SubmissionConverter;
+
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.pa.domain.Submission;
@@ -105,16 +106,27 @@ public class SubmissionBean
      */
     @Override
     public SubmissionDto create(SubmissionDto dto) throws RemoteException {
+        checkSubmissionDtoFields(dto);
+        return super.create(dto);
+    }
+     /**
+       * {@inheritDoc}
+      */
+      public void checkSubmissionDtoFields(SubmissionDto dto) throws RemoteException {
         if (PAUtil.isStNull(dto.getLabel())) {
             throw new RemoteException("Submission title is required.");
         }
         if (PAUtil.isTsNull(dto.getCutOffDate())) {
             throw new RemoteException("Cut off date is required.");
         }
+        /*if (!PAUtil.isTsNull(dto.getCutOffDate()) && !PAUtil.isDateCurrentOrPast(TsConverter.
+                 convertToString(dto.getCutOffDate()))) {
+            throw new RemoteException("Cut off date should be current or past.");
+        }*/
         if (PAUtil.isStNull(dto.getDescription())) {
-            throw new RemoteException("Description is required.");
-        }
-        return super.create(dto);
-    }
+               throw new RemoteException("Description is required.");
+         }
+      }
+    
 
 }

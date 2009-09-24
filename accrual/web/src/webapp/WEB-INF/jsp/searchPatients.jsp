@@ -43,6 +43,62 @@ function handleDelete(rowId){
   <s:form name="listForm">
     <s:hidden name="selectedRowIdentifier"/>
     <table class="form">
+    
+    <tr>     
+        <td scope="row" class="label">
+          <label for="Patient ID">
+              <fmt:message key="patient.assignedIdentifier"/>                
+          </label>
+         </td>
+         <td class="value">
+            <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+           </td>
+      </tr> 
+      <tr>     
+        <td scope="row" class="label">
+          <label for="Participating Site">
+              <fmt:message key="patient.organizationName"/>                
+          </label>
+         </td>
+         <td class="value">
+                              
+                   <s:select id="studySite" name="criteria.studySite" list="listOfStudySites" headerKey="" 
+             listValue="orgName" headerValue="--Select--"  cssStyle="width:206px"/>
+           </td>
+      </tr> 
+            
+            <tr>
+                <td scope="row" class="label">
+                 <label for="Birth Date">
+                    <fmt:message key="patient.birthDate"/>                
+                </label>
+                </td>
+                <td colspan="4">
+                <s:textfield id ="birthDate" name="criteria.birthDate" maxlength="400" size="50"
+                      cssStyle="width:98%;max-width:206px" />
+                </td>
+            </tr>
+            
+            <tr>
+                <td scope="row" class="label">
+                 <label for="Record Status">
+                    <fmt:message key="patient.statusCode"/>                
+                </label>
+                </td>
+                <td colspan="4">
+                                      
+                 <s:select id ="statusCode" name="criteria.statusCode" 
+                               headerKey="1"
+                               headerValue="--Select--"
+                               list="#{'Pending':'Pending','Active':'Active'}" 
+                               cssStyle="width:206px" />
+                 
+                 
+                </td>
+            </tr>
+    
+    
     </table>
 
     <div class="actionsrow">

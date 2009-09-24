@@ -122,6 +122,7 @@ public class PatientWebDto {
      * Construct using iso dto's from service tier.
      * @param pIsoDto patient iso dto
      * @param ssIsoDto study subject iso dto
+     * @param organizationName  organization name St
      */
     public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, St organizationName) {
         raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
@@ -257,4 +258,17 @@ public class PatientWebDto {
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
     }
+    
+   /**
+     * @return the identifier
+     */
+    public String getIdentifier() {
+       return identifier;
+     }
+    /**
+     * @param identifier the identifier to set
+     */
+     public void setIdentifier(String identifier) {
+       this.identifier = identifier;
+     }
 }
