@@ -11,12 +11,11 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.NullFlavorTransformer;
 
 /**
  * Transforms the Id element type (is-a ISO:II).
+ *
  * @author smatyas
  *
  */
-public final class IdTransformer
-    extends AbstractTransformer<Id, Ii>
-    implements Transformer<Id, Ii> {
+public final class IdTransformer extends AbstractTransformer<Id, Ii> implements Transformer<Id, Ii> {
 
     /**
      * Public singleton.

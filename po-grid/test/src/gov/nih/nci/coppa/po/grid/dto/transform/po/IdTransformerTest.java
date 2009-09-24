@@ -2,6 +2,8 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
@@ -12,8 +14,7 @@ import java.util.Set;
 import org.iso._21090.DSETII;
 import org.iso._21090.II;
 
-public class IdTransformerTest extends
-    AbstractTransformerTestBase<IdTransformer , Id ,Ii> {
+public class IdTransformerTest extends AbstractTransformerTestBase<IdTransformer, Id, Ii> {
 
     /**
      * The identifier name for for Identified org.
@@ -31,6 +32,8 @@ public class IdTransformerTest extends
         id.setRoot(IDENTIFIED_ORG_ROOT);
         id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
         id.setExtension("123");
+        id.setReliability(IdentifierReliability.ISS);
+        id.setScope(IdentifierScope.OBJ);
 
         return id;
     }
@@ -41,6 +44,8 @@ public class IdTransformerTest extends
         id.setRoot(IDENTIFIED_ORG_ROOT);
         id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
         id.setExtension("123");
+        id.setReliability(org.iso._21090.IdentifierReliability.ISS);
+        id.setScope(org.iso._21090.IdentifierScope.OBJ);
         return id;
     }
 
@@ -48,18 +53,23 @@ public class IdTransformerTest extends
     public void verifyDtoSimple(Ii x) {
         assertEquals(x.getRoot(), IDENTIFIED_ORG_ROOT);
         assertEquals(x.getExtension(), "123");
-        assertEquals(x.getIdentifierName(),IDENTIFIED_ORG_IDENTIFIER_NAME);
+        assertEquals(x.getIdentifierName(), IDENTIFIED_ORG_IDENTIFIER_NAME);
+        assertEquals(IdentifierReliability.ISS, x.getReliability());
+        assertEquals(IdentifierScope.OBJ, x.getScope());
     }
 
     @Override
     public void verifyXmlSimple(Id x) {
         assertEquals(x.getRoot(), IDENTIFIED_ORG_ROOT);
         assertEquals(x.getExtension(), "123");
-        assertEquals(x.getIdentifierName(),IDENTIFIED_ORG_IDENTIFIER_NAME);
+        assertEquals(x.getIdentifierName(), IDENTIFIED_ORG_IDENTIFIER_NAME);
+        assertEquals(org.iso._21090.IdentifierReliability.ISS, x.getReliability());
+        assertEquals(org.iso._21090.IdentifierScope.OBJ, x.getScope());
     }
 
     /**
      * Converts a single Ii into a DSet<Ii> containing just that Ii.
+     *
      * @param id Ii to add to set
      * @return DSet<Ii> containing the id
      */

@@ -7,9 +7,9 @@
     <!-- ============================================================== -->
 
     <path id="maven-ant-tasks.classpath" path="tools/lib/maven-ant-tasks-2.0.9.jar" />
-    <typedef 
-        resource="org/apache/maven/artifact/ant/antlib.xml" 
-        uri="urn:maven-artifact-ant" 
+    <typedef
+        resource="org/apache/maven/artifact/ant/antlib.xml"
+        uri="urn:maven-artifact-ant"
         classpathref="maven-ant-tasks.classpath" />
 
     <!-- ============================================================== -->
@@ -60,7 +60,7 @@
     <target name="defineExtendedClasspaths" unless="base.extended.classpath.prop">
         <artifact:pom file="pom.xml" id="pom.file" />
         <artifact:pom file="tools.pom.xml" id="tools.pom.file" />
-        
+
         <artifact:dependencies pomRefId="pom.file"
                 pathId="base.extended.classpath"
                 filesetId="compile.dependency.fileset"
@@ -96,8 +96,8 @@
         <echo level="info">
             test.build.extended.classpath is:
             ${test.build.extended.classpath.prop}
-          </echo>        
-        
+          </echo>
+
         <path id="test.run.extended.classpath">
         </path>
         <path id="run.extended.classpath">
@@ -118,7 +118,7 @@
         <echo level="info">
             tasks.run.extended.classpath is:
             ${tasks.run.extended.classpath.prop}
-          </echo>            
+          </echo>
     </target>
 
 
@@ -219,6 +219,7 @@
         </copy>
         <runtarget target="postCompile" />
     </target>
+
     <target name="compileStubs-quick" depends="init">
         <runtarget target="preCompileStubs" />
         <javac srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
@@ -238,8 +239,9 @@
     <!-- ============================================================== -->
     <target name="postCompile">
         <runtarget target="-checkstyle" />
-        <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
-        <copy toDir="${build.dest}" filtering="true" overwrite="true">
+        <!-- We don't want jndi.properties to end up in the CoreServices-common.jar, so delete it from the build/classes dir (it was copied there by the compile target) -->
+        <delete file="${build.dest}/jndi.properties"/>
+        <copy toDir="${build.dir}" filtering="true" overwrite="true">
             <filterset begintoken="$${" endtoken="}">
                 <filter token="java.naming.factory.initial" value="${java.naming.factory.initial}" />
                 <filter token="java.naming.provider.url.host" value="${java.naming.provider.url.host}" />
@@ -250,7 +252,7 @@
                 <filter token="java.naming.security.credentials" value="${java.naming.security.credentials}" />
             </filterset>
             <fileset dir="${src.dir}">
-                <include name="**/*" />
+                <include name="jndi.properties" />
             </fileset>
         </copy>
     </target>
@@ -266,7 +268,10 @@
     <!-- Post Jar Build Target                                          -->
     <!-- ============================================================== -->
     <target name="postJar">
-
+        <property name="config.jar.name" value="${jar.prefix}-config.jar" />
+        <jar jarfile="${build.lib.dir}/${config.jar.name}" basedir="${build.dir}">
+            <include name="jndi.properties" />
+        </jar>
     </target>
 
     <!-- ============================================================== -->
@@ -379,7 +384,7 @@
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="87" totallinerate="91" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="90" totallinerate="94" />
     </target>
 
     <!--
@@ -505,7 +510,7 @@
     <target name="runOrganizationalContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample OrganizationalContact Client">
         <run-client serviceEndpointName="OrganizationalContact" class="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client.OrganizationalContactClient" />
     </target>
-	<target name="runPatientClient" depends="checkGlobus, defineClasspaths" description="Run the sample Patient Client">
-	        <run-client serviceEndpointName="Patient" class="gov.nih.nci.coppa.services.structuralroles.patient.client.PatientClient" />
-	 </target>
+    <target name="runPatientClient" depends="checkGlobus, defineClasspaths" description="Run the sample Patient Client">
+            <run-client serviceEndpointName="Patient" class="gov.nih.nci.coppa.services.structuralroles.patient.client.PatientClient" />
+     </target>
 </project>
