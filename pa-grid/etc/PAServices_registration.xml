@@ -14,7 +14,7 @@
     <agg:AggregatorConfig xsi:type="agg:AggregatorConfig">
       <agg:GetMultipleResourcePropertiesPollType
 			xmlns:ns4="http://faults.pa.services.coppa.nci.nih.gov"
-			xmlns:ns2="uri:iso.org:21090"
+			xmlns:ns1="uri:iso.org:21090"
 			xmlns:ns3="http://po.coppa.nci.nih.gov"
 			xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types"
 			xmlns:ns29="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types"
@@ -24,11 +24,11 @@
 			xmlns:ns9="http://enterpriseservices.nci.nih.gov/PAServices/types"
 			xmlns:ns15="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types"
 			xmlns:ns34="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types"
-			xmlns:ns0="http://common.coppa.nci.nih.gov"
+			xmlns:ns2="http://common.coppa.nci.nih.gov"
 			xmlns:ns33="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types"
 			xmlns:ns8="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"
 			xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types"
-			xmlns:ns1="http://pa.services.coppa.nci.nih.gov"
+			xmlns:ns0="http://pa.services.coppa.nci.nih.gov"
 			xmlns:ns19="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types"
 			xmlns:xml="http://www.w3.org/XML/1998/namespace"
 			xmlns:ns18="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types"

@@ -66,12 +66,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
         super();
     }
 
-    public Id createInterventionalStudyProtocol(StudyProtocol studyProtocol, StudyOverallStatus studyOverallStatus,
-            StudyIndlde[] studyIndlde, StudyResourcing[] studyResourcing, Document[] document,
-            Organization leadOrganization, Person principalInvestigator, Organization sponsorOrganization,
-            StudySite leadOrganizationSiteIdentifier, StudySite nctIdentifierSiteIdentifier, StudyContact studyContact,
-            StudySiteContact studySiteContact, Organization summaryForOrganization,
-            StudyResourcing summaryForStudyResourcing, Id responsiblePartyContact) throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.Id createInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.StudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person principalInvestigator,gov.nih.nci.coppa.po.Organization sponsorOrganization,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationSiteIdentifier,gov.nih.nci.coppa.services.pa.StudySite nctIdentifierSiteIdentifier,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing,gov.nih.nci.coppa.services.pa.Id responsiblePartyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             StudyProtocolDTO studyProtocolDTO = StudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
             StudyOverallStatusDTO overallStatusDTO = StudyOverallStatusTransformer.INSTANCE.toDto(studyOverallStatus);
@@ -104,12 +99,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
         }
     }
 
-    public Id amend(StudyProtocol studyProtocol, StudyOverallStatus studyOverallStatus, StudyIndlde[] studyIndlde,
-            StudyResourcing[] studyResourcing, Document[] document, Organization leadOrganization,
-            Person principalInvestigator, Organization sponsorOrganization, StudySite leadOrganizationSiteIdentifier,
-            StudySite nctIdentifierSiteIdentifier, StudyContact studyContact, StudySiteContact studySiteContact,
-            Organization summaryForOrganization, StudyResourcing summaryForStudyResourcing, Id responsiblePartyContact)
-            throws RemoteException, PAFault {
+  public gov.nih.nci.coppa.services.pa.Id amend(gov.nih.nci.coppa.services.pa.StudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person principalInvestigator,gov.nih.nci.coppa.po.Organization sponsorOrganization,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationSiteIdentifier,gov.nih.nci.coppa.services.pa.StudySite nctIdentifierSiteIdentifier,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing,gov.nih.nci.coppa.services.pa.Id responsiblePartyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             StudyProtocolDTO studyProtocolDTO = StudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
             StudyOverallStatusDTO overallStatusDTO = StudyOverallStatusTransformer.INSTANCE.toDto(studyOverallStatus);
@@ -142,13 +132,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
         }
     }
 
-    public void update(StudyProtocol studyProtocol, StudyOverallStatus studyOverallStatus, StudySite studySite,
-            StudyIndlde[] studyIndlde, StudyResourcing[] studyResourcing, Document[] document,
-            Organization leadOrganization, Person principalInvestigator, Organization sponsorOrganization,
-            StudyContact studyContact, StudySiteContact studySiteContact, Organization summaryForOrganization,
-            StudyResourcing summaryForStudyResourcing, Id responsiblePartyContact,
-            StudyRegulatoryAuthority studyRegulatoryAuthority, StudySite[] collaborators,
-            StudySiteAccrualStatus[] participatingSites, StudySite[] pgCdUpdatedList) throws RemoteException, PAFault {
+  public void update(gov.nih.nci.coppa.services.pa.StudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person principalInvestigator,gov.nih.nci.coppa.po.Organization sponsorOrganization,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing,gov.nih.nci.coppa.services.pa.Id responsiblePartyContact,gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority,gov.nih.nci.coppa.services.pa.StudySite[] collaborators,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] participatingSites,gov.nih.nci.coppa.services.pa.StudySite[] pgCdUpdatedList) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             StudyProtocolDTO studyProtocolDTO = StudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
             StudyOverallStatusDTO overallStatusDTO = StudyOverallStatusTransformer.INSTANCE.toDto(studyOverallStatus);
@@ -183,7 +167,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
         }
     }
 
-    public void reject(Id studyProtocol) throws RemoteException, PAFault {
+  public void reject(gov.nih.nci.coppa.services.pa.Id studyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii studyProtocolIi = IITransformer.INSTANCE.toDto(studyProtocol);
             service.reject(studyProtocolIi);
@@ -192,5 +176,10 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             throw FaultUtil.reThrowRemote(e);
         }
     }
+
+  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.StudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteOverallStatus studySiteOverallStatus,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndldes,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcings,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    //TODO: Implement this autogenerated method
+    throw new RemoteException("Not yet implemented");
+  }
 
 }
