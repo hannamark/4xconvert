@@ -86,7 +86,7 @@ public class GenericCodeValueServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(unorderedList.size(), orderedList.size());
         TreeSet<ResearchOrganizationType> ts = new TreeSet(new Comparator() {
             public int compare(Object o1, Object o2) {
-                return ((ResearchOrganizationType)o1).getDescription().compareTo(((ResearchOrganizationType)o2).getDescription());
+                return ((ResearchOrganizationType)o1).getDescription().toLowerCase().compareTo(((ResearchOrganizationType)o2).getDescription().toLowerCase());
             }
         });
         ts.addAll(unorderedList);

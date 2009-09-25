@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -17,7 +18,13 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
         getToCreateResearchOrganization();
         
         List<String> selectOptions = Arrays.asList(selenium.getSelectOptions("role.typeCode"));
-        TreeSet<String> ts = new TreeSet<String>(selectOptions);
+        TreeSet<String> ts = new TreeSet<String>(new Comparator<String>() {
+            public int compare(String o1, String o2) {
+                return o1.toLowerCase().compareTo(o2.toLowerCase());
+            }
+        });
+        
+        ts.addAll(selectOptions);
 
         assertTrue(selectOptions.size() > 5);
         

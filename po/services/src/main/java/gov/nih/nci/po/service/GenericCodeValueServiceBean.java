@@ -62,8 +62,9 @@ public class GenericCodeValueServiceBean implements GenericCodeValueServiceLocal
         StringBuilder querySb  = new StringBuilder("FROM ");
         querySb.append(clz.getName());
         if (orderBy != null) {
-            querySb.append(" ORDER BY ");
+            querySb.append(" ORDER BY lower(");
             querySb.append(orderBy);
+            querySb.append(")");
         }
         Query q = s.createQuery(querySb.toString());
         return q.list();       
