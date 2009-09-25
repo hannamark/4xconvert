@@ -59,11 +59,11 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeAmend(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+	public void authorizeAmendInterventionalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
 	   				
-	public void authorizeUpdate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+	public void authorizeUpdateInterventionalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
 	   				
@@ -89,11 +89,11 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 		if(operation.getLocalPart().equals("createInterventionalStudyProtocol")){
 			authorizeCreateInterventionalStudyProtocol(peerSubject, context, operation);
 			return true;
-		} else if(operation.getLocalPart().equals("amend")){
-			authorizeAmend(peerSubject, context, operation);
+		} else if(operation.getLocalPart().equals("amendInterventionalStudyProtocol")){
+			authorizeAmendInterventionalStudyProtocol(peerSubject, context, operation);
 			return true;
-		} else if(operation.getLocalPart().equals("update")){
-			authorizeUpdate(peerSubject, context, operation);
+		} else if(operation.getLocalPart().equals("updateInterventionalStudyProtocol")){
+			authorizeUpdateInterventionalStudyProtocol(peerSubject, context, operation);
 			return true;
 		} else if(operation.getLocalPart().equals("reject")){
 			authorizeReject(peerSubject, context, operation);

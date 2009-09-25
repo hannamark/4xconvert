@@ -85,6 +85,20 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
+    public void validate(DTO dto) throws PAException {
+        try {
+            getLocator().getBasePaService(type).validate(dto);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    };
+
+    /**
+     * {@inheritDoc}
+     */
     public ServiceLocator getLocator() {
         return locator;
     }

@@ -20,6 +20,14 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="ST">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ISO:ST" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
     <xs:complexType name="BaseType" abstract="true">
         <xs:sequence>
             <xs:element name="identifier" type="ISO:II" />

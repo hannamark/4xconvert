@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -189,9 +190,9 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
     /**
      * {@inheritDoc}
      */
-    public void reject(Ii studyProtocolIi) throws PAException {
+    public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         try {
-            locator.getTrialRegistrationService().reject(studyProtocolIi);
+            locator.getTrialRegistrationService().reject(studyProtocolIi, rejectionReason);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

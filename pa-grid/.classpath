@@ -89,9 +89,9 @@
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.4.jar"/>
 	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.3-tests.jar" sourcepath="/coppa-commons"/>
 	<classpathentry kind="lib" path="build/lib/po-services-3.0m3-client.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.0-milestone4.2.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-ejb3x.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-common-3.0rc1.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-stubs-3.0rc1.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.0-milestone4.3.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

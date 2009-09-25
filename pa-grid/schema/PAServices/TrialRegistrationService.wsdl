@@ -54,7 +54,7 @@
             <element name="studyProtocol">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyProtocol" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -166,13 +166,13 @@
           </sequence>
         </complexType>
       </element>
-      <element name="AmendRequest">
+      <element name="AmendInterventionalStudyProtocolRequest">
         <complexType>
           <sequence>
             <element name="studyProtocol">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyProtocol" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -277,20 +277,20 @@
           </sequence>
         </complexType>
       </element>
-      <element name="AmendResponse">
+      <element name="AmendInterventionalStudyProtocolResponse">
         <complexType>
           <sequence>
             <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
-      <element name="UpdateRequest">
+      <element name="UpdateInterventionalStudyProtocolRequest">
         <complexType>
           <sequence>
             <element name="studyProtocol">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyProtocol" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -416,7 +416,7 @@
           </sequence>
         </complexType>
       </element>
-      <element name="UpdateResponse">
+      <element name="UpdateInterventionalStudyProtocolResponse">
         <complexType>
           <sequence />
         </complexType>
@@ -428,6 +428,13 @@
               <complexType>
                 <sequence>
                   <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="rejectionReason">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:ST" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -445,7 +452,7 @@
             <element name="studyProtocol">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyProtocol" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -557,17 +564,17 @@
   <message name="CreateInterventionalStudyProtocolResponse">
     <part name="parameters" element="tns:CreateInterventionalStudyProtocolResponse" />
   </message>
-  <message name="AmendRequest">
-    <part name="parameters" element="tns:AmendRequest" />
+  <message name="AmendInterventionalStudyProtocolRequest">
+    <part name="parameters" element="tns:AmendInterventionalStudyProtocolRequest" />
   </message>
-  <message name="AmendResponse">
-    <part name="parameters" element="tns:AmendResponse" />
+  <message name="AmendInterventionalStudyProtocolResponse">
+    <part name="parameters" element="tns:AmendInterventionalStudyProtocolResponse" />
   </message>
-  <message name="UpdateRequest">
-    <part name="parameters" element="tns:UpdateRequest" />
+  <message name="UpdateInterventionalStudyProtocolRequest">
+    <part name="parameters" element="tns:UpdateInterventionalStudyProtocolRequest" />
   </message>
-  <message name="UpdateResponse">
-    <part name="parameters" element="tns:UpdateResponse" />
+  <message name="UpdateInterventionalStudyProtocolResponse">
+    <part name="parameters" element="tns:UpdateInterventionalStudyProtocolResponse" />
   </message>
   <message name="RejectRequest">
     <part name="parameters" element="tns:RejectRequest" />
@@ -595,14 +602,14 @@
       <output message="tns:CreateInterventionalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/CreateInterventionalStudyProtocolResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/PAFaultFaultMessage" />
     </operation>
-    <operation name="amend">
-      <input message="tns:AmendRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/AmendRequest" />
-      <output message="tns:AmendResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/AmendResponse" />
+    <operation name="amendInterventionalStudyProtocol">
+      <input message="tns:AmendInterventionalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/AmendInterventionalStudyProtocolRequest" />
+      <output message="tns:AmendInterventionalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/AmendInterventionalStudyProtocolResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/PAFaultFaultMessage" />
     </operation>
-    <operation name="update">
-      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/UpdateRequest" />
-      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/UpdateResponse" />
+    <operation name="updateInterventionalStudyProtocol">
+      <input message="tns:UpdateInterventionalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/UpdateInterventionalStudyProtocolRequest" />
+      <output message="tns:UpdateInterventionalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/UpdateInterventionalStudyProtocolResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/PAFaultFaultMessage" />
     </operation>
     <operation name="reject">
