@@ -80,6 +80,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -293,9 +294,10 @@ public interface TrialRegistrationServiceRemote {
     /**
      * Reject a protocol and rollback all the changes.
      * @param studyProtocolIi study protocol identifier 
+     * @param rejectionReason rejectionReason
      * @throws PAException on error
      */
-    void reject(Ii studyProtocolIi) throws PAException;   
+    void reject(Ii studyProtocolIi, St rejectionReason) throws PAException;   
     
 
 }

@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -701,5 +702,24 @@ public class PAUtil {
         }    
         return true;  
    }
+    
+    /**
+     * Checks if the documentWorkflowStatus code is abstracted and above.
+     * 
+     * @param documentWorkFlowStatusCode the document work flow status code
+     * 
+     * @return true, if is abstracted and above
+     */
+    public static boolean isAbstractedAndAbove(Cd documentWorkFlowStatusCode) {
+      boolean retValue = false;
+      String dwfs = documentWorkFlowStatusCode.getCode();
+      if (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED.getCode())
+            || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
+            || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())) {
+        retValue = true;
+      }
+      return retValue;
+    }
+
 
 }

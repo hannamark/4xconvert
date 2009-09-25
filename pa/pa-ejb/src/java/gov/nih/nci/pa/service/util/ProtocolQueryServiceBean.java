@@ -306,6 +306,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                    if (studyProtocol.getProprietaryTrialIndicator() != null) {
                        studyProtocolDto.setIsProprietaryTrial(
                                studyProtocol.getProprietaryTrialIndicator().toString());
+                   } else {
+                       studyProtocolDto.setIsProprietaryTrial("false");
                    }
                 }
                 if (studyMilestone != null) {

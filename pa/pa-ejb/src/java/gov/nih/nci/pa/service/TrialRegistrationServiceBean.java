@@ -83,27 +83,24 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
@@ -144,8 +141,6 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -156,6 +151,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
 import org.hibernate.Session;
 
 /**
@@ -546,13 +542,23 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     /**
      * Reject a protocol and rollback all the changes.
      * @param studyProtocolIi study protocol identifier 
+     * @param rejectionReason rejectionReason
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void reject(Ii studyProtocolIi) throws PAException {
+    public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
             validate(studyProtocolDto, null , REJECTION);
+            //Original trial Rejection
+            if (studyProtocolDto.getSubmissionNumber().getValue().intValue() == 1) {
+                StudyMilestoneDTO smDto = new StudyMilestoneDTO();
+                smDto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+                smDto.setStudyProtocolIdentifier(studyProtocolIi);
+                smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_REJECTED));
+                smDto.setCommentText(rejectionReason);
+                studyMilestoneService.create(smDto);                
+            } else {
             Ii targetSpIi = null;
             Ii sourceSpIi = null;
             StudyRelationshipDTO srDto = new StudyRelationshipDTO();
@@ -635,6 +641,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             studySiteService.update(ssSourceDTO);
             
             paServiceUtils.executeSql(deleteAndReplace(sourceSpIi , targetSpIi));
+          }  
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -1081,97 +1088,22 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
         DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
               studyProtocolDTO.getIdentifier());
-        String dwfs = isoDocWrkStatus.getStatusCode().getCode();
-        if (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED.getCode())
-              || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
-                  || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())) {
-          
-            if (PAConstants.YES.equalsIgnoreCase(
-                    BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator()))
-                    && PAConstants.NO.equalsIgnoreCase(
-                            BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))) {
-                errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
-            }
-            
-            List<PlannedActivityDTO> paList = 
-                plannedActivityService.getByStudyProtocol(studyProtocolDTO.getIdentifier());            
-          //Display error in abstraction validation if section 801 indicator = ‘yes’,  
-            if (PAConstants.YES.equalsIgnoreCase(
-                    BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
-                    && PAConstants.YES.equalsIgnoreCase(
-                            BlConverter.convertBLToString(studyProtocolDTO.getDelayedpostingIndicator()))
-                    && !paServiceUtils.isDeviceFound(studyProtocolDTO.getIdentifier() , paList)) {
-                errMsg.append("Delay posting indicator can only be set to \'yes\' " 
-                    + " if study includes at least one intervention with type \'device\'.");
-            }
-            if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) { 
-                if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
-                        studyProtocolDTO.getFdaRegulatedIndicator()))) {
-                    errMsg.append("FDA Regulated Intervention Indicator must be Yes " 
-                      +                       " since it has Trial IND/IDE records.\n");         
-                }
-                Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
-                //doing this just to load the country since its lazy loaded. 
-                Country country = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId);
-                String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
-                if (country.getAlpha3().equals("USA")  
-                    && !regAuthName.equalsIgnoreCase("Food and Drug Administration")) {
-                    errMsg.append("For IND protocols, Oversight Authorities "
-                          + " must include United States: Food and Drug Administration.\n");
-                }
-          }
-          if (errMsg.length() > 1) {
-              throw new PAException(errMsg.toString());
-          }
-      } 
-  }   
-    @SuppressWarnings({"PMD" })
+        List<PlannedActivityDTO> paList = 
+            plannedActivityService.getByStudyProtocol(studyProtocolDTO.getIdentifier());      
+        paServiceUtils.enforceRegulatoryInfo(studyProtocolDTO, 
+                                studyRegAuthDTO, 
+                                studyIndldeDTOs, 
+                                isoDocWrkStatus, 
+                                paList, 
+                                regulatoryInfoBean);         
+   }   
+    
     private void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO,  
         List<StudySiteAccrualStatusDTO> participatingSites) throws PAException {
         if (participatingSites != null && !participatingSites.isEmpty()) { 
               StudyRecruitmentStatusDTO recruitmentStatusDto = 
                   studyRecruitmentStatusServiceRemote.getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
-              if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
-                      equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
-                  boolean recruiting = false;
-                  StudySiteAccrualStatusDTO latestDTO = null;
-                  List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
-                  for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
-                      Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
-                      //base condition if one of the newly changed status is recruiting ;then break
-                      if (latestId == null) {
-                          if (RecruitmentStatusCode.RECRUITING.getCode().
-                                  equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
-                              recruiting = true;
-                              break;
-                          } else if (!RecruitmentStatusCode.RECRUITING.getCode().
-                                  equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
-                              continue;
-                          }
-                      } else {
-                          participatingSitesOld = new ArrayList<StudySiteAccrualStatusDTO>();
-                          participatingSitesOld.add(studySiteAccuralStatus);
-                      }
-                  }
-                  if (participatingSitesOld != null && !participatingSitesOld.isEmpty()) { 
-                      //else sort the old statuses and the get the latest
-                      Collections.sort(participatingSitesOld, new Comparator<StudySiteAccrualStatusDTO>() {
-                          public int compare(StudySiteAccrualStatusDTO o1, StudySiteAccrualStatusDTO o2) {
-                              return o1.getIdentifier().getExtension().compareToIgnoreCase(
-                                      o2.getIdentifier().getExtension());
-                          }
-                      });
-                      latestDTO = participatingSitesOld.get(participatingSitesOld.size() - 1);
-                      if (latestDTO != null && RecruitmentStatusCode.RECRUITING.getCode().
-                              equalsIgnoreCase(latestDTO.getStatusCode().getCode())) {
-                          recruiting = true;
-                      }
-                      if (!recruiting) {
-                              new PAException("Data inconsistency: Atleast one location needs to be recruiting"
-                                      + " if the overall status recruitment status is\'Recruiting\'");   
-                      }
-                  }   
-              }
+              paServiceUtils.enforceRecruitmentStatus(studyProtocolDTO, participatingSites, recruitmentStatusDto);
         } 
     }
 
@@ -1301,27 +1233,23 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
        }
        if (docUpdated) {
-          stringBuffer.append("IRB Document was updated\n");
+          stringBuffer.append("IRB Document was updated<br>");
           studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
           trialUpdateForReview = true;
        }
        if (docParticipatingUpdated) {
-           stringBuffer.append("Participating Document was updated\n");
+           stringBuffer.append("Participating Document was updated<br>");
            studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
            trialUpdateForReview = true;
        }
-      
-       String dwfs = isoDocWrkStatus.getStatusCode().getCode();
-       if (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED.getCode())
-             || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
-                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())) {
-         List<AbstractionCompletionDTO> errorList =
+       if (PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode())) {
+           List<AbstractionCompletionDTO> errorList =
                abstractionCompletionService.validateAbstractionCompletion(studyProtocolDTO.getIdentifier());
            if (!errorList.isEmpty()) {
-            stringBuffer.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b>\n");
-            for (AbstractionCompletionDTO abDTO : errorList) {
-              stringBuffer.append(abDTO.getErrorType()).append(":").append(abDTO.getErrorDescription())
-                          .append(":").append(abDTO.getComment()).append("\n");
+             stringBuffer.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>");
+             for (AbstractionCompletionDTO abDTO : errorList) {
+               stringBuffer.append(abDTO.getErrorType()).append(":").append(abDTO.getErrorDescription())
+                          .append(":").append(abDTO.getComment()).append("<br>");
             }
             studyInboxDTO.setComments(StConverter.convertToSt(stringBuffer.toString()));
             trialUpdateForReview = true;

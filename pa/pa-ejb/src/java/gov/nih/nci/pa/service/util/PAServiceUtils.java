@@ -84,23 +84,30 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -127,6 +134,8 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -731,5 +740,127 @@ public class PAServiceUtils {
         Integer maxValue = (Integer) session.createQuery(query).list().get(0);
         return (maxValue == null ? 1 : maxValue + 1);
     }
+    
+    /**
+     * Enforce recruitment status.
+     * 
+     * @param studyProtocolDTO the study protocol dto
+     * @param participatingSites the participating sites
+     * @param recruitmentStatusDto the recruitment status dto
+     * 
+     * @throws PAException the PA exception
+     */
+    @SuppressWarnings({"PMD" })
+    public void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO, 
+                                         List<StudySiteAccrualStatusDTO> participatingSites, 
+                                         StudyRecruitmentStatusDTO recruitmentStatusDto) throws PAException {
+        if (participatingSites != null && !participatingSites.isEmpty()) { 
+               if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
+                      equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
+                  boolean recruiting = false;
+                  StudySiteAccrualStatusDTO latestDTO = null;
+                  List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
+                  for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
+                      Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
+                      //base condition if one of the newly changed status is recruiting ;then break
+                      if (latestId == null) {
+                        if (RecruitmentStatusCode.RECRUITING.getCode().
+                               equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
+                             recruiting = true;
+                             break;
+                        } else if (!RecruitmentStatusCode.RECRUITING.getCode().
+                                      equalsIgnoreCase(studySiteAccuralStatus.getStatusCode().getCode())) {
+                            continue;
+                        }
+                      } else {
+                          participatingSitesOld = new ArrayList<StudySiteAccrualStatusDTO>();
+                          participatingSitesOld.add(studySiteAccuralStatus);
+                      }
+                  }
+                  if (participatingSitesOld != null && !participatingSitesOld.isEmpty()) { 
+                      //else sort the old statuses and the get the latest
+                      Collections.sort(participatingSitesOld, new Comparator<StudySiteAccrualStatusDTO>() {
+                          public int compare(StudySiteAccrualStatusDTO o1, StudySiteAccrualStatusDTO o2) {
+                              return o1.getIdentifier().getExtension().compareToIgnoreCase(
+                                      o2.getIdentifier().getExtension());
+                          }
+                      });
+                      latestDTO = participatingSitesOld.get(participatingSitesOld.size() - 1);
+                      if (latestDTO != null && RecruitmentStatusCode.RECRUITING.getCode().
+                              equalsIgnoreCase(latestDTO.getStatusCode().getCode())) {
+                          recruiting = true;
+                      }
+                      if (!recruiting) {
+                              new PAException("Data inconsistency: Atleast one location needs to be recruiting"
+                                      + " if the overall status recruitment status is\'Recruiting\'");   
+                      }
+                  }   
+              }
+        } 
+    }
+    
+    
+    /**
+     * Enforce regulatory info.
+     * 
+     * @param studyProtocolDTO the study protocol dto
+     * @param studyRegAuthDTO the study reg auth dto
+     * @param studyIndldeDTOs the study indlde dt os
+     * @param isoDocWrkStatus the iso doc wrk status
+     * @param paList the pa list
+     * @param regulatoryInfoBean the regulatory info bean
+     * 
+     * @throws PAException the PA exception
+     */
+    @SuppressWarnings({"PMD" })
+    public void enforceRegulatoryInfo(StudyProtocolDTO studyProtocolDTO, 
+                                      StudyRegulatoryAuthorityDTO studyRegAuthDTO , 
+                                      List<StudyIndldeDTO> studyIndldeDTOs,
+                                      DocumentWorkflowStatusDTO isoDocWrkStatus ,
+                                      List<PlannedActivityDTO> paList ,
+                                      RegulatoryInformationServiceRemote regulatoryInfoBean) throws PAException {
+        StringBuffer errMsg = new StringBuffer();
+        if (studyRegAuthDTO == null) {
+            errMsg.append("Regulatory Information fields must be Entered.\n");
+        }
+        if (PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode())) {
+           
+            if (PAConstants.YES.equalsIgnoreCase(
+                  BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator()))
+                  && PAConstants.NO.equalsIgnoreCase(
+                            BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))) {
+                errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
+            }
+            
+           //Display error in abstraction validation if section 801 indicator = ‘yes’,  
+            if (PAConstants.YES.equalsIgnoreCase(
+                    BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
+                    && PAConstants.YES.equalsIgnoreCase(
+                            BlConverter.convertBLToString(studyProtocolDTO.getDelayedpostingIndicator()))
+                    && !isDeviceFound(studyProtocolDTO.getIdentifier() , paList)) {
+                errMsg.append("Delay posting indicator can only be set to \'yes\' " 
+                    + " if study includes at least one intervention with type \'device\'.");
+            }
+            if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) { 
+                if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
+                        studyProtocolDTO.getFdaRegulatedIndicator()))) {
+                    errMsg.append("FDA Regulated Intervention Indicator must be Yes " 
+                      +                       " since it has Trial IND/IDE records.\n");         
+                }
+                Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
+                //doing this just to load the country since its lazy loaded. 
+                Country country = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId);
+                String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
+                if (country.getAlpha3().equals("USA")  
+                    && !regAuthName.equalsIgnoreCase("Food and Drug Administration")) {
+                    errMsg.append("For IND protocols, Oversight Authorities "
+                          + " must include United States: Food and Drug Administration.\n");
+                }
+          }
+          if (errMsg.length() > 1) {
+              throw new PAException(errMsg.toString());
+          }
+      } 
+  }    
     
 }

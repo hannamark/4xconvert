@@ -281,18 +281,18 @@ public class TrialValidationAction extends ActionSupport {
         if (isTrialForAmendment(intSubNo)) {
             //send mail
             PoPaServiceBeanLookup.getMailManagerService()
-            .sendAmendRejectEmail(studyProtocolIi, gtdDTO.getCommentText());
-            //
+              .sendAmendRejectEmail(studyProtocolIi, gtdDTO.getCommentText());
             //PaRegistry.getStudyProtocolService().deleteStudyProtocol(studyProtocolIi);
-            PaRegistry.getTrialRegistrationService().reject(studyProtocolIi);
+            PaRegistry.getTrialRegistrationService().reject(studyProtocolIi, 
+              StConverter.convertToSt(gtdDTO.getCommentText()));
             ServletActionContext.getRequest().getSession().removeAttribute(submissionNo);
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PROTOCOL_II);
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.DOC_WFS_MENU); 
             return "amend_reject"; 
         } else {
-        createMilestones(MilestoneCode.SUBMISSION_REJECTED);    
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
+            createMilestones(MilestoneCode.SUBMISSION_REJECTED);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                 setMenuLinks(DocumentWorkflowStatusCode.REJECTED));
         
         try {
