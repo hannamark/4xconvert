@@ -364,6 +364,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       try {
           appendSecondaryIdentifiers(htmldata , spDTO);
           appendTitles(htmldata , spDTO);
+          if (!PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())
+                  && BlConverter.covertToBoolean(spDTO.getProprietaryTrialIndicator())) {
+              generateTSRForProprietary(htmldata, spDTO);
+              return htmldata.toString();
+          }
           appendOrgsAndPersons(htmldata , spDTO.getIdentifier());
           apppendTrialStatus(htmldata , spDTO);
           appendRegulatoryInformation(htmldata , spDTO);
@@ -1225,8 +1230,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     html.append(BR).append(appendBoldData("Detailed Description: ")).append(BR); 
     html.append(getDescription(studyProtocolDto.getScientificDescription(), false)); 
     html.append(BR).append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
-    html.append(BR).append(appendData("Reporting Dataset Method", 
+    if (studyProtocolDto.getAccrualReportingMethodCode() != null 
+            && studyProtocolDto.getAccrualReportingMethodCode().getDisplayName() != null) {
+        html.append(BR).append(appendData("Reporting Dataset Method", 
                 getInfo(studyProtocolDto.getAccrualReportingMethodCode().getDisplayName(), true), true, true));
+    }
     html.append(BR);
 
   }
@@ -1637,5 +1645,18 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     }
     return sbuff;
  }
-  
+  private void generateTSRForProprietary(StringBuffer htmldata,
+          StudyProtocolDTO spDTO) throws PAException, NullifiedRoleException {
+      Ii studyProtocolIi = spDTO.getIdentifier();
+      Organization lead = ocsr.getOrganizationByFunctionRole(
+              studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+      htmldata.append(appendData("Lead Organization" , lead.getName(), true , true));
+      htmldata.append(BR).append(BR);
+      appendIdeIde(htmldata , spDTO);
+      appendNihGrants(htmldata , spDTO);
+      appendSummary4(spDTO, htmldata);
+      appendDisease(studyProtocolIi, htmldata);
+      appendTrialDesign(htmldata, spDTO);
+      appendParticipatingSites(htmldata, spDTO);
+  }
 }
