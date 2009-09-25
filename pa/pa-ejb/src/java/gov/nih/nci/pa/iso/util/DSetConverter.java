@@ -182,6 +182,15 @@ public class DSetConverter {
                     } catch (UnsupportedEncodingException e) {
                         continue;
                     }
+                } else if (t instanceof TelPhone) {
+                    String url = t.getValue().toString();
+                    if (url != null && url.startsWith("tel")) {
+                        try {
+                            retList.add((URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8")));
+                        } catch (UnsupportedEncodingException e) {
+                            continue;
+                        }
+                    }
                 }
             }
         }
@@ -192,6 +201,11 @@ public class DSetConverter {
                 }
                 if (t instanceof TelEmail) {
                     retList.add((t.getValue().getSchemeSpecificPart()));
+                } else if (t instanceof Tel) {
+                    String url = t.getValue().toString();
+                    if (url != null && url.startsWith("mailto")) {
+                        retList.add((t.getValue().getSchemeSpecificPart()));
+                    }
                 }
             }
         }
