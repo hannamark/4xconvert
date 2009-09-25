@@ -877,7 +877,7 @@ function toggledisplay2 (it) {
          </tr> 
          </table>
         <p align="center" class="info">
-           Please verify ALL the trial information you provided on this screen before clicking the &#34;Submit Trial&#34; button below.  
+           Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.  
            <br>Once you submit the trial you will not be able to modify the information.
         </p>
         <div class="actionsrow">
