@@ -637,7 +637,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 if (studyProtocolId == null) {
                     studyProtocolId = pId;
                 }
-                Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+                Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(studyProtocolId));
                 TrialUtil util = new TrialUtil();
                 util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
                 synchActionWithDTO();
@@ -842,7 +842,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         TrialUtil util = new TrialUtil();
         Ii updateId = null;
         try {
-            Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.valueOf(trialDTO.getIdentifier()));
+            Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier()));
             //get the studyProtocol DTO
             StudyProtocolDTO spDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
@@ -1132,7 +1132,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
   throws PAException {
       StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
       studyResoureDTO = RegistryServiceLocator.getStudyResourcingService().getStudyResourceByID(
-              IiConverter.convertToIi(Long.valueOf(trialFundingWebDTO.getId())));
+              IiConverter.convertToIi(Long.parseLong(trialFundingWebDTO.getId())));
       studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
           trialFundingWebDTO.getFundingMechanismCode()));
