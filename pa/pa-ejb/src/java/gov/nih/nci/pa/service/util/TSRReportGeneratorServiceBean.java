@@ -106,6 +106,7 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -131,6 +132,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
@@ -222,6 +224,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     PAOrganizationServiceRemote  paOrganizationService = null;
     @EJB
     StudyObjectiveServiceRemote studyObjectiveService = null;
+    @EJB
+    StratumGroupServiceLocal stratumGroupService = null;
+    
   /** The Constant BR. */
   private static final String BR = "<BR>";
   
@@ -304,16 +309,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private static final int MIN_LEN = 3;
    
   /** The Constant FONT_TITLE. */
-  private static final String FONT_TITLE = "<FONT SIZE='5'>";
+  private static final String FONT_TITLE = "<FONT SIZE='5' FACE='calibiri'>";
   
   /** The Constant FONT_SECTION. */
-  private static final String FONT_SECTION = "<FONT SIZE='4' color='brown'>";
+  private static final String FONT_SECTION = "<FONT SIZE='4' color='brown' FACE='calibiri'>";
   
   /** The Constant FONT_LABEL. */
-  private static final String FONT_LABEL = "<FONT SIZE='3'>";
+  private static final String FONT_LABEL = "<FONT SIZE='3' FACE='calibiri'>";
   
   /** The Constant FONT_TEXT. */
-  private static final String FONT_TEXT = "<FONT SIZE='3'>";
+  private static final String FONT_TEXT = "<FONT SIZE='3' FACE='calibiri'>";
   
   
   /** The Constant FONT_END. */
@@ -376,6 +381,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
          createPrimaryOutcome(htmldata, somDtos);
          createSecondaryOutcome(htmldata, somDtos);
          appendParticipatingSites(htmldata, spDTO);
+         appendSubGroups(htmldata, spDTO);
          
       } catch (Exception e) {
           htmldata = new StringBuffer();
@@ -401,6 +407,27 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       return htmldata.toString();
   }
+
+  /**
+   * Append sub groups.
+   * 
+   * @param html the html
+   * @param spDto the sp dto
+   * 
+   * @throws PAException the PA exception
+   */
+  private void appendSubGroups(StringBuffer html , StudyProtocolDTO spDto) throws  PAException {
+    List<StratumGroupDTO> sraDTO = 
+          stratumGroupService.getByStudyProtocol(spDto.getIdentifier());
+  
+    if (sraDTO != null && !sraDTO.isEmpty()) {
+       appendTitle(html, appendBoldData("Sub Group Information"));
+         html.append(BR);
+         StratumGroupDTO dto = sraDTO.get(0);
+         html.append(appendData("Code: ", StConverter.convertToString(dto.getGroupNumberText()), true , true));
+         html.append(appendData("Description: ", StConverter.convertToString(dto.getDescription()), true , true));
+    }
+  }  
 
 /**
    * Append participating sites. 
@@ -536,16 +563,25 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    */
   private void createSecondaryOutcome(StringBuffer html,
       List<StudyOutcomeMeasureDTO> somDtos) {
-
-    for (StudyOutcomeMeasureDTO smDTO : somDtos) {
-      if (!smDTO.getPrimaryIndicator().getValue().booleanValue()) {
-    appendTitle(html, appendBoldData("Secondary Outcome Measures"));
-        html.append(appendData("Description", getInfo(smDTO.getName(), true), true , true));
-        html.append(appendData("TimeFrame", getInfo(smDTO.getTimeFrame(), true), true , true));
-        html.append(appendData("Safety Issue?", convertBLToString((smDTO.getSafetyIndicator()), false), true , true));
-        html.append(BR);
+    if (!somDtos.isEmpty()) {
+        appendTitle(html, appendBoldData("Secondary Outcome Measures"));
+        html.append(TBL_B);
+        html.append(TR_B);
+        appendTDAndData(html, appendTRBold("Description"));
+        appendTDAndData(html, appendTRBold("TimeFrame"));
+        appendTDAndData(html, appendTRBold("Safety Issue?"));
+        html.append(TR_E);
+        for (StudyOutcomeMeasureDTO smDTO : somDtos) {
+         if (!smDTO.getPrimaryIndicator().getValue().booleanValue()) {
+            html.append(TR_B);
+            appendTDAndData(html, StConverter.convertToString(smDTO.getName()));
+            appendTDAndData(html, StConverter.convertToString(smDTO.getTimeFrame()));
+            appendTDAndData(html, convertBLToString((smDTO.getSafetyIndicator()), false));
+            html.append(TR_E);
+        }
       }
-    }
+      html.append(TBL_E);  
+    }   
   }
 
   /**
@@ -555,17 +591,25 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
    */
   private void createPrimaryOutcome(StringBuffer html,
       List<StudyOutcomeMeasureDTO> somDtos) {
-
-    for (StudyOutcomeMeasureDTO smDTO : somDtos) {
-      if (smDTO.getPrimaryIndicator().getValue().booleanValue()) {
-    appendTitle(html, appendBoldData("Primary Outcome Measures"));
-        html.append(BR);
-        html.append(appendData("Description", getInfo(smDTO.getName(), true), true , true));
-        html.append(appendData("TimeFrame", getInfo(smDTO.getTimeFrame(), true), true , true));
-        html.append(appendData("Safety Issue?", convertBLToString((smDTO.getSafetyIndicator()), false), true , true));
-        html.append(BR);
+    if (!somDtos.isEmpty()) {
+      appendTitle(html, appendBoldData("Primary Outcome Measures"));
+      html.append(TBL_B);
+      html.append(TR_B);
+      appendTDAndData(html, appendTRBold("Description"));
+      appendTDAndData(html, appendTRBold("TimeFrame"));
+      appendTDAndData(html, appendTRBold("Safety Issue?"));
+      html.append(TR_E);
+      for (StudyOutcomeMeasureDTO smDTO : somDtos) {
+        if (smDTO.getPrimaryIndicator().getValue().booleanValue()) {
+           html.append(TR_B);
+           appendTDAndData(html, StConverter.convertToString(smDTO.getName()));
+           appendTDAndData(html, StConverter.convertToString(smDTO.getTimeFrame()));
+           appendTDAndData(html, convertBLToString((smDTO.getSafetyIndicator()), false));
+           html.append(TR_E);
+           }        
+        }
+      html.append(TBL_E);
       }
-    }
   }
 
   /**
@@ -585,6 +629,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       html.append(appendData("Description", getInfo(armDTO.getDescriptionText(), true), true , true));
       html.append(appendLabel("Intervention(s)", "" , true, true));
       List<PlannedActivityDTO> paList = plannedActivityService.getByArm(armDTO.getIdentifier());
+      if (!paList.isEmpty()) {
       html.append(TBL_B);
       html.append(TR_B);
       appendTDAndData(html, appendTRBold("Type"));
@@ -606,7 +651,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           html.append(TR_E);
       }
       html.append(TBL_E);
-    }
+     }
+    }   
   }
   
   private String getInterventionAltNames(InterventionDTO i) throws PAException {
@@ -817,10 +863,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             first = false;
             html.append(TR_B);
             appendTDAndData(html, appendTRBold("Name"));
-            appendTDAndData(html, appendTRBold("Lead"));
+            //appendTDAndData(html, appendTRBold("Lead"));
             html.append(TR_E);
           }
-        for (StudyDiseaseDTO sdDto : sdDtos) {
+       /* for (StudyDiseaseDTO sdDto : sdDtos) {
             if (sdDto.getLeadDiseaseIndicator() != null 
                     && sdDto.getLeadDiseaseIndicator().getValue()) {
                 DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
@@ -830,14 +876,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 html.append(TR_E);
                 break; 
            }
-        } 
+        } */
         List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
         for (StudyDiseaseDTO sdDto : sdDtos) {
-         if (sdDto.getLeadDiseaseIndicator() != null 
+         /*if (sdDto.getLeadDiseaseIndicator() != null 
                     && !sdDto.getLeadDiseaseIndicator().getValue()) {
-                DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
+         */       DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                 diseases.add(d);
-            }
+         //   }
         }
         Collections.sort(diseases, new Comparator<DiseaseDTO>() {
            public int compare(DiseaseDTO o1, DiseaseDTO o2) {
@@ -848,7 +894,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
        for (DiseaseDTO d : diseases) { 
            html.append(TR_B);
            appendTDAndData(html, getData(d.getPreferredName(), true));
-           appendTDAndData(html, "No");
+           //appendTDAndData(html, "No");
            html.append(TR_E);
           }
        }
@@ -1047,7 +1093,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                           throw new PAException(" Po Identifier is nullified " + paOrg.getIdentifier() , e);
                       }
                       html.append(appendData("Board" , paOrg.getName(), true , true));
-                      html.append(appendData(" affiliated with " , 
+                      html.append(BR).append(appendData("Affiliated with" , 
                              part.getReviewBoardOrganizationalAffiliation().getValue(), false , true));
                      html.append(appendData("Full Address" , AddressConverterUtil.convertToAddress(
                               poOrg.getPostalAddress()), true , true));
@@ -1174,10 +1220,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         .append(appendData("Official Title", getInfo(studyProtocolDto.getOfficialTitle(), true), true, true));
     html.append(BR).append(appendData("Brief Title", getInfo(studyProtocolDto.getPublicTitle(), true), true, true));
     html.append(BR).append(appendData("Acronym", getInfo(studyProtocolDto.getAcronym(), true), true, true));
-    html.append(BR)
-        .append(appendData("Brief Summary", getInfo(studyProtocolDto.getPublicDescription(), true), true, true));
-    html.append(BR).append(appendBoldData("Detailed Description: ")); 
-    html.append(getScientificDescription(studyProtocolDto.getScientificDescription())); 
+    html.append(BR).append(appendBoldData("Brief Summary: ")).append(BR);
+    html.append(getDescription(studyProtocolDto.getPublicDescription(), true));
+    html.append(BR).append(appendBoldData("Detailed Description: ")).append(BR); 
+    html.append(getDescription(studyProtocolDto.getScientificDescription(), false)); 
     html.append(BR).append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
     html.append(BR).append(appendData("Reporting Dataset Method", 
                 getInfo(studyProtocolDto.getAccrualReportingMethodCode().getDisplayName(), true), true, true));
@@ -1577,10 +1623,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
   }
   
-  private StringBuffer getScientificDescription(St scientificDescription) {
-    StringBuffer sbuff = new StringBuffer();
-      if (!PAUtil.isStNull(scientificDescription)) {
-        String data = scientificDescription.getValue();
+  private StringBuffer getDescription(St description, boolean appendNoData) {
+    StringBuffer sbuff = new StringBuffer();  
+      if (description.getValue() == null || description.getValue().equalsIgnoreCase("")  && appendNoData) {
+          return sbuff.append(NO_INFO);
+      }   
+      if (!PAUtil.isStNull(description)) {
+        String data = description.getValue();
         StringTokenizer stokens = new StringTokenizer(data , "\n");
         while (stokens.hasMoreTokens()) {
          sbuff.append(stokens.nextToken()).append(BR);
