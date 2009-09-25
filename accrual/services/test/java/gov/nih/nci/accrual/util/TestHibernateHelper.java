@@ -90,6 +90,7 @@ import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.MappingIdentifier;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
@@ -107,6 +108,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
+import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
 import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
@@ -127,6 +129,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
+import gov.nih.nci.pa.domain.StudySiteOverallStatus;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.domain.Submission;
 
@@ -208,6 +211,9 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(StudyObjective.class).
         addAnnotatedClass(StudySiteAccrualAccess.class).
         addAnnotatedClass(StudyInbox.class).
+        addAnnotatedClass(MappingIdentifier.class).
+        addAnnotatedClass(StudySiteOverallStatus.class).
+        addAnnotatedClass(StudyCheckout.class).
 
         // hibernate properties
         setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
