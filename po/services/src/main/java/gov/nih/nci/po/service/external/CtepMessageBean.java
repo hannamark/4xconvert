@@ -133,7 +133,15 @@ public class CtepMessageBean implements MessageListener {
         /**
          * an update.
          */
-        UPDATE
+        UPDATE,
+        /**
+         * a rejection.
+         */
+        REJECT,
+        /**
+         * a duplicate.
+         */
+        DUPLICATE
     }
 
     /**
@@ -204,18 +212,19 @@ public class CtepMessageBean implements MessageListener {
     }
 
     /**
-     * @param message the message from CTEP
+     * @param msg the message from CTEP
      */
-    public void onMessage(final Message message) {
-        if (message instanceof TextMessage) {
-            processMessage((TextMessage) message);
+    public void onMessage(final Message msg) {
+        if (msg instanceof TextMessage) {
+            processMessage((TextMessage) msg);
         } else {
-            logError(String.format("Unsuported Message Type %s", message.getClass().toString()), message, null);
+            logError(String.format("Unsuported Message Type %s", msg.getClass().toString()), msg, null);
         }
     }
 
     private void processMessage(TextMessage textMessage) {
         try {
+
             Digester digester = new Digester();
             digester.push(this);
             // This set of rules calls the processRow method and passes
@@ -245,16 +254,16 @@ public class CtepMessageBean implements MessageListener {
 
     /**
      * called my digester.
-     * 
      * @param trxTypeString message TRANSACTION_TYPE.
      * @param recordTypeString message RECORD_TYPE.
      * @param recordId message RECORD_ID.
+     * 
      * @throws JMSException on error.
      * @throws EntityValidationException if any validation errors occur
      */
     // public for digester reflection call.
-    public void processRow(String trxTypeString, String recordTypeString, String recordId) throws JMSException,
-            EntityValidationException {
+    public void processRow(String trxTypeString, String recordTypeString, String recordId)
+            throws JMSException, EntityValidationException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("TRANSACTION_TYPE = %s, RECORD_TYPE = %s, RECORD_ID = %s", trxTypeString,
                     recordTypeString, recordId));
@@ -279,28 +288,55 @@ public class CtepMessageBean implements MessageListener {
 
     /**
      * process on ROW element in a message.
-     * 
      * @param trxType message TRANSACTION_TYPE.
      * @param msgType message RECORD_TYPE.
      * @param id message RECORD_ID.
+     * 
      * @throws JMSException on error.
      * @throws EntityValidationException if any validation errors occur
      */
     // protected for testing.
-    protected void processMessage(TransactionType trxType, RecordType msgType, Ii id) throws JMSException,
-            EntityValidationException {
-        switch (msgType) {
-        case ORGANIZATION:
-        case ORGANIZATION_ADDRESS:
-            ctepImportService.importCtepOrganization(id);
-            break;
-        case PERSON:
-        case PERSON_ADDRESS:
-        case PERSON_CONTACT:
-            ctepImportService.importCtepPerson(id);
-            break;
+    protected void processMessage(TransactionType trxType, RecordType msgType, Ii id)
+            throws JMSException, EntityValidationException {
+        switch (trxType) {
+        case REJECT:
+        case DUPLICATE:
+            LOG.error(getSkipMessage(trxType, msgType, id));
         default:
-            LOG.error(String.format("Unexpected RecordType enum %s", msgType.name()));
+            switch (msgType) {
+            case ORGANIZATION:
+            case ORGANIZATION_ADDRESS:
+                ctepImportService.importCtepOrganization(id);
+                break;
+            case PERSON:
+            case PERSON_ADDRESS:
+            case PERSON_CONTACT:
+                ctepImportService.importCtepPerson(id);
+                break;
+            default:
+                LOG.error(String.format("Unexpected RecordType enum %s", msgType.name()));
+            }
+
         }
     }
+
+    /**
+     * @param trxType the transaction type
+     * @param id the identifier
+     * @param msgType record type value
+     * @return generate the message to skip processing
+     * @throws JMSException if a problem occurs with JMS
+     */
+    protected String getSkipMessage(TransactionType trxType, RecordType msgType, Ii id) throws JMSException {
+        StringBuilder b = new StringBuilder();
+        b.append("Skipping the processing of message TRANSACTION_TYPE (");
+        b.append(trxType);
+        b.append(") and RECORD_TYPE (");
+        b.append(msgType);
+        b.append(") and RECORD_ID (");
+        b.append(id.getExtension());
+        b.append(')');
+        return b.toString();
+    }
+
 }
