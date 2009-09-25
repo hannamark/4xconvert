@@ -181,14 +181,16 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                 if (!RegistryUtil.isValidDate(trialDTO.getDateOpenedforAccrual())) {
                     addFieldError("trialDTO.dateOpenedforAccrual", getText(err));
                 } else if (PAUtil.isDateCurrentOrPast(trialDTO.getDateOpenedforAccrual())) {
-                    addFieldError("trialDTO.dateOpenedforAccrual", getText("error.submit.invalidStatusDate"));
+                    addFieldError("trialDTO.dateOpenedforAccrual", 
+                       getText("error.proprietary.submit.dateOpenedAccrual"));
                 }
         }
         if (PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())) {
                 if (!RegistryUtil.isValidDate(trialDTO.getDateClosedforAccrual())) {
                     addFieldError("trialDTO.dateClosedforAccrual", getText(err));
                 } else if (PAUtil.isDateCurrentOrPast(trialDTO.getDateClosedforAccrual())) {
-                    addFieldError("trialDTO.dateClosedforAccrual", getText("error.submit.invalidStatusDate"));
+                    addFieldError("trialDTO.dateClosedforAccrual", 
+                       getText("error.proprietary.submit.dateClosedAccrual"));
                 }
         }
         if (PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())  
@@ -197,7 +199,9 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                         getText("error.proprietary.submit.dateOpenReq"));
         }
         if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual())
-                && PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())) {
+                && PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())
+                && RegistryUtil.isValidDate(trialDTO.getDateOpenedforAccrual())
+                && RegistryUtil.isValidDate(trialDTO.getDateClosedforAccrual())) {
             Timestamp dateOpenedDateStamp = PAUtil.dateStringToTimestamp(trialDTO.getDateOpenedforAccrual());
             Timestamp dateClosedDateStamp = PAUtil.dateStringToTimestamp(trialDTO.getDateClosedforAccrual());
             if (dateClosedDateStamp.before(dateOpenedDateStamp)) {
