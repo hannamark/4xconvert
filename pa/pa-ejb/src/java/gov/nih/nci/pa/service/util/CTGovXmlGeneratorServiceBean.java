@@ -717,6 +717,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         Pq pq = null;
         BigDecimal value;
         String unit;
+        String operator;
         Boolean incIndicator = null;
         for (PlannedEligibilityCriterionDTO paEC : paECs) {
             criterionName = StConverter.convertToString(paEC.getCriterionName());
@@ -752,15 +753,16 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             } else {
                 value = pq.getValue();
                 unit = pq.getUnit();
+                operator = (!PAUtil.isStNull(paEC.getOperator())) ? paEC.getOperator().getValue() : "";
                 if (incIndicator == null) {
                     nullCrit.append(TAB).append(DASH).append(criterionName).append(' ').append(value).append(' ').
-                        append(unit).append('\n');
+                        append(operator).append(' ').append(unit).append('\n');
                 } else if (incIndicator) {
                     incCrit.append(TAB).append(DASH).append(criterionName).append(' ').append(value).append(' ').
-                        append(unit).append('\n');
+                       append(operator).append(' ').append(unit).append('\n');
                 } else {
                     exCrit.append(TAB).append(DASH).append(criterionName).append(' ').append(value).append(' ').
-                        append(unit).append('\n');
+                       append(operator).append(' ').append(unit).append('\n');
                 }
             }
 
