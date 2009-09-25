@@ -113,7 +113,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
         // TODO Auto-generated method stub
         
     }
-    public void reject(Ii studyProtocolIi) throws PAException {
+    public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         // TODO Auto-generated method stub
         
     }
