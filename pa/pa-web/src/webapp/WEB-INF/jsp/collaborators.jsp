@@ -58,7 +58,8 @@ function handleCreate(){
 			    <display:column property="functionalRole"
 					titleKey="participatingOrganizations.functionalRole"
 					class="sortable" />
-				<c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">	
+				<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+										|| (sessionScope.role == 'SuAbstractor')}">	
 				<display:column titleKey="participatingOrganizations.edit"
 					headerClass="centered" class="action">
 					<s:a href="#" onclick="handleEdit(%{#attr.row.id})">
@@ -80,7 +81,8 @@ function handleCreate(){
 	</table>
 	<div class="actionsrow"><del class="btnwrapper">
 	<ul class="btnrow">
-	<c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+	<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+							|| (sessionScope.role == 'SuAbstractor')}">
 		<li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
 			class="btn_img"><span class="add">Add </span></span></a></li>
 	</c:if>			

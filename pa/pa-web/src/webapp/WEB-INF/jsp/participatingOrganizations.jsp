@@ -57,7 +57,8 @@ function handleDelete(studyResourcingId){
         <display:column property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" class="sortable" />
         <display:column property="investigator" titleKey="participatingOrganizations.investigators"/>
         <display:column property="primarycontact" titleKey="participatingOrganizations.primarycontacts"/>
-        <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+        					|| (sessionScope.role == 'SuAbstractor')}">
         <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
         <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
         </display:column>
@@ -71,7 +72,8 @@ function handleDelete(studyResourcingId){
 <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">
-            <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+            <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+            					|| (sessionScope.role == 'SuAbstractor')}">
             <li><a href="participatingOrganizationscreate.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add </span></span></a></li>
             </c:if>        

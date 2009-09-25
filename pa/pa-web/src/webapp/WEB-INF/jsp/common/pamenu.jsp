@@ -11,7 +11,7 @@
 </li>
 
 
-<c:if test="${(sessionScope.trialSummary  != null) && (sessionScope.role == 'Abstractor')}">
+<c:if test="${(sessionScope.trialSummary  != null) && (sessionScope.role == 'Abstractor' || sessionScope.role == 'SuAbstractor')}">
 	<li class="sub"><div><c:out value="${sessionScope.trialSummary.nciIdentifier }"/></div>
 		<ul>
 			<li><div>Trial Overview</div>

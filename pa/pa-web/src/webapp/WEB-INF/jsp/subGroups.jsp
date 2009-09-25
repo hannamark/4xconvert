@@ -21,7 +21,8 @@
     <display:table name="${subGroupsList}" id="row" class="data" sort="list"  pagesize="200" requestURI="subGroupsquery.action" export="false">    
 	    <display:column titleKey="subGroups.code" property="groupNumberText" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="subGroups.description" property="description" sortable="true" headerClass="sortable" />
-	    <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+	    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+	    					|| (sessionScope.role == 'SuAbstractor')}">
 	    <display:column title="Edit" class="action">
     		<s:url id="url" action="subGroupsedit"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
@@ -36,7 +37,8 @@
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
-					<c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+					<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+										|| (sessionScope.role == 'SuAbstractor')}">
 					<li><s:a href="subGroupsinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
 					</c:if>
 					<c:choose>

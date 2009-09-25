@@ -110,7 +110,7 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  * @author Harsha
  * 
  */
-@SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
 @Validation
 public class StudyProtocolQueryAction extends ActionSupport implements ServletResponseAware {
     private static final long serialVersionUID = -2308994602660261367L;
@@ -143,6 +143,10 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         if (ServletActionContext.getRequest().isUserInRole(Constants.REPORT_VIEWER)) {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.USER_ROLE, Constants.REPORT_VIEWER);
             return "criteriaReport";
+        }
+        if (ServletActionContext.getRequest().isUserInRole(Constants.SUABSTRACTOR)) {
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.USER_ROLE, Constants.SUABSTRACTOR);
+            return "criteriaProtected";
         }
         throw new PAException("User configured improperly.  Use UPT to assign user to a valid group "
                 + "for this application.");
@@ -214,6 +218,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @return res
      * @throws PAException exception
      */
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" })
     public String view() throws PAException {
         if (!userRoleInSession()) {
             return showCriteria();
@@ -237,9 +242,13 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             
             ServletActionContext.getRequest().getSession().setAttribute(
                     Constants.LOGGED_USER_NAME, loginName);
-            
-            if (studyProtocolQueryDTO.getStudyCheckoutBy() != null && loginName != null 
-                    && studyProtocolQueryDTO.getStudyCheckoutBy().equalsIgnoreCase(loginName)) {
+            String role = (String) ServletActionContext.getRequest().getSession().getAttribute(Constants.USER_ROLE);
+            boolean superUser = false;
+            if (role != null && role.equalsIgnoreCase(Constants.SUABSTRACTOR)) {
+                superUser = true;
+            }
+            if ((studyProtocolQueryDTO.getStudyCheckoutBy() != null && loginName != null 
+                    && studyProtocolQueryDTO.getStudyCheckoutBy().equalsIgnoreCase(loginName)) || superUser) {
                 setCheckoutStatus(true);
             }
             return "view";
@@ -314,9 +323,11 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                 PaRegistry.getStudyCheckoutService().create(scoDTO);        
             } else if (studyProtocolQueryDTO.getStudyCheckoutId() != null) {
                 PaRegistry.getStudyCheckoutService().delete(
-                        IiConverter.convertToIi(studyProtocolQueryDTO.getStudyCheckoutId()));       
+                        IiConverter.convertToIi(studyProtocolQueryDTO.getStudyCheckoutId()));                      
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                        getText("studyProtocol.trial.checkIn"));
             }
-            view();            
+            view(); 
             return "view";
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());

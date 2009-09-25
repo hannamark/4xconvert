@@ -68,7 +68,8 @@ function handleCreateGroup(){
                     titleKey="arms.description"
                     headerClass="sortable" />
                 <display:column property="interventions" titleKey="arms.interventions"/>
-                <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+                					|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="arms.edit" headerClass="centered" class="action">
                     <s:if test="%{currentAction == 'listArm'}">
                     <s:a href="#" onclick="handleEditArm(%{#attr.row.identifier})">
@@ -98,7 +99,8 @@ function handleCreateGroup(){
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
-    <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+    					|| (sessionScope.role == 'SuAbstractor')}">
         <s:if test="%{currentAction == 'listArm'}">
             <li><a href="#" class="btn" onclick="this.blur();handleCreateArm();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>

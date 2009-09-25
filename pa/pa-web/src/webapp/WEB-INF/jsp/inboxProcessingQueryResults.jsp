@@ -15,7 +15,7 @@
     <display:column titleKey="studyProtocol.studyOnholdDates" property="offHoldDates" headerClass="sortable"/>
     <display:column titleKey="inboxTrial.updatedDate" property="updatedDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
     <display:column titleKey="inboxTrial.updateReason" property="updatedComments"  headerClass="sortable"/>
-    <c:if test="${(sessionScope.role == 'Abstractor')}">
+    <c:if test="${(sessionScope.role == 'Abstractor') || (sessionScope.role == 'SuAbstractor')}">
         <display:column class="title" 
             titleKey="studyProtocol.action" 
             href="studyProtocolview.action" property="action"

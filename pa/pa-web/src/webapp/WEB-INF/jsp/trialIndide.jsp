@@ -54,7 +54,8 @@ function handleDelete(studyProtocolIi){
     	<display:column titleKey="trialIndide.nciDivProgHolderCode" property="nciDivProgHolder"   sortable="true" headerClass="sortable"/>
     	<display:column titleKey="trialIndide.expandedAccessIndicator" property="expandedAccessIndicator"   sortable="true" headerClass="sortable"/>
     	<display:column titleKey="trialIndide.expandedAccessStatusCode" property="expandedAccessStatus"   sortable="true" headerClass="sortable"/>
-    	<c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+    	<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+    						|| (sessionScope.role == 'SuAbstractor')}">
         <display:column title="Edit" class="action">
             <s:a href="#" onclick="handleAction(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
         </display:column>
@@ -67,7 +68,8 @@ function handleDelete(studyProtocolIi){
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
-                    <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy}">
+                    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+                    					|| (sessionScope.role == 'SuAbstractor')}">
                     <li><s:a href="trialIndide.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
                     </c:if>
 					<c:choose>

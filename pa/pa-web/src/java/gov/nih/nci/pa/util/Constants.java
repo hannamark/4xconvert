@@ -123,4 +123,6 @@ public class Constants {
     public static final String REPORT_VIEWER = "ReportViewer";
     /** CSM Group used to define abstractor role. **/
     public static final String ABSTRACTOR = "Abstractor";
+    /** CSM Group used to define suabstractor role. **/
+    public static final String SUABSTRACTOR = "SuAbstractor";
 }

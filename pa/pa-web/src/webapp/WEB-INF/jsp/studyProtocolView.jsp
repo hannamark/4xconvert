@@ -35,6 +35,7 @@
    <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 
   <div class="box">
+  <pa:sucessMessage/>
     <s:form ><s:actionerror/>
 	<h2>Trial Identification</h2>
 
@@ -98,16 +99,20 @@
             </td>
             <td class="value">
             	<c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null)
-            						|| (sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)}">
+            						|| (sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+            						|| (sessionScope.role == 'SuAbstractor')}">
                  <s:select  name="checkoutStatus" list="#{'false':'Check-In', 'true':'Check-Out'}" />
                  </c:if>
-                 <c:if test="${sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName != sessionScope.trialSummary.studyCheckoutBy}">
+                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName != sessionScope.trialSummary.studyCheckoutBy
+                 						&& sessionScope.role != 'SuAbstractor')}">
                  		<b><c:out value="${sessionScope.trialSummary.studyCheckoutBy }"/> </b>
                  </c:if>
             </td>
             </tr>     
             </table>  
-        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null) || (sessionScope.trialSummary.studyCheckoutBy == sessionScope.loggedUserName)}">
+        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null) 
+        					|| (sessionScope.trialSummary.studyCheckoutBy == sessionScope.loggedUserName)
+        					|| (sessionScope.role == 'SuAbstractor')}">
  <div class="actionsrow">
 	<del class="btnwrapper">
 		<ul class="btnrow">
