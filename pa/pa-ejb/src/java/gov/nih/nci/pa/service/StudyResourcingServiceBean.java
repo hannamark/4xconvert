@@ -89,11 +89,13 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -202,75 +204,53 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
      */
     @SuppressWarnings("PMD.NPathComplexity")
     public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
-        final int serialNumMin = 5;
-        final int serialNumMax = 6;
+        
         if (studyResourcingDTO == null) {
             LOG.error(" studyResourcingDTO should not be null ");
             throw new PAException(" studyResourcingDTO should not be null ");
         }
+        enforceValidation(studyResourcingDTO);
+        
         LOG.debug("Entering updateStudyResourcing ");
+        
         Session session = null;
         StudyResourcing studyResourcing = null;
         StudyResourcingDTO studyResourcingRetDTO = null;
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-        if (studyResourcingDTO.getSerialNumber() != null
-            && studyResourcingDTO.getSerialNumber().getValue() != null) {
-          String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
-          if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
-            throw new PAException("Serial number can be numeric with 5 or 6 digits");
-          }
-          if (!isNumeric(snValue)) {
-              throw new PAException("Serial number should have numbers from [0-9]");
-          }
-        }
-        if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-                && BlConverter.covertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-                    .equals(Boolean.FALSE)) {
-                enforceNoDuplicate(studyResourcingDTO);
-        }
-
-        try {
-            session = HibernateUtil.getCurrentSession();
-
-            Query query = null;
-
-            // step 1: form the hql
-            String hql = " select sr "
+        // step 1: form the hql
+        String hql = " select sr "
                        + " from StudyResourcing sr "
                        + " where sr.id = " + IiConverter.convertToLong(studyResourcingDTO.getIdentifier());
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-            studyResourcing = queryList.get(0);
-            // set the values from paramter
-            if (studyResourcingDTO.getTypeCode() != null) {
-              studyResourcing.setTypeCode(SummaryFourFundingCategoryCode.getByCode(
-                    studyResourcingDTO.getTypeCode().getCode()));
-            }
-            studyResourcing.setOrganizationIdentifier(IiConverter.convertToString(
-                    studyResourcingDTO.getOrganizationIdentifier()));
-            studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-            if (ejbContext != null) {
-                studyResourcing.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-            }
-            studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
-                    studyResourcingDTO.getFundingMechanismCode()));
-            studyResourcing.setNciDivisionProgramCode(NciDivisionProgramCode.getByCode(
-                        studyResourcingDTO.getNciDivisionProgramCode().getCode()));
-            studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
-            studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
-            session.update(studyResourcing);
-            session.flush();
-            studyResourcingRetDTO = src.convertFromDomainToDto(studyResourcing);
-
-        } catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving getsummary4ReportedResource" , hbe);
-            throw new PAException(" Hibernate exception while retrieving getsummary4ReportedResource "  , hbe);
-        }
-        LOG.debug("Leaving updateStudyResourcing ");
-        return studyResourcingRetDTO;
+       // step 2: construct query object
+       query = session.createQuery(hql);
+       queryList = query.list();
+       studyResourcing = queryList.get(0);
+       // set the values from paramter
+       if (studyResourcingDTO.getTypeCode() != null) {
+           studyResourcing.setTypeCode(SummaryFourFundingCategoryCode.getByCode(
+               studyResourcingDTO.getTypeCode().getCode()));
+       }
+       studyResourcing.setOrganizationIdentifier(IiConverter.convertToString(
+               studyResourcingDTO.getOrganizationIdentifier()));
+       studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
+       if (ejbContext != null) {
+            studyResourcing.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
+       }
+       studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
+                studyResourcingDTO.getFundingMechanismCode()));
+       studyResourcing.setNciDivisionProgramCode(NciDivisionProgramCode.getByCode(
+                 studyResourcingDTO.getNciDivisionProgramCode().getCode()));
+       studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
+       studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
+       session.update(studyResourcing);
+       session.flush();
+       studyResourcingRetDTO = src.convertFromDomainToDto(studyResourcing);
+   
+      LOG.debug("Leaving updateStudyResourcing ");
+      return studyResourcingRetDTO;
     }
 
     /**
@@ -281,30 +261,15 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
      */
     @SuppressWarnings("PMD.NPathComplexity")
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
-        final int serialNumMin = 5;
-        final int serialNumMax = 6;
+       
         if (studyResourcingDTO == null) {
             LOG.error(" studyResourcingDTO should not be null ");
             throw new PAException(" studyResourcingDTO should not be null ");
         }
-        if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-                && BlConverter.covertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-                    .equals(Boolean.FALSE)) {
-                enforceNoDuplicate(studyResourcingDTO);
-        }
+        enforceValidation(studyResourcingDTO);
         
         LOG.debug("Entering createStudyResourcing ");
         Session session = null;
-
-        if (studyResourcingDTO.getSerialNumber() != null) {
-          String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
-          if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
-            throw new PAException("Serial number can be numeric with 5 or 6 digits");
-          }
-          if (!isNumeric(snValue)) {
-              throw new PAException("Serial number should have numbers from [0-9]");
-          }
-        }
         StudyResourcing studyResourcing = src.convertFromDtoToDomain(studyResourcingDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         studyResourcing.setDateLastCreated(now);
@@ -314,8 +279,6 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
         // create Protocol Obj
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
-
-
         studyResourcing.setStudyProtocol(studyProtocol);
         studyResourcing.setActiveIndicator(true);
         try {
@@ -444,12 +407,13 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
     
 
     @SuppressWarnings({"PMD" })
-        private void enforceNoDuplicate(StudyResourcingDTO dto) throws PAException {
+        private boolean enforceNoDuplicate(StudyResourcingDTO dto) throws PAException {
           String newSerialNumber = dto.getSerialNumber().getValue();
           String newFundingMech = dto.getFundingMechanismCode().getCode();
           String newNciDivCode = dto.getNciDivisionProgramCode().getCode();
           String newNihInstCode = dto.getNihInstitutionCode().getCode();
           List<StudyResourcingDTO> spList = getstudyResourceByStudyProtocol(dto.getStudyProtocolIdentifier());
+          boolean duplicateExists = false;
           for (StudyResourcingDTO sp : spList) {
               boolean sameSerialNumber = newSerialNumber.equals(sp.getSerialNumber().getValue());
               boolean sameFundingMech = newFundingMech.equals(sp.getFundingMechanismCode().getCode());
@@ -459,10 +423,12 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
               if (sameSerialNumber && sameFundingMech && sameNciDivCode && sameNihInstCode) {
                   if (dto.getIdentifier() == null
                       || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension()))) {
-                    throw new PADuplicateException("Duplicate Grants are not allowed.");
+                      duplicateExists = true;
+                      break;
                   }
               }
           }
+          return duplicateExists;
       }
     
     @SuppressWarnings({"PMD" })
@@ -485,7 +451,10 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
      */
     public void validate(StudyResourcingDTO studyResourcingDTO)
             throws PAException {
-        enforceNoDuplicate(studyResourcingDTO);
+        boolean dupExists = enforceNoDuplicate(studyResourcingDTO);
+        if (dupExists) {
+           throw new PAException("Duplicate grants are not allowed\n");
+        }
     }
     
     /**
@@ -527,4 +496,79 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
        
     }
     
+    private boolean checkIfValueExists(String value, String tableName, String column) throws PAException {
+      String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = '" + value + "'";
+      Session session = null;
+      boolean exists = true;
+      int count = 0;
+      try { 
+        session = HibernateUtil.getCurrentSession();
+        Statement st = session.connection().createStatement();
+        ResultSet rs = st.executeQuery(sql);
+         while (rs.next()) {
+           count++;
+         }
+         if (count == 0) {
+           exists = false;
+         }
+     
+      }  catch (SQLException sqle) {
+          LOG.error(" Hibernate exception while checking for value " + value + " from table " + tableName , sqle);
+      } 
+      return exists;
+    }
+    @SuppressWarnings("PMD.NPathComplexity")
+    private void enforceValidation(StudyResourcingDTO studyResourcingDTO) throws PAException {
+      StringBuffer errorBuffer =  new StringBuffer();
+      final int serialNumMin = 5;
+      final int serialNumMax = 6;
+      
+      //check if nih institute code exists
+      if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
+        boolean nihExists = 
+           checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
+                              "NIH_INSTITUTE", "nih_institute_code");
+          if (!nihExists) {
+             errorBuffer.append("Error while checking for value ")
+                     .append(studyResourcingDTO.getNihInstitutionCode().getCode())
+                     .append(" from table NIH_INSTITUTE\n");
+          }
+      }
+      if (!PAUtil.isCdNull(studyResourcingDTO.getFundingMechanismCode())) {
+         //check if Funding mechanism code exists 
+         boolean fmExists = checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(), 
+             "FUNDING_MECHANISM", "funding_mechanism_code");
+       
+         if (!fmExists) {
+            errorBuffer.append("Error while checking for value ")
+                       .append(studyResourcingDTO.getFundingMechanismCode().getCode())
+                       .append(" from table FUNDING_MECHANISM\n");
+         }
+      }  
+        if (studyResourcingDTO.getSerialNumber() != null
+                && studyResourcingDTO.getSerialNumber().getValue() != null) {
+              String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
+              if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
+                errorBuffer.append("Serial number can be numeric with 5 or 6 digits\n");
+              }
+              if (!isNumeric(snValue)) {
+                errorBuffer.append("Serial number should have numbers from [0-9]\n");
+              }
+        }
+        if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+               && BlConverter.covertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+                    .equals(Boolean.FALSE)) {
+             boolean dupExists = enforceNoDuplicate(studyResourcingDTO);
+             if (dupExists) {
+                errorBuffer.append("Duplicate grants are not allowed\n");
+              }
+       }
+       if (errorBuffer.length() > 0) {
+           throw new PAException("Validation Exception " + errorBuffer.toString());
+       }
+    }        
+    
+    
 }
+
+    
