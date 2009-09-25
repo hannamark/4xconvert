@@ -83,7 +83,11 @@ public class SearchPersonTest extends AbstractPoWebTest {
         assertTrue("Person last name is missing", selenium.isElementPresent("searchPersonForm_criteria_lastName"));
         assertTrue("Person email is missing", selenium.isElementPresent("searchPersonForm_criteria_email"));
         assertTrue("Organization Affiliation is missing", selenium.isElementPresent("searchPersonForm_criteria_org"));
-        assertTrue("Investigator CTEP Identifier is missing", selenium.isElementPresent("searchPersonForm_criteria_ctepId"));
+        assertTrue("CTEP Person Identifier is missing", selenium.isElementPresent("searchPersonForm_criteria_ctepId"));
+
+        // Test for JIRA Issue# PO-1291, GForge Issue# 18768
+        assertTrue("Incorrect CTEP Person Identifier text.", selenium.isTextPresent("CTEP Person Identifier"));
+        assertTrue("Incorrect text - Investigator CTEP Identifier present.", !selenium.isTextPresent("Investigator CTEP Identifier"));
     }
 
     private void clear() {

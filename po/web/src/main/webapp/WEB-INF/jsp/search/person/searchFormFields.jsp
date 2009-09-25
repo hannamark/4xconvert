@@ -8,12 +8,12 @@
                        <s:textfield label="%{getText('person.lastName')}" name="criteria.lastName" size="50"/>
                        <s:textfield label="%{getText('emailEntry.value')}" name="criteria.email" size="60"/>
                        <s:textfield label="Organization Affiliation" name="criteria.org" size="80" maxlength="250"/>
-                       <s:textfield label="Investigator CTEP Identifier" name="criteria.ctepId" size="15"/>
+                       <s:textfield label="CTEP Person Identifier" name="criteria.ctepId" size="15"/>
                         <div class="clear"></div>
                     </div>
                 </div>
-                
+
             </div>
-              
+
             <div class="clearfloat"></div>
         </div>
