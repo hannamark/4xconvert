@@ -79,6 +79,5 @@
     <classpathentry kind="var" path="PA_LIB/pa-ejb/test/cglib-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-ear/runtime/quartz-all-1.6.5.jar"/>
     <classpathentry kind="var" path="PA_LIB"/>
-    <classpathentry kind="var" path="CODE_PA"/>
     <classpathentry kind="output" path="eclipse-out"/>
 </classpath>

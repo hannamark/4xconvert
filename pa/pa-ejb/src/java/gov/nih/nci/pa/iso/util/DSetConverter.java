@@ -108,7 +108,7 @@ public class DSetConverter {
 
     /** The base ii root value. */
     public static final String BASE_ROOT = "2.16.840.1.113883.3.26.4";
-    
+
     /**
      * @param dsetList list of DSets
      * @param type denoting email, telephone, fax, url, etc.,
@@ -182,7 +182,7 @@ public class DSetConverter {
                     } catch (UnsupportedEncodingException e) {
                         continue;
                     }
-                } else if (t instanceof TelPhone) {
+                } else {
                     String url = t.getValue().toString();
                     if (url != null && url.startsWith("tel")) {
                         try {
@@ -201,7 +201,7 @@ public class DSetConverter {
                 }
                 if (t instanceof TelEmail) {
                     retList.add((t.getValue().getSchemeSpecificPart()));
-                } else if (t instanceof Tel) {
+                } else {
                     String url = t.getValue().toString();
                     if (url != null && url.startsWith("mailto")) {
                         retList.add((t.getValue().getSchemeSpecificPart()));
@@ -279,14 +279,14 @@ public class DSetConverter {
         }
         return null;
     }
-    
+
     /**
      * Extract the internal identifier from the set of identifiers.
      * @param identifier set of identifiers
      * @return internal identifier
      */
     public static DSet<Ii> convertIiToDset(Ii identifier) {
-        
+
         DSet<Ii> dSet = null;
         if (identifier != null) {
             dSet = new DSet<Ii>();
