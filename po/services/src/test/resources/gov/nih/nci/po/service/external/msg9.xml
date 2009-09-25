@@ -1,9 +1,10 @@
 <?xml version = '1.0' encoding = 'utf-8'?>
-<ROWSET>  
+<ROWSET>
     <ROW num="1">
-        <TRANSACTION_TYPE>DELETE</TRANSACTION_TYPE>
+        <TRANSACTION_TYPE>NULLIFY</TRANSACTION_TYPE>
         <RECORD_TYPE>PERSON_ADDRESS</RECORD_TYPE>
         <RECORD_ID>42</RECORD_ID>
+        <DUPLICATE_OF>24</DUPLICATE_OF>
         <PERSON_TYPE>HealthCareProvider</PERSON_TYPE>
     </ROW>
-</ROWSET> 
+</ROWSET>

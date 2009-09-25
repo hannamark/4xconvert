@@ -2,6 +2,7 @@ package gov.nih.nci.po.service.external;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.service.external.CtepMessageBean.RecordType;
 import gov.nih.nci.po.service.external.CtepMessageBean.TransactionType;
 import gov.nih.nci.po.util.EmailLogger;
@@ -45,10 +46,10 @@ public class CtepMessageBeanTest {
         b.append(msgType );
         b.append(") and RECORD_ID (");
         b.append(id .getExtension());
-        b.append(')');        
+        b.append(')');
         assertEquals(b.toString(), bean.getSkipMessage(trxType, msgType, id));
     }
-    
+
     private StringWriter logWriter;
 
     @Before
@@ -68,7 +69,7 @@ public class CtepMessageBeanTest {
 
     /**
      * Test of onMessage method, of class CtepMessageBean.
-     * @throws JMSException 
+     * @throws JMSException
      */
     @Test
     public void testOnMessage() throws IOException, JMSException {
@@ -82,16 +83,18 @@ public class CtepMessageBeanTest {
         int idx = 0;
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.ORGANIZATION, "03013", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.ORGANIZATION_ADDRESS, "03013", idx++);
-        checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.ORGANIZATION_ADDRESS, "03013", idx++);
+        checkers[idx] = new Checker(true, TransactionType.NULLIFY, RecordType.ORGANIZATION_ADDRESS, "03013", idx++,
+                OrganizationType.HEALTHCAREFACILITY, "RSB003");
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.ORGANIZATION_ADDRESS, "03013", idx++);
-        checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.ORGANIZATION, "03013", idx++);
+        checkers[idx] = new Checker(true, TransactionType.NULLIFY, RecordType.ORGANIZATION, "03013", idx++,
+                OrganizationType.HEALTHCAREFACILITY, "RSB003");
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_ADDRESS, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_CONTACT, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.UPDATE, RecordType.PERSON, "42", idx++);
-        checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.PERSON_ADDRESS, "42", idx++);
+        checkers[idx] = new Checker(true, TransactionType.NULLIFY, RecordType.PERSON_ADDRESS, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_ADDRESS, "42", idx++);
-        checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.PERSON_CONTACT, "42", idx++);
+        checkers[idx] = new Checker(true, TransactionType.NULLIFY, RecordType.PERSON_CONTACT, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_CONTACT, "42", idx++);
         checkers[idx] = new Checker(false, null, null, null, idx++ /*,
                 "Failed to process JMS message ID:13",
@@ -113,8 +116,9 @@ public class CtepMessageBeanTest {
 
         CtepMessageBean bean = new CtepMessageBean() {
             @Override
-            protected void processMessage(TransactionType trxType, RecordType msgType, Ii id) throws JMSException {
-                checker.check(trxType, msgType, id);
+            protected void processMessage(TransactionType trxType, RecordType msgType, Ii id, OrganizationType orgType,
+                    Ii duplicateOf) {
+                checker.check(trxType, msgType, id, orgType, duplicateOf);
             }
         };
 
@@ -130,12 +134,17 @@ public class CtepMessageBeanTest {
         TransactionType expectedTrxType;
         RecordType expectedMsgType;
         String expectedId;
+        String expectedDuplicateOfId;
+        OrganizationType expectedOrgType;
         String[] errors;
+        boolean extendedInfo;
 
         boolean called;
         TransactionType trxType;
         RecordType msgType;
+        OrganizationType orgType;
         Ii id;
+        Ii duplicateOfId;
 
         int idx;
 
@@ -148,28 +157,44 @@ public class CtepMessageBeanTest {
             this.errors = errors;
         }
 
-        void check(TransactionType tType, RecordType mType, Ii ii) {
+        public Checker(boolean called, TransactionType trxType, RecordType msgType, String id, int idx,
+                OrganizationType orgType, String duplicateOfId, String... errors) {
+            this(called, trxType, msgType, id, idx, errors);
+            this.extendedInfo = true;
+            this.expectedOrgType = orgType;
+            this.expectedDuplicateOfId = duplicateOfId;
+        }
+
+        void check(TransactionType tType, RecordType mType, Ii ii, OrganizationType orgType, Ii duplicateOfIi) {
             called = true;
             this.trxType = tType;
             this.msgType = mType;
             this.id = ii;
+            this.orgType = orgType;
+            this.duplicateOfId = duplicateOfIi;
         }
 
         public void assertCall() {
-            Assert.assertEquals("called"+idx, expectedCalled, called);
+            Assert.assertEquals("called" + idx, expectedCalled, called);
             if (called) {
-                Assert.assertEquals("trxType"+idx, expectedTrxType, trxType);
-                Assert.assertEquals("msgType"+idx, expectedMsgType, msgType);
-                Assert.assertEquals("id"+idx, expectedId, id.getExtension());
+                Assert.assertEquals("trxType" + idx, expectedTrxType, trxType);
+                Assert.assertEquals("msgType" + idx, expectedMsgType, msgType);
+                Assert.assertEquals("id" + idx, expectedId, id.getExtension());
+                if (extendedInfo) {
+                    Assert.assertEquals("orgType" + idx, expectedOrgType, orgType);
+                    Assert.assertEquals("duplicateOfId" + idx, expectedDuplicateOfId, (duplicateOfId == null ? null
+                            : duplicateOfId.getExtension()));
+                }
             }
 
             // check logger entries.
             StringBuffer log = logWriter.getBuffer();
             if (log.length() > 0 && errors.length == 0) {
-                Assert.fail("unexpected log entry for msg "+idx+"  :"+log);
+                Assert.fail("unexpected log entry for msg " + idx + "  :" + log);
             }
             for (String m : errors) {
-                Assert.assertTrue("expected error not found for msg "+idx+": "+ m + "within \n " + log.toString(), log.indexOf(m) >= 0);
+                Assert.assertTrue("expected error not found for msg " + idx + ": " + m + "within \n " + log.toString(),
+                        log.indexOf(m) >= 0);
             }
         }
 

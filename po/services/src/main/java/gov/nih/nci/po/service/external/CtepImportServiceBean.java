@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 
 import java.util.Hashtable;
@@ -120,7 +121,7 @@ public class CtepImportServiceBean implements CtepImportService {
         initImporters();
     }
 
-    
+
     /**
      * Init the org and person importers.
      */
@@ -167,6 +168,13 @@ public class CtepImportServiceBean implements CtepImportService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public void nullifyCtepOrganization(Ii orgId, Ii duplicateOfId, OrganizationType orgType) throws JMSException {
+        orgImporter.nullifyCtepOrganization(orgId, duplicateOfId, orgType);
+    }
+
+    /**
      * @return an InitialContext to CTEP.
      * @throws NamingException when initial context cannot be created.
      */
@@ -178,7 +186,7 @@ public class CtepImportServiceBean implements CtepImportService {
         env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
         env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
         env.put(Context.PROVIDER_URL, props.get("ctep.url"));
-        
+
         oracle.j2ee.rmi.RMIInitialContextFactory contextFactory = new oracle.j2ee.rmi.RMIInitialContextFactory();
         return contextFactory.getInitialContext(env);
     }
@@ -200,4 +208,6 @@ public class CtepImportServiceBean implements CtepImportService {
 
         return config;
     }
+
+
 }

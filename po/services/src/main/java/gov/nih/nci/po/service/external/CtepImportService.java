@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 
 import javax.ejb.Local;
 import javax.jms.JMSException;
@@ -105,6 +106,15 @@ public interface CtepImportService {
      * @throws EntityValidationException if any validation errors occur
      */
     Organization importCtepOrganization(Ii orgId) throws JMSException, EntityValidationException;
+
+    /**
+     * Handle the nullification with duplicate of an organization from the ctep system.
+     * @param orgId the org id
+     * @param duplicateOfId the ID of the organization of which this is a duplicate
+     * @param orgType organization type
+     * @throws JMSException on error
+     */
+    void nullifyCtepOrganization(Ii orgId, Ii duplicateOfId, OrganizationType orgType) throws JMSException;
 
     /**
      * import the person with the given ii.

@@ -104,6 +104,7 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
+import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -125,7 +126,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Scott Miller
- * 
+ *
  */
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class CtepOrganizationImporter extends CtepEntityImporter {
@@ -152,7 +153,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Constructor.
-     * 
+     *
      * @param ctepContext the initial context providing access to ctep services.
      */
     public CtepOrganizationImporter(Context ctepContext) {
@@ -161,7 +162,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Get the organization representing ctep.
-     * 
+     *
      * @return the org
      * @throws JMSException on error
      * @throws EntityValidationException if a validation error occurs anywhere throughout
@@ -179,7 +180,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Imports the given org but will not update an existing entry.
-     * 
+     *
      * @param ctepOrgId the org id.
      * @return the org
      * @throws JMSException on error
@@ -195,7 +196,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Method to import an organization based on its ctep id.
-     * 
+     *
      * @param ctepOrgId the ctep id.
      * @return the organization record.
      * @throws JMSException on error
@@ -215,7 +216,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(assignedId);
             HealthCareFacility hcf = getCtepHealthCareFacility(assignedId);
             ResearchOrganization ro = getCtepResearchOrganization(assignedId);
-           
+
             if (isNewCtepOrg(identifiedOrg, hcf, ro)) {
                 return createCtepOrg(ctepOrg, assignedId, RoleStatus.PENDING);
             }
@@ -223,7 +224,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             if (identifiedOrg == null) {
                 identifiedOrg = genIdentifiedOrg(hcf, ro, assignedId, ctepOrg, RoleStatus.PENDING);
             }
-            return updateCtepOrg(ctepOrg, identifiedOrg, assignedId, hcf, ro); 
+            return updateCtepOrg(ctepOrg, identifiedOrg, assignedId, hcf, ro);
 
         } catch (CTEPEntException e) {
             // ID not found in ctep, therefore we can safely inactivate the entity if it exists locally.
@@ -236,13 +237,13 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             return null;
         }
     }
-    
-    private boolean isNewCtepOrg(IdentifiedOrganization identifiedOrg, HealthCareFacility hcf, 
+
+    private boolean isNewCtepOrg(IdentifiedOrganization identifiedOrg, HealthCareFacility hcf,
             ResearchOrganization ro) {
-        return (identifiedOrg == null && (hcf == null || hcf.getPlayer() == null) 
+        return (identifiedOrg == null && (hcf == null || hcf.getPlayer() == null)
                 && (ro == null || ro.getPlayer() == null));
     }
-    
+
     private void printOrgDataToDebugLog(OrganizationDTO dto) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("*** Importing ctep org ***");
@@ -306,30 +307,30 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             ro.getOtherIdentifiers().add(ctepOrgId);
             this.roService.curate(ro);
         }
-        
+
         // create an identified org record
-        IdentifiedOrganization identifiedOrg = genIdentifiedOrg(hcf, ro, 
+        IdentifiedOrganization identifiedOrg = genIdentifiedOrg(hcf, ro,
                 ctepOrgId, ctepOrg, roleStatus);
         this.identifiedOrgService.curate(identifiedOrg);
 
         return ctepOrg;
     }
-    
-    private IdentifiedOrganization genIdentifiedOrg(HealthCareFacility hcf, ResearchOrganization ro, 
-            Ii assignedId, Organization ctepOrg, RoleStatus roleStatus) 
+
+    private IdentifiedOrganization genIdentifiedOrg(HealthCareFacility hcf, ResearchOrganization ro,
+            Ii assignedId, Organization ctepOrg, RoleStatus roleStatus)
         throws JMSException, EntityValidationException {
-     
+
             IdentifiedOrganization identifiedOrg = new IdentifiedOrganization();
             identifiedOrg.setStatus(roleStatus);
             identifiedOrg.setAssignedIdentifier(assignedId);
             identifiedOrg.setScoper(getScoper(ctepOrg, assignedId));
-            
-            // When we are getting a new org from ctep we can use the ctepOrg provided to 
+
+            // When we are getting a new org from ctep we can use the ctepOrg provided to
             // be the player for the identified org. When we already have a user input org in the db
             // that has not yet been linked to ctep and we are receiving an update we need to use
-            // the HCF or the PO player as the identified org player to make sure we create an identified org 
+            // the HCF or the PO player as the identified org player to make sure we create an identified org
             // for the appropriate existing Organization.
-            
+
             if (ctepOrg != null && ctepOrg.getId() != null) {
                 identifiedOrg.setPlayer(ctepOrg);
             } else if (hcf != null && hcf.getId() != null) {
@@ -337,7 +338,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             } else if (ro != null && ro.getId() != null) {
                 identifiedOrg.setPlayer(ro.getPlayer());
             } else {
-                throw new 
+                throw new
                 IllegalArgumentException("Either the HCF or the RO must be not null so we may get player id.");
             }
         return identifiedOrg;
@@ -346,7 +347,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     private Organization updateCtepOrg(Organization src, IdentifiedOrganization identifiedOrg, Ii assignedId,
             HealthCareFacility hcf, ResearchOrganization ro)
             throws JMSException, EntityValidationException {
-        
+
         Organization org = identifiedOrg.getPlayer();
 
         update(src, org);
@@ -460,9 +461,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             }
             toSave = hcf;
         }
-        
-        
-        
+
+
+
         // only save if something has actually changed, to avoid sending out unneeded JMS messages
         if (toSave != null) {
             this.hcfService.curate(toSave);
@@ -495,11 +496,11 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             dest.setName(src.getName());
             changed = true;
         }
-        
+
         if (copyAddress(src, dest)) {
             changed = true;
         }
-        
+
         if (!areEmailListsEqual(dest.getEmail(), src.getEmail())) {
             dest.getEmail().clear();
             dest.getEmail().addAll(src.getEmail());
@@ -507,10 +508,10 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
         return changed;
     }
-    
+
     private boolean copyAddress(Organization src, AbstractOrganization dest) {
         boolean changed = false;
-        
+
         if (src.getPostalAddress() == null && dest.getPostalAddress() != null) {
             dest.setPostalAddress(null);
             changed = true;
@@ -523,7 +524,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             dest.getPostalAddress().copy(src.getPostalAddress());
             changed = true;
         }
-        
+
         return changed;
     }
 
@@ -552,17 +553,16 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             role.setStatus(RoleStatus.ACTIVE);
             changed = true;
         }
-        
+
         if (!role.isCtepOwned()) {
             role.getOtherIdentifiers().add(assignedId);
             changed = true;
         }
-        
+
         return changed;
     }
 
     private boolean checkAddressSetsEqual(Set<Address> dbAddresses, Set<Address> ctepAddresses) {
-
         // case #1 - both are either null or empty
         if (CollectionUtils.isEmpty(dbAddresses) && CollectionUtils.isEmpty(ctepAddresses)) {
             return true;
@@ -586,16 +586,14 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
             if (dbAddresses.size() != ctepAddresses.size()) {
                 return false;
-            } else {
-                for (Address ctepAd : ctepAddresses) {
-                    if (!isAddressPresent(ctepAd, dbAddresses)) {
-                        return false;
-                    }
-                }
             }
 
+            for (Address ctepAd : ctepAddresses) {
+                if (!isAddressPresent(ctepAd, dbAddresses)) {
+                    return false;
+                }
+            }
         }
-
         return true;
     }
 
@@ -640,6 +638,25 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     private void print(ResearchOrganizationDTO roDto) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(CtepUtils.toString(roDto));
+        }
+    }
+
+    /**
+     * Handle the nullification with duplicate of an organization from the ctep system.
+     * @param ctepOrgId the ctep org id
+     * @param duplicateOfId the ID of the organization of which this is a duplicate
+     * @param orgType organization type
+     * @throws JMSException on error
+     */
+    public void nullifyCtepOrganization(Ii ctepOrgId, Ii duplicateOfId, OrganizationType orgType) throws JMSException {
+        if (orgType == OrganizationType.HEALTHCAREFACILITY) {
+            LOG.error(String.format("Attempting to nullify HCF %s with duplicate %s", ctepOrgId.getExtension(),
+                    duplicateOfId.getExtension()));
+        } else if (orgType == OrganizationType.RESEARCHORGANIZATION) {
+            LOG.error(String.format("Attempting to nullify RO %s with duplicate %s", ctepOrgId.getExtension(),
+                    duplicateOfId.getExtension()));
+        } else {
+            throw new IllegalArgumentException(orgType.name() + " is an invalid organization type");
         }
 
     }

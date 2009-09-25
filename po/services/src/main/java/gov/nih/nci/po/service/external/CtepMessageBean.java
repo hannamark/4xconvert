@@ -100,14 +100,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
- * 
+ *
  * Ideally, this should have been a MDB, but JBoss has no docs on how to connect to an external non-JBoss JMS topic.
- * 
+ *
  * @see CtepMessageMBean
- * 
+ *
  * @author gax
- * 
-@MessageDriven(activationConfig =  {
+ *
+@MessageDriven(activationConfig = {
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/CTISTopic"),
@@ -115,7 +115,7 @@ import org.apache.log4j.Logger;
         @ActivationConfigProperty(propertyName = "clientId", propertyValue = "PoCTISTopicSubscriber"),
         @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "po-consummer")
     })
-*/
+ */
 public class CtepMessageBean implements MessageListener {
 
     /**
@@ -129,7 +129,7 @@ public class CtepMessageBean implements MessageListener {
         /**
          * a delete.
          */
-        DELETE,
+        NULLIFY,
         /**
          * an update.
          */
@@ -168,6 +168,20 @@ public class CtepMessageBean implements MessageListener {
          * person telecom CUD.
          */
         PERSON_CONTACT
+    }
+
+    /**
+     * CTEP message ORGANIZATION_TYPE.
+     */
+    public enum OrganizationType {
+        /**
+         * Research organization.
+         */
+        RESEARCHORGANIZATION,
+        /**
+         * health care facility.
+         */
+        HEALTHCAREFACILITY
     }
 
     private static final Logger LOG = Logger.getLogger(CtepMessageBean.class);
@@ -222,6 +236,7 @@ public class CtepMessageBean implements MessageListener {
         }
     }
 
+    @SuppressWarnings("PMD.MagicNumbers")
     private void processMessage(TextMessage textMessage) {
         try {
 
@@ -229,10 +244,14 @@ public class CtepMessageBean implements MessageListener {
             digester.push(this);
             // This set of rules calls the processRow method and passes
             // in 3 parameters to the method.
-            digester.addCallMethod("ROWSET/ROW", "processRow", 1 + 1 + 1); // checkstyle "3 is a magic number"
+            // CHECKSTYLE:OFF - magic numbers below
+            digester.addCallMethod("ROWSET/ROW", "processRow", 5);
             digester.addCallParam("ROWSET/ROW/TRANSACTION_TYPE", 0);
             digester.addCallParam("ROWSET/ROW/RECORD_TYPE", 1);
             digester.addCallParam("ROWSET/ROW/RECORD_ID", 2);
+            digester.addCallParam("ROWSET/ROW/ORGANIZATION_TYPE", 3);
+            digester.addCallParam("ROWSET/ROW/DUPLICATE_OF", 4);
+            // CHECKSTYLE:ON
 
             String txt = textMessage.getText();
             digester.parse(new StringReader(txt));
@@ -254,16 +273,18 @@ public class CtepMessageBean implements MessageListener {
 
     /**
      * called my digester.
+     *
      * @param trxTypeString message TRANSACTION_TYPE.
      * @param recordTypeString message RECORD_TYPE.
      * @param recordId message RECORD_ID.
-     * 
+     * @param organizationTypeString message ORGANIZATION_TYPE
+     * @param duplicateOf message DUPLICATE_OF
      * @throws JMSException on error.
      * @throws EntityValidationException if any validation errors occur
      */
     // public for digester reflection call.
-    public void processRow(String trxTypeString, String recordTypeString, String recordId)
-            throws JMSException, EntityValidationException {
+    public void processRow(String trxTypeString, String recordTypeString, String recordId,
+            String organizationTypeString, String duplicateOf) throws JMSException, EntityValidationException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("TRANSACTION_TYPE = %s, RECORD_TYPE = %s, RECORD_ID = %s", trxTypeString,
                     recordTypeString, recordId));
@@ -282,22 +303,43 @@ public class CtepMessageBean implements MessageListener {
             LOG.error("Unsuported Transaction Type in message", iae);
         }
 
+        OrganizationType orgType = parseOrgType(organizationTypeString);
+
         Ii id = generateIi(msgType, recordId.trim());
-        processMessage(trxType, msgType, id);
+
+        Ii duplicateOfIi = null;
+        if (StringUtils.isNotEmpty(duplicateOf)) {
+            duplicateOfIi = generateIi(msgType, duplicateOf.trim());
+        }
+        processMessage(trxType, msgType, id, orgType, duplicateOfIi);
+    }
+
+    private OrganizationType parseOrgType(String organizationTypeString) {
+        OrganizationType orgType = null;
+        if (StringUtils.isNotEmpty(organizationTypeString)) {
+            try {
+                orgType = OrganizationType.valueOf(StringUtils.upperCase(StringUtils.trim(organizationTypeString)));
+            } catch (IllegalArgumentException iae) {
+                LOG.error("Unsuported Organization Type in message", iae);
+            }
+        }
+        return orgType;
     }
 
     /**
      * process on ROW element in a message.
+     *
      * @param trxType message TRANSACTION_TYPE.
      * @param msgType message RECORD_TYPE.
      * @param id message RECORD_ID.
-     * 
+     * @param orgType message ORGANIZATION_TYPE
+     * @param duplicateOf message DUPLICATE_OF
      * @throws JMSException on error.
      * @throws EntityValidationException if any validation errors occur
      */
     // protected for testing.
-    protected void processMessage(TransactionType trxType, RecordType msgType, Ii id)
-            throws JMSException, EntityValidationException {
+    protected void processMessage(TransactionType trxType, RecordType msgType, Ii id, OrganizationType orgType,
+            Ii duplicateOf) throws JMSException, EntityValidationException {
         switch (trxType) {
         case REJECT:
         case DUPLICATE:
@@ -305,6 +347,10 @@ public class CtepMessageBean implements MessageListener {
         default:
             switch (msgType) {
             case ORGANIZATION:
+                if (trxType == TransactionType.NULLIFY) {
+                    ctepImportService.nullifyCtepOrganization(id, duplicateOf, orgType);
+                    break;
+                }
             case ORGANIZATION_ADDRESS:
                 ctepImportService.importCtepOrganization(id);
                 break;
@@ -338,5 +384,4 @@ public class CtepMessageBean implements MessageListener {
         b.append(')');
         return b.toString();
     }
-
 }

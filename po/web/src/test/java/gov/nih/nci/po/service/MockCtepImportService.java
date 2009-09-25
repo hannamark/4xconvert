@@ -86,6 +86,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.external.CtepImportService;
+import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +116,12 @@ public class MockCtepImportService implements CtepImportService {
     public Person importCtepPerson(Ii personId) throws JMSException {
         importedPersonIds.add(personId.getExtension());
         return new Person();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void nullifyCtepOrganization(Ii orgId, Ii duplicateOfId, OrganizationType orgType) throws JMSException {
     }
 
     /**

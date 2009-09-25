@@ -90,6 +90,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.MockCtepImportService;
 import gov.nih.nci.po.service.external.CtepImportService;
+import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.externalimport.CtepImportAction;
@@ -132,7 +133,7 @@ public class CtepFileUploadTest extends AbstractPoTest {
             getServiceLocator().getCtepImportService();
         assertEquals(18, service.getImportedOrgIds().size());
     }
-    
+
     /**
      * test the upload action org file are all skipped.
      */
@@ -148,17 +149,20 @@ public class CtepFileUploadTest extends AbstractPoTest {
                     public Person importCtepPerson(Ii personId) throws JMSException {
                         return null;
                     }
+                    public void nullifyCtepOrganization(Ii orgId, Ii duplicateOfId, OrganizationType orgType)
+                            throws JMSException {
+                    }
                 };
             }
         });
-        
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(ORG_FILE_NAME);
         File f = new File(fileUrl.toURI());
-        
+
         CtepImportAction action = new CtepImportAction();
         action.setFile(f);
         assertEquals(Action.SUCCESS, action.uploadOrganizations());
-        
+
         Iterator<String> itr= ActionHelper.getMessages().iterator();
         assertTrue(itr.hasNext());
         assertEquals("0 records successfully imported.", itr.next());
@@ -168,7 +172,7 @@ public class CtepFileUploadTest extends AbstractPoTest {
                 + "any record with one of these ctep id's was inactivated: "));
         assertFalse(itr.hasNext());
     }
-    
+
     /**
      * test the upload action org file all fail.
      */
@@ -184,17 +188,21 @@ public class CtepFileUploadTest extends AbstractPoTest {
                     public Person importCtepPerson(Ii personId) throws JMSException {
                         throw new HibernateException("Bogus");
                     }
+                    public void nullifyCtepOrganization(Ii orgId, Ii duplicateOfId, OrganizationType orgType)
+                        throws JMSException {
+                        throw new HibernateException("Bogus");
+                    }
                 };
             }
         });
-        
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(ORG_FILE_NAME);
         File f = new File(fileUrl.toURI());
-        
+
         CtepImportAction action = new CtepImportAction();
         action.setFile(f);
         assertEquals(Action.SUCCESS, action.uploadOrganizations());
-        
+
         Iterator<String> itr= ActionHelper.getMessages().iterator();
         assertTrue(itr.hasNext());
         assertEquals("0 records successfully imported.", itr.next());
@@ -236,17 +244,20 @@ public class CtepFileUploadTest extends AbstractPoTest {
                     public Person importCtepPerson(Ii personId) throws JMSException {
                         return null;
                     }
+                    public void nullifyCtepOrganization(Ii orgId, Ii duplicateOfId, OrganizationType orgType)
+                            throws JMSException {
+                    }
                 };
             }
         });
-        
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(PERSON_FILE_NAME);
         File f = new File(fileUrl.toURI());
-        
+
         CtepImportAction action = new CtepImportAction();
         action.setFile(f);
         assertEquals(Action.SUCCESS, action.uploadPeople());
-        
+
         Iterator<String> itr= ActionHelper.getMessages().iterator();
         assertTrue(itr.hasNext());
         assertEquals("0 records successfully imported.", itr.next());
@@ -256,7 +267,7 @@ public class CtepFileUploadTest extends AbstractPoTest {
                 + "any record with one of these ctep id's was inactivated: "));
         assertFalse(itr.hasNext());
     }
-    
+
     /**
      * test the upload action person file all fail.
      */
@@ -272,17 +283,22 @@ public class CtepFileUploadTest extends AbstractPoTest {
                     public Person importCtepPerson(Ii personId) throws JMSException {
                         throw new HibernateException("Bogus");
                     }
+                    public void nullifyCtepOrganization(Ii orgId, Ii duplicateOfId, OrganizationType orgType)
+                            throws JMSException {
+                        throw new HibernateException("Bogus");
+                    }
+
                 };
             }
         });
-        
+
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(PERSON_FILE_NAME);
         File f = new File(fileUrl.toURI());
-        
+
         CtepImportAction action = new CtepImportAction();
         action.setFile(f);
         assertEquals(Action.SUCCESS, action.uploadPeople());
-        
+
         Iterator<String> itr= ActionHelper.getMessages().iterator();
         assertTrue(itr.hasNext());
         assertEquals("0 records successfully imported.", itr.next());
@@ -291,7 +307,7 @@ public class CtepFileUploadTest extends AbstractPoTest {
         assertTrue(next.startsWith("An error occurred processing the following line(s): "));
         assertFalse(itr.hasNext());
     }
-    
+
     @Test
     public void testStart() {
         CtepImportAction action = new CtepImportAction();
