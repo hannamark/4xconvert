@@ -29,7 +29,7 @@
     <div class="box" align="center">
     <table>
     <tr>
-        <td>
+        <td colspan="2">
         Is your trial proprietary?  
         <s:radio name="selectedTrialType" id="selectedTrialType" list="#{'yes':'Yes', 'no':'No'}" onclick="loadSelectedTrialType();"/>
        </td>
@@ -41,12 +41,19 @@
        <td colspan="2">&nbsp; </td>
        </tr>
        <tr>
-            <td colspan="2">
+            <td>
+                <b><i><fmt:message key="trial.proprietary"/></i></b>
+            </td>
+            
+            <td>
                <fmt:message key="trial.docInstructionalText_one"/>
             </td>
         </tr>
         <tr>
-            <td colspan="2">
+            <td>
+                <b><i><fmt:message key="trial.non-proprietary"/></i></b>
+            </td>
+            <td>
                <fmt:message key="trial.docInstructionalText_two"/>
             </td>
         </tr>
