@@ -106,7 +106,7 @@ function handleDelete(rowId){
            <ul class="btnrow">
             <li>
             <s:a href="#" cssClass="btn" onclick="handleSearch()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleCreate()"><span class="btn_img"><span class="add">Add New Patient</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleCreate()"><span class="btn_img"><span class="add">Add New Study Subject</span></span></s:a>
             </li>
            </ul>
         </del>
@@ -116,7 +116,7 @@ function handleDelete(rowId){
    <div class="line"></div>
 
    <h1><fmt:message key="patient.list.header"/></h1>
-   <display:table class="data" summary="This table contains your patient search results.  Please use column headers to sort results" 
+   <display:table class="data" summary="This table contains your Study Subject search results.  Please use column headers to sort results" 
                   sort="list" pagesize="10" id="row" name="listOfPatients" requestURI="patients.action" export="false"> 
        <display:column titleKey="patient.assignedIdentifier" property="assignedIdentifier"
          sortable="true" headerClass="sortable" headerScope="col"

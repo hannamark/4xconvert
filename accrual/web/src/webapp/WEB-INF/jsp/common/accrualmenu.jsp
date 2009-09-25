@@ -31,10 +31,10 @@
                         </c:choose>
                         <c:choose>
                             <c:when test="${requestScope.topic == 'list_patients'}">
-                                <li><a href="patients.action" class="selected">Patient Search</a></li> 
+                                <li><a href="patients.action" class="selected">Study Subject Search</a></li> 
                             </c:when>
                             <c:otherwise>
-                                <li><a href="patients.action" >Patient Search</a></li>
+                                <li><a href="patients.action" >Study Subject Search</a></li>
                             </c:otherwise>
                         </c:choose>
                     </c:when>
