@@ -77,8 +77,8 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
               // place client calls here if you want to use this main as a
               // test....
               createInterventionalStudyProtocol(client);
-              amend(client);
-              update(client);
+              updateInterventionalStudyProtocol(client);
+              amendInterventionalStudyProtocol(client);
               createProprietaryInterventionalStudyProtocol(client);
               reject(client);
             } else {
@@ -124,6 +124,9 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         StudyResourcing[] studyResourcing = new StudyResourcing[0];
 
         Document d = new Document();
+        d.setFileName(ISOUtils.buildST("empty.doc"));
+        d.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.OTHER.getCode()));
+        d.setText(ISOUtils.buildED("dummy ed".getBytes()));
         Document[] document = new Document[] {d};
 
         Organization leadOrganization = new Organization();
@@ -146,7 +149,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
         StudySite leadOrganizationSiteIdentifier = new StudySite();
         ST localStudyProtocolIdentifier = new ST();
-        localStudyProtocolIdentifier.setValue("localStudyProtocolIdentifier");
+        localStudyProtocolIdentifier.setValue("createInterventionalStudyProtocolLocalStudyProtocolIdentifier");
         leadOrganizationSiteIdentifier.setLocalStudyProtocolIdentifier(localStudyProtocolIdentifier);
 
         StudySite nctIdentifierSiteIdentifier = new StudySite();
@@ -171,7 +174,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
                 summaryForStudyResourcing, responsiblePartyContact);
     }
 
-    private static void update(TrialRegistrationServiceClient client)  throws RemoteException {
+    private static void updateInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException {
         TS pastDate = new TS();
         pastDate.setValue("20090922090000.0000-0500");
         TS futureDate = new TS();
@@ -182,7 +185,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         II studyProtocolII = new II();
         studyProtocolII.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         studyProtocolII.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        studyProtocolII.setExtension("27426");
+        studyProtocolII.setExtension("180522");
         InterventionalStudyProtocol studyProtocol = new InterventionalStudyProtocol();
         studyProtocol.setIdentifier(studyProtocolII);
         studyProtocol.setStartDate(pastDate);
@@ -194,7 +197,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("slustbader@5amsolutions.com"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("ejbclient"));
 
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
@@ -209,6 +212,9 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         StudyResourcing[] studyResourcing = new StudyResourcing[0];
 
         Document d = new Document();
+        d.setFileName(ISOUtils.buildST("empty.doc"));
+        d.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.OTHER.getCode()));
+        d.setText(ISOUtils.buildED("dummy ed".getBytes()));
         Document[] document = new Document[] {d};
 
         Organization leadOrganization = new Organization();
@@ -255,7 +261,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
                 collaborators, participatingSites, pgCdUpdatedList);
     }
 
-    private static void amend(TrialRegistrationServiceClient client)  throws RemoteException {
+    private static void amendInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException {
         TS pastDate = new TS();
         pastDate.setValue("20090922090000.0000-0500");
         TS futureDate = new TS();
@@ -266,7 +272,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         II studyProtocolII = new II();
         studyProtocolII.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         studyProtocolII.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        studyProtocolII.setExtension("27426");
+        studyProtocolII.setExtension("180522");
         InterventionalStudyProtocol studyProtocol = new InterventionalStudyProtocol();
         studyProtocol.setIdentifier(studyProtocolII);
         studyProtocol.setStartDate(pastDate);
@@ -278,7 +284,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("slustbader@5amsolutions.com"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("ejbclient"));
 
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
@@ -290,6 +296,9 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         StudyResourcing[] studyResourcing = new StudyResourcing[0];
 
         Document d = new Document();
+        d.setFileName(ISOUtils.buildST("empty.doc"));
+        d.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.OTHER.getCode()));
+        d.setText(ISOUtils.buildED("dummy ed".getBytes()));
         Document[] document = new Document[] {d};
 
         Organization leadOrganization = new Organization();
@@ -369,7 +378,6 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         d.setText(ISOUtils.buildED("dummy ed".getBytes()));
         Document[] document = new Document[] {d};
 
-
         Organization leadOrganization = new Organization();
         II leadOrgIi = new II();
         leadOrgIi.setRoot("2.16.840.1.113883.3.26.4.2");
@@ -383,7 +391,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studySiteInvestigator.setIdentifier(studySiteInvestigatorIi);
 
         StudySite leadOrganizationStudySite = new StudySite();
-        leadOrganizationStudySite.setLocalStudyProtocolIdentifier(ISOUtils.buildST("localStudyProtocolIdentifier"));
+        leadOrganizationStudySite.setLocalStudyProtocolIdentifier(ISOUtils.buildST("createProprietaryInterventionalStudyProtocolLocalStudyProtocolIdentifier"));
 
         Organization studySiteOrganization = new Organization();
         II studySiteOrganizationIi = new II();
@@ -392,7 +400,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studySiteOrganization.setIdentifier(studySiteOrganizationIi);
 
         StudySite studySite = new StudySite();
-        studySite.setLocalStudyProtocolIdentifier(ISOUtils.buildST("studySiteLocalStudyProtocolIdentifier"));
+        studySite.setLocalStudyProtocolIdentifier(ISOUtils.buildST("createProprietaryInterventionalStudyProtocolStudySiteLocalStudyProtocolIdentifier"));
 
         StudySite nctIdentifier = new StudySite();
 
