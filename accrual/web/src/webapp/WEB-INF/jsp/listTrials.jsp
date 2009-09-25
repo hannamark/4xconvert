@@ -1,7 +1,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 
 <h1><fmt:message key="accrual.list.trials.page.header"/></h1>
-   <display:table class="data" summary="This table contains your trial search results.
+    <div class="padme5"></div>
+    <accrual:sucessMessage /> 
+    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <display:table class="data" summary="This table contains your trial search results.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SearchTrialResultDecorator"
       sort="list" pagesize="10" id="row" name="listOfTrials" requestURI="viewTrials.action" export="false"> 
    

@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.util.CountryDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
@@ -106,6 +107,7 @@ public class PatientAction extends AbstractAccrualAction {
     private SearchPatientsCriteriaWebDto criteria = null;
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
     private List<PatientWebDto> listOfPatients;
+    private List<CountryDto> listOfCountries = null;
     private PatientWebDto patient;
 
     /**
@@ -117,12 +119,13 @@ public class PatientAction extends AbstractAccrualAction {
             criteria = new SearchPatientsCriteriaWebDto();
         }
         try {
+            loadListOfCountries();
             loadListOfStudySites();
             loadListOfPatients();
         } catch (RemoteException e) {
             return ERROR;
         }
-        ServletActionContext.getRequest().setAttribute("listOfPatients", getListOfPatients());
+        ServletActionContext.getRequest().setAttribute("listOfPatients", listOfPatients);
         return super.execute();
     }
     /**
@@ -130,8 +133,40 @@ public class PatientAction extends AbstractAccrualAction {
      */
     @Override
     public String create() {
+        try {
+            loadListOfCountries();
+            loadListOfStudySites();
+        } catch (RemoteException e) {
+            return ERROR;
+        }
         patient = new PatientWebDto();
         return super.create();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String retrieve() {
+        try {
+            loadListOfCountries();
+            loadListOfStudySites();
+        } catch (RemoteException e) {
+            return ERROR;
+        }
+        return super.retrieve();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String update() {
+        try {
+            loadListOfCountries();
+            loadListOfStudySites();
+        } catch (RemoteException e) {
+            return ERROR;
+        }
+        return super.update();
     }
     /**
      * @return the criteria
@@ -146,24 +181,6 @@ public class PatientAction extends AbstractAccrualAction {
         this.criteria = criteria;
     }
     /**
-     * @return the listOfStudySites
-     */
-    public List<SearchStudySiteResultWebDto> getListOfStudySites() {
-        return listOfStudySites;
-    }
-    /**
-     * @return the listOfPatients
-     */
-    public List<PatientWebDto> getListOfPatients() {
-        return listOfPatients;
-    }
-    /**
-     * @param listOfPatients the listOfPatients to set
-     */
-    public void setListOfPatients(List<PatientWebDto> listOfPatients) {
-        this.listOfPatients = listOfPatients;
-    }
-    /**
      * @return the patient
      */
     public PatientWebDto getPatient() {
@@ -175,12 +192,31 @@ public class PatientAction extends AbstractAccrualAction {
     public void setPatient(PatientWebDto patient) {
         this.patient = patient;
     }
+    /**
+     * @return the listOfCountries
+     */
+    public List<CountryDto> getListOfCountries() {
+        return listOfCountries;
+    }
+    /**
+     * @return the listOfStudySites
+     */
+    public List<SearchStudySiteResultWebDto> getListOfStudySites() {
+        return listOfStudySites;
+    }
+
 
     private void loadListOfStudySites() throws RemoteException {
         List<SearchStudySiteResultDto> isoStudySiteList = null;
         if (listOfStudySites == null) {
             isoStudySiteList = searchStudySiteSvc.search(getSpIi(), getAuthorizedUser());
             listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoStudySiteList);
+        }
+    }
+
+    private void loadListOfCountries() throws RemoteException {
+        if (listOfCountries == null) {
+            listOfCountries = countrySvc.getCountries();
         }
     }
 

@@ -8,7 +8,7 @@
 <head>
     <title><fmt:message key="patient.search.title"/></title>   
     <s:head/>
-<SCRIPT LANGUAGE="JavaScript">
+<script LANGUAGE="JavaScript">
 function handleSearch(){
     document.forms[0].action="patients.action";
     document.forms[0].submit();
@@ -35,7 +35,7 @@ function handleDelete(rowId){
         document.forms[0].submit();
     }
 }
-</SCRIPT>
+</script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
@@ -44,61 +44,52 @@ function handleDelete(rowId){
     <s:hidden name="selectedRowIdentifier"/>
     <table class="form">
     
-    <tr>     
-        <td scope="row" class="label">
-          <label for="Patient ID">
-              <fmt:message key="patient.assignedIdentifier"/>                
-          </label>
+      <tr>     
+        <td class="label">
+           <label for="Patient ID">
+              <fmt:message key="patient.assignedIdentifier"/>
+           </label>
          </td>
          <td class="value">
-            <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier" maxlength="400" size="50" 
+           <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier" maxlength="400" size="50" 
                   cssStyle="width:98%;max-width:206px" />
-           </td>
+         </td>
       </tr> 
       <tr>     
-        <td scope="row" class="label">
+        <td class="label">
           <label for="Participating Site">
-              <fmt:message key="patient.organizationName"/>                
+             <fmt:message key="patient.organizationName"/>
           </label>
          </td>
          <td class="value">
-                              
-                   <s:select id="studySite" name="criteria.studySite" list="listOfStudySites" headerKey="" 
-             listValue="orgName" headerValue="--Select--"  cssStyle="width:206px"/>
-           </td>
+             <s:select id="studySite" name="criteria.studySite" list="listOfStudySites" headerKey="" 
+                       listValue="orgName" headerValue="--Select--"/>
+          </td>
       </tr> 
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Birth Date">
-                    <fmt:message key="patient.birthDate"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="birthDate" name="criteria.birthDate" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Record Status">
-                    <fmt:message key="patient.statusCode"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                                      
-                 <s:select id ="statusCode" name="criteria.statusCode" 
-                               headerKey="1"
-                               headerValue="--Select--"
-                               list="#{'Pending':'Pending','Active':'Active'}" 
-                               cssStyle="width:206px" />
-                 
-                 
-                </td>
-            </tr>
-    
-    
+      <tr>
+          <td class="label">
+           <label for="Birth Date">
+              <fmt:message key="patient.birthDate"/>
+          </label>
+          </td>
+          <td colspan="4">
+          <s:textfield id ="birthDate" name="criteria.birthDate" maxlength="400" size="50"
+                cssStyle="width:98%;max-width:128px" />
+          </td>
+      </tr>
+      <tr>
+          <td class="label">
+           <label for="Record Status">
+              <fmt:message key="patient.statusCode"/>
+          </label>
+          </td>
+          <td colspan="4">
+           <s:select id ="statusCode" name="criteria.statusCode" 
+                         headerKey="1"
+                         headerValue="--Select--"
+                         list="#{'Pending':'Pending','Active':'Active'}"/>
+          </td>
+      </tr>
     </table>
 
     <div class="actionsrow">
@@ -114,8 +105,11 @@ function handleDelete(rowId){
   </s:form>
 
    <div class="line"></div>
-
    <h1><fmt:message key="patient.list.header"/></h1>
+   <div class="padme5"></div>
+   <accrual:sucessMessage /> 
+   <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+
    <display:table class="data" summary="This table contains your Study Subject search results.  Please use column headers to sort results" 
                   sort="list" pagesize="10" id="row" name="listOfPatients" requestURI="patients.action" export="false"> 
        <display:column titleKey="patient.assignedIdentifier" property="assignedIdentifier"

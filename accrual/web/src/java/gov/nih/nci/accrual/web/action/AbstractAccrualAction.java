@@ -79,6 +79,7 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -135,6 +136,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected PatientService patientSvc;
     /** PerformedSubjectMilestoneService. */
     protected PerformedSubjectMilestoneService performedSubjectMilestoneSvc;
+    /** CountryService. */
+    protected CountryService countrySvc;
 
     /**
      * {@inheritDoc}
@@ -145,7 +148,9 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
         studySubjectSvc = AccrualServiceLocator.getInstance().getStudySubjectService();
         patientSvc = AccrualServiceLocator.getInstance().getPatientService();
-        performedSubjectMilestoneSvc = AccrualServiceLocator.getInstance().getPerformedSubjectMilestoneService();
+        performedSubjectMilestoneSvc = AccrualServiceLocator.getInstance().
+                getPerformedSubjectMilestoneService();
+        countrySvc = AccrualServiceLocator.getInstance().getCountryService();
     }
     /**
      * Default execute method for action classes.
@@ -191,6 +196,39 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     }
 
     /**
+     * Add a new record to database (needs to be overridden).  Returns to list jsp.
+     * @return result
+     * @throws RemoteException exception
+     */
+    public String add() throws RemoteException {
+        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                AccrualConstants.CREATE_MESSAGE);
+        return execute();
+    }
+
+    /**
+     * Update a record in the database (needs to be overridden).  Returns to list jsp.
+     * @return result
+     * @throws RemoteException exception
+     */
+    public String edit() throws RemoteException {
+        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                AccrualConstants.UPDATE_MESSAGE);
+        return execute();
+    }
+
+    /**
+     * Delete a record from database (needs to be overridden). Returns to list jsp.
+     * @return action result
+     * @throws RemoteException exception
+     */
+    public String delete() throws RemoteException {
+        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                AccrualConstants.DELETE_MESSAGE);
+        return execute();
+    }
+
+    /**
      * @return the currentAction
      */
     public String getCurrentAction() {
@@ -218,7 +256,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @return the role from the session
      */
     protected String getUserRole() {
-        return (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_ROLE);
+        return (String) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_ROLE);
     }
     /**
      * @return user login name as iso string
@@ -230,7 +269,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @return the spIi
      */
     public Ii getSpIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_SPII);
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_SPII);
     }
     /**
      * @param spIi the spIi to set

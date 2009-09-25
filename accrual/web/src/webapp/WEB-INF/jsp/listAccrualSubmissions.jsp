@@ -29,17 +29,17 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <s:form name="submissionForm"><s:hidden name="selectedRowIdentifier"/> 
 <h1><fmt:message key="accrual.list.accrual.submissions.page.header"/> </h1>
+    <div class="padme5"></div>
+    <accrual:sucessMessage /> 
+    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <display:table class="data" summary="This table contains list of Accrual Submissions.
-    Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SubmissionDecorator"
-      sort="list" pagesize="10" id="row" name="listOfSubmissions" requestURI="accrualSubmissions.action" export="false"> 
-       
-       
-         <display:column titleKey="accrual.list.submissions.label" headerClass="centered" sortable="true" class="action">
-           
-                      <s:a href="#" onclick="viewDetails(%{#attr.row.identifier.extension})">
-                    ${row.label.value}
-                    </s:a>
+          Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SubmissionDecorator"
+          sort="list" pagesize="10" id="row" name="listOfSubmissions" requestURI="accrualSubmissions.action" export="false"> 
 
+         <display:column titleKey="accrual.list.submissions.label" headerClass="centered" sortable="true" class="action">
+             <s:a href="#" onclick="viewDetails(%{#attr.row.identifier.extension})">
+                    ${row.label.value}
+             </s:a>
         </display:column>
        <display:column titleKey="accrual.list.submissions.description" property="description" sortable="true" 
          headerClass="sortable" headerScope="col"/>

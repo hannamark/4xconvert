@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:set var="topic" scope="request" value="list_accrual_submission"/> 
+<c:set var="topic" scope="request" value="list_accural_submissions"/> 
 <head>
     <title><fmt:message key="accrual.new.accrual.submission.page.title"/></title>   
     <s:head/>
@@ -33,10 +33,10 @@ function handleAction(){
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <h1><fmt:message key="accrual.new.accrual.submission.page.header"/></h1>
-  
-   <s:form name="addNew" validate="true">
+    <div class="padme5"></div>
+    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <s:form name="addNew" validate="true">
     <table class="form">
-    <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
       <tr>     
         <td scope="row" class="label">
           <label for="Submission Title">

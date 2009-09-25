@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,77 +76,62 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.util.JNDIUtil;
+package gov.nih.nci.accrual.service.util;
+
+import gov.nih.nci.accrual.dto.util.CountryDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.pa.domain.Country;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Sep 25, 2009
  */
-public class JndiServiceLocator implements ServiceLocatorAccInterface {
-
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
+public class CountryBean implements CountryService {
     /**
      * {@inheritDoc}
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return (SearchStudySiteService) JNDIUtil.lookup("accrual/SearchStudySiteBean/remote");
+    @SuppressWarnings("unchecked")
+    public List<CountryDto> getCountries() throws RemoteException {
+        List<CountryDto> countryDtos = new ArrayList<CountryDto>();
+        Session session = null;
+        try {
+            Set<String> dupCountryFilter = new HashSet<String>();
+            session = AccrualHibernateUtil.getCurrentSession();
+            List<Country> results = session.createQuery(
+                    "select country from RegulatoryAuthority as ra "
+                            + "order by ra.country.name ").list();
+            for (int i = 0; i < results.size(); i++) {
+                Country resCountry = results.get(i);
+                CountryDto dto = new CountryDto();
+                dto.setId(resCountry.getId());
+                dto.setAlpha2(resCountry.getAlpha2());
+                dto.setAlpha3(resCountry.getAlpha3());
+                dto.setName(resCountry.getName());
+                dto.setNumeric(resCountry.getNumeric());
+                if (dupCountryFilter.add(resCountry.getAlpha3())) {
+                    countryDtos.add(dto);
+                }
+            }
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Exception at getDistinctCountryNames", hbe);
+        }
+        return countryDtos;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PatientService getPatientService() {
-        return (PatientService) JNDIUtil.lookup("accrual/PatientBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public POPatientService getPOPatientService() {
-        return (POPatientService) JNDIUtil.lookup("accrual/POPatientBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
-        return (PerformedSubjectMilestoneService) JNDIUtil.lookup("accrual/PerformedSubjectMilestoneBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectService getStudySubjectService() {
-        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() {
-        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CountryService getCountryService() {
-        return (CountryService) JNDIUtil.lookup("accrual/CountryBean/remote");
-    }
 }

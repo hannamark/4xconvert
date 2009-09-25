@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,77 +76,80 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.util.JNDIUtil;
+package gov.nih.nci.accrual.dto.util;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Sep 25, 2009
  */
-public class JndiServiceLocator implements ServiceLocatorAccInterface {
+public class CountryDto {
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+    private String alpha2;
+    private String alpha3;
+    private String name;
+    private String numeric;
 
     /**
-     * {@inheritDoc}
+     * @return the id
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return (SearchStudySiteService) JNDIUtil.lookup("accrual/SearchStudySiteBean/remote");
+    public Long getId() {
+            return id;
     }
-
     /**
-     * {@inheritDoc}
+     * @param id the id to set
      */
-    public SearchTrialService getSearchTrialService() {
-        return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/remote");
+    public void setId(Long id) {
+            this.id = id;
     }
-
     /**
-     * {@inheritDoc}
+     * @return the alpha2
      */
-    public PatientService getPatientService() {
-        return (PatientService) JNDIUtil.lookup("accrual/PatientBean/remote");
+    public String getAlpha2() {
+            return alpha2;
     }
-
     /**
-     * {@inheritDoc}
+     * @param alpha2 the alpha2 to set
      */
-    public POPatientService getPOPatientService() {
-        return (POPatientService) JNDIUtil.lookup("accrual/POPatientBean/remote");
+    public void setAlpha2(String alpha2) {
+            this.alpha2 = alpha2;
     }
-
     /**
-     * {@inheritDoc}
+     * @return the alpha3
      */
-    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
-        return (PerformedSubjectMilestoneService) JNDIUtil.lookup("accrual/PerformedSubjectMilestoneBean/remote");
+    public String getAlpha3() {
+            return alpha3;
     }
-
     /**
-     * {@inheritDoc}
+     * @param alpha3 the alpha3 to set
      */
-    public StudySubjectService getStudySubjectService() {
-        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBean/remote");
+    public void setAlpha3(String alpha3) {
+            this.alpha3 = alpha3;
     }
-
     /**
-     * {@inheritDoc}
+     * @return the name
      */
-    public SubmissionService getSubmissionService() {
-        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBean/remote");
+    public String getName() {
+            return name;
     }
-
     /**
-     * {@inheritDoc}
+     * @param name the name to set
      */
-    public CountryService getCountryService() {
-        return (CountryService) JNDIUtil.lookup("accrual/CountryBean/remote");
+    public void setName(String name) {
+            this.name = name;
+    }
+    /**
+     * @return the numeric
+     */
+    public String getNumeric() {
+            return numeric;
+    }
+    /**
+     * @param numeric the numeric to set
+     */
+    public void setNumeric(String numeric) {
+            this.numeric = numeric;
     }
 }

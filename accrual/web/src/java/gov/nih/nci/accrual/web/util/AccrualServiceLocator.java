@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.util;
 import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
@@ -170,5 +171,12 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
      */
     public SubmissionService getSubmissionService() {
         return serviceLocator.getSubmissionService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CountryService getCountryService() {
+        return serviceLocator.getCountryService();
     }
 }

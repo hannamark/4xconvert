@@ -5,8 +5,9 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <c:set var="topic" scope="request" value="list_patients"/> 
-<SCRIPT LANGUAGE="JavaScript">
-function handleSearchAction(){
+<head>
+<script LANGUAGE="JavaScript">
+function handleCancelAction(){
     document.forms[0].action="patients.action";
     document.forms[0].submit();
 }
@@ -14,8 +15,11 @@ function handleAddAction(){
     document.forms[0].action="patientsadd.action";
     document.forms[0].submit();
 }
-</SCRIPT>
-<head>
+function handleEditAction(){
+    document.forms[0].action="patientsedit.action";
+    document.forms[0].submit();
+}
+</script>
     <s:if test="%{currentAction == 'create'}">
         <fmt:message key="patient.create.title" /></s:if>
     <s:elseif test="%{currentAction == 'retrieve'}">
@@ -35,189 +39,202 @@ function handleAddAction(){
         <fmt:message key="patient.update.title" /></s:elseif>
     <s:head/>
 </h1>
-<s:form name="listForm">
+<div class="box">
+    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+<s:form name="detailForm">
 <table class="form">
-    
-    <tr>     
-        <td scope="row" class="label">
-          <label for="Study Subject ID">
-              <fmt:message key="patient.ID"/>                
+    <tr>
+        <td class="label">
+          <label>
+              <fmt:message key="patient.ID"/>
+              <span class="required">*</span>
           </label>
-         </td>
-         <td class="value">
+        </td>
+        <td class="value" colspan="4">
             <s:textfield id ="identifier" name="patient.identifier" maxlength="400" size="50" 
                   cssStyle="width:98%;max-width:206px" />
-           </td>
-      </tr> 
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Study Subject Birth Date">
-                    <fmt:message key="patient.birthDate"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="birthDate" name="patient.birthDate" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-             <tr>
-                <td scope="row" class="label">
-                 <label for="Study Subject Gender">
-                    <fmt:message key="patient.birthDate"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="birthDate" name="criteria.birthDate" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-             <tr>
-                <td scope="row" class="label">
-                 <label for="Study Subject Race">
-                    <fmt:message key="patient.race"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="raceCode" name="patient.raceCode" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-             <tr>
-                <td scope="row" class="label">
-                 <label for="Study Subject Ethnicity">
-                    <fmt:message key="patient.ethnicity"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="ethnicCode" name="patient.ethnicCode" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Study Subject Country">
-                    <fmt:message key="patient.country"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="ethnicCode" name="patient.ethnicCode" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Study Subject Zip Code">
-                    <fmt:message key="patient.zipCode"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="ethnicCode" name="patient.ethnicCode" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Registration Date">
-                    <fmt:message key="patient.registrationDate"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="registrationDate" name="patient.registrationDate" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Study Subject method of payment">
-                    <fmt:message key="patient.methodOfPayment"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="paymentMethodCode" name="patient.paymentMethodCode" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Registering Institution/Group Name">
-                    <fmt:message key="patient.regInstitution"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="ethnicCode" name="patient.ethnicCode" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Disease">
-                    <fmt:message key="patient.disease"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="ethnicCode" name="patient.ethnicCode" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Participating Site">
-                    <fmt:message key="patient.organizationName"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="organizationName" name="patient.organizationName" maxlength="400" size="50"
-                      cssStyle="width:98%;max-width:206px" />
-                </td>
-            </tr>
-            
-            
-            <tr>
-                <td scope="row" class="label">
-                 <label for="Record Status">
-                    <fmt:message key="patient.statusCode"/>                
-                </label>
-                </td>
-                <td colspan="4">
-                                      
-                 <s:select id ="statusCode" name="patient.statusCode" 
-                               headerKey="1"
-                               headerValue="--Select--"
-                               list="#{'Pending':'Pending','Active':'Active'}" 
-                               cssStyle="width:206px" />
-                 
-                 
-                </td>
-            </tr>
-    
-            
-           
-    </table>
+        </td>
+    </tr> 
+    <tr>
+        <td class="label">
+          <label>
+            <fmt:message key="patient.birthDate"/>
+            <span class="required">*</span>
+          </label>
+        </td>
+        <td class="value" colspan="4">
+          <s:textfield id ="birthDate" name="patient.birthDate" maxlength="400" size="50"
+              cssStyle="width:98%;max-width:128px" />
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+          <label>
+            <fmt:message key="patient.gender"/>
+            <span class="required">*</span>
+          </label>
+        </td>
+        <td class="value" colspan="4">
+          <s:select id ="genderCode" name="patient.genderCode" 
+                       headerKey="1"
+                       headerValue="--Select--"
+                       list="#{'Male':'Male','Female':'Female','Unknown':'Unknown'}"/>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+         <label>
+            <fmt:message key="patient.race"/>
+            <span class="required">*</span>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+          <s:select id ="raceCode" name="patient.raceCode"  
+                       headerKey="1"
+                       headerValue="--Select--"
+                       list="#{'American Indian or Alaska Native':'American Indian or Alaska Native'
+                              ,'Asian':'Asian','Black or African American':'Black or African American'
+                              ,'Native Hawaiian or Other Pacific Islander':'Native Hawaiian or Other Pacific Islander'
+                              ,'Not Reported':'Not Reported','Unknown':'Unknown','White':'White'}"/>
+        </td>
+    </tr>
 
-         <div class="actionsrow">
-            <del class="btnwrapper">
-               <ul class="btnrow">
-                <li>
-                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-                <s:a href="#" cssClass="btn" onclick="cancel()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-                </li>
-               </ul>
-            </del>
-         </div>
-    
+     <tr>
+        <td scope="row" class="label">
+         <label>
+            <fmt:message key="patient.ethnicity"/>
+            <span class="required">*</span>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+          <s:select id ="ethnicCode" name="patient.ethnicCode"
+                       headerKey="1"
+                       headerValue="--Select--"
+                       list="#{'Hispanic or Latino':'Hispanic or Latino','Not Hispanic or Latino':'Not Hispanic or Latino'
+                              ,'Not Reported':'Not Reported','Unknown':'Unknown'}"/>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+         <label>
+            <fmt:message key="patient.country"/>
+            <span class="required">*</span>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+            <s:select id ="country" name="patient.country" headerValue="-Select-" headerKey=""
+                     list="listOfCountries"
+                     listKey="id" listValue="name"/>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+         <label>
+            <fmt:message key="patient.zipCode"/>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+            <s:textfield id ="zip" name="patient.zip" maxlength="400" size="50" cssStyle="width:98%;max-width:96px" />
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+         <label>
+            <fmt:message key="patient.registrationDate"/>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+        <s:textfield id ="registrationDate" name="patient.registrationDate" maxlength="400" size="50"
+              cssStyle="width:98%;max-width:206px" />
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+         <label>
+            <fmt:message key="patient.methodOfPayment"/>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+          <s:select id ="paymentMethodCode" name="patient.paymentMethodCode"
+               headerKey="1"
+               headerValue="--Select--"
+               list="#{'Private Insurance':'Private Insurance','Medicare':'Medicate'
+                      ,'Medicare and Private Insurance':'Medicare and Private Insurance'
+                      ,'Medicaid':'Medicaid','Medicaid and Medicare':'Medicaid and Medicare'
+                      ,'Military or Veterans Sponsored, Not Otherwise Specified (NOS)':'Military or Veterans Sponsored, Not Otherwise Specified (NOS)'
+                      ,'Military Sponsored (including CHAMPUS or TRICARE)':'Military Sponsored (including CHAMPUS or TRICARE)'
+                      ,'Veterans Sponsored':'Veterans Sponsored','Self pay (no insurance)':'Self pay (no insurance)'
+                      ,'No means of payment (no insurance)':'No means of payment (no insurance)'
+                      ,'Other':'Other','Unknown':'Unknown'}"/>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">
+         <label>
+            <fmt:message key="patient.disease"/>
+            <span class="required">*</span>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+        <s:textfield id ="disease" name="patient.disease" maxlength="400" size="50"
+              cssStyle="width:98%;max-width:206px" />
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+         <label>
+            <fmt:message key="patient.organizationName"/>
+            <span class="required">*</span>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+             <s:select id="orgName" name="patient.orgName" list="listOfStudySites" headerKey="" 
+                       listValue="orgName" headerValue="--Select--"/>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+         <label>
+            <fmt:message key="patient.statusCode"/>
+            <span class="required">*</span>
+        </label>
+        </td>
+        <td class="value" colspan="4">
+          <s:select id ="statusCode" name="patient.statusCode" 
+                       headerKey="1"
+                       headerValue="--Select--"
+                       list="#{'Pending':'Pending','Active':'Active'}"/>
+        </td>
+    </tr>
+</table>
 </s:form>
 
-<div class="line"></div>
+<div class="actionsrow">
+   <del class="btnwrapper">
+      <ul class="btnrow">
+       <li>
+        <s:if test="%{currentAction == 'create'}">
+            <s:a href="#" cssClass="btn" onclick="handleAddAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
+        </s:if>
+        <s:elseif test="%{currentAction == 'retrieve'}">
+            <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="back">Back</span></span></s:a>
+        </s:elseif>
+        <s:elseif test="%{currentAction == 'update'}">
+            <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
+        </s:elseif>
+       </li>
+      </ul>
+   </del>
+</div>
+
+</div>
 </body>
 </html>

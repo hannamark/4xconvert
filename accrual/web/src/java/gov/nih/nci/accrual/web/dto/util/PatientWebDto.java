@@ -97,6 +97,8 @@ public class PatientWebDto {
     private String genderCode;
     private String ethnicCode;
     private String birthDate;
+    private String zip;
+    private String country;
     private String statusCode;
     private String statusDateRangeLow;
 
@@ -105,11 +107,14 @@ public class PatientWebDto {
     private String paymentMethodCode;
     private String assignedIdentifier;
 
-//    // from PerformedStudySubjectMilestone
+    // from PerformedStudySubjectMilestone
     private String registrationDate;
 
     // from StudySite...Organization
     private String organizationName;
+
+    // disease
+    private String disease;
 
     /**
      * Default constructor.
@@ -271,5 +276,41 @@ public class PatientWebDto {
      */
     public void setRegistrationDate(String registrationDate) {
         this.registrationDate = registrationDate;
+    }
+    /**
+     * @return the zip
+     */
+    public String getZip() {
+        return zip;
+    }
+    /**
+     * @param zip the zip to set
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+    /**
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
+    /**
+     * @param country the country to set
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+    /**
+     * @return the disease
+     */
+    public String getDisease() {
+        return disease;
+    }
+    /**
+     * @param disease the disease to set
+     */
+    public void setDisease(String disease) {
+        this.disease = disease;
     }
 }
