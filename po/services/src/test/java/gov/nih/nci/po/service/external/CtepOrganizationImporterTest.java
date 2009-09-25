@@ -17,7 +17,9 @@ import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.AdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.AbstractCuratableServiceBean;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
@@ -39,7 +41,9 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jms.JMSException;
 import javax.naming.Context;
@@ -429,6 +433,97 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         MessageProducerTest.clearMessages((IdentifiedOrganizationServiceBean) importer.getIdentifiedOrgService());
         MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHCFService());
         MessageProducerTest.clearMessages((ResearchOrganizationServiceBean) importer.getROService());
+    }
+    
+    /**
+     * CTEP Integration - Scenario 4
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void verifyScenario4() throws Exception {
+        // a user creates an org w/ an ro in the po-web system. this ro will be one that is 
+        // going to be modified by ctep
+        final Country c = getDefaultCountry();
+        final ResearchOrganizationServiceBean getService = roSvc;
+        ResearchOrganizationServiceTest test = new ResearchOrganizationServiceTest() {
+            @Override
+            public Country getDefaultCountry() {
+                return c;
+            }
+
+            @Override
+            protected AbstractCuratableServiceBean<ResearchOrganization> getService() {
+                return getService;
+            }
+        };
+        test.setUpData();
+        test.setupType();
+        test.testSimpleCreateCtepOwnedAndGet();
+        ResearchOrganization ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(
+                ResearchOrganization.class).uniqueResult();
+        Organization org1 = ro.getPlayer();
+        assertNotNull(org1);
+        assertEquals(RoleStatus.PENDING, ro.getStatus());
+        assertTrue(ro.isCtepOwned());
+
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // see message sent to out on ro creation
+        MessageProducerTest.assertMessageCreated(ro, (ResearchOrganizationServiceBean) getService, true);
+        assertNull(ro.getName());
+        assertNotNull(ro.getFundingMechanism());
+        
+        // a user creates an HCF in the system, this hcf will have a ctep id added to it
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setStatus(RoleStatus.ACTIVE);
+        hcf.setName("NAME");
+        Address addr = AdConverter.SimpleConverter.convertToAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "VA",
+                "20110", "USA", "United States"));
+        Set<Address> addrs = new HashSet<Address>();
+        addrs.add(addr);
+        hcf.setPostalAddresses(addrs);
+        hcf.setPlayer(org1);
+        
+        Long hcfId = hcfSvc.create(hcf);
+        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // see message sent to out on hcf creation
+        MessageProducerTest.assertMessageCreated(hcf, (HealthCareFacilityServiceBean) hcfSvc, true);
+        
+        // feed the proper CTEP service stub into our importer
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROWithPlayerStub(org1.getId(), ro.getId(), hcfId);
+        importer.setCtepOrgService(service);
+        OrganizationDTO org = service.getOrg();
+
+        // update the org.
+        Organization importedOrg = importer.importOrganization(org.getIdentifier());
+        MessageProducerTest.assertMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService(), false);
+        Organization freshOrg = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, org1.getId());
+        IdentifiedOrganization idOrg = freshOrg.getIdentifiedOrganizations().iterator().next();
+        Ii assignedId = idOrg.getAssignedIdentifier();
+        assertEquals(CtepOrganizationImporter.CTEP_ORG_ROOT, assignedId.getRoot());
+        
+        // update the ro
+        MessageProducerTest.assertMessageCreated(importedOrg.getResearchOrganizations().iterator().next(), 
+                (ResearchOrganizationServiceBean) importer.getROService(), false);
+        ResearchOrganization freshRo = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(
+                ResearchOrganization.class).uniqueResult();
+        assertEquals("NAME", freshRo.getName());
+        assertFalse(ro.getFundingMechanism().getCode().equals(freshRo.getFundingMechanism().getCode()));
+        
+        // only update here is the adding of the ctep id
+        MessageProducerTest.assertMessageCreated(importedOrg.getHealthCareFacilities().iterator().next(), 
+                (HealthCareFacilityServiceBean) importer.getHCFService(), false);
+        HealthCareFacility freshHcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(
+                HealthCareFacility.class).uniqueResult();
+        Ii ctepIdForHcf = freshHcf.getOtherIdentifiers().iterator().next();
+        assertEquals(CtepOrganizationImporter.CTEP_ORG_ROOT, ctepIdForHcf.getRoot());
+        
+        
     }
 
     /**
