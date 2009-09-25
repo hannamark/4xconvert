@@ -274,14 +274,14 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
                 csmUsers = new HashMap<Long, User>();
                 csmUserNames = new ArrayList<LabelValueBean>();
                 Set<User> uSet = accrualAccessSvc.getSubmitters();
-                
+
                 List<LabelValueBean> lvBeanList = new ArrayList<LabelValueBean>();
                 for (User u : uSet) {
                     csmUsers.put(u.getUserId(), u);
                     String emailId = u.getLoginName() != null ? u.getLoginName() : " ";
                     LabelValueBean lvBean = new LabelValueBean();
                     lvBean.setId(u.getUserId());
-                    lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(u) + " " + emailId);
+                    lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(u) + " - " + emailId);
                     lvBeanList.add(lvBean);
                 }
                 Collections.sort(lvBeanList);
