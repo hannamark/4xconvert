@@ -118,6 +118,24 @@ public class POPatientBean implements POPatientService {
     public void setSessionContext(SessionContext ctx) {
         ejbContext = ctx;
     }
+
+    private static void copyDto(PatientDTO patient, POPatientDto dto) {
+        patient.setDuplicateOf(dto.getDuplicateOf());
+        patient.setPlayerIdentifier(dto.getPlayerIdentifier());
+        patient.setPostalAddress(dto.getPostalAddress());
+        patient.setScoperIdentifier(dto.getScoperIdentifier());
+        patient.setStatus(dto.getStatus());
+        patient.setTelecomAddress(dto.getTelecomAddress());
+    }
+
+    private static void copyDto(POPatientDto dto, PatientDTO patient) {
+        dto.setDuplicateOf(patient.getDuplicateOf());
+        dto.setPlayerIdentifier(patient.getPlayerIdentifier());
+        dto.setPostalAddress(patient.getPostalAddress());
+        dto.setScoperIdentifier(patient.getScoperIdentifier());
+        dto.setStatus(patient.getStatus());
+        dto.setTelecomAddress(patient.getTelecomAddress());
+    }
     
     /**
      * {@inheritDoc}
@@ -129,15 +147,10 @@ public class POPatientBean implements POPatientService {
 
         PoServiceLocator psl = PoServiceLocator.getInstance();
         PatientCorrelationServiceRemote pcsr = psl.getPatientCorrelationService();
-        PatientDTO patient = new PatientDTO();
 
-        patient.setDuplicateOf(dto.getDuplicateOf());
+        PatientDTO patient = new PatientDTO();
         patient.setIdentifier(null);
-        patient.setPlayerIdentifier(dto.getPlayerIdentifier());
-        patient.setPostalAddress(dto.getPostalAddress());
-        patient.setScoperIdentifier(dto.getScoperIdentifier());
-        patient.setStatus(dto.getStatus());
-        patient.setTelecomAddress(dto.getTelecomAddress());
+        copyDto(patient, dto);
 
         try {
             Ii newId = pcsr.createCorrelation(patient);
@@ -172,13 +185,9 @@ public class POPatientBean implements POPatientService {
         }
         
         POPatientDto dto = new POPatientDto();
-        dto.setDuplicateOf(patient.getDuplicateOf());
         dto.setIdentifier(DSetConverter.convertToIi(patient.getIdentifier()));
-        dto.setPlayerIdentifier(patient.getPlayerIdentifier());
-        dto.setPostalAddress(patient.getPostalAddress());
-        dto.setScoperIdentifier(patient.getScoperIdentifier());
-        dto.setStatus(patient.getStatus());
-        dto.setTelecomAddress(patient.getTelecomAddress());
+        copyDto(dto, patient);
+
         return dto;
     }
 
@@ -192,15 +201,10 @@ public class POPatientBean implements POPatientService {
 
         PoServiceLocator psl = PoServiceLocator.getInstance();
         PatientCorrelationServiceRemote pcsr = psl.getPatientCorrelationService();
-        PatientDTO patient = new PatientDTO();
 
-        patient.setDuplicateOf(dto.getDuplicateOf());
+        PatientDTO patient = new PatientDTO();
         patient.setIdentifier(DSetConverter.convertIiToDset(dto.getIdentifier()));
-        patient.setPlayerIdentifier(dto.getPlayerIdentifier());
-        patient.setPostalAddress(dto.getPostalAddress());
-        patient.setScoperIdentifier(dto.getScoperIdentifier());
-        patient.setStatus(dto.getStatus());
-        patient.setTelecomAddress(dto.getTelecomAddress());
+        copyDto(patient, dto);
 
         try {
             pcsr.updateCorrelation(patient);
