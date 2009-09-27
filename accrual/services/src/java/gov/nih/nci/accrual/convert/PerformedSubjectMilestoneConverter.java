@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.convert;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -115,6 +116,8 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
         dto.setRegistrationDate(TsConverter.convertToTs(bo.getRegistrationDate()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
                 bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(
+                bo.getStudySubject() == null ? null : bo.getStudySubject().getId()));
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         return dto;
@@ -138,6 +141,7 @@ public class PerformedSubjectMilestoneConverter extends AbstractConverter
         bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));
         bo.setRegistrationDate(TsConverter.convertToTimestamp(dto.getRegistrationDate()));
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
+        bo.setStudySubject(fKeySetter(StudySubject.class, dto.getStudySubjectIdentifier()));
         if (!PAUtil.isCdNull(dto.getSubcategoryCode())) {
             bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
         }

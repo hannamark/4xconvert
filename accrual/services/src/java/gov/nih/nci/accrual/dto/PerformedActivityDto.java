@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.dto;
 
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 
@@ -90,6 +91,7 @@ public class PerformedActivityDto extends AbstractActivityDto {
     private static final long serialVersionUID = -2096344255356565466L;
 
     private Ivl<Ts> actualDateRange;
+    private Ii studySubjectIdentifier;
 
     /**
      * @return the actualDateRange
@@ -97,11 +99,22 @@ public class PerformedActivityDto extends AbstractActivityDto {
     public Ivl<Ts> getActualDateRange() {
         return actualDateRange;
     }
-
     /**
      * @param actualDateRange the actualDateRange to set
      */
     public void setActualDateRange(Ivl<Ts> actualDateRange) {
         this.actualDateRange = actualDateRange;
+    }
+    /**
+     * @return the studySubjectIdentifier
+     */
+    public Ii getStudySubjectIdentifier() {
+        return studySubjectIdentifier;
+    }
+    /**
+     * @param studySubjectIdentifier the studySubjectIdentifier to set
+     */
+    public void setStudySubjectIdentifier(Ii studySubjectIdentifier) {
+        this.studySubjectIdentifier = studySubjectIdentifier;
     }
 }

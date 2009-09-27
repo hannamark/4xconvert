@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -96,6 +97,7 @@ import java.util.zip.DataFormatException;
  * @param <DTO> iso dto
  * @param <BO> domain object
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public abstract class AbstractConverter <DTO extends BaseDTO, BO extends AbstractEntity> {
     /**
      * @param dto iso dto
@@ -130,6 +132,8 @@ public abstract class AbstractConverter <DTO extends BaseDTO, BO extends Abstrac
             result = (T) new Patient();
         } else if (clazz.equals(Disease.class)) {
             result = (T) new Disease();
+        } else if (clazz.equals(StudySubject.class)) {
+            result = (T) new StudySubject();
         }
         result.setId(IiConverter.convertToLong(pkey));
         return result;

@@ -73,157 +73,72 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
-import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
+package gov.nih.nci.accrual.web.util;
+
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.util.IiConverter;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.struts2.ServletActionContext;
-
-
 /**
- * @author Rajani Kumar
- * @since  Aug 20, 2009
+ * @author Hugh Reinhart
+ * @since Sep 26, 2009
  */
-public class ParticipationSiteSelectionAction extends AbstractAccrualAction {
+public class MockPerfomedSubjectMilestoneBean implements PerformedSubjectMilestoneService {
 
-
-    private static final long serialVersionUID = 2140334334691287118L;
-    private List<SearchStudySiteResultDto> listOfSites = null;
-    private SearchStudySiteResultDto site = new SearchStudySiteResultDto();
-    private List<SearchStudySiteResultWebDto> listOfStudySites = null;
-    private SearchStudySiteResultWebDto webDto = null;
-    private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
-    private String studyProtocolId = null;
+    private static List<PerformedSubjectMilestoneDto> psmList = new ArrayList<PerformedSubjectMilestoneDto>();
+    /**
+     * {@inheritDoc}
+     */
+    public List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException {
+        return psmList;
+    }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String execute() {
-        try {
-            SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
-            SearchTrialService trialService = AccrualServiceLocator.getInstance().getSearchTrialService();
-            listOfSites = new ArrayList<SearchStudySiteResultDto>();
-            studyProtocolId = ServletActionContext.getRequest().getParameter("studyProtocolId");
-            Ii spid = IiConverter.convertToIi(studyProtocolId);
-            trialSummary = trialService.getTrialSummaryByStudyProtocolIi(spid);
-            // put an entry in the session
-            ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-            listOfSites = service.search(spid, getAuthorizedUser());
-            if (listOfSites != null)  {
-                ServletActionContext.getRequest().setAttribute("listOfSites", listOfSites);
-            } else {
-                ServletActionContext.getRequest().setAttribute("listOfSites",
-                        new ArrayList<SearchStudySiteResultDto>());
-            }
-        } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-        }
-        return super.execute();
+    public List<PerformedSubjectMilestoneDto> getByStudyProtocol(Ii ii) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
-     *
-     * @return listOfSites
+     * {@inheritDoc}
      */
-    public List<SearchStudySiteResultDto> getListOfSites() {
-         return listOfSites;
+    public PerformedSubjectMilestoneDto create(PerformedSubjectMilestoneDto dto) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
-     *
-     * @param listOfSites List
+     * {@inheritDoc}
      */
-    public void setListOfSites(List<SearchStudySiteResultDto> listOfSites) {
-         this.listOfSites = listOfSites;
-    }
-    /**
-     *
-     * @return listOfStudySites
-     */
-    public List<SearchStudySiteResultWebDto> getListOfStudySites() {
-      return listOfStudySites;
-    }
-    /**
-     *
-     * @param listOfStudySites List
-     */
+    public void delete(Ii ii) throws RemoteException {
+        // TODO Auto-generated method stub
 
-    public void setListOfStudySites(
-        List<SearchStudySiteResultWebDto> listOfStudySites) {
-        this.listOfStudySites = listOfStudySites;
-    }
-    /**
-     *
-     * @return studyProtocolId
-     */
-    public String getStudyProtocolId() {
-       return studyProtocolId;
-     }
-
-    /**
-     *
-     * @param studyProtocolId String
-     */
-    public void setStudyProtocolId(String studyProtocolId) {
-      this.studyProtocolId = studyProtocolId;
-    }
-    /**
-     *
-     * @return site
-     */
-    public SearchStudySiteResultDto getSite() {
-      return site;
     }
 
     /**
-     *
-     * @param site SearchStudySiteResultDto
+     * {@inheritDoc}
      */
-     public void setSite(SearchStudySiteResultDto site) {
-        this.site = site;
-     }
-     /**
-      *
-      * @return webDto
-      */
-     public SearchStudySiteResultWebDto getWebDto() {
-       return webDto;
-     }
+    public PerformedSubjectMilestoneDto get(Ii ii) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-     /**
-      *
-      * @param webDto SearchStudySiteResultWebDto
-      */
-     public void setWebDto(SearchStudySiteResultWebDto webDto) {
-       this.webDto = webDto;
-     }
+    /**
+     * {@inheritDoc}
+     */
+    public PerformedSubjectMilestoneDto update(PerformedSubjectMilestoneDto dto) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-     /**
-      *
-      * @return trialSummary
-      */
-     public SearchTrialResultDto getTrialSummary() {
-       return trialSummary;
-      }
-
-     /**
-      *
-      * @param trialSummary SearchTrialResultDto
-      */
-     public void setTrialSummary(SearchTrialResultDto trialSummary) {
-        this.trialSummary = trialSummary;
-      }
 }

@@ -96,6 +96,7 @@ public class DisclaimerActionTest extends AbstractAccrualActionTest {
     @Before
     public void initAction() {
         action = new DisclaimerAction();
+        setDisclaimer(false);
     }
 
     @Test

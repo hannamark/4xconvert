@@ -79,6 +79,8 @@
 package gov.nih.nci.accrual.dto.util;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 
@@ -94,6 +96,8 @@ public class PatientDto extends BaseDTO {
     private Cd genderCode;
     private Cd ethnicCode;
     private Ts birthDate;
+    private Ii countryIdentifier;
+    private St zip;
     private Cd statusCode;
     private Ts statusDateRangeLow;
 
@@ -168,5 +172,29 @@ public class PatientDto extends BaseDTO {
      */
     public void setStatusDateRangeLow(Ts statusDateRangeLow) {
         this.statusDateRangeLow = statusDateRangeLow;
+    }
+    /**
+     * @return the zip
+     */
+    public St getZip() {
+        return zip;
+    }
+    /**
+     * @param zip the zip to set
+     */
+    public void setZip(St zip) {
+        this.zip = zip;
+    }
+    /**
+     * @return the countryIdentifier
+     */
+    public Ii getCountryIdentifier() {
+        return countryIdentifier;
+    }
+    /**
+     * @param countryIdentifier the countryIdentifier to set
+     */
+    public void setCountryIdentifier(Ii countryIdentifier) {
+        this.countryIdentifier = countryIdentifier;
     }
 }

@@ -96,6 +96,7 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
     @Before
     public void initAction() {
         action = new WelcomeAction();
+        setDisclaimer(false);
     }
 
     @Test

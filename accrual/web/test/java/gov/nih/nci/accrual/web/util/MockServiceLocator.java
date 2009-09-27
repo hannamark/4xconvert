@@ -93,6 +93,10 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final SearchTrialService searchTrial = new MockSearchTrialBean();
     private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
     private final SubmissionService submissionService = new MockSubmissionServiceBean();
+    private final CountryService countryService = new MockCountryBean();
+    private final StudySubjectService studySubjectService = new MockStudySubjectBean();
+    private final PatientService patientService = new MockPatientBean();
+    private final PerformedSubjectMilestoneService psmService = new MockPerfomedSubjectMilestoneBean();
 
     /**
      * {@inheritDoc}
@@ -110,22 +114,19 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      * {@inheritDoc}
      */
     public PatientService getPatientService() {
-        // TODO Create mock service for web unit testing
-        return null;
+        return patientService;
     }
     /**
      * {@inheritDoc}
      */
     public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
-        // TODO Create mock service for web unit testing
-        return null;
+        return psmService;
     }
     /**
      * {@inheritDoc}
      */
     public StudySubjectService getStudySubjectService() {
-        // TODO Create mock service for web unit testing
-        return null;
+        return studySubjectService;
     }
     /**
      * {@inheritDoc}
@@ -144,7 +145,6 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      * {@inheritDoc}
      */
     public CountryService getCountryService() {
-        // TODO Auto-generated method stub
-        return null;
+        return countryService;
     }
 }

@@ -76,7 +76,7 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:select id ="genderCode" name="patient.genderCode" 
-                       headerKey="1"
+                       headerKey=""
                        headerValue="--Select--"
                        list="#{'Male':'Male','Female':'Female','Unknown':'Unknown'}"/>
         </td>
@@ -90,7 +90,7 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:select id ="raceCode" name="patient.raceCode"  
-                       headerKey="1"
+                       headerKey=""
                        headerValue="--Select--"
                        list="#{'American Indian or Alaska Native':'American Indian or Alaska Native'
                               ,'Asian':'Asian','Black or African American':'Black or African American'
@@ -108,7 +108,7 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:select id ="ethnicCode" name="patient.ethnicCode"
-                       headerKey="1"
+                       headerKey=""
                        headerValue="--Select--"
                        list="#{'Hispanic or Latino':'Hispanic or Latino','Not Hispanic or Latino':'Not Hispanic or Latino'
                               ,'Not Reported':'Not Reported','Unknown':'Unknown'}"/>
@@ -123,7 +123,7 @@ function handleEditAction(){
         </label>
         </td>
         <td class="value" colspan="4">
-            <s:select id ="country" name="patient.country" headerValue="-Select-" headerKey=""
+            <s:select id ="countryIdentifier" name="patient.countryIdentifier" headerValue="-Select-" headerKey=""
                      list="listOfCountries"
                      listKey="id" listValue="name"/>
         </td>
@@ -160,7 +160,7 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:select id ="paymentMethodCode" name="patient.paymentMethodCode"
-               headerKey="1"
+               headerKey=""
                headerValue="--Select--"
                list="#{'Private Insurance':'Private Insurance','Medicare':'Medicate'
                       ,'Medicare and Private Insurance':'Medicare and Private Insurance'
@@ -193,8 +193,8 @@ function handleEditAction(){
         </label>
         </td>
         <td class="value" colspan="4">
-             <s:select id="orgName" name="patient.orgName" list="listOfStudySites" headerKey="" 
-                       listValue="orgName" headerValue="--Select--"/>
+             <s:select id="organizationName" name="patient.organizationName" list="listOfStudySites" headerKey="" 
+                       listKey="ssIi" listValue="orgName" headerValue="--Select--"/>
         </td>
     </tr>
 
@@ -207,7 +207,7 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:select id ="statusCode" name="patient.statusCode" 
-                       headerKey="1"
+                       headerKey=""
                        headerValue="--Select--"
                        list="#{'Pending':'Pending','Active':'Active'}"/>
         </td>

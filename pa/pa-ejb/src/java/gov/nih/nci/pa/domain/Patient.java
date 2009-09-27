@@ -108,6 +108,34 @@ public class Patient extends StructuralRole {
     private PatientEthnicityCode ethnicCode;
     private Timestamp birthDate;
     private String personIdentifier;
+    private Long countryIdentifier;
+    private String zip;
+    /**
+     * @return the countryIdentifier
+     */
+    @Column(name = "COUNTRY_IDENTIFIER")
+    public Long getCountryIdentifier() {
+        return countryIdentifier;
+    }
+    /**
+     * @param countryIdentifier the countryIdentifier to set
+     */
+    public void setCountryIdentifier(Long countryIdentifier) {
+        this.countryIdentifier = countryIdentifier;
+    }
+    /**
+     * @return the zip
+     */
+    @Column(name = "ZIP")
+    public String getZip() {
+        return zip;
+    }
+    /**
+     * @param zip the zip to set
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
 
     /**

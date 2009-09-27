@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -98,7 +99,7 @@ public class PatientWebDto {
     private String ethnicCode;
     private String birthDate;
     private String zip;
-    private String country;
+    private Long countryIdentifier;
     private String statusCode;
     private String statusDateRangeLow;
 
@@ -114,7 +115,7 @@ public class PatientWebDto {
     private String organizationName;
 
     // disease
-    private String disease;
+    private Disease disease;
 
     /**
      * Default constructor.
@@ -130,16 +131,22 @@ public class PatientWebDto {
      * @param regDate registration date
      */
     public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName, String regDate) {
-        raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
-        genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
-        ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
-        birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
-        statusCode = CdConverter.convertCdToString(pIsoDto.getStatusCode());
-        statusDateRangeLow = TsConverter.convertToString(pIsoDto.getStatusDateRangeLow());
+        if (pIsoDto != null) {
+            raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
+            genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
+            ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
+            birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
+            countryIdentifier = IiConverter.convertToLong(pIsoDto.getCountryIdentifier());
+            zip = StConverter.convertToString(pIsoDto.getZip());
+            statusCode = CdConverter.convertCdToString(pIsoDto.getStatusCode());
+            statusDateRangeLow = TsConverter.convertToString(pIsoDto.getStatusDateRangeLow());
+        }
 
-        identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
-        paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
-        assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
+        if (ssIsoDto != null) {
+            identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
+            paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
+            assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
+        }
 
         organizationName = orgName;
         registrationDate = regDate;
@@ -190,7 +197,7 @@ public class PatientWebDto {
      * @param birthDate the birthDate to set
      */
     public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
+        this.birthDate = AccrualUtil.normalizeYearMonthString(birthDate);
     }
     /**
      * @return the statusCode
@@ -290,27 +297,27 @@ public class PatientWebDto {
         this.zip = zip;
     }
     /**
-     * @return the country
+     * @return the countryIdentifier
      */
-    public String getCountry() {
-        return country;
+    public Long getCountryIdentifier() {
+        return countryIdentifier;
     }
     /**
-     * @param country the country to set
+     * @param countryIdentifier the countryIdentifier to set
      */
-    public void setCountry(String country) {
-        this.country = country;
+    public void setCountryIdentifier(Long countryIdentifier) {
+        this.countryIdentifier = countryIdentifier;
     }
     /**
      * @return the disease
      */
-    public String getDisease() {
+    public Disease getDisease() {
         return disease;
     }
     /**
      * @param disease the disease to set
      */
-    public void setDisease(String disease) {
+    public void setDisease(Disease disease) {
         this.disease = disease;
     }
 }

@@ -79,10 +79,12 @@
 
 package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.dto.util.CountryDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -103,12 +105,34 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
 public class CountryBean implements CountryService {
+
+    /**
+     * {@inheritDoc}
+     */
+    public Country getCountry(Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called getCountry() with Ii == null.");
+        }
+        Country bo = null;
+        Session session = null;
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            bo = (Country) session.get(Country.class, IiConverter.convertToLong(ii));
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getCountry().", hbe);
+        }
+        if (bo == null) {
+            throw new RemoteException("Country not found.");
+        }
+        return bo;
+    }
+
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<CountryDto> getCountries() throws RemoteException {
-        List<CountryDto> countryDtos = new ArrayList<CountryDto>();
+    public List<Country> getCountries() throws RemoteException {
+        List<Country> countryDtos = new ArrayList<Country>();
         Session session = null;
         try {
             Set<String> dupCountryFilter = new HashSet<String>();
@@ -118,14 +142,8 @@ public class CountryBean implements CountryService {
                             + "order by ra.country.name ").list();
             for (int i = 0; i < results.size(); i++) {
                 Country resCountry = results.get(i);
-                CountryDto dto = new CountryDto();
-                dto.setId(resCountry.getId());
-                dto.setAlpha2(resCountry.getAlpha2());
-                dto.setAlpha3(resCountry.getAlpha3());
-                dto.setName(resCountry.getName());
-                dto.setNumeric(resCountry.getNumeric());
                 if (dupCountryFilter.add(resCountry.getAlpha3())) {
-                    countryDtos.add(dto);
+                    countryDtos.add(resCountry);
                 }
             }
         } catch (HibernateException hbe) {
@@ -133,5 +151,4 @@ public class CountryBean implements CountryService {
         }
         return countryDtos;
     }
-
 }

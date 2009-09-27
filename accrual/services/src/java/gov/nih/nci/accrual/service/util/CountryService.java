@@ -79,7 +79,8 @@
 
 package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.dto.util.CountryDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Country;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -94,8 +95,14 @@ import javax.ejb.Remote;
 public interface CountryService {
 
     /**
+     * @param ii country index
+     * @return country
+     * @throws RemoteException exception
+     */
+    Country getCountry(Ii ii) throws RemoteException;
+    /**
      * @return list of countries from database
      * @throws RemoteException exception
      */
-    List<CountryDto> getCountries() throws RemoteException;
+    List<Country> getCountries() throws RemoteException;
 }

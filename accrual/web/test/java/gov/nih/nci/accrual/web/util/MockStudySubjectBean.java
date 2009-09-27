@@ -76,126 +76,92 @@
 *
 *
 */
-package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.iso.util.TsConverter;
+package gov.nih.nci.accrual.web.util;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author Hugh Reinhart
- * @since 07/27/2009
+ * @since Sep 26, 2009
  */
-public class AccrualUtil {
-    private static final int YR_MO_FORMAT_IDX = 5;
+public class MockStudySubjectBean implements StudySubjectService {
 
+    Long seq = 1L;
+    List<StudySubjectDto> ssList;
+    {
+        ssList = new ArrayList<StudySubjectDto>();
+        StudySubjectDto dto = new StudySubjectDto();
+        dto.setAssignedIdentifier(StConverter.convertToSt("SUBJ 001"));
+        dto.setDiseaseIdentifier(null);
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        dto.setPatientIdentifier(IiConverter.convertToIi(1L));
+        dto.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MEDICAID));
+        dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(1L));
+        ssList.add(dto);
+    }
     /**
-     * Private class used to decode and normalize date strings.
+     * {@inheritDoc}
      */
-    private static class ValidYearMonthFormat {
-        String pattern;
-        int endIndex;
-        public ValidYearMonthFormat(String pattern) {
-            this.pattern = pattern;
-            endIndex = pattern.length();
-        }
+    public List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException {
+        return ssList;
     }
 
     /**
-     * Static ordered list of valid date format patterns.
+     * {@inheritDoc}
      */
-    private static ValidYearMonthFormat[] yearMonthFormats;
-    static {
-        yearMonthFormats = new ValidYearMonthFormat[] {
-                new ValidYearMonthFormat("MM/dd/yyyy"),
-                new ValidYearMonthFormat("yyyy-MM-dd HH:mm:ss"),
-                new ValidYearMonthFormat("yyyy-MM-dd"),
-                new ValidYearMonthFormat("yyyy/MM/dd"),
-                new ValidYearMonthFormat("MM-dd-yyyy HH:mm:ss"),
-                new ValidYearMonthFormat("MM/yyyy"),
-                new ValidYearMonthFormat("MM-yyyy")
-        };
+    public StudySubjectDto create(StudySubjectDto dto) throws RemoteException {
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        ssList.add(dto);
+        return dto;
     }
 
     /**
-     * Convert an input string to a Date.
-     *
-     * @param inDate string to be normalized
-     * @return Date
+     * {@inheritDoc}
      */
-    private static Date yearMonthStringToDate(String inDate) {
-        if (inDate == null) {
-            return null;
-        }
-        Date outDate = null;
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        for (ValidYearMonthFormat fm : yearMonthFormats) {
-            sdf.applyPattern(fm.pattern);
-            sdf.setLenient(false);
-            try {
-                int endIndex = inDate.trim().length() < fm.endIndex ? inDate.trim().length() : fm.endIndex;
-                inDate.trim().substring(0, endIndex);
-                outDate = sdf.parse(inDate);  //dateToParse);
-                break;
-            } catch (ParseException e) {
-               continue; //best effort to try the other date format(s).
+    public void delete(Ii ii) throws RemoteException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySubjectDto get(Ii ii) throws RemoteException {
+        Long id = IiConverter.convertToLong(ii);
+        StudySubjectDto result = null;
+        for (StudySubjectDto dto : ssList) {
+            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
+                result = dto;
             }
         }
-        return outDate;
-    }
-    /**
-     * Convert an input string to a normalized year month string.
-     * The output format is determined by the first element in
-     * the static yearMonthFormats array.
-     *
-     * @param inDate string to be normalized
-     * @return normalized string
-     */
-    public static String normalizeYearMonthString(String inDate) {
-        Date outDate = yearMonthStringToDate(inDate);
-        if (outDate == null) {
-            return null;
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern(yearMonthFormats[YR_MO_FORMAT_IDX].pattern);
-        return sdf.format(outDate);
+        return result;
     }
 
     /**
-     * @param ts iso timestamp
-     * @return timestamp represented as a string in MM/YYYY format
+     * {@inheritDoc}
      */
-    public static String tsToYearMonthString(Ts ts) {
-        return normalizeYearMonthString(TsConverter.convertToString(ts));
+    public StudySubjectDto update(StudySubjectDto dto) throws RemoteException {
+        Long id = IiConverter.convertToLong(dto.getIdentifier());
+        for (StudySubjectDto ss : ssList) {
+            if (id.equals(IiConverter.convertToLong(ss.getIdentifier()))) {
+                ss = dto;
+            }
+        }
+        return dto;
     }
 
-    /**
-     * @param yrMonthString string of year and month
-     * @return Ts representation of string
-     */
-    public static Ts yearMonthStringToTs(String yrMonthString) {
-        Date dt = yearMonthStringToDate(normalizeYearMonthString(yrMonthString));
-        if (dt == null) {
-            return null;
-        }
-        Timestamp ts = new Timestamp(dt.getTime());
-        return TsConverter.convertToTs(ts);
-    }
-
-    /**
-     * @param yrMonthTs iso Ts year and month value
-     * @return Timestamp
-     */
-    public static Timestamp yearMonthTsToTimestamp(Ts yrMonthTs) {
-        Date dt = yearMonthStringToDate(normalizeYearMonthString(TsConverter.convertToString(yrMonthTs)));
-        if (dt == null) {
-            return null;
-        }
-        return new Timestamp(dt.getTime());
-    }
 }

@@ -73,57 +73,83 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.web.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import gov.nih.nci.accrual.web.util.AccrualConstants;
+package gov.nih.nci.accrual.web.util;
 
-import javax.servlet.http.HttpSession;
+import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.service.util.PatientService;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
-import org.apache.struts2.ServletActionContext;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.opensymphony.xwork2.ActionSupport;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author Rajani Kumar
- * @since  Aug 20, 2009
+ * @author Hugh Reinhart
+ * @since Sep 26, 2009
  */
-public class ParticipationSiteSelectionActionTest extends AbstractAccrualActionTest {
-
-    ParticipationSiteSelectionAction action;
-
-    @Before
-    public void initAction() {
-        action = new ParticipationSiteSelectionAction();
+public class MockPatientBean implements PatientService {
+    private static Long seq = 1L;
+    private static List<PatientDto> pList;
+    static {
+        pList = new ArrayList<PatientDto>();
+        PatientDto p = new PatientDto();
+        p.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("3/1/1968")));
+        p.setCountryIdentifier(IiConverter.convertToCountryIi(1L));
+        p.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
+        p.setGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));
+        p.setIdentifier(IiConverter.convertToIi(seq++));
+        p.setRaceCode(CdConverter.convertToCd(PatientRaceCode.WHITE));
+        p.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
+        p.setZip(StConverter.convertToSt("12345"));
     }
 
-    @Test
-    public void executeTest() {
-        HttpSession session = ServletActionContext.getRequest().getSession();
-        session.setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER, AccrualConstants.DISCLAIMER_ACCEPTED);
-        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
-        assertNotNull(strDisclaimer);
-        assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, strDisclaimer);
-       // show participation site selection
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-
+    /**
+     * {@inheritDoc}
+     */
+    public PatientDto create(PatientDto dto) throws RemoteException {
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        pList.add(dto);
+        return dto;
     }
 
-    @Test
-     public void listOfSitesPropertyTest(){
-      assertNull(action.getListOfSites());
-     }
-
-    @Test
-    public void studyProtocolIdPropertyTest(){
-     assertNull(action.getStudyProtocolId());
-     action.setStudyProtocolId("123");
-     assertNotNull(action.getStudyProtocolId());
+    /**
+     * {@inheritDoc}
+     */
+    public PatientDto get(Ii ii) throws RemoteException {
+        Long id = IiConverter.convertToLong(ii);
+        PatientDto result = null;
+        for (PatientDto dto : pList) {
+            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
+                result = dto;
+            }
+        }
+        return result;
     }
 
-   }
+    /**
+     * {@inheritDoc}
+     */
+    public PatientDto update(PatientDto dto) throws RemoteException {
+        Long id = IiConverter.convertToLong(dto.getIdentifier());
+        for (PatientDto p : pList) {
+            if (id.equals(IiConverter.convertToLong(p.getIdentifier()))) {
+                p = dto;
+            }
+        }
+        return dto;
+    }
+
+}

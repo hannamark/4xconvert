@@ -87,7 +87,7 @@ import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.zip.DataFormatException;
@@ -104,11 +104,13 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
     @Override
     public PatientDto convertFromDomainToDto(Patient bo) throws DataFormatException {
         PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(AccrualUtil.removeDays(bo.getBirthDate())));
+        dto.setBirthDate(AccrualUtil.yearMonthStringToTs(bo.getBirthDate().toString()));
+        dto.setCountryIdentifier(IiConverter.convertToIi(bo.getCountryIdentifier()));
         dto.setEthnicCode(CdConverter.convertToCd(bo.getEthnicCode()));
         dto.setGenderCode(CdConverter.convertToCd(bo.getSexCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setRaceCode(CdConverter.convertToCd(bo.getRaceCode()));
+        dto.setZip(StConverter.convertToSt(bo.getZip()));
         return dto;
     }
 
@@ -118,7 +120,8 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
     @Override
     public Patient convertFromDtoToDomain(PatientDto dto) throws DataFormatException {
         Patient bo = new Patient();
-        bo.setBirthDate(AccrualUtil.removeDays(TsConverter.convertToTimestamp(dto.getBirthDate())));
+        bo.setBirthDate(AccrualUtil.yearMonthTsToTimestamp(dto.getBirthDate()));
+        bo.setCountryIdentifier(IiConverter.convertToLong(dto.getCountryIdentifier()));
         if (!PAUtil.isCdNull(dto.getEthnicCode())) {
             bo.setEthnicCode(PatientEthnicityCode.getByCode(dto.getEthnicCode().getCode()));
         }
@@ -129,6 +132,7 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
         if (!PAUtil.isCdNull(dto.getRaceCode())) {
             bo.setRaceCode(PatientRaceCode.getByCode(dto.getRaceCode().getCode()));
         }
+        bo.setZip(StConverter.convertToString(dto.getZip()));
         return bo;
     }
 }

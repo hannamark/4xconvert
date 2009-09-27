@@ -81,8 +81,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,8 +99,6 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
     @Before
     public void initAction() {
         action = new AccrualSubmissionsAction();
-    	HttpSession session = ServletActionContext.getRequest().getSession();
-        session.setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER, AccrualConstants.DISCLAIMER_ACCEPTED);
     }
 
     @Test
@@ -115,7 +111,7 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
         assertEquals(ActionSupport.SUCCESS, action.execute());
 
     }
-    
+
     @Test
     public void displayNewSubmissionTest() {
         assertEquals(AccrualConstants.AR_NEW_SUBMISSION, action.displayNewSubmission());

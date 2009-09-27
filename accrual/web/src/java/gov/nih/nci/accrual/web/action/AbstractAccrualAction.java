@@ -293,7 +293,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @param obj the object to be passed to jsp
      * @return string
      */
-    protected String getWebString(Object obj) {
+    protected static String getWebString(Object obj) {
         String result = null;
         if (obj instanceof Ts) {
             result = TsConverter.convertToString((Ts) obj);
@@ -308,5 +308,21 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
             result = (String) obj;
         }
         return result == null ? " " : result;
+    }
+
+    /**
+     * @param value object being tested
+     * @param errorMsg action error message to put on stack if object is empty
+     */
+    protected void addActionErrorIfEmpty(Object value, String errorMsg) {
+        if (value instanceof String) {
+            if (PAUtil.isEmpty((String) value)) {
+                addActionError(errorMsg);
+            }
+        } else {
+            if (value == null) {
+                addActionError(errorMsg);
+            }
+        }
     }
 }

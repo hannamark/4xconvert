@@ -77,79 +77,32 @@
 *
 */
 
-package gov.nih.nci.accrual.dto.util;
+package gov.nih.nci.accrual.web.action;
+
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.iso.util.IiConverter;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Hugh Reinhart
- * @since Sep 25, 2009
+ * @since Sep 26, 2009
  */
-public class CountryDto {
-    private static final long serialVersionUID = 1L;
+public class PatientActionTest extends AbstractAccrualActionTest {
+    PatientAction action;
 
-    private Long id;
-    private String alpha2;
-    private String alpha3;
-    private String name;
-    private String numeric;
+    @Before
+    public void initAction() throws Exception {
+        action = new PatientAction();
+        action.prepare();
+        action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
+    }
 
-    /**
-     * @return the id
-     */
-    public Long getId() {
-            return id;
-    }
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-            this.id = id;
-    }
-    /**
-     * @return the alpha2
-     */
-    public String getAlpha2() {
-            return alpha2;
-    }
-    /**
-     * @param alpha2 the alpha2 to set
-     */
-    public void setAlpha2(String alpha2) {
-            this.alpha2 = alpha2;
-    }
-    /**
-     * @return the alpha3
-     */
-    public String getAlpha3() {
-            return alpha3;
-    }
-    /**
-     * @param alpha3 the alpha3 to set
-     */
-    public void setAlpha3(String alpha3) {
-            this.alpha3 = alpha3;
-    }
-    /**
-     * @return the name
-     */
-    public String getName() {
-            return name;
-    }
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-            this.name = name;
-    }
-    /**
-     * @return the numeric
-     */
-    public String getNumeric() {
-            return numeric;
-    }
-    /**
-     * @param numeric the numeric to set
-     */
-    public void setNumeric(String numeric) {
-            this.numeric = numeric;
+    @Test
+    public void executeTest() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 }
