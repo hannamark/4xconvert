@@ -97,6 +97,8 @@ public final class AccrualConstants {
     public static final String DISCLAIMER_ACCEPTED = "Accepted";
     /** Role-name for the public role. */
     public static final String SESSION_ATTR_SPII = "studyProtocolIi";
+    /** Attribute to check if there is a submission opened. */
+    public static final String SESSION_ATTR_IS_SUBMISSION_OPENED = "submissionOpened";
 
     /** Action result for the global log out result. */
     public static final String AR_LOGOUT = "logout";

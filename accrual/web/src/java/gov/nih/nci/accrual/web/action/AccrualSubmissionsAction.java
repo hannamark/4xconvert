@@ -172,6 +172,9 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             dto.setSubmitUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                 getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             submissionSvc.update(dto);
+            ServletActionContext.getRequest().getSession().
+             setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.FALSE);
+            //setOpenedSubmission(Boolean.FALSE);
             listOfSubmissions = new ArrayList<SubmissionDto>();
             listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
             ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
@@ -195,6 +198,9 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             submission.setCreateUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                   getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             listOfSubmissions.add(submissionSvc.create(submission));
+           ServletActionContext.getRequest().getSession().
+             setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.TRUE);
+            //setOpenedSubmission(Boolean.TRUE);
             ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());

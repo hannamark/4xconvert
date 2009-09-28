@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
@@ -97,6 +98,8 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -123,7 +126,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private String currentAction;
     /** Bean to store row id selected from list view. */
     private String selectedRowIdentifier;
-
+    
+    
     /** SearchTrialService. */
     protected SearchTrialService searchTrialSvc;
     /** SearchStudySiteService. */
@@ -284,11 +288,30 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         } else {
             if (BlConverter.covertToBool(searchTrialSvc.isAuthorized(spIi, getAuthorizedUser()))) {
                 ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, spIi);
+                
+                List<SubmissionDto> listOfSubmissions = new ArrayList<SubmissionDto>();
+                listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
+                String overAllStat = "";
+                for (SubmissionDto sDto : listOfSubmissions) {
+                    if (sDto.getStatusCode().getCode().equalsIgnoreCase("Opened")) {
+                      overAllStat = "Opened";
+                  }
+                }
+                
+                if ("Opened".equals(overAllStat)) {
+                    ServletActionContext.getRequest().getSession().
+                       setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.TRUE);
+                  } else {
+                     ServletActionContext.getRequest().getSession().
+                       setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.FALSE);
+                 }
+                             
             } else {
                 throw new GeneralSecurityException("Authorization exception in AbstractAccrualAction.setSpIi().");
             }
         }
     }
+    
     /**
      * @param obj the object to be passed to jsp
      * @return string
