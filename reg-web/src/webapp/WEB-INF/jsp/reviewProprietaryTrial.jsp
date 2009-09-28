@@ -271,7 +271,7 @@ var winprint=window.open("","",sOption);
             <div class="box">
                <display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
                 name="${trialDTO.docDtos}" requestURI="searchTrialviewDoc.action" export="false">    
-                <display:column titleKey="search.trial.view.documentTypeCode" property="typeCode"   sortable="true" headerClass="sortable"/>
+                <display:column titleKey="search.trial.view.documentTypeCode" property="proprietaryTypeCode"   sortable="true" headerClass="sortable"/>
                 <display:column titleKey="search.trial.view.documentFileName" property="fileName"   sortable="true" headerClass="sortable"/>" 
                 </display:table>
             </div>

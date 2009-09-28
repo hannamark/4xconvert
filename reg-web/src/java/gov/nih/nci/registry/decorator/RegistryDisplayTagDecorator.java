@@ -84,6 +84,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 
 import java.util.Date;
 
@@ -246,5 +247,16 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
             }
         } 
         return instProgramCode;
+    }
+    /**
+     * 
+     * @return s
+     */
+    public String getProprietaryTypeCode() {
+       String typeCode =  ((TrialDocumentWebDTO) this.getCurrentRowObject()).getTypeCode();
+       if (typeCode.equalsIgnoreCase("Protocol Document")) {
+           typeCode = "Proprietary Template";
+       } 
+        return typeCode;
     }
 }

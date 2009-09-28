@@ -31,7 +31,7 @@
     <tr>
         <td colspan="2">
         Is your trial proprietary?  
-        <s:radio name="selectedTrialType" id="selectedTrialType" list="#{'yes':'Yes', 'no':'No'}" onclick="loadSelectedTrialType();"/>
+        <s:radio name="selectedTrialType" id="selectedTrialType" list="#{'yes':'Yes', 'no':'No'}"/>
        </td>
        </tr>
        <tr>
@@ -39,6 +39,20 @@
        </tr>
        <tr>
        <td colspan="2">&nbsp; </td>
+       </tr>
+       <tr>
+       <td colspan="2">
+       <div class="actionsrow">
+                <del class="btnwrapper">
+                <ul class="btnrow">
+                    <li><a href="#"                
+                        class="btn" onclick="loadSelectedTrialType();"><span class="btn_img"><span class="save">Submit</span></span></a></li>
+                    <li><a href="#"                
+                        class="btn" onclick="submitform();"><span class="btn_img"><span class="cancel">Cancel</span></span></a></li>          
+                </ul>   
+                </del>
+            </div>
+       </td>
        </tr>
        <tr>
             <td>

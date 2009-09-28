@@ -72,6 +72,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     private File otherDocument;
     private String otherDocumentFileName;
     private String trialAction = "submit";
+    private String selectedTrialType = "no";
     /**
      * @param response servletResponse
      */
@@ -444,4 +445,19 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                 .getSiteStatusDate())));
         return isoDto;
     }
+
+    /**
+     * @return the selectedTrialType
+     */
+    public String getSelectedTrialType() {
+        return selectedTrialType;
+    }
+
+    /**
+     * @param selectedTrialType the selectedTrialType to set
+     */
+    public void setSelectedTrialType(String selectedTrialType) {
+        this.selectedTrialType = selectedTrialType;
+    }
+    
 }
