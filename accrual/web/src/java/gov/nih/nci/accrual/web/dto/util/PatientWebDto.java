@@ -81,11 +81,13 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
+
+import java.util.List;
 
 
 /**
@@ -100,13 +102,13 @@ public class PatientWebDto {
     private String birthDate;
     private String zip;
     private Long countryIdentifier;
-    private String statusCode;
-    private String statusDateRangeLow;
+    private String countryName;
 
     // from StudySubjectDto
     private String identifier;
     private String paymentMethodCode;
     private String assignedIdentifier;
+    private String statusCode;
 
     // from PerformedStudySubjectMilestone
     private String registrationDate;
@@ -129,23 +131,30 @@ public class PatientWebDto {
      * @param ssIsoDto study subject iso dto
      * @param orgName organization name
      * @param regDate registration date
+     * @param listOfCountries country list
      */
-    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName, String regDate) {
+    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName, String regDate,
+            List<Country> listOfCountries) {
         if (pIsoDto != null) {
             raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
             genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
             ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
             birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
             countryIdentifier = IiConverter.convertToLong(pIsoDto.getCountryIdentifier());
+            for (Country c : listOfCountries) {
+                if (countryIdentifier != null && countryIdentifier.equals(c.getId())) {
+                    countryName = c.getName();
+                }
+            }
             zip = StConverter.convertToString(pIsoDto.getZip());
             statusCode = CdConverter.convertCdToString(pIsoDto.getStatusCode());
-            statusDateRangeLow = TsConverter.convertToString(pIsoDto.getStatusDateRangeLow());
         }
 
         if (ssIsoDto != null) {
             identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
             paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
             assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
+            statusCode = CdConverter.convertCdToString(ssIsoDto.getStatusCode());
         }
 
         organizationName = orgName;
@@ -210,18 +219,6 @@ public class PatientWebDto {
      */
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
-    }
-    /**
-     * @return the statusDateRangeLow
-     */
-    public String getStatusDateRangeLow() {
-        return statusDateRangeLow;
-    }
-    /**
-     * @param statusDateRangeLow the statusDateRangeLow to set
-     */
-    public void setStatusDateRangeLow(String statusDateRangeLow) {
-        this.statusDateRangeLow = statusDateRangeLow;
     }
     /**
      * @return the paymentMethodCode
@@ -319,5 +316,11 @@ public class PatientWebDto {
      */
     public void setDisease(Disease disease) {
         this.disease = disease;
+    }
+    /**
+     * @return the countryName
+     */
+    public String getCountryName() {
+        return countryName;
     }
 }

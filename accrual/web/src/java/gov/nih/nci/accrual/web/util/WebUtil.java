@@ -73,78 +73,42 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * @author Hugh Reinhart
- * @since 7/7/2009
+ * @since Sep 28, 2009
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface{
-    private final SearchTrialService searchTrial = new MockSearchTrialBean();
-    private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
-    private final SubmissionService submissionService = new MockSubmissionBean();
-    private final CountryService countryService = new MockCountryBean();
-    private final StudySubjectService studySubjectService = new MockStudySubjectBean();
-    private final PatientService patientService = new MockPatientBean();
-    private final PerformedSubjectMilestoneService psmService = new MockPerfomedSubjectMilestoneBean();
-
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class WebUtil {
     /**
-     * {@inheritDoc}
+     * @param obj object
+     * @return not null string representation of object
      */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return searchStudySite;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return searchTrial;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PatientService getPatientService() {
-        return patientService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
-        return psmService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectService getStudySubjectService() {
-        return studySubjectService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() {
-        return submissionService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public POPatientService getPOPatientService() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public CountryService getCountryService() {
-        return countryService;
+    public static String getStr(Object obj) {
+        String result = null;
+        if (obj instanceof Ts) {
+            result = TsConverter.convertToString((Ts) obj);
+        }
+        if (obj instanceof St) {
+            result = StConverter.convertToString((St) obj);
+        }
+        if (obj instanceof Cd) {
+            result = CdConverter.convertCdToString((Cd) obj);
+        }
+        if (obj instanceof String) {
+            result = (String) obj;
+        }
+        return result == null ? "" : result;
     }
 }

@@ -167,11 +167,18 @@ public class PatientAction extends AbstractAccrualAction {
     @Override
     public String retrieve() {
         try {
+            patient = null;
             loadListOfStudySites();
-        } catch (RemoteException e) {
-            return ERROR;
-        }
-        return super.retrieve();
+            loadListOfPatients();
+            for (PatientWebDto pat : listOfPatients) {
+                if (pat.getIdentifier().equals(getSelectedRowIdentifier())) {
+                    patient = pat;
+                }
+            }
+       } catch (RemoteException e) {
+           return ERROR;
+       }
+       return super.retrieve();
     }
     /**
      * {@inheritDoc}
@@ -269,7 +276,6 @@ public class PatientAction extends AbstractAccrualAction {
         return listOfStudySites;
     }
 
-
     private void loadListOfStudySites() throws RemoteException {
         List<SearchStudySiteResultDto> isoStudySiteList = null;
         if (listOfStudySites == null) {
@@ -302,7 +308,8 @@ public class PatientAction extends AbstractAccrualAction {
                         registrationDate = TsConverter.convertToString(sm.getRegistrationDate());
                     }
                 }
-                listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), registrationDate));
+                listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), registrationDate,
+                        getListOfCountries()));
             }
         }
     }
@@ -318,7 +325,6 @@ public class PatientAction extends AbstractAccrualAction {
             addActionErrorIfEmpty(patient.getEthnicCode(), "Ethnicity is required.");
             addActionErrorIfEmpty(patient.getCountryIdentifier(), "Country is required.");
             addActionErrorIfEmpty(patient.getOrganizationName(), "Participating site is required.");
-            addActionErrorIfEmpty(patient.getStatusCode(), "Record status is required.");
         }
         return !hasActionErrors();
     }

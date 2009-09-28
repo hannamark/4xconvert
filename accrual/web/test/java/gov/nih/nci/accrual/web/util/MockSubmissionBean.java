@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ import java.util.List;
  * @author Rajani Kumar
  *
  */
-public class MockSubmissionServiceBean implements SubmissionService {
+public class MockSubmissionBean implements SubmissionService {
 
     /** mock data. */
     public static List<SubmissionDto> dtos;
@@ -119,11 +120,11 @@ public class MockSubmissionServiceBean implements SubmissionService {
         r.setSubmitUser(StConverter.convertToSt("Test User"));
         r.setDescription(StConverter.convertToSt("Test Description"));
         r.setCutOffDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        
+
         dtos.add(r);
 
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -138,7 +139,7 @@ public class MockSubmissionServiceBean implements SubmissionService {
         return result;
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -146,10 +147,16 @@ public class MockSubmissionServiceBean implements SubmissionService {
         return BlConverter.convertToBl(true);
     }
 
-	public List<SubmissionDto> getByStudyProtocol(Ii ii) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public List<SubmissionDto> getByStudyProtocol(Ii ii) throws RemoteException {
+        List<SubmissionDto> result = new ArrayList<SubmissionDto>();
+        Long id = IiConverter.convertToLong(ii);
+        for (SubmissionDto dto : dtos) {
+            if (id.equals(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()))) {
+                result.add(dto);
+            }
+        }
+        return result;
+    }
 
 	public SubmissionDto create(SubmissionDto dto) throws RemoteException {
 		// TODO Auto-generated method stub
@@ -158,7 +165,7 @@ public class MockSubmissionServiceBean implements SubmissionService {
 
 	public void delete(Ii ii) throws RemoteException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public SubmissionDto get(Ii ii) throws RemoteException {
