@@ -483,6 +483,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @throws PAException e
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @SuppressWarnings({"PMD.PreserveStackTrace" })
     public Ii createProprietaryInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO ,
             StudySiteOverallStatusDTO studySiteOverallStatusDTO ,
@@ -533,7 +534,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             //
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
-            throw new PAException(e);
+            throw new PAException(e.getMessage());
         }
 
         return studyProtocolIi;
