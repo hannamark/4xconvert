@@ -65,6 +65,7 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
     mvn nci-commons:jboss-undeploy  - removes the deployable from jboss.
     mvn nci-commons:hbm2ddl - generates the hibernate scheam.sql - usefull when writing migration scripts.
     mvn cargo:deploy - deploys to jboss
+    mvn nci-commons:copy-web-files - copies the web files (jsps, javascript, etc) without redeploying
     mvn -Pinit-db sql:execute - reinit the db by completely dropping and recreating.
     mvn liquibase:update run the liquibase update process, thus creating the schema (if needed) and bring the app in to line with the latest.
         ** Note this is run as part of nearly every build cycle, so there is no need to run it unless
