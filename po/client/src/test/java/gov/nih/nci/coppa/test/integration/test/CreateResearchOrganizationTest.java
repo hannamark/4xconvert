@@ -9,7 +9,13 @@ import java.util.TreeSet;
 public class CreateResearchOrganizationTest extends OrganizationWebTest {
     
     private final String SELECT_A_ROLE_TYPE = "CCOP";
+    private final String SELECT_ROLE_WITH_ONE_FUNDING = "Cancer Center";
+    private final String SELECT_ROLE_WITH_MULTIPLE_FUNDING = "Network";
+    private final String CODE_FOR_ONE_FUNDING = "P30";
+    private final String VALUE_FOR_MULTIPLE_FUNDING = "--Select a Funding Mechanism--";
+    
     private final String FUNDING_MECH_TO_LOOK_FOR = "U10 - Cooperative Clinical Research Cooperative Agreements";
+    
     
     /**
      * Verifies PO-924 via UI
@@ -71,5 +77,20 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
         
     }
     
+    public void testFundingMechanismIsSelectedIfOnlyOneOption() throws Exception {
+        getToCreateResearchOrganization();
+        
+        selenium.select("role.typeCode", SELECT_ROLE_WITH_ONE_FUNDING);
+        Thread.sleep(1000);
+            
+        String selectedLabel = selenium.getSelectedLabel("role.fundingMechanismSelect");
+        assertTrue(selectedLabel.startsWith(CODE_FOR_ONE_FUNDING));
+        
+        selenium.select("role.typeCode", SELECT_ROLE_WITH_MULTIPLE_FUNDING);
+        Thread.sleep(1000);
+        
+        selectedLabel = selenium.getSelectedLabel("role.fundingMechanismSelect");
+        assertEquals(selectedLabel, VALUE_FOR_MULTIPLE_FUNDING);        
+    }
     
 }

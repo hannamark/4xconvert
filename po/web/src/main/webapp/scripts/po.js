@@ -29,7 +29,7 @@ function submitDivAsForm(url, divId) {
     return false;
 }
 
-function loadDiv(url, divId, showLoadingIcon) {
+function loadDiv(url, divId, showLoadingIcon, customOnComplete) {
     var div = $(divId);
     div.show();
     if (showLoadingIcon) {
@@ -38,7 +38,12 @@ function loadDiv(url, divId, showLoadingIcon) {
     var aj = new Ajax.Updater(div, url, {
         asynchronous: true,
         method: 'get',
-        evalScripts: true
+        evalScripts: true,
+        onComplete: function(transport) { 
+            if(customOnComplete != null) { 
+                customOnComplete() 
+            }
+        }
     });
     return false;
 }

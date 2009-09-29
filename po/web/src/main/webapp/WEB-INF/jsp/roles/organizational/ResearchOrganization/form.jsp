@@ -72,8 +72,18 @@
                     */
                     function curateRoleForm_displayFundingMechanism(ResearchOrganizationType_id) {
                       var url =  '' + contextPath + '/protected/ajax/roles/organizational/ResearchOrganization/funding/changeResearchOrganizationType.action?researchOrganizationType.id=' + ResearchOrganizationType_id;
-                        loadDiv(url, 'curateRoleForm_displayFundingMechanism', true);
+                      selectOnlyFundingMechanism = function() {
+                        var fundingSel = $('curateRoleForm.role._selectFundingMechanism');
+                        if (fundingSel != null) {
+                            var opts = fundingSel.options;
+                            if (opts.length == 2) {
+                               fundingSel.selectedIndex = 1;
+                            }
+                        }
+                      }
+                      loadDiv(url, 'curateRoleForm_displayFundingMechanism', true, selectOnlyFundingMechanism);
                     }
+                    
                     --></script>
                     <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
                     <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
