@@ -52,4 +52,8 @@
        <comment>Upgrade for PO-1229 - add CTEP ID to structural role otherIdentifiers</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1229.sql"/>
     </changeSet>
+    <changeSet id="PO-1309" author="slustbader">
+       <comment>Upgrade for PO-1309 - add index on otheridentifier join tables</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1309.sql"/>
+    </changeSet>
 </databaseChangeLog>

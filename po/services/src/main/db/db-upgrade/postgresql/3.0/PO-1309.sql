@@ -1,0 +1,9 @@
+create index crs_id_index on crs_otheridentifier (crs_id);
+create index hcf_id_index on hcf_otheridentifier (hcf_id);
+create index hcp_id_index on hcp_otheridentifier (hcp_id);
+create index identifiedorg_id_index on identifiedorg_otheridentifier (identifiedorg_id);
+create index identifiedperson_id_index on identifiedperson_otheridentifier (identifiedperson_id);
+create index oco_id_index on oco_otheridentifier (oco_id);
+create index orgcontact_id_index on orgcontact_otheridentifier (orgcontact_id);
+create index patient_id_index on patient_otheridentifier (patient_id);
+create index ro_id_index on ro_otheridentifier (ro_id);
