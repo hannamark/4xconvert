@@ -54,7 +54,9 @@
     <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="javax.servlet"           rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="javax.servlet.jsp"       rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="jbosssx"                 rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="jboss"                  name="jboss-j2ee"              rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.2"           conf="compile->master"/>
     <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"           conf="compile->master"/>
