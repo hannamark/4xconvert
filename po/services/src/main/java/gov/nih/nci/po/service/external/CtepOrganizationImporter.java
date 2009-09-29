@@ -90,6 +90,7 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
@@ -650,16 +651,56 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      */
     public void nullifyCtepOrganization(Ii ctepOrgId, Ii duplicateOfId, OrganizationType orgType) throws JMSException {
         if (orgType == OrganizationType.HEALTHCAREFACILITY) {
-            LOG.error(String.format("Attempting to nullify HCF %s with duplicate %s", ctepOrgId.getExtension(),
-                    duplicateOfId.getExtension()));
+            HealthCareFacility roleToNullify = searchForHcfInDbByCtepId(ctepOrgId, "ctep id");
+            HealthCareFacility duplicateOfHcfId = searchForHcfInDbByCtepId(duplicateOfId, "duplicate Of ctep id");
+            roleToNullify.setStatus(RoleStatus.NULLIFIED);
+            roleToNullify.setDuplicateOf(duplicateOfHcfId);
+            hcfService.curate(roleToNullify);
+            
         } else if (orgType == OrganizationType.RESEARCHORGANIZATION) {
-            LOG.error(String.format("Attempting to nullify RO %s with duplicate %s", ctepOrgId.getExtension(),
-                    duplicateOfId.getExtension()));
+            ResearchOrganization roleToNullify = searchForRoInDbByCtepId(ctepOrgId, "ctep id");
+            ResearchOrganization duplicateOfHcfId = searchForRoInDbByCtepId(duplicateOfId, "duplicate Of ctep id");
+            roleToNullify.setStatus(RoleStatus.NULLIFIED);
+            roleToNullify.setDuplicateOf(duplicateOfHcfId);
+            roService.curate(roleToNullify);
+            
         } else {
             throw new IllegalArgumentException(orgType.name() + " is an invalid organization type");
         }
 
     }
+    
+    private HealthCareFacility searchForHcfInDbByCtepId(Ii ctepOrgId, String logStr) {
+        HealthCareFacility example = new HealthCareFacility();
+        example.getOtherIdentifiers().add(ctepOrgId);
+
+        SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
+        List<HealthCareFacility> listOfHcfs = hcfService.search(sc);
+        checkRoleResults(listOfHcfs, "HealthCareFacility", logStr, ctepOrgId.getExtension());
+        return listOfHcfs.get(0);
+    }
+    
+    private ResearchOrganization searchForRoInDbByCtepId(Ii ctepOrgId, String logStr) {
+        ResearchOrganization example = new ResearchOrganization();
+        example.getOtherIdentifiers().add(ctepOrgId);
+
+        SearchCriteria<ResearchOrganization> sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(example);
+        List<ResearchOrganization> listOfRos = roService.search(sc);
+        checkRoleResults(listOfRos, "ResearchOrganization", logStr, ctepOrgId.getExtension());
+        return listOfRos.get(0);
+        
+    }
+    
+    private void checkRoleResults(List<? extends Correlation> listOfRos, String roleType, String logStr, String ext) {
+        if (CollectionUtils.isEmpty(listOfRos)) {
+            throw new IllegalArgumentException("The " + roleType + " " + logStr 
+                    + " " + ext + " provided could not be found in our system.");
+        } else if (listOfRos.size() > 1) {
+            throw new IllegalArgumentException("The " + roleType + " " + logStr 
+                    + " " + ext + " provided brought back more than 1 result.");
+        }
+    }
+    
 
     /**
      * @return {@link OrganizationServiceLocal} bean

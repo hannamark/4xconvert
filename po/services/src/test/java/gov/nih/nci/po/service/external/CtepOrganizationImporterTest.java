@@ -34,6 +34,8 @@ import gov.nih.nci.po.service.OrganizationServiceBean;
 import gov.nih.nci.po.service.ResearchOrganizationServiceBean;
 import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
 import gov.nih.nci.po.service.correlation.ResearchOrganizationServiceTest;
+import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
+import gov.nih.nci.po.service.external.CtepMessageBean.RecordType;
 import gov.nih.nci.po.service.external.stubs.CTEPOrgServiceStubBuilder;
 import gov.nih.nci.po.service.external.stubs.CTEPOrganizationServiceStub;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -525,6 +527,248 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         
         
     }
+    
+    /**
+     * CTEP Integration - Scenario 9 - Illegal arg when multiple RO's are found with the
+     * same ctep id.
+     * 
+     * @throws Exception
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void verifyScenario9ROIllegalArg() throws Exception {
+        
+        final Country c = getDefaultCountry();
+        final ResearchOrganizationServiceBean getService = roSvc;
+        ResearchOrganizationServiceTest test = new ResearchOrganizationServiceTest() {
+            @Override
+            public Country getDefaultCountry() {
+                return c;
+            }
+
+            @Override
+            protected AbstractCuratableServiceBean<ResearchOrganization> getService() {
+                return getService;
+            }
+        };
+        test.setUpData();
+        test.setupType();
+        // create org1 with ro1
+        test.testSimpleCreateCtepOwnedAndGet();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // create org2 with ro2
+        test.testSimpleCreateCtepOwnedAndGet();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        List<ResearchOrganization> roList = (List<ResearchOrganization>) PoHibernateUtil.getCurrentSession().createCriteria(
+                ResearchOrganization.class).list();
+
+        ResearchOrganization ro1 = roList.get(0);
+        
+        Ii ctepId = ro1.getOtherIdentifiers().iterator().next();
+       
+        
+        // nullify the org through the ctep importer
+        importer.nullifyCtepOrganization(ctepId, ctepId, OrganizationType.RESEARCHORGANIZATION);
+    }
+    
+    /**
+     * CTEP Integration - Scenario 9 - Illegal arg when no ROs are found
+     * with ctep id.
+     * 
+     * @throws Exception
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void verifyScenario9ROIllegalArgEmptySet() throws Exception {
+        
+        Ii ctepId = new Ii();
+        ctepId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepId.setExtension("SCN9ORG2");
+        ctepId.setIdentifierName("unimportant value");
+     
+        Ii duplicateOfId = new Ii();
+        duplicateOfId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        duplicateOfId.setExtension("SCN9DUP2");
+        duplicateOfId.setIdentifierName("some name");
+       
+        
+        // nullify the org through the ctep importer
+        importer.nullifyCtepOrganization(ctepId, duplicateOfId, OrganizationType.RESEARCHORGANIZATION);
+    }
+    
+    /**
+     * CTEP Integration - Scenario 9 - for RO
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void verifyScenario9RO() throws Exception {
+        
+        final Country c = getDefaultCountry();
+        final ResearchOrganizationServiceBean getService = roSvc;
+        ResearchOrganizationServiceTest test = new ResearchOrganizationServiceTest() {
+            @Override
+            public Country getDefaultCountry() {
+                return c;
+            }
+
+            @Override
+            protected AbstractCuratableServiceBean<ResearchOrganization> getService() {
+                return getService;
+            }
+        };
+        test.setUpData();
+        test.setupType();
+        // create org1 with ro1
+        test.testSimpleCreateCtepOwnedAndGet();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // create org2 with ro2
+        test.testSimpleCreateCtepOwnedAndGet();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        List<ResearchOrganization> roList = (List<ResearchOrganization>) PoHibernateUtil.getCurrentSession().createCriteria(
+                ResearchOrganization.class).list();
+
+        ResearchOrganization ro1 = roList.get(0);
+        Organization org1 = ro1.getPlayer();
+        assertNotNull(org1);
+        assertEquals(RoleStatus.PENDING, ro1.getStatus());
+        assertTrue(ro1.isCtepOwned());
+        assertNull(ro1.getName());
+        assertNotNull(ro1.getFundingMechanism());
+        
+        ResearchOrganization ro2 = roList.get(1);
+        Organization org2 = ro2.getPlayer();
+        assertNotNull(org2);
+        assertEquals(RoleStatus.PENDING, ro2.getStatus());
+        assertTrue(ro2.isCtepOwned());
+        assertNull(ro2.getName());
+        assertNotNull(ro2.getFundingMechanism());
+        
+        Ii ctepId = new Ii();
+        ctepId.setExtension("SCN9ORG");
+        ctepId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepId.setIdentifierName("no name for ctep id");
+        
+        ro1.getOtherIdentifiers().clear();
+        ro1.getOtherIdentifiers().add(ctepId);
+        roSvc.curate(ro1);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        Ii duplicateOfId = new Ii();
+        duplicateOfId.setExtension("SCN9DUP");
+        duplicateOfId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        duplicateOfId.setIdentifierName("no name for dup id");
+        
+        ro2.getOtherIdentifiers().clear();
+        ro2.getOtherIdentifiers().add(duplicateOfId);
+        roSvc.curate(ro2);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+       
+        
+        // nullify the org through the ctep importer
+        importer.nullifyCtepOrganization(ctepId, duplicateOfId, OrganizationType.RESEARCHORGANIZATION);
+        // update the ro
+        MessageProducerTest.assertMessageCreated(ro1, 
+                (ResearchOrganizationServiceBean) importer.getROService(), false);
+        ResearchOrganization freshRo = (ResearchOrganization) PoHibernateUtil.getCurrentSession().get(
+                ResearchOrganization.class, ro1.getId());
+        assertEquals(RoleStatus.NULLIFIED, freshRo.getStatus());
+        assertEquals(ro2.getId(), freshRo.getDuplicateOf().getId());
+    }
+    
+    /**
+     * CTEP Integration - Scenario 9 - for HCF
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void verifyScenario9HCF() throws Exception {
+        
+        final Country c = getDefaultCountry();
+        final HealthCareFacilityServiceBean getService = (HealthCareFacilityServiceBean) hcfSvc;
+        HealthCareFacilityServiceTest test = new HealthCareFacilityServiceTest() {
+            @Override
+            public Country getDefaultCountry() {
+                return c;
+            }
+
+            @Override
+            protected AbstractCuratableServiceBean<HealthCareFacility> getService() {
+                return getService;
+            }
+        };
+        test.setUpData();
+        // create org1 with hcf1
+        test.testSimpleCreateCtepOwnedAndGet();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // create org2 with hcf2
+        test.testSimpleCreateCtepOwnedAndGet();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        List<HealthCareFacility> hcfList = (List<HealthCareFacility>) PoHibernateUtil.getCurrentSession().createCriteria(
+                HealthCareFacility.class).list();
+
+        HealthCareFacility hcf1 = hcfList.get(0);
+        Organization org1 = hcf1.getPlayer();
+        assertNotNull(org1);
+        assertEquals(RoleStatus.PENDING, hcf1.getStatus());
+        assertTrue(hcf1.isCtepOwned());
+        assertNull(hcf1.getName());
+        
+        HealthCareFacility hcf2 = hcfList.get(1);
+        Organization org2 = hcf2.getPlayer();
+        assertNotNull(org2);
+        assertEquals(RoleStatus.PENDING, hcf2.getStatus());
+        assertTrue(hcf2.isCtepOwned());
+        assertNull(hcf2.getName());
+        
+        Ii ctepId = new Ii();
+        ctepId.setExtension("SCN9ORGHCF");
+        ctepId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepId.setIdentifierName("no name for ctep id");
+        
+       
+        
+        Ii duplicateOfId = new Ii();
+        duplicateOfId.setExtension("SCN9DUPHCF");
+        duplicateOfId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        duplicateOfId.setIdentifierName("no name for dup id");
+      
+        hcf1.getOtherIdentifiers().clear();
+        hcf1.getOtherIdentifiers().add(ctepId);
+        hcfSvc.curate(hcf1);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        hcf2.getOtherIdentifiers().clear();
+        hcf2.getOtherIdentifiers().add(duplicateOfId);
+        hcfSvc.curate(hcf2);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+       
+        
+        // nullify the org through the ctep importer
+        importer.nullifyCtepOrganization(ctepId, duplicateOfId, OrganizationType.HEALTHCAREFACILITY);
+        // update the ro
+        MessageProducerTest.assertMessageCreated(hcf1, 
+                (HealthCareFacilityServiceBean) importer.getHCFService(), false);
+        HealthCareFacility freshRo = (HealthCareFacility) PoHibernateUtil.getCurrentSession().get(
+                HealthCareFacility.class, hcf1.getId());
+        assertEquals(RoleStatus.NULLIFIED, freshRo.getStatus());
+        assertEquals(hcf2.getId(), freshRo.getDuplicateOf().getId());
+    }
+
 
     /**
      * CTEP Integration - Scenario 5 - CTEP adds a new Structural Role on an existing Organization

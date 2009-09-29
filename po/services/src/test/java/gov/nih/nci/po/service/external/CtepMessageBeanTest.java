@@ -1,20 +1,35 @@
 package gov.nih.nci.po.service.external;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.AbstractCuratableServiceBean;
+import gov.nih.nci.po.service.AbstractServiceBeanTest;
+import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.HealthCareFacilityServiceBean;
+import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
 import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.service.external.CtepMessageBean.RecordType;
 import gov.nih.nci.po.service.external.CtepMessageBean.TransactionType;
 import gov.nih.nci.po.util.EmailLogger;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.jms.TextMessageStub;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import javax.naming.Context;
 
 import org.apache.log4j.WriterAppender;
 import org.junit.After;
@@ -27,7 +42,7 @@ import org.junit.Test;
  *
  * @author gax
  */
-public class CtepMessageBeanTest {
+public class CtepMessageBeanTest extends AbstractServiceBeanTest {
 
     @Test
     public void skipMessage() throws Exception {
@@ -128,6 +143,106 @@ public class CtepMessageBeanTest {
         logWriter.getBuffer().setLength(0);
         logWriter.getBuffer().trimToSize();
     }
+    
+    @Test
+    public void testMsg4Full() throws Exception {
+        HealthCareFacilityServiceBean hcfSvc = 
+            (HealthCareFacilityServiceBean) EjbTestHelper.getHealthCareFacilityServiceBean();
+        
+        // create org and 2 hcfs for this test
+        final Country c = getDefaultCountry();
+        final HealthCareFacilityServiceBean getService = (HealthCareFacilityServiceBean) hcfSvc;
+        HealthCareFacilityServiceTest test = new HealthCareFacilityServiceTest() {
+            @Override
+            public Country getDefaultCountry() {
+                return c;
+            }
+
+            @Override
+            protected AbstractCuratableServiceBean<HealthCareFacility> getService() {
+                return getService;
+            }
+        };
+        test.setUpData();
+        // create org1 with hcf1
+        test.testSimpleCreateCtepOwnedAndGet();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        // create org2 with hcf2
+        test.testSimpleCreateCtepOwnedAndGet();
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        List<HealthCareFacility> hcfList = (List<HealthCareFacility>) PoHibernateUtil.getCurrentSession().createCriteria(
+                HealthCareFacility.class).list();
+
+        HealthCareFacility hcf1 = hcfList.get(0);
+        Organization org1 = hcf1.getPlayer();
+        assertNotNull(org1);
+        assertEquals(RoleStatus.PENDING, hcf1.getStatus());
+        assertTrue(hcf1.isCtepOwned());
+        assertNull(hcf1.getName());
+        
+        HealthCareFacility hcf2 = hcfList.get(1);
+        Organization org2 = hcf2.getPlayer();
+        assertNotNull(org2);
+        assertEquals(RoleStatus.PENDING, hcf2.getStatus());
+        assertTrue(hcf2.isCtepOwned());
+        assertNull(hcf2.getName());
+         
+        Ii ctepId = new Ii();
+        ctepId.setExtension("03013");
+        ctepId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        ctepId.setIdentifierName("no name for ctep id");
+      
+        hcf1.getOtherIdentifiers().clear();
+        hcf1.getOtherIdentifiers().add(ctepId);
+        hcfSvc.curate(hcf1);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        Ii duplicateOfId = new Ii();
+        duplicateOfId.setExtension("RSB003");
+        duplicateOfId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
+        duplicateOfId.setIdentifierName("no name for dup id");
+        
+        hcf2.getOtherIdentifiers().clear();
+        hcf2.getOtherIdentifiers().add(duplicateOfId);
+        hcfSvc.curate(hcf2);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        MockTextMessage msg = new MockTextMessage(4);
+        CtepMessageBean bean = new CtepMessageBean();
+        
+        final CtepOrganizationImporter importer = new CtepOrganizationImporter(null) {
+            @Override
+            protected void initCtepServices(Context ctepContext) {
+            }
+        };
+        
+        CtepImportServiceBean importServiceBean = new CtepImportServiceBean() {
+            @Override
+            protected void initImporters() {
+                try {
+                    
+                    setOrgImporter(importer);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        
+        bean.setCtepImportService(importServiceBean);
+        bean.onMessage(msg);
+        
+        HealthCareFacility freshRo = (HealthCareFacility) PoHibernateUtil.getCurrentSession().get(
+                HealthCareFacility.class, hcf1.getId());
+        assertEquals(RoleStatus.NULLIFIED, freshRo.getStatus());
+        assertEquals(hcf2.getId(), freshRo.getDuplicateOf().getId());
+       
+    }
 
     class Checker {
         boolean expectedCalled;
@@ -199,7 +314,7 @@ public class CtepMessageBeanTest {
         }
 
     }
-
+    
     private class MockTextMessage implements TextMessage {
         private final String text;
         private final int id;
