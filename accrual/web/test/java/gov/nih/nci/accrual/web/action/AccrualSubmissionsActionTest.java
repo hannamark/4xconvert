@@ -82,7 +82,6 @@ import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
-import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -106,7 +105,7 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void executeTest() {
-        
+
        // show list of submissions
         assertEquals(ActionSupport.SUCCESS, action.execute());
 
@@ -123,15 +122,15 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
         assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.viewSubmissionDetails());
 
     }
-    
+
     @Test
     public void submitTest() {
-      assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.submit());
+      assertEquals(ActionSupport.SUCCESS, action.submit());
     }
-    
+
     @Test
     public void addNewTest() {
-      assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.addNew());
+      assertEquals(ActionSupport.SUCCESS, action.addNew());
     }
 
 //    @Test
