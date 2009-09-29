@@ -80,6 +80,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
@@ -97,17 +98,16 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 	AccrualSubmissionsAction action;
 
     @Before
-    public void initAction() {
+    public void initAction() throws Exception {
         action = new AccrualSubmissionsAction();
+        action.prepare();
+        action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
     }
 
     @Test
     public void executeTest() {
-        String strDisclaimer = (String) ServletActionContext.getRequest().getSession().
-                               getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
-        assertNotNull(strDisclaimer);
-        assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, strDisclaimer);
-       // show participation site selection
+        
+       // show list of submissions
         assertEquals(ActionSupport.SUCCESS, action.execute());
 
     }
@@ -122,6 +122,16 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
     public void viewSubmissionDetailsTest() {
         assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.viewSubmissionDetails());
 
+    }
+    
+    @Test
+    public void submitTest() {
+      assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.submit());
+    }
+    
+    @Test
+    public void addNewTest() {
+      assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.addNew());
     }
 
 //    @Test

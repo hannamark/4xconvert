@@ -29,7 +29,13 @@ function cancel(){
           </label>
         </td>
         <td class="value">
-            <s:text name="submission.label.value" />
+          <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+            <s:textfield id ="label" name="submission.label.value" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+          </s:if>
+          <s:elseif test="%{currentAction == 'viewSubmissionDetails'}">
+            <s:label name="submission.label.value" cssStyle="font-weight:normal"/>
+          </s:elseif>
         </td>
       </tr> 
       
@@ -40,7 +46,13 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-            <s:text name="submission.description.value" />
+          <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+            <s:textfield id ="description" name="submission.description.value" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+          </s:if>
+          <s:elseif test="%{currentAction == 'viewSubmissionDetails'}">
+            <s:label name="submission.description.value" cssStyle="font-weight:normal"/>
+          </s:elseif>
         </td>
        </tr> 
        <tr>     
@@ -50,7 +62,13 @@ function cancel(){
            </label>
          </td>
           <td class="value">
-            <s:text name="submissionCutOffDate" />
+           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+            <s:textfield id ="submissionCutOffDate" name="submissionCutOffDate" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+          </s:if>
+          <s:elseif test="%{currentAction == 'viewSubmissionDetails'}">
+            <s:label name="submissionCutOffDate" cssStyle="font-weight:normal"/>
+          </s:elseif>
         </td>
       </tr> 
       
@@ -61,7 +79,13 @@ function cancel(){
            </label>
          </td>
           <td class="value">
-            <s:text name="submissionStatus" />
+           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+            <s:textfield id ="submissionStatus" name="submissionStatus" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+          </s:if>
+          <s:elseif test="%{currentAction == 'viewSubmissionDetails'}">
+            <s:label name="submissionStatus" cssStyle="font-weight:normal"/>
+          </s:elseif>
         </td>
          
       </tr> 
@@ -73,7 +97,13 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-            <s:text name="submissionCreatedDate" />
+            <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+            <s:textfield id ="submissionCreatedDate" name="submissionCreatedDate" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+          </s:if>
+          <s:elseif test="%{currentAction == 'viewSubmissionDetails'}">
+            <s:label name="submissionCreatedDate" cssStyle="font-weight:normal"/>
+          </s:elseif>
         </td>
          
       </tr> 
@@ -85,7 +115,13 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-            <s:text name="submissionCreateUser" />
+            <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+            <s:textfield id ="submissionCreateUser" name="submissionCreateUser" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+          </s:if>
+          <s:elseif test="%{currentAction == 'viewSubmissionDetails'}">
+            <s:label name="submissionCreateUser" cssStyle="font-weight:normal"/>
+          </s:elseif>
         </td>
          
       </tr> 
@@ -97,7 +133,13 @@ function cancel(){
            </label>
          </td>
         <td class="value">
-            <s:text name="submissionSubmittedDate" />
+          <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+            <s:textfield id ="submissionSubmittedDate" name="submissionSubmittedDate" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+          </s:if>
+          <s:elseif test="%{currentAction == 'viewSubmissionDetails'}">
+            <s:label name="submissionSubmittedDate" cssStyle="font-weight:normal"/>
+          </s:elseif>
         </td>
          
       </tr> 
@@ -109,7 +151,13 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-            <s:text name="submissionSubmitUser" />
+          <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+            <s:textfield id ="submissionSubmitUser" name="submissionSubmitUser" maxlength="400" size="50" 
+                  cssStyle="width:98%;max-width:206px" />
+          </s:if>
+          <s:elseif test="%{currentAction == 'viewSubmissionDetails'}">
+            <s:label name="submissionSubmitUser" cssStyle="font-weight:normal"/>
+          </s:elseif>
         </td>
          
       </tr> 

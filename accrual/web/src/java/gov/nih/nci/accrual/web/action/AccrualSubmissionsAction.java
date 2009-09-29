@@ -157,6 +157,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
         } catch (Exception e) {
              addActionError(e.getLocalizedMessage());
         }
+      setCurrentAction(AR_VIEW_SUBMISSION_DETAILS);
       return AR_VIEW_SUBMISSION_DETAILS;
     }
 
@@ -182,7 +183,8 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }
-        return super.execute();
+       // return super.execute();
+        return edit();
     }
 
     /**
@@ -207,8 +209,39 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             addActionError(e.getLocalizedMessage());
             return AR_NEW_SUBMISSION;
         }
-        return super.execute();
+        setCurrentAction(AR_VIEW_SUBMISSION_DETAILS);
+        //return super.execute();
+        return add();
     }
+    
+    /**
+      * {@inheritDoc}
+      */
+     @Override
+     public String add() {
+       try {
+               ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                 AccrualConstants.CREATE_MESSAGE);
+        } catch (Exception e) {
+             addActionError(e.getLocalizedMessage());
+       }
+        return super.execute();
+     }
+
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public String edit() {
+       try {
+             ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                AccrualConstants.UPDATE_MESSAGE);
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+        }
+           return super.execute();
+     }
+
 
     /**
      *
