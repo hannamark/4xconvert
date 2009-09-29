@@ -339,6 +339,22 @@ public class TrialBatchDataValidator {
         if (null == ActualAnticipatedTypeCode.getByCode(batchDto.getStudyStartDateType())) {
             fieldErr.append("Please enter valid value for Study Start Date Type.");
         }
+        //check is valid Date
+        if (PAUtil.isNotEmpty(batchDto.getCurrentTrialStatusDate()) 
+                && !PAUtil.isValidDate(batchDto.getCurrentTrialStatusDate())) {
+            fieldErr.append("Please enter valid value for Current Trial Status Date.");
+        }
+        //current status date
+        //trial start date
+        if (PAUtil.isNotEmpty(batchDto.getStudyStartDate()) 
+                && !PAUtil.isValidDate(batchDto.getStudyStartDate())) {
+            fieldErr.append("Please enter valid value for Study Start Date.");
+        }
+        //primaryCompletion date
+        if (PAUtil.isNotEmpty(batchDto.getPrimaryCompletionDate()) 
+                && !PAUtil.isValidDate(batchDto.getPrimaryCompletionDate())) {
+            fieldErr.append("Please enter valid value for Primary Completion Date.");
+        }
         return fieldErr;
     }
     /**

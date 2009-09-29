@@ -278,7 +278,8 @@ public class BatchCreateProtocols {
             util.updateStudyProtcolDTO(studyProtocolDTO, trialDTO);
             
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
-            studyProtocolDTO.setIdentifier(studyProtocolIi);
+            studyProtocolDTO.setIdentifier(IiConverter.convertToStudyProtocolIi(
+                    Long.parseLong(studyProtocolDTO.getIdentifier().getExtension())));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
             overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
@@ -393,8 +394,10 @@ public class BatchCreateProtocols {
                         if (batchDto.getSponsorContactType().equalsIgnoreCase(strPersonal)) {
                             trialDTO.setResponsiblePersonName(batchDto.getSponsorContactLName() 
                                     + batchDto.getSponsorContactFName());
+                            trialDTO.setResponsibleGenericContactName("");
                         } else {
                             trialDTO.setResponsibleGenericContactName(batchDto.getResponsibleGenericContactName());
+                            trialDTO.setResponsiblePersonName("");
                         }
                     }
                 }   
@@ -403,7 +406,8 @@ public class BatchCreateProtocols {
                 trialDTO.setStartDateType(batchDto.getStudyStartDateType());
                 trialDTO.setStatusCode(batchDto.getCurrentTrialStatus());
                 trialDTO.setStatusDate(batchDto.getCurrentTrialStatusDate());
-                
+                trialDTO.setCompletionDate(batchDto.getPrimaryCompletionDate());
+                trialDTO.setCompletionDateType(batchDto.getPrimaryCompletionDateType());
                 OrganizationBatchDTO summ4Sponsor = dataValidator.buildSummary4Sponsor(batchDto); //Summary 4 Info
                 Ii summary4Sponsor = null;
                 if (!dataValidator.orgDTOIsEmpty(summ4Sponsor)) {

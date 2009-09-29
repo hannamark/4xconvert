@@ -378,10 +378,10 @@ public class TrialUtil {
         
         if (trialDTO.getTrialType().equalsIgnoreCase("Observational")) {
             isoDto = RegistryServiceLocator.getStudyProtocolService().getObservationalStudyProtocol(
-                        IiConverter.convertToIi(trialDTO.getIdentifier()));
+                        IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
         } else {
             isoDto  = RegistryServiceLocator.getStudyProtocolService().getInterventionalStudyProtocol(
-                    IiConverter.convertToIi(trialDTO.getIdentifier()));
+                    IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
         }
         isoDto = convertToStudyProtocolDTO(trialDTO, isoDto);
         isoDto.setAssignedIdentifier(IiConverter.convertToIi(trialDTO.getAssignedIdentifier()));
