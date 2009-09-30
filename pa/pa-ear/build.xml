@@ -280,7 +280,7 @@
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
     
-    <target name="deploy" description="Deploys the ear for the application">
+    <target name="deploy" depends="fix-server-xml" description="Deploys the ear for the application">
         <available file="${pa-ear.build.dir}/${pa-ear.ear}" property="pa-ear.ear.present"/>
         <fail unless="pa-ear.ear.present" message="Ear file not found."/>
         <copy todir="${jboss.deploy.directory}" file="${pa-ear.build.dir}/${pa-ear.ear}"/>
@@ -420,6 +420,24 @@
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/pa-ear"/>
     </target>
-
+	 <!--  ====================================================================== 
+	       The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
+	       security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
+	       remote deployments. This definition supports the developer local deployments.
+	     ====================================================================== --> 
+	             <target name="find-server-xml">
+	                <available file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" property="server-xml.present"/>
+	              </target>
+	              <target name="fix-server-xml" depends="find-server-xml" if="server-xml.present">
+	                 <copy file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" todir="${pa-ear.build.dir}" overwrite="true"/>
+	                 <copy file="${pa-ear.build.dir}/server.xml" todir="${jboss.deploy.directory}/jbossweb-tomcat55.sar" overwrite="true">
+	                   <filterchain>
+	                    <tokenfilter>
+	                        <replacestring from="emptySessionPath=&quot;true&quot;" to="emptySessionPath=&quot;false&quot;"/>
+	                     </tokenfilter>
+	                   </filterchain>
+	                  </copy>
+	              </target>     
+	            
     
 </project>
