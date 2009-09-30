@@ -47,6 +47,10 @@ function handleEditAction(){
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
+    <s:hidden name = "patient.patientId" />
+    <s:hidden name = "patient.studySubjectId" />
+    <s:hidden name = "patient.studyProtocolId" />
+    <s:hidden name = "patient.statusCode" />
 <table class="form">
     <tr>
         <td class="label">
@@ -57,7 +61,7 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:textfield id ="identifier" name="patient.identifier" maxlength="400" size="50" 
+            <s:textfield id ="identifier" name="patient.assignedIdentifier" maxlength="400" size="50" 
                   cssStyle="width:98%;max-width:206px" />
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
@@ -208,7 +212,7 @@ function handleEditAction(){
             <s:select id ="paymentMethodCode" name="patient.paymentMethodCode"
                headerKey=""
                headerValue="--Select--"
-               list="#{'Private Insurance':'Private Insurance','Medicare':'Medicate'
+               list="#{'Private Insurance':'Private Insurance','Medicare':'Medicare'
                       ,'Medicare and Private Insurance':'Medicare and Private Insurance'
                       ,'Medicaid':'Medicaid','Medicaid and Medicare':'Medicaid and Medicare'
                       ,'Military or Veterans Sponsored, Not Otherwise Specified (NOS)':'Military or Veterans Sponsored, Not Otherwise Specified (NOS)'

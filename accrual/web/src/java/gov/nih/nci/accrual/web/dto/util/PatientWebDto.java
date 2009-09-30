@@ -78,15 +78,27 @@
 */
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 
@@ -94,8 +106,10 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since Sep 22, 2009
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyFields" })
 public class PatientWebDto {
     // from PatientDto
+    private Long patientId;
     private String raceCode;
     private String genderCode;
     private String ethnicCode;
@@ -105,12 +119,15 @@ public class PatientWebDto {
     private String countryName;
 
     // from StudySubjectDto
+    private Long studySubjectId;
+    private Long studyProtocolId;
     private String identifier;
     private String paymentMethodCode;
     private String assignedIdentifier;
     private String statusCode;
 
-    // from PerformedStudySubjectMilestone
+    // from PerformedSubjectMilestone
+    private Long performedSubjectMilestoneId;
     private String registrationDate;
 
     // from StudySite...Organization
@@ -125,17 +142,28 @@ public class PatientWebDto {
     public PatientWebDto() {
         // default constructor
     }
+
+    /**
+     * Constructor for new records status is always pending.
+     * @param studyProtocolIi study protocol id
+     */
+    public PatientWebDto(Ii studyProtocolIi) {
+        studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
+        statusCode = FunctionalRoleStatusCode.PENDING.getCode();
+    }
+
     /**
      * Construct using iso dto's from service tier.
      * @param pIsoDto patient iso dto
      * @param ssIsoDto study subject iso dto
      * @param orgName organization name
-     * @param regDate registration date
+     * @param psm registration date
      * @param listOfCountries country list
      */
-    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName, String regDate,
-            List<Country> listOfCountries) {
+    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName,
+            PerformedSubjectMilestoneDto psm, List<Country> listOfCountries) {
         if (pIsoDto != null) {
+            patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
             raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
             genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
             ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
@@ -147,10 +175,11 @@ public class PatientWebDto {
                 }
             }
             zip = StConverter.convertToString(pIsoDto.getZip());
-            statusCode = CdConverter.convertCdToString(pIsoDto.getStatusCode());
         }
 
         if (ssIsoDto != null) {
+            studySubjectId = IiConverter.convertToLong(ssIsoDto.getIdentifier());
+            studyProtocolId = IiConverter.convertToLong(ssIsoDto.getStudyProtocolIdentifier());
             identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
             paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
             assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
@@ -158,8 +187,59 @@ public class PatientWebDto {
         }
 
         organizationName = orgName;
-        registrationDate = regDate;
+
+        if (psm != null) {
+            performedSubjectMilestoneId = IiConverter.convertToLong(psm.getIdentifier());
+            registrationDate = TsConverter.convertToString(psm.getRegistrationDate());
+        }
     }
+
+    /**
+     * @return patient iso dto
+     */
+    public PatientDto getPatientDto() {
+        PatientDto pat = new PatientDto();
+        pat.setIdentifier(IiConverter.convertToIi(getPatientId()));
+        pat.setBirthDate(AccrualUtil.yearMonthStringToTs(getBirthDate()));
+        pat.setCountryIdentifier(IiConverter.convertToCountryIi(getCountryIdentifier()));
+        pat.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.getByCode(getEthnicCode())));
+        pat.setGenderCode(CdConverter.convertToCd(PatientGenderCode.getByCode(getGenderCode())));
+        pat.setRaceCode(CdConverter.convertToCd(PatientRaceCode.getByCode(getRaceCode())));
+        pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
+        pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        pat.setZip(StConverter.convertToSt(getZip()));
+        return pat;
+    }
+
+    /**
+     * @return study subject iso dto
+     */
+    public StudySubjectDto getStudySubjectDto() {
+        StudySubjectDto ssub = new StudySubjectDto();
+        ssub.setIdentifier(IiConverter.convertToIi(getStudySubjectId()));
+        ssub.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(Long.valueOf(getOrganizationName())));
+        ssub.setStudyProtocolIdentifier(IiConverter.convertToIi(getStudyProtocolId()));
+        ssub.setPatientIdentifier(IiConverter.convertToIi(getPatientId()));
+        ssub.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
+        ssub.setDiseaseIdentifier(null);
+        ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(getPaymentMethodCode())));
+        ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(getStatusCode())));
+        ssub.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+        return ssub;
+    }
+
+    /**
+     * @return performed subject milestone dto
+     */
+    public PerformedSubjectMilestoneDto getPerformedStudySubjectMilestoneDto() {
+        PerformedSubjectMilestoneDto psm = new PerformedSubjectMilestoneDto();
+        psm.setIdentifier(IiConverter.convertToIi(getPerformedSubjectMilestoneId()));
+        psm.setStudySubjectIdentifier(IiConverter.convertToIi(getStudySubjectId()));
+        psm.setStudyProtocolIdentifier(IiConverter.convertToIi(getStudyProtocolId()));
+        psm.setRegistrationDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        return psm;
+    }
+
     /**
      * @return the raceCode
      */
@@ -322,5 +402,61 @@ public class PatientWebDto {
      */
     public String getCountryName() {
         return countryName;
+    }
+
+    /**
+     * @return the patientId
+     */
+    public Long getPatientId() {
+        return patientId;
+    }
+
+    /**
+     * @param patientId the patientId to set
+     */
+    public void setPatientId(Long patientId) {
+        this.patientId = patientId;
+    }
+
+    /**
+     * @return the studySubjectId
+     */
+    public Long getStudySubjectId() {
+        return studySubjectId;
+    }
+
+    /**
+     * @param studySubjectId the studySubjectId to set
+     */
+    public void setStudySubjectId(Long studySubjectId) {
+        this.studySubjectId = studySubjectId;
+    }
+
+    /**
+     * @return the performedSubjectMilestoneId
+     */
+    public Long getPerformedSubjectMilestoneId() {
+        return performedSubjectMilestoneId;
+    }
+
+    /**
+     * @param performedSubjectMilestoneId the performedSubjectMilestoneId to set
+     */
+    public void setPerformedSubjectMilestoneId(Long performedSubjectMilestoneId) {
+        this.performedSubjectMilestoneId = performedSubjectMilestoneId;
+    }
+
+    /**
+     * @return the studyProtocolId
+     */
+    public Long getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(Long studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
 }

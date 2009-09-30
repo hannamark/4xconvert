@@ -82,21 +82,13 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.enums.PaymentMethodCode;
-import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -158,7 +150,7 @@ public class PatientAction extends AbstractAccrualAction {
         } catch (RemoteException e) {
             return ERROR;
         }
-        patient = new PatientWebDto();
+        patient = new PatientWebDto(getSpIi());
         return super.create();
     }
     /**
@@ -186,7 +178,14 @@ public class PatientAction extends AbstractAccrualAction {
     @Override
     public String update() {
         try {
+            patient = null;
             loadListOfStudySites();
+            loadListOfPatients();
+            for (PatientWebDto pat : listOfPatients) {
+                if (pat.getIdentifier().equals(getSelectedRowIdentifier())) {
+                    patient = pat;
+                }
+            }
         } catch (RemoteException e) {
             return ERROR;
         }
@@ -212,31 +211,32 @@ public class PatientAction extends AbstractAccrualAction {
             loadListOfStudySites();
             return super.create();
         }
-        PatientDto pat = new PatientDto();
-        pat.setBirthDate(AccrualUtil.yearMonthStringToTs(patient.getBirthDate()));
-        pat.setCountryIdentifier(IiConverter.convertToCountryIi(patient.getCountryIdentifier()));
-        pat.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.getByCode(patient.getEthnicCode())));
-        pat.setGenderCode(CdConverter.convertToCd(PatientGenderCode.getByCode(patient.getGenderCode())));
-        pat.setRaceCode(CdConverter.convertToCd(PatientRaceCode.getByCode(patient.getRaceCode())));
-        pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
-        pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        pat.setZip(StConverter.convertToSt(patient.getZip()));
-        StudySubjectDto ssub = new StudySubjectDto();
-        ssub.setAssignedIdentifier(StConverter.convertToSt(patient.getIdentifier()));
-        ssub.setDiseaseIdentifier(null);
-        ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(patient.getPaymentMethodCode())));
-        ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(patient.getStatusCode())));
-        ssub.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+        PatientDto pat = patient.getPatientDto();
+        StudySubjectDto ssub = patient.getStudySubjectDto();
         ssub.setStudyProtocolIdentifier(getSpIi());
-        ssub.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(Long.valueOf(patient.getOrganizationName())));
-        PerformedSubjectMilestoneDto psm = new PerformedSubjectMilestoneDto();
-        psm.setRegistrationDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        psm.setStudyProtocolIdentifier(getSpIi());
+        PerformedSubjectMilestoneDto psm = patient.getPerformedStudySubjectMilestoneDto();
         pat = patientSvc.create(pat);
         ssub.setPatientIdentifier(pat.getIdentifier());
         ssub = studySubjectSvc.create(ssub);
         psm.setStudySubjectIdentifier(ssub.getIdentifier());
         performedSubjectMilestoneSvc.create(psm);
+        return super.add();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String edit() throws RemoteException {
+        if (!hasAllRequiredFields()) {
+            loadListOfStudySites();
+            return super.create();
+        }
+        PatientDto pat = patient.getPatientDto();
+        StudySubjectDto ssub = patient.getStudySubjectDto();
+        PerformedSubjectMilestoneDto psm = patient.getPerformedStudySubjectMilestoneDto();
+        pat = patientSvc.update(pat);
+        ssub = studySubjectSvc.update(ssub);
+        setRegistrationDate(psm);
         return super.add();
     }
     /**
@@ -302,14 +302,27 @@ public class PatientAction extends AbstractAccrualAction {
                 PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
                 List<PerformedSubjectMilestoneDto> smList =
                         performedSubjectMilestoneSvc.getByStudySubject(sub.getIdentifier());
-                String registrationDate = null;
+                PerformedSubjectMilestoneDto psmDto = null;
                 for (PerformedSubjectMilestoneDto sm : smList) {
                     if (!PAUtil.isTsNull(sm.getRegistrationDate())) {
-                        registrationDate = TsConverter.convertToString(sm.getRegistrationDate());
+                        psmDto = sm;
                     }
                 }
-                listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), registrationDate,
-                        getListOfCountries()));
+                listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), psmDto, getListOfCountries()));
+            }
+        }
+    }
+
+    private void setRegistrationDate(PerformedSubjectMilestoneDto dto) throws RemoteException {
+        if (!PAUtil.isTsNull(dto.getRegistrationDate())) {
+            if (!PAUtil.isIiNull(dto.getIdentifier())) {
+                performedSubjectMilestoneSvc.update(dto);
+            } else {
+                performedSubjectMilestoneSvc.create(dto);
+            }
+        } else {
+            if (!PAUtil.isIiNull(dto.getIdentifier())) {
+                performedSubjectMilestoneSvc.delete(dto.getIdentifier());
             }
         }
     }
@@ -318,7 +331,7 @@ public class PatientAction extends AbstractAccrualAction {
         clearActionErrors();
         addActionErrorIfEmpty(patient, "Error inputing study subject data.");
         if (!hasActionErrors()) {
-            addActionErrorIfEmpty(patient.getIdentifier(), "Study Subject ID is required.");
+            addActionErrorIfEmpty(patient.getAssignedIdentifier(), "Study Subject ID is required.");
             addActionErrorIfEmpty(patient.getBirthDate(), "Birth date is required.");
             addActionErrorIfEmpty(patient.getGenderCode(), "Gender is required.");
             addActionErrorIfEmpty(patient.getRaceCode(), "Race is required.");
