@@ -188,26 +188,25 @@ public class StudySiteServiceBean
             to.setIdentifierName(from.getIdentifierName());
             to.setRoot(from.getRoot());
             to.setExtension(bo.getId().toString());
-            if (StudySiteFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) {
-                // create study contact
-                spcDtos = studySiteContactService.getByStudySite(from);
+            // create study contact
+            spcDtos = studySiteContactService.getByStudySite(from);
+            if (spcDtos != null && !spcDtos.isEmpty()) {
                 for (StudySiteContactDTO spcDto : spcDtos) {
                     spcDto.setIdentifier(null);
                     spcDto.setStudySiteIi(to);
                     spcDto.setStudyProtocolIdentifier(toStudyProtocolIi);
                     session.save(ssc.convertFromDtoToDomain(spcDto));
                 }
-                // create study accrual status
-                accDtos = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudySite(from);
-                for (StudySiteAccrualStatusDTO accDto : accDtos) {
-                    accDto.setIdentifier(null);
-                    accDto.setStudySiteIi(to);
-                    session.save(StudySiteAccrualStatusConverter.convertFromDtoToDomain(accDto));
-                }
-                
-                
             }
-            
+            // create study accrual status
+            if (StudySiteFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) { 
+                    accDtos = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudySite(from);
+                    for (StudySiteAccrualStatusDTO accDto : accDtos) {
+                        accDto.setIdentifier(null);
+                        accDto.setStudySiteIi(to);
+                        session.save(StudySiteAccrualStatusConverter.convertFromDtoToDomain(accDto));
+                    }
+            }
             map.put(from, to);
         }
         return map;

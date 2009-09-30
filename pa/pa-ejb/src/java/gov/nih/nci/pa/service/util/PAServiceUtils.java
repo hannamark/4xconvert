@@ -518,6 +518,40 @@ public class PAServiceUtils {
     
     /**
      * 
+     * @param studyProtocolIi Study Protocol Identifier
+     * @param sponsorDto Lead Organization Dto
+     * @throws PAException on error
+     */
+    public void manageSponsor(Ii studyProtocolIi , OrganizationDTO sponsorDto)
+    throws PAException {
+        OrganizationCorrelationServiceBean ocsr = new OrganizationCorrelationServiceBean();
+        String orgPoIdentifier = sponsorDto.getIdentifier().getExtension();
+        if (orgPoIdentifier  == null) {
+            throw new PAException("Organization Identifier is null");
+        }
+        if (studyProtocolIi == null) {
+            throw new PAException("Protocol Identifier is Null");
+        }
+        Long roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
+        List<StudySiteDTO> studySiteDtos = 
+            getStudySite(studyProtocolIi, StudySiteFunctionalCode.SPONSOR, true);
+        StudySiteDTO studySiteDTO = null;
+        if (PAUtil.getFirstObj(studySiteDtos) != null) {
+            studySiteDTO = PAUtil.getFirstObj(studySiteDtos);
+        } else {
+            studySiteDTO = new StudySiteDTO();
+        }
+        studySiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+        studySiteDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
+        studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        studySiteDtos  = new ArrayList<StudySiteDTO>();
+        studySiteDtos.add(studySiteDTO);
+        createOrUpdate(studySiteDtos, IiConverter.convertToStudySiteIi(null), studyProtocolIi);
+        
+    }    
+    
+    /**
+     * 
      * @param studyProtocolIi study protocol identifier
      * @param leadOrganizationDto lead organization identifier
      * @param principalInvestigatorDto pi

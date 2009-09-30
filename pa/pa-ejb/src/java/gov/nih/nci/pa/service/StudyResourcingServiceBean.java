@@ -451,10 +451,7 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
      */
     public void validate(StudyResourcingDTO studyResourcingDTO)
             throws PAException {
-        boolean dupExists = enforceNoDuplicate(studyResourcingDTO);
-        if (dupExists) {
-           throw new PAException("Duplicate grants are not allowed\n");
-        }
+        enforceValidation(studyResourcingDTO);
     }
     
     /**
@@ -522,46 +519,48 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
       StringBuffer errorBuffer =  new StringBuffer();
       final int serialNumMin = 5;
       final int serialNumMax = 6;
-      
-      //check if nih institute code exists
-      if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
-        boolean nihExists = 
-           checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
-                              "NIH_INSTITUTE", "nih_institute_code");
-          if (!nihExists) {
-             errorBuffer.append("Error while checking for value ")
-                     .append(studyResourcingDTO.getNihInstitutionCode().getCode())
-                     .append(" from table NIH_INSTITUTE\n");
-          }
-      }
-      if (!PAUtil.isCdNull(studyResourcingDTO.getFundingMechanismCode())) {
-         //check if Funding mechanism code exists 
-         boolean fmExists = checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(), 
-             "FUNDING_MECHANISM", "funding_mechanism_code");
-       
-         if (!fmExists) {
-            errorBuffer.append("Error while checking for value ")
-                       .append(studyResourcingDTO.getFundingMechanismCode().getCode())
-                       .append(" from table FUNDING_MECHANISM\n");
-         }
-      }  
-        if (studyResourcingDTO.getSerialNumber() != null
-                && studyResourcingDTO.getSerialNumber().getValue() != null) {
-              String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
-              if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
-                errorBuffer.append("Serial number can be numeric with 5 or 6 digits\n");
+      if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+              && BlConverter.covertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
+                   .equals(Boolean.FALSE)) {      
+              //check if nih institute code exists
+              if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
+                boolean nihExists = 
+                   checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
+                                      "NIH_INSTITUTE", "nih_institute_code");
+                  if (!nihExists) {
+                     errorBuffer.append("Error while checking for value ")
+                             .append(studyResourcingDTO.getNihInstitutionCode().getCode())
+                             .append(" from table NIH_INSTITUTE\n");
+                  }
               }
-              if (!isNumeric(snValue)) {
-                errorBuffer.append("Serial number should have numbers from [0-9]\n");
-              }
-        }
-        if (!PAUtil.isBlNull(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-               && BlConverter.covertToBoolean(studyResourcingDTO.getSummary4ReportedResourceIndicator())
-                    .equals(Boolean.FALSE)) {
-             boolean dupExists = enforceNoDuplicate(studyResourcingDTO);
-             if (dupExists) {
-                errorBuffer.append("Duplicate grants are not allowed\n");
-              }
+              if (!PAUtil.isCdNull(studyResourcingDTO.getFundingMechanismCode())) {
+                 //check if Funding mechanism code exists 
+                 boolean fmExists = checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(), 
+                     "FUNDING_MECHANISM", "funding_mechanism_code");
+               
+                 if (!fmExists) {
+                    errorBuffer.append("Error while checking for value ")
+                               .append(studyResourcingDTO.getFundingMechanismCode().getCode())
+                               .append(" from table FUNDING_MECHANISM\n");
+                 }
+              }  
+              if (studyResourcingDTO.getSerialNumber() != null
+                    && studyResourcingDTO.getSerialNumber().getValue() != null) {
+                  String snValue = studyResourcingDTO.getSerialNumber().getValue().toString();
+                  if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
+                    errorBuffer.append("Serial number can be numeric with 5 or 6 digits\n");
+                  }
+                  if (!isNumeric(snValue)) {
+                    errorBuffer.append("Serial number should have numbers from [0-9]\n");
+                  }
+             }
+             if (PAUtil.isIiNotNull(studyResourcingDTO.getStudyProtocolIdentifier())) {
+                 //this means it is original submission thats why not having Ii
+                 boolean dupExists = enforceNoDuplicate(studyResourcingDTO);
+                 if (dupExists) {
+                     errorBuffer.append("Duplicate grants are not allowed\n");
+                 }
+             }
        }
        if (errorBuffer.length() > 0) {
            throw new PAException("Validation Exception " + errorBuffer.toString());

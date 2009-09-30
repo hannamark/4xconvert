@@ -550,7 +550,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
-            validate(studyProtocolDto, null , REJECTION);
+            validate(studyProtocolDto, null , REJECTION, null);
             //Original trial Rejection
             if (studyProtocolDto.getSubmissionNumber().getValue().intValue() == 1) {
                 StudyMilestoneDTO smDto = new StudyMilestoneDTO();
@@ -640,6 +640,27 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             ssSourceDTO.setStudyProtocolIdentifier(targetSpIi);
             studySiteService.delete(sourceIi);
             studySiteService.update(ssSourceDTO);
+            //sponsor
+            List<StudySiteDTO> studySiteSponsorDtos = 
+                paServiceUtils.getStudySite(sourceSpIi, StudySiteFunctionalCode.SPONSOR, true);
+            StudySiteDTO ssSponsorSourceDTO = null;
+            if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
+                ssSponsorSourceDTO = PAUtil.getFirstObj(studySiteSponsorDtos);
+            } else {
+                throw new PAException("Source Lead Organization is not available");
+            }
+            sourceIi = ssSponsorSourceDTO.getIdentifier();
+            studySiteSponsorDtos = paServiceUtils.getStudySite(targetSpIi, StudySiteFunctionalCode.SPONSOR, true);
+            StudySiteDTO ssSponsorTargetDTO = null;
+            if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
+                ssSponsorTargetDTO = PAUtil.getFirstObj(studySiteSponsorDtos);
+            } else {
+                throw new PAException("Target Sponsor is not available");
+            }
+            ssSponsorSourceDTO.setIdentifier(ssSponsorTargetDTO.getIdentifier());
+            ssSponsorSourceDTO.setStudyProtocolIdentifier(targetSpIi);
+            studySiteService.delete(sourceIi);
+            studySiteService.update(ssSponsorSourceDTO);
             
             paServiceUtils.executeSql(deleteAndReplace(sourceSpIi , targetSpIi));
           }  
@@ -679,7 +700,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         Ii toStudyProtocolIi = null;
-        validate(studyProtocolDTO, overallStatusDTO , operation);
+        validate(studyProtocolDTO, overallStatusDTO , operation, studyResourcingDTOs);
         
         enforceBusinessRulesForUpdate(studyProtocolDTO ,
                                      overallStatusDTO ,
@@ -737,9 +758,12 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
       
         paServiceUtils.removeResponsibleParty(studyProtocolDTO.getIdentifier());
+        if (AMENDMENT.equalsIgnoreCase(operation)) {
+            paServiceUtils.manageSponsor(studyProtocolIi , sponsorOrganizationDTO);
+        }
         paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO, 
                 sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
-      
+        
        // update summary4
        paServiceUtils.manageSummaryFour(studyProtocolIi , summary4organizationDTO , summary4studyResourcingDTO);
       if (AMENDMENT.equalsIgnoreCase(operation)) {
@@ -778,7 +802,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyResourcingDTO summary4studyResourcingDTO ,
             Ii responsiblePartyContactIi , String operation)
     throws PAException {
-        validate(studyProtocolDTO, overallStatusDTO, operation);
+        validate(studyProtocolDTO, overallStatusDTO, operation, studyResourcingDTOs);
         enforceBusinessRules(
                 studyProtocolDTO,
                 overallStatusDTO,
@@ -952,11 +976,13 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param studyProtocolDTO protocolDto
      * @param overallStatusDTO statusDto
      * @param isAmend amend
+     * @param studyResourcingDTO studyResourcingDTO
      * @return 
      * @throws PAException e
      */
     private void validate(StudyProtocolDTO studyProtocolDTO ,
-            StudyOverallStatusDTO overallStatusDTO , String operation) throws PAException {
+            StudyOverallStatusDTO overallStatusDTO , String operation ,
+            List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
         if (REJECTION.equalsIgnoreCase(operation)) {
             DocumentWorkflowStatusDTO dws = docWrkFlowStatusService.getCurrentByStudyProtocol(
@@ -966,6 +992,12 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             }
         } else {
             studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
+            if (studyResourcingDTOs != null && !studyResourcingDTOs.isEmpty()) {
+                for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
+                    studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+                    studyResourcingService.validate(studyResourcingDTO);
+                }
+            }
         }
         if (AMENDMENT.equalsIgnoreCase(operation) || UPDAT.equalsIgnoreCase(operation)) {
             DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
