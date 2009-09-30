@@ -76,22 +76,26 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-
+import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-
+import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -115,6 +119,11 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     private String studyProtocolId = null;
     private List<SubmissionDto> listOfSubmissions = null;
     private SubmissionDto submission = new SubmissionDto();
+    
+    private List<PatientDto> listOfPatients;
+    private List<SearchStudySiteResultWebDto> listOfStudySites = null;
+    private PatientDto patient;
+    
 
     /**
      * {@inheritDoc}
@@ -174,6 +183,14 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             dto.setSubmitUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                 getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             submissionSvc.update(dto);
+            
+            loadListOfPatients();
+            for (PatientDto pat : listOfPatients) {
+                 pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
+                 pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+                 patientSvc.update(pat);
+            }
+            
             ServletActionContext.getRequest().getSession().
              setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.FALSE);
             //setOpenedSubmission(Boolean.FALSE);
@@ -186,7 +203,22 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
        // return super.execute();
         return edit();
     }
-
+    
+      private void loadListOfPatients() throws RemoteException {
+           List<SearchStudySiteResultDto> isoStudySiteList = null;
+           if (listOfStudySites == null) {
+            isoStudySiteList = searchStudySiteSvc.search(getSpIi(), getAuthorizedUser());
+            listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoStudySiteList);
+           }
+         listOfPatients = new ArrayList<PatientDto>();
+          for (SearchStudySiteResultWebDto ss : listOfStudySites) {
+              List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(IiConverter.convertToIi(ss.getSsIi()));
+              for (StudySubjectDto sub : subList) {
+                PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
+                 listOfPatients.add(pat);
+           }
+         }
+       }
     /**
      * {@inheritDoc}
      */
@@ -345,4 +377,49 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     public String getSubmissionSubmittedDate() {
         return WebUtil.getStr(IvlConverter.convertTs().convertHighToString(getSubmission().getStatusDateRange()));
     }
+    
+    /**
+     * @return the patient
+     */
+    public PatientDto getPatient() {
+      return patient;
+    }
+
+    /**
+     * @param patient the patient to set
+    */
+    public void setPatient(PatientDto patient) {
+      this.patient = patient;
+    }
+
+     /**
+     * @return the listOfPatients
+     */
+     public List<PatientDto> getListOfPatients() {
+      return listOfPatients;
+     }
+
+     /**
+      * @param listOfPatients the listOfPatients to set
+      */
+      public void setListOfPatients(List<PatientDto> listOfPatients) {
+         this.listOfPatients = listOfPatients;
+     }
+
+     /**
+      * @return the listOfStudySites
+      */
+      public List<SearchStudySiteResultWebDto> getListOfStudySites() {
+       return listOfStudySites;
+      }
+
+     /**
+      * @param listOfStudySites the listOfStudySites to set
+     */
+       public void setListOfStudySites(
+          List<SearchStudySiteResultWebDto> listOfStudySites) {
+          this.listOfStudySites = listOfStudySites;
+       }
+    
+
 }
