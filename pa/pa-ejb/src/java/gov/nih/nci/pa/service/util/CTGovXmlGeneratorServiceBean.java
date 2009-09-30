@@ -482,7 +482,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             if (scDTO.getClinicalResearchStaffIi() == null && scDTO.getOrganizationalContactIi() != null) {
                 PAContactDTO paCDto =  cUtils.getContactByPAOrganizationalContactId((
                         Long.valueOf(scDTO.getOrganizationalContactIi().getExtension())));
-                appendElement(overallContact, createElement("title", paCDto.getTitle() , doc));
+                appendElement(overallContact, createElement("last_name", paCDto.getTitle() , doc));
             } else if (scDTO.getClinicalResearchStaffIi() != null) {
                 Person p  = cUtils.getPAPersonByIi(scDTO.getClinicalResearchStaffIi());
                 appendElement(overallContact, createElement(FIRST_NAME, p.getFirstName() , doc));
@@ -1188,7 +1188,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             } else if (spcDTO.getOrganizationalContactIi() != null) {
                 PAContactDTO paCDto =  corr.getContactByPAOrganizationalContactId((
                         Long.valueOf(spcDTO.getOrganizationalContactIi().getExtension())));
-                appendElement(contact , createElement("Title" , paCDto.getTitle() , doc));
+                appendElement(contact , createElement("last_name" , paCDto.getTitle() , doc));
             }
             if (phones != null && !phones.isEmpty()) {
                 appendElement(contact , createElement(PHONE , phones.get(0) , PAAttributeMaxLen.LEN_30 , doc));
