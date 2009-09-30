@@ -92,10 +92,28 @@
     <target name="build-notest" description="Build the ear, jar and war" depends="set-notask, accrual-dist">
     </target>
     
-    <target name="deploy" depends="set-full, deploy-ear, echoTime" 
+    <target name="deploy" depends="set-full, fix-server-xml, deploy-ear, echoTime" 
             description="Build test and deploy."/>
-            
-    <target name="deploy-notest" depends="set-notask, deploy-ear, echoTime" 
+
+    <!-- The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
+        security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
+        remote deployments. This definition supports the developer local deployments.
+    -->
+    <target name="find-server-xml">
+        <available file="${jboss.deploy.dir}/jbossweb-tomcat55.sar/server.xml" property="server-xml.present"/>
+    </target>
+    <target name="fix-server-xml" depends="find-server-xml" if="server-xml.present">
+        <copy file="${jboss.deploy.dir}/jbossweb-tomcat55.sar/server.xml" todir="${target.dir}" overwrite="true"/>
+        <copy file="${target.dir}/server.xml" todir="${jboss.deploy.dir}/jbossweb-tomcat55.sar" overwrite="true">
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from="emptySessionPath=&quot;true&quot;" to="emptySessionPath=&quot;false&quot;"/>
+                </tokenfilter>
+            </filterchain>
+        </copy>
+    </target>
+    
+    <target name="deploy-notest" depends="set-notask, fix-server-xml, deploy-ear, echoTime" 
             description="Build and deploy without testing or getting dependencies.">
     </target>
 

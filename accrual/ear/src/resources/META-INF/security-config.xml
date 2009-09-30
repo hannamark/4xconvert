@@ -5,7 +5,10 @@
 
 <policy>
     <application-policy name="pa">
-        <authentication>   
+        <authentication>
+            <login-module code="com.fiveamsolutions.nci.commons.authentication.SessionFixationProtectionLoginModule" flag="required">
+                <module-option name="migrateSessionAttributes">true</module-option>
+            </login-module>
             <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional">
                 <module-option name="driver">@jdbc.driver@</module-option>
                 <module-option name="url">@csm.jdbc.url@</module-option>

@@ -47,6 +47,7 @@
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="runtime->master"/>
     <dependency org="springsource"           name="spring"                  rev="2.0.8"           conf="runtime->default"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="runtime->master"/>
+    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.3"           conf="runtime->default"/>
 
     <!-- compile -->
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="compile->master"/>
