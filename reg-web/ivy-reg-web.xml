@@ -54,7 +54,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="runtime->master"/>
     <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="runtime->master"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="runtime->master"/>
-
+    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.3"           conf="runtime->default"/>
     <!-- compile -->
     <dependency org="jboss"                  name="activation"              rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>

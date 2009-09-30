@@ -317,9 +317,9 @@
         <copy todir="${jboss.deploy.directory}" file="${reg-web.ear.file}"/>
     </target>
     
-    <target name="deploy" depends="package,ear,deploy-ear" 
+    <target name="deploy" depends="package,ear,deploy-ear,fix-server-xml" 
             description="Build test and deploy."/>
-    <target name="deploy-notest" depends="package-notest-noivy,ear,deploy-ear" 
+    <target name="deploy-notest" depends="package-notest-noivy,ear,deploy-ear,fix-server-xml" 
             description="Build and deploy without testing or getting dependencies."/>
 
 
@@ -461,5 +461,24 @@
                   </copy>
               </sequential>
             </for>
-      </target> 
+      </target>
+	
+	<!--  ====================================================================== 
+	           The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
+	           security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
+	           remote deployments. This definition supports the developer local deployments.
+	           ====================================================================== --> 
+	           <target name="find-server-xml">
+	                <available file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" property="server-xml.present"/>
+	            </target>
+	            <target name="fix-server-xml" depends="find-server-xml" if="server-xml.present">
+	                <copy file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" todir="${reg-web.build.dir}" overwrite="true"/>
+	                <copy file="${reg-web.build.dir}/server.xml" todir="${jboss.deploy.directory}/jbossweb-tomcat55.sar" overwrite="true">
+	                    <filterchain>
+	                        <tokenfilter>
+	                            <replacestring from="emptySessionPath=&quot;true&quot;" to="emptySessionPath=&quot;false&quot;"/>
+	                        </tokenfilter>
+	                    </filterchain>
+	                </copy>
+	            </target>
 </project>
