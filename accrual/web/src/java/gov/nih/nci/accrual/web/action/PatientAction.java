@@ -82,13 +82,17 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.web.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -135,7 +139,7 @@ public class PatientAction extends AbstractAccrualAction {
             loadListOfCountries();
             loadListOfStudySites();
             loadListOfPatients();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             return ERROR;
         }
         ServletActionContext.getRequest().setAttribute("listOfPatients", listOfPatients);
@@ -168,7 +172,7 @@ public class PatientAction extends AbstractAccrualAction {
                     patient = pat;
                 }
             }
-       } catch (RemoteException e) {
+       } catch (Exception e) {
            return ERROR;
        }
        return super.retrieve();
@@ -187,8 +191,8 @@ public class PatientAction extends AbstractAccrualAction {
                     patient = pat;
                 }
             }
-        } catch (RemoteException e) {
-            patient = null;
+        } catch (Exception e) {
+           patient = null;
             LOG.error("Error in PatientAction.update().", e);
         }
         if (patient == null) {
@@ -228,6 +232,7 @@ public class PatientAction extends AbstractAccrualAction {
         performedSubjectMilestoneSvc.create(psm);
         return super.add();
     }
+    
     /**
      * {@inheritDoc}
      */
@@ -244,7 +249,33 @@ public class PatientAction extends AbstractAccrualAction {
         ssub = studySubjectSvc.update(ssub);
         setRegistrationDate(psm);
         return super.edit();
+    } 
+    
+    /**
+     * Method called from pop-up.  Loads selected disease.
+     * @return result
+     */
+    public String displayDisease() {    
+        DiseaseWebDTO webDTO = new DiseaseWebDTO();        
+        webDTO.setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
+        if ((webDTO == null) || PAUtil.isEmpty(webDTO.getDiseaseIdentifier())) {
+            webDTO = new DiseaseWebDTO();
+        } else {
+            Ii ii = IiConverter.convertToIi(webDTO.getDiseaseIdentifier());
+            try {
+                DiseaseDTO dto = diseaseSvc.get(ii);
+                webDTO.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
+                webDTO.setDiseaseIdentifier(IiConverter.convertToString(dto.getIdentifier()));
+            } catch (Exception e) {
+                return ERROR;
+            }
+        }
+        patient = new PatientWebDto();
+        patient.setDiseasePreferredName(webDTO.getPreferredName());
+        patient.setDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
+        return SUCCESS;
     }
+    
     /**
      * @return the criteria
      */
@@ -296,26 +327,33 @@ public class PatientAction extends AbstractAccrualAction {
         }
     }
 
-    private void loadListOfPatients() throws RemoteException {
-        listOfPatients = new ArrayList<PatientWebDto>();
-        for (SearchStudySiteResultWebDto ss : listOfStudySites) {
-            List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(IiConverter.convertToIi(ss.getSsIi()));
-            for (StudySubjectDto sub : subList) {
-                String statusCode = CdConverter.convertCdToString(sub.getStatusCode());
-                if (!validStatusCodes.contains(statusCode)) {
-                    continue;
-                }
-                PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
-                List<PerformedSubjectMilestoneDto> smList =
-                        performedSubjectMilestoneSvc.getByStudySubject(sub.getIdentifier());
-                PerformedSubjectMilestoneDto psmDto = null;
-                for (PerformedSubjectMilestoneDto sm : smList) {
-                    if (!PAUtil.isTsNull(sm.getRegistrationDate())) {
-                        psmDto = sm;
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    private void loadListOfPatients() {
+        try {
+            listOfPatients = new ArrayList<PatientWebDto>();
+            for (SearchStudySiteResultWebDto ss : listOfStudySites) {
+                List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(IiConverter.convertToIi(ss.getSsIi()));
+                for (StudySubjectDto sub : subList) {
+                    String statusCode = CdConverter.convertCdToString(sub.getStatusCode());
+                    if (!validStatusCodes.contains(statusCode)) {
+                        continue;
                     }
+                    PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
+                    DiseaseDTO dto = diseaseSvc.get(sub.getDiseaseIdentifier());
+                    List<PerformedSubjectMilestoneDto> smList =
+                        performedSubjectMilestoneSvc.getByStudySubject(sub.getIdentifier());
+                    PerformedSubjectMilestoneDto psmDto = null;
+                    for (PerformedSubjectMilestoneDto sm : smList) {
+                        if (!PAUtil.isTsNull(sm.getRegistrationDate())) {
+                            psmDto = sm;
+                        }
+                    }
+                    listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), psmDto,
+                            getListOfCountries(), dto));
                 }
-                listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), psmDto, getListOfCountries()));
             }
+        } catch (Exception e) {
+           e.getMessage();
         }
         sortListOfPatients();
     }

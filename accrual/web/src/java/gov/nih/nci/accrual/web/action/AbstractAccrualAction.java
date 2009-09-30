@@ -86,10 +86,12 @@ import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.web.util.PaServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -137,6 +139,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected PerformedSubjectMilestoneService performedSubjectMilestoneSvc;
     /** CountryService. */
     protected CountryService countrySvc;
+    /** DiseaseService. */
+    protected DiseaseServiceRemote diseaseSvc;
 
     /**
      * {@inheritDoc}
@@ -150,6 +154,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         performedSubjectMilestoneSvc = AccrualServiceLocator.getInstance().
                 getPerformedSubjectMilestoneService();
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
+        diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
     }
     /**
      * Default execute method for action classes.

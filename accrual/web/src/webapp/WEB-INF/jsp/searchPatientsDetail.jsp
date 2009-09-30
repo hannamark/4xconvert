@@ -5,9 +5,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <c:set var="topic" scope="request" value="list_patients"/> 
+<c:url value="/protected/popup.action" var="lookupUrl" />
 <head>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript">
 addCalendar("Cal1", "Select Date", "patient.registrationDate", "detailForm");
 setWidth(90, 1, 15, 1);
@@ -24,13 +28,28 @@ function handleEditAction(){
     document.forms[0].action="patientsedit.action";
     document.forms[0].submit();
 }
+function lookup(){
+        showPopWin('${lookupUrl}', 900, 400, '', 'Disease');
+}
+function loadDiv(intid){
+         var url = '/accrual/protected/ajaxpatientsdisplayDisease.action?diseaseId='+intid;
+         var div = document.getElementById('loadDetails');   
+         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+         var aj = new Ajax.Updater(div, url, {
+            asynchronous: true,
+            method: 'get',
+            evalScripts: false
+         });
+}     
 </script>
+<title>
     <s:if test="%{currentAction == 'create'}">
         <fmt:message key="patient.create.title" /></s:if>
     <s:elseif test="%{currentAction == 'retrieve'}">
         <fmt:message key="patient.retrieve.title" /></s:elseif>
     <s:elseif test="%{currentAction == 'retrieve'}">
         <fmt:message key="patient.update.title" /></s:elseif>
+</title>        
     <s:head/>
 </head>
 <body>
@@ -234,12 +253,14 @@ function handleEditAction(){
             <span class="required">*</span>
         </label>
         </td>
-        <td class="value" colspan="4">
+        <td class="value">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:textfield id ="disease" name="patient.disease" maxlength="400" size="50" cssStyle="width:98%;max-width:206px" />
+            <div id="loadDetails">
+		         <%@ include file="/WEB-INF/jsp/nodecorate/displayDisease.jsp" %>
+            </div>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:label name="patient.disease" cssStyle="font-weight:normal"/>
+            <s:label name="patient.diseasePreferredName" cssStyle="font-weight:normal"/>
           </s:elseif>
         </td>
     </tr>
