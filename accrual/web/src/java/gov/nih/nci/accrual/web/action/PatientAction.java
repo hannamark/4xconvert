@@ -422,7 +422,7 @@ public class PatientAction extends AbstractAccrualAction {
         }
         if (!PAUtil.isEmpty(criteria.getStatusCode())
                 && !criteria.getStatusCode().equals(pat.getStatusCode())) {
-            result =false;
+            result = false;
         }
         return result;
     }
