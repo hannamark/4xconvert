@@ -28,7 +28,7 @@ function handleUpdate(rowId){
     document.forms[0].submit();
 }
 function handleDelete(rowId){
-    input_box=confirm("Click OK to remove the patient from the study.  Cancel to abort.");
+    input_box=confirm("Click OK to remove the subject from the study.  Cancel to abort.");
     if (input_box==true){
         document.forms[0].selectedRowIdentifier.value = rowId;
         document.forms[0].action="patientsdelete.action";
@@ -69,9 +69,9 @@ function handleDelete(rowId){
           </label>
          </td>
          <td class="value">
-             <s:select id="studySite" name="criteria.studySite" list="listOfStudySites" headerKey="" 
-                       listValue="orgName" headerValue="--Select--"/>
-          </td>
+             <s:select id="organizationName" name="criteria.studySiteId" list="listOfStudySites" headerKey="" 
+                       listKey="ssIi" listValue="orgName" headerValue="--Select--"/>
+         </td>
       </tr> 
       <tr>
           <td class="label">
@@ -92,7 +92,7 @@ function handleDelete(rowId){
           </td>
           <td colspan="4">
            <s:select id ="statusCode" name="criteria.statusCode" 
-                         headerKey="1"
+                         headerKey=""
                          headerValue="--Select--"
                          list="#{'Pending':'Pending','Active':'Active'}"/>
           </td>
@@ -120,7 +120,6 @@ function handleDelete(rowId){
 
    <div class="line"></div>
    <h1><fmt:message key="patient.list.header"/></h1>
-   <div class="padme5"></div>
    <accrual:sucessMessage /> 
    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 

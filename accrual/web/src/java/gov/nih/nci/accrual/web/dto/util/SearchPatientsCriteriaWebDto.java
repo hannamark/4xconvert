@@ -86,7 +86,7 @@ import gov.nih.nci.accrual.util.AccrualUtil;
  */
 public class SearchPatientsCriteriaWebDto {
     private String assignedIdentifier;
-    private String studySite;
+    private Long studySiteId;
     private String birthDate;
     private String statusCode;
     /**
@@ -100,18 +100,6 @@ public class SearchPatientsCriteriaWebDto {
      */
     public void setAssignedIdentifier(String assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
-    }
-    /**
-     * @return the studySite
-     */
-    public String getStudySite() {
-        return studySite;
-    }
-    /**
-     * @param studySite the studySite to set
-     */
-    public void setStudySite(String studySite) {
-        this.studySite = studySite;
     }
     /**
      * @return the birthDate
@@ -136,5 +124,17 @@ public class SearchPatientsCriteriaWebDto {
      */
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+    /**
+     * @return the studySiteId
+     */
+    public Long getStudySiteId() {
+        return studySiteId;
+    }
+    /**
+     * @param studySiteId the studySiteId to set
+     */
+    public void setStudySiteId(Long studySiteId) {
+        this.studySiteId = studySiteId;
     }
 }

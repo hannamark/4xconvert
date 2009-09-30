@@ -97,6 +97,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -104,7 +105,7 @@ import org.apache.struts2.ServletActionContext;
  * @author Hugh Reinhart
  * @since Sep 21, 2009
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
 public class PatientAction extends AbstractAccrualAction {
 
     private static final long serialVersionUID = -6820189447703204634L;
@@ -177,8 +178,8 @@ public class PatientAction extends AbstractAccrualAction {
      */
     @Override
     public String update() {
+        patient = null;
         try {
-            patient = null;
             loadListOfStudySites();
             loadListOfPatients();
             for (PatientWebDto pat : listOfPatients) {
@@ -187,7 +188,12 @@ public class PatientAction extends AbstractAccrualAction {
                 }
             }
         } catch (RemoteException e) {
-            return ERROR;
+            patient = null;
+            LOG.error("Error in PatientAction.update().", e);
+        }
+        if (patient == null) {
+            addActionError("Error retrieving study subject info for update.");
+            return execute();
         }
         return super.update();
     }
@@ -237,7 +243,7 @@ public class PatientAction extends AbstractAccrualAction {
         pat = patientSvc.update(pat);
         ssub = studySubjectSvc.update(ssub);
         setRegistrationDate(psm);
-        return super.add();
+        return super.edit();
     }
     /**
      * @return the criteria
@@ -311,6 +317,7 @@ public class PatientAction extends AbstractAccrualAction {
                 listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), psmDto, getListOfCountries()));
             }
         }
+        sortListOfPatients();
     }
 
     private void setRegistrationDate(PerformedSubjectMilestoneDto dto) throws RemoteException {
@@ -337,8 +344,48 @@ public class PatientAction extends AbstractAccrualAction {
             addActionErrorIfEmpty(patient.getRaceCode(), "Race is required.");
             addActionErrorIfEmpty(patient.getEthnicCode(), "Ethnicity is required.");
             addActionErrorIfEmpty(patient.getCountryIdentifier(), "Country is required.");
-            addActionErrorIfEmpty(patient.getOrganizationName(), "Participating site is required.");
+            addActionErrorIfEmpty(patient.getStudySiteId(), "Participating site is required.");
         }
         return !hasActionErrors();
+    }
+
+    private void sortListOfPatients() {
+        TreeMap<String, Long> ids = new TreeMap<String, Long>();
+        for (PatientWebDto pat : listOfPatients) {
+            ids.put(pat.getAssignedIdentifier(), pat.getStudySubjectId());
+        }
+        List<PatientWebDto> result = new ArrayList<PatientWebDto>();
+        for (Long ssId : ids.values()) {
+            for (PatientWebDto pat : listOfPatients) {
+                if (ssId.equals(pat.getStudySubjectId()) && includePatient(pat)) {
+                    result.add(pat);
+                }
+            }
+        }
+        listOfPatients = result;
+    }
+
+    private boolean includePatient(PatientWebDto pat) {
+        if (criteria == null) {
+            return true;
+        }
+        boolean result = true;
+        if (!PAUtil.isEmpty(criteria.getAssignedIdentifier())
+                && !pat.getAssignedIdentifier().contains(criteria.getAssignedIdentifier())) {
+            result = false;
+        }
+        if (criteria.getStudySiteId() != null
+                && !criteria.getStudySiteId().equals(pat.getStudySiteId())) {
+            result = false;
+        }
+        if (!PAUtil.isEmpty(criteria.getBirthDate())
+                && !criteria.getBirthDate().equals(pat.getBirthDate())) {
+            result = false;
+        }
+        if (!PAUtil.isEmpty(criteria.getStatusCode())
+                && !criteria.getStatusCode().equals(pat.getStatusCode())) {
+            result =false;
+        }
+        return result;
     }
 }

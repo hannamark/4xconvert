@@ -121,6 +121,7 @@ public class PatientWebDto {
     // from StudySubjectDto
     private Long studySubjectId;
     private Long studyProtocolId;
+    private Long studySiteId;
     private String identifier;
     private String paymentMethodCode;
     private String assignedIdentifier;
@@ -180,6 +181,7 @@ public class PatientWebDto {
         if (ssIsoDto != null) {
             studySubjectId = IiConverter.convertToLong(ssIsoDto.getIdentifier());
             studyProtocolId = IiConverter.convertToLong(ssIsoDto.getStudyProtocolIdentifier());
+            studySiteId = IiConverter.convertToLong(ssIsoDto.getStudySiteIdentifier());
             identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
             paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
             assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
@@ -217,7 +219,7 @@ public class PatientWebDto {
     public StudySubjectDto getStudySubjectDto() {
         StudySubjectDto ssub = new StudySubjectDto();
         ssub.setIdentifier(IiConverter.convertToIi(getStudySubjectId()));
-        ssub.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(Long.valueOf(getOrganizationName())));
+        ssub.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(Long.valueOf(getStudySiteId())));
         ssub.setStudyProtocolIdentifier(IiConverter.convertToIi(getStudyProtocolId()));
         ssub.setPatientIdentifier(IiConverter.convertToIi(getPatientId()));
         ssub.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
@@ -330,13 +332,6 @@ public class PatientWebDto {
     public String getOrganizationName() {
         return organizationName;
     }
-    /**
-     * @param organizationName the organizationName to set
-     */
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
-
    /**
      * @return the identifier
      */
@@ -458,5 +453,19 @@ public class PatientWebDto {
      */
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
+    }
+
+    /**
+     * @return the studySiteId
+     */
+    public Long getStudySiteId() {
+        return studySiteId;
+    }
+
+    /**
+     * @param studySiteId the studySiteId to set
+     */
+    public void setStudySiteId(Long studySiteId) {
+        this.studySiteId = studySiteId;
     }
 }

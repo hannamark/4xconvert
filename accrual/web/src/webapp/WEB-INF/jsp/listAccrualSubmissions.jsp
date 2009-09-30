@@ -29,7 +29,6 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <s:form name="submissionForm"><s:hidden name="selectedRowIdentifier"/> 
 <h1><fmt:message key="accrual.list.accrual.submissions.page.header"/> </h1>
-    <div class="padme5"></div>
     <accrual:sucessMessage /> 
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <display:table class="data" summary="This table contains list of Accrual Submissions.

@@ -253,7 +253,7 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-             <s:select id="organizationName" name="patient.organizationName" list="listOfStudySites" headerKey="" 
+             <s:select id="organizationName" name="patient.studySiteId" list="listOfStudySites" headerKey="" 
                        listKey="ssIi" listValue="orgName" headerValue="--Select--"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
