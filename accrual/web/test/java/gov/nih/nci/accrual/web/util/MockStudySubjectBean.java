@@ -164,4 +164,11 @@ public class MockStudySubjectBean implements StudySubjectService {
         return dto;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudySubjectDto> getByStudyProtocol(Ii ii) throws RemoteException {
+        return ssList;
+    }
+
 }

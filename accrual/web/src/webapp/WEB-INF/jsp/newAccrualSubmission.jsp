@@ -33,7 +33,6 @@ function handleAction(){
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <h1><fmt:message key="accrual.new.accrual.submission.page.header"/></h1>
-    <div class="padme5"></div>
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <s:form name="addNew" validate="true">
     <table class="form">

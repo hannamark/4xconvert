@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.web.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
@@ -121,6 +122,7 @@ public class PatientAction extends AbstractAccrualAction {
         validStatusCodes.add(FunctionalRoleStatusCode.ACTIVE.getCode());
     }
     private static List<Country> listOfCountries = null;
+    private static Long unitedStatesId = null;
 
     private SearchPatientsCriteriaWebDto criteria = null;
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
@@ -155,7 +157,7 @@ public class PatientAction extends AbstractAccrualAction {
         } catch (RemoteException e) {
             return ERROR;
         }
-        patient = new PatientWebDto(getSpIi());
+        patient = new PatientWebDto(getSpIi(), unitedStatesId);
         return super.create();
     }
     /**
@@ -232,7 +234,7 @@ public class PatientAction extends AbstractAccrualAction {
         performedSubjectMilestoneSvc.create(psm);
         return super.add();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -240,7 +242,7 @@ public class PatientAction extends AbstractAccrualAction {
     public String edit() throws RemoteException {
         if (!hasAllRequiredFields()) {
             loadListOfStudySites();
-            return super.create();
+            return super.update();
         }
         PatientDto pat = patient.getPatientDto();
         StudySubjectDto ssub = patient.getStudySubjectDto();
@@ -249,16 +251,16 @@ public class PatientAction extends AbstractAccrualAction {
         ssub = studySubjectSvc.update(ssub);
         setRegistrationDate(psm);
         return super.edit();
-    } 
-    
+    }
+
     /**
      * Method called from pop-up.  Loads selected disease.
      * @return result
      */
-    public String displayDisease() {    
-        DiseaseWebDTO webDTO = new DiseaseWebDTO();        
+    public String displayDisease() {
+        DiseaseWebDTO webDTO = new DiseaseWebDTO();
         webDTO.setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
-        if ((webDTO == null) || PAUtil.isEmpty(webDTO.getDiseaseIdentifier())) {
+        if (webDTO == null || PAUtil.isEmpty(webDTO.getDiseaseIdentifier())) {
             webDTO = new DiseaseWebDTO();
         } else {
             Ii ii = IiConverter.convertToIi(webDTO.getDiseaseIdentifier());
@@ -275,7 +277,7 @@ public class PatientAction extends AbstractAccrualAction {
         patient.setDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
         return SUCCESS;
     }
-    
+
     /**
      * @return the criteria
      */
@@ -324,36 +326,41 @@ public class PatientAction extends AbstractAccrualAction {
     private void loadListOfCountries() throws RemoteException {
         if (listOfCountries == null) {
             listOfCountries = countrySvc.getCountries();
+            for (Country c : listOfCountries) {
+                if ("United States".equals(c.getName())) {
+                    unitedStatesId = c.getId();
+                }
+            }
         }
     }
 
-    @SuppressWarnings("PMD.CyclomaticComplexity")
-    private void loadListOfPatients() {
-        try {
-            listOfPatients = new ArrayList<PatientWebDto>();
-            for (SearchStudySiteResultWebDto ss : listOfStudySites) {
-                List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(IiConverter.convertToIi(ss.getSsIi()));
-                for (StudySubjectDto sub : subList) {
-                    String statusCode = CdConverter.convertCdToString(sub.getStatusCode());
-                    if (!validStatusCodes.contains(statusCode)) {
-                        continue;
-                    }
-                    PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
-                    DiseaseDTO dto = diseaseSvc.get(sub.getDiseaseIdentifier());
-                    List<PerformedSubjectMilestoneDto> smList =
-                        performedSubjectMilestoneSvc.getByStudySubject(sub.getIdentifier());
-                    PerformedSubjectMilestoneDto psmDto = null;
-                    for (PerformedSubjectMilestoneDto sm : smList) {
-                        if (!PAUtil.isTsNull(sm.getRegistrationDate())) {
-                            psmDto = sm;
-                        }
-                    }
-                    listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), psmDto,
-                            getListOfCountries(), dto));
+    private void loadListOfPatients() throws RemoteException {
+        listOfPatients = new ArrayList<PatientWebDto>();
+        for (SearchStudySiteResultWebDto ss : listOfStudySites) {
+            List<StudySubjectDto> subList = studySubjectSvc.getByStudySite(IiConverter.convertToIi(ss.getSsIi()));
+            for (StudySubjectDto sub : subList) {
+                String statusCode = CdConverter.convertCdToString(sub.getStatusCode());
+                if (!validStatusCodes.contains(statusCode)) {
+                    continue;
                 }
+                PatientDto pat = patientSvc.get(sub.getPatientIdentifier());
+                DiseaseDTO dto;
+                try {
+                    dto = diseaseSvc.get(sub.getDiseaseIdentifier());
+                } catch (Exception e) {
+                    dto = null;
+                }
+                List<PerformedSubjectMilestoneDto> smList =
+                    performedSubjectMilestoneSvc.getByStudySubject(sub.getIdentifier());
+                PerformedSubjectMilestoneDto psmDto = null;
+                for (PerformedSubjectMilestoneDto sm : smList) {
+                    if (!PAUtil.isTsNull(sm.getRegistrationDate())) {
+                        psmDto = sm;
+                    }
+                }
+                listOfPatients.add(new PatientWebDto(pat, sub, ss.getOrgName(), psmDto,
+                        getListOfCountries(), dto));
             }
-        } catch (Exception e) {
-           e.getMessage();
         }
         sortListOfPatients();
     }
@@ -372,7 +379,8 @@ public class PatientAction extends AbstractAccrualAction {
         }
     }
 
-    private boolean hasAllRequiredFields() {
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
+    private boolean hasAllRequiredFields() throws RemoteException {
         clearActionErrors();
         addActionErrorIfEmpty(patient, "Error inputing study subject data.");
         if (!hasActionErrors()) {
@@ -383,6 +391,42 @@ public class PatientAction extends AbstractAccrualAction {
             addActionErrorIfEmpty(patient.getEthnicCode(), "Ethnicity is required.");
             addActionErrorIfEmpty(patient.getCountryIdentifier(), "Country is required.");
             addActionErrorIfEmpty(patient.getStudySiteId(), "Participating site is required.");
+        }
+        if (!hasActionErrors()) {
+            List<StudySubjectDto> allSss = studySubjectSvc.getByStudyProtocol(getSpIi());
+            for (StudySubjectDto ss : allSss) {
+                if (StConverter.convertToString(ss.getAssignedIdentifier()).equals(patient.getAssignedIdentifier())
+                        && (patient.getStudySubjectId() == null
+                             || !patient.getStudySubjectId().equals(IiConverter.convertToLong(ss.getIdentifier())))) {
+                    addActionError("This Study Subject Id (" + patient.getAssignedIdentifier()
+                            + ") has already been added to this study.");
+                }
+            }
+            if (!PAUtil.isEmpty(patient.getRegistrationDate())) {
+                Timestamp registration = AccrualUtil.yearMonthStringToTimestamp(patient.getRegistrationDate());
+                Timestamp birth = AccrualUtil.yearMonthStringToTimestamp(patient.getBirthDate());
+                if (birth.after(registration)) {
+                    addActionError("The birth date must be less then or equal to the registration date.");
+                }
+            }
+            if (unitedStatesId.equals(patient.getCountryIdentifier())) {
+                addActionErrorIfEmpty(patient.getZip(), "Zip code is mandatory if country is United States.");
+            } else {
+                if (!PAUtil.isEmpty(patient.getZip())) {
+                    addActionError("Zip code should only be entered if country is United States.");
+                }
+            }
+            if (!PAUtil.isEmpty(patient.getRegistrationDate())) {
+                Timestamp registrationDate = PAUtil.dateStringToTimestamp(patient.getRegistrationDate());
+                if (registrationDate.after(getCutOffDate())) {
+                    addActionError("Registration date must not be after the cut off date for the current submission ("
+                            + PAUtil.normalizeDateString(getCutOffDate().toString()) + ").");
+                }
+            }
+            if (!unitedStatesId.equals(patient.getCountryIdentifier())
+                    && !PAUtil.isEmpty(patient.getPaymentMethodCode())) {
+                addActionError("Method of payment should only be entered if country is United States.");
+            }
         }
         return !hasActionErrors();
     }

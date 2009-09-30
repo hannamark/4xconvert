@@ -198,4 +198,11 @@ public class AccrualUtil {
         }
         return new Timestamp(dt.getTime());
     }
+    /**
+     * @param dateString year month date string
+     * @return timestamp
+     */
+    public static Timestamp yearMonthStringToTimestamp(String dateString) {
+        return new Timestamp(yearMonthStringToDate(dateString).getTime());
+    }
 }

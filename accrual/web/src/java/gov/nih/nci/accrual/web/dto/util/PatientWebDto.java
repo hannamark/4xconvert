@@ -148,9 +148,11 @@ public class PatientWebDto {
     /**
      * Constructor for new records status is always pending.
      * @param studyProtocolIi study protocol id
+     * @param unitedStatesId country id of the United States
      */
-    public PatientWebDto(Ii studyProtocolIi) {
+    public PatientWebDto(Ii studyProtocolIi, Long unitedStatesId) {
         studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
+        countryIdentifier = unitedStatesId;
         statusCode = FunctionalRoleStatusCode.PENDING.getCode();
     }
 

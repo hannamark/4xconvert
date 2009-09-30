@@ -107,7 +107,7 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
 public class StudySubjectBean
-        extends AbstractBaseAccrualBean<StudySubjectDto, StudySubject, StudySubjectConverter>
+        extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
         implements StudySubjectService {
 
     /**

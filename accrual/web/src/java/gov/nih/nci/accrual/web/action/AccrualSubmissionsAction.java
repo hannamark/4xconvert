@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+
 import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
@@ -119,11 +120,11 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     private String studyProtocolId = null;
     private List<SubmissionDto> listOfSubmissions = null;
     private SubmissionDto submission = new SubmissionDto();
-    
+
     private List<PatientDto> listOfPatients;
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
     private PatientDto patient;
-    
+
 
     /**
      * {@inheritDoc}
@@ -183,17 +184,17 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             dto.setSubmitUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                 getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             submissionSvc.update(dto);
-            
+
             loadListOfPatients();
             for (PatientDto pat : listOfPatients) {
                  pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
                  pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
                  patientSvc.update(pat);
             }
-            
-            ServletActionContext.getRequest().getSession().
-             setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.FALSE);
-            //setOpenedSubmission(Boolean.FALSE);
+
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.FALSE);
+            ServletActionContext.getRequest().removeAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE);
             listOfSubmissions = new ArrayList<SubmissionDto>();
             listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
             ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
@@ -203,7 +204,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
        // return super.execute();
         return edit();
     }
-    
+
       private void loadListOfPatients() throws RemoteException {
            List<SearchStudySiteResultDto> isoStudySiteList = null;
            if (listOfStudySites == null) {
@@ -233,9 +234,11 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             submission.setCreateUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                   getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             listOfSubmissions.add(submissionSvc.create(submission));
-           ServletActionContext.getRequest().getSession().
-             setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.TRUE);
-            //setOpenedSubmission(Boolean.TRUE);
+            ServletActionContext.getRequest().getSession().
+                    setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.TRUE);
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE,
+                    TsConverter.convertToTimestamp(submission.getCutOffDate()));
             ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -245,7 +248,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
         //return super.execute();
         return add();
     }
-    
+
     /**
       * {@inheritDoc}
       */
@@ -377,7 +380,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     public String getSubmissionSubmittedDate() {
         return WebUtil.getStr(IvlConverter.convertTs().convertHighToString(getSubmission().getStatusDateRange()));
     }
-    
+
     /**
      * @return the patient
      */
@@ -420,6 +423,6 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
           List<SearchStudySiteResultWebDto> listOfStudySites) {
           this.listOfStudySites = listOfStudySites;
        }
-    
+
 
 }

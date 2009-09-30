@@ -91,11 +91,13 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -277,6 +279,13 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
                 AccrualConstants.SESSION_ATTR_SPII);
     }
     /**
+     * @return cutoff date for current submission
+     */
+    public Timestamp getCutOffDate() {
+        return (Timestamp) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE);
+    }
+    /**
      * @param spIi the spIi to set
      * @param spIi
      * @throws GeneralSecurityException authorization exception
@@ -291,13 +300,17 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
 
                 List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
                 Boolean isOpen = false;
+                Timestamp cutOffDate = null;
                 for (SubmissionDto sDto : listOfSubmissions) {
                     if (sDto.getStatusCode().getCode().equalsIgnoreCase("Opened")) {
                       isOpen = true;
+                      cutOffDate = TsConverter.convertToTimestamp(sDto.getCutOffDate());
                     }
                 }
                 ServletActionContext.getRequest().getSession().
-                       setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, isOpen);
+                        setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, isOpen);
+                ServletActionContext.getRequest().getSession().
+                        setAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE, cutOffDate);
             } else {
                 throw new GeneralSecurityException("Authorization exception in AbstractAccrualAction.setSpIi().");
             }

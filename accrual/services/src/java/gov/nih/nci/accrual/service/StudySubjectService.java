@@ -93,7 +93,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface StudySubjectService
-        extends BaseAccrualService<StudySubjectDto> {
+        extends BaseAccrualStudyService<StudySubjectDto> {
     /**
      * @param ii study site index
      * @return list of study subjects

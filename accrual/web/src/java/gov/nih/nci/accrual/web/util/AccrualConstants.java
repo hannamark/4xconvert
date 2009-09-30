@@ -99,6 +99,8 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_SPII = "studyProtocolIi";
     /** Attribute to check if there is a submission opened. */
     public static final String SESSION_ATTR_IS_SUBMISSION_OPENED = "submissionOpened";
+    /** Attribute to check if there is a submission opened. */
+    public static final String SESSION_ATTR_SUBMISSION_CUTOFF_DATE = "submissionCutOffDate";
 
     /** Action result for the global log out result. */
     public static final String AR_LOGOUT = "logout";
