@@ -827,8 +827,7 @@ public class PAServiceUtils {
            
             if (PAConstants.YES.equalsIgnoreCase(
                   BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator()))
-                  && PAConstants.NO.equalsIgnoreCase(
-                            BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))) {
+                  && PAUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
                 errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
             }
             
