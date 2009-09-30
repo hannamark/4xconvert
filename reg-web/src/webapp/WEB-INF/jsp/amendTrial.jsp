@@ -259,6 +259,9 @@ function toggledisplay2 (it) {
     <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
     <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
+    <s:hidden name="trialDTO.fdaRegulatoryInformationIndicator" id="trialDTO.fdaRegulatoryInformationIndicator"/>
+    <s:hidden name="trialDTO.section801Indicator" id="trialDTO.section801Indicator"/>
+
 
         <input type="hidden" name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>

@@ -425,13 +425,15 @@ public class TrialUtil {
         isoDto.setProgramCodeText(StConverter.convertToSt(trialDTO.getProgramCodeText()));
         boolean fdaRegIndicator = false;
         if (trialDTO.getFdaRegulatoryInformationIndicator() != null 
-                && trialDTO.getFdaRegulatoryInformationIndicator().equalsIgnoreCase(YES)) {
+                && (trialDTO.getFdaRegulatoryInformationIndicator().equalsIgnoreCase(YES)
+                    || trialDTO.getFdaRegulatoryInformationIndicator().equalsIgnoreCase("true"))) {
             fdaRegIndicator = true;
         }
         isoDto.setFdaRegulatedIndicator(BlConverter.convertToBl(fdaRegIndicator));
         boolean section801Indicator = false;
         if (trialDTO.getSection801Indicator() != null 
-                && trialDTO.getSection801Indicator().equalsIgnoreCase(YES)) {
+                && (trialDTO.getSection801Indicator().equalsIgnoreCase(YES)
+                    || trialDTO.getSection801Indicator().equalsIgnoreCase("true"))) {
             section801Indicator = true;
         }
         isoDto.setSection801Indicator(BlConverter.convertToBl(section801Indicator));
@@ -1100,10 +1102,13 @@ public class TrialUtil {
                                                            .getStudyProtocol(studyProtocolIi);
                        if (spDTO.getSection801Indicator().getValue() != null) {
                            webDTO.setSection801Indicator(BlConverter.convertToString(spDTO.getSection801Indicator()));
+                           trialDTO.setSection801Indicator(BlConverter.convertToString(spDTO.getSection801Indicator()));
                        }
                        if (spDTO.getFdaRegulatedIndicator().getValue() != null) {
                            webDTO.setFdaRegulatedInterventionIndicator(BlConverter.convertToString(spDTO
                                .getFdaRegulatedIndicator()));
+                           trialDTO.setFdaRegulatoryInformationIndicator(BlConverter.convertToString(spDTO
+                                   .getFdaRegulatedIndicator()));
                        }
                        if (spDTO.getDelayedpostingIndicator().getValue() != null) {
                            webDTO.setDelayedPostingIndicator(
