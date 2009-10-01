@@ -76,69 +76,40 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.convert;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
-import org.junit.Test;
+import java.util.zip.DataFormatException;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @author lhebel
+ *
  */
-public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTest {
+@SuppressWarnings("unchecked")
+public class InvalidConverter extends AbstractConverter
+{
+    public String data;
 
-    /**
-     * {@inheritDoc}
+    /* (non-Javadoc)
+     * @see gov.nih.nci.accrual.convert.AbstractConverter#convertFromDomainToDto(gov.nih.nci.pa.domain.AbstractEntity)
      */
     @Override
-    @Test
-    public void conversionTest() throws Exception {
-        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
-        dto.setActualDateRange(ivlVal);
-        dto.setCategoryCode(cdVal);
-        dto.setIdentifier(iiVal);
-        dto.setInformedConsentDate(tsVal);
-        dto.setRegistrationDate(tsVal);
-        dto.setStudyProtocolIdentifier(iiVal);
-        dto.setSubcategoryCode(cdVal);
-        dto.setTextDescription(stVal);
-        dto.setStudySubjectIdentifier(iiVal);
-
-        PerformedSubjectMilestone bo = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
-        PerformedSubjectMilestoneDto r = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo);
-
-        assertTrue(ivlTest(r.getActualDateRange()));
-        assertTrue(cdTest(r.getCategoryCode()));
-        assertTrue(iiTest(r.getIdentifier()));
-        assertTrue(tsTest(r.getInformedConsentDate()));
-        assertTrue(tsTest(r.getRegistrationDate()));
-        assertTrue(iiTest(r.getStudyProtocolIdentifier()));
-        assertTrue(cdTest(r.getSubcategoryCode()));
-        assertTrue(stTest(r.getTextDescription()));
-        assertTrue(iiTest(r.getStudySubjectIdentifier()));
+    public BaseDTO convertFromDomainToDto(AbstractEntity bo) throws DataFormatException
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    @Test
-    public void enumCodesTest() throws Exception {
-        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
-        dto.setActualDateRange(new Ivl<Ts>());
-        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
-        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.OTHER));
-
-        PerformedSubjectMilestone bo = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
-        PerformedSubjectMilestoneDto r = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo);
-
-        assertEquals(ActivityCategoryCode.INTERVENTION.getCode(), CdConverter.convertCdToString(r.getCategoryCode()));
-        assertEquals(ActivitySubcategoryCode.OTHER.getCode(), CdConverter.convertCdToString(r.getSubcategoryCode()));
-     }
-
+    /* (non-Javadoc)
+     * @see gov.nih.nci.accrual.convert.AbstractConverter#convertFromDtoToDomain(gov.nih.nci.pa.iso.dto.BaseDTO)
+     */
+    @Override
+    public AbstractEntity convertFromDtoToDomain(BaseDTO dto) throws DataFormatException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

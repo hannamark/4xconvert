@@ -84,6 +84,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -93,6 +94,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -113,7 +115,12 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
     @Test
     public void get() throws Exception {
         SubmissionDto dto = bean.get(IiConverter.convertToIi(TestSchema.submissions.get(0).getId()));
+        Ts cdate = new Ts();
+        cdate.setValue(new Date());
+        dto.setCreatedDate(cdate);
         assertNotNull(dto);
+        cdate = dto.getCreatedDate();
+        assertNotNull(cdate);
         try {
             dto = bean.get(BII);
         } catch (RemoteException e) {
@@ -140,6 +147,9 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
         assertFalse(newLabel.equals(TestSchema.submissions.get(0).getLabel()));
         SubmissionDto dto = bean.get(IiConverter.convertToIi(TestSchema.submissions.get(0).getId()));
         dto.setLabel(StConverter.convertToSt(newLabel));
+        Ts cdate = new Ts();
+        cdate.setValue(new Date());
+        dto.setCreatedDate(cdate);
         SubmissionDto r = bean.update(dto);
         assertTrue(newLabel.equals(StConverter.convertToString(r.getLabel())));
     }

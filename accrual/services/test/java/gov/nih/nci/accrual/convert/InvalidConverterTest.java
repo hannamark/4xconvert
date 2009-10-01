@@ -76,25 +76,18 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.convert;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @since Aug 29, 2009
  */
-public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTest {
+public class InvalidConverterTest extends AbstractConverterTest {
 
     /**
      * {@inheritDoc}
@@ -102,43 +95,8 @@ public class PerformedSubjectMilestoneConverterTest extends AbstractConverterTes
     @Override
     @Test
     public void conversionTest() throws Exception {
-        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
-        dto.setActualDateRange(ivlVal);
-        dto.setCategoryCode(cdVal);
-        dto.setIdentifier(iiVal);
-        dto.setInformedConsentDate(tsVal);
-        dto.setRegistrationDate(tsVal);
-        dto.setStudyProtocolIdentifier(iiVal);
-        dto.setSubcategoryCode(cdVal);
-        dto.setTextDescription(stVal);
-        dto.setStudySubjectIdentifier(iiVal);
 
-        PerformedSubjectMilestone bo = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
-        PerformedSubjectMilestoneDto r = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo);
-
-        assertTrue(ivlTest(r.getActualDateRange()));
-        assertTrue(cdTest(r.getCategoryCode()));
-        assertTrue(iiTest(r.getIdentifier()));
-        assertTrue(tsTest(r.getInformedConsentDate()));
-        assertTrue(tsTest(r.getRegistrationDate()));
-        assertTrue(iiTest(r.getStudyProtocolIdentifier()));
-        assertTrue(cdTest(r.getSubcategoryCode()));
-        assertTrue(stTest(r.getTextDescription()));
-        assertTrue(iiTest(r.getStudySubjectIdentifier()));
+        InvalidConverter obj = Converters.get(InvalidConverter.class);
+        assertNull(obj);
     }
-
-    @Test
-    public void enumCodesTest() throws Exception {
-        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
-        dto.setActualDateRange(new Ivl<Ts>());
-        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
-        dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.OTHER));
-
-        PerformedSubjectMilestone bo = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDtoToDomain(dto);
-        PerformedSubjectMilestoneDto r = Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo);
-
-        assertEquals(ActivityCategoryCode.INTERVENTION.getCode(), CdConverter.convertCdToString(r.getCategoryCode()));
-        assertEquals(ActivitySubcategoryCode.OTHER.getCode(), CdConverter.convertCdToString(r.getSubcategoryCode()));
-     }
-
 }
