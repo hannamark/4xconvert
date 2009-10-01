@@ -11,7 +11,13 @@
 		<display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
 		<display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
 		<display:column title="Action" class="action" sortable="false">
-			<input type="button" value="Delete" onclick="deleteIndIde('${row.rowId}')"/>		
+			<c:choose>
+            <c:when test="${row.indIdeId != null}">
+            </c:when>
+            <c:otherwise>
+             <input type="button" value="Delete" onclick="deleteIndIde('${row.rowId}')"/>
+            </c:otherwise>
+            </c:choose>		
 		</display:column>
 	</display:table>
 </c:when>
@@ -26,8 +32,15 @@
 		<display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
 		<display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
 		<display:column title="Action" class="action" sortable="false">
-			<input type="button" value="Delete" onclick="deleteIndIde('${row.rowId}')"/>		
-		</display:column>
+	        <c:choose>
+	        <c:when test="${row.indIdeId != null}">
+			</c:when>
+			<c:otherwise>
+			 <input type="button" value="Delete" onclick="deleteIndIde('${row.rowId}')"/>
+			</c:otherwise>
+			</c:choose>		
+        </display:column>
+
 	</display:table>
 	</c:if>
 </c:when>

@@ -9,7 +9,14 @@
      <display:column titleKey="search.trial.view.serialNumber" property="serialNumber"   sortable="true" headerClass="sortable"/>
      <display:column titleKey="search.trial.view.divProgram" property="nciDivisionProgramCode"   sortable="true" headerClass="sortable"/>
      <display:column title="Action" class="action" sortable="false">
-            <input type="button" value="Delete" onclick="deleteGrantRow('${row.rowId}')"/>      
+        <c:choose>
+            <c:when test="${row.id != null}">
+            </c:when>
+            <c:otherwise>
+              <input type="button" value="Delete" onclick="deleteGrantRow('${row.rowId}')"/>
+            </c:otherwise>
+        </c:choose>
+              
     </display:column>
 </display:table>
 </c:when>
