@@ -209,6 +209,7 @@ public class SearchTrialBean implements SearchTrialService {
             result.setOfficialTitle(StConverter.convertToSt((String) qArr[SP_TITLE_IDX]));
             result.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi((Long) qArr[SP_ID_IDX]));
             result.setStudyStatusCode(CdConverter.convertToCd((StudyStatusCode) qArr[SOS_STATUS_IDX]));
+            result.setIdentifier(studyProtocolIi);
             Person person = (Person) qArr[PERSON_IDX];
             result.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
         } catch (HibernateException hbe) {

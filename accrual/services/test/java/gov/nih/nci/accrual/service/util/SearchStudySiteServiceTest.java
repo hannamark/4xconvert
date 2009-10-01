@@ -79,9 +79,11 @@
 package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -120,6 +122,11 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         rList = bean.search(
                 IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()), lName2);
         assertEquals(1, rList.size());
+        if (rList.size() > 0)
+        {
+            Ii id = rList.get(0).getStudySiteIi();
+            assertNotNull(id);
+        }
 
         // second trial has 1 accrual site (first organization)
         rList = bean.search(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId()), lName1);

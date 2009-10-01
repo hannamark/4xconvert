@@ -404,6 +404,7 @@ public class TestSchema {
         // Patient
         Patient p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("7/11/1963"));
+        p.setCountryIdentifier(new Long(100));
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
         p.setIdentifier("PO PATIENT ID 01");
         p.setPersonIdentifier("PO PERSON ID 01");
@@ -411,11 +412,13 @@ public class TestSchema {
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("5/10/1963"));
+        p.setCountryIdentifier(new Long(100));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("PO PATIENT ID 02");
         p.setPersonIdentifier("PO PERSON ID 02");
@@ -423,11 +426,13 @@ public class TestSchema {
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("8/11/1963"));
+        p.setCountryIdentifier(new Long(100));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("PO PATIENT ID 03");
         p.setPersonIdentifier("PO PERSON ID 03");
@@ -435,11 +440,13 @@ public class TestSchema {
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("1/3/1960"));
+        p.setCountryIdentifier(new Long(100));
         p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
         p.setIdentifier("PO PATIENT ID 04");
         p.setPersonIdentifier("PO PERSON ID 04");
@@ -447,11 +454,13 @@ public class TestSchema {
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("9/7/1968"));
+        p.setCountryIdentifier(new Long(100));
         p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
         p.setIdentifier("PO PATIENT ID 05");
         p.setPersonIdentifier("PO PERSON ID 05");
@@ -459,6 +468,7 @@ public class TestSchema {
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
 

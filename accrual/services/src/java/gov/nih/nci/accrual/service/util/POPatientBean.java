@@ -84,7 +84,6 @@ import java.rmi.RemoteException;
 import org.apache.log4j.Logger;
 
 import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -93,8 +92,6 @@ import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.accrual.dto.util.POPatientDto;
 import gov.nih.nci.accrual.util.PoServiceLocator;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 
 import javax.annotation.Resource;
@@ -117,8 +114,9 @@ public class POPatientBean implements POPatientService {
      * 
      * @param ctx the context
      */
+    @SuppressWarnings("unused")
     @Resource
-    public void setSessionContext(SessionContext ctx) {
+    private void setSessionContext(SessionContext ctx) {
         ejbContext = ctx;
     }
 
@@ -234,6 +232,7 @@ public class POPatientBean implements POPatientService {
      * @param pps the service interface
      * @param orgId an organization id
      */
+/*
     public static void example1(POPatientService pps, String orgId) {
         try {
             POPatientDto dto = new POPatientDto();
@@ -244,11 +243,6 @@ public class POPatientBean implements POPatientService {
             dto = pps.create(dto);
     
             POPatientDto dto2 = pps.get(dto.getIdentifier());
-    /*
-            Ii player = IiConverter.convertToPoPersonIi("552");
-            player.setReliability(IdentifierReliability.ISS);
-            dto.setPlayerIdentifier(player);
-    */
             Cd status = new Cd();
             status.setCode("SUSPENDED");
             dto2.setStatus(status);
@@ -258,5 +252,5 @@ public class POPatientBean implements POPatientService {
             LOG.error(ex.toString(), ex);
         }
     }
-
+*/
 }

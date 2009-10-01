@@ -79,99 +79,177 @@
 
 package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.service.AbstractServiceTest;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.enums.USStateCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import static org.junit.Assert.fail;
 
 import java.rmi.RemoteException;
 
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author Hugh Reinhart
- * @since Aug 29, 2009
- */
-public class PatientServiceTest extends AbstractServiceTest<PatientService> {
+import gov.nih.nci.accrual.dto.util.POPatientDto;
+import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.PoServiceLocator;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
 
+/**
+ * @author lhebel
+ *
+ */
+public class POPatientServiceTest extends AbstractServiceTest<POPatientService>
+{
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.accrual.service.AbstractServiceTest#instantiateServiceBean()
+     */
     @Override
     @Before
-    public void instantiateServiceBean() throws Exception {
-        bean = new PatientBean();
+    public void instantiateServiceBean() throws Exception
+    {
+        PoServiceLocator psl = PoServiceLocator.getInstance();
+        psl.setServiceLocator(new MockPoServiceLocator());
+        bean = new POPatientBean();
     }
 
-    @Test
-    public void get() throws Exception {
-        PatientDto  dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        assertNotNull(dto);
-        Ts bDay = dto.getBirthDate();
-        assertNotNull(bDay);
-        Ii country = dto.getCountryIdentifier();
-        assertNotNull(country);
-        Cd ethnicity = dto.getEthnicCode();
-        assertNotNull(ethnicity);
-        Cd gender = dto.getGenderCode();
-        assertNotNull(gender);
-        Ii id = dto.getIdentifier();
-        assertNotNull(id);
-        Cd race = dto.getRaceCode();
-        assertNotNull(race);
-        Cd status = dto.getStatusCode();
-        assertNotNull(status);
-        Ts dateLow = dto.getStatusDateRangeLow();
-        assertNotNull(dateLow);
-        St zip = dto.getZip();
-        assertNotNull(zip);
-
-        try {
-            dto = bean.get(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-    }
     @Test
     public void create() throws Exception {
-        PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
-        dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
-        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
-        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.BLACK));
-        dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
-        dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-
-        PatientDto r = bean.create(dto);
-        assertNotNull(r);
-
-        // birth date must be only year and month
-        assertEquals(PAUtil.dateStringToTimestamp("7/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
+        POPatientDto dto = new POPatientDto();
+        assertNotNull(dto);
+        dto.setDuplicateOf(new Ii());
+        dto.setIdentifier(null);
+        dto.setPlayerIdentifier(new Ii());
+        dto.setPostalAddress(new DSet());
+        Ii scoper = new Ii();
+        scoper.setExtension("0");
+        dto.setScoperIdentifier(scoper);
+        dto.setStatus(new Cd());
+        dto.setTelecomAddress(new DSet<Tel>());
+        POPatientDto dto2 = null;
+        dto2 = bean.create(dto);
+        assertNotNull(dto2);
+        Ii dup = dto2.getDuplicateOf();
+        assertNotNull(dup);
+        Ii id = dto2.getIdentifier();
+        assertNotNull(id);
+        Ii player = dto2.getPlayerIdentifier();
+        assertNotNull(player);
+        DSet paddr = dto2.getPostalAddress();
+        assertNotNull(paddr);
+        scoper = dto2.getScoperIdentifier();
+        assertNotNull(scoper);
+        Cd status = dto2.getStatus();
+        assertNotNull(status);
+        DSet<Tel> tel = dto2.getTelecomAddress();
+        assertNotNull(tel);
     }
+    
+    @Test
+    public void createWithNull() throws Exception {
+        try {
+            POPatientDto dto = bean.create(null);
+            fail();
+        } catch(RemoteException ex) {
+            // expected to fail
+        }
+    }
+    
+    @Test
+    public void createThrowCuration() throws Exception {
+        POPatientDto dto = new POPatientDto();
+        Ii scoper = new Ii();
+        scoper.setExtension("1");
+        dto.setScoperIdentifier(scoper);
+        
+        try {
+            dto = bean.create(dto);
+            fail();
+        } catch(RemoteException ex) {
+            // expected to fail
+        }
+    }
+    
+    @Test
+    public void createThrowEntity() throws Exception {
+        POPatientDto dto = new POPatientDto();
+        Ii scoper = new Ii();
+        scoper.setExtension("2");
+        dto.setScoperIdentifier(scoper);
+        
+        try {
+            dto = bean.create(dto);
+            fail();
+        } catch(RemoteException ex) {
+            // expected to fail
+        }
+    }
+    
+    @Test
+    public void get() throws Exception {
+        Ii patient = new Ii();
+        patient.setExtension("0");
+        POPatientDto dto = bean.get(patient);
+        assertNotNull(dto);
+    }
+    
+    @Test
+    public void getWithNull() throws Exception {
+        Ii patient = new Ii();
+        POPatientDto dto = null;
+        try {
+            dto = bean.get(patient);
+            fail();
+        } catch (RemoteException ex) {
+            // expected because the patient id is null
+        }
+    }
+    
+    @Test
+    public void getThrowsNull() throws Exception {
+        Ii patient = new Ii();
+        patient.setExtension("1");
+        POPatientDto dto = null;
+        try {
+            dto = bean.get(patient);
+            fail();
+        } catch (RemoteException ex) {
+            // expected because the patient id is null
+        }
+    }
+    
     @Test
     public void update() throws Exception {
-        assertFalse(TestSchema.patients.get(0).getRaceCode().equals(PatientRaceCode.ASIAN));
-        PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.ASIAN));
-        PatientDto r = bean.update(dto);
-        assertTrue(PatientRaceCode.ASIAN.getCode().equals(r.getRaceCode().getCode()));
-
+        Ii patient = new Ii();
+        patient.setExtension("0");
+        POPatientDto dto = bean.get(patient);
+        Cd status = dto.getStatus();
+        status.setCode("active");
+        bean.update(dto);
+    }
+    
+    @Test
+    public void updateWithNull() throws Exception {
+        try {
+            bean.update(null);
+            fail();
+        } catch (RemoteException ex) {
+            // expected with null object
+        }
+    }
+    
+    @Test
+    public void updateThrowsEntity() throws Exception {
+        try {
+            POPatientDto dto = new POPatientDto();
+            Cd status = new Cd();
+            status.setCode("suspended");
+            dto.setStatus(status);
+            bean.update(dto);
+            fail();
+        } catch (RemoteException ex) {
+            // expected with null object
+        }
     }
 }

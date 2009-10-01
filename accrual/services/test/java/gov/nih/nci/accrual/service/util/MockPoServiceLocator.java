@@ -73,105 +73,27 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
 
 package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.service.AbstractServiceTest;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.enums.USStateCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
-
-import java.rmi.RemoteException;
-
-import org.junit.Before;
-import org.junit.Test;
+import gov.nih.nci.accrual.util.ServiceLocatorPoInterface;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 29, 2009
+ * @author lhebel
+ *
  */
-public class PatientServiceTest extends AbstractServiceTest<PatientService> {
-
-    @Override
-    @Before
-    public void instantiateServiceBean() throws Exception {
-        bean = new PatientBean();
+public class MockPoServiceLocator implements ServiceLocatorPoInterface
+{
+    private static final MockPatientCorrelationServiceRemote service = new MockPatientCorrelationServiceRemote();
+    
+    /* (non-Javadoc)
+     * @see gov.nih.nci.accrual.util.ServiceLocatorPoInterface#getPatientCorrelationService()
+     */
+    public PatientCorrelationServiceRemote getPatientCorrelationService()
+    {
+        return service;
     }
 
-    @Test
-    public void get() throws Exception {
-        PatientDto  dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        assertNotNull(dto);
-        Ts bDay = dto.getBirthDate();
-        assertNotNull(bDay);
-        Ii country = dto.getCountryIdentifier();
-        assertNotNull(country);
-        Cd ethnicity = dto.getEthnicCode();
-        assertNotNull(ethnicity);
-        Cd gender = dto.getGenderCode();
-        assertNotNull(gender);
-        Ii id = dto.getIdentifier();
-        assertNotNull(id);
-        Cd race = dto.getRaceCode();
-        assertNotNull(race);
-        Cd status = dto.getStatusCode();
-        assertNotNull(status);
-        Ts dateLow = dto.getStatusDateRangeLow();
-        assertNotNull(dateLow);
-        St zip = dto.getZip();
-        assertNotNull(zip);
-
-        try {
-            dto = bean.get(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-    }
-    @Test
-    public void create() throws Exception {
-        PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
-        dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
-        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
-        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.BLACK));
-        dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
-        dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-
-        PatientDto r = bean.create(dto);
-        assertNotNull(r);
-
-        // birth date must be only year and month
-        assertEquals(PAUtil.dateStringToTimestamp("7/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
-    }
-    @Test
-    public void update() throws Exception {
-        assertFalse(TestSchema.patients.get(0).getRaceCode().equals(PatientRaceCode.ASIAN));
-        PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.ASIAN));
-        PatientDto r = bean.update(dto);
-        assertTrue(PatientRaceCode.ASIAN.getCode().equals(r.getRaceCode().getCode()));
-
-    }
 }

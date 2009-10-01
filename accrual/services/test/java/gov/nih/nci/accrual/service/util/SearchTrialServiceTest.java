@@ -86,6 +86,8 @@ import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -131,8 +133,27 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         int goodCount = shouldBeAuthorized ? 1: 0;
 
         // second study is inactive
-        bean.search(new SearchTrialCriteriaDto(), authUser);
-        assertEquals(goodCount, bean.search(new SearchTrialCriteriaDto(), authUser).size());
+        List<SearchTrialResultDto> results = bean.search(new SearchTrialCriteriaDto(), authUser);
+        assertEquals(goodCount, results.size());
+        if (results.size() > 0) {
+            SearchTrialResultDto str = results.get(0);
+            St aid = str.getAssignedIdentifier();
+            assertNotNull(aid);
+            Ii id = str.getIdentifier();
+            assertNotNull(id);
+            St lon = str.getLeadOrgName();
+            assertNotNull(lon);
+            St loti = str.getLeadOrgTrialIdentifier();
+            assertNotNull(loti);
+            St ot = str.getOfficialTitle();
+            assertNotNull(ot);
+            St pi = str.getPrincipalInvestigator();
+            assertNotNull(pi);
+            Ii spi = str.getStudyProtocolIdentifier();
+            assertNotNull(spi);
+            Cd status = str.getStudyStatusCode();
+            assertNotNull(status);
+        }
 
         // get by assigned identifier
         SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();

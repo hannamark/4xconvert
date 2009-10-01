@@ -73,105 +73,150 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
 
 package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.service.AbstractServiceTest;
-import gov.nih.nci.accrual.util.TestSchema;
+import java.util.List;
+import java.util.Map;
+
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.enums.USStateCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
-
-import java.rmi.RemoteException;
-
-import org.junit.Before;
-import org.junit.Test;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientDTO;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 29, 2009
+ * @author lhebel
+ *
  */
-public class PatientServiceTest extends AbstractServiceTest<PatientService> {
-
-    @Override
-    @Before
-    public void instantiateServiceBean() throws Exception {
-        bean = new PatientBean();
+public class MockPatientCorrelationServiceRemote implements PatientCorrelationServiceRemote
+{
+    private Ii identifier = new Ii();
+    private PatientDTO last = null;
+    
+    public MockPatientCorrelationServiceRemote()
+    {
+        last = new PatientDTO();
+        last.setDuplicateOf(new Ii());
+        last.setIdentifier(DSetConverter.convertIiToDset(identifier));
+        last.setPlayerIdentifier(new Ii());
+        last.setPostalAddress(new DSet());
+        last.setScoperIdentifier(new Ii());
+        last.setStatus(new Cd());
+        last.setTelecomAddress(new DSet<Tel>());
     }
 
-    @Test
-    public void get() throws Exception {
-        PatientDto  dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        assertNotNull(dto);
-        Ts bDay = dto.getBirthDate();
-        assertNotNull(bDay);
-        Ii country = dto.getCountryIdentifier();
-        assertNotNull(country);
-        Cd ethnicity = dto.getEthnicCode();
-        assertNotNull(ethnicity);
-        Cd gender = dto.getGenderCode();
-        assertNotNull(gender);
-        Ii id = dto.getIdentifier();
-        assertNotNull(id);
-        Cd race = dto.getRaceCode();
-        assertNotNull(race);
-        Cd status = dto.getStatusCode();
-        assertNotNull(status);
-        Ts dateLow = dto.getStatusDateRangeLow();
-        assertNotNull(dateLow);
-        St zip = dto.getZip();
-        assertNotNull(zip);
-
-        try {
-            dto = bean.get(BII);
-        } catch (RemoteException e) {
-            // expected behavior
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#createCorrelation(gov.nih.nci.services.PoDto)
+     */
+    public Ii createCorrelation(PatientDTO arg0) throws EntityValidationException, CurationException
+    {
+        if (arg0.getScoperIdentifier() != null) {
+            String ext = arg0.getScoperIdentifier().getExtension();
+            if (ext.equals("0")) {
+                // don't throw an exception
+            } else if (ext.equals("1")) {
+                throw new CurationException("Preset Curation Exception for Junit tests.");
+            } else {
+                throw new EntityValidationException("Preset Entity Validation Exception for Junit tests.", null);
+            }
         }
-    }
-    @Test
-    public void create() throws Exception {
-        PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
-        dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
-        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
-        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.BLACK));
-        dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
-        dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
 
-        PatientDto r = bean.create(dto);
-        assertNotNull(r);
-
-        // birth date must be only year and month
-        assertEquals(PAUtil.dateStringToTimestamp("7/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
+        String id = identifier.getExtension();
+        if (id == null || id == "") {
+            id = "0";
+        }
+        id = String.valueOf(Integer.parseInt(id) + 1);
+        identifier.setExtension(id);
+        arg0.setIdentifier(DSetConverter.convertIiToDset(identifier));
+        last = arg0;
+        return identifier;
     }
-    @Test
-    public void update() throws Exception {
-        assertFalse(TestSchema.patients.get(0).getRaceCode().equals(PatientRaceCode.ASIAN));
-        PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.ASIAN));
-        PatientDto r = bean.update(dto);
-        assertTrue(PatientRaceCode.ASIAN.getCode().equals(r.getRaceCode().getCode()));
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.coppa.iso.Ii)
+     */
+    public PatientDTO getCorrelation(Ii arg0) throws NullifiedRoleException
+    {
+        if (arg0.getExtension().equals("1")) {
+            throw new NullifiedRoleException(arg0);
+        }
+        return last;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#getCorrelations(gov.nih.nci.coppa.iso.Ii[])
+     */
+    public List<PatientDTO> getCorrelations(Ii[] arg0) throws NullifiedRoleException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#getCorrelationsByPlayerIds(gov.nih.nci.coppa.iso.Ii[])
+     */
+    public List<PatientDTO> getCorrelationsByPlayerIds(Ii[] arg0) throws NullifiedRoleException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#search(gov.nih.nci.services.PoDto)
+     */
+    public List<PatientDTO> search(PatientDTO arg0)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#search(gov.nih.nci.services.PoDto, gov.nih.nci.coppa.services.LimitOffset)
+     */
+    public List<PatientDTO> search(PatientDTO arg0, LimitOffset arg1) throws TooManyResultsException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#updateCorrelation(gov.nih.nci.services.PoDto)
+     */
+    public void updateCorrelation(PatientDTO arg0) throws EntityValidationException
+    {
+        String code = arg0.getStatus().getCode().toUpperCase();
+        if (ActStatusCode.valueOf(code) == ActStatusCode.SUSPENDED) {
+            throw new EntityValidationException("Preset Entity Validation Exception for Junit tests.", null);
+        }
 
     }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#updateCorrelationStatus(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Cd)
+     */
+    public void updateCorrelationStatus(Ii arg0, Cd arg1) throws EntityValidationException
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.CorrelationService#validate(gov.nih.nci.services.PoDto)
+     */
+    public Map<String, String[]> validate(PatientDTO arg0)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
