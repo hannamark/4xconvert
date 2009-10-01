@@ -90,6 +90,7 @@ import org.junit.Test;
 import gov.nih.nci.accrual.dto.util.POPatientDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.PoServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorPoInterface;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
@@ -101,6 +102,7 @@ import gov.nih.nci.coppa.iso.Tel;
  */
 public class POPatientServiceTest extends AbstractServiceTest<POPatientService>
 {
+    private PoServiceLocator psl;
 
     /* (non-Javadoc)
      * @see gov.nih.nci.accrual.service.AbstractServiceTest#instantiateServiceBean()
@@ -109,9 +111,15 @@ public class POPatientServiceTest extends AbstractServiceTest<POPatientService>
     @Before
     public void instantiateServiceBean() throws Exception
     {
-        PoServiceLocator psl = PoServiceLocator.getInstance();
+        psl = PoServiceLocator.getInstance();
         psl.setServiceLocator(new MockPoServiceLocator());
         bean = new POPatientBean();
+    }
+    
+    @Test
+    public void checkLocator() {
+        ServiceLocatorPoInterface pi = psl.getServiceLocator();
+        assertNotNull(pi);
     }
 
     @Test
