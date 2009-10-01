@@ -79,8 +79,19 @@ package gov.nih.nci.accrual.web.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.accrual.web.util.WebUtil;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -95,16 +106,31 @@ import com.opensymphony.xwork2.ActionSupport;
 public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
 	AccrualSubmissionsAction action;
+    private SearchTrialResultDto trialSummary;
+    private List<SubmissionDto> listOfSubmissions;
+    private SubmissionDto submission;
+    private List<PatientDto> listOfPatients;
+    private List<SearchStudySiteResultWebDto> listOfStudySites;
+    private PatientDto patient;
+
 
     @Before
     public void initAction() throws Exception {
         action = new AccrualSubmissionsAction();
         action.prepare();
         action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
+        trialSummary = new SearchTrialResultDto();
+        listOfSubmissions = new ArrayList<SubmissionDto>();
+        submission = new SubmissionDto();
+        patient = new PatientDto();
+        listOfPatients = new ArrayList<PatientDto>();
+        listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
+        
+        
     }
 
     @Test
-    public void executeTest() {
+    public void executeTest() throws Exception{
 
        // show list of submissions
         assertEquals(ActionSupport.SUCCESS, action.execute());
@@ -118,26 +144,102 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
     }
 
     @Test
-    public void viewSubmissionDetailsTest() {
+    public void viewSubmissionDetailsTest() throws Exception {
         assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.viewSubmissionDetails());
 
     }
 
     @Test
-    public void submitTest() {
+    public void submitTest() throws Exception {
       assertEquals(ActionSupport.SUCCESS, action.submit());
     }
 
     @Test
-    public void addNewTest() {
+    public void addNewTest() throws Exception {
       assertEquals(ActionSupport.SUCCESS, action.addNew());
     }
 
-//    @Test
+    @Test
     public void studyProtocolIdPropertyTest(){
-     assertNull(action.getStudyProtocolId());
-     action.setStudyProtocolId("123");
-     assertNotNull(action.getStudyProtocolId());
+        assertNull(action.getStudyProtocolId());
+        action.setStudyProtocolId("1L");
+        assertNotNull(action.getStudyProtocolId());
+    }
+    
+    @Test
+    public void trialSummaryPropertyTest() {
+    	action.setTrialSummary(trialSummary);
+    	assertNotNull(action.getTrialSummary());
+    }
+    
+    @Test
+    public void listOfSubmissionsPropertyTest() {
+        action.setListOfSubmissions(listOfSubmissions);
+        assertNotNull(action.getListOfSubmissions());
+     }
+    
+    @Test
+    public void submissionsPropertyTest() {
+        action.setSubmission(submission);
+        assertNotNull(action.getSubmission());
+    }
+    
+    @Test
+    public void submissionLabelPropertyTest() {
+        assertNotNull(action.getSubmissionLabel());
+    }
+    
+    @Test
+    public void submissionDescriptionPropertyTest() {
+        assertNotNull(action.getSubmissionDescription());
+    }
+    
+    @Test
+    public void submissionCutOffDatePropertyTest() {
+      assertNotNull(action.getSubmissionCutOffDate());
     }
 
+    @Test
+    public void submissionStatusPropertyTest() {
+      assertNull(action.getSubmissionStatus());
+    }
+    
+    @Test
+    public void submissionCreateUserPropertyTest() {
+      assertNotNull(action.getSubmissionCreateUser());
+    }
+
+    @Test
+    public void submissionCreatedDatePropertyTest() {
+      assertNotNull(action.getSubmissionCreatedDate());
+    }
+    
+    @Test
+    public void submissionSubmitUserPropertyTest() {
+      assertNotNull(action.getSubmissionSubmitUser());
+    }
+    
+    @Test
+    public void submissionSubmittedDatePropertyTest() {
+      assertNotNull(action.getSubmissionSubmittedDate());
+    }
+    
+    @Test
+    public void listOfPatientsPropertyTest() {
+       action.setListOfPatients(listOfPatients);
+       assertNotNull(action.getListOfPatients());
+    }
+    
+    @Test
+    public void patientPropertyTest() {
+        action.setPatient(patient);
+        assertNotNull(action.getPatient());
+    }
+    
+    @Test
+    public void listOfStudySitesPropertyTest() {
+       action.setListOfStudySites(listOfStudySites);
+       assertNotNull(action.getListOfStudySites());
+     }
+    
    }

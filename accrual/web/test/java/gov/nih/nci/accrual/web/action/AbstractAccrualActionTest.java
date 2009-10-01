@@ -136,6 +136,8 @@ public class AbstractAccrualActionTest {
         setRole(AccrualConstants.ROLE_PUBLIC);
         setDisclaimer(true);
     }
+    
+    
 
     /**
      * Clean out the action context to ensure one test does not impact another.
@@ -161,4 +163,6 @@ public class AbstractAccrualActionTest {
             ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
         }
     }
+    
+    
 }
