@@ -84,18 +84,19 @@ import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -166,7 +167,7 @@ public class PatientWebDto {
      * @param dIsoDto disease iso dto
      */
     @SuppressWarnings({"PMD.ExcessiveParameterList" })
-    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName, 
+    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName,
     PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, DiseaseDTO dIsoDto) {
         if (pIsoDto != null) {
             patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
@@ -199,9 +200,10 @@ public class PatientWebDto {
             performedSubjectMilestoneId = IiConverter.convertToLong(psm.getIdentifier());
             registrationDate = TsConverter.convertToString(psm.getRegistrationDate());
         }
-        
+
         if (dIsoDto != null) {
             diseasePreferredName = StConverter.convertToString(dIsoDto.getPreferredName());
+            diseaseIdentifier = IiConverter.convertToLong(dIsoDto.getIdentifier());
         }
     }
 
@@ -247,7 +249,7 @@ public class PatientWebDto {
         psm.setIdentifier(IiConverter.convertToIi(getPerformedSubjectMilestoneId()));
         psm.setStudySubjectIdentifier(IiConverter.convertToIi(getStudySubjectId()));
         psm.setStudyProtocolIdentifier(IiConverter.convertToIi(getStudyProtocolId()));
-        psm.setRegistrationDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        psm.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(getRegistrationDate())));
         return psm;
     }
 
@@ -389,7 +391,7 @@ public class PatientWebDto {
     public void setCountryIdentifier(Long countryIdentifier) {
         this.countryIdentifier = countryIdentifier;
     }
-    
+
     /**
      * @return the countryName
      */
@@ -466,28 +468,28 @@ public class PatientWebDto {
     public void setStudySiteId(Long studySiteId) {
         this.studySiteId = studySiteId;
     }
-    
+
     /**
      * @return the diseasePreferredNames
      */
     public String getDiseasePreferredName() {
         return diseasePreferredName;
     }
-    
+
     /**
      * @param diseasePreferredName the diseasePreferredName to set
      */
     public void setDiseasePreferredName(String diseasePreferredName) {
         this.diseasePreferredName = diseasePreferredName;
     }
-    
+
     /**
      * @return the diseaseIdentifier
      */
     public Long getDiseaseIdentifier() {
         return diseaseIdentifier;
     }
-    
+
     /**
      * @param diseaseIdentifier the diseaseIdentifier to set
      */

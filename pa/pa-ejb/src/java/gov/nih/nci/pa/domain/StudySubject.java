@@ -158,7 +158,7 @@ public class StudySubject extends Subject {
      * @return the studySite
      */
     @ManyToOne
-    @JoinColumn(name = "study_site_identifier", updatable = false)
+    @JoinColumn(name = "study_site_identifier")
     public StudySite getStudySite() {
         return studySite;
     }
@@ -173,7 +173,7 @@ public class StudySubject extends Subject {
      * @return the disease
      */
     @ManyToOne
-    @JoinColumn(name = "disease_identifier", updatable = false)
+    @JoinColumn(name = "disease_identifier")
     public Disease getDisease() {
         return disease;
     }

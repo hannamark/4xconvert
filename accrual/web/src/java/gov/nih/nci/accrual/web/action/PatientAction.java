@@ -390,6 +390,7 @@ public class PatientAction extends AbstractAccrualAction {
             addActionErrorIfEmpty(patient.getRaceCode(), "Race is required.");
             addActionErrorIfEmpty(patient.getEthnicCode(), "Ethnicity is required.");
             addActionErrorIfEmpty(patient.getCountryIdentifier(), "Country is required.");
+            addActionErrorIfEmpty(patient.getDiseaseIdentifier(), "Disease is required.");
             addActionErrorIfEmpty(patient.getStudySiteId(), "Participating site is required.");
         }
         if (!hasActionErrors()) {
