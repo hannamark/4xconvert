@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.convert;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
@@ -98,5 +99,11 @@ public class InvalidConverterTest extends AbstractConverterTest {
 
         InvalidConverter obj = Converters.get(InvalidConverter.class);
         assertNull(obj);
+    }
+    
+    @Test
+    public void converter() throws Exception {
+        Converters cn = new Converters();
+        assertNotNull(cn);
     }
 }

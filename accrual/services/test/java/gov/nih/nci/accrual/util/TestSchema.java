@@ -140,7 +140,14 @@ public class TestSchema {
     /**
      *  Reset the schema.
      */
+    @SuppressWarnings("unused")
     public static void reset() throws Exception {
+        /* just to exercise the getHibernateHelper with a null value */
+        AccrualHibernateUtil ahu = new AccrualHibernateUtil();
+        AccrualHibernateUtil.testHelper = null;
+        AccrualHibernateUtil.getHibernateHelper();
+        /* end test */
+
         AccrualHibernateUtil.testHelper = testHelper;
         Session session = AccrualHibernateUtil.getHibernateHelper().getCurrentSession();
         Connection connection = session.connection();

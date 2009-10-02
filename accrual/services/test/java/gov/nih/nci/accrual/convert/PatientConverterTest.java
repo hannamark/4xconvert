@@ -80,8 +80,15 @@
 package gov.nih.nci.accrual.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.sql.Timestamp;
+
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -125,5 +132,24 @@ public class PatientConverterTest extends AbstractConverterTest {
         assertTrue(dsetTest(r.getRaceCode()));
         assertTrue(stTest(r.getZip()));
     }
+
+    @Test
+    public void accrualCheck() throws Exception {
+        AccrualUtil au = new AccrualUtil();
+        assertNotNull(au);
+        
+        String str = AccrualUtil.tsToYearMonthString(null);
+        assertNull(str);
+        
+        Ts tst = AccrualUtil.yearMonthStringToTs(null);
+        assertNull(tst);
+        
+        Timestamp stm = AccrualUtil.yearMonthTsToTimestamp(null);
+        assertNull(stm);
+        
+        stm = AccrualUtil.yearMonthStringToTimestamp("04/2002");
+        assertNotNull(stm);
+    }
+
 
 }

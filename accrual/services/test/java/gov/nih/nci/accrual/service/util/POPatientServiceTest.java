@@ -89,12 +89,15 @@ import org.junit.Test;
 
 import gov.nih.nci.accrual.dto.util.POPatientDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.PoJndiServiceLocator;
 import gov.nih.nci.accrual.util.PoServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPoInterface;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.util.JNDIUtil;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 
 /**
  * @author lhebel
@@ -258,6 +261,27 @@ public class POPatientServiceTest extends AbstractServiceTest<POPatientService>
             fail();
         } catch (RemoteException ex) {
             // expected with null object
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Test
+    public void remoteCheck() throws Exception {
+        PoJndiServiceLocator psl = new PoJndiServiceLocator();
+        try {
+            PatientCorrelationServiceRemote obj = psl.getPatientCorrelationService();
+        } catch (Exception ex) {
+            // expected, ignore it
+        } catch (Error ex) {
+            // expected, ignore it
+        }
+        
+        try {
+            Object obj = JNDIUtil.lookup("jndi");
+        } catch (Exception ex) {
+            // expected, ignore it
+        } catch (Error ex) {
+            // expected, ignore it
         }
     }
 }
