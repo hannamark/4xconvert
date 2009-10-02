@@ -130,4 +130,35 @@ public class DSetEnumConverter {
         }
         return result.toString();
     }
+
+    /**
+     * @param set set of enum names
+     * @return iso DSet of Cd
+     */
+    public static DSet<Cd> convertSetToDSet(Set<String> set) {
+        DSet<Cd> result = new DSet<Cd>();
+        if (set != null) {
+            Set<Cd> resultSet = new HashSet<Cd>();
+            for (String str : set) {
+                resultSet.add(CdConverter.convertStringToCd(str));
+            }
+            result.setItem(resultSet);
+        }
+        return result;
+    }
+
+    /**
+     * @param dset iso DSet
+     * @return set of enumerator codes
+     */
+    public static Set<String> convertDSetToSet(DSet<Cd> dset) {
+        Set<String> result = new HashSet<String>();
+        if (dset != null && dset.getItem() != null && !dset.getItem().isEmpty()) {
+            Set<Cd> set = dset.getItem();
+            for (Cd cd : set) {
+                result.add(CdConverter.convertCdToString(cd));
+            }
+        }
+        return result;
+    }
 }

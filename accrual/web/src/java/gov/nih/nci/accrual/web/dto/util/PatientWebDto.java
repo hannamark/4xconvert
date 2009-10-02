@@ -88,7 +88,6 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
@@ -101,7 +100,9 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -112,7 +113,7 @@ import java.util.List;
 public class PatientWebDto {
     // from PatientDto
     private Long patientId;
-    private String raceCode;
+    private Set<String> raceCode = new HashSet<String>();
     private String genderCode;
     private String ethnicCode;
     private String birthDate;
@@ -172,9 +173,7 @@ public class PatientWebDto {
     PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, DiseaseDTO dIsoDto) {
         if (pIsoDto != null) {
             patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
-            raceCode = DSetEnumConverter.convertDSetToCsv(pIsoDto.getRaceCode());
-            raceCode = raceCode.substring(0, raceCode.indexOf(','));
-            raceCode = Enum.valueOf(PatientRaceCode.class, raceCode).getCode();
+            raceCode = DSetEnumConverter.convertDSetToSet(pIsoDto.getRaceCode());
             genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
             ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
             birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
@@ -220,7 +219,7 @@ public class PatientWebDto {
         pat.setCountryIdentifier(IiConverter.convertToCountryIi(getCountryIdentifier()));
         pat.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.getByCode(getEthnicCode())));
         pat.setGenderCode(CdConverter.convertToCd(PatientGenderCode.getByCode(getGenderCode())));
-        pat.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.getByCode(getRaceCode()).getName()));
+        pat.setRaceCode(DSetEnumConverter.convertSetToDSet(getRaceCode()));
         pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         pat.setZip(StConverter.convertToSt(getZip()));
@@ -259,13 +258,13 @@ public class PatientWebDto {
     /**
      * @return the raceCode
      */
-    public String getRaceCode() {
+    public Set<String> getRaceCode() {
         return raceCode;
     }
     /**
      * @param raceCode the raceCode to set
      */
-    public void setRaceCode(String raceCode) {
+    public void setRaceCode(Set<String> raceCode) {
         this.raceCode = raceCode;
     }
     /**

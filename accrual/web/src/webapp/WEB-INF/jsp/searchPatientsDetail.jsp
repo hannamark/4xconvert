@@ -114,16 +114,16 @@ function loadDiv(intid){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:select id ="genderCode" name="patient.genderCode" 
-                      headerKey=""
-                      headerValue="--Select--"
-                      list="#{'Male':'Male','Female':'Female','Unknown':'Unknown'}"/>
+            <s:set name="genderCodeValues" value="@gov.nih.nci.pa.enums.PatientGenderCode@getDisplayNames()" />
+            <s:select id ="genderCode" name="patient.genderCode" headerKey="" headerValue="--Select--"
+                      list="#genderCodeValues"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
             <s:label name="patient.genderCode" cssStyle="font-weight:normal"/>
           </s:elseif>
         </td>
     </tr>
+
     <tr>
         <td class="label">
          <label>
@@ -133,16 +133,14 @@ function loadDiv(intid){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:select id ="raceCode" name="patient.raceCode"  
-                      headerKey=""
-                      headerValue="--Select--"
-                      list="#{'American Indian or Alaska Native':'American Indian or Alaska Native'
-                             ,'Asian':'Asian','Black or African American':'Black or African American'
-                             ,'Native Hawaiian or Other Pacific Islander':'Native Hawaiian or Other Pacific Islander'
-                             ,'Not Reported':'Not Reported','Unknown':'Unknown','White':'White'}"/>
+            <s:set name="raceCodeValues" value="@gov.nih.nci.pa.enums.PatientRaceCode@getDisplayNames()" />
+            <s:select id ="raceCode" name="patient.raceCode" multiple="true" size="7" list="#raceCodeValues" />
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:label name="patient.raceCode" cssStyle="font-weight:normal"/>
+            <s:iterator id="races" value="patient.raceCode" >
+                <s:set name="racerx" value="%{code}"/>
+                <s:label name="races" cssStyle="font-weight:normal"/><br>
+            </s:iterator>
           </s:elseif>
         </td>
     </tr>
@@ -156,11 +154,9 @@ function loadDiv(intid){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:select id ="ethnicCode" name="patient.ethnicCode"
-                      headerKey=""
-                      headerValue="--Select--"
-                      list="#{'Hispanic or Latino':'Hispanic or Latino','Not Hispanic or Latino':'Not Hispanic or Latino'
-                             ,'Not Reported':'Not Reported','Unknown':'Unknown'}"/>
+            <s:set name="ethnicCodeValues" value="@gov.nih.nci.pa.enums.PatientEthnicityCode@getDisplayNames()" />
+            <s:select id ="ethnicCode" name="patient.ethnicCode" headerKey="" headerValue="--Select--"
+                      list="#ethnicCodeValues"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
             <s:label name="patient.ethnicCode" cssStyle="font-weight:normal"/>
@@ -228,17 +224,9 @@ function loadDiv(intid){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:select id ="paymentMethodCode" name="patient.paymentMethodCode"
-               headerKey=""
-               headerValue="--Select--"
-               list="#{'Private Insurance':'Private Insurance','Medicare':'Medicare'
-                      ,'Medicare and Private Insurance':'Medicare and Private Insurance'
-                      ,'Medicaid':'Medicaid','Medicaid and Medicare':'Medicaid and Medicare'
-                      ,'Military or Veterans Sponsored, Not Otherwise Specified (NOS)':'Military or Veterans Sponsored, Not Otherwise Specified (NOS)'
-                      ,'Military Sponsored (including CHAMPUS or TRICARE)':'Military Sponsored (including CHAMPUS or TRICARE)'
-                      ,'Veterans Sponsored':'Veterans Sponsored','Self pay (no insurance)':'Self pay (no insurance)'
-                      ,'No means of payment (no insurance)':'No means of payment (no insurance)'
-                      ,'Other':'Other','Unknown':'Unknown'}"/>
+            <s:set name="paymentCodeValues" value="@gov.nih.nci.pa.enums.PaymentMethodCode@getDisplayNames()" />
+            <s:select id ="paymentMethodCode" name="patient.paymentMethodCode" headerKey="" headerValue="--Select--"
+               list="#paymentCodeValues"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
             <s:label name="patient.paymentMethodCode" cssStyle="font-weight:normal"/>

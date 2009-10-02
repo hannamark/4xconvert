@@ -85,6 +85,9 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 
 
@@ -95,14 +98,14 @@ import org.junit.Test;
 public class DSetEnumConverterTest {
 
     @Test
-    public void nullValueTest() {
+    public void nullValueCsvTest() {
         DSet<Cd> dset = DSetEnumConverter.convertCsvToDSet(null);
         String result = DSetEnumConverter.convertDSetToCsv(dset);
         assertEquals("", result);
     }
 
     @Test
-    public void singleValueTest() {
+    public void singleValueCsvTest() {
         String test = PatientRaceCode.AMERICAN_INDIAN.getName()+",";
         DSet<Cd> dset = DSetEnumConverter.convertCsvToDSet(test);
         String result = DSetEnumConverter.convertDSetToCsv(dset);
@@ -110,7 +113,7 @@ public class DSetEnumConverterTest {
     }
 
     @Test
-    public void multipleValuesTest() {
+    public void multipleValuesCsvTest() {
         String test = PatientRaceCode.AMERICAN_INDIAN.getName() + "," + PatientRaceCode.BLACK.getName() + ",";
         DSet<Cd> dset = DSetEnumConverter.convertCsvToDSet(test);
         String result = DSetEnumConverter.convertDSetToCsv(dset);
@@ -122,10 +125,37 @@ public class DSetEnumConverterTest {
      * required for backward compatibility
      */
     @Test
-    public void singleValueNoCommaTest() {
+    public void singleValueNoCommaCsvTest() {
         String test = PatientRaceCode.AMERICAN_INDIAN.getName();
         DSet<Cd> dset = DSetEnumConverter.convertCsvToDSet(test);
         String result = DSetEnumConverter.convertDSetToCsv(dset);
         assertTrue(result.contains(test));
+    }
+
+    @Test
+    public void nullValueSetTest() {
+        DSet<Cd> dset = DSetEnumConverter.convertSetToDSet(null);
+        Set<String> result = DSetEnumConverter.convertDSetToSet(dset);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void singleValueSetTest() {
+        Set<String> test = new HashSet<String>();
+        test.add(PatientRaceCode.AMERICAN_INDIAN.getCode());
+        DSet<Cd> dset = DSetEnumConverter.convertSetToDSet(test);
+        Set<String> result = DSetEnumConverter.convertDSetToSet(dset);
+        assertEquals(test, result);
+    }
+
+    @Test
+    public void multipleValuesSetTest() {
+        Set<String> test = new HashSet<String>();
+        test.add(PatientRaceCode.AMERICAN_INDIAN.getCode());
+        test.add(PatientRaceCode.NOT_REPORTED.getCode());
+        test.add(PatientRaceCode.HAWAIIAN.getCode());
+        DSet<Cd> dset = DSetEnumConverter.convertSetToDSet(test);
+        Set<String> result = DSetEnumConverter.convertDSetToSet(dset);
+        assertEquals(test, result);
     }
 }
