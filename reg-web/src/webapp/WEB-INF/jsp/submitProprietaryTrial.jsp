@@ -390,94 +390,7 @@ function toggledisplay2 (it) {
             </tr>                                             
           
           <tr>  <td colspan="2" class="space">&nbsp;</td></tr>
-          <table class="data2">
-          <tr>
-                <th colspan="2"><fmt:message key="submit.trial.grantInfo"/></th> 
-          </tr>
-          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          <tr>
-            <td colspan="2">
-               <fmt:message key="submit.trial.grantInstructionalText"/>
-            </td>
-          </tr>
-          <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-          </tr>
           
-          <tr>
-                <td colspan="3">
-                    <table class="form">
-                    <tbody> 
-                       <tr>
-                            <th><fmt:message key="submit.trial.fundingMechanism"/></th>
-                            <th><fmt:message key="submit.trial.instituteCode"/></th>
-                            <th><fmt:message key="submit.trial.serialNumber"/></th>
-                            <th><fmt:message key="submit.trial.divProgram"/></th>
-                            <th></th>
-                    </tr>
-                       
-                       <tr>
-                            <s:set name="fundingMechanismValues" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getFundingMechanisms()" />
-                            <td>                                             
-                                <s:select headerKey="" headerValue="--Select--" 
-                                     name="trialFundingDTO.fundingMechanismCode" 
-                                     list="#fundingMechanismValues"                             
-                                     listKey="fundingMechanismCode"  
-                                     listValue="fundingMechanismCode" 
-                                     id="fundingMechanismCode"
-                                     value="trialFundingDTO.fundingMechanismCode" 
-                                     cssStyle="width:150px" />
-                            </td>
-                            <s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
-                            <td>                                             
-                                <s:select headerKey="" headerValue="--Select--" 
-                                     name="trialFundingDTO.nihInstitutionCode" 
-                                     list="#nihInstituteCodes"
-                                     listKey="nihInstituteCode" 
-                                     listValue="nihInstituteCode"
-                                     id="nihInstitutionCode"
-                                     value="trialFundingDTO.nihInstitutionCode" 
-                                     cssStyle="width:150px"  />
-                                     <span class="formErrorMsg" >
-                                        <s:fielderror>
-                                        <s:param>trialFundingDTO.nihInstitutionCode</s:param>
-                                       </s:fielderror>                            
-                                     </span>
-                            </td>
-                            <td>
-                                <s:textfield name="trialFundingDTO.serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px"  />
-                                <span class="formErrorMsg"> 
-                                    <s:fielderror>
-                                    <s:param>trialFundingDTO.serialNumber</s:param>
-                                    </s:fielderror>                            
-                                </span>
-                            </td>
-                            <s:set name="programCodes" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
-                            <td>                                             
-                                <s:select headerKey="" headerValue="--Select--" name="trialFundingDTO.nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="trialFundingDTO.nciDivisionProgramCode" cssStyle="width:150px" />
-                                <span class="formErrorMsg"> 
-                                   <s:fielderror>
-                                   <s:param>trialFundingDTO.nciDivisionProgramCode</s:param>
-                                  </s:fielderror>                            
-                                </span>
-                            </td>
-                            <td> <input type="button" id="grantbtnid" value="Add Grant" onclick="addGrant();" /></td>
-                            <td> &nbsp;</td><td> &nbsp;</td><td> &nbsp;</td>
-                      </tr>
-                      </tbody>
-                    </table>
-                </td>
-          </tr>
-          </table>
-          <tr>
-                <td colspan="2" class="space">  
-                <div id="grantdiv">
-                    <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
-                </div>
-                </td>
-          </tr>
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
@@ -550,37 +463,7 @@ function toggledisplay2 (it) {
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>          
-        <table class="data2">
-        <tr>
-              <th colspan="2">FDA IND/IDE Information for applicable trials</th>
-        </tr>     
          <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-          <tr>
-            <td colspan="2">
-               <fmt:message key="submit.trial.indInstructionalText"/>
-            </td>
-          </tr>
-          <tr>
-              <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-            
-                <tr><td colspan="2" class="space">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
-                        </td>
-                </tr>
-        <tr>    
-            <td colspan="2" class="space">
-            <div id="indidediv">         
-                                    
-                        <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
-                
-            </div>
-            </td>
-        </tr>
-        </table>
-        <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
         </table>
