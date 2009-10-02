@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 
 <h1><fmt:message key="accrual.list.trials.page.header"/></h1>
-    <div class="padme5"></div>
     <accrual:sucessMessage /> 
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <display:table class="data" summary="This table contains your trial search results.

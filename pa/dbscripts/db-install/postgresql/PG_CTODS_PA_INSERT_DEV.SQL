@@ -35,6 +35,9 @@ insert into study_overall_status (identifier, status_code, status_date, study_pr
 values (2, 'APPROVED', '2007-07-21', 2, current_timestamp, 'abstractor' ) 
 ;
 
+-- eligibility criterion
+insert into planned_activity (category_code, study_protocol_identifier, planned_activity_type, inclusion_indicator, criterion_name, eligible_gender_code)
+  values ('ELIGIBILITY_CRITERION', 1, 'PlannedEligibilityCriterion', true, 'GENDER', 'MALE');
 
 --- organization insert
 insert into organization (identifier, name, assigned_identifier, date_last_updated, user_last_updated ,status_code) 

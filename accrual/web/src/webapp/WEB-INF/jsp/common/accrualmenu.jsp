@@ -3,10 +3,10 @@
     <ul>
         <c:choose>
            <c:when test="${requestScope.topic == 'home'}">
-              <li><a href="/accrual/logout.action" class="selected">Home</a></li>
+              <li><a href="home.action" class="selected">Home</a></li>
            </c:when>
            <c:otherwise>
-              <li><a href="/accrual/logout.action">Home</a></li>
+              <li><a href="home.action">Home</a></li>
            </c:otherwise>
         </c:choose>
         <c:choose>

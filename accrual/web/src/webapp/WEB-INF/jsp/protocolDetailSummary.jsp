@@ -2,8 +2,6 @@
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">    
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
-<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
-<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
 
 <div class="summarybox">
     <div class="row">

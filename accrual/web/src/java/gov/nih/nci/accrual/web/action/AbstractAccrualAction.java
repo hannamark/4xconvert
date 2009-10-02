@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -143,6 +144,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected CountryService countrySvc;
     /** DiseaseService. */
     protected DiseaseServiceRemote diseaseSvc;
+    /** PlannedActivityService. */
+    protected PlannedActivityServiceRemote plannedActivitySvc;
 
     /**
      * {@inheritDoc}
@@ -157,6 +160,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
                 getPerformedSubjectMilestoneService();
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
+        plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
     }
     /**
      * Default execute method for action classes.

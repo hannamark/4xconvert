@@ -77,7 +77,7 @@
 package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -85,9 +85,9 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
  */
 public interface ServiceLocatorPaInterface {
     /**
-     * @return StudyDisease service
+     * @return PlannedActivity service
      */
-    StudyDiseaseServiceRemote getStudyDiseaseService();
+    PlannedActivityServiceRemote getPlannedActivityService();
     /**
      * @return Disease service
      */

@@ -79,13 +79,17 @@
 package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 24, 2009
  */
 public final class PaServiceLocator implements ServiceLocatorPaInterface {
+
+    /** Value from PA action class used to indicate a gender criterion. */
+    public static final String ELIG_CRITERION_NAME_GENDER = "GENDER";
+
     private static final PaServiceLocator PA_REGISTRY = new PaServiceLocator();
     private ServiceLocatorPaInterface serviceLocator;
 
@@ -127,7 +131,7 @@ public final class PaServiceLocator implements ServiceLocatorPaInterface {
     /**
      * {@inheritDoc}
      */
-    public StudyDiseaseServiceRemote getStudyDiseaseService() {
-        return serviceLocator.getStudyDiseaseService();
+    public PlannedActivityServiceRemote getPlannedActivityService() {
+        return serviceLocator.getPlannedActivityService();
     }
 }

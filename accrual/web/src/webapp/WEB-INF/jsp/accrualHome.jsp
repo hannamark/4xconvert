@@ -26,13 +26,23 @@ This Site enables you to report accrual information for a trial with NCI's Clini
 </p>
         
 <ul class="padme10">
-                
-<li><a href="/accrual/protected/welcome.action">Log In</a> to your account and</li> 
-    <menu> 
+  <c:choose>
+    <c:when test="${pageContext.request.remoteUser == null}">
+      <li><a href="/accrual/protected/welcome.action">Log In</a> to your account and</li>
+      <menu> 
          <li>Report Accruals on Multiple Trials</li>
          <li>Generate Basic Results report for <a href="http://www.clinicaltrials.gov/">ClinicalTrials.gov</a></li>
-     </menu>                                               
-</ul>                    
+      </menu>
+    </c:when> 
+    <c:otherwise>
+      <li>You have logged in to your account and can now</li>
+      <menu> 
+         <li>Report Accruals on Multiple Trials</li>
+         <li>Generate Basic Results report for <a href="http://www.clinicaltrials.gov/">ClinicalTrials.gov</a></li>
+      </menu>
+    </c:otherwise>
+  </c:choose>
+</ul>
 <p class="padme2">
 Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/ctrp"  target="new1">NCI Clinical Trials Reporting Program</a> website
  <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance

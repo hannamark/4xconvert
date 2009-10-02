@@ -87,10 +87,14 @@ import gov.nih.nci.accrual.web.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.accrual.web.util.PaServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -128,6 +132,7 @@ public class PatientAction extends AbstractAccrualAction {
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
     private List<PatientWebDto> listOfPatients;
     private PatientWebDto patient;
+    private EligibleGenderCode genderCriterion = null;
 
     /**
      * {@inheritDoc}
@@ -365,6 +370,26 @@ public class PatientAction extends AbstractAccrualAction {
         sortListOfPatients();
     }
 
+    private EligibleGenderCode getGenderCriterion() {
+        if (genderCriterion == null) {
+            genderCriterion = EligibleGenderCode.BOTH;
+            List<PlannedEligibilityCriterionDTO> pecList;
+            try {
+                pecList = plannedActivitySvc.getPlannedEligibilityCriterionByStudyProtocol(getSpIi());
+                for (PlannedEligibilityCriterionDTO pec : pecList) {
+                    if (PaServiceLocator.ELIG_CRITERION_NAME_GENDER.equals(
+                            StConverter.convertToString(pec.getCriterionName()))) {
+                        genderCriterion = EligibleGenderCode.getByCode(
+                                CdConverter.convertCdToString(pec.getEligibleGenderCode()));
+                    }
+                }
+            } catch (Exception e) {
+                genderCriterion = EligibleGenderCode.BOTH;
+            }
+        }
+        return genderCriterion;
+    }
+
     private void setRegistrationDate(PerformedSubjectMilestoneDto dto) throws RemoteException {
         if (!PAUtil.isTsNull(dto.getRegistrationDate())) {
             if (!PAUtil.isIiNull(dto.getIdentifier())) {
@@ -427,6 +452,12 @@ public class PatientAction extends AbstractAccrualAction {
             if (!unitedStatesId.equals(patient.getCountryIdentifier())
                     && !PAUtil.isEmpty(patient.getPaymentMethodCode())) {
                 addActionError("Method of payment should only be entered if country is United States.");
+            }
+            if (EligibleGenderCode.FEMALE.equals(getGenderCriterion())
+                    && patient.getGenderCode().equals(PatientGenderCode.MALE.getCode())
+                || EligibleGenderCode.MALE.equals(getGenderCriterion())
+                        && patient.getGenderCode().equals(PatientGenderCode.FEMALE.getCode())) {
+                addActionError("Gender must not be " + patient.getGenderCode() + " for subjects in this study.");
             }
         }
         return !hasActionErrors();

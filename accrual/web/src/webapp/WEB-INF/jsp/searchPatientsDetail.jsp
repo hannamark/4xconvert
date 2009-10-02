@@ -236,14 +236,12 @@ function loadDiv(intid){
 
     <tr>
         <td class="label">
-         <label>
-            <fmt:message key="patient.disease"/>
-            <span class="required">*</span>
-        </label>
+          <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}"><div class="padme5"></div></s:if>
+          <label><fmt:message key="patient.disease"/><span class="required">*</span></label>
         </td>
         <td class="value">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <div id="loadDetails">
+            <div id="loadDetails" >
 		         <%@ include file="/WEB-INF/jsp/nodecorate/displayDisease.jsp" %>
             </div>
           </s:if>

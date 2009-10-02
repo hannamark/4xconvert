@@ -132,7 +132,7 @@ public class DSetEnumConverter {
     }
 
     /**
-     * @param set set of enum names
+     * @param set set of enum codes
      * @return iso DSet of Cd
      */
     public static DSet<Cd> convertSetToDSet(Set<String> set) {

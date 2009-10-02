@@ -31,7 +31,7 @@ function handleAction(){
     <tr>     
         <td scope="row" class="label">
           <label for="NCI Trial Number">
-              <fmt:message key="accrual.search.trials.nciTrialNumber"/>                
+              <fmt:message key="accrual.search.trials.nciTrialNumber"/>
           </label>
          </td>
          <td class="value">
@@ -41,7 +41,7 @@ function handleAction(){
       <tr>     
         <td scope="row" class="label">
           <label for="NCT Trial Number">
-              <fmt:message key="accrual.search.trials.nctTrialNumber"/>                
+              <fmt:message key="accrual.search.trials.nctTrialNumber"/>
           </label>
          </td>
          <td class="value">
@@ -52,7 +52,7 @@ function handleAction(){
             <tr>
                 <td scope="row" class="label">
                  <label for="Official Title">
-                    <fmt:message key="accrual.search.trials.officialTitle"/>                
+                    <fmt:message key="accrual.search.trials.officialTitle"/>
                 </label>
                 </td>
                 <td colspan="4">
@@ -64,21 +64,21 @@ function handleAction(){
     
         <div class="actionsrow">
             <del class="btnwrapper">
-               <ul class="btnrow">         
-                <li>           
+               <ul class="btnrow">
+                <li>
                 <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search Trials</span></span></s:a>
                 <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                </li>                
+                </li>
                </ul>
             </del>
          </div>
        </s:form>
        
        <div class="line"></div>
-         <c:if test="${listOfTrials != null}">                       
-               <c:set var="topic" scope="request" value="search_trials"/>   
+         <c:if test="${listOfTrials != null}">
+               <c:set var="topic" scope="request" value="search_trials"/>
                 <jsp:include page="/WEB-INF/jsp/listTrials.jsp">
-                    <jsp:param name="listOfTrials" value="listOfTrials" />        
+                    <jsp:param name="listOfTrials" value="listOfTrials" />
                 </jsp:include>
          </c:if>
          

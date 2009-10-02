@@ -80,7 +80,7 @@ package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.accrual.util.JNDIUtil;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -98,7 +98,7 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
     /**
      * {@inheritDoc}
      */
-    public StudyDiseaseServiceRemote getStudyDiseaseService() {
-        return (StudyDiseaseServiceRemote) JNDIUtil.lookupPa("/pa/StudyDiseaseServiceBean/remote");
+    public PlannedActivityServiceRemote getPlannedActivityService() {
+        return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityServiceBean/remote");
     }
 }
