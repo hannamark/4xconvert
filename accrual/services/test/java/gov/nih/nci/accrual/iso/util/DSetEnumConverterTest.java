@@ -77,53 +77,55 @@
 *
 */
 
-package gov.nih.nci.accrual.convert;
+package gov.nih.nci.accrual.iso.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 
 import org.junit.Test;
 
+
 /**
  * @author Hugh Reinhart
- * @since Aug 28, 2009
+ * @since Oct 2, 2009
  */
-public class PatientConverterTest extends AbstractConverterTest {
+public class DSetEnumConverterTest {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @Test
-    public void conversionTest() throws Exception {
-        PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/2/2009")));
-        dto.setCountryIdentifier(iiVal);
-        dto.setEthnicCode(cdVal);
-        dto.setGenderCode(cdVal);
-        dto.setIdentifier(iiVal);
-        dto.setRaceCode(dsetVal);
-        dto.setZip(stVal);
-
-        Patient bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
-        // must strip days
-        assertEquals(PAUtil.dateStringToTimestamp("1/1/2009"), bo.getBirthDate());
-
-        bo.setBirthDate(PAUtil.dateStringToTimestamp("1/2/2009"));
-        PatientDto r = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
-
-        // must strip days
-        assertEquals(PAUtil.dateStringToTimestamp("1/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
-        assertTrue(iiTest(r.getCountryIdentifier()));
-        assertTrue(cdTest(r.getEthnicCode()));
-        assertTrue(cdTest(r.getGenderCode()));
-        assertTrue(iiTest(r.getIdentifier()));
-        assertTrue(dsetTest(r.getRaceCode()));
-        assertTrue(stTest(r.getZip()));
+    public void nullValueTest() {
+        DSet<Cd> dset = DSetEnumConverter.convertCsvToDSet(null);
+        String result = DSetEnumConverter.convertDSetToCsv(dset);
+        assertEquals("", result);
     }
 
+    @Test
+    public void singleValueTest() {
+        String test = PatientRaceCode.AMERICAN_INDIAN.getName()+",";
+        DSet<Cd> dset = DSetEnumConverter.convertCsvToDSet(test);
+        String result = DSetEnumConverter.convertDSetToCsv(dset);
+        assertTrue(result.contains(test));
+    }
+
+    @Test
+    public void multipleValuesTest() {
+        String test = PatientRaceCode.AMERICAN_INDIAN.getName() + "," + PatientRaceCode.BLACK.getName() + ",";
+        DSet<Cd> dset = DSetEnumConverter.convertCsvToDSet(test);
+        String result = DSetEnumConverter.convertDSetToCsv(dset);
+        assertTrue(result.contains( PatientRaceCode.AMERICAN_INDIAN.getName()));
+        assertTrue(result.contains( PatientRaceCode.BLACK.getName()));
+    }
+
+    /**
+     * required for backward compatibility
+     */
+    @Test
+    public void singleValueNoCommaTest() {
+        String test = PatientRaceCode.AMERICAN_INDIAN.getName();
+        DSet<Cd> dset = DSetEnumConverter.convertCsvToDSet(test);
+        String result = DSetEnumConverter.convertDSetToCsv(dset);
+        assertTrue(result.contains(test));
+    }
 }

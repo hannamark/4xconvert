@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
@@ -171,7 +172,9 @@ public class PatientWebDto {
     PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, DiseaseDTO dIsoDto) {
         if (pIsoDto != null) {
             patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
-            raceCode = CdConverter.convertCdToString(pIsoDto.getRaceCode());
+            raceCode = DSetEnumConverter.convertDSetToCsv(pIsoDto.getRaceCode());
+            raceCode = raceCode.substring(0, raceCode.indexOf(','));
+            raceCode = Enum.valueOf(PatientRaceCode.class, raceCode).getCode();
             genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
             ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
             birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
@@ -217,7 +220,7 @@ public class PatientWebDto {
         pat.setCountryIdentifier(IiConverter.convertToCountryIi(getCountryIdentifier()));
         pat.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.getByCode(getEthnicCode())));
         pat.setGenderCode(CdConverter.convertToCd(PatientGenderCode.getByCode(getGenderCode())));
-        pat.setRaceCode(CdConverter.convertToCd(PatientRaceCode.getByCode(getRaceCode())));
+        pat.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.getByCode(getRaceCode()).getName()));
         pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         pat.setZip(StConverter.convertToSt(getZip()));

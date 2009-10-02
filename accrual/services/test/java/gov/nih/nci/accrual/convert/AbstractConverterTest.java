@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
@@ -107,6 +108,7 @@ public abstract class AbstractConverterTest {
     protected static Ivl<Ts> ivlVal = IvlConverter.convertTs().convertToIvl(low, high);
     protected static Bl blVal = BlConverter.convertToBl(true);
     protected static Cd cdVal = null;
+    protected static DSet<Cd> dsetVal = null;
 
     protected boolean iiTest(Ii ii) {
         return IiConverter.convertToLong(ii).equals(2L);
@@ -133,6 +135,9 @@ public abstract class AbstractConverterTest {
         return PAUtil.isCdNull(cd);
     }
 
+    protected boolean dsetTest(DSet<Cd> dset) {
+        return true;
+    }
     /**
      * Convert iso dto to domain object and back.  Test all attributes.
      * @throws Exception exception

@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.dto.util;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
@@ -92,7 +93,7 @@ public class PatientDto extends BaseDTO {
 
     private static final long serialVersionUID = -8768541762718262265L;
 
-    private Cd raceCode;
+    private DSet<Cd> raceCode;
     private Cd genderCode;
     private Cd ethnicCode;
     private Ts birthDate;
@@ -104,13 +105,13 @@ public class PatientDto extends BaseDTO {
     /**
      * @return the raceCode
      */
-    public Cd getRaceCode() {
+    public DSet<Cd> getRaceCode() {
         return raceCode;
     }
     /**
      * @param raceCode the raceCode to set
      */
-    public void setRaceCode(Cd raceCode) {
+    public void setRaceCode(DSet<Cd> raceCode) {
         this.raceCode = raceCode;
     }
     /**

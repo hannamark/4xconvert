@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
@@ -111,7 +112,7 @@ public class MockPatientBean implements PatientService {
         p.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         p.setGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));
         p.setIdentifier(IiConverter.convertToIi(seq++));
-        p.setRaceCode(CdConverter.convertToCd(PatientRaceCode.WHITE));
+        p.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.WHITE.getName()));
         p.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         p.setZip(StConverter.convertToSt("12345"));
     }

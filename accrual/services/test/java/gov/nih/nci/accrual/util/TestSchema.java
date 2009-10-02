@@ -408,7 +408,7 @@ public class TestSchema {
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
         p.setIdentifier("PO PATIENT ID 01");
         p.setPersonIdentifier("PO PERSON ID 01");
-        p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN);
+        p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
@@ -422,7 +422,7 @@ public class TestSchema {
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("PO PATIENT ID 02");
         p.setPersonIdentifier("PO PERSON ID 02");
-        p.setRaceCode(PatientRaceCode.WHITE);
+        p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
@@ -436,7 +436,7 @@ public class TestSchema {
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("PO PATIENT ID 03");
         p.setPersonIdentifier("PO PERSON ID 03");
-        p.setRaceCode(PatientRaceCode.WHITE);
+        p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
@@ -450,7 +450,7 @@ public class TestSchema {
         p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
         p.setIdentifier("PO PATIENT ID 04");
         p.setPersonIdentifier("PO PERSON ID 04");
-        p.setRaceCode(PatientRaceCode.NOT_REPORTED);
+        p.setRaceCode(PatientRaceCode.NOT_REPORTED.getName());
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
@@ -464,7 +464,7 @@ public class TestSchema {
         p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
         p.setIdentifier("PO PATIENT ID 05");
         p.setPersonIdentifier("PO PERSON ID 05");
-        p.setRaceCode(PatientRaceCode.UNKNOWN);
+        p.setRaceCode(PatientRaceCode.UNKNOWN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));

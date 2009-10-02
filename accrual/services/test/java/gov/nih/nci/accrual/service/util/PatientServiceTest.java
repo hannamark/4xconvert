@@ -84,9 +84,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
@@ -132,7 +134,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         assertNotNull(gender);
         Ii id = dto.getIdentifier();
         assertNotNull(id);
-        Cd race = dto.getRaceCode();
+        DSet<Cd> race = dto.getRaceCode();
         assertNotNull(race);
         Cd status = dto.getStatusCode();
         assertNotNull(status);
@@ -154,7 +156,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
         dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.BLACK));
+        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.BLACK.getName()));
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
@@ -169,9 +171,9 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
     public void update() throws Exception {
         assertFalse(TestSchema.patients.get(0).getRaceCode().equals(PatientRaceCode.ASIAN));
         PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        dto.setRaceCode(CdConverter.convertToCd(PatientRaceCode.ASIAN));
+        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.ASIAN.getName()));
         PatientDto r = bean.update(dto);
-        assertTrue(PatientRaceCode.ASIAN.getCode().equals(r.getRaceCode().getCode()));
+        assertTrue(DSetEnumConverter.convertDSetToCsv(r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
 
     }
 }

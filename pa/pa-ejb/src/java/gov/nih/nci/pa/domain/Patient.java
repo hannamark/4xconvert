@@ -80,7 +80,6 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -103,7 +102,7 @@ import javax.persistence.Table;
 public class Patient extends StructuralRole {
 
     private static final long serialVersionUID = 2013257396600913947L;
-    private PatientRaceCode raceCode;
+    private String raceCode;  // csv PatientRaceCode
     private PatientGenderCode sexCode;
     private PatientEthnicityCode ethnicCode;
     private Timestamp birthDate;
@@ -142,14 +141,13 @@ public class Patient extends StructuralRole {
      * @return the raceCode
      */
     @Column(name = "RACE_CODE")
-    @Enumerated(EnumType.STRING)
-    public PatientRaceCode getRaceCode() {
+    public String getRaceCode() {
         return raceCode;
     }
     /**
      * @param raceCode the raceCode to set
      */
-    public void setRaceCode(PatientRaceCode raceCode) {
+    public void setRaceCode(String raceCode) {
         this.raceCode = raceCode;
     }
     /**

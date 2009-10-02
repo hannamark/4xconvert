@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd>
-    <workingSet>accrual_src</workingSet>
+    <workingSet>VIEWER_SRC</workingSet>
     <useProjectRuleSet>true</useProjectRuleSet>
     <ruleSetFile>resources\accrualPmd.xml</ruleSetFile>
     <includeDerivedFiles>false</includeDerivedFiles>
