@@ -734,6 +734,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             studyProtocolDTO.setAmendmentReasonCode(null);
             studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(
                     paServiceUtils.generateSubmissionNumber(studyProtocolDTO.getAssignedIdentifier().getExtension())));
+            studyProtocolDTO.setStatusDate(TsConverter.convertToTs(null));
         }
 
         studyProtocolService.updateStudyProtocol(studyProtocolDTO);

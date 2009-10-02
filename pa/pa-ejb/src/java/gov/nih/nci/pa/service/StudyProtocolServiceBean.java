@@ -657,10 +657,13 @@ import org.hibernate.criterion.Example;
         if (sp.getStatusCode() == null) {
             sp.setStatusCode(ActStatusCode.ACTIVE);
         }
-        sp.setStatusDate(new Timestamp((new Date()).getTime()));
+        if (sp.getStatusDate() == null) {
+            sp.setStatusDate(new Timestamp((new Date()).getTime()));
+        }
 //        if (CREATE.equals(operation) && ActStatusCode.ACTIVE.equals(sp.getStatusCode())) {
 //          sp.setSubmissionNumber(generateSubmissionNumber(sp.getIdentifier(), session));
 //        }
+
         if (sp.getIdentifier() == null) {
             sp.setIdentifier(generateNciIdentifier(session));
         }
