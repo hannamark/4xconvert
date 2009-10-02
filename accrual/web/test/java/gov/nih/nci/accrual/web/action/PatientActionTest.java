@@ -80,6 +80,15 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
+import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
+import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import org.junit.Before;
@@ -93,16 +102,62 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class PatientActionTest extends AbstractAccrualActionTest {
     PatientAction action;
+    SearchPatientsCriteriaWebDto criteria;
+    List<SearchStudySiteResultWebDto> listOfStudySites;
+    List<PatientWebDto> listOfPatients;
+    PatientWebDto patient;
 
     @Before
     public void initAction() throws Exception {
         action = new PatientAction();
         action.prepare();
         action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
+        criteria = new SearchPatientsCriteriaWebDto();
+        patient = new PatientWebDto();
+        listOfPatients = new ArrayList<PatientWebDto>();
+        listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
     }
 
     @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
+    
+    @Test
+    public void createTest() {
+       assertEquals(AccrualConstants.AR_DETAIL, action.create());
+    }
+    
+    @Test
+    public void retrieveTest() {
+       assertEquals(AccrualConstants.AR_DETAIL, action.retrieve());
+    }
+    
+    @Test
+     public void updateTest() {
+      assertEquals(ActionSupport.SUCCESS, action.update());
+    }
+    
+    @Test
+    public void deleteTest() throws Exception {
+     // assertEquals(ActionSupport.SUCCESS, action.delete());
+    }
+    
+    @Test
+    public void addTest() throws Exception {
+       assertEquals(AccrualConstants.AR_DETAIL, action.add());
+    }
+    
+    @Test
+    public void editTest() throws Exception {
+       assertEquals(AccrualConstants.AR_DETAIL, action.edit());
+    }
+    
+    @Test
+    public void displayDiseaseTest() throws Exception {
+      // assertEquals(ActionSupport.SUCCESS, action.displayDisease());
+    }
+    
+    
+    
 }

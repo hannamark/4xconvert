@@ -110,6 +110,8 @@ public final class AccrualConstants {
     public static final String AR_NEW_SUBMISSION = "showNewSubmission";
     /** Action result for the view submission details. */
     public static final String AR_VIEW_SUBMISSION_DETAILS = "viewSubmissionDetails";
+    /** Action result returned to display the detail page. */
+    public static final String AR_DETAIL = "detail";
 
     /** Success Message . */
     public static final String SUCCESS_MESSAGE = "successMessage";

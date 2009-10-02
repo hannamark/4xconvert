@@ -103,7 +103,8 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
     public void submitterRoleTest() {
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_PUBLIC, true);
         assertEquals(AccrualConstants.AR_DISCLAIMER, action.execute());
-        assertEquals(AccrualConstants.ROLE_PUBLIC, ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
+        assertEquals(AccrualConstants.ROLE_PUBLIC, ServletActionContext.getRequest().getSession().
+        		getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
     }
 
     @Test

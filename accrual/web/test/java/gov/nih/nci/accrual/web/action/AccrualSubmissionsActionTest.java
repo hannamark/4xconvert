@@ -105,11 +105,7 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
     private SearchTrialResultDto trialSummary;
     private List<SubmissionDto> listOfSubmissions;
     private SubmissionDto submission;
-    private List<PatientDto> listOfPatients;
-    private List<SearchStudySiteResultWebDto> listOfStudySites;
-    private PatientDto patient;
-
-
+    
     @Before
     public void initAction() throws Exception {
         action = new AccrualSubmissionsAction();
@@ -118,12 +114,7 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
         trialSummary = new SearchTrialResultDto();
         listOfSubmissions = new ArrayList<SubmissionDto>();
         submission = new SubmissionDto();
-        patient = new PatientDto();
-        listOfPatients = new ArrayList<PatientDto>();
-        listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
-
-
-    }
+        }
 
     @Test
     public void executeTest() throws Exception{

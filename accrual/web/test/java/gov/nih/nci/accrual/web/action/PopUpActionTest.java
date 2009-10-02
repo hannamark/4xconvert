@@ -76,40 +76,82 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.ServletActionContext;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Rajani Kumar
- * @since  Aug 13, 2009
+ * @since  Oct 2, 2009
  */
 
-public class DisclaimerActionTest extends AbstractAccrualActionTest {
-
-	DisclaimerAction action;
+public class PopUpActionTest extends AbstractAccrualActionTest {
 
     @Before
-    public void initAction() {
-        action = new DisclaimerAction();
-        setDisclaimer(false);
+      public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
     }
 
     @Test
-    public void executeTest() {
-        // show disclaimer page
-        assertEquals(AccrualConstants.AR_DISCLAIMER, action.execute());
+    public void testDisplayList() {
+	
     }
 
     @Test
-    public void acceptTest(){
-        // user accepts the disclaimer and goes to home page
-        action.accept();
-      	assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, ServletActionContext.getRequest().getSession().
-      			getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER));
-     }
+    public void testGetSearchName() {
+
+    }
+
+    @Test
+    public void testSetSearchName() {
+	
+    }
+
+   @Test
+    public void testGetDisWebList() {
+
+   }
+
+    @Test
+    public void testSetDisWebList() {
+
+    }
+
+    @Test
+    public void testGetIncludeSynonym() {
+
+    }
+
+    @Test
+    public void testSetIncludeSynonym() {
+
+    }
+
+    @Test
+    public void testGetExactMatch() {
+    
+    }
+
+    @Test
+    public void testSetExactMatch() {
+
+    }
 }
