@@ -71,7 +71,7 @@ public class TrialUtil {
     /** The Constant SPONSOR. */
     private static final String SPONSOR = "sponsor";
     private static final String YES = "Yes";
-    
+    private static final String NO = "No";
     /** The Constant MAXF. */
     private static final int MAXF = 1024;
     
@@ -398,6 +398,7 @@ public class TrialUtil {
      * 
      * @return the study protocol dto
      */
+    @SuppressWarnings({"PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     private StudyProtocolDTO convertToStudyProtocolDTO(TrialDTO trialDTO,
             StudyProtocolDTO isoDto) {
         if (PAUtil.isNotEmpty(trialDTO.getOfficialTitle())) {
@@ -438,6 +439,22 @@ public class TrialUtil {
         }
         isoDto.setSection801Indicator(BlConverter.convertToBl(section801Indicator));
         isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        
+        
+        if (trialDTO.getDelayedPostingIndicator() == null) {
+            isoDto.setDelayedpostingIndicator(BlConverter.convertToBl(null));
+        } else if (YES.equalsIgnoreCase(trialDTO.getDelayedPostingIndicator())) {
+            isoDto.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else if (NO.equalsIgnoreCase(trialDTO.getDelayedPostingIndicator())) {
+            isoDto.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }  
+        if (trialDTO.getDataMonitoringCommitteeAppointedIndicator() == null) {
+            isoDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(null));
+        } else if (YES.equalsIgnoreCase(trialDTO.getDataMonitoringCommitteeAppointedIndicator())) {
+            isoDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else if (NO.equalsIgnoreCase(trialDTO.getDataMonitoringCommitteeAppointedIndicator())) {
+            isoDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
         return isoDto;
     }
     

@@ -91,6 +91,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -337,10 +338,14 @@ public class BatchCreateProtocols {
                     }
                 }
             }
-            
+          //set the NCT number 
+            StudySiteDTO ssNctIdDto = util.getStudySite(studyProtocolIi, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            if (ssNctIdDto != null) {
+                util.convertToNCTStudySiteDTO(trialDTO, ssNctIdDto);
+            }
             //get the values from db and update only those are needed and then convert
                 RegistryServiceLocator.getTrialRegistrationService().
-                    update(studyProtocolDTO, overallStatusDTO, null, studyIndldeDTOs, studyResourcingDTOs, 
+                    update(studyProtocolDTO, overallStatusDTO, ssNctIdDto, studyIndldeDTOs, studyResourcingDTOs, 
                     documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, studyContactDTO, 
                     studySiteContactDTO, summary4orgDTO, summary4studyResourcingDTO, 
                     responsiblePartyContactIi, studyRegAuthDTO, null, null, null);
@@ -445,6 +450,7 @@ public class BatchCreateProtocols {
                 trialDTO.setDelayedPostingIndicator(batchDto.getDelayedPostingIndicator());
                 trialDTO.setDataMonitoringCommitteeAppointedIndicator(
                         batchDto.getDataMonitoringCommitteeAppointedIndicator());
+                trialDTO.setNctIdentifier(batchDto.getNctNumber());
                 return trialDTO;
     }
 
