@@ -160,7 +160,8 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-
+        dto.setAssignedIdentifier(IiConverter.convertToIi("PO PATIENT ID 01"));
+        dto.setPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
         PatientDto r = bean.create(dto);
         assertNotNull(r);
 

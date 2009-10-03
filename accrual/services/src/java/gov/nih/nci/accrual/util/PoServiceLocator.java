@@ -77,7 +77,6 @@
 
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 
 /**
  * @author Larry Hebel
@@ -113,13 +112,6 @@ public final class PoServiceLocator implements ServiceLocatorPoInterface {
      */
     public void setServiceLocator(ServiceLocatorPoInterface serviceLocator) {
         this.serviceLocator = serviceLocator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PatientCorrelationServiceRemote getPatientCorrelationService() {
-        return serviceLocator.getPatientCorrelationService();
     }
 
 }

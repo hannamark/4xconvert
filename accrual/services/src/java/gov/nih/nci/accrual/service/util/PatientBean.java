@@ -125,7 +125,7 @@ public class PatientBean implements PatientService {
     public PatientDto create(PatientDto dto) throws RemoteException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Update method should be used to modify existing.");
-        }
+        }        
         return createOrUpdate(dto);
     }
 
@@ -164,7 +164,7 @@ public class PatientBean implements PatientService {
     public PatientDto update(PatientDto dto) throws RemoteException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.");
-        }
+        }        
         return createOrUpdate(dto);
     }
 
@@ -172,8 +172,10 @@ public class PatientBean implements PatientService {
         Patient bo = null;
         try {
             bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
-            bo.setIdentifier("PO ID");
-            bo.setPersonIdentifier("PO PERSON ID");
+            
+            bo.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+           //PO generated Player identifier
+            bo.setPersonIdentifier(IiConverter.convertToString(dto.getPersonIdentifier()));
             bo.setStatusCode(StructuralRoleStatusCode.PENDING);
             bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         } catch (DataFormatException e) {

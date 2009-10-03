@@ -123,7 +123,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
             try {
                 session = AccrualHibernateUtil.getCurrentSession();
                 Query query = null;
-                String hql = "select ss.id, org.name "
+                String hql = "select ss.id, org.name, org.identifier "
                     + "from StudyProtocol as sp "
                     + "join sp.studySites as ss "
                     + "left outer join ss.healthCareFacility as ro "
@@ -139,6 +139,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
                         SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
                         dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
                         dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
+                        dto.setOrganizationIi(IiConverter.convertToIi((String) site[2]));
                         result.add(dto);
                     }
                 }

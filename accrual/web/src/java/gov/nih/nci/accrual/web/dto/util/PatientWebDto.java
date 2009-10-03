@@ -120,6 +120,7 @@ public class PatientWebDto {
     private String zip;
     private Long countryIdentifier;
     private String countryName;
+    private Long poIdentifier;
 
     // from StudySubjectDto
     private Long studySubjectId;
@@ -184,6 +185,7 @@ public class PatientWebDto {
                 }
             }
             zip = StConverter.convertToString(pIsoDto.getZip());
+            poIdentifier = IiConverter.convertToLong(pIsoDto.getAssignedIdentifier());
         }
 
         if (ssIsoDto != null) {
@@ -223,6 +225,7 @@ public class PatientWebDto {
         pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         pat.setZip(StConverter.convertToSt(getZip()));
+        pat.setAssignedIdentifier(IiConverter.convertToIi(getPoIdentifier()));
         return pat;
     }
 
@@ -497,5 +500,21 @@ public class PatientWebDto {
      */
     public void setDiseaseIdentifier(Long diseaseIdentifier) {
         this.diseaseIdentifier = diseaseIdentifier;
+    }
+
+    /**
+     * Gets the po identifier.
+     * @return the po identifier
+     */
+    public Long getPoIdentifier() {
+        return poIdentifier;
+    }
+
+    /**
+     * Sets the po identifier.
+     * @param poIdentifier the new po identifier
+     */
+    public void setPoIdentifier(Long poIdentifier) {
+        this.poIdentifier = poIdentifier;
     }
 }

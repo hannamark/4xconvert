@@ -87,6 +87,7 @@ import gov.nih.nci.accrual.web.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
@@ -95,10 +96,12 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.POPatientDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -127,6 +130,7 @@ public class PatientAction extends AbstractAccrualAction {
     }
     private static List<Country> listOfCountries = null;
     private static Long unitedStatesId = null;
+    private Long organizationId;
 
     private SearchPatientsCriteriaWebDto criteria = null;
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
@@ -228,7 +232,23 @@ public class PatientAction extends AbstractAccrualAction {
             loadListOfStudySites();
             return super.create();
         }
+        loadListOfStudySites();
+        getOrganizationIdentifier();        
         PatientDto pat = patient.getPatientDto();
+        pat.setOrganizationIdentifier(IiConverter.convertToIi(organizationId));
+        POPatientDTO popDTO = new POPatientDTO();
+        Ii scoper = IiConverter.convertToPoOrganizationIi(
+                IiConverter.convertToString(pat.getOrganizationIdentifier()));
+        scoper.setReliability(IdentifierReliability.ISS);
+        popDTO.setScoperIdentifier(scoper);        
+        POPatientDTO createdDTO = null;
+        try {
+            createdDTO = patientCorrelationSvc.create(popDTO);
+        } catch (PAException e) {
+            createdDTO = null;
+        }
+        pat.setAssignedIdentifier(createdDTO.getIdentifier());
+        pat.setPersonIdentifier(createdDTO.getPlayerIdentifier());
         StudySubjectDto ssub = patient.getStudySubjectDto();
         ssub.setStudyProtocolIdentifier(getSpIi());
         PerformedSubjectMilestoneDto psm = patient.getPerformedStudySubjectMilestoneDto();
@@ -238,6 +258,16 @@ public class PatientAction extends AbstractAccrualAction {
         psm.setStudySubjectIdentifier(ssub.getIdentifier());
         performedSubjectMilestoneSvc.create(psm);
         return super.add();
+    }
+    
+  private void getOrganizationIdentifier() {
+        if (patient.getStudySiteId() != null) {
+            for (SearchStudySiteResultWebDto ss : listOfStudySites) {
+                if (Long.valueOf(ss.getSsIi()).equals(patient.getStudySiteId())) {
+                    organizationId = Long.valueOf(ss.getOrgIi());
+                }
+            }
+        }
     }
 
     /**
@@ -249,7 +279,24 @@ public class PatientAction extends AbstractAccrualAction {
             loadListOfStudySites();
             return super.update();
         }
+        loadListOfStudySites();
+        getOrganizationIdentifier();
         PatientDto pat = patient.getPatientDto();
+        pat.setOrganizationIdentifier(IiConverter.convertToIi(organizationId));
+        POPatientDTO dto = null;
+        try {
+            dto = patientCorrelationSvc.get(IiConverter.convertToPOPatientIi(
+                    IiConverter.convertToLong(pat.getAssignedIdentifier())));
+            Ii scoper = IiConverter.convertToPoOrganizationIi(
+                    IiConverter.convertToString(pat.getOrganizationIdentifier()));
+            scoper.setReliability(IdentifierReliability.ISS);
+            dto.setScoperIdentifier(scoper);
+            dto = patientCorrelationSvc.update(dto);
+        } catch (PAException e) {
+            dto = null;
+        }
+        pat.setAssignedIdentifier(dto.getIdentifier());
+        pat.setPersonIdentifier(dto.getPlayerIdentifier());
         StudySubjectDto ssub = patient.getStudySubjectDto();
         PerformedSubjectMilestoneDto psm = patient.getPerformedStudySubjectMilestoneDto();
         pat = patientSvc.update(pat);

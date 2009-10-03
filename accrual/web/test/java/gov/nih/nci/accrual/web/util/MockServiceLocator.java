@@ -80,7 +80,6 @@ import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -133,13 +132,6 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      */
     public SubmissionService getSubmissionService() {
         return submissionService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public POPatientService getPOPatientService() {
-        // TODO Auto-generated method stub
-        return null;
     }
     /**
      * {@inheritDoc}

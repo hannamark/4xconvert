@@ -93,6 +93,7 @@ public class SearchStudySiteResultDto implements Serializable {
 
     private Ii studySiteIi;
     private St organizationName;
+    private Ii organizationIi;
 
     /**
      * @return the studySiteIi
@@ -117,5 +118,17 @@ public class SearchStudySiteResultDto implements Serializable {
      */
     public void setOrganizationName(St organizationName) {
         this.organizationName = organizationName;
+    }
+    /**
+     * @return the organizationIi
+     */
+  public Ii getOrganizationIi() {
+        return organizationIi;
+    }
+    /**
+     * @param organizationIi the organizationIi to set
+     */
+  public void setOrganizationIi(Ii organizationIi) {
+        this.organizationIi = organizationIi;
     }
 }

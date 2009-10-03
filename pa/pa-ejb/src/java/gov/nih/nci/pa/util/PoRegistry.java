@@ -6,6 +6,7 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -121,5 +122,14 @@ public final class PoRegistry {
     public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() 
     throws PAException {
        return getInstance().getPoServiceLocator().getOrganizationalContactCorrelationService(); 
+    }
+    
+    /**
+     * 
+     * @return PatientCorrelationServiceRemote
+     * @throws PAException the PA exception
+     */
+    public static PatientCorrelationServiceRemote getPatientCorrelationService() throws PAException {
+        return getInstance().getPoServiceLocator().getPatientCorrelationService();
     }
 }

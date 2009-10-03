@@ -168,4 +168,9 @@ public class MockPaDiseaseBean implements DiseaseServiceRemote {
         return null;
     }
 
+    public void validate(DiseaseDTO arg0) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

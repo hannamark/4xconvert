@@ -3,21 +3,23 @@
  */
 package gov.nih.nci.pa.test.util;
 
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.service.MockPoClinicalResearchStaffCorrelationService;
 import gov.nih.nci.service.MockPoHealthCareFacilityCorrelationService;
 import gov.nih.nci.service.MockPoHealthCareProviderCorrelationService;
 import gov.nih.nci.service.MockPoOrganizationEntityService;
 import gov.nih.nci.service.MockPoOrganizationalContactCorrelationService;
 import gov.nih.nci.service.MockPoOversightCommitteeCorrelationService;
+import gov.nih.nci.service.MockPoPatientCorrelationService;
 import gov.nih.nci.service.MockPoPersonEntityService;
 import gov.nih.nci.service.MockPoResearchOrganizationCorrelationService;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -36,6 +38,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     private final ClinicalResearchStaffCorrelationServiceRemote crsService = new MockPoClinicalResearchStaffCorrelationService();
     private final HealthCareProviderCorrelationServiceRemote hcpService = new MockPoHealthCareProviderCorrelationService();
     private final OrganizationalContactCorrelationServiceRemote orgContact = new MockPoOrganizationalContactCorrelationService();
+    private final  PatientCorrelationServiceRemote patientService = new MockPoPatientCorrelationService();
   
     public OrganizationEntityServiceRemote getOrganizationEntityService()
             throws PAException {
@@ -82,5 +85,10 @@ public class MockPoServiceLocator implements PoServiceLocator {
     public PersonEntityServiceRemote getPersonEntityService()
             throws PAException {
         return personEntityService;
+    }
+
+    public PatientCorrelationServiceRemote getPatientCorrelationService()
+            throws PAException {
+        return patientService;
     } 
 }

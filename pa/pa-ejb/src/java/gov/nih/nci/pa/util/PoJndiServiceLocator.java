@@ -6,6 +6,7 @@ import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemo
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -97,6 +98,17 @@ public class PoJndiServiceLocator implements PoServiceLocator {
         String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
                                 + "/po/OrganizationalContactCorrelationServiceBean/remote";
         return (OrganizationalContactCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
+    }
+    
+    /**
+     * @return PatientCorrelationServiceRemote
+     * @throws PAException on error
+     */
+    public PatientCorrelationServiceRemote getPatientCorrelationService()
+            throws PAException {
+        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
+        + "/po/PatientCorrelationServiceBean/remote";
+        return (PatientCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
     } 
 
 

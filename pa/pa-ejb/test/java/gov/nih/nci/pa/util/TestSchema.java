@@ -159,6 +159,9 @@ import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -173,6 +176,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -201,6 +205,7 @@ public class TestSchema {
         public static ArrayList<Long> outcomeIds;
         public static ArrayList<Long> regAuthIds;
         public static ArrayList<Long> personIds;
+        public static ArrayList<Long> patientsIds;
 
         static {
             Configuration config = new AnnotationConfiguration().
@@ -406,6 +411,7 @@ public class TestSchema {
             outcomeIds = new ArrayList<Long>();
             regAuthIds = new ArrayList<Long>();
             personIds = new ArrayList<Long>();
+            patientsIds = new ArrayList<Long>();
 
             StudyProtocol sp = new StudyProtocol();
             sp.setOfficialTitle("cacncer for THOLA");
@@ -683,6 +689,36 @@ public class TestSchema {
             scheckout.setUserIdentifier("Abstractor");
             addUpdObject(scheckout);
 
+         // Patient
+            Patient p = new Patient();
+            p.setBirthDate(PAUtil.dateStringToTimestamp("7/11/1963"));
+            p.setCountryIdentifier(new Long(100));
+            p.setEthnicCode(PatientEthnicityCode.HISPANIC);
+            p.setIdentifier("PO PATIENT ID 01");
+            p.setPersonIdentifier("PO PERSON ID 01");
+            p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN.getName());
+            p.setSexCode(PatientGenderCode.FEMALE);
+            p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+            p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+            p.setZip("TX");
+            addUpdObject(p);
+            patientsIds.add(p.getId());
+
+            p = new Patient();
+            p.setBirthDate(PAUtil.dateStringToTimestamp("5/10/1963"));
+            p.setCountryIdentifier(new Long(100));
+            p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
+            p.setIdentifier("PO PATIENT ID 02");
+            p.setPersonIdentifier("PO PERSON ID 02");
+            p.setRaceCode(PatientRaceCode.WHITE.getName());
+            p.setSexCode(PatientGenderCode.MALE);
+            p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+            p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+            p.setZip("TX");
+            addUpdObject(p);
+            patientsIds.add(p.getId());
+
+            
             HibernateUtil.getCurrentSession().clear();
         }
 }

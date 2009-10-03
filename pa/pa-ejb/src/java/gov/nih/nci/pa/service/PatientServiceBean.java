@@ -77,25 +77,20 @@
 *
 */
 
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.pa.service;
 
-import java.rmi.RemoteException;
-
-import org.apache.log4j.Logger;
-
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.POPatientDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
-import gov.nih.nci.accrual.dto.util.POPatientDto;
-import gov.nih.nci.accrual.util.PoServiceLocator;
-import gov.nih.nci.coppa.iso.Ii;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 
 /**
@@ -104,23 +99,9 @@ import javax.ejb.Stateless;
  */
 
 @Stateless
-public class POPatientBean implements POPatientService {
+public class PatientServiceBean implements PatientServiceRemote {
 
-    private static final Logger LOG  = Logger.getLogger(POPatientBean.class);
-
-    private SessionContext ejbContext;
-
-    /**
-     * 
-     * @param ctx the context
-     */
-    @SuppressWarnings("unused")
-    @Resource
-    private void setSessionContext(SessionContext ctx) {
-        ejbContext = ctx;
-    }
-
-    private static void copyDto(PatientDTO patient, POPatientDto dto) {
+    private static void copyDtoFromPaToPo(PatientDTO patient, POPatientDTO dto) {
         patient.setDuplicateOf(dto.getDuplicateOf());
         patient.setPlayerIdentifier(dto.getPlayerIdentifier());
         patient.setPostalAddress(dto.getPostalAddress());
@@ -129,7 +110,7 @@ public class POPatientBean implements POPatientService {
         patient.setTelecomAddress(dto.getTelecomAddress());
     }
 
-    private static void copyDto(POPatientDto dto, PatientDTO patient) {
+    private static void copyDtoFromPoToPa(POPatientDTO dto, PatientDTO patient) {
         dto.setDuplicateOf(patient.getDuplicateOf());
         dto.setPlayerIdentifier(patient.getPlayerIdentifier());
         dto.setPostalAddress(patient.getPostalAddress());
@@ -141,53 +122,48 @@ public class POPatientBean implements POPatientService {
     /**
      * {@inheritDoc}
      */
-    public POPatientDto create(POPatientDto dto) throws RemoteException {
-        if (dto == null) {
-            throw new RemoteException("Called create(null)");
+    public POPatientDTO create(POPatientDTO dto) throws PAException {
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            throw new PAException("Update method should be used to modify existing.");
         }
 
-        PoServiceLocator psl = PoServiceLocator.getInstance();
-        PatientCorrelationServiceRemote pcsr = psl.getPatientCorrelationService();
+        PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
 
         PatientDTO patient = new PatientDTO();
         patient.setIdentifier(null);
-        copyDto(patient, dto);
-
+        copyDtoFromPaToPo(patient, dto);
+        POPatientDTO createdDTO = null;
         try {
             Ii newId = pcsr.createCorrelation(patient);
-            dto.setIdentifier(newId);
+            createdDTO = get(IiConverter.convertToPOPatientIi(IiConverter.convertToLong(newId)));
         } catch (CurationException ex) {
-            logError(ex);
-            throw new RemoteException(ex.toString(), ex);
+            throw new PAException(ex.toString(), ex);
         } catch (EntityValidationException ex) {
-            logError(ex);
-            throw new RemoteException(ex.toString(), ex);
-        }
+            throw new PAException(ex.toString(), ex);
+        } 
         
-        return dto;
+        return createdDTO;
     }
 
     /**
      * {@inheritDoc}
      */
-    public POPatientDto get(Ii ii) throws RemoteException {
+    public POPatientDTO get(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
-            throw new RemoteException("Called get(null)");
+            throw new PAException("Called get(null)");
         }
 
-        PoServiceLocator psl = PoServiceLocator.getInstance();
-        PatientCorrelationServiceRemote pcsr = psl.getPatientCorrelationService();
+        PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
         PatientDTO patient = null;
         try {
             patient = pcsr.getCorrelation(ii);
         } catch (NullifiedRoleException ex) {
-            logError(ex);
-            throw new RemoteException(ex.toString(), ex);
+            throw new PAException(ex.toString(), ex);
         }
         
-        POPatientDto dto = new POPatientDto();
+        POPatientDTO dto = new POPatientDTO();
         dto.setIdentifier(DSetConverter.convertToIi(patient.getIdentifier()));
-        copyDto(dto, patient);
+        copyDtoFromPoToPa(dto, patient);
 
         return dto;
     }
@@ -195,62 +171,24 @@ public class POPatientBean implements POPatientService {
     /**
      * {@inheritDoc}
      */
-    public POPatientDto update(POPatientDto dto) throws RemoteException {
-        if (dto == null) {
-            throw new RemoteException("Called update(null)");
+    public POPatientDTO update(POPatientDTO dto) throws PAException {
+        if (PAUtil.isIiNull(dto.getIdentifier())) {
+            throw new PAException("Create method should be used to create new.");
         }
 
-        PoServiceLocator psl = PoServiceLocator.getInstance();
-        PatientCorrelationServiceRemote pcsr = psl.getPatientCorrelationService();
+        PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
 
         PatientDTO patient = new PatientDTO();
         patient.setIdentifier(DSetConverter.convertIiToDset(dto.getIdentifier()));
-        copyDto(patient, dto);
-
+        copyDtoFromPaToPo(patient, dto);
+        POPatientDTO updatedDTO = null;
         try {
             pcsr.updateCorrelation(patient);
+            updatedDTO = get(IiConverter.convertToPOPatientIi(IiConverter.convertToLong(dto.getIdentifier())));
         } catch (EntityValidationException ex) {
-            logError(ex);
-            throw new RemoteException(ex.toString(), ex);
+            throw new PAException(ex.toString(), ex);
         }
 
-        return dto;
+        return updatedDTO;
     }
-
-    private void logError(Exception ex) {
-        String name = (ejbContext != null) ? ejbContext.getCallerPrincipal().getName() : "unknown";
-        LOG.error("Principal " + name + " " + ex.toString(), ex);
-    }
-    
-    /**
-     * Execute a quick test. Provided as an example and for debugging.
-     * 
-     * Call this method using AccrualServiceLocator.getInstance().getPOPatientService() and an Organization ID
-     * created via PO. Can't make a reference to AccrualServiceLocator from here because it creates a
-     * dependency on the Web packages.
-     * 
-     * @param pps the service interface
-     * @param orgId an organization id
-     */
-/*
-    public static void example1(POPatientService pps, String orgId) {
-        try {
-            POPatientDto dto = new POPatientDto();
-    
-            Ii scoper = IiConverter.convertToPoOrganizationIi(orgId);
-            scoper.setReliability(IdentifierReliability.ISS);
-            dto.setScoperIdentifier(scoper);
-            dto = pps.create(dto);
-    
-            POPatientDto dto2 = pps.get(dto.getIdentifier());
-            Cd status = new Cd();
-            status.setCode("SUSPENDED");
-            dto2.setStatus(status);
-            dto2 = pps.update(dto2);
-    
-        } catch (Exception ex) {
-            LOG.error(ex.toString(), ex);
-        }
-    }
-*/
 }

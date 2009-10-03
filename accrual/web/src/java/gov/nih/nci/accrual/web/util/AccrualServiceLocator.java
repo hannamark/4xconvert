@@ -82,7 +82,6 @@ import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -148,9 +147,9 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    public POPatientService getPOPatientService() {
+  /*  public POPatientService getPOPatientService() {
         return serviceLocator.getPOPatientService();
-    }
+    }*/
 
     /**
      * {@inheritDoc}

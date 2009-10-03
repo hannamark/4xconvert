@@ -350,6 +350,10 @@ public class IiConverter {
     private static final String STUDY_SITE_OVERALL_STATUS_IDENTIFIER_NAME = "Study site overall status identifier";
 
     private static final String STUDY_SITE_OVERALL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.5.5";
+    
+    private static final String PO_PATIENT_IDENTIFIER_NAME = "PO Patient identifier";
+
+    private static final String PO_PATIENT_ROOT = "2.16.840.1.113883.3.26.4.5.6";
 
 
     
@@ -869,6 +873,19 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(STUDY_SITE_OVERALL_STATUS_IDENTIFIER_NAME);
         ii.setRoot(STUDY_SITE_OVERALL_STATUS_ROOT);
+        return ii;
+
+    }
+    
+    /**
+     * Convert to po patient ii.
+     * @param id the id
+     * @return the ii
+     */
+    public static Ii convertToPOPatientIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(PO_PATIENT_IDENTIFIER_NAME);
+        ii.setRoot(PO_PATIENT_ROOT);
         return ii;
 
     }

@@ -77,19 +77,18 @@
 *
 */
 
-package gov.nih.nci.accrual.dto.util;
+package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
  * @author Larry Hebel
  *
  */
-public class POPatientDto extends BaseDTO {
+public class POPatientDTO extends BaseDTO {
     /**
      * 
      */

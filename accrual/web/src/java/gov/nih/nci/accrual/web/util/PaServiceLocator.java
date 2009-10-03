@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.PatientServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
 /**
@@ -133,5 +134,12 @@ public final class PaServiceLocator implements ServiceLocatorPaInterface {
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
         return serviceLocator.getPlannedActivityService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PatientServiceRemote getPatientService() {
+        return serviceLocator.getPatientService();
     }
 }

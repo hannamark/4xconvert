@@ -76,15 +76,11 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 
 /**
  * @author Larry Hebel
  * @since Sep 14, 2009
  */
 public interface ServiceLocatorPoInterface {
-    /**
-     * @return StudyDisease service
-     */
-    PatientCorrelationServiceRemote getPatientCorrelationService();
+   
 }

@@ -70,6 +70,7 @@ function loadDiv(intid){
     <s:hidden name = "patient.studySubjectId" />
     <s:hidden name = "patient.studyProtocolId" />
     <s:hidden name = "patient.statusCode" />
+    <s:hidden name = "patient.poIdentifier" />
 <table class="form">
     <tr>
         <td class="label">

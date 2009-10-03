@@ -95,6 +95,7 @@ public class SearchStudySiteResultWebDto {
 
     private String ssIi;
     private String orgName;
+    private String orgIi;
 
     /**
      * @param isoList list of iso dto's
@@ -114,6 +115,7 @@ public class SearchStudySiteResultWebDto {
     public SearchStudySiteResultWebDto(SearchStudySiteResultDto iso) {
         this.ssIi = IiConverter.convertToString(iso.getStudySiteIi());
         this.orgName = StConverter.convertToString(iso.getOrganizationName());
+        this.orgIi = IiConverter.convertToString(iso.getOrganizationIi());
     }
 
     /**
@@ -139,5 +141,21 @@ public class SearchStudySiteResultWebDto {
      */
     public void setOrgName(String orgName) {
         this.orgName = orgName;
+    }
+
+    /**
+     * Gets the org ii.
+     * @return the org ii
+     */
+      public String getOrgIi() {
+        return orgIi;
+    }
+
+    /**
+     * Sets the org ii.
+     * @param orgIi the new org ii
+     */
+      public void setOrgIi(String orgIi) {
+        this.orgIi = orgIi;
     }
 }
