@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.iso.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.pa.enums.PatientRaceCode;
@@ -157,5 +158,25 @@ public class DSetEnumConverterTest {
         DSet<Cd> dset = DSetEnumConverter.convertSetToDSet(test);
         Set<String> result = DSetEnumConverter.convertDSetToSet(dset);
         assertEquals(test, result);
+    }
+    
+    @Test
+    public void checkConverter() {
+        DSetEnumConverter dec = new DSetEnumConverter();
+        assertNotNull(dec);
+    }
+    
+    @Test
+    public void convertDSetToCsv() {
+        String result = DSetEnumConverter.convertDSetToCsv(null);
+        assertNotNull(result);
+        assertEquals(0, result.length());
+    }
+    
+    @Test
+    public void convertDSetToSet() {
+        Set<String> result = DSetEnumConverter.convertDSetToSet(null);
+        assertNotNull(result);
+        assertEquals(0, result.size());
     }
 }

@@ -126,6 +126,8 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         {
             Ii id = rList.get(0).getStudySiteIi();
             assertNotNull(id);
+            id = rList.get(0).getOrganizationIi();
+            assertNotNull(id);
         }
 
         // second trial has 1 accrual site (first organization)

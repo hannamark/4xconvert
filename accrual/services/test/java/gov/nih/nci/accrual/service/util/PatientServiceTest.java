@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
@@ -142,6 +143,8 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         assertNotNull(dateLow);
         St zip = dto.getZip();
         assertNotNull(zip);
+        Ii org = dto.getOrganizationIdentifier();
+        assertNull(org);
 
         try {
             dto = bean.get(BII);
@@ -162,6 +165,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
         dto.setAssignedIdentifier(IiConverter.convertToIi("PO PATIENT ID 01"));
         dto.setPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
+        dto.setOrganizationIdentifier(IiConverter.convertToIi("PO ORG ID 01"));
         PatientDto r = bean.create(dto);
         assertNotNull(r);
 
