@@ -141,4 +141,27 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         rList = bean.search(BII, BST);
         assertEquals(0, rList.size());
     }
+    
+    @Test
+    public void studySiteExceptions() throws Exception {
+        List<SearchStudySiteResultDto> list;
+        Ii ii = new Ii();
+        St st = new St();
+        
+        list = bean.search(null, null);
+        assertNotNull(list);
+        assertEquals(0, list.size());
+        
+        list = bean.search(null, st);
+        assertNotNull(list);
+        assertEquals(0, list.size());
+        
+        list = bean.search(ii, null);
+        assertNotNull(list);
+        assertEquals(0, list.size());
+        
+        list = bean.search(ii, st);
+        assertNotNull(list);
+        assertEquals(0, list.size());
+    }
 }

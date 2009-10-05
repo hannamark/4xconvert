@@ -79,135 +79,57 @@
 
 package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
-import gov.nih.nci.accrual.service.AbstractServiceTest;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.enums.USStateCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author Hugh Reinhart
- * @since Aug 29, 2009
- */
-public class PatientServiceTest extends AbstractServiceTest<PatientService> {
+import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
+/**
+ * @author lhebel
+ *
+ */
+public class CountryServiceTest extends AbstractServiceTest<CountryService> {
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Before
-    public void instantiateServiceBean() throws Exception {
-        bean = new PatientBean();
-    }
-
-    @Test
-    public void get() throws Exception {
-        PatientDto  dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        assertNotNull(dto);
-        Ts bDay = dto.getBirthDate();
-        assertNotNull(bDay);
-        Ii country = dto.getCountryIdentifier();
-        assertNotNull(country);
-        Cd ethnicity = dto.getEthnicCode();
-        assertNotNull(ethnicity);
-        Cd gender = dto.getGenderCode();
-        assertNotNull(gender);
-        Ii id = dto.getIdentifier();
-        assertNotNull(id);
-        DSet<Cd> race = dto.getRaceCode();
-        assertNotNull(race);
-        Cd status = dto.getStatusCode();
-        assertNotNull(status);
-        Ts dateLow = dto.getStatusDateRangeLow();
-        assertNotNull(dateLow);
-        St zip = dto.getZip();
-        assertNotNull(zip);
-        Ii org = dto.getOrganizationIdentifier();
-        assertNull(org);
-
-        try {
-            dto = bean.get(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-    }
-    @Test
-    public void create() throws Exception {
-        PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
-        dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
-        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
-        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.BLACK.getName()));
-        dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
-        dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-        dto.setAssignedIdentifier(IiConverter.convertToIi("PO PATIENT ID 01"));
-        dto.setPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
-        dto.setOrganizationIdentifier(IiConverter.convertToIi("PO ORG ID 01"));
-        PatientDto r = bean.create(dto);
-        assertNotNull(r);
-
-        // birth date must be only year and month
-        assertEquals(PAUtil.dateStringToTimestamp("7/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
-    }
-    @Test
-    public void update() throws Exception {
-        assertFalse(TestSchema.patients.get(0).getRaceCode().equals(PatientRaceCode.ASIAN));
-        PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.ASIAN.getName()));
-        PatientDto r = bean.update(dto);
-        assertTrue(DSetEnumConverter.convertDSetToCsv(r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
-
+    public void instantiateServiceBean() throws Exception
+    {
+        bean = new CountryBean();
     }
     
     @Test
-    public void patientExceptions() throws Exception {
-        PatientDto dto = new PatientDto();
-        
+    public void get() throws Exception {
+        Country place;
         try {
-            bean.get(null);
+            place = bean.getCountry(null);
             fail();
         } catch (RemoteException ex) {
             // expected
         }
         
         try {
-            bean.update(dto);
-            fail();
+            Long id = new Long(1);
+            Ii ii = IiConverter.convertToCountryIi(id);
+            place = bean.getCountry(ii);
+            assertNotNull(place);
         } catch (RemoteException ex) {
             // expected
         }
         
-        Ii ii = IiConverter.convertToIi(new Long(1));
-        dto.setIdentifier(ii);
-        try {
-            bean.create(dto);
-            fail();
-        } catch (RemoteException ex) {
-            // expected
-        }
+        List<Country> list = bean.getCountries();
+        assertNotNull(list);
     }
+
 }
