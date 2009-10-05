@@ -79,11 +79,14 @@
 
 package gov.nih.nci.accrual.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -143,5 +146,70 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     public void getByStudySite() throws Exception {
         List<StudySubjectDto> rList = bean.getByStudySite(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
         assertTrue(0 < rList.size());
+    }
+    
+    @Test
+    public void studySiteExceptions() throws Exception {
+        try {
+            bean.getByStudySite(null);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
+        Ii ii = IiConverter.convertToIi("test ii");
+        try {
+            List<StudySubjectDto> ssd = bean.getByStudySite(ii);
+            fail();
+        } catch (Exception ex) {
+            // expected
+        }
+        
+        ii = IiConverter.convertToIi("100000");
+        try {
+            List<StudySubjectDto> ssd = bean.getByStudySite(ii);
+            assertEquals(0, ssd.size());
+        } catch (Exception ex) {
+            // expected
+        }
+        
+        try {
+            bean.get(null);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
+        StudySubjectDto dto = new StudySubjectDto();
+
+        try {
+            bean.update(dto);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+
+        try {
+            ii = IiConverter.convertToStudySiteIi(new Long(1));
+            dto.setIdentifier(ii);
+            bean.create(dto);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
+        try {
+            bean.delete(null);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
+        try {
+            bean.delete(ii);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
     }
 }

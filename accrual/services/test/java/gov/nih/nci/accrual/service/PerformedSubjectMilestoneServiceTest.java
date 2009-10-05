@@ -82,8 +82,10 @@ package gov.nih.nci.accrual.service;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -140,5 +142,29 @@ public class PerformedSubjectMilestoneServiceTest
     public void getByStudyProtocol() throws Exception {
         List<PerformedSubjectMilestoneDto> rList = bean.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertTrue(0 < rList.size());
+    }
+    
+    @Test
+    public void subjectMilestoneExceptions() throws Exception {
+        try {
+            bean.getByStudySubject(null);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
+        Ii ii = IiConverter.convertToIi("test ii");
+        
+        try {
+            bean.getByStudySubject(ii);
+            fail();
+        } catch (Exception ex) {
+            // expected
+        }
+        
+        ii = IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId());
+        
+        List<PerformedSubjectMilestoneDto> dto = bean.getByStudySubject(ii);
+        assertNotNull(dto);
     }
 }

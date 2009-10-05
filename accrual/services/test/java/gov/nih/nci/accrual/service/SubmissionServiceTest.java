@@ -82,8 +82,10 @@ package gov.nih.nci.accrual.service;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -94,6 +96,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -157,5 +160,34 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
     public void getByStudyProtocol() throws Exception {
         List<SubmissionDto> rList = bean.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertTrue(0 < rList.size());
+    }
+    
+    @Test
+    public void submissionDtoExceptions() throws Exception {
+        SubmissionDto dto = new SubmissionDto();
+        try {
+            bean.update(dto);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
+        St label = StConverter.convertToSt("TX");
+        dto.setLabel(label);
+        try {
+            bean.update(dto);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
+        Ts cod = TsConverter.convertToTs(new Timestamp(0));
+        dto.setCutOffDate(cod);
+        try {
+            bean.update(dto);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
     }
 }
