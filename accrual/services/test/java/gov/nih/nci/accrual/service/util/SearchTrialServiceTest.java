@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
@@ -200,6 +201,31 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
             if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(1).getId())) {
                 assertNull(StudyStatusCode.getByCode(r.getStudyStatusCode().getCode()));
             }
+        }
+    }
+    
+    @Test
+    public void searchTrialExceptions() throws Exception {
+        try {
+            List<SearchTrialResultDto> results = bean.search(null, null);
+            assertEquals(0, results.size());
+        } catch (Exception ex) {
+            // expected
+        }
+
+        try {
+            List<SearchTrialResultDto> results = bean.search(new SearchTrialCriteriaDto(), null);
+            assertEquals(0, results.size());
+        } catch (Exception ex) {
+            // expected
+        }
+        
+        try {
+            Bl flag = bean.isAuthorized(null, null);
+            assertNotNull(flag);
+            assertEquals(false, flag.getValue());
+        } catch (Exception ex) {
+            // expected
         }
     }
 }

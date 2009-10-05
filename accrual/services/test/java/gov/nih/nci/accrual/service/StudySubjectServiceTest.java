@@ -156,6 +156,13 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         } catch (RemoteException ex) {
             // expected
         }
+
+        try {
+            bean.getByStudyProtocol(null);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
         
         Ii ii = IiConverter.convertToIi("test ii");
         try {

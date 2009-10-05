@@ -84,6 +84,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
@@ -180,5 +181,26 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         PatientDto r = bean.update(dto);
         assertTrue(DSetEnumConverter.convertDSetToCsv(r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
 
+    }
+    
+    @Test
+    public void patientExceptions() throws Exception {
+        PatientDto dto = new PatientDto();
+        
+        try {
+            bean.update(dto);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
+        Ii ii = IiConverter.convertToIi(new Long(1));
+        dto.setIdentifier(ii);
+        try {
+            bean.create(dto);
+            fail();
+        } catch (RemoteException ex) {
+            // expected
+        }
     }
 }
