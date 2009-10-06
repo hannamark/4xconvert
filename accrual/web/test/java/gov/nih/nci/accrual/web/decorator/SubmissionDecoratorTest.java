@@ -77,8 +77,6 @@
 
 package gov.nih.nci.accrual.web.decorator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import gov.nih.nci.accrual.dto.SubmissionDto;
@@ -146,7 +144,7 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getCutOffDate() {
         setDataRow();
-        assertNotNull(bean.getCutOffDate());
+        assertTrue(0 != bean.getCutOffDate().length());
 
         setNullRow();
         assertTrue(" ".equals(bean.getCutOffDate()));
@@ -155,7 +153,7 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getLabel() {
         setDataRow();
-        assertNotNull(bean.getLabel());
+        assertTrue(0 != bean.getLabel().length());
 
         setNullRow();
         assertTrue(" ".equals(bean.getLabel()));
@@ -164,7 +162,7 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getDescription() {
         setDataRow();
-        assertNotNull(bean.getDescription());
+        assertTrue(0 != bean.getDescription().length());
 
         setNullRow();
         assertTrue(" ".equals(bean.getDescription()));
@@ -173,7 +171,7 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getCreatedDate() {
         setDataRow();
-        assertNotNull(bean.getCreatedDate());
+        assertTrue(0 != bean.getCreatedDate().length());
 
         setNullRow();
         assertTrue(" ".equals(bean.getCreatedDate()));
@@ -182,7 +180,7 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getSubmittedDate() {
         setDataRow();
-        assertNotNull(bean.getSubmittedDate());
+        assertTrue(0 != bean.getSubmittedDate().length());
 
         setNullRow();
         assertTrue(" ".equals(bean.getSubmittedDate()));
@@ -191,7 +189,7 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getStatus() {
         setDataRow();
-        assertNotNull(bean.getStatus());
+        assertTrue(0 != bean.getStatus().length());
 
         setNullRow();
         assertTrue(" ".equals(bean.getStatus()));
@@ -200,7 +198,7 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getCreateUser() {
         setDataRow();
-        assertNotNull(bean.getCreateUser());
+        assertTrue(0 != bean.getCreateUser().length());
 
         setNullRow();
         assertTrue(" ".equals(bean.getCreateUser()));
@@ -209,7 +207,7 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getSubmitUser() {
         setDataRow();
-        assertNotNull(bean.getSubmitUser());
+        assertTrue(0 != bean.getSubmitUser().length());
 
         setNullRow();
         assertTrue(" ".equals(bean.getSubmitUser()));
@@ -218,18 +216,18 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
     @Test
     public void getIdentifier() {
         setDataRow();
-        assertNotNull(bean.getIdentifier());
+        assertTrue(0 != bean.getIdentifier().length());
 
         setNullRow();
-        assertEquals(0, bean.getIdentifier().length());
+        assertTrue(0 == bean.getIdentifier().length());
     }
     
     @Test
     public void getStudyProtocolIdentifier() {
         setDataRow();
-        assertNotNull(bean.getStudyProtocolIdentifier());
+        assertTrue(0 != bean.getStudyProtocolIdentifier().length());
 
         setNullRow();
-        assertEquals(0, bean.getStudyProtocolIdentifier().length());
+        assertTrue(0 == bean.getStudyProtocolIdentifier().length());
     }
 }
