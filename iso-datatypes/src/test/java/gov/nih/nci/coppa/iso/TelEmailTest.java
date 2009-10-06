@@ -15,6 +15,7 @@ public class TelEmailTest {
     private TelPerson t;
     private String TEL = "tel:";
     private String MAILTO = "mailto:";
+    private String MAILTO_MIXED = "MAilto:";
     private String phrase = "+15556755745";
 
     @Before
@@ -36,6 +37,10 @@ public class TelEmailTest {
     @Test
     public void testValueMailto() {
         String s = MAILTO + "not+with+a+bang,+but+a+whimper";
+        t.setValue(URI.create(s));
+        assertEquals(t.getValue().toString(), s);
+        
+        s = MAILTO_MIXED + "not+with+a+bang,+but+a+whimper";
         t.setValue(URI.create(s));
         assertEquals(t.getValue().toString(), s);
     }

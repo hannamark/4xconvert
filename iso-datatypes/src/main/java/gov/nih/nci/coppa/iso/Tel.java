@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.iso;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -116,6 +117,7 @@ public class Tel extends Any implements Cloneable {
      * @param value the value to set
      */
     public void setValue(URI value) {
+        
         if (!isAllowed(value, getAllowedSchemes())) {
             throw new IllegalArgumentException(value.getScheme());
         }
@@ -131,8 +133,11 @@ public class Tel extends Any implements Cloneable {
      * @param allowedSchemes the schemes that we consider to be valid.
      * @return true if allowedSchemes is null or if it contains scheme.
      */
-    protected static boolean isAllowed(String scheme, List<String> allowedSchemes) {
-        return allowedSchemes == null || allowedSchemes.contains(scheme);
+    protected static boolean isAllowed(String scheme, List<String> allowedSchemes) {     
+        if (scheme == null) {
+            return false;
+        }
+        return allowedSchemes == null || allowedSchemes.contains(scheme.toLowerCase(Locale.getDefault()));
     }
 
     /**

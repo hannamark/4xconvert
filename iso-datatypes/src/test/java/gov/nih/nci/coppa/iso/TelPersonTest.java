@@ -20,6 +20,7 @@ public class TelPersonTest {
     private final String XTEL = "x-text-tel:";
     private final String XFAX = "x-text-fax:";
     private final String MAILTO = "mailto:";
+    private final String MAILTO_MIXED = "MailTO:";
     private final String phrase = "this+is+the+way+the+world+ends";
 
     @Before
@@ -56,6 +57,13 @@ public class TelPersonTest {
     @Test
     public void testValueMailto() {
         String u = MAILTO + phrase;
+        t.setValue(URI.create(u));
+        assertEquals(u, t.getValue().toString());
+    }
+    
+    @Test
+    public void testMixedCaseMailto() {
+        String u = MAILTO_MIXED + phrase;
         t.setValue(URI.create(u));
         assertEquals(u, t.getValue().toString());
     }

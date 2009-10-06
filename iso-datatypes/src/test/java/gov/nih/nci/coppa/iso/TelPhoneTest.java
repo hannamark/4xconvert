@@ -32,7 +32,7 @@ public class TelPhoneTest {
     
     @Test
     public void test() {
-        TelUrlTest.testAllowed(t, XFAX, XTEL, TEL);
+        TelUrlTest.testAllowed(t, XFAX, XTEL, TEL, "TEL:", "X-Text-Fax:");
         TelUrlTest.testDisallowed(t, "", MAILTO, "foo:");
     }
 

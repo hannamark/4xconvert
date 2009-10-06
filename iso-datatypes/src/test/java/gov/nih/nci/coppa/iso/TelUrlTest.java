@@ -21,8 +21,8 @@ public class TelUrlTest {
     private final String CID = "cid:";
     private final String HTTP = "http:";
     private final String HTTPS = "https:";
-    private final String phrase = "this+is+the+way+the+world+ends";
-
+    private final String phrase = "this+is+the+way+the+world+ends";    
+    
     @Before
     public void init() {
         t = new TelUrl();
@@ -55,7 +55,7 @@ public class TelUrlTest {
 
     @Test
     public void testSchemes() {
-        testAllowed(t, FILE, NFS, FTP, CID, HTTP, HTTPS);
+        testAllowed(t, FILE, NFS, FTP, CID, HTTP, HTTPS, "File:", "HttpS:", "cId:");
         testDisallowed(t, "", "mailto:");
     }
 
