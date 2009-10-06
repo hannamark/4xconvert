@@ -224,9 +224,9 @@ public interface TrialRegistrationServiceRemote {
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
      * @param studyRegAuthDTO updated studyRegAuthDTO
-     * @param collaborators list of updated collaborators
-     * @param studySiteAccrualStatuses  list of updated participating sites 
-     * @param studySites  list of StudySite DTOs with updated program code
+     * @param collaboratorDTOs list of updated collaborators
+     * @param studySiteAccrualStatusDTOs  list of updated participating sites 
+     * @param studySiteDTOs  list of StudySite DTOs with updated program code
      * @throws PAException on error
      */
 
@@ -244,9 +244,9 @@ public interface TrialRegistrationServiceRemote {
         StudyResourcingDTO summary4studyResourcingDTO ,
         Ii responsiblePartyContactIi, 
         StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
-        List<StudySiteDTO> collaborators, 
-        List<StudySiteAccrualStatusDTO> studySiteAccrualStatuses,
-        List<StudySiteDTO> studySites)
+        List<StudySiteDTO> collaboratorDTOs, 
+        List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
+        List<StudySiteDTO> studySiteDTOs)
      throws PAException;
    
    /**
