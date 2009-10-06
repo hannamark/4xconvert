@@ -1057,9 +1057,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       <delete dir="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
       <mkdir dir="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
       <unzip src="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" dest="${temp.dir}/${po-grid-legacy.dist.relative.dir}"/>
-      <unzip src="${temp.dir}/${po-grid-legacy.dist.relative.dir}/WEB-INF/lib/${po-grid-legacy.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${po-grid-legacy.introduce.skeleton.service.name}-common"/>
+      <unzip src="${temp.dir}/${po-grid-legacy.dist.relative.dir}/WEB-INF/lib/${po-grid-legacy.introduce.skeleton.service.name}-config.jar" dest="${temp.dir}/${po-grid-legacy.introduce.skeleton.service.name}-config"/>
       <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
-      <var name="file.list" value="${po-grid-legacy.introduce.skeleton.service.name}-common/jndi.properties"/>
+      <var name="file.list" value="${po-grid-legacy.introduce.skeleton.service.name}-config/jndi.properties"/>
 
       <for list="${file.list}" param="file.relative.name">
           <sequential>
@@ -1088,8 +1088,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           </sequential>
       </for>
       <move file="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" tofile="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}.orig"/>
-      <jar destfile="${temp.dir}/${po-grid-legacy.dist.relative.dir}/WEB-INF/lib/${po-grid-legacy.introduce.skeleton.service.name}-common.jar"
-                  basedir="${temp.dir}/${po-grid-legacy.introduce.skeleton.service.name}-common" compress="false"/>
+      <jar destfile="${temp.dir}/${po-grid-legacy.dist.relative.dir}/WEB-INF/lib/${po-grid-legacy.introduce.skeleton.service.name}-config.jar"
+                  basedir="${temp.dir}/${po-grid-legacy.introduce.skeleton.service.name}-config" compress="false"/>
 
       <zip basedir="${temp.dir}/${po-grid-legacy.dist.relative.dir}" compress="true" file="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" update="false"/>
   </target>
