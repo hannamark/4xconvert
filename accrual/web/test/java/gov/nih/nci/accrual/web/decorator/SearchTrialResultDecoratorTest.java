@@ -74,49 +74,107 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 package gov.nih.nci.accrual.web.decorator;
 
-import static org.junit.Assert.*;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.junit.Before;
 import org.junit.Test;
 
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+
 /**
- * @author Rajani Kumar
- * @since 10/5/2009
+ * @author lhebel
+ *
  */
+public class SearchTrialResultDecoratorTest extends AbstractDecoratorTest<SearchTrialResultDecorator, SearchTrialResultDto> {
 
-public class SearchTrialResultDecoratorTest extends AbstractStudyDecoratorTest {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void initBean() {
+        bean = new SearchTrialResultDecorator();
+    }
 
-    SearchTrialResultDecorator searchDecorator;
-    SearchTrialResultDto resultDto;
-
-    @Before
-    public void setUp() {
-          searchDecorator = new SearchTrialResultDecorator();
-          resultDto = new SearchTrialResultDto();
-          resultDto.setAssignedIdentifier(StConverter.convertToSt("1"));
-          resultDto.setOfficialTitle(StConverter.convertToSt("officialTitle"));
-          resultDto.setStudyStatusCode(CdConverter.convertStringToCd("code"));
-          
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SearchTrialResultDto initDataRow() {
+        SearchTrialResultDto dto = new SearchTrialResultDto();
+        St ai = new St();
+        ai.setValue("assigned 1");
+        dto.setAssignedIdentifier(ai);
+        ai = new St();
+        ai.setValue("title 1");
+        dto.setOfficialTitle(ai);
+        Cd status = new Cd();
+        status.setCode("active");
+        dto.setStudyStatusCode(status);
+        Ii ii = new Ii();
+        ii.setExtension("id 1");
+        dto.setIdentifier(ii);
+        ii = new Ii();
+        ii.setExtension("protocol id 1");
+        dto.setStudyProtocolIdentifier(ii);
+        return dto;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SearchTrialResultDto initNullRow() {
+        return new SearchTrialResultDto();
     }
 
     @Test
-    public void getAssignedIdentifierTest() {
-       assertNotNull(resultDto.getAssignedIdentifier());
-     }
-    
-    @Test
-    public void getOfficialTitleTest() {
-       assertNotNull(resultDto.getOfficialTitle());
+    public void getAssignedIdentifier() {
+        setDataRow();
+        assertNotNull(bean.getAssignedIdentifier());
+        
+        setNullRow();
+        assertEquals(0, bean.getAssignedIdentifier().length());
     }
     
     @Test
-     public void getStudyStatusCodeTest() {
-        assertNotNull(resultDto.getStudyStatusCode());
-     }
+    public void getOfficialTitle() {
+        setDataRow();
+        assertNotNull(bean.getOfficialTitle());
+
+        setNullRow();
+        assertEquals(0, bean.getOfficialTitle().length());
+    }
+    
+    @Test
+    public void getStudyStatusCode() {
+        setDataRow();
+        assertNotNull(bean.getStudyStatusCode());
+
+        setNullRow();
+        assertEquals(0, bean.getStudyStatusCode().length());
+    }
+    
+    @Test
+    public void getIdentifier() {
+        setDataRow();
+        assertNotNull(bean.getIdentifier());
+
+        setNullRow();
+        assertEquals(0, bean.getIdentifier().length());
+    }
+    
+    @Test
+    public void getStudyProtocolIdentifier() {
+        setDataRow();
+        assertNotNull(bean.getStudyProtocolIdentifier());
+
+        setNullRow();
+        assertEquals(0, bean.getStudyProtocolIdentifier().length());
+    }
 }

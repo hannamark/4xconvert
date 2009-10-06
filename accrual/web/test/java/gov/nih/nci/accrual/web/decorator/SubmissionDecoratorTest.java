@@ -74,85 +74,162 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 package gov.nih.nci.accrual.web.decorator;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
+import static org.junit.Assert.assertTrue;
 
-import java.sql.Timestamp;
+import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+
 import java.util.Date;
 
-import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author Rajani Kumar
- * @since 10/5/2009
+ * @author lhebel
+ *
  */
-
-public class SubmissionDecoratorTest extends AbstractStudyDecoratorTest {
-
-    SubmissionDto resultDto;
-
-    @Before
-    public void setUp() {
-          
-          resultDto = new SubmissionDto();
-          resultDto.setCutOffDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-          resultDto.setLabel(StConverter.convertToSt("label"));
-          resultDto.setDescription(StConverter.convertToSt("description"));
-          resultDto.setCreatedDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-          resultDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
-                      new Timestamp(new Date().getTime()), null));
-          resultDto.setStatusCode(CdConverter.convertStringToCd("Active"));
-          resultDto.setCreateUser(StConverter.convertToSt("createUser"));
-          resultDto.setSubmitUser(StConverter.convertToSt("submitUser"));
-          
+public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDecorator, SubmissionDto>
+{
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void initBean() {
+        bean = new SubmissionDecorator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubmissionDto initDataRow() {
+        SubmissionDto dto = new SubmissionDto();
+        Ts created = new Ts();
+        created.setValue(new Date());
+        dto.setCreatedDate(created);
+        St user = new St();
+        user.setValue("user 1");
+        dto.setCreateUser(user);
+        dto.setCutOffDate(created);
+        St desc = new St();
+        desc.setValue("test");
+        dto.setDescription(desc);
+        dto.setLabel(desc);
+        Cd status = new Cd();
+        status.setCode("active");
+        dto.setStatusCode(status);
+        dto.setSubmitUser(user);
+        Ii ii = new Ii();
+        ii.setExtension("id 1");
+        dto.setIdentifier(ii);
+        ii = new Ii();
+        ii.setExtension("protocol id 1");
+        dto.setStudyProtocolIdentifier(ii);
+        return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubmissionDto initNullRow() {
+        return new SubmissionDto();
+    }
+
     @Test
-    public void getCutOffDateTest() {
-       assertNotNull(resultDto.getCutOffDate());
-       assertNotNull(TsConverter.convertToString(resultDto.getCutOffDate()));
+    public void getCutOffDate() {
+        setDataRow();
+        assertNotNull(bean.getCutOffDate());
+
+        setNullRow();
+        assertTrue(" ".equals(bean.getCutOffDate()));
+    }
+
+    @Test
+    public void getLabel() {
+        setDataRow();
+        assertNotNull(bean.getLabel());
+
+        setNullRow();
+        assertTrue(" ".equals(bean.getLabel()));
+    }
+
+    @Test
+    public void getDescription() {
+        setDataRow();
+        assertNotNull(bean.getDescription());
+
+        setNullRow();
+        assertTrue(" ".equals(bean.getDescription()));
+    }
+
+    @Test
+    public void getCreatedDate() {
+        setDataRow();
+        assertNotNull(bean.getCreatedDate());
+
+        setNullRow();
+        assertTrue(" ".equals(bean.getCreatedDate()));
+    }
+
+    @Test
+    public void getSubmittedDate() {
+        setDataRow();
+        assertNotNull(bean.getSubmittedDate());
+
+        setNullRow();
+        assertTrue(" ".equals(bean.getSubmittedDate()));
+    }
+
+    @Test
+    public void getStatus() {
+        setDataRow();
+        assertNotNull(bean.getStatus());
+
+        setNullRow();
+        assertTrue(" ".equals(bean.getStatus()));
+    }
+
+    @Test
+    public void getCreateUser() {
+        setDataRow();
+        assertNotNull(bean.getCreateUser());
+
+        setNullRow();
+        assertTrue(" ".equals(bean.getCreateUser()));
+    }
+
+    @Test
+    public void getSubmitUser() {
+        setDataRow();
+        assertNotNull(bean.getSubmitUser());
+
+        setNullRow();
+        assertTrue(" ".equals(bean.getSubmitUser()));
     }
     
     @Test
-    public void getLabelTest() {
-       assertNotNull(resultDto.getLabel());
-    }
-    
-     @Test
-     public void getDescriptionTest() {
-        assertNotNull(resultDto.getDescription());
-     }
-    
-    @Test
-    public void getCreatedDateTest() {
-      assertNotNull(resultDto.getCreatedDate());
+    public void getIdentifier() {
+        setDataRow();
+        assertNotNull(bean.getIdentifier());
+
+        setNullRow();
+        assertEquals(0, bean.getIdentifier().length());
     }
     
     @Test
-    public void getSubmittedDateTest() {
-      assertNotNull(resultDto.getStatusDateRange());
+    public void getStudyProtocolIdentifier() {
+        setDataRow();
+        assertNotNull(bean.getStudyProtocolIdentifier());
+
+        setNullRow();
+        assertEquals(0, bean.getStudyProtocolIdentifier().length());
     }
-    
-    @Test
-    public void getStatusTest() {
-      assertNotNull(resultDto.getStatusCode());
-    }
-    
-    @Test
-    public void getCreateUserTest() {
-       assertNotNull(resultDto.getCreateUser());
-    }
-    
-    @Test
-    public void getSubmitUserTest() {
-      assertNotNull(resultDto.getSubmitUser());
-    }
-    
 }
