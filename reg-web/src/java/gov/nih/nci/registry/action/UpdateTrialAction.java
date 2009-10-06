@@ -40,7 +40,6 @@ import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.File;
 import java.io.IOException;
@@ -870,14 +869,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO); 
             }
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-            
-            //Responsible party info update
-            OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
-            //needs lead pi info
-            PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
-            //needs sponsor info
-            OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
-            
+          
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studyParticipationContactDTO = null;
             Ii responsiblePartyContactIi = null;
@@ -944,8 +936,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
           updateId = studyProtocolIi; 
           //call the service to invoke the update method
           RegistryServiceLocator.getTrialRegistrationService().
-                        update(spDTO, sosDto, ssDto, studyIndldeDTOList, studyResourcingDTOs, documentDTOs, leadOrgDTO,
-                               principalInvestigatorDTO, sponsorOrgDTO, studyContactDTO, studyParticipationContactDTO,
+                        update(spDTO, sosDto, ssDto, studyIndldeDTOList, studyResourcingDTOs, documentDTOs, 
+                                studyContactDTO, studyParticipationContactDTO,
                                summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
                               studyRegAuthDTO, collaboratorsDTOList, 
                               pssDTOList, prgCdUpdatedList);  

@@ -10,7 +10,6 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -366,13 +365,11 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             studySiteOrgDTO.setIdentifier(IiConverter.convertToPoOrganizationIi(
                     trialDTO.getSiteOrganizationIdentifier()));
             
-            List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
-            List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             
             Ii studyProtocolIi = RegistryServiceLocator.getTrialRegistrationService().
-            createProprietaryInterventionalStudyProtocol(studyProtocolDTO, siteOverallStatusDTO, studyIndldeDTOs, 
-                    studyResourcingDTOs, documentDTOs, leadOrganizationDTO, siteInvestigatorDTO,
+            createProprietaryInterventionalStudyProtocol(studyProtocolDTO, siteOverallStatusDTO,  
+                    documentDTOs, leadOrganizationDTO, siteInvestigatorDTO,
                     leadOrganizationTrialIdentifierDTO, studySiteOrgDTO, siteDTO, 
                     nctIdentifierDTO, summary4organizationDTO, studyResourcingDTO);
           //send a notification mail

@@ -284,9 +284,6 @@ public class BatchCreateProtocols {
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
             overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
-            OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
-            PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
-            OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
@@ -346,8 +343,7 @@ public class BatchCreateProtocols {
             //get the values from db and update only those are needed and then convert
                 RegistryServiceLocator.getTrialRegistrationService().
                     update(studyProtocolDTO, overallStatusDTO, ssNctIdDto, studyIndldeDTOs, studyResourcingDTOs, 
-                    documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, studyContactDTO, 
-                    studySiteContactDTO, summary4orgDTO, summary4studyResourcingDTO, 
+                    documentDTOs, studyContactDTO, studySiteContactDTO, summary4orgDTO, summary4studyResourcingDTO, 
                     responsiblePartyContactIi, studyRegAuthDTO, null, null, null);
                
              return studyProtocolIi;
