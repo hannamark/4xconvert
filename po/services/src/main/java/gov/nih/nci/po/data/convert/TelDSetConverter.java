@@ -93,6 +93,7 @@ import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -110,7 +111,7 @@ public class TelDSetConverter {
                 continue;
             }
 
-            String val = t.getValue().getScheme();
+            String val = t.getValue().getScheme().toLowerCase(Locale.getDefault());
 
             if (val.equals(TelEmail.SCHEME_MAILTO)) {
                 email.add(new Email(t.getValue().getSchemeSpecificPart()));

@@ -77,23 +77,23 @@ public class TelDSetConverterTest {
         Tel t = new TelEmail();
         t.setValue(URI.create("mailto:foo"));
         set.add(t);
-
+        
         t = new TelPhone();
         t.setValue(URI.create("x-text-fax:foo"));
         set.add(t);
-
+       
         t = new TelPhone();
         t.setValue(URI.create("tel:foo"));
         set.add(t);
-
+        
         t = new TelUrl();
         t.setValue(URI.create("file:foo"));
         set.add(t);
-
+        
         t = new TelPhone();
         t.setValue(URI.create("x-text-tel:foo"));
         set.add(t);
-
+        
         t = new TelPhone();
         t.setNullFlavor(NullFlavor.UNK);
         set.add(t);
@@ -110,6 +110,47 @@ public class TelDSetConverterTest {
         assertEquals("foo", fax.get(0).getValue().toString());
         assertEquals("foo", phone.get(0).getValue().toString());
         assertEquals("file:foo", url.get(0).getValue().toString());
+        assertEquals("foo", text.get(0).getValue().toString());
+    }
+
+    @Test
+    public void testConvertToContactListIgnoreCase() {
+        DSet<Tel> value = new DSet<Tel>();
+        Set<Tel> set = new HashSet<Tel>();
+        value.setItem(set);
+         
+        Tel t = new TelEmail();
+        t.setValue(URI.create("mailTO:foo"));
+        set.add(t);
+        
+        t = new TelPhone();
+        t.setValue(URI.create("x-text-FAX:foo"));
+        set.add(t);
+        
+        t = new TelPhone();
+        t.setValue(URI.create("TEL:foo"));
+        set.add(t);
+        
+        t = new TelUrl();
+        t.setValue(URI.create("File:foo"));
+        set.add(t);
+        
+        t = new TelPhone();
+        t.setValue(URI.create("X-TEXT-TEL:foo"));
+        set.add(t);
+        
+        TelDSetConverter.convertToContactList(value, c);
+        
+        assertEquals(1, email.size());
+        assertEquals(1, fax.size());
+        assertEquals(1, phone.size());
+        assertEquals(1, url.size());
+        assertEquals(1, text.size());
+        
+        assertEquals("foo", email.get(0).getValue().toString());
+        assertEquals("foo", fax.get(0).getValue().toString());
+        assertEquals("foo", phone.get(0).getValue().toString());
+        assertEquals("File:foo", url.get(0).getValue().toString());
         assertEquals("foo", text.get(0).getValue().toString());
     }
 
