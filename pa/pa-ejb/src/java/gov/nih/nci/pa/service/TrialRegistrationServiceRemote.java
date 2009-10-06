@@ -218,9 +218,6 @@ public interface TrialRegistrationServiceRemote {
      * @param studyIndldeDTOs list of Study Ind/ides
      * @param studyResourcingDTOs list of nih grants
      * @param documentDTOs List of documents IRB and Participating doc
-     * @param leadOrgDTO lead organization
-     * @param principalInvestigatorDTO lead pi
-     * @param sponsorOrgDTO sponsor Organization DTO
      * @param studyContactDTO phone and email info when Pi is responsible
      * @param studyParticipationContactDTO StudySiteContactDTO 
      * @param summary4organizationDTO summary 4 organization code
@@ -228,8 +225,8 @@ public interface TrialRegistrationServiceRemote {
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
      * @param studyRegAuthDTO updated studyRegAuthDTO
      * @param collaborators list of updated collaborators
-     * @param participatingSites list of updated participating sites 
-     * @param pgCdUpdatedList list of StudySite DTOs with updated program code
+     * @param studySiteAccrualStatuses  list of updated participating sites 
+     * @param studySites  list of StudySite DTOs with updated program code
      * @throws PAException on error
      */
 
@@ -241,9 +238,6 @@ public interface TrialRegistrationServiceRemote {
         List<StudyIndldeDTO> studyIndldeDTOs ,
         List<StudyResourcingDTO> studyResourcingDTOs ,
         List<DocumentDTO> documentDTOs ,
-        OrganizationDTO leadOrgDTO ,
-        PersonDTO principalInvestigatorDTO, 
-        OrganizationDTO sponsorOrgDTO,
         StudyContactDTO studyContactDTO ,
         StudySiteContactDTO studyParticipationContactDTO, 
         OrganizationDTO summary4organizationDTO ,
@@ -251,16 +245,14 @@ public interface TrialRegistrationServiceRemote {
         Ii responsiblePartyContactIi, 
         StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
         List<StudySiteDTO> collaborators, 
-        List<StudySiteAccrualStatusDTO> participatingSites,
-        List<StudySiteDTO> pgCdUpdatedList)
+        List<StudySiteAccrualStatusDTO> studySiteAccrualStatuses,
+        List<StudySiteDTO> studySites)
      throws PAException;
    
    /**
     * 
     * @param studyProtocolDTO studyProtocolDTO
     * @param studySiteOverallStatusDTO studySiteOverallStatusDTO
-    * @param studyIndldeDTOs studyIndldeDTOs
-    * @param studyResourcingDTOs studyResourcingDTOs
     * @param documentDTOs documentDTOs
     * @param leadOrganizationDTO leadOrganizationDTO
     * @param studySiteInvestigatorDTO studySiteInvestigatorDTO
@@ -277,8 +269,6 @@ public interface TrialRegistrationServiceRemote {
    Ii createProprietaryInterventionalStudyProtocol(
            StudyProtocolDTO studyProtocolDTO ,
            StudySiteOverallStatusDTO studySiteOverallStatusDTO ,
-           List<StudyIndldeDTO> studyIndldeDTOs ,
-           List<StudyResourcingDTO> studyResourcingDTOs ,
            List<DocumentDTO> documentDTOs ,
            OrganizationDTO leadOrganizationDTO ,
            PersonDTO studySiteInvestigatorDTO ,

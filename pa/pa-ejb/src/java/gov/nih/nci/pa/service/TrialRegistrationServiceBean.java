@@ -126,6 +126,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -401,9 +402,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param studyIndldeDTOs list of Study Ind/ides
      * @param studyResourcingDTOs list of nih grants
      * @param documentDTOs IRB document
-     * @param leadOrgDTO lead OrganizationDTO
-     * @param principalInvestigatorDTO lead pi
-     * @param sponsorOrgDTO sponsor Organization DTO
      * @param studyContactDTO phone and email info when Pi is responsible
      * @param studyParticipationContactDTO StudySiteContactDTO 
      * @param summary4organizationDTO summary 4 organization code
@@ -411,8 +409,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
      * @param studyRegAuthDTO updated studyRegAuthDTO
      * @param collaborators list of updated collaborators
-     * @param participatingSites list of updated participating sites 
-     * @param pgCdUpdatedList list of StudySite DTOs with updated program code
+     * @param studySiteAccrualStatuses list of updated participating sites 
+     * @param studySites  list of StudySite DTOs with updated program code
      * @throws PAException on error
      */
     @SuppressWarnings({"PMD.ExcessiveMethodLength" })
@@ -424,9 +422,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         List<StudyIndldeDTO> studyIndldeDTOs ,
         List<StudyResourcingDTO> studyResourcingDTOs ,
         List<DocumentDTO> documentDTOs ,
-        OrganizationDTO leadOrgDTO,
-        PersonDTO principalInvestigatorDTO,
-        OrganizationDTO sponsorOrgDTO,
         StudyContactDTO studyContactDTO ,
         StudySiteContactDTO studyParticipationContactDTO, 
         OrganizationDTO summary4organizationDTO ,
@@ -434,11 +429,30 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         Ii responsiblePartyContactIi, 
         StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
         List<StudySiteDTO> collaborators, 
-        List<StudySiteAccrualStatusDTO> participatingSites,
-        List<StudySiteDTO> pgCdUpdatedList) throws PAException {
+        List<StudySiteAccrualStatusDTO> studySiteAccrualStatuses,
+        List<StudySiteDTO> studySites) throws PAException {
        
         try {
-           updateStudyProtocolObjs(
+            //get
+            CorrelationUtils cUtils = new CorrelationUtils();
+            OrganizationDTO leadOrgDTO = new OrganizationDTO();
+            StudySiteDTO studySiteDto = PAUtil.getFirstObj(paServiceUtils.getStudySite(studyProtocolDTO.getIdentifier(),
+                    StudySiteFunctionalCode.LEAD_ORGANIZATION, true)); 
+            leadOrgDTO.setIdentifier(IiConverter.convertToIi(cUtils.getPAOrganizationByIi(
+                    studySiteDto.getResearchOrganizationIi()).getIdentifier()));
+
+            OrganizationDTO sponsorOrgDTO = new OrganizationDTO();
+            studySiteDto = PAUtil.getFirstObj(paServiceUtils.getStudySite(studyProtocolDTO.getIdentifier(),
+                    StudySiteFunctionalCode.SPONSOR, true)); 
+            sponsorOrgDTO.setIdentifier(IiConverter.convertToIi(cUtils.getPAOrganizationByIi(
+                    studySiteDto.getResearchOrganizationIi()).getIdentifier()));
+            
+            PersonDTO principalInvestigatorDTO = new PersonDTO();
+            StudyContactDTO studyContactDto = PAUtil.getFirstObj(paServiceUtils.getStudyContact(
+                    studyProtocolDTO.getIdentifier(), StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true));
+            principalInvestigatorDTO.setIdentifier(IiConverter.convertToIi(
+                    cUtils.getPAPersonByIi(studyContactDto.getClinicalResearchStaffIi()).getIdentifier()));
+            updateStudyProtocolObjs(
                     studyProtocolDTO ,
                     overallStatusDTO ,
                     null ,
@@ -456,8 +470,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     responsiblePartyContactIi , 
                     studyRegAuthDTO, 
                     collaborators, 
-                    participatingSites,
-                    pgCdUpdatedList, UPDAT);
+                    studySiteAccrualStatuses,
+                    studySites, UPDAT);
 
            } catch (Exception e) {
             ejbContext.setRollbackOnly();
@@ -468,8 +482,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * 
      * @param studyProtocolDTO studyProtocolDTO
      * @param studySiteOverallStatusDTO studySiteOverallStatusDTO
-     * @param studyIndldeDTOs studyIndldeDTOs
-     * @param studyResourcingDTOs studyResourcingDTOs
      * @param documentDTOs documentDTOs
      * @param leadOrganizationDTO leadOrganizationDTO
      * @param studySiteInvestigatorDTO studySiteInvestigatorDTO
@@ -485,10 +497,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @SuppressWarnings({"PMD.PreserveStackTrace" })
     public Ii createProprietaryInterventionalStudyProtocol(
-            StudyProtocolDTO studyProtocolDTO ,
+            StudyProtocolDTO studyProtocolDTO,
             StudySiteOverallStatusDTO studySiteOverallStatusDTO ,
-            List<StudyIndldeDTO> studyIndldeDTOs ,
-            List<StudyResourcingDTO> studyResourcingDTOs ,
             List<DocumentDTO> documentDTOs ,
             OrganizationDTO leadOrganizationDTO ,
             PersonDTO studySiteInvestigatorDTO ,
@@ -513,10 +523,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 studyTypeCode = StudyTypeCode.OBSERVATIONAL;
             }
             createMilestone(studyProtocolIi);
-            paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null),
-                    studyProtocolIi);    
-            paServiceUtils.createOrUpdate(studyResourcingDTOs, 
-                    IiConverter.convertToStudyResourcingIi(null), studyProtocolIi);    
             paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
             paServiceUtils.manageSummaryFour(studyProtocolIi , summary4OrganizationDTO , summary4StudyResourcingDTO);
           
