@@ -77,8 +77,7 @@
 
 package gov.nih.nci.accrual.web.decorator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -136,45 +135,45 @@ public class SearchTrialResultDecoratorTest extends AbstractDecoratorTest<Search
     @Test
     public void getAssignedIdentifier() {
         setDataRow();
-        assertNotNull(bean.getAssignedIdentifier());
+        assertTrue(0 != bean.getAssignedIdentifier().length());
         
         setNullRow();
-        assertEquals(0, bean.getAssignedIdentifier().length());
+        assertTrue(0 == bean.getAssignedIdentifier().length());
     }
     
     @Test
     public void getOfficialTitle() {
         setDataRow();
-        assertNotNull(bean.getOfficialTitle());
+        assertTrue(0 != bean.getOfficialTitle().length());
 
         setNullRow();
-        assertEquals(0, bean.getOfficialTitle().length());
+        assertTrue(0 == bean.getOfficialTitle().length());
     }
     
     @Test
     public void getStudyStatusCode() {
         setDataRow();
-        assertNotNull(bean.getStudyStatusCode());
+        assertTrue(0 != bean.getStudyStatusCode().length());
 
         setNullRow();
-        assertEquals(0, bean.getStudyStatusCode().length());
+        assertTrue(0 == bean.getStudyStatusCode().length());
     }
     
     @Test
     public void getIdentifier() {
         setDataRow();
-        assertNotNull(bean.getIdentifier());
+        assertTrue(0 != bean.getIdentifier().length());
 
         setNullRow();
-        assertEquals(0, bean.getIdentifier().length());
+        assertTrue(0 == bean.getIdentifier().length());
     }
     
     @Test
     public void getStudyProtocolIdentifier() {
         setDataRow();
-        assertNotNull(bean.getStudyProtocolIdentifier());
+        assertTrue(0 != bean.getStudyProtocolIdentifier().length());
 
         setNullRow();
-        assertEquals(0, bean.getStudyProtocolIdentifier().length());
+        assertTrue(0 == bean.getStudyProtocolIdentifier().length());
     }
 }
