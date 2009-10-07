@@ -113,7 +113,7 @@
       </td>
     </tr>
     <tr>
-        <td scope="row" class="label"><s:label for="local Trial Identifier">Local Trial Identifier:</s:label><span class="required">*</span></td>
+        <td scope="row" class="label"><s:label for="local Trial Identifier"><fmt:message key="proprietary.siteidentifier"/></s:label><span class="required">*</span></td>
     <td>
         <s:textfield name="siteLocalTrialIdentifier" id="siteLocalTrialIdentifier" maxlength="20" size="200" cssStyle="width: 200px" />
     </td>
@@ -129,7 +129,7 @@
     </td>
     </tr>
     <tr>
-      <td scope="row" class="label"><label for="siteProgramCode"><fmt:message key="proprietary.siteidentifier"/><span class="required">*</span></label></td>
+      <td scope="row" class="label"><label for="siteProgramCode"><fmt:message key="proprietary.sitePrgCode"/><span class="required">*</span></label></td>
       <td class="value">
         <s:textfield name="siteProgramCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
         <span class="formErrorMsg">

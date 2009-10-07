@@ -1030,10 +1030,10 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                             + " Abstraction Verified No Response or  " 
                             + " Abstraction Verified No Response can be Updated.");
             }
-            if (statusDTO.getStatusCode().getCode().equals(StudyStatusCode.DISAPPROVED)
-                 || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE)
-                 || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.WITHDRAWN)
-                 || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.COMPLETE)) {
+            if (statusDTO.getStatusCode().getCode().equals(StudyStatusCode.DISAPPROVED.getCode())
+                 || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode())
+                 || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.WITHDRAWN.getCode())
+                 || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.COMPLETE.getCode())) {
                 errorMsg.append(operation).append(" to a Trial with Current Trial Status as Disapproved or" 
                         + " Withdrawn or Complete or Administratively Complete is not allowed.\n");
             }

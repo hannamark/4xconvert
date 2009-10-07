@@ -431,18 +431,19 @@ extends AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus
         //Current Trial Status Date and have 'actual' type. New Rule added-01/15/09 if start date is smaller 
         //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.            
         //pa2.0 as part of release removing the "replace Current Trial Status date with the actual Start Date."
-        if (StudyStatusCode.ACTIVE.getCode().equals(statusCode)
-                && (trialStartDate.after(statusDate) || !studyStartDateType.equals(
-                         ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
+        if (StudyStatusCode.ACTIVE.getCode().equals(statusCode) && (trialStartDate.after(statusDate) 
+                || !studyStartDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
                 errors.append("If Current Trial Status is Active, Trial Start Date must be Actual "
                               + " and same as or smaller than Current Trial Status Date.\n");
         }
         // Constraint/Rule: 26 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. 
         //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'. 
           if (StudyStatusCode.APPROVED.getCode().equals(statusCode)
-                  || StudyStatusCode.IN_REVIEW.getCode().equals(statusCode)) {
+                  || StudyStatusCode.IN_REVIEW.getCode().equals(statusCode)
+                  || StudyStatusCode.WITHDRAWN.getCode().equals(statusCode)
+                  || StudyStatusCode.DISAPPROVED.getCode().equals(statusCode)) {
               if (!studyStartDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                errors.append("If Current Trial Status is Approved/In Review, Trial Start Date must be Anticipated.\n");
+                errors.append("If Current Trial Status is " + statusCode + ", Trial Start Date must be Anticipated.\n");
               } 
           } else if (!studyStartDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
             errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
