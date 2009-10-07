@@ -101,7 +101,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -244,7 +243,7 @@ public class PatientAction extends AbstractAccrualAction {
         POPatientDTO createdDTO = null;
         try {
             createdDTO = patientCorrelationSvc.create(popDTO);
-        } catch (PAException e) {
+        } catch (Exception e) {
             addActionError("Error creating patient in PO.  Paticipating site may have been nullified.  If problem persists please contact CTRO.");
             loadListOfStudySites();
             return super.create();
@@ -294,7 +293,7 @@ public class PatientAction extends AbstractAccrualAction {
             scoper.setReliability(IdentifierReliability.ISS);
             dto.setScoperIdentifier(scoper);
             dto = patientCorrelationSvc.update(dto);
-        } catch (PAException e) {
+        } catch (Exception e) {
             addActionError("Error updating patient in PO.  Paticipating site may have been nullified.  If problem persists please contact CTRO.");
             loadListOfStudySites();
             return super.update();
