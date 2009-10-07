@@ -320,7 +320,9 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             scoDTO.setUserIdentifier(StConverter.convertToSt(loginName));
             
             if (checkoutStatus) {
-                PaRegistry.getStudyCheckoutService().create(scoDTO);        
+                PaRegistry.getStudyCheckoutService().create(scoDTO);   
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                        getText("studyProtocol.trial.checkOut"));
             } else if (studyProtocolQueryDTO.getStudyCheckoutId() != null) {
                 PaRegistry.getStudyCheckoutService().delete(
                         IiConverter.convertToIi(studyProtocolQueryDTO.getStudyCheckoutId()));                      
