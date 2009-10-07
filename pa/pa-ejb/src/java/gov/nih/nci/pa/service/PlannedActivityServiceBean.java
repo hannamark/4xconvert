@@ -145,12 +145,12 @@ public class PlannedActivityServiceBean
             if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
                 throw new PAException("An Intervention must be selected.");
             }
-            if (checkDuplicate(dto)) {
-                throw new PAException("Redundancy error:  this trial already includes the selected intervention. ");
-            }
             if (!isDrug && (dto.getLeadProductIndicator() != null)) {
                 getLogger().info("Setting lead product indicator to null for non-drug PlannedActivity.");
                 dto.setLeadProductIndicator(null);
+            }
+            if (checkDuplicate(dto)) {
+                throw new PAException("Redundancy error:  this trial already includes the selected intervention. ");
             }
             if (isDrug) {
                 drugBusinessRules(dto);
@@ -173,8 +173,12 @@ public class PlannedActivityServiceBean
                   && ((padto.getTextDescription().getValue() == null && dto.getTextDescription().getValue() == null)
                     || (padto.getTextDescription().getValue() != null && dto.getTextDescription().getValue() != null
                         && padto.getTextDescription().getValue().equals(dto.getTextDescription().getValue())))
-                  && padto.getLeadProductIndicator().getValue()
-                          .equals(dto.getLeadProductIndicator().getValue())) {
+                  && ((PAUtil.isBlNull(dto.getLeadProductIndicator()) 
+                          && PAUtil.isBlNull(padto.getLeadProductIndicator()))
+                       || (!PAUtil.isBlNull(dto.getLeadProductIndicator()) 
+                           && !PAUtil.isBlNull(padto.getLeadProductIndicator()) 
+                           && padto.getLeadProductIndicator().getValue()
+                                   .equals(dto.getLeadProductIndicator().getValue())))) {
                        duplicate = true;
                    }
                 }

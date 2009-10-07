@@ -200,7 +200,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             InterventionWebDTO i = generateWebDto(paDto);
             setInterventionIdentifier(i.getIdentifier());
             setInterventionLeadIndicator(LEAD_TEXT.equals(i.getLeadIndicator()));
-            setInterventionType(i.getCtGovType());
+            setInterventionType(paDto.getSubcategoryCode().getCode());
             setInterventionName(i.getName());
             setInterventionDescription(i.getDescription());
             setInterventionOtherNames(i.getOtherNames());
