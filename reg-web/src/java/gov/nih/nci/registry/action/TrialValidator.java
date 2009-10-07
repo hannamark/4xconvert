@@ -493,11 +493,10 @@ public class TrialValidator {
           }            
         //Constraint/Rule: 22 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. 
         //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'. 
-        if (PAUtil.isNotEmpty(trialDto.getStatusCode())
-                         && PAUtil.isNotEmpty(trialDto.getStartDateType())) {
+        if (PAUtil.isNotEmpty(trialDto.getStatusCode()) && PAUtil.isNotEmpty(trialDto.getStartDateType())) {
           if (TrialStatusCode.APPROVED.getCode().equals(trialDto.getStatusCode())
-                  || TrialStatusCode.IN_REVIEW.getCode().equals(
-                                  trialDto.getStatusCode())) {
+                  || TrialStatusCode.IN_REVIEW.getCode().equals(trialDto.getStatusCode())
+                  || StudyStatusCode.WITHDRAWN.getCode().equals(trialDto.getStatusCode())) {
               if (!trialDto.getStartDateType().equals(
                               ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
                   addFieldError.put("trialDTO.startDateType", 

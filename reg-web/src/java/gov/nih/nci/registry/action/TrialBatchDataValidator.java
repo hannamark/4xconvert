@@ -10,6 +10,7 @@ import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
@@ -104,7 +105,9 @@ public class TrialBatchDataValidator {
             } else if (batchDto.getTitle().length() > TRIAL_TITLE_MAX_LENGTH) {
                 fieldErr.append("Trial Title must be 4000 characters max");
             }
-
+            if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
+                fieldErr.append("Please enter valid value for Current Trial Status");
+            }
 
         }
         //Summary 4 Info validation
@@ -152,16 +155,19 @@ public class TrialBatchDataValidator {
     private StringBuffer validateUpdate(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         if (PAUtil.isNotEmpty(batchDto.getSubmissionType()) 
-                && batchDto.getSubmissionType().equalsIgnoreCase("U") 
-           && PAUtil.isEmpty(batchDto.getNciTrialIdentifier())) {
-            fieldErr.append("NCI Trial Identifier is required. \n");                
+                && batchDto.getSubmissionType().equalsIgnoreCase("U")) { 
+            if (PAUtil.isEmpty(batchDto.getNciTrialIdentifier())) {
+                fieldErr.append("NCI Trial Identifier is required. \n");
+            }
             fieldErr.append(validateSponsorContactInfo(batchDto));
             if (PAUtil.isEmpty(batchDto.getNctNumber())) {
                 fieldErr.append("NCT Number is required. \n");
             }
+            if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())
+                    && !StudyStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(batchDto.getCurrentTrialStatus())) {
+                fieldErr.append("Please enter valid value for Current Trial Status");
+            }
         }
-        
-
         return fieldErr;
     }
     private StringBuffer validateOversightInfo(StudyProtocolBatchDTO batchDto) {
@@ -317,9 +323,6 @@ public class TrialBatchDataValidator {
      */
     private StringBuffer validateListOfValues(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
-        if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
-            fieldErr.append("Please enter valid value for Current Trial Status");
-        }
         if (null != TrialStatusReasonCode.getByCode(batchDto.getCurrentTrialStatus())
                 && PAUtil.isEmpty(batchDto.getReasonForStudyStopped())) {
                 fieldErr.append("Why Study Stopped is required.");
