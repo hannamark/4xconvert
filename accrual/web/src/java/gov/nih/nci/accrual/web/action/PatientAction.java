@@ -244,7 +244,8 @@ public class PatientAction extends AbstractAccrualAction {
         try {
             createdDTO = patientCorrelationSvc.create(popDTO);
         } catch (Exception e) {
-            addActionError("Error creating patient in PO.  Paticipating site may have been nullified.  If problem persists please contact CTRO.");
+            addActionError("Error creating patient in PO.  Paticipating site may have been nullified.  "
+                    + "If problem persists please contact CTRO.");
             loadListOfStudySites();
             return super.create();
         }
@@ -294,7 +295,8 @@ public class PatientAction extends AbstractAccrualAction {
             dto.setScoperIdentifier(scoper);
             dto = patientCorrelationSvc.update(dto);
         } catch (Exception e) {
-            addActionError("Error updating patient in PO.  Paticipating site may have been nullified.  If problem persists please contact CTRO.");
+            addActionError("Error updating patient in PO.  Paticipating site may have been nullified.  "
+                    + "If problem persists please contact CTRO.");
             loadListOfStudySites();
             return super.update();
         }

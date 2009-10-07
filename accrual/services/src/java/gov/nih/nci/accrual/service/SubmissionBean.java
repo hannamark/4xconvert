@@ -82,10 +82,13 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.SubmissionConverter;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -100,6 +103,18 @@ public class SubmissionBean
         extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
         implements SubmissionService {
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<SubmissionDto> getByStudyProtocol(Ii ii) throws RemoteException {
+        List<SubmissionDto> temp = super.getByStudyProtocol(ii);
+        List<SubmissionDto> result = new ArrayList<SubmissionDto>();
+        for (int x = temp.size() - 1; x >= 0; x--) {
+            result.add(temp.get(x));
+        }
+        return result;
+    }
     /**
      * {@inheritDoc}
      */
@@ -124,10 +139,6 @@ public class SubmissionBean
         if (PAUtil.isTsNull(dto.getCutOffDate())) {
             throw new RemoteException("Cut off date is required.");
         }
-        /*if (!PAUtil.isTsNull(dto.getCutOffDate()) && !PAUtil.isDateCurrentOrPast(TsConverter.
-                 convertToString(dto.getCutOffDate()))) {
-            throw new RemoteException("Cut off date should be current or past.");
-        }*/
         if (PAUtil.isStNull(dto.getDescription())) {
             throw new RemoteException("Description is required.");
         }
