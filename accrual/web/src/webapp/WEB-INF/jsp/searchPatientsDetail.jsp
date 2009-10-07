@@ -4,7 +4,6 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:set var="topic" scope="request" value="list_patients"/> 
 <c:url value="/protected/popup.action" var="lookupUrl" />
 <head>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
@@ -44,10 +43,13 @@ function loadDiv(intid){
 </script>
 <title>
     <s:if test="%{currentAction == 'create'}">
+        <c:set var="topic" scope="request" value="subjects_adding"/> 
         <fmt:message key="patient.create.title" /></s:if>
-    <s:elseif test="%{currentAction == 'retrieve'}">
+    <s:elseif test="%{currentAction == 'update'}">
+        <c:set var="topic" scope="request" value="subjects_update"/> 
         <fmt:message key="patient.retrieve.title" /></s:elseif>
     <s:elseif test="%{currentAction == 'retrieve'}">
+        <c:set var="topic" scope="request" value="subjects_intro"/> 
         <fmt:message key="patient.update.title" /></s:elseif>
 </title>        
     <s:head/>

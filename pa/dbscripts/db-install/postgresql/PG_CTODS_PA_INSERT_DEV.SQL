@@ -213,7 +213,7 @@ values ((select user_id from csm_user where login_name = 'submitter'), 5, 'detai
 insert into submission (label, description, cut_off_date, status_code, status_date_range_low, status_date_range_high, study_protocol_identifier)
   values ('01', 'description', '9/30/2009', 'OPENED', '1/1/2009', null, 1);
 insert into patient (identifier, assigned_identifier, race_code, sex_code, ethnic_code, birth_date, status_code, status_date_range_low)
-	values (1,'PO001', 'HAWAIIAN', 'FEMALE', 'NOT_HISPANIC', '1/1/1988', 'ACTIVE', '6/1/2009');
+	values (1,'1', 'HAWAIIAN', 'FEMALE', 'NOT_HISPANIC', '1/1/1988', 'ACTIVE', '6/1/2009');
 insert into study_subject (identifier, patient_identifier, study_protocol_identifier, study_site_identifier, payment_method_code, 
             status_code, status_date_range_low, assigned_identifier)
 	values (1, 1, 1, 3, 'PRIVATE', 'ACTIVE', '6/1/2009', 'Patient 001');

@@ -4,7 +4,7 @@
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:set var="topic" scope="request" value="list_accural_submissions"/> 
+<c:set var="topic" scope="request" value="accrual_submissions"/> 
 <head>
 <title><fmt:message key="accrual.list.accrual.submissions.page.header" /></title>
 <s:head />

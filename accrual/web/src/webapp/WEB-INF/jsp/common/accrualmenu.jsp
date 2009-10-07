@@ -12,7 +12,7 @@
         <c:choose>
             <c:when test="${pageContext.request.remoteUser != null}">
                  <c:choose>
-                    <c:when test="${requestScope.topic == 'search_trials'}">
+                    <c:when test="${requestScope.topic == 'trials_intro'}">
                        <li><a href="viewTrials.action" class="selected">Trial Search</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -22,7 +22,7 @@
                 <c:choose>
                     <c:when test="${sessionScope.studyProtocolIi != null}">
                         <c:choose>
-                            <c:when test="${requestScope.topic == 'list_accural_submissions'}">
+                            <c:when test="${(requestScope.topic == 'accrual_submissions') || (requestScope.topic == 'accrual_submitting') || (requestScope.topic == 'accrual_reviewing')}">
                                 <li><a href="accrualSubmissions.action" class="selected">Submissions</a></li> 
                             </c:when>
                             <c:otherwise>
@@ -30,7 +30,7 @@
                             </c:otherwise>
                         </c:choose>
                         <c:choose>
-                            <c:when test="${requestScope.topic == 'list_patients'}">
+                            <c:when test="${(requestScope.topic == 'subjects_intro') || (requestScope.topic == 'subjects_adding') || (requestScope.topic == 'subjects_update')}">
                                 <li><a href="patients.action" class="selected">Study Subject Search</a></li> 
                             </c:when>
                             <c:otherwise>

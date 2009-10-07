@@ -4,6 +4,7 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<c:set var="topic" scope="request" value="trials_intro"/>
 <head>
     <title><fmt:message key="accrual.search.trials.page.title"/></title>   
     <s:head/>
@@ -77,7 +78,6 @@ function handleAction(){
        
        <div class="line"></div>
          <c:if test="${listOfTrials != null}">
-               <c:set var="topic" scope="request" value="search_trials"/>
                 <jsp:include page="/WEB-INF/jsp/listTrials.jsp">
                     <jsp:param name="listOfTrials" value="listOfTrials" />
                 </jsp:include>

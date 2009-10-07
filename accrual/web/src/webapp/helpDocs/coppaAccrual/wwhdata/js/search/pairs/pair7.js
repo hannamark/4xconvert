@@ -1,0 +1,27 @@
+function FileData_Pairs(x)
+{
+x.t("searching","trials");
+x.t("trials","searching");
+x.t("trials","navigating");
+x.t("trials","viewing");
+x.t("trials","section");
+x.t("trials","ctrp");
+x.t("accrual","section");
+x.t("lists","viewing");
+x.t("describes","search");
+x.t("navigating","trial");
+x.t("listed","trials");
+x.t("includes","following");
+x.t("trial","lists");
+x.t("trial","details");
+x.t("search","existing");
+x.t("viewing","searching");
+x.t("viewing","trial");
+x.t("section","describes");
+x.t("section","includes");
+x.t("existing","trials");
+x.t("selecting","listed");
+x.t("ctrp","accrual");
+x.t("topics","selecting");
+x.t("following","topics");
+}

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:set var="topic" scope="request" value="list_accural_submissions"/> 
+<c:set var="topic" scope="request" value="accrual_submitting"/> 
 <head>
     <title><fmt:message key="accrual.new.accrual.submission.page.title"/></title>   
     <s:head/>
