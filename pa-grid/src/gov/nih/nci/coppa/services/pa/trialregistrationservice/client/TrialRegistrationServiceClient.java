@@ -22,6 +22,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
@@ -76,11 +77,14 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
               TrialRegistrationServiceClient client = new TrialRegistrationServiceClient(args[1]);
               // place client calls here if you want to use this main as a
               // test....
+              System.out.println("creating a protocol");
               createInterventionalStudyProtocol(client);
+              System.out.println("updating a protocol");
               updateInterventionalStudyProtocol(client);
+              System.out.println("amending a protocol");
               amendInterventionalStudyProtocol(client);
+              System.out.println("creating a proprietary protocol");
               createProprietaryInterventionalStudyProtocol(client);
-              reject(client);
             } else {
                 usage();
                 System.exit(1);
@@ -149,7 +153,8 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
         StudySite leadOrganizationSiteIdentifier = new StudySite();
         ST localStudyProtocolIdentifier = new ST();
-        localStudyProtocolIdentifier.setValue("createInterventionalStudyProtocolLocalStudyProtocolIdentifier");
+        localStudyProtocolIdentifier.setValue("createInterventionalStudyProtocolLocalStudyProtocolIdentifier"
+                + new Date().getTime());
         leadOrganizationSiteIdentifier.setLocalStudyProtocolIdentifier(localStudyProtocolIdentifier);
 
         StudySite nctIdentifierSiteIdentifier = new StudySite();
@@ -217,24 +222,6 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         d.setText(ISOUtils.buildED("dummy ed".getBytes()));
         Document[] document = new Document[] {d};
 
-        Organization leadOrganization = new Organization();
-        II leadOrgIi = new II();
-        leadOrgIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        leadOrgIi.setExtension("574");
-        leadOrganization.setIdentifier(leadOrgIi);
-
-        Person principalInvestigator = new Person();
-        II principalInvestigatorIi = new II();
-        principalInvestigatorIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        principalInvestigatorIi.setExtension("531");
-        principalInvestigator.setIdentifier(principalInvestigatorIi);
-
-        Organization sponsorOrganization = new Organization();
-        II sponsorOrganizationIi = new II();
-        sponsorOrganizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        sponsorOrganizationIi.setExtension("574");
-        sponsorOrganization.setIdentifier(sponsorOrganizationIi);
-
         StudyContact studyContact = new StudyContact();
         TELEmail email = new TELEmail();
         email.setValue("mailto:example@example.com");
@@ -252,13 +239,13 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
         StudyRegulatoryAuthority studyRegulatoryAuthority = new StudyRegulatoryAuthority();
         StudySite[] collaborators = new StudySite[0];
-        StudySiteAccrualStatus[] participatingSites = new StudySiteAccrualStatus[0];
-        StudySite[] pgCdUpdatedList = new StudySite[0];
+        StudySiteAccrualStatus[] studySiteAccrualStatuses = new StudySiteAccrualStatus[0];
+        StudySite[] studySites = new StudySite[0];
 
-        client.updateInterventionalStudyProtocol(studyProtocol, studyOverallStatus, studySite, studyIndlde, studyResourcing, document,
-                leadOrganization, principalInvestigator, sponsorOrganization, studyContact, studyParticipationContact,
-                summaryForOrganization, summaryForStudyResourcing, responsiblePartyContact, studyRegulatoryAuthority,
-                collaborators, participatingSites, pgCdUpdatedList);
+        client.updateInterventionalStudyProtocol(studyProtocol, studyOverallStatus, studySite, studyIndlde,
+                studyResourcing, document, studyContact, studyParticipationContact, summaryForOrganization,
+                summaryForStudyResourcing, responsiblePartyContact, studyRegulatoryAuthority, collaborators,
+                studySiteAccrualStatuses, studySites);
     }
 
     private static void amendInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException {
@@ -369,9 +356,6 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studySiteOverallStatusCode.setCode(StudyStatusCode.ACTIVE.getCode());
         studySiteOverallStatus.setStatusCode(studySiteOverallStatusCode);
 
-        StudyIndlde[] studyIndlde = new StudyIndlde[0];
-        StudyResourcing[] studyResourcing = new StudyResourcing[0];
-
         Document d = new Document();
         d.setFileName(ISOUtils.buildST("empty.doc"));
         d.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.OTHER.getCode()));
@@ -407,18 +391,9 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Organization summaryForOrganization = new Organization();
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
 
-        client.createProprietaryInterventionalStudyProtocol(studyProtocol, studySiteOverallStatus, studyIndlde,
-                studyResourcing, document, leadOrganization, studySiteInvestigator, leadOrganizationStudySite,
-                studySiteOrganization, studySite, nctIdentifier, summaryForOrganization, summaryForStudyResourcing);
-    }
-
-    private static void reject(TrialRegistrationServiceClient client)  throws RemoteException {
-        Id studyProtocolId = new Id();
-        studyProtocolId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-        studyProtocolId.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        studyProtocolId.setExtension("180462");
-
-        client.reject(studyProtocolId, null);
+        client.createProprietaryInterventionalStudyProtocol(studyProtocol, studySiteOverallStatus, document,
+                leadOrganization, studySiteInvestigator, leadOrganizationStudySite, studySiteOrganization, studySite,
+                nctIdentifier, summaryForOrganization, summaryForStudyResourcing);
     }
 
   public gov.nih.nci.coppa.services.pa.Id createInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person principalInvestigator,gov.nih.nci.coppa.po.Organization sponsorOrganization,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationSiteIdentifier,gov.nih.nci.coppa.services.pa.StudySite nctIdentifierSiteIdentifier,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing,gov.nih.nci.coppa.services.pa.Id responsiblePartyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
@@ -529,7 +504,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
     }
   }
 
-  public void updateInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person principalInvestigator,gov.nih.nci.coppa.po.Organization sponsorOrganization,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing,gov.nih.nci.coppa.services.pa.Id responsiblePartyContact,gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority,gov.nih.nci.coppa.services.pa.StudySite[] collaborators,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] participatingSites,gov.nih.nci.coppa.services.pa.StudySite[] pgCdUpdatedList) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void updateInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing,gov.nih.nci.coppa.services.pa.Id responsiblePartyContact,gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority,gov.nih.nci.coppa.services.pa.StudySite[] collaborators,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] studySiteAccrualStatuses,gov.nih.nci.coppa.services.pa.StudySite[] studySites) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateInterventionalStudyProtocol");
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequest();
@@ -551,15 +526,6 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestDocument documentContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestDocument();
     documentContainer.setDocument(document);
     params.setDocument(documentContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestLeadOrganization leadOrganizationContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestLeadOrganization();
-    leadOrganizationContainer.setOrganization(leadOrganization);
-    params.setLeadOrganization(leadOrganizationContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestPrincipalInvestigator principalInvestigatorContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestPrincipalInvestigator();
-    principalInvestigatorContainer.setPerson(principalInvestigator);
-    params.setPrincipalInvestigator(principalInvestigatorContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestSponsorOrganization sponsorOrganizationContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestSponsorOrganization();
-    sponsorOrganizationContainer.setOrganization(sponsorOrganization);
-    params.setSponsorOrganization(sponsorOrganizationContainer);
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestStudyContact studyContactContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestStudyContact();
     studyContactContainer.setStudyContact(studyContact);
     params.setStudyContact(studyContactContainer);
@@ -581,31 +547,17 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestCollaborators collaboratorsContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestCollaborators();
     collaboratorsContainer.setStudySite(collaborators);
     params.setCollaborators(collaboratorsContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestParticipatingSites participatingSitesContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestParticipatingSites();
-    participatingSitesContainer.setStudySiteAccrualStatus(participatingSites);
-    params.setParticipatingSites(participatingSitesContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestPgCdUpdatedList pgCdUpdatedListContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestPgCdUpdatedList();
-    pgCdUpdatedListContainer.setStudySite(pgCdUpdatedList);
-    params.setPgCdUpdatedList(pgCdUpdatedListContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestStudySiteAccrualStatuses studySiteAccrualStatusesContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestStudySiteAccrualStatuses();
+    studySiteAccrualStatusesContainer.setStudySiteAccrualStatus(studySiteAccrualStatuses);
+    params.setStudySiteAccrualStatuses(studySiteAccrualStatusesContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestStudySites studySitesContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolRequestStudySites();
+    studySitesContainer.setStudySite(studySites);
+    params.setStudySites(studySitesContainer);
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateInterventionalStudyProtocolResponse boxedResult = portType.updateInterventionalStudyProtocol(params);
     }
   }
 
-  public void reject(gov.nih.nci.coppa.services.pa.Id studyProtocol,gov.nih.nci.coppa.services.pa.ST rejectionReason) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"reject");
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.RejectRequest params = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.RejectRequest();
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.RejectRequestStudyProtocol studyProtocolContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.RejectRequestStudyProtocol();
-    studyProtocolContainer.setId(studyProtocol);
-    params.setStudyProtocol(studyProtocolContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.RejectRequestRejectionReason rejectionReasonContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.RejectRequestRejectionReason();
-    rejectionReasonContainer.setST(rejectionReason);
-    params.setRejectionReason(rejectionReasonContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.RejectResponse boxedResult = portType.reject(params);
-    }
-  }
-
-  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteOverallStatus studySiteOverallStatus,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndldes,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcings,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteOverallStatus studySiteOverallStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createProprietaryInterventionalStudyProtocol");
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequest();
@@ -615,12 +567,6 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudySiteOverallStatus studySiteOverallStatusContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudySiteOverallStatus();
     studySiteOverallStatusContainer.setStudySiteOverallStatus(studySiteOverallStatus);
     params.setStudySiteOverallStatus(studySiteOverallStatusContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudyIndldes studyIndldesContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudyIndldes();
-    studyIndldesContainer.setStudyIndlde(studyIndldes);
-    params.setStudyIndldes(studyIndldesContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudyResourcings studyResourcingsContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudyResourcings();
-    studyResourcingsContainer.setStudyResourcing(studyResourcings);
-    params.setStudyResourcings(studyResourcingsContainer);
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestDocuments documentsContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestDocuments();
     documentsContainer.setDocument(documents);
     params.setDocuments(documentsContainer);

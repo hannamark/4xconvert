@@ -137,13 +137,13 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         }
     }
 
+
     /**
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
     public Ii createProprietaryInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
-            StudySiteOverallStatusDTO studySiteOverallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
-            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            StudySiteOverallStatusDTO studySiteOverallStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
@@ -151,9 +151,9 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         // CHECKSTYLE:ON
         try {
             return locator.getTrialRegistrationService().createProprietaryInterventionalStudyProtocol(studyProtocolDTO,
-                    studySiteOverallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
-                    studySiteInvestigatorDTO, leadOrganizationStudySiteDTO, studySiteOrganizationDTO, studySiteDTO,
-                    nctIdentifierDTO, summary4OrganizationDTO, summary4StudyResourcingDTO);
+                    studySiteOverallStatusDTO, documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO,
+                    leadOrganizationStudySiteDTO, studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO,
+                    summary4OrganizationDTO, summary4StudyResourcingDTO);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
@@ -191,14 +191,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
-        try {
-            locator.getTrialRegistrationService().reject(studyProtocolIi, rejectionReason);
-        } catch (PAException pae) {
-            throw pae;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-
+        throw new UnsupportedOperationException("reject not allowed");
     }
 
     /**
@@ -207,19 +200,18 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
     // CHECKSTYLE:OFF
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             StudySiteDTO studySiteDto, List<StudyIndldeDTO> studyIndldeDTOs,
-            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs, OrganizationDTO leadOrgDTO,
-            PersonDTO principalInvestigatorDTO, OrganizationDTO sponsorOrgDTO, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studyParticipationContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudySiteDTO> collaborators,
-            List<StudySiteAccrualStatusDTO> participatingSites, List<StudySiteDTO> pgCdUpdatedList) throws PAException {
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studyParticipationContactDTO,
+            OrganizationDTO summary4organizationDTO, StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudySiteDTO> collaboratorDTOs, List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
+            List<StudySiteDTO> studySiteDTOs) throws PAException {
         // CHECKSTYLE:ON
         try {
             locator.getTrialRegistrationService().update(studyProtocolDTO, overallStatusDTO, studySiteDto,
-                    studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO,
-                    sponsorOrgDTO, studyContactDTO, studyParticipationContactDTO, summary4organizationDTO,
-                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, collaborators,
-                    participatingSites, pgCdUpdatedList);
+                    studyIndldeDTOs, studyResourcingDTOs, documentDTOs, studyContactDTO, studyParticipationContactDTO,
+                    summary4organizationDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
+                    collaboratorDTOs, studySiteAccrualStatusDTOs, studySiteDTOs);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

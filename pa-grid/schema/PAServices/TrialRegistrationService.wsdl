@@ -329,27 +329,6 @@
                 </sequence>
               </complexType>
             </element>
-            <element name="leadOrganization">
-              <complexType>
-                <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-            <element name="principalInvestigator">
-              <complexType>
-                <sequence>
-                  <element ref="ns3:Person" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-            <element name="sponsorOrganization">
-              <complexType>
-                <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
             <element name="studyContact">
               <complexType>
                 <sequence>
@@ -399,14 +378,14 @@
                 </sequence>
               </complexType>
             </element>
-            <element name="participatingSites">
+            <element name="studySiteAccrualStatuses">
               <complexType>
                 <sequence>
                   <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
-            <element name="pgCdUpdatedList">
+            <element name="studySites">
               <complexType>
                 <sequence>
                   <element ref="ns0:StudySite" minOccurs="1" maxOccurs="unbounded" />
@@ -417,31 +396,6 @@
         </complexType>
       </element>
       <element name="UpdateInterventionalStudyProtocolResponse">
-        <complexType>
-          <sequence />
-        </complexType>
-      </element>
-      <element name="RejectRequest">
-        <complexType>
-          <sequence>
-            <element name="studyProtocol">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-            <element name="rejectionReason">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:ST" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="RejectResponse">
         <complexType>
           <sequence />
         </complexType>
@@ -460,20 +414,6 @@
               <complexType>
                 <sequence>
                   <element ref="ns0:StudySiteOverallStatus" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-            <element name="studyIndldes">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:StudyIndlde" minOccurs="1" maxOccurs="unbounded" />
-                </sequence>
-              </complexType>
-            </element>
-            <element name="studyResourcings">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
@@ -576,12 +516,6 @@
   <message name="UpdateInterventionalStudyProtocolResponse">
     <part name="parameters" element="tns:UpdateInterventionalStudyProtocolResponse" />
   </message>
-  <message name="RejectRequest">
-    <part name="parameters" element="tns:RejectRequest" />
-  </message>
-  <message name="RejectResponse">
-    <part name="parameters" element="tns:RejectResponse" />
-  </message>
   <message name="CreateProprietaryInterventionalStudyProtocolRequest">
     <part name="parameters" element="tns:CreateProprietaryInterventionalStudyProtocolRequest" />
   </message>
@@ -610,11 +544,6 @@
     <operation name="updateInterventionalStudyProtocol">
       <input message="tns:UpdateInterventionalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/UpdateInterventionalStudyProtocolRequest" />
       <output message="tns:UpdateInterventionalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/UpdateInterventionalStudyProtocolResponse" />
-      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/PAFaultFaultMessage" />
-    </operation>
-    <operation name="reject">
-      <input message="tns:RejectRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/RejectRequest" />
-      <output message="tns:RejectResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/RejectResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/PAFaultFaultMessage" />
     </operation>
     <operation name="createProprietaryInterventionalStudyProtocol">

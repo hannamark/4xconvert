@@ -92,6 +92,6 @@
 	<classpathentry kind="lib" path="lib/jboss-ejb3x.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-common-3.0rc1.jar"/>
 	<classpathentry kind="lib" path="build/lib/CoreServices-stubs-3.0rc1.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.0-milestone4.3.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.0rc1.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

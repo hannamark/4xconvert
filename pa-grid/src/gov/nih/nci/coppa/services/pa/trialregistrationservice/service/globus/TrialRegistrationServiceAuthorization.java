@@ -67,10 +67,6 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeReject(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-	}
-	   				
 	public void authorizeGetServiceSecurityMetadata(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
@@ -94,9 +90,6 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("updateInterventionalStudyProtocol")){
 			authorizeUpdateInterventionalStudyProtocol(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("reject")){
-			authorizeReject(peerSubject, context, operation);
 			return true;
 		} else if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			authorizeGetServiceSecurityMetadata(peerSubject, context, operation);

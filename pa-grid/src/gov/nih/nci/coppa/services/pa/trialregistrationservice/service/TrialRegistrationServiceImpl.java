@@ -1,11 +1,9 @@
 package gov.nih.nci.coppa.services.pa.trialregistrationservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.IdTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
@@ -76,8 +74,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
-            Ii ii =
-                    service.createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+            Ii ii = service.createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, nctIdentifierSiteIdentifierDTO,
                             studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
@@ -109,8 +106,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
-            Ii ii =
-                    service.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+            Ii ii = service.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                             documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
                             leadOrganizationSiteIdentifierDTO, nctIdentifierSiteIdentifierDTO, studyContactDTO,
                             studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
@@ -122,7 +118,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
         }
     }
 
-  public void updateInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person principalInvestigator,gov.nih.nci.coppa.po.Organization sponsorOrganization,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing,gov.nih.nci.coppa.services.pa.Id responsiblePartyContact,gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority,gov.nih.nci.coppa.services.pa.StudySite[] collaborators,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] participatingSites,gov.nih.nci.coppa.services.pa.StudySite[] pgCdUpdatedList) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void updateInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing,gov.nih.nci.coppa.services.pa.Id responsiblePartyContact,gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority,gov.nih.nci.coppa.services.pa.StudySite[] collaborators,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] studySiteAccrualStatuses,gov.nih.nci.coppa.services.pa.StudySite[] studySites) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             StudyProtocolDTO studyProtocolDTO = InterventionalStudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
             StudyOverallStatusDTO overallStatusDTO = StudyOverallStatusTransformer.INSTANCE.toDto(studyOverallStatus);
@@ -130,9 +126,6 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             List<StudyIndldeDTO> studyIndldeDTOs = StudyIndldeTransformer.INSTANCE.convert(studyIndlde);
             List<StudyResourcingDTO> studyResourcingDTOs = StudyResourcingTransformer.INSTANCE.convert(studyResourcing);
             List<DocumentDTO> documentDTOs = DocumentTransformer.INSTANCE.convert(document);
-            OrganizationDTO leadOrganizationDTO = OrganizationTransformer.INSTANCE.toDto(leadOrganization);
-            PersonDTO principalInvestigatorDTO = PersonTransformer.INSTANCE.toDto(principalInvestigator);
-            OrganizationDTO sponsorOrganizationDTO = OrganizationTransformer.INSTANCE.toDto(sponsorOrganization);
             StudyContactDTO studyContactDTO = StudyContactTransformer.INSTANCE.toDto(studyContact);
             StudySiteContactDTO studySiteContactDTO = StudySiteContactTransformer.INSTANCE.toDto(studySiteContact);
             OrganizationDTO summary4organizationDTO = OrganizationTransformer.INSTANCE.toDto(summaryForOrganization);
@@ -142,40 +135,26 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyRegulatoryAuthorityDTO studyRegAuthDTO =
                     StudyRegulatoryAuthorityTransformer.INSTANCE.toDto(studyRegulatoryAuthority);
             List<StudySiteDTO> collaboratorDTOs = StudySiteTransformer.INSTANCE.convert(collaborators);
-            List<StudySiteAccrualStatusDTO> participatingSiteDTOs =
-                    StudySiteAccrualStatusTransformer.INSTANCE.convert(participatingSites);
-            List<StudySiteDTO> pgCdUpdatedDtoList = StudySiteTransformer.INSTANCE.convert(pgCdUpdatedList);
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs =
+                    StudySiteAccrualStatusTransformer.INSTANCE.convert(studySiteAccrualStatuses);
+            List<StudySiteDTO> studySiteDTOs = StudySiteTransformer.INSTANCE.convert(studySites);
 
             service.update(studyProtocolDTO, overallStatusDTO, studySiteDTO, studyIndldeDTOs, studyResourcingDTOs,
-                    documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
+                    documentDTOs,
                     studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                    responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, participatingSiteDTOs,
-                    pgCdUpdatedDtoList);
+                    responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, studySiteAccrualStatusDTOs,
+                    studySiteDTOs);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
         }
     }
 
-  public void reject(gov.nih.nci.coppa.services.pa.Id studyProtocol,gov.nih.nci.coppa.services.pa.ST rejectionReason) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
-        try {
-            Ii studyProtocolIi = IITransformer.INSTANCE.toDto(studyProtocol);
-            St rejectionReasonDto = STTransformer.INSTANCE.toDto(rejectionReason);
-            service.reject(studyProtocolIi, rejectionReasonDto);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw FaultUtil.reThrowRemote(e);
-        }
-    }
-
-  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteOverallStatus studySiteOverallStatus,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndldes,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcings,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteOverallStatus studySiteOverallStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             StudyProtocolDTO studyProtocolDTO = InterventionalStudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
             StudySiteOverallStatusDTO studySiteOverallStatusDTO =
                     StudySiteOverallStatusTransformer.INSTANCE.toDto(studySiteOverallStatus);
-            List<StudyIndldeDTO> studyIndldeDTOs = StudyIndldeTransformer.INSTANCE.convert(studyIndldes);
-            List<StudyResourcingDTO> studyResourcingDTOs =
-                    StudyResourcingTransformer.INSTANCE.convert(studyResourcings);
             List<DocumentDTO> documentDTOs = DocumentTransformer.INSTANCE.convert(documents);
             OrganizationDTO leadOrganizationDTO = OrganizationTransformer.INSTANCE.toDto(leadOrganization);
             PersonDTO studySiteInvestigatorDTO = PersonTransformer.INSTANCE.toDto(studySiteInvestigator);
@@ -187,9 +166,9 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii ii = service.createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteOverallStatusDTO,
-                            studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
-                            studySiteInvestigatorDTO, leadOrganizationStudySiteDTO, studySiteOrganizationDTO,
-                            studySiteDTO, nctIdentifierDTO, summary4organizationDTO, summary4studyResourcingDTO);
+                            documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
+                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
+                            summary4studyResourcingDTO);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
