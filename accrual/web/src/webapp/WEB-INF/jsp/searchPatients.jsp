@@ -39,6 +39,7 @@ function handleDelete(rowId){
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1><fmt:message key="patient.search.title"/></h1>
  <% 
            

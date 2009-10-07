@@ -32,6 +32,7 @@ function handleAction(){
 
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1><fmt:message key="accrual.new.accrual.submission.page.header"/></h1>
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <s:form name="addNew" validate="true">

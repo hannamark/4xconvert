@@ -28,6 +28,7 @@
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <s:form name="submissionForm"><s:hidden name="selectedRowIdentifier"/> 
+<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1><fmt:message key="accrual.list.accrual.submissions.page.header"/> </h1>
     <accrual:sucessMessage /> 
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>

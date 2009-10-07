@@ -54,6 +54,7 @@ function loadDiv(intid){
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>
     <s:if test="%{currentAction == 'create'}">
         <fmt:message key="patient.create.title" /></s:if>

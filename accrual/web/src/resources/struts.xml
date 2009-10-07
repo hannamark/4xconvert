@@ -70,10 +70,6 @@
             <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
 
-        <action name="participationSiteSelection" class="gov.nih.nci.accrual.web.action.ParticipationSiteSelectionAction">
-            <result name="participation_site_selection">/WEB-INF/jsp/participationSiteSelection.jsp</result>
-        </action>
-
         <action name="accrualSubmissions*" class="gov.nih.nci.accrual.web.action.AccrualSubmissionsAction" method="{1}">
             <result>/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
             <result name="showNewSubmission">/WEB-INF/jsp/newAccrualSubmission.jsp</result>

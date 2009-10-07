@@ -17,6 +17,7 @@ function cancel(){
 
 <body>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1><fmt:message key="accrual.view.accrual.submission.page.header"/></h1>
   
    <s:form name="viewDetails" >

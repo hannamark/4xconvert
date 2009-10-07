@@ -13,6 +13,7 @@
 
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
+ <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
  <h1><fmt:message key="contact.page.header" /></h1>
     <!--Box-->
 

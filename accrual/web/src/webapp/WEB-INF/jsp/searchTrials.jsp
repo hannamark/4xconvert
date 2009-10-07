@@ -25,6 +25,7 @@ function handleAction(){
 </head>
 <body>
 
+<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1><fmt:message key="accrual.search.trials.page.header"/></h1>
   <s:form name="searchTrial">
     <table class="form">

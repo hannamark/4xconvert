@@ -6,7 +6,9 @@
 </head>
 <c:url value="/../registry/registerUser.action" var="createAccountUrl"/>
 <c:url value="/../registry/registerUser.action?resetPassword=true" var="resetPasswordUrl"/>
-<body><h1>Login</h1>
+<body>
+<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
+<h1>Login</h1>
 <div class="box"> 
     <p style="margin:0; padding:0">Please log in to manage Accrual Submissions. 
              If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>. 

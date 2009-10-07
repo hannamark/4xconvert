@@ -19,6 +19,7 @@
           </td>
         <!--/Home Link-->
         </tr></table>
+        <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
         <h1>Accrual Home
         </h1>
 <p class="padme2">
