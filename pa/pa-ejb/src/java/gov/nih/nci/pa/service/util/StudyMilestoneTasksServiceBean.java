@@ -173,7 +173,8 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                         && !checkMilestoneExists(smdto)) {
                     LOG.info("Creating a new milestone with code - initial abstration verify");   
                     StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
-                    newDTO.setCommentText(StConverter.convertToSt("Creating the new milestone"));
+                    newDTO.setCommentText(
+                             StConverter.convertToSt("Milestone auto-set based on Non-Response within 5 days"));
                     newDTO.setMilestoneCode(CdConverter.convertStringToCd(
                                                MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
                     newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
