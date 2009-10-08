@@ -275,7 +275,7 @@ public class PatientRemoteServiceTest
     protected void searchByStatus(PatientDTO searchCriteria, List<PatientDTO> results) {
         // search by status
         searchCriteria.setPostalAddress(null);
-        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.ACTIVE));
+        searchCriteria.setStatus(StatusCodeConverter.convertToCd(EntityStatus.PENDING));
         results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
     }
@@ -284,14 +284,14 @@ public class PatientRemoteServiceTest
     protected void verifyPersonRoleDto(AbstractPersonRoleDTO e, AbstractPersonRoleDTO a) {
         assertEquals(e.getScoperIdentifier().getExtension(), a.getScoperIdentifier().getExtension());
         assertEquals("PT" + e.getPlayerIdentifier().getExtension(), a.getPlayerIdentifier().getExtension());
-        assertEquals("active", a.getStatus().getCode());
+        assertEquals("pending", a.getStatus().getCode());
         assertEquals(e.getPostalAddress().getItem().size(), a.getPostalAddress().getItem().size());
         assertEquals(e.getTelecomAddress().getItem().size(), a.getTelecomAddress().getItem().size());
     }
     
     @Override
     protected void search2StatusChange(PatientDTO sc) {
-        sc.setStatus(RoleStatusConverter.convertToCd(RoleStatus.ACTIVE));
+        sc.setStatus(RoleStatusConverter.convertToCd(RoleStatus.PENDING));
     }
     
 }

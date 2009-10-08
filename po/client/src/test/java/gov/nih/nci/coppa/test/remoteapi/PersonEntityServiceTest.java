@@ -356,7 +356,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, dto.getPostalAddress().getNullFlavor());
         assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, ((Tel) dto.getTelecomAddress().getItem()
                 .iterator().next()).getNullFlavor());
-        assertEquals(RoleStatus.ACTIVE, CdConverter.convertToRoleStatus(dto.getStatusCode()));
+        assertEquals(RoleStatus.PENDING, CdConverter.convertToRoleStatus(dto.getStatusCode()));
         
         // 4 prop fields
         assertEquals(getPatientId().getExtension(), dto.getIdentifier().getExtension());

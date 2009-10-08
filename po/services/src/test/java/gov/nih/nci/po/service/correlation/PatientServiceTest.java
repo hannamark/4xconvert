@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
@@ -168,7 +169,7 @@ public class PatientServiceTest extends AbstractPersonRoleServiceTest<Patient> {
         
         if (ScopedRole.class.isAssignableFrom(Patient.class)) {
             Patient r = createSample();
-            assertEquals(RoleStatus.ACTIVE, r.getStatus());
+            assertEquals(RoleStatus.PENDING, r.getStatus());
             basicOrganization.setStatusCode(EntityStatus.NULLIFIED);
             locator.getOrganizationService().curate(basicOrganization);
             assertEquals(RoleStatus.NULLIFIED, r.getStatus());
@@ -195,6 +196,15 @@ public class PatientServiceTest extends AbstractPersonRoleServiceTest<Patient> {
         }
     }
 
+    @Test
+    public void testCreatePatientWithPendingOrganization() throws Exception {
+        Patient patient = new Patient();
+        createAndGetOrganization();
+        fillinPersonRoleFields(patient);
+        PatientServiceLocal s = (PatientServiceLocal) getService();
+        long patientID = s.create(patient);
+        assertTrue(patientID > 0);
+    }
 
     @Test
     public void testConvertToPatient() throws Exception {

@@ -183,18 +183,22 @@ public class PatientCorrelationServiceTest
         if (super.getCorrelationId() == null) {
             super.createMinimal();
         }
-        Cd cd = new Cd();
-        cd.setCode("SUSPENDED");
-        
+
         super.createConnection();
         ResultSet rs = super.getConnection().createStatement()
             .executeQuery("select status from Patient where id = " + getCorrelationId().getExtension());
         assertTrue(rs.next());
         String oldStatus = rs.getString(1);
         rs.close();
-        assertEquals("ACTIVE", oldStatus);
+        assertEquals("PENDING", oldStatus);
+        Cd cd = new Cd();
+        cd.setCode("ACTIVE");        
         getCorrelationService().updateCorrelationStatus(getCorrelationId(), cd);
 
+        cd = new Cd();
+        cd.setCode("SUSPENDED");        
+        getCorrelationService().updateCorrelationStatus(getCorrelationId(), cd);
+        
         rs = super.getConnection().createStatement()
             .executeQuery("select status from Patient where id = " + getCorrelationId().getExtension());
         assertTrue(rs.next());

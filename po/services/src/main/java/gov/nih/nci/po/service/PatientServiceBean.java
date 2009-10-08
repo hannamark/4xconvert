@@ -113,7 +113,7 @@ public class PatientServiceBean extends AbstractCuratableServiceBean<Patient>
      */
     @Override
     public long create(Patient obj) throws EntityValidationException, JMSException {
-        obj.setStatus(RoleStatus.ACTIVE);
+        obj.setStatus(RoleStatus.PENDING);
         return super.createHelper(obj);
     }
 
