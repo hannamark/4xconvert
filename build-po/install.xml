@@ -224,15 +224,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <filter token="database.xa.driver" value="${database.xa.driver}"/>
     <filter token="database.dialect" value="${database.dialect}"/>
     <filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
-        <!-- added for liquibase -->
-        <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
+    <!-- added for liquibase -->
+    <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
     <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
+    <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress" value="${jboss.server.hostname}"/>
     <filter token="ctep.url" value="${ctep.url}"/>
     <filter token="ctep.username" value="${ctep.username}"/>
     <filter token="ctep.password" value="${ctep.password}"/>
-        <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
-        <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
-        <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
+    <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
+    <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
+    <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
   </filterset>
 
 
@@ -967,21 +968,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             -->
             <filter token="app.log.level" value="${app.log.level}"/>
             <filter token="app.log.level.default" value="${app.log.level.default}"/>
-                        <filter token="app.log.smtp.host" value="${app.log.smtp.host}"/>
-                        <filter token="app.log.smtp.from" value="${app.log.smtp.from}"/>
-                        <filter token="app.log.smtp.to" value="${app.log.smtp.to}"/>
+            <filter token="app.log.smtp.host" value="${app.log.smtp.host}"/>
+            <filter token="app.log.smtp.from" value="${app.log.smtp.from}"/>
+            <filter token="app.log.smtp.to" value="${app.log.smtp.to}"/>
             <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
             <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
+            <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress" value="${jboss.server.hostname}"/>
             <filter token="ctep.url" value="${ctep.url}"/>
             <filter token="ctep.username" value="${ctep.username}"/>
             <filter token="ctep.password" value="${ctep.password}"/>
-                        <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
-                        <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
-                        <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
+            <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
+            <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
+            <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
 
             <!-- PO-GRID: reuses the jboss.server.jndi.port -->
-                        <filter token="pogrid.jndi.principal" value="${pogrid.jndi.principal}"/>
-                        <filter token="pogrid.jndi.credentials" value="${pogrid.jndi.credentials}"/>
+            <filter token="pogrid.jndi.principal" value="${pogrid.jndi.principal}"/>
+            <filter token="pogrid.jndi.credentials" value="${pogrid.jndi.credentials}"/>
           </filterset>
         </copy>
         <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>

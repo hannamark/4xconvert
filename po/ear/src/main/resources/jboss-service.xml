@@ -8,22 +8,22 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
         <depends optional-attribute-name="LoginConfigService">jboss.security:service=XMLLoginConfig</depends>
         <depends optional-attribute-name="SecurityManagerService">jboss.security:service=JaasSecurityManager</depends>
     </mbean>
-	<mbean code="org.jboss.logging.Log4jService" name="jboss.system:type=POLog4jService,service=POLogging"
-		xmbean-dd="resource:xmdesc/Log4jService-xmbean.xml">
-		<attribute name="ConfigurationURL">resource:po-log4j.xml</attribute>
-		<!--
-			Set the org.apache.log4j.helpers.LogLog.setQuiteMode. As of log4j1.2.8 this
-			needs to be set to avoid a possible deadlock on exception at the appender
-			level. See bug#696819.
-		-->
-		<attribute name="Log4jQuietMode">true</attribute>
+    <mbean code="org.jboss.logging.Log4jService" name="jboss.system:type=POLog4jService,service=POLogging"
+        xmbean-dd="resource:xmdesc/Log4jService-xmbean.xml">
+        <attribute name="ConfigurationURL">resource:po-log4j.xml</attribute>
+        <!--
+            Set the org.apache.log4j.helpers.LogLog.setQuiteMode. As of log4j1.2.8 this
+            needs to be set to avoid a possible deadlock on exception at the appender
+            level. See bug#696819.
+        -->
+        <attribute name="Log4jQuietMode">true</attribute>
         <!-- How frequently in seconds the ConfigurationURL is checked for changes -->
-		<attribute name="RefreshPeriod">60</attribute>
-	</mbean>
-    
+        <attribute name="RefreshPeriod">60</attribute>
+    </mbean>
+
     <!--
-    ################################# START deploy\jms\jbossmq-destinations-service.xml ############################# 
-     -->   
+    ################################# START deploy\jms\jbossmq-destinations-service.xml #############################
+     -->
     <mbean code="org.jboss.mq.server.jmx.Topic" name="jboss.mq.destination:service=Topic,name=POTopic">
         <depends optional-attribute-name="DestinationManager">jboss.mq:service=PODestinationManager
         </depends>
@@ -32,8 +32,8 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
         <attribute name="SecurityConf">
             <security>
                 <!--
-                    <role name="guest" read="true" write="true"/> 
-                    <role name="publisher" read="true" write="true" create="false"/> 
+                    <role name="guest" read="true" write="true"/>
+                    <role name="publisher" read="true" write="true" create="false"/>
                     <role name="durpublisher" read="true" write="true" create="true"/>
                 -->
                 <role name="Subscriber" read="true" write="false" create="true" />
@@ -42,10 +42,10 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
             </security>
         </attribute>
     </mbean>
-  
+
     <!--
-    ################################# START deploy\jms\jbossmq-service.xml ############################# 
-     -->  
+    ################################# START deploy\jms\jbossmq-service.xml #############################
+     -->
     <!-- ==================================================================== -->
     <!-- JBossMQ Interceptor chain configuration                              -->
     <!-- ==================================================================== -->
@@ -55,12 +55,12 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
       <depends optional-attribute-name="NextInterceptor">jboss.mq:service=POTracingInterceptor</depends>
       <depends>jboss:service=Naming</depends>
     </mbean>
-    
+
     <mbean code="org.jboss.mq.server.jmx.InterceptorLoader" name="jboss.mq:service=POTracingInterceptor">
       <attribute name="InterceptorClass">org.jboss.mq.server.TracingInterceptor</attribute>
       <depends optional-attribute-name="NextInterceptor">jboss.mq:service=POSecurityManager</depends>
     </mbean>
-    
+
     <mbean code="org.jboss.mq.security.SecurityManager" name="jboss.mq:service=POSecurityManager">
       <attribute name="DefaultSecurityConfig">
         <security>
@@ -70,7 +70,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
       <attribute name="SecurityDomain">java:/jaas/po</attribute>
       <depends optional-attribute-name="NextInterceptor">jboss.mq:service=PODestinationManager</depends>
     </mbean>
-    
+
     <!--
        | The ClientMonitorInterceptor disconnects clients that have been idle for to long.
        | This interceptor is not enabled by default since the server might disconnect clients
@@ -82,7 +82,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
       <depends optional-attribute-name="NextInterceptor">jboss.mq:service=DestinationManager</depends>
     </mbean>
     -->
-    
+
     <!-- A Thread pool service -->
     <mbean code="org.jboss.util.threadpool.BasicThreadPool"
        name="jboss.mq:service=POThreadPool">
@@ -102,42 +102,42 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
        -->
        <attribute name="BlockingMode">run</attribute>
     </mbean>
-    
+
     <!-- ==================================================================== -->
     <!-- System Destinations                                                  -->
     <!-- ==================================================================== -->
-    
+
     <!-- Dead Letter Queue -->
     <mbean code="org.jboss.mq.server.jmx.Queue"
        name="jboss.mq.destination:service=Queue,name=PODLQ">
       <depends optional-attribute-name="DestinationManager">jboss.mq:service=PODestinationManager</depends>
       <depends optional-attribute-name="SecurityManager">jboss.mq:service=POSecurityManager</depends>
-    </mbean>     
-    
-  
+    </mbean>
+
+
     <!--
-    ################################# START deploy\jms\jvm-il-service.xml ############################# 
-     -->    
+    ################################# START deploy\jms\jvm-il-service.xml #############################
+     -->
     <!-- JBossMQ in memory "communication -->
-    
+
     <mbean code="org.jboss.mq.il.jvm.JVMServerILService"
        name="jboss.mq:service=POInvocationLayer,type=JVM">
       <depends optional-attribute-name="Invoker">jboss.mq:service=POInvoker</depends>
       <attribute name="ConnectionFactoryJNDIRef">java:/POConnectionFactory</attribute>
       <attribute name="XAConnectionFactoryJNDIRef">java:/POXAConnectionFactory</attribute>
       <attribute name="PingPeriod">0</attribute>
-    </mbean>  
-    
+    </mbean>
+
       <!--
-     ################################# START deploy\jms\uil2-service.xml ############################# 
-      -->     
-    
+     ################################# START deploy\jms\uil2-service.xml #############################
+      -->
+
     <!-- JBossMQ using the Unified Invocation Layer
         All communication uses one socket connection -->
-    
+
     <mbean code="org.jboss.mq.il.uil2.UILServerILService"
        name="jboss.mq:service=POInvocationLayer,type=UIL2">
-    
+
       <!-- The server chain -->
      <depends optional-attribute-name="Invoker">jboss.mq:service=POInvoker</depends>
      <!-- JNDI binding -->
@@ -146,6 +146,10 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
      <attribute name="XAConnectionFactoryJNDIRef">POXAConnectionFactory</attribute>
      <!-- The bind address -->
      <attribute name="BindAddress">${jboss.bind.address}</attribute>
+     <!-- The connect address - The hostname/ip address passed to the client as the address that should be used to
+          connect to the server. This may be needed when a client connects through a firewall/proxy. The hostname is
+          not resolved until its used on the client side using the InetAddress.getName(String) method. -->
+     <attribute name="ConnectAddress">${jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress}</attribute>
      <!-- The bind port -->
      <attribute name="ServerBindPort">${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}</attribute>
      <!-- The ping period in millis -->
@@ -166,8 +170,8 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
      <!-- It must be larger than the buffer size -->
       <attribute name="ChunkSize">1000000</attribute>
     </mbean>
-    
-    <!-- Aliases UIL -> UIL2 for backwards compatibility 
+
+    <!-- Aliases UIL -> UIL2 for backwards compatibility
         the deprecated UIL deployment can be found in docs/examples/jca -->
     <mbean code="org.jboss.naming.NamingAlias" name="jboss.mq:service=POInvocationLayer,type=UIL">
        <attribute name="FromName">POUILConnectionFactory</attribute>
@@ -191,7 +195,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
        <attribute name="ToName">POXAConnectionFactory</attribute>
        <depends>jboss:service=Naming</depends>
     </mbean>
-    
+
     <!--
        Two JNDI bindings that act like jms client connections remotely
        but have j2ee defined semantics inside JBoss
@@ -210,16 +214,16 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
        <attribute name="LocalJndiName">java:/POJmsXA</attribute>
        <depends>jboss:service=Naming</depends>
     </mbean>
-   
+
     <!--
-    ################################# START docs\examples\jms\postgres-jdbc2-service.xml ############################# 
-     -->        
+    ################################# START docs\examples\jms\postgres-jdbc2-service.xml #############################
+     -->
 
     <!-- ==================================================================== -->
     <!-- Persistence and caching using Postgres                               -->
     <!-- IMPORTANT: Remove hsqldb-jdbc2-service.xml                           -->
     <!-- ==================================================================== -->
-    
+
     <!--
        | The destination manager is the core service within JBossMQ
     -->
@@ -228,7 +232,7 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
       <depends optional-attribute-name="PersistenceManager">jboss.mq:service=POPersistenceManager</depends>
       <depends optional-attribute-name="StateManager">jboss.mq:service=POStateManager</depends>
     </mbean>
-    
+
     <!--
        | The MessageCache decides where to put JBossMQ message that
        | are sitting around waiting to be consumed by a client.
@@ -244,13 +248,13 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
       <attribute name="MaxMemoryMark">60</attribute>
       <attribute name="CacheStore">jboss.mq:service=POPersistenceManager</attribute>
     </mbean>
-    
+
     <!-- The PersistenceManager is used to store messages to disk. -->
-    <!-- 
+    <!--
        | The jdbc2 PersistenceManager is the new improved JDBC implementation.
-       | This implementation allows you to control how messages are stored in 
+       | This implementation allows you to control how messages are stored in
        | the database.
-       | 
+       |
        | This jdbc2 PM configuration has was supplied by Stephane Nicoll in the forums as an example for Postgres
      -->
     <mbean code="org.jboss.mq.pm.jdbc2.PersistenceManager"
@@ -285,18 +289,18 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
       <!--attribute name="RecoveryTimeout">0</attribute-->
       <!-- The number of blobs to load at once during message recovery -->
       <attribute name="RecoverMessagesChunk">0</attribute>
-    </mbean> 
-  
-   
+    </mbean>
+
+
     <!--
-    ################################# START deploy\jms\hsqldb-jdbc-state-service.xml ############################# 
-     -->    
-  
+    ################################# START deploy\jms\hsqldb-jdbc-state-service.xml #############################
+     -->
+
     <!-- ==================================================================== -->
     <!-- JBossMQ State Management using HSQLDB                                -->
     <!-- See docs/examples/jms for other configurations                       -->
     <!-- ==================================================================== -->
-     
+
     <!-- A Statemanager that stores state in the database -->
     <mbean code="org.jboss.mq.sm.jdbc.JDBCStateManager"
             name="jboss.mq:service=POStateManager">
@@ -333,6 +337,6 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
         POPULATE.TABLES.13 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('durpublisher','dynsub')
         POPULATE.TABLES.14 = INSERT INTO JMS_ROLES (ROLEID, USERID) VALUES ('noacc','nobody')
       </attribute>
-    </mbean>  
-      
+    </mbean>
+
 </server>
