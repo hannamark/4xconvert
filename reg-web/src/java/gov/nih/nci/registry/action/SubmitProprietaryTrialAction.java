@@ -325,6 +325,8 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
         TrialUtil util = new TrialUtil();
         try {
             StudyProtocolDTO studyProtocolDTO = convertToInterventionalStudyProtocolDTO(trialDTO);
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.
+                    getRequest().getRemoteUser()));
             StudySiteOverallStatusDTO siteOverallStatusDTO = convertToStudySiteOverallStatusDTO(trialDTO);
             
             OrganizationDTO leadOrganizationDTO = new OrganizationDTO();

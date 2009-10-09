@@ -845,7 +845,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             //get the studyProtocol DTO
             StudyProtocolDTO spDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
-            
+            spDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser()));
             //set the NCT number 
             StudySiteDTO ssDto = util.getStudySite(studyProtocolIi, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
             if (ssDto != null) {

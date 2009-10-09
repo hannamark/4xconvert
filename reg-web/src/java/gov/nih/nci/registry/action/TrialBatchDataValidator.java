@@ -160,9 +160,6 @@ public class TrialBatchDataValidator {
                 fieldErr.append("NCI Trial Identifier is required. \n");
             }
             fieldErr.append(validateSponsorContactInfo(batchDto));
-            if (PAUtil.isEmpty(batchDto.getNctNumber())) {
-                fieldErr.append("NCT Number is required. \n");
-            }
             if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())
                     && !StudyStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(batchDto.getCurrentTrialStatus())) {
                 fieldErr.append("Please enter valid value for Current Trial Status");
@@ -716,9 +713,6 @@ public class TrialBatchDataValidator {
             if (batchDto.getCurrentTrialStatus().equalsIgnoreCase("In Review")) {
                 fieldErr.append("To Amend Submission of pre-IRB approved study replace " 
                   + " current trial status 'In-Review' with 'Approved'");
-            }
-            if (PAUtil.isEmpty(batchDto.getNctNumber())) {
-                fieldErr.append("NCT Number is required. \n");
             }
 
         }
