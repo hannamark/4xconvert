@@ -55,12 +55,15 @@ function handleDelete(studyResourcingId){
         <display:column property="name" titleKey="participatingOrganizations.name" class="sortable" />
         <display:column property="status" titleKey="participatingOrganizations.status" class="sortable" />
         <display:column property="investigator" titleKey="participatingOrganizations.investigators"/>
+        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
+        					|| (sessionScope.role == 'SuAbstractor')}">
         <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
         <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
         </display:column>
         <display:column titleKey="participatingOrganizations.unlink" headerClass="centered" class="action" >
         <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Un-link" width="16" height="16"/></s:a>
         </display:column>
+        </c:if>
     </display:table>
     </td></tr>
     </table>
