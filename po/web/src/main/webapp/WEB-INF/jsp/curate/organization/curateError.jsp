@@ -17,12 +17,9 @@ An error occurred when merging this Organization's associated correlations into 
             <div class="box_white">
                 <table class="data">
                 <c:forEach items="${associatedPlayedRolesForOrganization}" var="item">
-                    <c:url var="curateUrl" value="/protected/organization/curate/start.action">
-                        <c:param name="organization.id" value="${organization.id}"/>
-                    </c:url>
                     <tr>
                     <td>
-                        <fmt:message key="${item.class.simpleName}"/> (${item.id}) 
+                        <fmt:message key="${item.class.simpleName}"/> (${item.id})
                     </td>
                     <td>
                         <c:url var="editUrl" value="/protected/roles/organizational/${item.class.simpleName}/input.action">
@@ -45,7 +42,7 @@ An error occurred when merging this Organization's associated correlations into 
                     </c:url>
                     <tr>
                     <td>
-                        <fmt:message key="${item.class.simpleName}"/> (${item.id}) for Person ID (${item.player.id}) 
+                        <fmt:message key="${item.class.simpleName}"/> (${item.id}) for Person ID (${item.player.id})
                     </td>
                     <td>
                         <po:buttonRow>
@@ -70,16 +67,13 @@ An error occurred when merging this Organization's associated correlations into 
             <div class="box_white">
                 <table class="data">
                 <c:forEach items="${associatedPlayedRolesForDuplicateOfOrganization}" var="item">
-                    <c:url var="curateUrl" value="/protected/organization/curate/start.action">
-                        <c:param name="organization.id" value="${organization.id}"/>
-                    </c:url>
                     <tr>
                     <td>
-                        <fmt:message key="${item.class.simpleName}"/> (${item.id}) 
+                        <fmt:message key="${item.class.simpleName}"/> (${item.id})
                     </td>
                     <td>
                         <c:url var="editUrl" value="/protected/roles/organizational/${item.class.simpleName}/input.action">
-                            <c:param name="organization" value="${organization.id}"/>
+                            <c:param name="organization" value="${duplicateOf.id}"/>
                             <c:param name="role.id" value="${item.id}"/>
                         </c:url>
                         <po:buttonRow>
