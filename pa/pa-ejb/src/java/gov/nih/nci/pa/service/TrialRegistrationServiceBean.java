@@ -82,7 +82,6 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -142,6 +141,8 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -566,25 +567,33 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 smDto.setCommentText(rejectionReason);
                 studyMilestoneService.create(smDto);                
             } else {
-            Ii targetSpIi = null;
+            Ii targetSpIi = studyProtocolIi;
             Ii sourceSpIi = null;
-            StudyRelationshipDTO srDto = new StudyRelationshipDTO();
-            srDto.setTargetStudyProtocolIdentifier(studyProtocolIi);
+            // search the StudyProtocol to get the latest accepted protocol.
             LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
-            List<StudyRelationshipDTO> dtos = null;
-            try {
-                dtos = studyRelationshipService.search(srDto, limit);
-            } catch (TooManyResultsException e) {
-                throw new PAException(e);
+            StudyProtocolDTO studyToSearch = new StudyProtocolDTO();
+            studyToSearch.setAssignedIdentifier(studyProtocolDto.getAssignedIdentifier());
+            studyToSearch.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+            
+            List<StudyProtocolDTO> spList = studyProtocolService.search(studyToSearch, limit);
+            if (spList != null && !spList.isEmpty()) {
+              Collections.sort(spList, new Comparator<StudyProtocolDTO>() {
+                public int compare(StudyProtocolDTO o1, StudyProtocolDTO o2) {
+                     return o1.getSubmissionNumber().getValue()
+                                 .compareTo(o2.getSubmissionNumber().getValue());
+                 }
+      
+             });
+              sourceSpIi = spList.get(spList.size() - 1).getIdentifier(); 
             }
-    
-            for (StudyRelationshipDTO dto : dtos) {
-                targetSpIi = dto.getTargetStudyProtocolIdentifier(); // same == target == original - 30599
-                sourceSpIi = dto.getSourceStudyProtocolIdentifier(); // old == copy == source - 30605 copied 
-                break;
+            if (spList == null || spList.isEmpty()) {
+             throw new PAException("Discrepancies occured while Rejecting the Amended Protocol");
+            }
+            if (sourceSpIi == null) {
+             throw new PAException("Discrepancies occured while Rejecting the Amended Protocol");
             }
             if (targetSpIi == null) {
-                throw new PAException("Study Relationshit not found for the Amended Protocol");
+                throw new PAException("Study Relationship not found for the Amended Protocol");
                
             }
             InterventionalStudyProtocolDTO sourceSpDto = 
