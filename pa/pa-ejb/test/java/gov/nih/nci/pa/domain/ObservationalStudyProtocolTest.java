@@ -149,6 +149,7 @@ public class ObservationalStudyProtocolTest {
         osp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
         osp.setUserLastUpdated("Abstractor");
         osp.setProprietaryTrialIndicator(Boolean.FALSE);
+        osp.setSubmissionNumber(1);
         return osp;
     }
     

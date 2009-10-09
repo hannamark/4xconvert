@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -563,7 +564,7 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
              }
        }
        if (errorBuffer.length() > 0) {
-           throw new PAException("Validation Exception " + errorBuffer.toString());
+           throw new PADuplicateException("Validation Exception " + errorBuffer.toString());
        }
     }        
     

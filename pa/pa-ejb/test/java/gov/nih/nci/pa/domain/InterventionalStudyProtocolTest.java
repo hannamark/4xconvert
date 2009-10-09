@@ -173,6 +173,7 @@ public class InterventionalStudyProtocolTest {
         isp.setAllocationCode(AllocationCode.NA);
         isp.setDelayedpostingIndicator(Boolean.FALSE);
         isp.setProprietaryTrialIndicator(Boolean.FALSE);
+        isp.setSubmissionNumber(1);
         return isp;
     }
     

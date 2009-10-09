@@ -1504,7 +1504,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (PAUtil.isEmpty(siteLocalTrialIdentifier)) {
             addFieldError("siteLocalTrialIdentifier", getText("error.siteLocalTrialIdentifier.required"));
         }
-        if (PAUtil.isEmpty(personContactWebDTO.getSelectedPersId().toString())) {
+        if (personContactWebDTO.getSelectedPersId() == null) {
             addFieldError("personContactWebDTO.selectedPersId", getText("error.selectedPersId.required"));
         }
         if (PAUtil.isEmpty(statusCode)) {

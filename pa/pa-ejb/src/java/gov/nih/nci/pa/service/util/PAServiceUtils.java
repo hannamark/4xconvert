@@ -89,7 +89,9 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
@@ -97,12 +99,14 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
@@ -115,6 +119,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyPaService;
@@ -129,13 +134,17 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -714,10 +723,14 @@ public class PAServiceUtils {
     @SuppressWarnings(UNCHECKED)
     public void enforceNoDuplicateIndIde(List<StudyIndldeDTO> studyIndldeDTOs, StudyProtocolDTO studyProtocolDTO) 
     throws PAException {
-     
+        StringBuffer errorMsg = new StringBuffer();
         if (studyIndldeDTOs != null  && !studyIndldeDTOs.isEmpty()) {
             for (int i = 0; i < studyIndldeDTOs.size(); i++) {
                 StudyIndldeDTO sp = (StudyIndldeDTO) studyIndldeDTOs.get(i);
+                if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyIndIdeIi(
+                        Long.valueOf(sp.getIdentifier().getExtension())))) {
+                    errorMsg.append("Ind/Ide id " + sp.getIdentifier().getExtension() + " does not exist");
+                }
                 for (int j = ++i; j < studyIndldeDTOs.size(); j++) {
                     StudyIndldeDTO newType = (StudyIndldeDTO) studyIndldeDTOs.get(j);        
                     boolean sameType = newType.getIndldeTypeCode().getCode().equals(sp.getIndldeTypeCode().getCode());
@@ -729,7 +742,10 @@ public class PAServiceUtils {
                 }
             }
             if (!BlConverter.covertToBool(studyProtocolDTO.getFdaRegulatedIndicator())) {
-                new PAException("FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.");
+                errorMsg.append("FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.");
+            }
+            if (errorMsg.length() > 1) {
+                new PAException(errorMsg.toString());
             }
         }  
     }    
@@ -740,9 +756,15 @@ public class PAServiceUtils {
      */
     @SuppressWarnings(UNCHECKED)
     public void enforceNoDuplicateGrants(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
+        StringBuffer errorMsg = new StringBuffer();
         if (studyResourcingDTOs != null  && !studyResourcingDTOs.isEmpty()) {
             for (int i = 0; i < studyResourcingDTOs.size(); i++) {
                 StudyResourcingDTO sp =  studyResourcingDTOs.get(i);
+                if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyIndIdeIi(
+                        Long.valueOf(sp.getIdentifier().getExtension())))) {
+                    errorMsg.append("Grant id " + sp.getIdentifier().getExtension() + " does not exist");
+                }
+
                 for (int j = ++i; j < studyResourcingDTOs.size(); j++) {
                     StudyResourcingDTO newType =  studyResourcingDTOs.get(j);
                     boolean sameFundingMech = newType.getFundingMechanismCode().getCode().
@@ -757,6 +779,9 @@ public class PAServiceUtils {
                           throw new PADuplicateException("Duplicates Grants are not allowed.");
                     }
                }
+           }
+           if (errorMsg.length() > 1) {
+               new PAException(errorMsg.toString());
            }
        }  
     }
@@ -788,6 +813,7 @@ public class PAServiceUtils {
     public void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO, 
                                          List<StudySiteAccrualStatusDTO> participatingSites, 
                                          StudyRecruitmentStatusDTO recruitmentStatusDto) throws PAException {
+        StringBuffer errorMsg = new StringBuffer();
         if (participatingSites != null && !participatingSites.isEmpty()) { 
                if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
                       equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
@@ -795,6 +821,12 @@ public class PAServiceUtils {
                   StudySiteAccrualStatusDTO latestDTO = null;
                   List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
                   for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
+                      if (PAUtil.isIiNotNull(studySiteAccuralStatus.getStudySiteIi())
+                              && !isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(
+                                      studySiteAccuralStatus.getStudySiteIi().getExtension())))) {
+                          errorMsg.append("Study Site Id " + studySiteAccuralStatus.getStudySiteIi().getExtension() 
+                                  + " does not exit");
+                      }
                       Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
                       //base condition if one of the newly changed status is recruiting ;then break
                       if (latestId == null) {
@@ -895,5 +927,111 @@ public class PAServiceUtils {
           }
       } 
   }    
+    /**
+     * 
+     * @param studyProtocolIi Ii
+     * @param msc milestonCode
+     * @param commentText text
+     * @throws PAException e
+     */
     
+    public void createMilestone(Ii studyProtocolIi, MilestoneCode msc, St commentText) throws PAException {
+        StudyMilestoneDTO smDto = new StudyMilestoneDTO();
+        smDto.setMilestoneDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
+        smDto.setStudyProtocolIdentifier(studyProtocolIi);
+        smDto.setMilestoneCode(CdConverter.convertToCd(msc));
+        smDto.setCommentText(commentText);
+        StudyPaService<StudyMilestoneDTO>  spService = getRemoteService(IiConverter.convertToStudyMilestoneIi(null));
+        spService.create(smDto);
+    }
+    /**
+     * 
+     * @param documentDTOs listOf doc
+     * @param docTypeCode type code
+     * @return s
+     */
+    public boolean isDocumentInList(List<DocumentDTO> documentDTOs, DocumentTypeCode docTypeCode) {
+        boolean retValue = false;
+        for (DocumentDTO doc : documentDTOs) {
+            if (docTypeCode.getCode().equals(
+                        CdConverter.convertCdToString(doc.getTypeCode()))) {
+                retValue = true;
+            }
+        }  
+     return retValue;   
+    }
+    /**
+     * 
+     * @param poIi po  Ii
+     * @return true
+     */
+    public boolean isIiExistInPO(Ii poIi) {
+        boolean retValue = false;
+        if (PAUtil.isIiNull(poIi)) {
+            retValue = false;
+            return retValue;
+        }
+        if (IiConverter.ORG_IDENTIFIER_NAME.equals(poIi.getIdentifierName())) {  
+            OrganizationDTO poOrg = null;
+            try {
+                poOrg = PoRegistry.getOrganizationEntityService().
+                    getOrganization(IiConverter.convertToPoOrganizationIi(poIi.getExtension()));
+                if (poOrg != null) {
+                    retValue = true;
+                }
+
+            } catch (NullifiedEntityException e) {
+                retValue = false;
+            } catch (PAException e) {
+                retValue = false;
+            }
+        }
+        if (IiConverter.PERSON_IDENTIFIER_NAME.equalsIgnoreCase(poIi.getIdentifierName())
+                || IiConverter.PERSON_ROOT.equalsIgnoreCase(poIi.getRoot())) {
+            PersonDTO poPerson = null;
+            try {
+               poPerson = PoRegistry.getPersonEntityService().getPerson(IiConverter.
+                       convertToPoPersonIi(poIi.getExtension())); 
+               if (poPerson != null) {
+                   retValue = true;
+               } 
+            } catch (NullifiedEntityException e) {
+                retValue = false;
+            } catch (PAException e) {
+                retValue = false;
+            }
+        }
+        if (IiConverter.ORGANIZATIONAL_CONTACT_ROOT.equalsIgnoreCase(poIi.getRoot())) {
+            try {
+                OrganizationalContactDTO  contactDto = PoRegistry.
+                    getOrganizationalContactCorrelationService().getCorrelation(poIi);
+                if (contactDto != null) {
+                    retValue = true;
+                }
+            } catch (NullifiedRoleException e) {
+                retValue = false;
+            } catch (PAException e) {
+                retValue = false;
+            }
+        }
+        return retValue;
+    }
+    /**
+     * 
+     * @param paIi Ii
+     * @return s
+     */
+    public boolean isIiExistInPA(Ii paIi) {
+        boolean retValue = false;
+        try {
+            StudyPaService<StudyDTO> paService = getRemoteService(paIi);
+            StudyDTO dto = paService.get(paIi);
+            if (dto != null) {
+                retValue = true;
+            }
+        } catch (PAException e) {
+            retValue = false;
+        }
+     return retValue;   
+    }
 }

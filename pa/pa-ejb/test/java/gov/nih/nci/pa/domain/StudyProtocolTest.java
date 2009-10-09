@@ -292,6 +292,7 @@ public class StudyProtocolTest  {
         isp.setDesignConfigurationCode(DesignConfigurationCode.CROSSOVER);
         isp.setNumberOfInterventionGroups(Integer.valueOf(5));
         isp.setProprietaryTrialIndicator(Boolean.FALSE);
+        isp.setSubmissionNumber(Integer.valueOf(1));
         return isp;
     }
     

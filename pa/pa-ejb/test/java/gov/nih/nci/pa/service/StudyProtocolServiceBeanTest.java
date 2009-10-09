@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -396,6 +397,7 @@ public class StudyProtocolServiceBeanTest {
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
         TestSchema.addUpdObject(sp);
         
         StudyProtocolDTO spDto = remoteEjb.getStudyProtocol(IiConverter.convertToIi(sp.getId()));

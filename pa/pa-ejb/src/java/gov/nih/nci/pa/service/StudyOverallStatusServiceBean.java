@@ -287,14 +287,14 @@ extends AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus
         }
         StudyOverallStatusDTO  currentDBdto = getCurrentByStudyProtocol(studyProtocolIi);
         StudyStatusCode currentStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
-        Timestamp currentStatusDate = PAUtil.dateStringToTimestamp(currentDBdto.getStatusDate().toString());
+        Timestamp currentStatusDate = TsConverter.convertToTimestamp(currentDBdto.getStatusDate());
         
-        boolean codeChanged = (StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode()) == null)
-                ? (currentStatusCode != null) 
-                        : !StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode()).equals(currentStatusCode);
+        StudyStatusCode newStatusCode =  StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode());
+        Timestamp newStatusDate = TsConverter.convertToTimestamp(newStatusDto.getStatusDate());
+        boolean codeChanged = (newStatusCode == null)
+                ? (currentStatusCode != null) : !newStatusCode.equals(currentStatusCode);
         boolean statusDateChanged = (currentStatusDate == null) 
-                ? (PAUtil.dateStringToTimestamp(newStatusDto.getStatusDate().toString()) != null) 
-                : !currentStatusDate.equals(PAUtil.dateStringToTimestamp(newStatusDto.getStatusDate().toString()));
+                ? (newStatusDate != null) : !currentStatusDate.equals(newStatusDate);
         if (!codeChanged && !statusDateChanged) {
             statusOrDateChanged = false;
         }

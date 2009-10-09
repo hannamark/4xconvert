@@ -87,6 +87,7 @@ import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -130,6 +131,7 @@ public class InterventionalStudyProtocolDTOTest {
         ispDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
         ispDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
         ispDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        ispDTO.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));
         return ispDTO;
     }
 

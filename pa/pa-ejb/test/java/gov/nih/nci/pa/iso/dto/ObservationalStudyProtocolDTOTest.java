@@ -125,6 +125,7 @@ public class ObservationalStudyProtocolDTOTest {
         ospDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
         ospDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
         ospDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        ospDTO.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));
         return ospDTO;
     }
 

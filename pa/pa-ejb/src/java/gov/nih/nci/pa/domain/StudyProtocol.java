@@ -103,6 +103,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.NotNull;
 
 /**
  * An action plan and execution of a pre-clinical or clinical study including
@@ -919,6 +920,7 @@ public class StudyProtocol extends AbstractEntity {
      * @return the submissionNumber
      */
     @Column(name = "SUBMISSION_NUMBER")
+    @NotNull
     public Integer getSubmissionNumber() {
         return submissionNumber;
     }
