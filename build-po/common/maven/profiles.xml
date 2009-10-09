@@ -37,7 +37,7 @@
                 <!-- jndi.properties -->
                 <jboss.naming.port>%%jboss.server.jndi.port%%</jboss.naming.port>
                 <jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>%%jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort%%</jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>
-                <jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress>%%jboss.server.hostname%%</jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress>
+                <jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress>%%jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress%%</jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress>
 
                 <!-- SMM: Preliminary: used to drive Selenium tests
                 <jboss.port>@jboss.server.port@</jboss.port>
