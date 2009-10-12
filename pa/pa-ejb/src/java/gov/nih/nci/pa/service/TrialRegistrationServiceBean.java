@@ -811,7 +811,15 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 IiConverter.convertToStudyResourcingIi(null) , studyProtocolIi);
         
         if (UPDAT.equalsIgnoreCase(operation)) {
-            paServiceUtils.createOrUpdate(collaborators, IiConverter.convertToStudySiteIi(null) , studyProtocolIi);
+            List<StudySiteDTO> collaboratorDTOs  = new ArrayList<StudySiteDTO>();
+            if (collaborators != null  && !collaborators.isEmpty()) {
+                for (StudySiteDTO collaborator : collaborators) {
+                    StudySiteDTO dbCollaborator = studySiteService.get(collaborator.getIdentifier());
+                    dbCollaborator.setFunctionalCode(collaborator.getFunctionalCode());
+                    collaboratorDTOs.add(dbCollaborator);
+                }
+            }
+            paServiceUtils.createOrUpdate(collaboratorDTOs, IiConverter.convertToStudySiteIi(null) , studyProtocolIi);
             updateParticipatingSites(participatingSites);
             paServiceUtils.createOrUpdate(pgCdUpdatedList, IiConverter.convertToStudySiteIi(null) , studyProtocolIi);
             if (studyRegAuthDTO != null) {

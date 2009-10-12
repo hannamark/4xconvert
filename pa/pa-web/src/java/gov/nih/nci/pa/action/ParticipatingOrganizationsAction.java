@@ -300,6 +300,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             return;
         }
         StudySiteDTO sp;
+        String errorOrgName = "editOrg.name";
         if (tab.getStudyParticipationId() != null) {
             sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
             Integer iTargetAccrual = (targetAccrualNumber == null) ? null : Integer.parseInt(targetAccrualNumber);
@@ -308,7 +309,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 try {
                     sp = sPartService.update(sp);
                 } catch (PADuplicateException e) {
-                    addFieldError("editOrg.name", e.getMessage());
+                    addFieldError(errorOrgName, e.getMessage());
                     return;
                 }
             }
@@ -326,7 +327,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             try {
                 sp = sPartService.create(sp);
             } catch (PADuplicateException e) {
-                addFieldError("editOrg.name", e.getMessage());
+                addFieldError(errorOrgName, e.getMessage());
                 return;
             }
         }
@@ -1499,7 +1500,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     private void enforceBusinessRulesForProprietary() {
         if (PAUtil.isEmpty(editOrg.getIdentifier())) {
-            addFieldError("editOrg.identifier", getText("error.orgId.required"));
+            addFieldError("editOrg.name", getText("error.orgId.required"));
         }
         if (PAUtil.isEmpty(siteLocalTrialIdentifier)) {
             addFieldError("siteLocalTrialIdentifier", getText("error.siteLocalTrialIdentifier.required"));

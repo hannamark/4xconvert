@@ -27,7 +27,10 @@
 
 <script type="text/javascript">
 
-    addCalendar("Cal1", "Select Date", "recStatusDate", "facility");
+    addCalendar("Cal1", "Select Date", "recStatusDate", "recStatusDate");
+    addCalendar("Cal2", "Select Date", "dateOpenedForAccrual", "dateOpenedForAccrual");
+    addCalendar("Cal3", "Select Date", "dateClosedForAccrual", "dateClosedForAccrual");
+
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
     var orgid;
@@ -116,6 +119,11 @@
         <td scope="row" class="label"><s:label for="local Trial Identifier"><fmt:message key="proprietary.siteidentifier"/></s:label><span class="required">*</span></td>
     <td>
         <s:textfield name="siteLocalTrialIdentifier" id="siteLocalTrialIdentifier" maxlength="20" size="200" cssStyle="width: 200px" />
+        <span class="formErrorMsg">
+        <s:fielderror>
+            <s:param>siteLocalTrialIdentifier</s:param>
+        </s:fielderror>                            
+        </span>
     </td>
     </tr>
     <tr>
@@ -129,7 +137,7 @@
     </td>
     </tr>
     <tr>
-      <td scope="row" class="label"><label for="siteProgramCode"><fmt:message key="proprietary.sitePrgCode"/><span class="required">*</span></label></td>
+      <td scope="row" class="label"><label for="siteProgramCode"><fmt:message key="proprietary.sitePrgCode"/></label></td>
       <td class="value">
         <s:textfield name="siteProgramCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
         <span class="formErrorMsg">
@@ -156,7 +164,7 @@
     <tr>
         <td scope="row" class="label"><label for="statusDate">
             <fmt:message key="site.currentTrialStatusDate" /><span class="required">*</span></label></td>
-        <td class="value"><s:textfield name="recStatusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+        <td class="value"><s:textfield name="recStatusDate" id="recStatusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
                     <span class="formErrorMsg"> 
