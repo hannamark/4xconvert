@@ -123,6 +123,23 @@
             <c:out value="${sessionScope.trialSummary.nciIdentifier}"/>
         </td>
     </tr>
+      <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+      <tr>
+        <td scope="row" class="label"><label for="studyPhase">
+            <label for="officialTitle">
+             <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
+        <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
+        <td>
+            <s:select headerKey="" headerValue="" name="gtdDTO.phaseCode" list="#phaseCodeValues" 
+                value="gtdDTO.phaseCode" cssStyle="width:120px" />
+            <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.phaseCode</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+    </c:if>
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">

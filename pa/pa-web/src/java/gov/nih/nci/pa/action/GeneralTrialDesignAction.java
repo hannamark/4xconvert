@@ -94,6 +94,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -252,6 +253,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         gtdDTO.setAssignedIdentifier(spDTO.getAssignedIdentifier().getExtension());
         gtdDTO.setAcronym(spDTO.getAcronym().getValue());
         gtdDTO.setKeywordText(spDTO.getKeywordText().getValue());
+        gtdDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
         if (!PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())) {
             gtdDTO.setProprietarytrialindicator(BlConverter.convertToString(spDTO.getProprietaryTrialIndicator()));
         }
@@ -259,7 +261,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
 
 
     private void copy(StudyProtocolQueryDTO spqDTO) {
-        gtdDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());
+        gtdDTO.setLocalProtocolIdentifier(spqDTO.getLocalStudyProtocolIdentifier());        
     }
     private void copyLO(Organization o) {
         gtdDTO.setLeadOrganizationIdentifier(o.getIdentifier());
@@ -383,6 +385,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         spDTO.setOfficialTitle(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));
+        spDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(gtdDTO.getPhaseCode())));
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
 

@@ -460,7 +460,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             InterventionalStudyProtocolDTO dbStudyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(
                     studyProtocolDTO.getIdentifier());
             dbStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
-            dbStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getProgramCodeText());
+            dbStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
             dbStudyProtocolDTO.setStartDate(studyProtocolDTO.getStartDate());
             dbStudyProtocolDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
             dbStudyProtocolDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
