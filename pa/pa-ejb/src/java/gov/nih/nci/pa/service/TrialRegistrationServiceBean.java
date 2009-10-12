@@ -366,7 +366,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         
         try {        
             updateStudyProtocolObjs(
-                studyProtocolDTO ,
+                getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT),
                 overallStatusDTO ,
                 leadOrganizationSiteIdentifierDTO ,
                 nctIdentifierSiteIdentifierDTO,
@@ -456,8 +456,23 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     studyProtocolDTO.getIdentifier(), StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true));
             principalInvestigatorDTO.setIdentifier(IiConverter.convertToIi(
                     cUtils.getPAPersonByIi(studyContactDto.getClinicalResearchStaffIi()).getIdentifier()));
+            
+            InterventionalStudyProtocolDTO dbStudyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(
+                    studyProtocolDTO.getIdentifier());
+            dbStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
+            dbStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getProgramCodeText());
+            dbStudyProtocolDTO.setStartDate(studyProtocolDTO.getStartDate());
+            dbStudyProtocolDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
+            dbStudyProtocolDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
+            dbStudyProtocolDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+            dbStudyProtocolDTO.setFdaRegulatedIndicator(studyProtocolDTO.getFdaRegulatedIndicator());
+            dbStudyProtocolDTO.setSection801Indicator(studyProtocolDTO.getSection801Indicator());
+            dbStudyProtocolDTO.setDelayedpostingIndicator(studyProtocolDTO.getDelayedpostingIndicator());
+            dbStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
+                    studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator());
+            dbStudyProtocolDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
             updateStudyProtocolObjs(
-                    studyProtocolDTO ,
+                    dbStudyProtocolDTO ,
                     overallStatusDTO ,
                     null ,
                     nctIdentifierSiteIdentifierDTO,
@@ -546,11 +561,12 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         try {
             if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
                 studyProtocolIi =  studyProtocolService.createInterventionalStudyProtocol(
-                            (InterventionalStudyProtocolDTO) getStudyProtocolForCreate(studyProtocolDTO));
+                            (InterventionalStudyProtocolDTO) getStudyProtocolForCreateOrAmend(
+                                    studyProtocolDTO, CREATE));
                 studyTypeCode = StudyTypeCode.INTERVENTIONAL;
             } else {
                 studyProtocolIi =  studyProtocolService.createObservationalStudyProtocol(
-                        (ObservationalStudyProtocolDTO) getStudyProtocolForCreate(studyProtocolDTO));
+                        (ObservationalStudyProtocolDTO) getStudyProtocolForCreateOrAmend(studyProtocolDTO, CREATE));
                 studyTypeCode = StudyTypeCode.OBSERVATIONAL;
             }
             paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
@@ -880,11 +896,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
         if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
             studyProtocolIi =  studyProtocolService.createInterventionalStudyProtocol(
-                        (InterventionalStudyProtocolDTO) getStudyProtocolForCreate(studyProtocolDTO));
+                        (InterventionalStudyProtocolDTO) getStudyProtocolForCreateOrAmend(studyProtocolDTO, CREATE));
             studyTypeCode = StudyTypeCode.INTERVENTIONAL;
         } else {
             studyProtocolIi =  studyProtocolService.createObservationalStudyProtocol(
-                    (ObservationalStudyProtocolDTO) getStudyProtocolForCreate(studyProtocolDTO));
+                    (ObservationalStudyProtocolDTO) getStudyProtocolForCreateOrAmend(studyProtocolDTO, CREATE));
             studyTypeCode = StudyTypeCode.OBSERVATIONAL;
         }
         paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
@@ -912,13 +928,24 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
 
     /**
      * @param studyProtocolDTO
+     * @throws PAException e 
      */
-    private StudyProtocolDTO getStudyProtocolForCreate(StudyProtocolDTO studyProtocolDTO) {
-        StudyProtocolDTO createStudyProtocolDTO =  null; 
+    private StudyProtocolDTO getStudyProtocolForCreateOrAmend(StudyProtocolDTO studyProtocolDTO , String operation) 
+    throws PAException {
+        StudyProtocolDTO createStudyProtocolDTO =  null;
         if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
             createStudyProtocolDTO  = new InterventionalStudyProtocolDTO();
         } else if (studyProtocolDTO instanceof ObservationalStudyProtocolDTO) {
             createStudyProtocolDTO  = new ObservationalStudyProtocolDTO();   
+        }
+        if (AMENDMENT.equalsIgnoreCase(operation)) {
+            createStudyProtocolDTO =  studyProtocolService.getInterventionalStudyProtocol(
+                    studyProtocolDTO.getIdentifier());
+            createStudyProtocolDTO.setAmendmentDate(studyProtocolDTO.getAmendmentDate());
+            createStudyProtocolDTO.setAmendmentNumber(studyProtocolDTO.getAmendmentNumber());
+        } else {
+            createStudyProtocolDTO.setSubmissionNumber(studyProtocolDTO.getSubmissionNumber());
+            createStudyProtocolDTO.setIdentifier(null);
         }
         createStudyProtocolDTO.setOfficialTitle(studyProtocolDTO.getOfficialTitle());
         createStudyProtocolDTO.setPhaseCode(studyProtocolDTO.getPhaseCode());
@@ -936,9 +963,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         createStudyProtocolDTO.setDelayedpostingIndicator(studyProtocolDTO.getDelayedpostingIndicator());
         createStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
                 studyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator());
-        createStudyProtocolDTO.setIdentifier(null);
         
-        createStudyProtocolDTO.setSubmissionNumber(studyProtocolDTO.getSubmissionNumber());
+        
+        
         createStudyProtocolDTO.setProprietaryTrialIndicator(studyProtocolDTO.getProprietaryTrialIndicator());
         createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         return createStudyProtocolDTO;
@@ -1250,7 +1277,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             sb.append(PAUtil.isTsNull(overallStatusDTO.getStatusDate())
                     ? "Current Trial Status Date cannot be null , " : "");
         }
-        if (UPDAT.equalsIgnoreCase(operation)) {
+        if (UPDAT.equalsIgnoreCase(operation) && collaborators != null 
+                && !collaborators.isEmpty()) {
             for (StudySiteDTO collaborator : collaborators) {
                 if (PAUtil.isIiNotNull(collaborator.getIdentifier())
                     && !paServiceUtils.isIiExistInPA(IiConverter.convertToStudySiteIi(
