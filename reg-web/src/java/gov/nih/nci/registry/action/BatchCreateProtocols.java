@@ -336,9 +336,15 @@ public class BatchCreateProtocols {
                 }
             }
           //set the NCT number 
-            StudySiteDTO ssNctIdDto = util.getStudySite(studyProtocolIi, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-            if (ssNctIdDto != null) {
-                util.convertToNCTStudySiteDTO(trialDTO, ssNctIdDto);
+            StudySiteDTO ssNctIdDto  = null;
+            if (PAUtil.isNotEmpty(trialDTO.getNctIdentifier())) {
+                ssNctIdDto = util.getStudySite(studyProtocolIi, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                if (ssNctIdDto != null) {
+                    util.convertToNCTStudySiteDTO(trialDTO, ssNctIdDto);
+                } else {
+                    ssNctIdDto = new StudySiteDTO();
+                    ssNctIdDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getNctIdentifier()));
+                }
             }
             //get the values from db and update only those are needed and then convert
                 RegistryServiceLocator.getTrialRegistrationService().
