@@ -1,6 +1,7 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
@@ -58,5 +59,6 @@ public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extend
         assertEquals(expected.getUrl().size(), actual.getUrl().size());
         assertEquals(expected.getStatus(), actual.getStatus());
         assertEquals(expected.getPostalAddresses().size(), actual.getPostalAddresses().size());
+        assertTrue(expected.isUsOrCanadaAddress());
     }
 }

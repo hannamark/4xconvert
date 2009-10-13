@@ -91,6 +91,7 @@ import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+import gov.nih.nci.po.web.util.validator.Addressable;
 
 import java.util.ArrayList;
 
@@ -113,7 +114,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 public class ResearchOrganizationAction
     extends AbstractCtepOwnedOrgRoleAction<ResearchOrganization, ResearchOrganizationCR,
         ResearchOrganizationServiceLocal>
-    implements Preparable {
+    implements Addressable, Preparable {
 
     private static final long serialVersionUID = 1L;
     private ResearchOrganization role = new ResearchOrganization();
@@ -168,9 +169,14 @@ public class ResearchOrganizationAction
      */
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") })
-        }
-    )
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") }),
+        @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.phone", 
+                message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
+        @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.fax", 
+                message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
+        @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.tty", 
+                message = "US and Canadian tty numbers must match ###-###-####(x#*).")       
+        })
     @Override
     @SuppressWarnings("PMD.UselessOverridingMethod")
     public String add() throws JMSException {
@@ -182,9 +188,14 @@ public class ResearchOrganizationAction
      */
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
-                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") })
-        }
-    )
+                parameters = { @ValidationParameter(name = "resourceKeyBase", value = "researchOrganization") }),
+        @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.phone", 
+                message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
+        @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.fax", 
+                message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
+        @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.tty", 
+                message = "US and Canadian tty numbers must match ###-###-####(x#*).")       
+    })
     @Override
     public String edit() throws JMSException {
         // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
@@ -374,6 +385,14 @@ public class ResearchOrganizationAction
      */
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isUsOrCanadaFormat() {
+        return role.isUsOrCanadaAddress();
     }
 
 }

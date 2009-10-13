@@ -8,7 +8,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractRole;
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
@@ -45,6 +47,12 @@ public class OversightCommitteeActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         assertNotNull(action.getOrganization());
     }
+    
+    @Test
+    public void testUsFormat() {
+        assertFalse(action.isUsOrCanadaFormat());
+    }
+
 
     @Test
     public void testPrepareNoRole() {

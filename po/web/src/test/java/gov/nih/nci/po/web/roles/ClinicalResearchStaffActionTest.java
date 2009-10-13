@@ -6,8 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
@@ -220,6 +222,22 @@ public class ClinicalResearchStaffActionTest extends AbstractRoleActionTest {
         assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
     }
+    
+    @Test
+    public void testUsFormat() {
+        action.setRole(null);
+        action.prepare();
+        assertFalse(action.isUsOrCanadaFormat());
+        Address addr1 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
+                new Country("United States", "840", "US", "USA"));
+        action.getRole().getPostalAddresses().add(addr1);
+        assertTrue(action.isUsOrCanadaFormat());
+        Address addr2 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
+                new Country("Tazmania", "999", "TZ", "TAZ"));
+        action.getRole().getPostalAddresses().add(addr2);
+        assertFalse(action.isUsOrCanadaFormat());
+    }
+
 
     @Test
     public void testCrProperty() {

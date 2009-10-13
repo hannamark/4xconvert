@@ -231,6 +231,7 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
         instance.setPhoneEntry(e);
         assertEquals(e, instance.getPhoneEntry());
+        assertFalse(instance.isUsOrCanadaFormat());
 
     }
 
@@ -253,6 +254,7 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
         instance.setFaxEntry(e);
         assertEquals(e, instance.getFaxEntry());
+        assertFalse(instance.isUsOrCanadaFormat());
 
     }
 
@@ -275,7 +277,8 @@ public class AbstractEditContactListActionTest extends AbstractPoTest {
 
         instance.setTtyEntry(e);
         assertEquals(e, instance.getTtyEntry());
-
+        assertFalse(instance.isUsOrCanadaFormat());
+        
     }
 
     @Test

@@ -262,5 +262,14 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
     public void setTty(List<PhoneNumber> tty) {
         this.tty = tty;
     }
+    
+    /**
+     * Returns boolean if the address is US.
+     * @return bool
+     */
+    @Transient
+    public boolean isUsOrCanadaAddress() {
+        return super.isUsOrCanadaAddresses(this.getPostalAddresses());
+    }
 
 }

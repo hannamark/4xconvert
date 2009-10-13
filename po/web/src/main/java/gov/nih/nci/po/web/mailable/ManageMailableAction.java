@@ -4,6 +4,7 @@ import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Mailable;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+import gov.nih.nci.po.web.util.validator.Addressable;
 
 import java.util.Iterator;
 
@@ -20,7 +21,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * Action to manage Mailable instances.
  * @author smatyas
  */
-public class ManageMailableAction extends ActionSupport implements Preparable {
+@SuppressWarnings("PMD.TooManyMethods")
+public class ManageMailableAction extends ActionSupport implements Addressable, Preparable {
     private static final String ADDRESS = "address";
 
     private static final long serialVersionUID = 1L;
@@ -206,5 +208,12 @@ public class ManageMailableAction extends ActionSupport implements Preparable {
      */
     public void setIndex(Integer addressIndex) {
         this.index = addressIndex;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isUsOrCanadaFormat() {
+        return mailable.isUsOrCanadaAddress();
     }
 }

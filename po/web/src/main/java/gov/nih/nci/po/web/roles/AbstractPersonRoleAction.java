@@ -99,7 +99,10 @@ public abstract class AbstractPersonRoleAction<ROLE extends Correlation, ROLECR 
         extends AbstractRoleAction<ROLE, ROLECR, ROLESERVICE> {
 
     private static final long serialVersionUID = 1L;
-
+    /**
+     * name of us or canada phone validator.
+     */
+    public static final String USORCANADAVALIDATOR = "usOrCanadaPhone"; 
     private Person person = new Person();
 
     /**
@@ -122,4 +125,10 @@ public abstract class AbstractPersonRoleAction<ROLE extends Correlation, ROLECR 
     public void setPerson(Person person) {
         this.person = person;
     }
+    
+    /**
+     * Whether to use us formatted telephone numbers.
+     * @return bool
+     */
+    public abstract boolean isUsOrCanadaFormat();
 }

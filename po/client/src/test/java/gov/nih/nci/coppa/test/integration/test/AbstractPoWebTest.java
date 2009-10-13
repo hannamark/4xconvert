@@ -388,11 +388,9 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void inputContactInfo(String email, String phone, String fax, String tty, String url) {
-        if (StringUtils.isNotBlank(email)) {
-            selenium.type("emailEntry_value", email);
-            selenium.click("email-add");
-            waitForElementById("email-entry-0", 5);
-        }
+        
+        inputEmailAndUrl(email, url);
+        
         if (StringUtils.isNotBlank(phone)) {
             selenium.type("phoneEntry_value", phone);
             selenium.click("phone-add");
@@ -408,15 +406,49 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
             selenium.click("tty-add");
             waitForElementById("tty-entry-0", 5);
         }
+        
+    }
+    
+    protected void inputContactInfoForUSAndCan(String email, String[] phone, String[] fax, String[] tty, String url) {
+        inputEmailAndUrl(email, url);
+        inputForTel(phone, "phone");
+        inputForTel(fax, "fax");
+        inputForTel(tty, "tty");  
+    }
+    
+    private void inputEmailAndUrl(String email, String url) {
+        if (StringUtils.isNotBlank(email)) {
+            selenium.type("emailEntry_value", email);
+            selenium.click("email-add");
+            waitForElementById("email-entry-0", 5);
+        }
+        
         if (StringUtils.isNotBlank(url)) {
             selenium.type("urlEntry_value", url);
             selenium.click("url-add");
             waitForElementById("url-entry-0", 5);
         }
     }
+    
+    private void inputForTel(String[]tel, String type) {
+        if (tel.length >= 3) {
+            selenium.type(type + "Entry_part1", tel[0]);
+            selenium.type(type + "Entry_part2", tel[1]);
+            selenium.type(type + "Entry_part3", tel[2]);
+            if (tel.length == 4) {
+                selenium.type(type + "Entry_part4", tel[3]);
+            }
+            selenium.click("//div[@id='us_format_"+type+"']//a[@id='" + type + "-add']");
+            waitForElementById(type +"-entry-0", 5);
+        }
+    }
 
     public Address getAddress() {
         return new Address("123 Main Street", "40 5th Street", "Ashburn", "VA", "20147", "United States");
+    }
+    
+    public Address getForeignAddress() {
+        return new Address("123 Main Street", "40 5th Street", "Bogata", null, "20147", "Columbia");
     }
 
     protected String createPerson() {

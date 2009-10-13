@@ -217,4 +217,14 @@ public abstract class AbstractRole implements PersistentObject {
     public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
         this.otherIdentifiers = otherIdentifiers;
     }
+    
+    /**
+     * 
+     * @param addrs addresses to check
+     * @return bool
+     */
+    @Transient
+    protected boolean isUsOrCanadaAddresses(Set<Address> addrs) {
+        return UsOrCanadaAddressHelper.isUsOrCanadaAddresses(addrs);
+    }
 }

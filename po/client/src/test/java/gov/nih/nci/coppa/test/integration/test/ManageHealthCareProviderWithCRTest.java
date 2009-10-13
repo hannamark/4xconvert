@@ -154,7 +154,8 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         selenium.selectFrame("relative=parent");
         waitForTelecomFormsToLoad();
         //add Contact Information
-        inputContactInfo("abc@example.com", "1234567890", "2345678901", "3456789012", "http://www.example.com");
+        inputContactInfoForUSAndCan("abc@example.com", new String[]{"123","456","7890"}, 
+                new String[]{"234","567","8901"}, new String[]{"345","678","9012"}, "http://www.example.com");
         //save HCP
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully created!"));
@@ -190,15 +191,15 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         // email, phone, fax, tty, url
         waitForElementById("email-remove-0", 5);
         assertEquals("abc@example.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
-
+       
         waitForElementById("phone-remove-0", 5);
-        assertEquals("1234567890 | Remove", selenium.getText("//div[@id='phone-list']/ul/li[@id='phone-entry-0']"));
+        assertEquals("123-456-7890 | Remove", selenium.getText("//div[@id='phone-list']//div[@id='us_format_phone']/ul/li[@id='phone-entry-0']"));
 
         waitForElementById("fax-remove-0", 5);
-        assertEquals("2345678901 | Remove", selenium.getText("//div[@id='fax-list']/ul/li[@id='fax-entry-0']"));
+        assertEquals("234-567-8901 | Remove", selenium.getText("//div[@id='fax-list']//div[@id='us_format_fax']/ul/li[@id='fax-entry-0']"));
 
         waitForElementById("tty-remove-0", 5);
-        assertEquals("3456789012 | Remove", selenium.getText("//div[@id='tty-list']/ul/li[@id='tty-entry-0']"));
+        assertEquals("345-678-9012 | Remove", selenium.getText("//div[@id='tty-list']//div[@id='us_format_tty']/ul/li[@id='tty-entry-0']"));
 
         waitForElementById("url-remove-0", 5);
         assertEquals("http://www.example.com | Remove", selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-0']"));

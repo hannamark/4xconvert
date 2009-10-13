@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractRole;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
@@ -45,6 +47,22 @@ public class OrganizationalContactActionTest extends AbstractPoTest {
         assertNotNull(action.getCr());
         assertNotNull(action.getPerson());
     }
+    
+    @Test
+    public void testUsFormat() {
+        action.setRole(null);
+        action.prepare();
+        assertFalse(action.isUsOrCanadaFormat());
+        Address addr1 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
+                new Country("United States", "840", "US", "USA"));
+        action.getRole().getPostalAddresses().add(addr1);
+        assertTrue(action.isUsOrCanadaFormat());
+        Address addr2 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
+                new Country("Tazmania", "999", "TZ", "TAZ"));
+        action.getRole().getPostalAddresses().add(addr2);
+        assertFalse(action.isUsOrCanadaFormat());
+    }
+
 
     @Test
     public void testPrepareNoPersonId() throws Exception {

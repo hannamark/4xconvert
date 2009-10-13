@@ -503,4 +503,13 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
+    
+    /**
+     * Returns boolean if the address is US.
+     * @return bool
+     */
+    @Transient
+    public boolean isUsOrCanadaAddress() {
+        return UsOrCanadaAddressHelper.isUsOrCanadaAddress(this.getPostalAddress());
+    }
 }

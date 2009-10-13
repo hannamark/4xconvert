@@ -3,6 +3,7 @@
 <c:if test="${fn:length(mailable.postalAddresses) == 0}">
 No Postal Address(es) found.
 </c:if>
+<c:set var="showUsFormattedTel" value="${usOrCanadaFormat}"/>
 <c:forEach items="${mailable.postalAddresses}" var="addy" varStatus="e">
 <fieldset id="postalAddress${e.index}">
     <legend>Address ${e.index + 1}</legend>
@@ -46,3 +47,24 @@ No Postal Address(es) found.
 </div>
 </c:if>
 <div class="clear"></div>
+
+<script type="text/javascript">
+<!--
+if (${showUsFormattedTel}) {
+        $('no_format_phone').hide();
+        $('no_format_fax').hide();
+        $('no_format_tty').hide();
+        $('us_format_phone').show();
+        $('us_format_fax').show();
+        $('us_format_tty').show();
+} else {
+        $('no_format_phone').show();
+        $('no_format_fax').show();
+        $('no_format_tty').show();
+        $('us_format_phone').hide();
+        $('us_format_fax').hide();
+        $('us_format_tty').hide();
+}
+
+-->
+</script>

@@ -9,6 +9,7 @@ import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+import gov.nih.nci.po.web.util.validator.Addressable;
 
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +29,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 /**
  * Action class to handle curation of Person entities.
  */
-public class CuratePersonAction extends ActionSupport implements Preparable {
+public class CuratePersonAction extends ActionSupport implements Addressable, Preparable {
     private static final long serialVersionUID = 1L;
     /**
      * The action execution was successful. Show result view to the end user.
@@ -91,10 +92,13 @@ public class CuratePersonAction extends ActionSupport implements Preparable {
      * @return success
      * @throws JMSException if an error occurred while publishing the announcement
      */
-    @Validations(customValidators = {
-                @CustomValidator(type = "hibernate",
-                    fieldName = "person"
-                )
+    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "person"),
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.phone", 
+                    message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.fax", 
+                    message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.tty", 
+                    message = "US and Canadian tty numbers must match ###-###-####(x#*).")       
             })
     public String curate() throws JMSException {
         // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
@@ -225,5 +229,12 @@ public class CuratePersonAction extends ActionSupport implements Preparable {
      */
     public void setDuplicateOf(Person duplicateOf) {
         this.duplicateOf = duplicateOf;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isUsOrCanadaFormat() {
+        return this.person.isUsOrCanadaAddress();
     }
 }

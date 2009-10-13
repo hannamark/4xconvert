@@ -153,4 +153,13 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
     public void setUrl(List<URL> url) {
         this.url = url;
     }
+    
+    /**
+     * Returns boolean if the address is US.
+     * @return bool
+     */
+    @Transient
+    public boolean isUsOrCanadaAddress() {
+        return super.isUsOrCanadaAddresses(this.getPostalAddresses());
+    }
 }

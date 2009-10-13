@@ -101,7 +101,10 @@ public abstract class AbstractOrganizationRoleAction
         extends AbstractRoleAction<ROLE, ROLECR, ROLESERVICE> {
 
     private static final long serialVersionUID = 1L;
-
+    /**
+     * name of us or canada phone validator.
+     */
+    public static final String USORCANADAVALIDATOR = "usOrCanadaPhone"; 
     private Organization organization = new Organization();
 
     /**
@@ -124,5 +127,11 @@ public abstract class AbstractOrganizationRoleAction
     public void setOrganization(Organization organization) {
         this.organization = organization;
     }
+    
+    /**
+     * Whether to use us formatted telephone numbers.
+     * @return bool
+     */
+    public abstract boolean isUsOrCanadaFormat();
 
 }

@@ -179,3 +179,70 @@ IdValue.prototype = {
 function showPopup(url, callbackFunc) {
 	showPopWin(url, calculateMaxPopupWidth(), calculateMaxPopupHeight(), callbackFunc);
 }
+
+function assembleAndSubmitPhoneNumber(type, url, divId) {
+    	
+	$(type + 'Entry_value').value = $(type + 'Entry_part1').value + '-' + $(type + 'Entry_part2').value + '-' + $(type + 'Entry_part3').value;
+    
+	if ($(type + 'Entry_value').value.length < 12) {
+		alert('The entire ' + type + ' number must be provided.');
+		return false;
+	}
+	
+	var myRe = new RegExp ("\\d{3}-\\d{3}-\\d{4}");
+	var OK = myRe.exec($(type + 'Entry_value').value); 
+	if (!OK) {
+		alert($(type + 'Entry_value').value + ' must match ###-###-####.');
+		return false;
+	}
+	
+    if ($(type + 'Entry_part4').value.length > 0) {
+    	myRe = new RegExp ("^\\d{0,}$");
+    	OK = myRe.exec($(type + 'Entry_part4').value); 
+    	if (!OK) {
+    		alert('Ext ' + $(type + 'Entry_part4').value + ' must match digits only.');
+    		return false;
+    	}
+    	$(type + 'Entry_value').value = $(type + 'Entry_value').value + 'x' + $(type + 'Entry_part4').value;
+    }
+    
+    
+    
+    submitDivAsForm(url, divId);
+    
+    return false;
+}
+
+/*
+Auto tabbing script- By JavaScriptKit.com
+http://www.javascriptkit.com
+*/ 
+function autotab(original,destination) {
+	if (original.getAttribute && original.value.length == original.getAttribute("maxlength")) {
+		destination.focus();
+	}
+}
+
+function switchContactNumberFormats(country) {
+	
+	var countryField = $(country);
+    var countryName = countryField.options[countryField.selectedIndex].text;
+   
+    if ($('no_format_phone')) {
+	    if (countryName == 'United States' || countryName == 'Canada') {
+	        $('no_format_phone').hide();
+	        $('no_format_fax').hide();
+	        $('no_format_tty').hide();
+	        $('us_format_phone').show();
+	        $('us_format_fax').show();
+	        $('us_format_tty').show();
+	    } else {
+	        $('no_format_phone').show();
+	        $('no_format_fax').show();
+	        $('no_format_tty').show();
+	        $('us_format_phone').hide();
+	        $('us_format_fax').hide();
+	        $('us_format_tty').hide();
+	    }
+    }
+}

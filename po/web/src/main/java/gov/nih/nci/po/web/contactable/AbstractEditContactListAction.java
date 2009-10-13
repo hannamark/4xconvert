@@ -122,6 +122,8 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
     private Entry entry;
     private String rootKey;
     private boolean readonly;
+    private boolean create;
+    private boolean usOrCanadaFormat;
 
     /**
      * @return session key of the Contactable to edit.
@@ -263,6 +265,34 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
      * @return a new Entry instance .
      */
     protected abstract Entry newEntry();
+
+    /**
+     * @param create the create to set
+     */
+    public void setCreate(boolean create) {
+        this.create = create;
+    }
+
+    /**
+     * @return the create
+     */
+    public boolean isCreate() {
+        return create;
+    }
+
+    /**
+     * @param usFormat the usFormat to set
+     */
+    public void setUsOrCanadaFormat(boolean usFormat) {
+        this.usOrCanadaFormat = usFormat;
+    }
+
+    /**
+     * @return the usFormat
+     */
+    public boolean isUsOrCanadaFormat() {
+        return usOrCanadaFormat;
+    }
 
     ///////////////////////////////////////////////////////////////////
     // Concrete implementations below

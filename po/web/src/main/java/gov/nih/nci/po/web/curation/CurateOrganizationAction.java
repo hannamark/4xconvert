@@ -11,6 +11,7 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+import gov.nih.nci.po.web.util.validator.Addressable;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 /**
  * Action class to handle curation of Organization entities.
  */
-public class CurateOrganizationAction extends ActionSupport implements Preparable {
+public class CurateOrganizationAction extends ActionSupport implements Addressable, Preparable {
     private static final long serialVersionUID = 1L;
     /**
      * The action execution was successful. Show result view to the end user.
@@ -107,7 +108,13 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization"),
             @CustomValidator(type = "duplicateOfNullifiedOrg", fieldName = "duplicateOf", 
-                    message = "A duplicate Organization must be provided.")
+                    message = "A duplicate Organization must be provided."),
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.phone", 
+                    message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.fax", 
+                    message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.tty", 
+                    message = "US and Canadian tty numbers must match ###-###-####(x#*).")       
             })
     public String curate() throws JMSException {
         // PO-1196 - We are using a struts validator to make sure that when an org with associated ctep roles
@@ -270,4 +277,12 @@ public class CurateOrganizationAction extends ActionSupport implements Preparabl
     public void setDuplicateOf(Organization duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isUsOrCanadaFormat() {
+        return this.organization.isUsOrCanadaAddress();
+    }
+    
 }

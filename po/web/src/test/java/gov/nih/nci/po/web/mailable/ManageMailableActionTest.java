@@ -9,6 +9,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import java.util.Iterator;
@@ -31,6 +32,21 @@ public class ManageMailableActionTest extends AbstractPoTest {
         getSession().setAttribute(action.getRootKey(), new ClinicalResearchStaff());
         action.prepare();
     }
+    
+    @Test
+    public void testUsFormat() {
+       
+        assertFalse(action.isUsOrCanadaFormat());
+        Address addr1 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
+                new Country("United States", "840", "US", "USA"));
+        action.getMailable().getPostalAddresses().add(addr1);
+        assertTrue(action.isUsOrCanadaFormat());
+        Address addr2 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
+                new Country("Tazmania", "999", "TZ", "TAZ"));
+        action.getMailable().getPostalAddresses().add(addr2);
+        assertFalse(action.isUsOrCanadaFormat());
+    }
+
 
     @Test
     public void testPrepare_AddressLoadedByIndex() throws Exception {

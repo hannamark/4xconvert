@@ -83,9 +83,13 @@
 package gov.nih.nci.po.web.curation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.web.AbstractPoTest;
@@ -201,5 +205,18 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
             assertEquals("CR-ID-" + i, value);
             i++;
         }
+    }
+    
+    @Test
+    public void testUsFormat() {
+        assertFalse(action.isUsOrCanadaFormat());
+        Address addr1 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
+                new Country("United States", "840", "US", "USA"));
+        action.getOrganization().setPostalAddress(addr1);
+        assertTrue(action.isUsOrCanadaFormat());
+        Address addr2 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
+                new Country("Tazmania", "999", "TZ", "TAZ"));
+        action.getOrganization().setPostalAddress(addr2);
+        assertFalse(action.isUsOrCanadaFormat());
     }
 }

@@ -54,6 +54,11 @@ public class IdentifiedPersonActionTest extends AbstractPoTest {
         action.prepare();
         assertNotNull(action.getRole());
     }
+    
+    @Test
+    public void testUsFormat() {
+        assertFalse(action.isUsOrCanadaFormat());
+    }
 
     @Test
     public void testPrepareWithRoleId() {

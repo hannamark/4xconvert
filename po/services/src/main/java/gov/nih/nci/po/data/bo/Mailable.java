@@ -94,4 +94,9 @@ public interface Mailable {
      * @return the postal address(es), if any
      */
     Set<Address> getPostalAddresses();
+    
+    /**
+     * @return whether address list contains any US or CAN items.
+     */
+    boolean isUsOrCanadaAddress();
 }

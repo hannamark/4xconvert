@@ -91,6 +91,8 @@ function isTelecomFieldsBlank() {
     <c:url value="contactable/phone/edit.action" var="viewPhoneAction">
         <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="readonly" value="${readonlyBool}"/>
+        <c:param name="create" value="${isCreate}"/>
+        <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
     </c:url>
     <div id="phone-list">Loading...</div>
     <script>
@@ -106,6 +108,8 @@ function isTelecomFieldsBlank() {
     <c:url value="contactable/fax/edit.action" var="viewFaxAction">
         <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="readonly" value="${readonlyBool}"/>
+        <c:param name="create" value="${isCreate}"/>
+        <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
     </c:url>
     <div id="fax-list">Loading...</div>
     <script>
@@ -121,6 +125,8 @@ function isTelecomFieldsBlank() {
     <c:url value="contactable/tty/edit.action" var="viewTtyAction">
         <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="readonly" value="${readonlyBool}"/>
+        <c:param name="create" value="${isCreate}"/>
+        <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
     </c:url>
     <div id="tty-list">Loading...</div>
     <script>

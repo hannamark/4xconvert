@@ -34,6 +34,8 @@ function loadStateProvince(code, v) {
             field: '${addressKeyBase}.stateOrProvince'
             }
     });
+   
+    switchContactNumberFormats('${formNameBase}.${addressKeyBase}.country');
 }
 
 --></script>
