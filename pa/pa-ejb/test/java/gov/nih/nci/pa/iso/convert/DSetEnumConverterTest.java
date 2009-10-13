@@ -85,6 +85,7 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 
 import java.util.HashSet;
 import java.util.Set;

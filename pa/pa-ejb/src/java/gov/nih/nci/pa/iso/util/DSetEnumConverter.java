@@ -77,12 +77,11 @@
 *
 */
 
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.pa.enums.CodedEnum;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.HashSet;
