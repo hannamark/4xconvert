@@ -120,7 +120,7 @@ import com.opensymphony.xwork2.ActionSupport;
 private static final String ELIGIBILITY = "eligibility";
   private static final String ELIGIBILITYADD = "eligibilityAdd";
   private static final int MAXIMUM_CHAR_POPULATION = 800;
-  private static final int MAXIMUM_CHAR_DESCRIPTION = 400;
+  private static final int MAXIMUM_CHAR_DESCRIPTION = 5000;
   private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
   private Long id = null;
   private String page;

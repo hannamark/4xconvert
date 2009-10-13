@@ -184,10 +184,11 @@ BubbleTips.activateTipOn("dfn");
     <s:if test="eligibilityList != null">    
     	<input type="hidden" name="page" />
     	<input type="hidden" name="id" /> 
-    	<display:table name="${eligibilityList}" id="row" class="data" 
+    	<s:set name="eligibilityList" value="eligibilityList" scope="request"/>
+    	<display:table name="eligibilityList" id="row" class="data" 
     	       sort="list"  pagesize="200" requestURI="eligibilityCriteriaquery.action" export="false">
             <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriatype" property="inclusionIndicator" sortable="true" headerClass="sortable" />
-            <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriadescription" property="textDescription" sortable="true" headerClass="sortable" maxLength= "200"/>
+            <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriadescription" property="textDescription" sortable="true" headerClass="sortable" maxLength= "5000"/>
             <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriterianame" property="criterionName"  sortable="true" headerClass="sortable" />
             <display:column titleKey="isdesign.eligibilitycriteria.operator" property="operator" sortable="true" headerClass="sortable" />
             <display:column titleKey="isdesign.eligibilitycriteria.value" property="value"  sortable="true" headerClass="sortable" />
