@@ -99,14 +99,12 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
  * action for study title and description.
  * @author Anupama Sharma
  *
  */
-@Validation
 @SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class TrialDescriptionAction extends ActionSupport {
 

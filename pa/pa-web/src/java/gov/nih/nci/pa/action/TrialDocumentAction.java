@@ -109,7 +109,6 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 /**
  *
  * @author Kalpana Guthikonda
@@ -119,7 +118,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  * copyright holder, NCI.
  */
 
-@Validation
 public class TrialDocumentAction extends ActionSupport implements
 ServletResponseAware {
 

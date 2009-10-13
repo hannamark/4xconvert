@@ -23,6 +23,7 @@
     <s:form><s:actionerror/>
     <h2><fmt:message key="trialDocument.subtitle" /></h2>
     <s:if test="trialDocumentList != null">
+    <s:set name="trialDocumentList" value="trialDocumentList" scope="request"/>
     <display:table name="${trialDocumentList}" id="row" class="data" sort="list"  pagesize="10" requestURI="trialDocumentquery.action" export="false">    
 	    <display:column titleKey="trialDocument.fileName" sortable="true" headerClass="sortable" >
 	    <s:url id="url" action="trialDocumentsaveFile"><s:param name="id" value="%{#attr.row.id}" /></s:url>

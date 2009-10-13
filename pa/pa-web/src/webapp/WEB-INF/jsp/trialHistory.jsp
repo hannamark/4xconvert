@@ -40,6 +40,7 @@ function handlePopup(a,b,c)  // write corresponding content to the popup window
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr><td colspan="2">
+            <s:set name="trialHistoryWebDTO" value="trialHistoryWebDTO" scope="request"/>
             <display:table name="trialHistoryWebDTO" id="row" class="data" sort="list" defaultsort="1" defaultorder="ascending" pagesize="10" requestURI="trialHistory.action">
                 <display:column property="submissionNumber" sortable="false" titleKey="trialHistory.submissionNumber"/>
                 <display:column property="type" sortable="false" titleKey="trialHistory.type"/>

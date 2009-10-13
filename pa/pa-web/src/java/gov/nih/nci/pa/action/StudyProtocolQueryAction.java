@@ -102,7 +102,6 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 
 /**
@@ -111,7 +110,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  * 
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.UnusedPrivateField", "PMD.ImmutableField", "PMD.SingularField" })
-@Validation
 public class StudyProtocolQueryAction extends ActionSupport implements ServletResponseAware {
     private static final long serialVersionUID = -2308994602660261367L;
     private List<StudyProtocolQueryDTO> records = null;

@@ -38,6 +38,7 @@ function handleEdit(rowId){
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr><td colspan="2">
+            <s:set name="onholdList" value="onholdList" scope="request"/>
             <display:table name="onholdList" id="row" class="data" sort="list" pagesize="10" requestURI="onhold.action">
                 <display:column property="reasonCode" sortable="false" titleKey="onhold.reason.code"/>
                 <display:column property="reasonText" sortable="false" titleKey="onhold.reason.text"/>

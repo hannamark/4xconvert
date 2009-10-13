@@ -99,13 +99,11 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 /**
  *
  * @author Kalpana Guthikonda
  *
  */
-@Validation
 @SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
 public class TrialFundingAction extends ActionSupport {
   private static final long serialVersionUID = 4865176377748106852L;

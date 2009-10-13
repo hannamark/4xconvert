@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <pa:failureMessage/>
-<c:if test="${interWebList != null}">
+<s:if test="interWebList != null">
 
+<s:set name="interWebList" value="interWebList" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" uid="row" 
     name="interWebList" export="false">
     <display:column title="Preferred Name" property="name"  headerClass="sortable"/>
@@ -16,4 +17,4 @@
     </display:column>
 </display:table>
 
-</c:if>
+</s:if>

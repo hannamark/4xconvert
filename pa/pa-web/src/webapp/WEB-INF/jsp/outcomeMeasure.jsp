@@ -30,7 +30,8 @@
     <s:if test="outcomeList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="id" />
-	<display:table name="${outcomeList}" id="row" class="data" sort="list"  pagesize="200" requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">    
+	<s:set name="outcomeList" value="outcomeList" scope="request"/>
+	<display:table name="outcomeList" id="row" class="data" sort="list"  pagesize="200" requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">    
 	    <display:column titleKey="osdesign.outcome.primary" property="primaryIndicator" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="osdesign.outcome.description" property="name" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="osdesign.outcome.timeFrame" property="timeFrame"  sortable="true" headerClass="sortable" />

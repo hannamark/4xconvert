@@ -42,7 +42,8 @@ function handleDelete(studyResourcingId){
     <s:if test="trialFundingList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="cbValue" />
-	<display:table name="${trialFundingList}" id="row" class="data" sort="list"  pagesize="200" requestURI="trialFundingquery.action" export="false">    
+	<s:set name="trialFundingList" value="trialFundingList" scope="request"/>
+	<display:table name="trialFundingList" id="row" class="data" sort="list"  pagesize="200" requestURI="trialFundingquery.action" export="false">    
 	    <display:column titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />

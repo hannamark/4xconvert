@@ -1,5 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>	
+<s:set name="webDTO" value="webDTO" scope="request"/>
 <table class="form" border=1>
 	<tr>
 	    <td scope="row" class="label" style="width:250px" align="right"><b>First Name:</b></td>

@@ -45,7 +45,8 @@ function handleDelete(studyProtocolIi){
     <s:if test="studyIndideList != null">
     <input type="hidden" name="page" />
     <input type="hidden" name="cbValue" />
-    <display:table name="${studyIndideList}" id="row" class="data" sort="list"  pagesize="200" requestURI="trialIndidequery.action" export="false">    
+    <s:set name="studyIndideList" value="studyIndideList" scope="request"/>
+    <display:table name="studyIndideList" id="row" class="data" sort="list"  pagesize="200" requestURI="trialIndidequery.action" export="false">    
         <display:column titleKey="trialIndide.indldeType" property="indldeType" sortable="true" headerClass="sortable" />
         <display:column titleKey="trialIndide.indideNumber" property="indldeNumber" sortable="true" headerClass="sortable" />
         <display:column titleKey="trialIndide.grantor" property="grantor"   sortable="true" headerClass="sortable"/>

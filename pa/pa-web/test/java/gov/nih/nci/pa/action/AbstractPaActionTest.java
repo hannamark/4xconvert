@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.action;
 
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.test.util.MockPoServiceLocator;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
@@ -94,6 +95,12 @@ import org.junit.Before;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.config.Configuration;
+import com.opensymphony.xwork2.config.ConfigurationManager;
+import com.opensymphony.xwork2.config.providers.XWorkConfigurationProvider;
+import com.opensymphony.xwork2.inject.Container;
+import com.opensymphony.xwork2.util.ValueStack;
+import com.opensymphony.xwork2.util.ValueStackFactory;
 
 /**
  * @author hreinhart
@@ -119,6 +126,18 @@ public abstract class AbstractPaActionTest {
      */
     @Before
     public void initMockRequest() {
+
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.addContainerProvider(new XWorkConfigurationProvider());
+        Configuration config = configurationManager.getConfiguration();
+        Container container = config.getContainer();
+
+        ValueStack stack = container.getInstance(ValueStackFactory.class).createValueStack();
+        stack.getContext().put(ActionContext.CONTAINER, container);
+        ActionContext.setContext(new ActionContext(stack.getContext()));
+
+        assertNotNull(ActionContext.getContext());
+        
         protocolSessionBean = new StudyProtocolQueryDTO();
         protocolSessionBean.setStudyProtocolId(1L);
 

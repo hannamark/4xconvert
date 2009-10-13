@@ -96,6 +96,7 @@
             </table>
         </td>
         <td>
+            <s:set name="intList" value="intList" scope="request"/>
             <display:table name="intList" id="row" class="data">
                 <display:column titleKey="arms.intervention.assignment" headerClass="centered" style="text-align: center">
                     <s:a href="#" onclick="interventionCheckboxClick(%{#attr.row.identifier})">

@@ -50,6 +50,7 @@ function handleDelete(studyResourcingId){
     <tr><td colspan="2">
     <input type="hidden" name="cbValue" />
     <s:hidden name="proprietaryTrialIndicator" id="proprietaryTrialIndicator"></s:hidden>
+    <s:set name="organizationList" value="organizationList" scope="request"/>
     <display:table name="organizationList" id="row" class="data" pagesize="200">  
         <display:column property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
         <display:column property="name" titleKey="participatingOrganizations.name" class="sortable" />

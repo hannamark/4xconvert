@@ -47,7 +47,7 @@
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
             <result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
             <result name="criteriaReport">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
-            <result name="criteriaProtected" type="redirect-action">
+            <result name="criteriaProtected" type="redirectAction">
                 <param name="namespace">../protected</param>
                 <param name="actionName">studyProtocolshowCriteria</param>
             </result>
@@ -57,7 +57,7 @@
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
             <result>/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
             <result name="criteriaReport">/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
-            <result name="criteriaProtected" type="redirect-action">
+            <result name="criteriaProtected" type="redirectAction">
                 <param name="namespace">../protected</param>
                 <param name="actionName">inboxProcessingshowCriteria</param>
             </result>
@@ -68,7 +68,7 @@
         <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
             <result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
-            <result name="criteriaReport" type="redirect-action">
+            <result name="criteriaReport" type="redirectAction">
                 <param name="namespace">../report</param>
                 <param name="actionName">studyProtocolshowCriteria</param>
             </result>
@@ -243,7 +243,7 @@
         <action name="trialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
           <result name="edit">/WEB-INF/jsp/trialValidation.jsp</result>
           <result name="rejectReason">/WEB-INF/jsp/trialValidationReject.jsp</result>
-          <result name="amend_reject" type="redirect-action">
+          <result name="amend_reject" type="redirectAction">
             <param name="actionName">studyProtocol.action</param>
           </result>
         </action>
@@ -285,7 +285,7 @@
         <action name="inboxProcessing*" class="gov.nih.nci.pa.action.InboxProcessingAction" method="{1}">
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>         
             <result>/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
-             <result name="criteriaReport" type="redirect-action">
+             <result name="criteriaReport" type="redirectAction">
                 <param name="namespace">../report</param>
                 <param name="actionName">inboxProcessingshowCriteria</param>
             </result>

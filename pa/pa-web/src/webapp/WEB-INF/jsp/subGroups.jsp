@@ -18,7 +18,8 @@
     <s:form><s:actionerror/>
     <h2><fmt:message key="subGroups.subtitle" /></h2>
     <s:if test="subGroupsList != null">
-    <display:table name="${subGroupsList}" id="row" class="data" sort="list"  pagesize="200" requestURI="subGroupsquery.action" export="false">    
+    <s:set name="subGroupsList" value="subGroupsList" scope="request"/>
+    <display:table name="subGroupsList" id="row" class="data" sort="list"  pagesize="200" requestURI="subGroupsquery.action" export="false">    
 	    <display:column titleKey="subGroups.code" property="groupNumberText" sortable="true" headerClass="sortable" />
 	    <display:column titleKey="subGroups.description" property="description" sortable="true" headerClass="sortable" />
 	    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)

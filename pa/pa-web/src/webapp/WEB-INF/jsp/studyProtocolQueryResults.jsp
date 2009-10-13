@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <s:form name="sForm"><s:actionerror/>    
+<s:set name="records" value="records" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
-    name="${param.listName}" requestURI="studyProtocolquery.action" export="false">
+    name="records" requestURI="studyProtocolquery.action" export="false">
     <display:column class="title" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier"
         href="studyProtocolview.action"
         paramId="studyProtocolId" paramProperty="studyProtocolId"

@@ -1,8 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<%@ taglib prefix="sx" uri="/struts-dojo-tags" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<s:head theme="ajax" />
+<sx:head />
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title><fmt:message key="regulatory.title" /></title>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
@@ -226,7 +227,7 @@
 		<ul class="btnrow">			
 			<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
 								|| (sessionScope.role == 'SuAbstractor')}">
-			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+			<li><sx:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></sx:a></li>
 			</c:if>
 			<li><a href="nciSpecificInformationquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 			<li><a href="irb.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>

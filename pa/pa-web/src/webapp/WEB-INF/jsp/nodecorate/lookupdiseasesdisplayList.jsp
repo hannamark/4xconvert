@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <pa:failureMessage/>
-<c:if test="${disWebList != null}">
+<s:if test="disWebList != null">
+<s:set name="disWebList" value="disWebList" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" uid="row" 
     name="disWebList" export="false">
     <display:column title="Name" property="preferredName"  headerClass="sortable"/>
@@ -21,4 +22,4 @@
         </c:choose>  
     </display:column>
 </display:table>
-</c:if>
+</s:if>

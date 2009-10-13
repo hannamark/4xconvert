@@ -33,6 +33,7 @@ function handleCreate(){
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
             <td colspan="2">
+            <s:set name="milestoneList" value="milestoneList" scope="request"/>
             <display:table name="milestoneList" id="row" class="data" sort="list" pagesize="200" requestURI="milestone.action">
                 <display:column property="milestone" sortable="false"
                     titleKey="milestone.milestone" />

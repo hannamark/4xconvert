@@ -38,6 +38,7 @@ function handleEdit(rowId){
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr><td colspan="2">
+            <s:set name="accessList" value="accessList" scope="request"/>
             <display:table name="accessList" id="row" class="data" sort="list" pagesize="10" requestURI="manageAccrualAccess.action">
                 <display:column property="userName" sortable="false" titleKey="manageAccrualAccess.userName"/>
                 <display:column property="email" sortable="false" titleKey="manageAccrualAccess.email"/>

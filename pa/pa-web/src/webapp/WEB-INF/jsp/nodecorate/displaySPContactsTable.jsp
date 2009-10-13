@@ -5,6 +5,7 @@
             <div class="error_msg"><s:actionerror/></div>
  </s:if>
          
+<s:set name="personWebDTOList" value="personWebDTOList" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="row"  name="personWebDTOList" export="false" >
 	<display:column title="Last Name" property="lastName"  headerClass="sortable"/> 
 	<display:column title="First Name" property="firstName"  headerClass="sortable"/>

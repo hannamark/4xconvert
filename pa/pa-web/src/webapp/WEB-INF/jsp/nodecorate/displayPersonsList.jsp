@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <pa:failureMessage/>
 <s:set name="rolecode" value="@gov.nih.nci.pa.enums.StudySiteContactRoleCode@getRoleCodes()" />
-<c:if test="${persons != null}">
+<s:if test="persons != null">
+<s:set name="persons" value="persons" scope="request"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="row"  
 	name="persons" export="false" requestURI="/pa/protected/popupdisplayPersonsListDisplayTag.action">
 	<display:column title="PO-ID" property="id"  headerClass="sortable"/>
@@ -18,7 +19,7 @@
 							<span class="btn_img"><span class="add">Select</span></span></a>
 	</display:column>
 </display:table>
-</c:if>
+</s:if>
 
 
 

@@ -204,12 +204,10 @@ function resetValues(){
  </div>
  <div class="line"></div>
  
- <c:if test="${records != null}">                       
+ <s:if test="records != null">                       
         <h2>Search Results</h2>  
-        <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp">
-            <jsp:param name="listName" value="records" />        
-        </jsp:include>
-   </c:if>
+        <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp"/>
+   </s:if>
    
 </body>
 </html>

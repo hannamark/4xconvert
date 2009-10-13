@@ -47,6 +47,7 @@
     <tr>
       <td width="45%">
           <h2 class="small"><fmt:message key="disease.parents.title"/></h2>
+          <s:set name="parentList" value="parentList" scope="request"/>
           <display:table name="parentList" id="row" class="data">
             <display:column property="preferredName" titleKey="disease.preferredName" headerClass="small"/>
             <display:column titleKey="disease.view" headerClass="centeredsmall" class="action" style="width:30%">
@@ -60,6 +61,7 @@
       <td/>
       <td width="45%">
           <h2 class="small"><fmt:message key="disease.children.title"/></h2>
+          <s:set name="childList" value="childList" scope="request"/>
           <display:table name="childList" id="row" class="data">
             <display:column property="preferredName" titleKey="disease.preferredName" headerClass="small"/>
             <display:column titleKey="disease.view" headerClass="centeredsmall" class="action" style="width:30%">

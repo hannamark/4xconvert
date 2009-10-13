@@ -19,6 +19,7 @@
       <h2><fmt:message key="statusHistory.title" /></h2>
       <table class="form">
         <tr><td>
+        <s:set name="overallStatusList" value="overallStatusList" scope="request"/>
         <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" uid="row" 
                 name="overallStatusList" export="false">
             <display:column property="statusCode" titleKey="studyOverallStatus.statusCode" sortable="false"/>

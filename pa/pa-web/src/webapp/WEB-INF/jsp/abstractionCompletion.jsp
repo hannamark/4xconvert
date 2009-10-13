@@ -51,8 +51,9 @@ function generateTSRWord() {
     </s:if>
     
     </h2>
-    <s:if test="%{abstractionList != null}">    
-    <display:table name="${abstractionList}" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
+    <s:if test="abstractionList != null">    
+    <s:set name="abstractionList" value="abstractionList" scope="request"/>
+    <display:table name="abstractionList" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
 	    <display:column title="Type" property="errorType"  sortable="true" headerClass="sortable" />
     	<display:column title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
 	    <display:column title="Comment" property="comment" sortable="true" headerClass="sortable" />	
