@@ -86,7 +86,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.iso.Cd;
@@ -160,7 +160,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
         dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.BLACK.getName()));
+        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.BLACK.getName()));
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
@@ -177,9 +177,9 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
     public void update() throws Exception {
         assertFalse(TestSchema.patients.get(0).getRaceCode().equals(PatientRaceCode.ASIAN));
         PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
-        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.ASIAN.getName()));
+        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.ASIAN.getName()));
         PatientDto r = bean.update(dto);
-        assertTrue(DSetEnumConverter.convertDSetToCsv(r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
+        assertTrue(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
 
     }
     

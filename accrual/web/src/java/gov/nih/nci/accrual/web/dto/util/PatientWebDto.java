@@ -81,7 +81,7 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;

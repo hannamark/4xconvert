@@ -80,11 +80,12 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.iso.util.DSetEnumConverter;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -110,7 +111,7 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
         dto.setEthnicCode(CdConverter.convertToCd(bo.getEthnicCode()));
         dto.setGenderCode(CdConverter.convertToCd(bo.getSexCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(bo.getRaceCode()));
+        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, bo.getRaceCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setZip(StConverter.convertToSt(bo.getZip()));
@@ -133,7 +134,7 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
             bo.setSexCode(PatientGenderCode.getByCode(dto.getGenderCode().getCode()));
         }
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setRaceCode(DSetEnumConverter.convertDSetToCsv(dto.getRaceCode()));
+        bo.setRaceCode(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, dto.getRaceCode()));
         bo.setZip(StConverter.convertToString(dto.getZip()));
         return bo;
     }
