@@ -27,9 +27,9 @@
 
 <script type="text/javascript">
 
-    addCalendar("Cal1", "Select Date", "recStatusDate", "recStatusDate");
-    addCalendar("Cal2", "Select Date", "dateOpenedForAccrual", "dateOpenedForAccrual");
-    addCalendar("Cal3", "Select Date", "dateClosedForAccrual", "dateClosedForAccrual");
+    addCalendar("Cal1", "Select Date", "recStatusDate", "proprietarySite");
+    addCalendar("Cal2", "Select Date", "dateOpenedForAccrual", "proprietarySite");
+    addCalendar("Cal3", "Select Date", "dateClosedForAccrual", "proprietarySite");
 
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
