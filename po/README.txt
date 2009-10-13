@@ -63,7 +63,7 @@ Note: the EJB3 deployer used comes from the JEMS installer 1.2.0.GA (http://www.
 1.4 Useful, non standard mvn targets
 
     mvn nci-commons:jboss-undeploy  - removes the deployable from jboss.
-    mvn nci-commons:hbm2ddl - generates the hibernate scheam.sql - usefull when writing migration scripts.
+    mvn nci-commons:hbm2ddl - generates the hibernate scheam.sql - usefull when writing migration scripts. (run from services dir)
     mvn cargo:deploy - deploys to jboss
     mvn nci-commons:copy-web-files - copies the web files (jsps, javascript, etc) without redeploying
     mvn -Pinit-db sql:execute - reinit the db by completely dropping and recreating.
