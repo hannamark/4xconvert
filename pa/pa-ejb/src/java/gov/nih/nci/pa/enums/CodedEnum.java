@@ -101,4 +101,12 @@ public interface CodedEnum<C> {
      * @return String
      */
     String getDisplayName();
+    
+    /**
+     * Given the Cd code return the Enum value by name.
+     * 
+     * @param str the code from a Cd
+     * @return the Enum.name() value
+     */
+    String getNameByCode(String str);
 }

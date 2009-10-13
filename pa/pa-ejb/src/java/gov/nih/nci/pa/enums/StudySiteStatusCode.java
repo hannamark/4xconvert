@@ -190,4 +190,10 @@ public enum StudySiteStatusCode implements CodedEnum<String> {
          return TRANSITIONS.get(this).contains(newStatus);
      }
 
+     /**
+      * {@inheritDoc}
+      */
+     public String getNameByCode(String str) {
+         return getByCode(str).name();
+     }
 }

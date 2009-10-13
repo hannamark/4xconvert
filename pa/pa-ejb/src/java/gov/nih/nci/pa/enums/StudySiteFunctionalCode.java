@@ -229,5 +229,11 @@ public enum StudySiteFunctionalCode implements CodedEnum<String> {
          }
          return codedNames;
      }        
+     
+     /**
+      * {@inheritDoc}
+      */
+     public String getNameByCode(String str) {
+         return getByCode(str).name();
+     }
 }
-

@@ -284,4 +284,11 @@ public enum StudyStatusCode implements CodedEnum<String> {
          codedNames = list.toArray(codedNames);
          return codedNames;
      }    
+     
+     /**
+      * {@inheritDoc}
+      */
+     public String getNameByCode(String str) {
+         return getByCode(str).name();
+     }
 }

@@ -167,4 +167,11 @@ public enum PhaseCode implements CodedEnum<String> {
         }
         return a;
     }  
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
+    }
 }

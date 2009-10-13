@@ -224,5 +224,11 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     public boolean isEligibleForAccrual() {
         return eligibleForAccrual;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
+    }
 }
-
