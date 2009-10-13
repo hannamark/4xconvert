@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.pa.report.enums;
 
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import gov.nih.nci.pa.enums.CodedEnum;
 
@@ -109,5 +110,22 @@ public enum SubmissionTypeCode implements CodedEnum<String> {
      */
     public String getDisplayName() {
         return sentenceCasedName(this);
+    }
+
+    /**
+     *
+     * @param code code
+     * @return PatientRaceCode
+     */
+    public static SubmissionTypeCode getByCode(String code) {
+        return getByClassAndCode(SubmissionTypeCode.class, code);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str)
+    {
+        return getByCode(str).name();
     }
 }
