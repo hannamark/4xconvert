@@ -87,6 +87,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -109,6 +111,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
@@ -765,8 +768,15 @@ public class BatchCreateProtocols {
                criteria.setPostalAddress(AddressConverterUtil.create(null, null,
                         cityName, null, zipCode, countryName.toUpperCase(Locale.US)));
         }
-        List<OrganizationDTO> poOrgDtos = RegistryServiceLocator
-                        .getPoOrganizationEntityService().search(criteria);
+        
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<OrganizationDTO> poOrgDtos = null;
+        try {
+            poOrgDtos = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria, limit);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+        
         if (null == poOrgDtos || poOrgDtos.isEmpty()) {
               // create a new org and then return the new Org
               LOG.info(" lookUpOrgs Serch return no org so creating new");
@@ -914,7 +924,14 @@ public class BatchCreateProtocols {
             }
             p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
         }
-        poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p);
+                
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        try {
+            poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p, limit);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+        
         if (null == poPersonList ||  poPersonList.isEmpty()) {
             LOG.info("No Person found so creating new Person");
             personId = createPerson(batchDto);

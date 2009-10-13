@@ -87,6 +87,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
@@ -94,6 +96,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -240,8 +243,13 @@ public class PopupAction extends ActionSupport implements Preparable {
             } else {
                 p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
             }
-            if (p.getIdentifier() != null || p.getName() != null) {
-                poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p);
+            if (p.getIdentifier() != null || p.getName() != null) {                
+                LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+                try {
+                    poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p, limit);
+                } catch (TooManyResultsException e) {
+                    throw new PAException(e);
+                }
             }
             for (gov.nih.nci.services.person.PersonDTO poPersonDTO : poPersonList) {
                 persons.add(EnPnConverter.convertToPaPersonDTO(poPersonDTO));
@@ -312,7 +320,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             if (criteria.getIdentifier() != null 
                     || criteria.getName() != null
                     || criteria.getPostalAddress() != null) {
-                callConvert = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria);
+                LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+                callConvert = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria, limit);
             }
             convertPoOrganizationDTO(callConvert);
             return pagination ? "orgs" : SUCCESS;
