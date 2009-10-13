@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <s:form name="sForm"><s:actionerror/>    
+<c:set var="topic" scope="request" value="inbox_process"/>
 <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
     name="${param.listName}" requestURI="inboxProcessingquery.action" export="false">
     <display:column class="title" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier"

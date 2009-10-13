@@ -28,7 +28,7 @@ function resetValues(){
 </SCRIPT>
 <body>
 <!-- main content begins-->
-    <c:set var="topic" scope="request" value="search_trial"/>
+    <c:set var="topic" scope="request" value="inbox_access"/>
     <h1><fmt:message key="inboxTrial.search.title"/></h1>
     <div class="filter_checkbox"><input type="checkbox" name="checkbox" checked="true" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Display Search Fields</label></div>
     <div class="box" id="filters">
