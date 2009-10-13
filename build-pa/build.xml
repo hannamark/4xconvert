@@ -911,7 +911,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         init,
         test:pa-ejb,
         test:pa-web,
-        test:reg-web
+        test:reg-web,
+        test:accrual
         "/>
 
     <target name="test:pa-web" depends="init">
@@ -954,6 +955,23 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.url" value="${database.url}"/>
             <property name="test.schema.showsql" value="false"/>
             <property name="test.java.naming.provider" value="localhost"/>
+        </ant>
+    </target>
+    <target name="test:accrual" depends="init" unless="exclude.accrual">
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
+            target="test-dynamic-analysis"
+            dir="${accrual-ear.base.dir}" >
+            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="jdbc.driver" value="${database.driver}"/>
+            <property name="accrual-ear.build.dir" location="${pa-ear.dist.dir}" />
+            <property name="application.url" location="${application.url}" />
+            <property name="database.url" value="${database.url}" />
+            <property name="database.user" value="${database.user}" />
+            <property name="database.password" value="${database.password}" />
+            <property name="po.jnp.url" value="${accrual.po.jnp.url}" />
+            <property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
+            <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
         </ant>
     </target>
 

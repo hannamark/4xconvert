@@ -295,6 +295,10 @@
     <target name="test" depends="test-cobertura"
             description="Runs various tests in the subproject">
     </target>
+    
+    <target name="test-dynamic-analysis" depends="inspect, test"
+        description="Runs full analysis and test">
+    </target>
 
 
     <!-- ====================================================================== -->
@@ -316,7 +320,7 @@
         </war>
     </target>
 
-    <target name="war" depends="ivy-get, compile, inspect, test, create-war"/>
+    <target name="war" depends="ivy-get, compile, test-dynamic-analysis, create-war"/>
 
     <target name="war-notest" depends="ivy-compile, ivy-runtime, compile, create-war"
             description="Package the application.  Do not run tests."/>

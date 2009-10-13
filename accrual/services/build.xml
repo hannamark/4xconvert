@@ -289,7 +289,7 @@
     <!-- Static analysis target                                                 -->
     <!-- ====================================================================== -->
 
-    <target name="inspect" depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
+    <target name="inspect" depends="ivy-get, create-jar, test-checkstyle, test-pmd, test-simian"
             description="Runs various static analysis tools such as PMD, Checkstyle, Simian">
     </target>
 
@@ -302,27 +302,31 @@
             description="Runs various tests in the subproject">
     </target>
 
+    <target name="test-dynamic-analysis" depends="inspect, test"
+        description="Runs full analysis and test">
+    </target>
+
 
     <!-- ====================================================================== -->
     <!-- Package targets                                                        -->
     <!-- ====================================================================== -->
 
-    <target name="create-jar">
+    <target name="create-jar" depends="compile">
         <jar jarfile="${services.build.dir}/${services.jar}" 
              compress="true" 
              index="false" 
              basedir="${services.build.outputDir}"/>
     </target>
     
-    <target name="jar" depends="ivy-get, compile, inspect, test, create-jar" 
+    <target name="jar" depends="ivy-get, create-jar, test-dynamic-analysis" 
             description="Makes services jar">
     </target>
     
-    <target name="jar-notest" depends="ivy-compile, compile, create-jar"
+    <target name="jar-notest" depends="ivy-compile, create-jar"
             description="Makes services jar, doesn't run tests">
     </target>
 
-    <target name="jar-notest-noivy" depends="compile, create-jar"/>
+    <target name="jar-notest-noivy" depends="create-jar"/>
 
 
     <!-- ====================================================================== -->

@@ -95,6 +95,23 @@
     <target name="deploy" depends="set-full, fix-server-xml, deploy-ear, echoTime" 
             description="Build test and deploy."/>
 
+    <target name="test-dynamic-analysis">
+        <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
+            dir="${services.dir}" >
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+
+            <target name="test-dynamic-analysis"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${web.build.file}"
+            dir="${web.dir}" >
+            <property name="application.url" value="${application.url}" />
+            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+
+            <target name="test-dynamic-analysis"/>
+        </ant>
+    </target>
+    
     <!-- The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
         security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
         remote deployments. This definition supports the developer local deployments.
