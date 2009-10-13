@@ -854,7 +854,7 @@ function toggledisplay2 (it) {
                     <s:iterator id="participatingSites" value="participatingSites" status="psstats">
                     <tr>
                         <td>
-                            <s:textfield  name="participatingSites[%{#psstats.index}].name" value="%{name}" readonly="true" cssStyle="border: 1px solid #FFFFFF"/>
+                            <s:textfield  name="participatingSites[%{#psstats.index}].name" value="%{name}" readonly="true" cssStyle="width:300px;border: 1px solid #FFFFFF"/>
                         </td>
                             
                          <s:set name="recruitmentStatusValues" 
@@ -912,7 +912,7 @@ function toggledisplay2 (it) {
                     <tr>
                         <td class="tdBoxed">
                           <s:hidden  name="collaborators[%{#stat.index}].id" value="%{id}" />
-                          <s:textfield  name="collaborators[%{#stat.index}].name" value="%{name}" readonly="true" cssStyle="border: 1px solid #FFFFFF"/>
+                          <s:textfield  name="collaborators[%{#stat.index}].name" value="%{name}" readonly="true" cssStyle="width:300px;border: 1px solid #FFFFFF"/>
                          </td>
                             <s:set name="functionalCodeValues"
                                 value="@gov.nih.nci.pa.enums.StudySiteFunctionalCode@getCollaboratorDisplayNames()"/>
