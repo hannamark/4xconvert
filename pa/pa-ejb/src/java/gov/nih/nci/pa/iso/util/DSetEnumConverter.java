@@ -129,7 +129,7 @@ public class DSetEnumConverter {
                 Cd obj = CdConverter.convertToCd(value);
                 tSet.add(obj);
             }
-            if (tSet.isEmpty()) {
+            if (!tSet.isEmpty()) {
                 dset.setItem(tSet);
             }
         }
