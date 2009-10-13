@@ -44,6 +44,7 @@
 			<c:if test="${docWFSMenu  == 'Accepted'}">
     			<li><div>Administrative Data</div>
     				<ul>
+    				    <li><a href="ajaxAbstractionCompletionviewTSR.action" >View TSR</a></li>
                         <li><a href="generalTrialDesignquery.action" >General Trial Details</a></li>
     					<li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
                         <li class="hassubmenu">Regulatory Information
