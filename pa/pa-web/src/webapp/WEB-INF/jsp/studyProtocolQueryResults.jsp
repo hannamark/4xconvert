@@ -40,7 +40,10 @@
 </s:form>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 function generateTSR(Id) {
-     showPopWin('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+Id, 900, 400, '', 'View TSR');
+    var url = "/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId="+Id;
+    document.sForm.target = "TSR";
+    document.sForm.action = url;
+    document.sForm.submit();
     
 }
 </script>

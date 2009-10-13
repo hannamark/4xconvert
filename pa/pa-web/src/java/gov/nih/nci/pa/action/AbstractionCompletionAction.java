@@ -124,7 +124,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     private HttpServletResponse servletResponse;
     private static final String TSR = "TSR_";
     private static final String HTML = ".html";
-
+    private static final String WORD = ".doc";
 
     /**
     * @return result
@@ -197,6 +197,41 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         servletResponse.setContentType("text/html;charset=ISO-8859-1");
         servletResponse.setContentLength(htmlData.length());
         servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
+        servletResponse.setHeader("Pragma", "public");
+        servletResponse.setHeader("Cache-Control", "max-age=0");
+
+        ServletOutputStream servletout = servletResponse.getOutputStream();
+        servletout.write(htmlData.getBytes());
+
+        servletout.flush();
+        servletout.close();
+      } catch (Exception e) {
+        return SUCCESS;
+      }
+      return NONE;
+    }
+    
+    /**
+     * @return res
+     */
+    public String viewTSRWord() {
+      try {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
+        getAttribute(Constants.STUDY_PROTOCOL_II);
+
+        PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+            IiConverter.convertToLong(studyProtocolIi));
+          String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(studyProtocolIi);
+
+        final int i = 1000;
+        Random randomGenerator = new Random();
+        int randomInt = randomGenerator.nextInt(i);
+
+        String fileName = TSR + randomInt + studyProtocolIi.getExtension() + WORD;
+        
+        servletResponse.setContentType("application/vnd.msword");
+        servletResponse.setHeader("Content-Disposition", "attachment;" + " filename=\""  + fileName + "\"");
+        servletResponse.setContentLength(htmlData.length());
         servletResponse.setHeader("Pragma", "public");
         servletResponse.setHeader("Cache-Control", "max-age=0");
 

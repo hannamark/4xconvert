@@ -26,6 +26,12 @@ function generateTSR() {
    document.aForm.submit();
    
    }
+function generateTSRWord() {
+  document.aForm.target = "TSR";
+   document.aForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSRWord.action";
+   document.aForm.submit();
+
+}
 </SCRIPT>
 
 <body onload="setFocusToFirstControl();">
@@ -57,7 +63,8 @@ function generateTSR() {
             <ul class="btnrow">
                 <c:if test="${abstractionError==false}">                                        
                     <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
-                    <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>                                
+                    <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>
+                     <li><a href="#"  class="btn" onclick="generateTSRWord();"><span class="btn_img"><span class="save">View TSR in Word</span></span></a></li>                                
                 </c:if>
             </ul>   
         </del>
