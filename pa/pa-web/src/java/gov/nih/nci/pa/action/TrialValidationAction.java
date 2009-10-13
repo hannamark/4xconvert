@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -708,8 +709,9 @@ public class TrialValidationAction extends ActionSupport {
             return "display_org";
         }
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        LimitOffset limit = new LimitOffset(1, 0);
         try {
-            selectedLeadOrg = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
+            selectedLeadOrg = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
             gtdDTO.setLeadOrganizationName(selectedLeadOrg.getName().getPart().get(0).getValue());
             gtdDTO.setLeadOrganizationIdentifier(selectedLeadOrg.getIdentifier().getExtension());
         } catch (Exception e) {
@@ -753,8 +755,9 @@ public class TrialValidationAction extends ActionSupport {
             return "display_selected_sponsor";
         }
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        LimitOffset limit = new LimitOffset(1, 0);
         try {
-            selectedSponsor = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
+            selectedSponsor = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
             gtdDTO.setSponsorIdentifier(selectedSponsor.getIdentifier().getExtension());
             gtdDTO.setSponsorName(selectedSponsor.getName().getPart().get(0).getValue());
         } catch (Exception e) {
@@ -775,8 +778,9 @@ public class TrialValidationAction extends ActionSupport {
             return "display_summary4funding_sponsor";
         }
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        LimitOffset limit = new LimitOffset(1, 0);
         try {
-            selectedSummary4Sponsor = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
+            selectedSummary4Sponsor = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
             gtdDTO.setSummaryFourOrgName(selectedSummary4Sponsor.getName().getPart().get(0).getValue());
             gtdDTO.setSummaryFourOrgIdentifier(selectedSummary4Sponsor.getIdentifier().getExtension());
         } catch (Exception e) {

@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -86,6 +88,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -298,8 +301,9 @@ public class PopUpAction extends ActionSupport {
             criteria.setName(EnOnConverter.convertToEnOn(orgName));
             criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName,
                                                                             stateName, zipCode, countryName));
-            List<OrganizationDTO> personsList = new ArrayList<OrganizationDTO>();
-            personsList = PoRegistry.getOrganizationEntityService().search(criteria);
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+            List<OrganizationDTO> personsList = new ArrayList<OrganizationDTO>();            
+            personsList = PoRegistry.getOrganizationEntityService().search(criteria, limit);
             for (OrganizationDTO dto : personsList) {
                 orgs.add(EnOnConverter.convertPoOrganizationDTO(dto, countryList));
             }
@@ -339,12 +343,17 @@ public class PopUpAction extends ActionSupport {
         p.setName(EnPnConverter.convertToEnPn(firstName, null, lastName, null, null));
         p.setPostalAddress(AddressConverterUtil.create(null, null, cityName, stateName, zipCode, countryName));
         try {
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
             List<PersonDTO> persList = new ArrayList<PersonDTO>();
-            persList = PoRegistry.getPersonEntityService().search(p);
+            persList = PoRegistry.getPersonEntityService().search(p, limit);
             for (PersonDTO dto : persList) {
                 persons.add(EnPnConverter.convertToPaPersonDTO(dto));
             }
         } catch (PAException e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return retvalue;
+        } catch (TooManyResultsException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return retvalue;

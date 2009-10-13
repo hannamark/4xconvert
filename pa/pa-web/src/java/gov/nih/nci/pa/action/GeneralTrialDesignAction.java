@@ -83,6 +83,8 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
@@ -117,6 +119,7 @@ import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -648,7 +651,15 @@ public class GeneralTrialDesignAction extends ActionSupport {
     private String getCtGocIdentifier() throws  PAException, CurationException {
         OrganizationDTO poOrgDto = new OrganizationDTO();
         poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
-        List<OrganizationDTO> poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto);
+        
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<OrganizationDTO> poOrgs = null;
+        try {
+            poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto, limit);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+        
         String identifier = null;
         if (poOrgs == null || poOrgs.isEmpty()) {
             poOrgDto.setPostalAddress(AddressConverterUtil.create("ct.gov.address", null, "ct.mun", "VA", "20171",

@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
@@ -103,14 +105,12 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
  *
  * @author gnaveh
  *
  */
-@Validation
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
 public class NCISpecificInformationAction extends ActionSupport {
     private static final long serialVersionUID = -5560377425534113809L;
@@ -309,10 +309,15 @@ public class NCISpecificInformationAction extends ActionSupport {
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
+        LimitOffset limit = new LimitOffset(1, 0);
         OrganizationDTO selectedOrgDTO;
         try {
-            selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
+            selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
         } catch (PAException e) {
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            return ERROR;
+        } catch (TooManyResultsException e) {
             addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return ERROR;

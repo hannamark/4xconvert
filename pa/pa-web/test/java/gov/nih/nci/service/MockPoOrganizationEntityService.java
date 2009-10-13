@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -148,8 +149,38 @@ public class MockPoOrganizationEntityService implements
 
     public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1)
             throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+    	List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
+        if(arg0.getIdentifier() != null) {
+            for(OrganizationDTO dto:orgDtoList){
+                if(dto.getIdentifier().getExtension().equals(arg0.getIdentifier().getExtension())){
+                    matchingDtosList.add(dto);
+                }
+            }
+        }
+        if(arg0.getName()!= null ) {
+            String inputName = EnOnConverter.convertEnOnToString(arg0.getName());
+            for(OrganizationDTO dto:orgDtoList){
+                String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
+                if(dtoName .equals(inputName)){
+                    matchingDtosList.add(dto);
+                }
+            }
+        }
+        
+        int fromIndex = (arg1.getOffset() < 0 ? 0 : arg1.getOffset());
+        int toIndex = Math.min(fromIndex + arg1.getLimit(), matchingDtosList.size());
+        
+        try {
+        	matchingDtosList = matchingDtosList.subList(fromIndex, toIndex);
+        } catch (IndexOutOfBoundsException e) { // fromIndex > toIndex
+        	matchingDtosList.clear();  // return empty list
+        }
+        
+        if (matchingDtosList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+            throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
+        }
+        
+        return matchingDtosList ;
     }
 
 }

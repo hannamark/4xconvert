@@ -141,12 +141,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
  * Action class for viewing and editing the participating organizations.
@@ -155,12 +155,12 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  * @since 08/20/2008 copyright NCI 2007. All rights reserved. This code may not be used without the express written
  *        permission of the copyright holder, NCI.
  */
-@Validation
 @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity",
         "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.NPathComplexity", "PMD.InefficientStringBuffering" })
 public class ParticipatingOrganizationsAction extends ActionSupport implements Preparable {
     private static final String REC_STATUS_DATE = "recStatusDate";
     private static final long serialVersionUID = 123412653L;
+    private static final Logger LOG = Logger.getLogger(ParticipatingOrganizationsAction.class);
     static final String ACT_FACILITY_SAVE = "facilitySave";
     static final String ACT_EDIT = "edit";
     static final String ACT_DELETE = "delete";
@@ -550,7 +550,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
-        selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
+        
+        LimitOffset limit = new LimitOffset(1, 0);
+        try {
+            selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+
         // convert the PO DTO to the pa domain
         paOrgDTO = EnOnConverter.convertPoOrganizationDTO(selectedOrgDTO, null);
         //paOrgDTO = ISOOrgDisplayConverter.convertPoOrganizationDTO(selectedOrgDTO);
@@ -1380,7 +1387,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String perId = ServletActionContext.getRequest().getParameter("perId");
         PersonDTO criteria = new PersonDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(perId)));
-        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         PersonDTO perDTO;
         try {
             perDTO = PoRegistry.getPersonEntityService().search(criteria, limit).get(0);

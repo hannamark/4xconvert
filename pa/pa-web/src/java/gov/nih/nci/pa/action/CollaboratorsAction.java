@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
@@ -340,7 +341,8 @@ public class CollaboratorsAction extends ActionSupport
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
-        selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria).get(0);
+        LimitOffset limit = new LimitOffset(1, 0);
+        selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
 
         // store selection
         Organization org = new Organization();
