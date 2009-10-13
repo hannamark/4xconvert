@@ -86,6 +86,11 @@
                     <td class="label"><s:label for="armDescription">Arm Description:</s:label></td>
                     <td class="value">
                         <s:textarea name="armDescription" rows="3" cssStyle="width:280px;float:left"/>
+                        <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>armDescription</s:param>
+                               </s:fielderror>                            
+                         </span>
                     </td>
                 </tr>
             </table>

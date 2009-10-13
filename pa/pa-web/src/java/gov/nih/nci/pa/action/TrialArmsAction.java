@@ -97,6 +97,7 @@ import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -129,7 +130,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     private static final String ACT_LIST_GROUP = "listGroup";
     private static final String ACT_EDIT_NEW_GROUP = "editNewGroup";
     private static final String ACT_EDIT_GROUP = "editGroup";
-
+    
     private ArmServiceRemote armService;
     private PlannedActivityServiceRemote plaService;
     private InterventionServiceRemote intService;
@@ -298,6 +299,10 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     private void businessRules() {
         if (PAUtil.isEmpty(getArmType())) {
             addFieldError("armType", "Select an Arm Type");   
+        }
+        if (!PAUtil.isEmpty(getArmDescription()) 
+              && PAUtil.isGreatenThan(StConverter.convertToSt(getArmDescription()), PAAttributeMaxLen.LEN_1000)) {
+            addFieldError("armDescription", "Arm Description length should not be greater than 1000");   
         }
         if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
                 && (!PAUtil.isEmpty(armType) && armType.equals(ArmTypeCode.NO_INTERVENTION.getCode())
@@ -490,7 +495,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @param armDescription the armDescription to set
      */
     public void setArmDescription(String armDescription) {
-        this.armDescription = PAUtil.stringSetter(armDescription, Arm.DESCRIPTION_TEXT_LENGTH);
+        this.armDescription = armDescription;
     }
 
     /**
