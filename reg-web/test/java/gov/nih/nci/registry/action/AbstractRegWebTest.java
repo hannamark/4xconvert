@@ -3,10 +3,7 @@
  */
 package gov.nih.nci.registry.action;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -16,11 +13,22 @@ import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.config.Configuration;
+import com.opensymphony.xwork2.config.ConfigurationManager;
+import com.opensymphony.xwork2.config.providers.XWorkConfigurationProvider;
+import com.opensymphony.xwork2.inject.Container;
+import com.opensymphony.xwork2.util.ValueStack;
+import com.opensymphony.xwork2.util.ValueStackFactory;
 
 /**
  * @author Vrushali
@@ -39,6 +47,17 @@ public abstract class AbstractRegWebTest {
      */
     @Before
     public void initMockrequest() {
+    	ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.addContainerProvider(new XWorkConfigurationProvider());
+        Configuration config = configurationManager.getConfiguration();
+        Container container = config.getContainer();
+
+        ValueStack stack = container.getInstance(ValueStackFactory.class).createValueStack();
+        stack.getContext().put(ActionContext.CONTAINER, container);
+        ActionContext.setContext(new ActionContext(stack.getContext()));
+
+        assertNotNull(ActionContext.getContext());
+        
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         ServletActionContext.setRequest(request);

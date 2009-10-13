@@ -44,6 +44,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.validator.ClassValidator;
@@ -65,6 +66,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
      */
     private static final long serialVersionUID = 1L;
     private HttpServletResponse servletResponse;
+    private static final Logger LOG = Logger.getLogger(SubmitProprietaryTrialAction.class);
     private ProprietaryTrialDTO trialDTO;
     private File protocolDoc;
     private String protocolDocFileName;

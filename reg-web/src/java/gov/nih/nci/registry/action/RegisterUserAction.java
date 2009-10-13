@@ -3,23 +3,21 @@
  */
 package gov.nih.nci.registry.action;
 
-import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.registry.dto.RegistryUserWebDTO;
+import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.EncoderDecoder;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
-import gov.nih.nci.registry.dto.RegistryUserWebDTO;
-import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 /**
  * @author Bala Nair
@@ -27,7 +25,6 @@ import com.opensymphony.xwork2.validator.annotations.Validation;
  */
 
 @SuppressWarnings({ "PMD" })
-@Validation
 public class RegisterUserAction extends ActionSupport {
     
     private static final Logger LOG  = Logger.getLogger(RegisterUserAction.class);

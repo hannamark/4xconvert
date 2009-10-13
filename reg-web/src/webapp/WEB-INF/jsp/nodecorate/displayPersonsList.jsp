@@ -1,6 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <reg-web:failureMessage/>
-<c:if test="${persons != null}">
+<s:if test="persons != null">
+
+<s:set name="persons" value="persons" scope="request"/>
 <display:table class="data" summary="This table contains Person search results. Please use column headers to sort results"  sort="list" pagesize="10" uid="row"  name="persons" export="false" 
 															requestURI="popupdisplayPersonsListDisplayTag.action">
 	<display:column title="PO-ID" property="id"  sortable="true"  headerClass="sortable"  headerScope="col"/>
@@ -13,4 +15,4 @@
 							<span class="btn_img"><span class="confirm">Select</span></span></a>	
 	</display:column>
 </display:table>
-</c:if>
+</s:if>

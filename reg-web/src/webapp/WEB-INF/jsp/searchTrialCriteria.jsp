@@ -170,12 +170,10 @@ function handleMyAction(){
        </s:form>
      </div>
     	<div class="line"></div>
-    	 <c:if test="${records != null}">						
+    	 <s:if test="records != null">						
 			<h2 id="search_results">Submitted Clinical Trials Search Results</h2>
 			   <c:set var="topic" scope="request" value="search_results"/>   
-				<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp">
-					<jsp:param name="listName" value="records" />        
-				</jsp:include>
-		 </c:if>
+				<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
+		 </s:if>
 	</body>
 </html>

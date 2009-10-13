@@ -2,14 +2,11 @@ package gov.nih.nci.registry.dto;
 
 import org.hibernate.validator.NotEmpty;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
-
 /**
  * 
  * @author Vrushali
  *
  */
-@Validation
 public class OrganizationBatchDTO extends AddressDTO {
     private String name;
     private String orgCTEPId;

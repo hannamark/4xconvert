@@ -7,14 +7,11 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.Pattern;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
-
 /**
  * @author Vrushali
  * 
  */
 @SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals" })
-@Validation
 public class StudyProtocolBatchDTO {
     private String uniqueTrialId;
     private String localProtocolIdentifier;

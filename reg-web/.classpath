@@ -16,7 +16,7 @@
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/dwr-2.0.1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/ehcache-1.2.4.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/ejb-api-3.0.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/compile/freemarker-2.3.8.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/freemarker-2.3.13.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-annotations-3.2.0.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-commons-annotations-3.3.0.ga.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-validator-3.0.0.GA.jar"/>
@@ -31,13 +31,14 @@
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/persistence-api-1.0.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/postgresql-jdbc3-8.3-603.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/security-4.0.1.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/compile/sitemesh-2.2.1.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/sitemesh-2.3.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/spring-2.0.5.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/standard-1.1.2.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-core-2.0.14.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-sitemesh-plugin-2.0.14.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-spring-plugin-2.0.14.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/compile/xwork-2.0.7.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-core-2.1.6.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-dojo-plugin-2.1.6.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-sitemesh-plugin-2.1.6.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-spring-plugin-2.1.6.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/xwork-2.1.2.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/cargo-ant-0.8.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/cargo-core-uberjar-0.8.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/clm-4.0.jar"/>
@@ -49,8 +50,8 @@
     <classpathentry kind="var" path="PA_LIB/pa-web/test/postgresql-jdbc3-8.3-603.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/security-4.0.1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test/spring-2.0.5.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/test/struts2-core-2.0.14.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/test/xwork-2.0.7.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/test/struts2-core-2.1.6.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/test/xwork-2.1.2.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test-junit/junit-4.4.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-java-client-driver-1.0-beta-1.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-java-client-driver-sources-1.0-beta-1.jar"/>

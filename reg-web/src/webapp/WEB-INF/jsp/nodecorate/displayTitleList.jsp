@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <reg-web:failureMessage/>
+<s:set name="orgContactList" value="orgContactList" scope="request"/>
 <display:table class="data" summary="This table contains Person search results. Please use column headers to sort results"  sort="list" pagesize="10" uid="row"  name="orgContactList" export="false" 
 															requestURI="popupdisplayTitlesListDisplayTag.action">
 	<display:column title="PO-ID" property="identifier.extension"  sortable="true"  headerClass="sortable"  headerScope="col"/>

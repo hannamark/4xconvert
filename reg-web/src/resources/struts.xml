@@ -46,7 +46,7 @@
 			<result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
 			<result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
 			<result name="myAccountError">/WEB-INF/jsp/myAccount.jsp</result>
-            <result name="redirect_to_login" type="redirect-action">
+            <result name="redirect_to_login" type="redirectAction">
                  <param name="actionName">searchTrial.action</param>
                  <param name="namespace">/protected</param>
                  <param name="parse">true</param>
@@ -86,7 +86,7 @@
 		<result name="error">/WEB-INF/jsp/submitTrial.jsp</result>
 		<result name="edit">/WEB-INF/jsp/submitTrial.jsp</result>
 		<result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
-        <result name="redirect_to_search" type="redirect-action">
+        <result name="redirect_to_search" type="redirectAction">
              <param name="actionName">searchTrial.action</param>
              <param name="parse">true</param>
              <param name="trialAction">${trialAction}</param>
@@ -99,7 +99,7 @@
 		<result name="error">/WEB-INF/jsp/amendTrial.jsp</result>
 		<result name="edit">/WEB-INF/jsp/amendTrial.jsp</result>
 		<result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
-        <result name="redirect_to_search" type="redirect-action">
+        <result name="redirect_to_search" type="redirectAction">
              <param name="actionName">searchTrial.action</param>
              <param name="parse">true</param>
              <param name="trialAction">${trialAction}</param>
@@ -112,7 +112,7 @@
         <result name="error">/WEB-INF/jsp/updateTrial.jsp</result>
         <result name="edit">/WEB-INF/jsp/updateTrial.jsp</result>
         <result name="review">/WEB-INF/jsp/reviewUpdateTrial.jsp</result>
-        <result name="redirect_to_search" type="redirect-action">
+        <result name="redirect_to_search" type="redirectAction">
            <param name="actionName">searchTrial.action</param>
              <param name="parse">true</param>
              <param name="trialAction">${trialAction}</param>
@@ -155,7 +155,7 @@
     </action>      
 	<action name="disClaimerAction*" class="gov.nih.nci.registry.action.DisclaimerAction" method="{1}">
         <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
-        <result name="redirect_to" type="redirect-action">
+        <result name="redirect_to" type="redirectAction">
              <param name="actionName">${actionName}</param>
              <param name="parse">true</param>
         </result>
@@ -170,7 +170,7 @@
         <result name="error">/WEB-INF/jsp/submitProprietaryTrial.jsp</result>
         <result name="review">/WEB-INF/jsp/reviewProprietaryTrial.jsp</result>
         <result name="edit">/WEB-INF/jsp/submitProprietaryTrial.jsp</result>
-        <result name="redirect_to_search" type="redirect-action">
+        <result name="redirect_to_search" type="redirectAction">
              <param name="actionName">searchTrial.action</param>
              <param name="parse">true</param>
         </result>

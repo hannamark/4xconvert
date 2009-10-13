@@ -12,14 +12,11 @@ import java.util.List;
 
 import org.hibernate.validator.NotEmpty;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
-
 /**
  * @author Vrushali
  *
  */
 @SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyFields" })
-@Validation
 public class TrialDTO {
     private String accrualReportingMethodCode;
     private String assignedIdentifier; // used to store nci-accession number

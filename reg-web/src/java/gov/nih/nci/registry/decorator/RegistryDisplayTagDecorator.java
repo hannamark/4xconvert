@@ -88,8 +88,9 @@ import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.time.FastDateFormat;
-import org.apache.struts2.ServletActionContext;
 import org.displaytag.decorator.TableDecorator;
 
 /**
@@ -120,7 +121,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      */
     public String getAmend() {
         String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
-        String loginUser = ServletActionContext.getRequest().getRemoteUser();
+        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
         String isProprietaryTrial = 
                   ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null 
                          ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
@@ -152,7 +153,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
      */
     public String getUpdate() {
         String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
-        String loginUser = ServletActionContext.getRequest().getRemoteUser();
+        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
         String isProprietaryTrial = 
             ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null 
                    ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
@@ -202,7 +203,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         DocumentWorkflowStatusCode documentWorkflowStatusCode = ((StudyProtocolQueryDTO) this.getCurrentRowObject())
                 .getDocumentWorkflowStatusCode();
         String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
-        loginUser = ServletActionContext.getRequest().getRemoteUser();
+        loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
         if (loginUser != null && loginUser.equalsIgnoreCase(userCreated)) {
             return documentWorkflowStatusCode;
         } else {
