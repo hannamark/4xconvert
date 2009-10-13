@@ -380,6 +380,7 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
             .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
 
         String submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
+        submissionMailBody = submissionMailBody.replace(currentDate, getFormatedCurrentDate());
         submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier} ",
                 spDTO.getLocalStudyProtocolIdentifier());
         submissionMailBody = submissionMailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
