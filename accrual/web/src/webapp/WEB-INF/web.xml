@@ -62,7 +62,7 @@
     <!-- Registry session-timeout-->
     <session-config>
         <session-timeout>
-            120
+            240
         </session-timeout>
     </session-config>   
     
