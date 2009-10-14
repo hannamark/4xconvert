@@ -136,6 +136,8 @@ function handleDelete(rowId){
          sortable="true" headerClass="sortable" headerScope="col"/> 
        <display:column titleKey="patient.organizationName" property="organizationName" 
          sortable="true" headerClass="sortable" headerScope="col"/>
+         <display:column titleKey="subject.statusCode" property="statusCode" 
+         sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="patient.update" headerClass="centered" class="action">
            <%
             if(submissionOpened.booleanValue()){
