@@ -76,16 +76,22 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.web.util.MockServiceLocator;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.mockrunner.mock.web.MockServletContext;
@@ -103,7 +109,14 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  */
 public class AbstractAccrualActionTest {
     protected static final String TEST_USER = "joe@barngrill.com";
-        
+
+    private class TestAction extends AbstractAccrualAction{
+        private static final long serialVersionUID = 8637312133341800224L;
+    };
+
+    private final TestAction action = new TestAction();
+
+
     @Before
     public void initMockServiceLocator() {
         AccrualServiceLocator.getInstance().setServiceLocator(new MockServiceLocator());
@@ -135,62 +148,73 @@ public class AbstractAccrualActionTest {
         setRole(AccrualConstants.ROLE_PUBLIC);
         setDisclaimer(true);
     }
-    
-    
-    @Test
-     public void executeTest() throws Exception {
-       ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_PUBLIC, true);
-         assertEquals(AccrualConstants.ROLE_PUBLIC, ServletActionContext.getRequest().getSession().
-          getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
 
-     }
-    
-       
+
+    @Test
+    public void sessionTimeoutExecuteTest() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(new MockHttpSession());
+        request.setRemoteUser(TEST_USER);
+        ServletActionContext.setServletContext(new MockServletContext());
+        ServletActionContext.setRequest(request);
+
+        assertEquals(AccrualConstants.AR_LOGOUT, action.execute());
+    }
+
+    @Test
+    public void executeTest() throws Exception {
+      ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_PUBLIC, true);
+      assertEquals(AccrualConstants.ROLE_PUBLIC, ServletActionContext.getRequest().getSession(). getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
+    }
+
+
     @Test
      public void createTest() throws Exception {
-        //assertEquals(AccrualConstants.AR_DETAIL, action.create());
+        assertEquals(AccrualConstants.AR_DETAIL, action.create());
      }
 
     @Test
     public void retrieveTest() {
-      // assertEquals(AccrualConstants.AR_DETAIL, action.retrieve());
+       assertEquals(AccrualConstants.AR_DETAIL, action.retrieve());
     }
-    
+
     @Test
     public void updateTest() {
-       //assertEquals(AccrualConstants.AR_DETAIL, action.update());
+       assertEquals(AccrualConstants.AR_DETAIL, action.update());
     }
-    
+
     @Test
     public void addTest() throws Exception {
-     //  assertEquals(action.execute(), action.add());
+       assertEquals(action.execute(), action.add());
     }
-    
+
     @Test
     public void editTest() throws Exception {
-       //assertEquals(action.execute(), action.edit());
+       assertEquals(action.execute(), action.edit());
     }
-    
+
     @Test
     public void deleteTest() throws Exception {
-     //  assertEquals(action.execute(), action.delete());
+       assertEquals(action.execute(), action.delete());
     }
-    
+
     @Test
     public void currentActionPropertyTest() {
-     //  action.setCurrentAction("currentAction");
-       //assertNotNull(action.getCurrentAction());
+       action.setCurrentAction("currentAction");
+       assertNotNull(action.getCurrentAction());
     }
-    
+
     @Test
     public void selectedRowIdentifierPropertyTest() {
-    //   action.setSelectedRowIdentifier("1");
-      // assertNotNull(action.getSelectedRowIdentifier());
+       action.setSelectedRowIdentifier("1");
+       assertNotNull(action.getSelectedRowIdentifier());
     }
 
     @Test
     public void cutOffDatePropertyTest() {
-     //  assertNull(action.getCutOffDate());
+        Timestamp testDate = new Timestamp(new Date().getTime());
+        setCutOffDate(testDate);
+        assertEquals(testDate, action.getCutOffDate());
     }
 
     /**
@@ -217,6 +241,13 @@ public class AbstractAccrualActionTest {
             ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
         }
     }
-    
-    
+
+    public void setCutOffDate(Timestamp value) {
+        if (value != null) {
+            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE,
+                    value);
+        } else {
+            ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE);
+        }
+    }
 }

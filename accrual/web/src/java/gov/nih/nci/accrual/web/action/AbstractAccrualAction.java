@@ -93,8 +93,8 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.PatientServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -173,7 +173,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     @Override
     public String execute() {
         // make sure user authorized
-        if (!getUserRole().equals(AccrualConstants.ROLE_PUBLIC)) {
+        if (getUserRole() == null || !getUserRole().equals(AccrualConstants.ROLE_PUBLIC)) {
             return AccrualConstants.AR_LOGOUT;
         }
         //check if users accepted the disclaimer if not show one
