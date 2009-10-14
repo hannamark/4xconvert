@@ -78,9 +78,8 @@
 */
 package gov.nih.nci.accrual.web.dto.util;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.util.AccrualUtil;
 
 import java.util.HashSet;

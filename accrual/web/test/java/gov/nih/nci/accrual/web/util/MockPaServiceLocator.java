@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.PatientServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
 /**
@@ -89,7 +89,9 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 public class MockPaServiceLocator implements ServiceLocatorPaInterface {
 
     private final DiseaseServiceRemote disease = new MockPaDiseaseBean();
-
+    //private final PatientServiceRemote patient = new MockPaPatientServiceBean();
+    private final PlannedActivityServiceRemote pActivity = new MockPaPlannedActivityServiceBean();
+    private final DiseaseParentServiceRemote diseaseParent = new MockPaDiseaseParentServiceBean();
     /**
      * {@inheritDoc}
      */
@@ -100,9 +102,15 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
      * {@inheritDoc}
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
-        return null;
-    }
+        return pActivity;
+    }/*
+    *//**
+     * {@inheritDoc}
+     *//*
     public PatientServiceRemote getPatientService() {
-        return null;
+        return patient;
+    }*/
+    public DiseaseParentServiceRemote getDiseaseParentService() {
+        return diseaseParent;
     }
 }

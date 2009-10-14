@@ -79,16 +79,7 @@
 package gov.nih.nci.accrual.web.dto.util;
 
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.web.action.ViewTrialsAction;
-import gov.nih.nci.accrual.web.util.AccrualConstants;
 
-import java.util.ArrayList;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 

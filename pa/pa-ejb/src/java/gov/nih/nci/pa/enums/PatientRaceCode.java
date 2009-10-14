@@ -87,24 +87,25 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @author Hugh Reinhart
  * @since Aug 28, 2009
  */
-public enum PatientRaceCode implements CodedEnum<String> {
+public enum PatientRaceCode implements CodedEnum<String>  {
 
     /** White. */
     WHITE("White"),
     /** American Indian or Alaska Native. */
-    AMERICAN_INDIAN("American Indian or Alaska Native"),
+    AMERICAN_INDIAN("American_Indian_or_Alaska_Native"),
     /** Asian. */
     ASIAN("Asian"),
     /** Black or African American. */
-    BLACK("Black or African American"),
+    BLACK("Black_or_African_American"),
     /** Native Hawaiian or Other Pacific Islander. */
-    HAWAIIAN("Native Hawaiian or Other Pacific Islander"),
+    HAWAIIAN("Native_Hawaiian_or_Other_Pacific_Islander"),
     /** Not Reported. */
-    NOT_REPORTED("Not Reported"),
+    NOT_REPORTED("Not_Reported"),
     /** Unknown. */
     UNKNOWN("Unknown");
 
     private final String code;
+    
     /**
      *
      * @param code

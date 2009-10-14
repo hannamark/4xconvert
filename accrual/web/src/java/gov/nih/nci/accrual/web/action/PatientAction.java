@@ -88,14 +88,12 @@ import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.POPatientDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -235,22 +233,6 @@ public class PatientAction extends AbstractAccrualAction {
         getOrganizationIdentifier();
         PatientDto pat = patient.getPatientDto();
         pat.setOrganizationIdentifier(IiConverter.convertToIi(organizationId));
-        POPatientDTO popDTO = new POPatientDTO();
-        Ii scoper = IiConverter.convertToPoOrganizationIi(
-                IiConverter.convertToString(pat.getOrganizationIdentifier()));
-        scoper.setReliability(IdentifierReliability.ISS);
-        popDTO.setScoperIdentifier(scoper);
-        POPatientDTO createdDTO = null;
-        try {
-            createdDTO = patientCorrelationSvc.create(popDTO);
-        } catch (Exception e) {
-            addActionError("Error creating patient in PO.  Paticipating site may have been nullified.  "
-                    + "If problem persists please contact CTRO.");
-            loadListOfStudySites();
-            return super.create();
-        }
-        pat.setAssignedIdentifier(createdDTO.getIdentifier());
-        pat.setPersonIdentifier(createdDTO.getPlayerIdentifier());
         StudySubjectDto ssub = patient.getStudySubjectDto();
         ssub.setStudyProtocolIdentifier(getSpIi());
         PerformedSubjectMilestoneDto psm = patient.getPerformedStudySubjectMilestoneDto();
@@ -285,23 +267,6 @@ public class PatientAction extends AbstractAccrualAction {
         getOrganizationIdentifier();
         PatientDto pat = patient.getPatientDto();
         pat.setOrganizationIdentifier(IiConverter.convertToIi(organizationId));
-        POPatientDTO dto = null;
-        try {
-            dto = patientCorrelationSvc.get(IiConverter.convertToPOPatientIi(
-                    IiConverter.convertToLong(pat.getAssignedIdentifier())));
-            Ii scoper = IiConverter.convertToPoOrganizationIi(
-                    IiConverter.convertToString(pat.getOrganizationIdentifier()));
-            scoper.setReliability(IdentifierReliability.ISS);
-            dto.setScoperIdentifier(scoper);
-            dto = patientCorrelationSvc.update(dto);
-        } catch (Exception e) {
-            addActionError("Error updating patient in PO.  Paticipating site may have been nullified.  "
-                    + "If problem persists please contact CTRO.");
-            loadListOfStudySites();
-            return super.update();
-        }
-        pat.setAssignedIdentifier(dto.getIdentifier());
-        pat.setPersonIdentifier(dto.getPlayerIdentifier());
         StudySubjectDto ssub = patient.getStudySubjectDto();
         PerformedSubjectMilestoneDto psm = patient.getPerformedStudySubjectMilestoneDto();
         pat = patientSvc.update(pat);
@@ -553,5 +518,12 @@ public class PatientAction extends AbstractAccrualAction {
             result = false;
         }
         return result;
+    }
+    
+    /**
+     * @param unitedStatesId unitedStatesId
+     */
+    public static void setUnitedStatesId(Long unitedStatesId) {
+        PatientAction.unitedStatesId = unitedStatesId;
     }
 }

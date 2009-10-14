@@ -90,11 +90,11 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum PatientEthnicityCode implements CodedEnum<String> {
 
     /** Hispanic. */
-    HISPANIC("Hispanic or Latino"),
+    HISPANIC("Hispanic_or_Latino"),
     /** Not Hispanic. */
-    NOT_HISPANIC("Not Hispanic or Latino"),
+    NOT_HISPANIC("Not_Hispanic_or_Latino"),
     /** Not Reported. */
-    NOT_REPORTED("Not Reported"),
+    NOT_REPORTED("Not_Reported"),
     /** Unknown. */
     UNKNOWN("Unknown");
 
@@ -149,7 +149,7 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
         }
         return a;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -80,21 +80,37 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.convert.PatientConverter;
+import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.DataFormatException;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -113,7 +129,11 @@ public class PatientBean implements PatientService {
 
     private static final Logger LOG  = Logger.getLogger(PatientBean.class);
     private SessionContext ejbContext;
-
+    @EJB
+    CountryService countryServ;
+    @EJB
+    PatientServiceRemote patientCorrelationSvc;
+    
     @Resource
     void setSessionContext(SessionContext ctx) {
         ejbContext = ctx;
@@ -171,11 +191,12 @@ public class PatientBean implements PatientService {
     private PatientDto createOrUpdate(PatientDto dto) throws RemoteException {
         Patient bo = null;
         try {
+            updatePOPatientCorrelation(dto);
             bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
-            
             bo.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
            //PO generated Player identifier
             bo.setPersonIdentifier(IiConverter.convertToString(dto.getPersonIdentifier()));
+            updatePOPatientDetails(dto);
             bo.setStatusCode(StructuralRoleStatusCode.PENDING);
             bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         } catch (DataFormatException e) {
@@ -207,5 +228,59 @@ public class PatientBean implements PatientService {
             throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
         }
         return resultDto;
+    }
+   
+    private void updatePOPatientDetails(PatientDto dto) throws RemoteException {
+        
+        gov.nih.nci.services.person.PersonDTO poPersonDTO = new gov.nih.nci.services.person.PersonDTO();
+        try {
+            PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
+             Ii personID = IiConverter.convertToPoPersonIi(dto.getPersonIdentifier().getExtension());
+             poPersonDTO = peService.getPerson(personID);
+        } catch (NullifiedEntityException e) {
+            LOG.info("This Person is nullified " + dto.getPersonIdentifier().getExtension());
+        } 
+        
+        poPersonDTO.setBirthDate(dto.getBirthDate());
+        poPersonDTO.setRaceCode(dto.getRaceCode());
+        poPersonDTO.setSexCode(dto.getGenderCode());
+        List<Cd> cds = new ArrayList<Cd>();
+        cds.add(dto.getEthnicCode());
+        poPersonDTO.setEthnicGroupCode(DSetConverter.convertCdListToDSet(cds));
+       try {
+            PoRegistry.getPersonEntityService().updatePerson(poPersonDTO);
+        } catch (EntityValidationException e) {
+            LOG.info("EntityValidationException in updatePOPatientDetails:  " + e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updatePOPatientCorrelation(PatientDto dto)
+            throws RemoteException {
+        POPatientDTO popDTO = new POPatientDTO();
+        Ii scoper = IiConverter.convertToPoOrganizationIi(
+                IiConverter.convertToString(dto.getOrganizationIdentifier()));
+        scoper.setReliability(IdentifierReliability.ISS);
+        popDTO.setScoperIdentifier(scoper);
+
+        Country country = countryServ.getCountry(dto.getCountryIdentifier());
+        String zip = !dto.getZip().getValue().equals("") ? dto.getZip().getValue() : "11111";   
+        
+        Ad ad = AddressConverterUtil.create("Street", null, "City", "VA", zip, country.getAlpha3());
+        popDTO.setPostalAddress(new DSet<Ad>());
+        popDTO.getPostalAddress().setItem(Collections.singleton(ad));
+        
+        POPatientDTO poPatientDTO = null;
+            if (dto.getAssignedIdentifier() != null && dto.getAssignedIdentifier().getExtension() != null) {
+                poPatientDTO = patientCorrelationSvc.get(IiConverter.convertToPOPatientIi(
+                    IiConverter.convertToLong(dto.getAssignedIdentifier())));
+                poPatientDTO.setScoperIdentifier(scoper);
+                poPatientDTO.setPostalAddress(popDTO.getPostalAddress());
+                popDTO = patientCorrelationSvc.update(poPatientDTO);
+            } else {
+                popDTO = patientCorrelationSvc.create(popDTO);
+            }
+        dto.setAssignedIdentifier(popDTO.getIdentifier());
+        dto.setPersonIdentifier(popDTO.getPlayerIdentifier());
     }
 }

@@ -76,16 +76,22 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -105,7 +111,8 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
       public void setUp() throws Exception {
 		
         action = new PopUpAction();
-        searchName = "xyz";
+        action.prepare();
+        searchName = "disease";
         includeSynonym = "yes";
         exactMatch = "yes";
         disWebList = new ArrayList<DiseaseWebDTO>();
@@ -130,6 +137,10 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
       criteria.setIncludeSynonym(StConverter.convertToSt(action.getIncludeSynonym()));
       criteria.setExactMatch(StConverter.convertToSt(action.getExactMatch()));
       assertNotNull(criteria);
+      ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("searchName",searchName);
+      ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("includeSynonym",includeSynonym);
+      ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("exactMatch",exactMatch);
+      assertEquals(ActionSupport.SUCCESS, action.displayList());
    
     }
 

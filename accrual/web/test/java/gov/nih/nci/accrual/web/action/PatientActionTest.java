@@ -80,20 +80,26 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -146,16 +152,47 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Test
     public void addTest() throws Exception {
        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+       patient.setBirthDate("7/16/2009");
+       patient.setCountryIdentifier(new Long(101));
+       patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
+       patient.setGenderCode(PatientGenderCode.MALE.getCode());
+       Set<String> raceCode = new HashSet<String>();
+       raceCode.add(PatientRaceCode.WHITE.getName()); 
+       patient.setRaceCode(raceCode);
+       patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+       patient.setAssignedIdentifier("PO PATIENT ID 01");
+       patient.setStudySiteId(Long.valueOf("01"));
+       patient.setDiseaseIdentifier(Long.valueOf("1"));
+       PatientAction.setUnitedStatesId(1L);
+       action.setPatient(patient);
+       assertEquals("success", action.add());
     }
     
     @Test
     public void editTest() throws Exception {
        assertEquals(AccrualConstants.AR_DETAIL, action.edit());
+       patient.setBirthDate("7/16/2009");
+       patient.setCountryIdentifier(new Long(101));
+       patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
+       patient.setGenderCode(PatientGenderCode.MALE.getCode());
+       Set<String> raceCode = new HashSet<String>();
+       raceCode.add(PatientRaceCode.WHITE.getName()); 
+       patient.setRaceCode(raceCode);
+       patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+       patient.setAssignedIdentifier("PO PATIENT ID 01");
+       patient.setStudySiteId(Long.valueOf("01"));
+       patient.setDiseaseIdentifier(Long.valueOf("1"));
+       patient.setStudySubjectId(1L);
+       patient.setPatientId(1L);
+       PatientAction.setUnitedStatesId(1L);
+       action.setPatient(patient);
+       assertEquals("success", action.edit());
     }
     
     @Test
     public void displayDiseaseTest() throws Exception {
-      // assertEquals(ActionSupport.SUCCESS, action.displayDisease());
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("diseaseId", "1");
+       assertEquals(ActionSupport.SUCCESS, action.displayDisease());
     }
     
     

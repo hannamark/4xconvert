@@ -77,36 +77,159 @@
 *
 */
 
-package gov.nih.nci.pa.service;
+package gov.nih.nci.accrual.service.util;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import gov.nih.nci.accrual.dto.util.POPatientDTO;
+import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.MockPoServiceLocator;
+import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.POPatientDTO;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
-import javax.ejb.Remote;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * @author Larry Hebel
- * @since Sep 15, 2009
+ * @author lhebel
+ *
  */
+public class PatientServiceBeanTest extends AbstractServiceTest<PatientServiceBean>{
+    private PatientServiceRemote bean = new PatientServiceBean();
+    private Ii ii;
+    
+    @Override
+    @Before
+    public void instantiateServiceBean() throws Exception {
+        TestSchema.primeData();
+        ii = IiConverter.convertToIi(TestSchema.patients.get(0).getId());
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+    }
 
-@Remote
-public interface PatientServiceRemote {
-    /**
-     * @param ii index of object
-     * @return object
-     * @throws PAException exception
-     */
-    POPatientDTO get(Ii ii) throws PAException;
-    /**
-     * @param dto dto
-     * @return created object
-     * @throws PAException exception
-     */
-    POPatientDTO create(POPatientDTO dto) throws PAException;
-    /**
-     * @param dto dto
-     * @return updated object
-     * @throws PAException exception
-     */
-    POPatientDTO update(POPatientDTO dto) throws PAException;
+    @Test
+    public void create() throws Exception {
+        POPatientDTO dto = new POPatientDTO();
+        assertNotNull(dto);
+        dto.setDuplicateOf(new Ii());
+        dto.setIdentifier(null);
+        dto.setPlayerIdentifier(new Ii());
+        dto.setPostalAddress(new DSet());
+        Ii scoper = new Ii();
+        scoper.setExtension("0");
+        dto.setScoperIdentifier(scoper);
+        dto.setStatus(new Cd());
+        dto.setTelecomAddress(new DSet<Tel>());
+        POPatientDTO dto2 = null;
+        dto2 = bean.create(dto);
+        assertNotNull(dto2);
+        Ii id = dto2.getIdentifier();
+        assertNotNull(id);
+        Ii player = dto2.getPlayerIdentifier();
+        assertNotNull(player);
+        scoper = dto2.getScoperIdentifier();
+        assertNotNull(scoper);
+        Cd status = dto2.getStatus();
+        assertNotNull(status);
+    }
+    
+    @Test
+    public void createWithNull() throws Exception {
+        try {
+            POPatientDTO dto = bean.create(null);
+            fail();
+        } catch(Exception ex) {
+            // expected to fail
+        }
+    }
+    
+   @Test
+    public void get() throws Exception {
+        POPatientDTO dto = bean.get(IiConverter.convertToPOPatientIi(
+                IiConverter.convertToLong(ii)));
+        assertNotNull(dto);
+    }
+    
+    @Test
+    public void getWithNull() throws Exception {
+        Ii patient = new Ii();
+        POPatientDTO dto = null;
+        try {
+            dto = bean.get(ii);
+            fail();
+        } catch (Exception ex) {
+            // expected because the patient id is null
+        }
+    }
+    
+    @Test
+    public void getThrowsNull() throws Exception {
+        Ii patient = new Ii();
+        patient.setExtension("1");
+        POPatientDTO dto = null;
+        try {
+            dto = bean.get(ii);
+            fail();
+        } catch (Exception ex) {
+            // expected because the patient id is null
+        }
+    }
+    
+    @Test
+    public void update() throws Exception {
+        POPatientDTO dto = bean.get(IiConverter.convertToPOPatientIi(
+                IiConverter.convertToLong(ii)));
+        Cd status = dto.getStatus();
+        status.setCode("active");
+        bean.update(dto);
+    }
+    
+    @Test
+    public void updateWithNull() throws Exception {
+        try {
+            bean.update(null);
+            fail();
+        } catch (Exception ex) {
+            // expected with null object
+        }
+    }
+    
+    @Test
+    public void updateThrowsEntity() throws Exception {
+        try {
+            POPatientDTO dto = new POPatientDTO();
+            Cd status = new Cd();
+            status.setCode("suspended");
+            dto.setStatus(status);
+            bean.update(dto);
+            fail();
+        } catch (Exception ex) {
+            // expected with null object
+        }
+    }
+
+   /* @SuppressWarnings("unused")
+    @Test
+    public void remoteCheck() throws Exception {
+        PoJndiServiceLocator psl = new PoJndiServiceLocator();
+        try {
+            PatientCorrelationServiceRemote obj = psl.getPatientCorrelationService();
+        } catch (Exception ex) {
+            // expected, ignore it
+        } catch (Error ex) {
+            // expected, ignore it
+        }
+        
+        try {
+            Object obj = JNDIUtil.lookup("jndi");
+        } catch (Exception ex) {
+            // expected, ignore it
+        } catch (Error ex) {
+            // expected, ignore it
+        }
+    }*/
 }

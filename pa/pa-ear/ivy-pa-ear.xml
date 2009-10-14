@@ -58,9 +58,6 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="opensymphony"           name="quartz"                   rev="1.6.5"           conf="compile->default"/>
 
     <!-- runtime -->
-    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"       	  conf="runtime->master"/>
-    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone3"  conf="runtime->master"/>
-    <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.2"       	  conf="runtime->master"/>
     <dependency org="opensymphony"           name="quartz"                   rev="1.6.5"           conf="runtime->master"/>
     <!-- container -->
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="container->master"/>
@@ -69,6 +66,9 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="container->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="container->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="container->master"/>
+    <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"       	  conf="container->master"/>
+    <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone3"  conf="container->master"/>
+    <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.2"       	  conf="container->master"/>
 
     <!-- test -->
     <dependency org="apache"                 name="struts2-core"            rev="2.0.14"           conf="test->default"/>

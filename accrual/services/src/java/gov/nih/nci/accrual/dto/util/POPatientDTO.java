@@ -77,118 +77,125 @@
 *
 */
 
-package gov.nih.nci.pa.service;
+package gov.nih.nci.accrual.dto.util;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.POPatientDTO;
-import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
-import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.PatientDTO;
-
-import javax.ejb.Stateless;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
  * @author Larry Hebel
  *
  */
+public class POPatientDTO extends BaseDTO {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
+    private Ii duplicateOf;
+    private Ii playerId;
+    private DSet pAddr;
+    private Ii scoperId;
+    private Cd status;
+    private DSet<Tel> tAddr;
 
-@Stateless
-public class PatientServiceBean implements PatientServiceRemote {
-
-    private static void copyDtoFromPaToPo(PatientDTO patient, POPatientDTO dto) {
-        patient.setDuplicateOf(dto.getDuplicateOf());
-        patient.setPlayerIdentifier(dto.getPlayerIdentifier());
-        patient.setPostalAddress(dto.getPostalAddress());
-        patient.setScoperIdentifier(dto.getScoperIdentifier());
-        patient.setStatus(dto.getStatus());
-        patient.setTelecomAddress(dto.getTelecomAddress());
-    }
-
-    private static void copyDtoFromPoToPa(POPatientDTO dto, PatientDTO patient) {
-        dto.setDuplicateOf(patient.getDuplicateOf());
-        dto.setPlayerIdentifier(patient.getPlayerIdentifier());
-        dto.setPostalAddress(patient.getPostalAddress());
-        dto.setScoperIdentifier(patient.getScoperIdentifier());
-        dto.setStatus(patient.getStatus());
-        dto.setTelecomAddress(patient.getTelecomAddress());
+    /**
+     * 
+     * @return Ii
+     */
+    public Ii getDuplicateOf() {
+        return duplicateOf;
     }
     
     /**
-     * {@inheritDoc}
+     * 
+     * @return Ii
      */
-    public POPatientDTO create(POPatientDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new PAException("Update method should be used to modify existing.");
-        }
-
-        PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
-
-        PatientDTO patient = new PatientDTO();
-        patient.setIdentifier(null);
-        copyDtoFromPaToPo(patient, dto);
-        POPatientDTO createdDTO = null;
-        try {
-            Ii newId = pcsr.createCorrelation(patient);
-            createdDTO = get(IiConverter.convertToPOPatientIi(IiConverter.convertToLong(newId)));
-        } catch (CurationException ex) {
-            throw new PAException(ex.toString(), ex);
-        } catch (EntityValidationException ex) {
-            throw new PAException(ex.toString(), ex);
-        } 
-        
-        return createdDTO;
+    public Ii getPlayerIdentifier() {
+        return playerId;
+    }
+    
+    /**
+     * 
+     * @return DSet
+     */
+    public DSet getPostalAddress() {
+        return pAddr;
+    }
+    
+    /**
+     * 
+     * @return Ii
+     */
+    public Ii getScoperIdentifier() {
+        return scoperId;
+    }
+    
+    /**
+     * 
+     * @return Cd
+     */
+    public Cd getStatus() {
+        return status;
     }
 
     /**
-     * {@inheritDoc}
+     * 
+     * @return DSet
      */
-    public POPatientDTO get(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
-            throw new PAException("Called get(null)");
-        }
-
-        PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
-        PatientDTO patient = null;
-        try {
-            patient = pcsr.getCorrelation(ii);
-        } catch (NullifiedRoleException ex) {
-            throw new PAException(ex.toString(), ex);
-        }
-        
-        POPatientDTO dto = new POPatientDTO();
-        dto.setIdentifier(DSetConverter.convertToIi(patient.getIdentifier()));
-        copyDtoFromPoToPa(dto, patient);
-
-        return dto;
+    public DSet<Tel> getTelecomAddress() {
+        return tAddr;
     }
 
     /**
-     * {@inheritDoc}
+     * Set duplicate.
+     * 
+     * @param obj the duplicate
      */
-    public POPatientDTO update(POPatientDTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new PAException("Create method should be used to create new.");
-        }
+    public void setDuplicateOf(Ii obj) {
+        duplicateOf = obj;
+    }
+    
+    /**
+     * 
+     * @param obj the player (Person)
+     */
+    public void setPlayerIdentifier(Ii obj) {
+        playerId = obj;
+    }
+    
+    /**
+     * 
+     * @param obj the address
+     */
+    public void setPostalAddress(DSet obj) {
+        pAddr = obj;
+    }
+    
+    /**
+     * 
+     * @param obj the scoper (organization)
+     */
+    public void setScoperIdentifier(Ii obj) {
+        scoperId = obj;
+    }
+    
+    /**
+     * 
+     * @param code the status
+     */
+    public void setStatus(Cd code) {
+        status = code;
+    }
 
-        PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
-
-        PatientDTO patient = new PatientDTO();
-        patient.setIdentifier(DSetConverter.convertIiToDset(dto.getIdentifier()));
-        copyDtoFromPaToPo(patient, dto);
-        POPatientDTO updatedDTO = null;
-        try {
-            pcsr.updateCorrelation(patient);
-            updatedDTO = get(IiConverter.convertToPOPatientIi(IiConverter.convertToLong(dto.getIdentifier())));
-        } catch (EntityValidationException ex) {
-            throw new PAException(ex.toString(), ex);
-        }
-
-        return updatedDTO;
+    /**
+     * 
+     * @param obj the address
+     */
+    public void setTelecomAddress(DSet<Tel> obj) {
+        tAddr = obj;
     }
 }

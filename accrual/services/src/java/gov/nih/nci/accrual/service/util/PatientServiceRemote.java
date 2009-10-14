@@ -73,106 +73,42 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 
-package gov.nih.nci.accrual.web.decorator;
+package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 
-import org.junit.Test;
+import java.rmi.RemoteException;
+
+import javax.ejb.Remote;
 
 /**
- * @author lhebel
- *
+ * @author Larry Hebel
+ * @since Sep 15, 2009
  */
-public class SearchTrialResultDecoratorTest extends AbstractDecoratorTest<SearchTrialResultDecorator, SearchTrialResultDto> {
 
+@Remote
+public interface PatientServiceRemote {
     /**
-     * {@inheritDoc}
+     * @param ii index of object
+     * @return object
+     * @throws RemoteException exception
      */
-    @Override
-    public void initBean() {
-        bean = new SearchTrialResultDecorator();
-    }
-
+    POPatientDTO get(Ii ii) throws RemoteException;
     /**
-     * {@inheritDoc}
+     * @param dto dto
+     * @return created object
+     * @throws RemoteException exception
      */
-    @Override
-    public SearchTrialResultDto initDataRow() {
-        SearchTrialResultDto dto = new SearchTrialResultDto();
-        St ai = new St();
-        ai.setValue("assigned 1");
-        dto.setAssignedIdentifier(ai);
-        ai = new St();
-        ai.setValue("title 1");
-        dto.setOfficialTitle(ai);
-        Cd status = new Cd();
-        status.setCode("active");
-        dto.setStudyStatusCode(status);
-        Ii ii = new Ii();
-        ii.setExtension("id 1");
-        dto.setIdentifier(ii);
-        ii = new Ii();
-        ii.setExtension("protocol id 1");
-        dto.setStudyProtocolIdentifier(ii);
-        return dto;
-    }
-    
+    POPatientDTO create(POPatientDTO dto) throws RemoteException;
     /**
-     * {@inheritDoc}
+     * @param dto dto
+     * @return updated object
+     * @throws RemoteException exception
      */
-    @Override
-    public SearchTrialResultDto initNullRow() {
-        return new SearchTrialResultDto();
-    }
-
-    @Test
-    public void getAssignedIdentifier() {
-        setDataRow();
-        assertTrue(0 != bean.getAssignedIdentifier().length());
-        
-        setNullRow();
-        assertTrue(0 == bean.getAssignedIdentifier().length());
-    }
-    
-    @Test
-    public void getOfficialTitle() {
-        setDataRow();
-        assertTrue(0 != bean.getOfficialTitle().length());
-
-        setNullRow();
-        assertTrue(0 == bean.getOfficialTitle().length());
-    }
-    
-    @Test
-    public void getStudyStatusCode() {
-        setDataRow();
-        assertTrue(0 != bean.getStudyStatusCode().length());
-
-        setNullRow();
-        assertTrue(0 == bean.getStudyStatusCode().length());
-    }
-    
-    @Test
-    public void getIdentifier() {
-        setDataRow();
-        assertTrue(0 != bean.getIdentifier().length());
-
-        setNullRow();
-        assertTrue(0 == bean.getIdentifier().length());
-    }
-    
-    @Test
-    public void getStudyProtocolIdentifier() {
-        setDataRow();
-        assertTrue(0 != bean.getStudyProtocolIdentifier().length());
-
-        setNullRow();
-        assertTrue(0 == bean.getStudyProtocolIdentifier().length());
-    }
+    POPatientDTO update(POPatientDTO dto) throws RemoteException;
 }

@@ -81,6 +81,7 @@ import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
+import gov.nih.nci.accrual.service.util.PatientServiceRemote;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -96,7 +97,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final StudySubjectService studySubjectService = new MockStudySubjectBean();
     private final PatientService patientService = new MockPatientBean();
     private final PerformedSubjectMilestoneService psmService = new MockPerfomedSubjectMilestoneBean();
-
+    private final PatientServiceRemote poPatientService = new MockPaPatientServiceBean();
     /**
      * {@inheritDoc}
      */
@@ -138,5 +139,9 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      */
     public CountryService getCountryService() {
         return countryService;
+    }
+    public PatientServiceRemote getPOPatientService() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

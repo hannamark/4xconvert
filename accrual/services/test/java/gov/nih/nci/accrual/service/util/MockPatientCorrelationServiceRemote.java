@@ -77,22 +77,24 @@
 
 package gov.nih.nci.accrual.service.util;
 
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author lhebel
@@ -100,37 +102,10 @@ import gov.nih.nci.services.correlation.PatientDTO;
  */
 public class MockPatientCorrelationServiceRemote implements PatientCorrelationServiceRemote
 {
-    private Ii identifier = new Ii();
-    private PatientDTO last = null;
-    
-    public MockPatientCorrelationServiceRemote()
-    {
-        last = new PatientDTO();
-        last.setDuplicateOf(new Ii());
-        last.setIdentifier(DSetConverter.convertIiToDset(identifier));
-        last.setPlayerIdentifier(new Ii());
-        last.setPostalAddress(new DSet());
-        last.setScoperIdentifier(new Ii());
-        last.setStatus(new Cd());
-        last.setTelecomAddress(new DSet<Tel>());
-    }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#createCorrelation(gov.nih.nci.services.PoDto)
-     */
-    public Ii createCorrelation(PatientDTO arg0) throws EntityValidationException, CurationException
-    {
-        if (arg0.getScoperIdentifier() != null) {
-            String ext = arg0.getScoperIdentifier().getExtension();
-            if (ext.equals("0")) {
-                // don't throw an exception
-            } else if (ext.equals("1")) {
-                throw new CurationException("Preset Curation Exception for Junit tests.");
-            } else {
-                throw new EntityValidationException("Preset Entity Validation Exception for Junit tests.", null);
-            }
-        }
-
+    public Ii createCorrelation(PatientDTO arg0)
+            throws EntityValidationException, CurationException {
+        Ii identifier = new Ii();
         String id = identifier.getExtension();
         if (id == null || id == "") {
             id = "0";
@@ -138,83 +113,60 @@ public class MockPatientCorrelationServiceRemote implements PatientCorrelationSe
         id = String.valueOf(Integer.parseInt(id) + 1);
         identifier.setExtension(id);
         arg0.setIdentifier(DSetConverter.convertIiToDset(identifier));
-        last = arg0;
         return identifier;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.coppa.iso.Ii)
-     */
-    public PatientDTO getCorrelation(Ii arg0) throws NullifiedRoleException
-    {
-        if (arg0.getExtension().equals("1")) {
-            throw new NullifiedRoleException(arg0);
+    public PatientDTO getCorrelation(Ii ii) throws NullifiedRoleException {
+        if (NullFlavor.NA.equals(ii.getNullFlavor())) {
+            Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+            nullifiedEntities.put(ii, IiConverter.convertToPoOrganizationalContactIi("1"));
+            throw new NullifiedRoleException(nullifiedEntities);
         }
-        return last;
+        ii.setReliability(IdentifierReliability.ISS);
+        PatientDTO dto = new PatientDTO();
+        dto.setIdentifier(DSetConverter.convertIiToDset(ii));
+        dto.setPlayerIdentifier(IiConverter.convertToPoPersonIi("PO PERSON ID 01"));
+        dto.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+        dto.setStatus(CdConverter.convertStringToCd("ACTIVE"));
+        return dto;    
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#getCorrelations(gov.nih.nci.coppa.iso.Ii[])
-     */
-    public List<PatientDTO> getCorrelations(Ii[] arg0) throws NullifiedRoleException
-    {
+    public List<PatientDTO> getCorrelations(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#getCorrelationsByPlayerIds(gov.nih.nci.coppa.iso.Ii[])
-     */
-    public List<PatientDTO> getCorrelationsByPlayerIds(Ii[] arg0) throws NullifiedRoleException
-    {
+    public List<PatientDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#search(gov.nih.nci.services.PoDto)
-     */
-    public List<PatientDTO> search(PatientDTO arg0)
-    {
+    public List<PatientDTO> search(PatientDTO arg0) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#search(gov.nih.nci.services.PoDto, gov.nih.nci.coppa.services.LimitOffset)
-     */
-    public List<PatientDTO> search(PatientDTO arg0, LimitOffset arg1) throws TooManyResultsException
-    {
+    public List<PatientDTO> search(PatientDTO arg0, LimitOffset arg1)
+            throws TooManyResultsException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#updateCorrelation(gov.nih.nci.services.PoDto)
-     */
-    public void updateCorrelation(PatientDTO arg0) throws EntityValidationException
-    {
-        String code = arg0.getStatus().getCode().toUpperCase();
-        if (ActStatusCode.valueOf(code) == ActStatusCode.SUSPENDED) {
-            throw new EntityValidationException("Preset Entity Validation Exception for Junit tests.", null);
-        }
-
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#updateCorrelationStatus(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Cd)
-     */
-    public void updateCorrelationStatus(Ii arg0, Cd arg1) throws EntityValidationException
-    {
+    public void updateCorrelation(PatientDTO arg0)
+            throws EntityValidationException {
         // TODO Auto-generated method stub
-
+        
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#validate(gov.nih.nci.services.PoDto)
-     */
-    public Map<String, String[]> validate(PatientDTO arg0)
-    {
+    public void updateCorrelationStatus(Ii arg0, Cd arg1)
+            throws EntityValidationException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public Map<String, String[]> validate(PatientDTO arg0) {
         // TODO Auto-generated method stub
         return null;
     }

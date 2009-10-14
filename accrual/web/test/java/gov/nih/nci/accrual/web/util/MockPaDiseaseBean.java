@@ -140,8 +140,7 @@ public class MockPaDiseaseBean implements DiseaseServiceRemote {
      * {@inheritDoc}
      */
     public List<DiseaseDTO> search(DiseaseDTO searchCriteria) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        return dtos;
     }
 
     /**

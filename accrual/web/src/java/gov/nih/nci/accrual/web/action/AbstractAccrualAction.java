@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
+import gov.nih.nci.accrual.service.util.PatientServiceRemote;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
@@ -92,8 +93,8 @@ import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.PatientServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -149,6 +150,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected PlannedActivityServiceRemote plannedActivitySvc;
     /** PatientService. */
     protected PatientServiceRemote patientCorrelationSvc;
+    /** DiseaseService. */
+    protected DiseaseParentServiceRemote diseaseParentSvc;
 
     /**
      * {@inheritDoc}
@@ -164,7 +167,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
-        patientCorrelationSvc = PaServiceLocator.getInstance().getPatientService();
+        patientCorrelationSvc = AccrualServiceLocator.getInstance().getPOPatientService();
+        diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
     }
     /**
      * Default execute method for action classes.

@@ -77,6 +77,7 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -134,6 +135,7 @@ public class TestSchema {
     public static List<HealthCareFacility> healthCareFacilities;
     public static List<Organization> organizations;
     public static List<StudySiteAccrualAccess> studySiteAccrualAccess;
+    public static List<Country> countries;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -201,7 +203,8 @@ public class TestSchema {
         healthCareFacilities = new ArrayList<HealthCareFacility>();
         organizations = new ArrayList<Organization>();
         studySiteAccrualAccess = new ArrayList<StudySiteAccrualAccess>();
-
+        countries = new ArrayList<Country>();
+        
         // Organization
         Organization org = new Organization();
         org.setCity("city");
@@ -498,6 +501,12 @@ public class TestSchema {
         m.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(m);
         performedSubjectMilestones.add(m);
+        
+        Country c =  new Country();
+        c.setAlpha2("US");
+        c.setAlpha3("USA");
+        addUpdObject(c);
+        countries.add(c);
     }
 
 }

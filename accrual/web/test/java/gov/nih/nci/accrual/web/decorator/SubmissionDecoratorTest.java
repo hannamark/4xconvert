@@ -78,7 +78,6 @@
 package gov.nih.nci.accrual.web.decorator;
 
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;

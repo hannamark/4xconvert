@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
+import gov.nih.nci.accrual.service.util.PatientServiceRemote;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.JNDIUtil;
@@ -117,9 +118,9 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-   /* public POPatientService getPOPatientService() {
-        return (POPatientService) JNDIUtil.lookup("accrual/POPatientBean/remote");
-    }*/
+    public PatientServiceRemote getPOPatientService() {
+        return (PatientServiceRemote) JNDIUtil.lookup("accrual/PatientServiceBean/remote");
+    }
 
     /**
      * {@inheritDoc}

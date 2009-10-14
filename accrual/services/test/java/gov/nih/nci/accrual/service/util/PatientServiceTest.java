@@ -88,6 +88,8 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.MockPoServiceLocator;
+import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
@@ -115,11 +117,19 @@ import org.junit.Test;
  * @since Aug 29, 2009
  */
 public class PatientServiceTest extends AbstractServiceTest<PatientService> {
-
+    private final PatientBean bean = new PatientBean();
+    private final CountryService cs = new CountryBean();
+    private final PatientServiceRemote psb = new PatientServiceBean();
+    Ii countryIi;
+    
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        bean = new PatientBean();
+        //bean = new PatientBean();        
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+        bean.countryServ = cs;
+        bean.patientCorrelationSvc = psb;
+        countryIi =IiConverter.convertToIi(TestSchema.countries.get(0).getId());
     }
 
     @Test
@@ -157,16 +167,15 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
     public void create() throws Exception {
         PatientDto dto = new PatientDto();
         dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
-        dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
+        //dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
+        dto.setCountryIdentifier(countryIi);
         dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
         dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.BLACK.getName()));
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-        dto.setAssignedIdentifier(IiConverter.convertToIi("PO PATIENT ID 01"));
-        dto.setPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
-        dto.setOrganizationIdentifier(IiConverter.convertToIi("PO ORG ID 01"));
+        dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
         PatientDto r = bean.create(dto);
         assertNotNull(r);
 
@@ -178,6 +187,9 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         assertFalse(TestSchema.patients.get(0).getRaceCode().equals(PatientRaceCode.ASIAN));
         PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
         dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.ASIAN.getName()));
+        dto.setCountryIdentifier(countryIi);
+        dto.setAssignedIdentifier(IiConverter.convertToIi("1"));
+        dto.setPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
         PatientDto r = bean.update(dto);
         assertTrue(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
 

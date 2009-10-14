@@ -85,7 +85,6 @@ import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -163,7 +162,7 @@ public class PopUpAction extends AbstractAccrualAction {
         }
         List<DiseaseParentDTO> dpList;
         try {
-            dpList = PaRegistry.getDiseaseParentService().getByChildDisease(iis);
+            dpList = diseaseParentSvc.getByChildDisease(iis);
         } catch (Exception e) {
             error("Exception thrown while getting disease parents.", e);
             return;
