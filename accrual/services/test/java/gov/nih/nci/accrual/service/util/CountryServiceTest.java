@@ -120,7 +120,7 @@ public class CountryServiceTest extends AbstractServiceTest<CountryService> {
         }
         
         try {
-            Long id = new Long(1);
+            Long id = Long.valueOf(1);
             Ii ii = IiConverter.convertToCountryIi(id);
             place = bean.getCountry(ii);
             assertNotNull(place);

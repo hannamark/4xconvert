@@ -77,32 +77,19 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-
-import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.web.util.MockServiceLocator;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
-import gov.nih.nci.pa.iso.util.IiConverter;
-
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.mockrunner.mock.web.MockServletContext;
 import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.config.Configuration;
 import com.opensymphony.xwork2.config.ConfigurationManager;
 import com.opensymphony.xwork2.config.providers.XWorkConfigurationProvider;

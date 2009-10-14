@@ -77,8 +77,6 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;

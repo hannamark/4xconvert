@@ -77,27 +77,15 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.web.dto.util.DiseaseWebDTO;
-import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**

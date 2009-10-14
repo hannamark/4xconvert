@@ -77,12 +77,11 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.pa.iso.util.IiConverter;
 

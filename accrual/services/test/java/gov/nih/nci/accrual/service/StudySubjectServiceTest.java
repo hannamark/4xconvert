@@ -197,7 +197,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         }
 
         try {
-            ii = IiConverter.convertToStudySiteIi(new Long(1));
+            ii = IiConverter.convertToStudySiteIi(Long.valueOf(1));
             dto.setIdentifier(ii);
             bean.create(dto);
             fail();
