@@ -6,14 +6,14 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 import gov.nih.nci.pa.enums.CodedEnum;
 /**
- * 
+ *
  * @author Vrushali
  *
  */
 public enum  TrialStatusReasonCode implements CodedEnum<String> {
     /**
      * Temporarily Closed to Accrual.
-     */     
+     */
     TEMPORARILY_CLOSED_TO_ACCRUAL ("Temporarily Closed to Accrual") ,
     /**
      * Temporarily Closed To Accrual and Intervention.
@@ -22,12 +22,12 @@ public enum  TrialStatusReasonCode implements CodedEnum<String> {
     /**
      * Withdrawn.
      */
-    WITHDRAWN("Withdrawn") , 
+    WITHDRAWN("Withdrawn") ,
     /**
      * Administratively Complete.
      */
     ADMINISTRATIVELY_COMPLETE("Administratively Complete");
-    
+
          private String code;
 
          /**
@@ -87,8 +87,7 @@ public enum  TrialStatusReasonCode implements CodedEnum<String> {
          /**
           * {@inheritDoc}
           */
-         public String getNameByCode(String str)
-         {
+         public String getNameByCode(String str) {
              return getByCode(str).name();
          }
 }

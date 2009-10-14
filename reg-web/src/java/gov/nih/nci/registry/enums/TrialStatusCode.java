@@ -16,7 +16,7 @@ public enum TrialStatusCode implements CodedEnum<String> {
     /**
      * In Review.
      */
-     IN_REVIEW("In Review") , 
+     IN_REVIEW("In Review") ,
     /**
       * Approved.
       */
@@ -109,8 +109,7 @@ public enum TrialStatusCode implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
-    public String getNameByCode(String str)
-    {
+    public String getNameByCode(String str) {
         return getByCode(str).name();
     }
 
