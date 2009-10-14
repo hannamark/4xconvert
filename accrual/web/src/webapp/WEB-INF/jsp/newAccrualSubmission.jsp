@@ -59,7 +59,7 @@ function handleAction(){
          </td>
                    
            <td class="value"><s:textfield name="submission.cutOffDate.value"
-                maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                readonly="true" maxlength="10" size="10" cssStyle="width:70px;float:left" cssClass="readonly"/>
                 <a href="javascript:showCal('Cal1')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
                 </td>
