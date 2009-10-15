@@ -163,6 +163,27 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
             // expected behavior
         }
     }
+    
+    @Test
+    public void enforceBusinessRules() throws Exception {
+        PatientDto dto = new PatientDto();
+        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
+        dto.setCountryIdentifier(countryIi);
+        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
+        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
+        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.BLACK.getName()));
+        dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
+        dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
+        dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
+    	
+        try {
+           bean.enforceBusinessRules(dto);
+         } catch (RemoteException e) {
+           // expected behavior
+        }
+    }
+    
     @Test
     public void create() throws Exception {
         PatientDto dto = new PatientDto();
@@ -191,7 +212,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setAssignedIdentifier(IiConverter.convertToIi("1"));
         dto.setPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
         PatientDto r = bean.update(dto);
-        assertTrue(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
+       assertTrue(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
 
     }
     
@@ -213,7 +234,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
             // expected
         }
         
-        Ii ii = IiConverter.convertToIi(new Long(1));
+        Ii ii = IiConverter.convertToIi(Long.valueOf(1));
         dto.setIdentifier(ii);
         try {
             bean.create(dto);

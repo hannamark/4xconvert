@@ -148,6 +148,15 @@ public class PatientBean implements PatientService {
         }        
         return createOrUpdate(dto);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void enforceBusinessRules(PatientDto dto) throws RemoteException {
+        
+        throw new RemoteException("Business Rule is violated.");
+        
+    }
 
     /**
      * {@inheritDoc}

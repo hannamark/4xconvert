@@ -78,7 +78,9 @@
 */
 package gov.nih.nci.accrual.web.dto.util;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -95,10 +97,28 @@ public class SearchPatientsCriteriaWebDtoTest {
     public void initDto() {
      searchPatientsCriteriaWebDto = new SearchPatientsCriteriaWebDto();
      searchPatientsCriteriaWebDto.setStatusCode("statusCode");
+     searchPatientsCriteriaWebDto.setAssignedIdentifier("assignedIdentifier");
+     searchPatientsCriteriaWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1978/08"));
+     searchPatientsCriteriaWebDto.setStudySiteId(Long.valueOf(1));
     }
     
     @Test
     public void statusCodePropertyTest() {
       assertNotNull(searchPatientsCriteriaWebDto.getStatusCode());
+    }
+    
+    @Test
+    public void assignedIdentifierPropertyTest() {
+       assertNotNull(searchPatientsCriteriaWebDto.getAssignedIdentifier());
+    }
+    
+    @Test
+    public void birthDatePropertyTest() {
+      assertNull(searchPatientsCriteriaWebDto.getBirthDate());
+    }
+    
+    @Test
+    public void studySiteIdPropertyTest() {
+      assertNotNull(searchPatientsCriteriaWebDto.getStudySiteId());
     }
 }
