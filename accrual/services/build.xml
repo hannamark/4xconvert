@@ -142,6 +142,8 @@
                 <filter token="accrual.jnp.url" value="${accrual.jnp.url}"/>
                 <filter token="pa.jnp.url" value="${pa.jnp.url}"/>
                 <filter token="po.jnp.url" value="${po.jnp.url}"/>
+            	<filter token="po.port.number" value="${po.port.number}"/>
+                <filter token="jboss.server.hostname" value="${jboss.server.hostname}"/>
             </filterset>
             <fileset dir="${services.build.resourceDir}"/>
         </copy>
