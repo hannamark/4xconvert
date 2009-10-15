@@ -421,8 +421,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.jnp.url" value="${accrual.po.jnp.url}" />
             <property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
             <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
-	    <property name="po.port.number" location="${po.port.number}" />
-            <property name="jboss.server.hostname" location="${jboss.server.hostname}" />
+	    <property name="po.port.number" value="${po.port.number}" />
+            <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
             <target name="${accrual-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
         </ant>
