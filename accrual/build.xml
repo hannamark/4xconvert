@@ -179,7 +179,8 @@
             dir="${services.dir}" >
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
-
+        	<property name="po.port.number" location="${po.port.number}" />
+        	<property name="jboss.server.hostname" location="${jboss.server.hostname}" />
             <target name="${services.build.target}${notask}"/>
         </ant>
     </target>
