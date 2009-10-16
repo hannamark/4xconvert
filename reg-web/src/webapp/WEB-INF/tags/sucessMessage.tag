@@ -3,10 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- Success Messages --%>
 
-<c:if test="${request.successMessage  != null}">
+<c:if test="${requestScope.successMessage  != null}">
 
 <div class="confirm_msg">
-	<strong>Message:</strong> <c:out value="${request.successMessage }"/>.
+	<strong>Message:</strong> <c:out value="${requestScope.successMessage }"/>.
 </div>
 <c:remove var="successMessage" scope="request"/>
 </c:if>

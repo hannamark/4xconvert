@@ -53,9 +53,9 @@ function handleMyAction(){
     <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a>
     <h1><fmt:message key="search.trial.page.header"/></h1>
     <c:set var="topic"  scope="request" value="search_trials"/>
-    <c:if test="${records != null}">    
+    <s:if test="records != null">    
         <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
-    </c:if>
+    </s:if>
     <div class="box" id="filters">
     <reg-web:failureMessage/>
     <s:form name="searchTrial">

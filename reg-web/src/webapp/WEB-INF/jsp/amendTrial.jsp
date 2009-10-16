@@ -317,7 +317,7 @@ function toggledisplay2 (it) {
             	</label>
           </td>
           <td class="value">
-          	<c:out value="${trialDTO.assignedIdentifier}"/> 
+          	<s:property value="trialDTO.assignedIdentifier"/>
           </td>
           </tr>
           <tr>
@@ -482,9 +482,8 @@ function toggledisplay2 (it) {
 				<td>
 				<s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
 				</td>
-		</tr>
-        <c:choose>
-         <c:when test="${trialDTO.responsiblePartyType == 'sponsor'}">
+		</tr>        
+         <s:if test="trialDTO.responsiblePartyType == 'sponsor'">
              <tr id="rpcid" >
               <td scope="row" class="label">
                           <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
@@ -505,8 +504,8 @@ function toggledisplay2 (it) {
                         </div>      
                     </td>
           </tr>   
-         </c:when>
-         <c:otherwise>
+         </s:if>
+         <s:else>
             <tr id="rpcid" style="display:none">
                      <td scope="row" class="label">
                                  <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label> 
@@ -527,8 +526,7 @@ function toggledisplay2 (it) {
                         </div>      
                     </td>
           </tr>   
-         </c:otherwise>
-        </c:choose>                                          
+         </s:else>                                          
 				
          <tr>
          <td colspan="2">
@@ -565,8 +563,7 @@ function toggledisplay2 (it) {
          <td colspan="2">
           <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
          </td>
-         </tr>
-          <tr>           
+         </tr>          
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
@@ -972,8 +969,7 @@ function toggledisplay2 (it) {
         </p>
         <div class="actionsrow">
             <del class="btnwrapper">
-                <ul class="btnrow">         
-                        <li>
+                <ul class="btnrow">                 
                         <li>            
                             <s:a href="#" cssClass="btn" onclick="reviewProtocol()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>

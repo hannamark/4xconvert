@@ -322,7 +322,7 @@ function toggledisplay2 (it) {
                 </label>
           </td>
           <td class="value">
-            <c:out value="${trialDTO.assignedIdentifier}"/> 
+            <s:property value="trialDTO.assignedIdentifier"/> 
           </td>
           </tr>
           <tr>
@@ -383,8 +383,7 @@ function toggledisplay2 (it) {
                 <s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
                 </td>
          </tr>
-         <c:choose>
-         <c:when test="${trialDTO.responsiblePartyType == 'sponsor'}">
+         <s:if test="trialDTO.responsiblePartyType == 'sponsor'">
           <tr id="rpcid" >
               <td scope="row" class="label">
                           <label for="updateTrial_resPartyContactFullName"> <fmt:message key="update.trial.responsiblePartyContact"/></label> 
@@ -405,8 +404,8 @@ function toggledisplay2 (it) {
                         </div>      
                     </td>
           </tr>   
-          </c:when>
-          <c:otherwise>
+          </s:if>
+          <s:else>
           <tr id="rpcid" style="display:none">
                      <td scope="row" class="label">
                                  <label for="updateTrial_resPartyContactFullName"> <fmt:message key="update.trial.responsiblePartyContact"/></label> 
@@ -427,8 +426,7 @@ function toggledisplay2 (it) {
                         </div>      
                     </td>
            </tr>   
-          </c:otherwise>
-         </c:choose>                                          
+          </s:else>                                                
          <tr>
           <td colspan="2">
            <p><b><I>Please provide professional contact information only.</I></b></p>
