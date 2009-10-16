@@ -123,7 +123,7 @@
            </label>
          </td>
          <td class="value">
-            <c:out value="${gtdDTO.nctIdentifier}" /> 
+            <s:property value="gtdDTO.nctIdentifier"/> 
         </td>
     </tr>
     <tr>
@@ -133,7 +133,7 @@
                 </label>
             </td>
             <td class="value">
-                <c:out value="${gtdDTO.proprietarytrialindicator }"/> 
+                <s:property value="gtdDTO.proprietarytrialindicator"/> 
             </td>
     </tr> 
     <tr>
@@ -247,7 +247,7 @@
              </span>
         </td>
     </tr>
-    <c:if test="${gtdDTO.submissionNumber > 1}">
+    <s:if test="gtdDTO.submissionNumber > 1">
     <tr>
         <th colspan="2"> Amendment Information </th>
     </tr>
@@ -273,7 +273,7 @@
                 </span>
           </td>                                 
      </tr>    
-</c:if>    
+</s:if>    
     </table>  
          <div class="actionsrow">
             <del class="btnwrapper">

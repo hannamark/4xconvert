@@ -26,7 +26,7 @@
 			     </s:if>
 			 </td> 
 		</tr>
-		<c:if test="${proprietaryTrialIndicator == 'false'}">
+		<s:if test="proprietaryTrialIndicator == 'false'">
 		<tr>
 		    <td scope="row" class="label"><s:label for="editOrg.city">City:</s:label><span class="required">*</span></td>
 		    <td class="value" colspan="2">
@@ -46,6 +46,7 @@
 		    <td class="value" colspan="2">
 		        <s:textfield name="orgFromPO.country" maxlength="200" size="200" 
 		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
+		    </td>
 		</tr>
 		<tr>
 		    <td scope="row" class="label"><s:label for="editOrg.postalCode">Zip/Postal Code(*US/Canada):</s:label></td>
@@ -54,6 +55,6 @@
 		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
 		    </td>
 		</tr>
-    </c:if>
+    </s:if>
     <s:hidden name="editOrg.identifier" id="editOrg.identifier" ></s:hidden>
 </table>

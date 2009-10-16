@@ -278,7 +278,8 @@
 			<!-----------------------------------------------Begin Investigators Tab------------------->
 	   		<div id="investigators" class="box" style="display:none;">
 	   		
-				<h3>Participating Site Investigators <c:out value="${organizationName}"/></h3>
+				<h3>Participating Site Investigators <s:property value="organizationName"/></h3>
+
 					<div id="saveAndShowContacts">
 						<%@ include file="/WEB-INF/jsp/nodecorate/displaySPContactsTable.jsp" %>
 					</div>	
@@ -293,7 +294,7 @@
 	  <!-----------------------------------------------End Investigators Tab------------------->
 	  <!-----------------------------------------------Begin Contact Tab------------------->
 	  	   <div id="contacts" class="box" style="display:none;">						
-				<h3>Primary Contact <c:out value="${organizationName}"/></h3>				
+				<h3>Primary Contact <s:property value="organizationName"/></h3>				
 			
 					<div id="showPrimaryContacts">
 						<%@ include file="/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp" %>

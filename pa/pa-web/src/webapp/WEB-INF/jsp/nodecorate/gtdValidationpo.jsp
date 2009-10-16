@@ -139,9 +139,8 @@ function manageRespPartyLookUp(){
         <td>
             <s:radio id="gtdDTO.responsiblePartyType"  name="gtdDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
         </td>
-        </tr> 
-         <c:choose>
-         <c:when test="${gtdDTO.responsiblePartyType == 'sponsor'}">
+        </tr>
+         <s:if test="gtdDTO.responsiblePartyType == 'sponsor'">
             
 
              <tr id="rpcid" >
@@ -164,8 +163,8 @@ function manageRespPartyLookUp(){
                     </div>      
                 </td>
             </tr>   
-        </c:when>
-        <c:otherwise>
+        </s:if>
+        <s:else>
             <tr id="rpcid" style="display:none">
                 <td scope="row" class="label">
                     <label for="responsiblepartycontact"> Responsible Party Contact :</label> 
@@ -186,8 +185,7 @@ function manageRespPartyLookUp(){
                     </div>      
                 </td>
             </tr>
-        </c:otherwise>
-        </c:choose>
+        </s:else>
         <tr>
             <td scope="row" class="label">
                Email Address:<span class="required">*</span>
