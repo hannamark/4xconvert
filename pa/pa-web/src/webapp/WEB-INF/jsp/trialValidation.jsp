@@ -123,7 +123,7 @@
            </label>
          </td>
          <td class="value">
-            <s:property value="gtdDTO.nctIdentifier"/> 
+            <s:textfield name="gtdDTO.nctIdentifier" cssStyle="width:206px" maxlength="50"/> 
         </td>
     </tr>
     <tr>

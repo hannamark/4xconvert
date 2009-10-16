@@ -91,11 +91,13 @@ import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
+import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -204,6 +206,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     
     private String statusCode;
+    private List<StudyOverallStatusWebDTO> overallStatusList;
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws PAException on error
@@ -1566,6 +1569,45 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             }
         }
 
+    }
+    /**
+     * @return result
+     */
+    public String historyPopup()  {
+        String studySiteId = ServletActionContext.getRequest().getParameter("studySiteId");
+        overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
+        List<StudySiteOverallStatusDTO> isoList;
+        try {
+            isoList = studySiteOverallStatusService.getByStudySite(
+                    IiConverter.convertToStudySiteIi(Long.valueOf(studySiteId)));
+            StudyOverallStatusWebDTO studySiteStatus = null;
+            for (StudySiteOverallStatusDTO iso : isoList) {
+                studySiteStatus = new StudyOverallStatusWebDTO();
+                studySiteStatus.setStatusCode(StudyStatusCode.getByCode(iso
+                    .getStatusCode().getCode()).getDisplayName());
+                studySiteStatus.setStatusDate(PAUtil.normalizeDateString(
+                TsConverter.convertToTimestamp(iso.getStatusDate()).toString()));
+                overallStatusList.add(studySiteStatus);
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());   
+        }
+        return "historypopup";
+    }
+
+    /**
+     * @return the overallStatusList
+     */
+    public List<StudyOverallStatusWebDTO> getOverallStatusList() {
+        return overallStatusList;
+    }
+
+    /**
+     * @param overallStatusList the overallStatusList to set
+     */
+    public void setOverallStatusList(
+            List<StudyOverallStatusWebDTO> overallStatusList) {
+        this.overallStatusList = overallStatusList;
     }
     
 }

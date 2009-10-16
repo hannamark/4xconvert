@@ -92,9 +92,9 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -108,13 +108,13 @@ import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -128,13 +128,13 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
-import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -312,7 +312,33 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
           checkDuplicateINDIDE(siList, abstractionList);
       }
       enforceStudySiteRuleForProprietary(abstractionList, studyProtocolIi);    
-
+      if (studyProtocolDTO.getPhaseCode().getCode() == null) {
+          abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+                  "Trial Phase must be Entered"));
+        }
+      if (studyProtocolDTO.getPrimaryPurposeCode().getCode() == null) {
+          abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+                  "Primary Purpose must be Entered"));
+      }
+      List<DocumentDTO> isoList = documentServiceLocal.getDocumentsByStudyProtocol(studyProtocolIi);
+      String protocolDoc = null;
+      if (!(isoList.isEmpty())) {
+        for (DocumentDTO dto : isoList) {
+          if (dto.getTypeCode().getCode().equalsIgnoreCase(
+              DocumentTypeCode.PROTOCOL_DOCUMENT.getCode())) {
+            protocolDoc = dto.getTypeCode().getCode().toString();
+          }
+        }
+      }
+      PAServiceUtils paServiceUtils = new PAServiceUtils();
+      List<StudySiteDTO> studySites = paServiceUtils.getStudySite(studyProtocolIi, 
+                  StudySiteFunctionalCode.IDENTIFIER_ASSIGNER, true);
+          StudySiteDTO studySite = PAUtil.getFirstObj(studySites);
+      if (protocolDoc == null && studySite == null) {
+          abstractionList.add(createError("Error", "Select Trial Related Documents from Administrative Data menu. "
+                  + " or Select General Trial Details from Administrative Data menu.",
+              "Either one of NCT number or Proprietary Template document is mandatory"));
+        }
     } //method
 
 /**

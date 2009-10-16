@@ -362,9 +362,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudyResourcingDTO summary4studyResourcingDTO ,
             Ii responsiblePartyContactIi)
     throws PAException {
-
         
-        try {        
+        try {      
+            validateStudyExist(studyProtocolDTO, AMENDMENT);
             updateStudyProtocolObjs(
                 getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT),
                 overallStatusDTO ,
@@ -437,6 +437,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         List<StudySiteDTO> studySiteDTOs) throws PAException {
        
         try {
+            validateStudyExist(studyProtocolDTO, UPDAT);
             //get
             CorrelationUtils cUtils = new CorrelationUtils();
             OrganizationDTO leadOrgDTO = new OrganizationDTO();
@@ -497,6 +498,24 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             throw new PAException(e);
         }
     }
+    
+    private void validateStudyExist(StudyProtocolDTO studyProtocolDTO,
+            String operation) throws PAException {
+        if (AMENDMENT.equalsIgnoreCase(operation) || UPDAT.equalsIgnoreCase(operation)) {
+            //make sure Trial Exist 
+            InterventionalStudyProtocolDTO dto = studyProtocolService.getInterventionalStudyProtocol(
+                    studyProtocolDTO.getIdentifier());
+            if (dto == null) {
+                throw new PAException("No Trial found for given Trial Identifier.\n");
+            }
+            if (!PAUtil.isBlNull(dto.getProprietaryTrialIndicator()) 
+                    && dto.getProprietaryTrialIndicator().getValue().booleanValue()) {
+                throw new PAException(operation + " to Proprietary trial is not supported. ");
+            }
+        }
+    }
+
+
     /**
      * 
      * @param studyProtocolDTO studyProtocolDTO
@@ -755,10 +774,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           List<StudySiteAccrualStatusDTO> participatingSites,
           List<StudySiteDTO> pgCdUpdatedList , String operation) throws PAException {
         
-        if (!PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator()) 
-             && studyProtocolDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
-            throw new PAException("Proprietary trials Update or Amendment not supported. ");
-        }
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         Ii toStudyProtocolIi = null;
         validate(studyProtocolDTO, overallStatusDTO , operation, studyResourcingDTOs, documentDTOs,
@@ -1126,12 +1141,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             }
         }
         if (AMENDMENT.equalsIgnoreCase(operation) || UPDAT.equalsIgnoreCase(operation)) {
-            //make sure Trial Exist 
-            InterventionalStudyProtocolDTO dto = studyProtocolService.getInterventionalStudyProtocol(
-                    studyProtocolDTO.getIdentifier());
-            if (dto == null) {
-                errorMsg.append("No Trial found for given Trial Identifier.\n");
-            }
             DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(
                     studyProtocolDTO.getIdentifier());
             String dwfs = isoDocWrkStatus.getStatusCode().getCode();
@@ -1345,7 +1354,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         }
     }
 
-
+    @SuppressWarnings({"PMD.AvoidDuplicateLiterals" })
     private List<String> deleteAndReplace(Ii sourceIi, Ii targetIi) {
         String sqlUpd = targetIi.getExtension() + " WHERE STUDY_PROTOCOL_IDENTIFIER = " + sourceIi.getExtension();
         List<String> sqls = new ArrayList<String>();
@@ -1382,6 +1391,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             + "('RESPONSIBLE_PARTY_SPONSOR_CONTACT')");
         sqls.add("UPDATE STUDY_SITE_CONTACT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND ROLE_CODE IN " 
                +  "('RESPONSIBLE_PARTY_SPONSOR_CONTACT')");
+        //nct reject
+        sqls.add("DELETE FROM STUDY_SITE WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetId + " AND FUNCTIONAL_CODE IN " 
+                + "('IDENTIFIER_ASSIGNER')");
+        sqls.add("UPDATE STUDY_SITE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd + " AND FUNCTIONAL_CODE IN " 
+                    + "('IDENTIFIER_ASSIGNER')");
         sqls.add("Delete from STUDY_RELATIONSHIP WHERE TARGET_STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension());
         sqls.add("Delete from STUDY_PROTOCOL WHERE IDENTIFIER  = " + sourceIi.getExtension());
         return sqls;

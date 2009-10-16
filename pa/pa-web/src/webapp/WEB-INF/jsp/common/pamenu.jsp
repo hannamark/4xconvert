@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <li class="stdnav"><div>Protocol Abstraction</div> 
 	<ul>
-		<li><a href="#">Home</a></li>			
 		<li><a href="studyProtocolexecute.action" >Trial Search</a></li>
 		<li><a href="inboxProcessingexecute.action" >Inbox</a></li>
 		<c:if test="${pageContext.request.remoteUser != null}">	

@@ -139,6 +139,20 @@
           </span>
         </td>
     </tr>
+    <tr>
+    <td  scope="row" class="label"><label>
+            <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
+        <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
+        <td>
+          <s:select headerKey="" headerValue="" name="gtdDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
+                   value="gtdDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate()"/>
+          <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>gtdDTO.primaryPurposeCode</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
     </c:if>
     <tr>
         <td scope="row" class="label">

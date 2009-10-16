@@ -97,6 +97,7 @@
             <result name="proprietaryCreate">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
             <result name="proprietaryEdit">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
             <result name="error_proprietary">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
+            <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
          </action>  
 
         <action name="collaborators*" class="gov.nih.nci.pa.action.CollaboratorsAction" method="{1}">

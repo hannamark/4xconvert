@@ -18,6 +18,7 @@
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
+<c:url value="/protected/participatingOrganizationshistoryPopup.action" var="lookupUrlstatusHistory" />
 <style type="text/css"> 
 .disabled 
 { 
@@ -43,6 +44,10 @@
     }   
     function lookupperson(){
         showPopWin('${lookupPersonsUrl}', 900, 400, '', 'Persons');
+    }   
+    function lookupStatusHistory(){
+        showPopWin('${lookupUrlstatusHistory}?studySiteId='+document.getElementById('studySiteIdentifier').value,
+                 900, 400, '', 'Status History');
     }   
     function loadDiv(orgid){
          var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;
@@ -152,13 +157,24 @@
             <label for="statusCode"> <fmt:message key="site.currentTrialStatus"/><span class="required">*</span></label>
         </td>
         <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudySiteStatusCode@getDisplayNames()" />
-        <td>                                             
-            <s:select headerKey="" headerValue="--Select--" name="statusCode" list="#statusCodeValues"  value="statusCode" cssStyle="width:206px" />
-            <span class="formErrorMsg"> 
-            <s:fielderror>
+        <td>         
+          <table>   
+            <tr> 
+            <td>                                 
+                <s:select headerKey="" headerValue="--Select--" name="statusCode" list="#statusCodeValues"  value="statusCode" cssStyle="width:206px" />
+                <span class="formErrorMsg"> 
+                <s:fielderror>
                 <s:param>statusCode</s:param>
              </s:fielderror>                            
              </span>
+            </td>
+            <td>
+            <ul class="btnrow">         
+                    <li style="padding-left:0"><a href="#" class="btn" onclick="lookupStatusHistory()"><span class="btn_img"><span class="history">History</span></span></a></li>
+                </ul>
+                </td>
+             </tr>
+             </table>
         </td>
     </tr>
     <tr>

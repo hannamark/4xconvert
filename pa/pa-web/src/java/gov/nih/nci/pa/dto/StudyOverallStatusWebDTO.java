@@ -108,6 +108,12 @@ public class StudyOverallStatusWebDTO {
         this.reason = StConverter.convertToString(dto.getReasonText());
     }
     /**
+     * 
+     */
+    public StudyOverallStatusWebDTO() {
+        super();
+    }
+    /**
      * @return the statusCode
      */
     public String getStatusCode() {
