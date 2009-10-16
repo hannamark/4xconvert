@@ -90,7 +90,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -119,10 +118,10 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      generate-helper-methods="false"
  *      serial-version-uid="1L"
  */
-@Entity
+@javax.persistence.Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class Organization extends AbstractOrganization
-        implements Auditable, CuratableEntity<Organization, OrganizationCR> {
+        implements Auditable, CuratableEntity<Organization, OrganizationCR>, Entity {
     private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private Organization duplicateOf;
@@ -134,6 +133,9 @@ public class Organization extends AbstractOrganization
     private Set<HealthCareFacility> healthCareFacilities = new HashSet<HealthCareFacility>();
     private Set<IdentifiedOrganization> identifiedOrganizations = new HashSet<IdentifiedOrganization>();
     private Set<OrganizationalContact> organizationalContacts = new HashSet<OrganizationalContact>();
+    private Set<ClinicalResearchStaff> clinicalResearchStaff = new HashSet<ClinicalResearchStaff>();
+    private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
+    private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
 
     private String comments;
 
@@ -374,7 +376,7 @@ public class Organization extends AbstractOrganization
      * @return organizationalContacts.
      */
     @OneToMany(mappedBy = "scoper")
-    @Where(clause = "status <> 'NULLIFIED' and person_id IS NULL")
+    @Where(clause = "status <> 'NULLIFIED'")
     public Set<OrganizationalContact> getOrganizationalContacts() {
         return organizationalContacts;
     }
@@ -387,6 +389,58 @@ public class Organization extends AbstractOrganization
         this.organizationalContacts = organizationalContacts;
     }
 
+    /**
+     * @return clinicalResearchStaff.
+     */
+    @OneToMany(mappedBy = "scoper")
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<ClinicalResearchStaff> getClinicalResearchStaff() {
+        return clinicalResearchStaff;
+    }
+
+    /**
+     * @param clinicalResearchStaff Clinical Research Staff.
+     */
+    @SuppressWarnings("unused")
+    private void setClinicalResearchStaff(Set<ClinicalResearchStaff> clinicalResearchStaff) {
+        this.clinicalResearchStaff = clinicalResearchStaff;
+    }
+    
+    /**
+     * @return Identified Persons.
+     */
+    @OneToMany(mappedBy = "scoper")
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<IdentifiedPerson> getIdentifiedPersons() {
+        return identifiedPersons;
+    }
+
+    /**
+     * @param identifiedPersons Identified Persons.
+     */
+    @SuppressWarnings("unused")
+    private void setIdentifiedPersons(Set<IdentifiedPerson> identifiedPersons) {
+        this.identifiedPersons = identifiedPersons;
+    }
+    
+    /**
+     * @return Health Care Providers.
+     */
+    @OneToMany(mappedBy = "scoper")
+    @Where(clause = "status <> 'NULLIFIED'")
+    public Set<HealthCareProvider> getHealthCareProviders() {
+        return healthCareProviders;
+    }
+
+    /**
+     * @param healthCareProviders Health Care Provider.
+     */
+    @SuppressWarnings("unused")
+    private void setHealthCareProviders(Set<HealthCareProvider> healthCareProviders) {
+        this.healthCareProviders = healthCareProviders;
+    }
+    
+    
     /**
      * @return comments
      */

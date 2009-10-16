@@ -89,7 +89,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
@@ -119,9 +118,9 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      generate-helper-methods="false"
  *      serial-version-uid="1L"
  */
-@Entity
+@javax.persistence.Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
-public class Person extends AbstractPerson implements Auditable, CuratableEntity<Person, PersonCR> {
+public class Person extends AbstractPerson implements Auditable, CuratableEntity<Person, PersonCR>, Entity {
     private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private Person duplicateOf;
