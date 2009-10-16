@@ -27,9 +27,9 @@ import java.util.LinkedHashSet;
 
 /**
  * A builder to simulate the data returned from {@link OrganizationService} as provided by CTEP.
- * 
+ *
  * @author smatyas
- * 
+ *
  */
 public class CTEPOrgServiceStubBuilder {
     private static final String DEFAULT_EMAIL = "default@example.com";
@@ -48,7 +48,7 @@ public class CTEPOrgServiceStubBuilder {
         CTEPOrganizationServiceStub common = createGeneric();
         return new CTEPOrganizationServiceStub(common.getOrg(), null, common.getRo());
     }
-    
+
     public CTEPOrganizationServiceStub buildCreateROWithPlayerStub(Long id, Long roId, Long hcfId) throws URISyntaxException {
         CTEPOrganizationServiceStub common = createGeneric();
         Ii playerId = new Ii();
@@ -58,23 +58,23 @@ public class CTEPOrgServiceStubBuilder {
         playerId.setRoot(IdConverter.ORG_ROOT);
         common.getRo().setPlayerIdentifier(playerId);
         common.getHcf().setPlayerIdentifier(playerId);
-        
+
         Ii roIi = new Ii();
         roIi.setExtension(roId.toString());
         roIi.setReliability(IdentifierReliability.ISS);
         roIi.setIdentifierName(IdConverter.RESEARCH_ORG_IDENTIFIER_NAME);
         roIi.setRoot(IdConverter.RESEARCH_ORG_ROOT);
-        
+
         Ii hcfIi = new Ii();
         hcfIi.setExtension(hcfId.toString());
         hcfIi.setReliability(IdentifierReliability.ISS);
         hcfIi.setIdentifierName(IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         hcfIi.setRoot(IdConverter.HEALTH_CARE_FACILITY_ROOT);
-        
+
         common.getRo().getIdentifier().getItem().add(roIi);
-        
+
         common.getHcf().getIdentifier().getItem().add(hcfIi);
-        
+
         return new CTEPOrganizationServiceStub(common.getOrg(), common.getHcf(), common.getRo());
     }
 
@@ -108,7 +108,7 @@ public class CTEPOrgServiceStubBuilder {
         o.setName(name);
         o.setPostalAddress(ad);
         o.setTelecomAddress(tels);
-        
+
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
         hcf.setIdentifier(new DSet<Ii>());
         hcf.getIdentifier().setItem(new LinkedHashSet<Ii>());
@@ -116,7 +116,7 @@ public class CTEPOrgServiceStubBuilder {
         hcf.setStatus(status);
         hcf.setName(name);
         hcf.setPostalAddress(ads);
- 
+
         ResearchOrganizationDTO ro = new ResearchOrganizationDTO();
         ro.setIdentifier(new DSet<Ii>());
         ro.getIdentifier().setItem(new LinkedHashSet<Ii>());
@@ -135,7 +135,7 @@ public class CTEPOrgServiceStubBuilder {
     }
 
     /**
-     * 
+     *
      * @return the data that
      * @throws Exception
      */
@@ -147,7 +147,7 @@ public class CTEPOrgServiceStubBuilder {
     }
 
     /**
-     * 
+     *
      * @return the data that
      * @throws Exception
      */
@@ -155,7 +155,7 @@ public class CTEPOrgServiceStubBuilder {
             String state, String postalCode, Country country) throws Exception {
         CTEPOrganizationServiceStub stub = buildCreateROStub();
         buildCreateWithAddedAddressStub(stub.getRo(), roId, street, city, state, postalCode, country);
-        return stub; 
+        return stub;
     }
 
     private void buildCreateWithAddedAddressStub(AbstractEnhancedOrganizationRoleDTO dto, Ii roId, String street,
@@ -168,6 +168,7 @@ public class CTEPOrgServiceStubBuilder {
         ro.getIdentifier().getItem().add(roId);
     }
 
+    @SuppressWarnings("unchecked")
     private void addAdress(AbstractEnhancedOrganizationRoleDTO dto, String street, String city, String state,
             String postalCode, Country country) {
         Address a = new Address(street, city, state, postalCode, country);

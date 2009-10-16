@@ -117,7 +117,7 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
                 "at org.apache.commons.digester.Digester.parse"*/);
         checkers[idx] = new Checker(false, null, null, null, idx++/*,
                 "Failed to process JMS message ID:14",
-                "java.lang.IllegalArgumentException: Unsuported Record Type in message BODUS_TYPE",
+                "java.lang.IllegalArgumentException: Unsuported Record Type in message BOGUS_TYPE",
                 "at gov.nih.nci.po.service.external.CtepMessageBean.processMessage"*/);
         checkers[idx] = new Checker(true, TransactionType.REJECT, RecordType.ORGANIZATION, "abc", idx++);
         checkers[idx] = new Checker(true, TransactionType.DUPLICATE, RecordType.ORGANIZATION, "abc", idx++);
@@ -143,12 +143,12 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         logWriter.getBuffer().setLength(0);
         logWriter.getBuffer().trimToSize();
     }
-    
+
     @Test
     public void testMsg4Full() throws Exception {
-        HealthCareFacilityServiceBean hcfSvc = 
+        HealthCareFacilityServiceBean hcfSvc =
             (HealthCareFacilityServiceBean) EjbTestHelper.getHealthCareFacilityServiceBean();
-        
+
         // create org and 2 hcfs for this test
         final Country c = getDefaultCountry();
         final HealthCareFacilityServiceBean getService = (HealthCareFacilityServiceBean) hcfSvc;
@@ -168,12 +168,12 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         test.testSimpleCreateCtepOwnedAndGet();
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         // create org2 with hcf2
         test.testSimpleCreateCtepOwnedAndGet();
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         List<HealthCareFacility> hcfList = (List<HealthCareFacility>) PoHibernateUtil.getCurrentSession().createCriteria(
                 HealthCareFacility.class).list();
 
@@ -183,65 +183,65 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         assertEquals(RoleStatus.PENDING, hcf1.getStatus());
         assertTrue(hcf1.isCtepOwned());
         assertNull(hcf1.getName());
-        
+
         HealthCareFacility hcf2 = hcfList.get(1);
         Organization org2 = hcf2.getPlayer();
         assertNotNull(org2);
         assertEquals(RoleStatus.PENDING, hcf2.getStatus());
         assertTrue(hcf2.isCtepOwned());
         assertNull(hcf2.getName());
-         
+
         Ii ctepId = new Ii();
         ctepId.setExtension("03013");
         ctepId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
         ctepId.setIdentifierName("no name for ctep id");
-      
+
         hcf1.getOtherIdentifiers().clear();
         hcf1.getOtherIdentifiers().add(ctepId);
         hcfSvc.curate(hcf1);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         Ii duplicateOfId = new Ii();
         duplicateOfId.setExtension("RSB003");
         duplicateOfId.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
         duplicateOfId.setIdentifierName("no name for dup id");
-        
+
         hcf2.getOtherIdentifiers().clear();
         hcf2.getOtherIdentifiers().add(duplicateOfId);
         hcfSvc.curate(hcf2);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         MockTextMessage msg = new MockTextMessage(4);
         CtepMessageBean bean = new CtepMessageBean();
-        
+
         final CtepOrganizationImporter importer = new CtepOrganizationImporter(null) {
             @Override
             protected void initCtepServices(Context ctepContext) {
             }
         };
-        
+
         CtepImportServiceBean importServiceBean = new CtepImportServiceBean() {
             @Override
             protected void initImporters() {
                 try {
-                    
+
                     setOrgImporter(importer);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
         };
-        
+
         bean.setCtepImportService(importServiceBean);
         bean.onMessage(msg);
-        
+
         HealthCareFacility freshRo = (HealthCareFacility) PoHibernateUtil.getCurrentSession().get(
                 HealthCareFacility.class, hcf1.getId());
         assertEquals(RoleStatus.NULLIFIED, freshRo.getStatus());
         assertEquals(hcf2.getId(), freshRo.getDuplicateOf().getId());
-       
+
     }
 
     class Checker {
@@ -314,7 +314,7 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         }
 
     }
-    
+
     private class MockTextMessage implements TextMessage {
         private final String text;
         private final int id;

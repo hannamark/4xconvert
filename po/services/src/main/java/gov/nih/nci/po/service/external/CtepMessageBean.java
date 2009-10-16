@@ -127,7 +127,7 @@ public class CtepMessageBean implements MessageListener {
          */
         INSERT,
         /**
-         * a delete.
+         * a nullification.
          */
         NULLIFY,
         /**
@@ -141,7 +141,11 @@ public class CtepMessageBean implements MessageListener {
         /**
          * a duplicate.
          */
-        DUPLICATE
+        DUPLICATE,
+        /**
+         * a deletion.
+         */
+        DELETE
     }
 
     /**
@@ -291,14 +295,14 @@ public class CtepMessageBean implements MessageListener {
         }
         RecordType msgType;
         try {
-            msgType = RecordType.valueOf(StringUtils.trim(recordTypeString));
+            msgType = RecordType.valueOf(StringUtils.upperCase(StringUtils.trim(recordTypeString)));
         } catch (IllegalArgumentException iae) {
             throw new IllegalArgumentException("Unsuported Record Type in message " + recordTypeString, iae);
         }
 
         TransactionType trxType = null;
         try {
-            trxType = TransactionType.valueOf(StringUtils.trim(trxTypeString));
+            trxType = TransactionType.valueOf(StringUtils.upperCase(StringUtils.trim(trxTypeString)));
         } catch (IllegalArgumentException iae) {
             LOG.error("Unsuported Transaction Type in message", iae);
         }
@@ -342,8 +346,9 @@ public class CtepMessageBean implements MessageListener {
             Ii duplicateOf) throws JMSException, EntityValidationException {
         switch (trxType) {
         case REJECT:
+        case DELETE:
         case DUPLICATE:
-            LOG.error(getSkipMessage(trxType, msgType, id));
+            LOG.warn(getSkipMessage(trxType, msgType, id));
         default:
             switch (msgType) {
             case ORGANIZATION:

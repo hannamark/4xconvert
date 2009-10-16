@@ -373,7 +373,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
         // update research org role
         if (ro != null) {
-            updateRoRoles(org, ro, assignedId);
+            updateRoRole(org, ro, assignedId);
         }
 
         return org;
@@ -397,31 +397,39 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
     }
 
-    private void updateRoRoles(Organization org, ResearchOrganization ro, Ii assignedId) throws JMSException {
+    private void updateRoRole(Organization org, ResearchOrganization ro, Ii assignedId) throws JMSException {
         ResearchOrganization toSave = null;
         if (ro.getId() != null) {
             ResearchOrganization persistedRo = roService.getById(ro.getId());
-
-            toSave = updateFundingMechanism(ro, persistedRo);
-
-            toSave = updateTypeCode(ro, persistedRo);
-
-            if (copyCtepRoleToExistingRole(ro, persistedRo, assignedId)) {
-                toSave = persistedRo;
-            }
+            toSave = updateExistingRo(persistedRo, ro, assignedId);
         } else {
-            ro.setPlayer(org);
-            ro.setStatus(RoleStatus.ACTIVE);
-            if (!ro.isCtepOwned()) {
-                ro.getOtherIdentifiers().add(assignedId);
+            ResearchOrganization persistedRo = getRoInDbByCtepId(assignedId, "CTEP ID");
+            if (persistedRo != null) {
+                toSave = updateExistingRo(persistedRo, ro, assignedId);
+            } else {
+                ro.setPlayer(org);
+                ro.setStatus(RoleStatus.ACTIVE);
+                if (!ro.isCtepOwned()) {
+                    ro.getOtherIdentifiers().add(assignedId);
+                }
+                toSave = ro;
             }
-            toSave = ro;
         }
         // only save if something has actually changed, to avoid sending out unneeded JMS messages
         if (toSave != null) {
             this.roService.curate(toSave);
         }
 
+    }
+
+    private ResearchOrganization updateExistingRo(ResearchOrganization persistedRo, ResearchOrganization ctepRo,
+            Ii assignedId) {
+        ResearchOrganization toSave = updateFundingMechanism(ctepRo, persistedRo);
+        toSave = updateTypeCode(ctepRo, persistedRo);
+        if (copyCtepRoleToExistingRole(ctepRo, persistedRo, assignedId)) {
+            toSave = persistedRo;
+        }
+        return toSave;
     }
 
     private ResearchOrganization updateTypeCode(ResearchOrganization ro, ResearchOrganization persistedRo) {
@@ -451,24 +459,33 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         HealthCareFacility toSave = null;
         if (hcf.getId() != null) {
             HealthCareFacility persistedHcf = hcfService.getById(hcf.getId());
-            if (copyCtepRoleToExistingRole(hcf, persistedHcf, assignedId)) {
-                toSave = persistedHcf;
-            }
+            toSave = updateExistingHcf(persistedHcf, hcf, assignedId);
         } else {
-            hcf.setPlayer(org);
-            hcf.setStatus(org.getStatusCode() == EntityStatus.ACTIVE ? RoleStatus.ACTIVE : RoleStatus.PENDING);
-            if (!hcf.isCtepOwned()) {
-                hcf.getOtherIdentifiers().add(assignedId);
+            HealthCareFacility persistedHcf = getHcfInDbByCtepId(assignedId, "CTEP ID");
+            if (persistedHcf != null) {
+                toSave = updateExistingHcf(persistedHcf, hcf, assignedId);
+            } else {
+                hcf.setPlayer(org);
+                hcf.setStatus(org.getStatusCode() == EntityStatus.ACTIVE ? RoleStatus.ACTIVE : RoleStatus.PENDING);
+                if (!hcf.isCtepOwned()) {
+                    hcf.getOtherIdentifiers().add(assignedId);
+                }
+                toSave = hcf;
             }
-            toSave = hcf;
         }
-
-
 
         // only save if something has actually changed, to avoid sending out unneeded JMS messages
         if (toSave != null) {
             this.hcfService.curate(toSave);
         }
+    }
+
+    private HealthCareFacility updateExistingHcf(HealthCareFacility persistedHcf, HealthCareFacility ctepHcf,
+            Ii assignedId) {
+        if (copyCtepRoleToExistingRole(ctepHcf, persistedHcf, assignedId)) {
+            return persistedHcf;
+        }
+        return null;
     }
 
     private Organization getScoper(Organization defaultScoper, Ii ctepOrgId) throws JMSException,
@@ -651,56 +668,77 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      */
     public void nullifyCtepOrganization(Ii ctepOrgId, Ii duplicateOfId, OrganizationType orgType) throws JMSException {
         if (orgType == OrganizationType.HEALTHCAREFACILITY) {
-            HealthCareFacility roleToNullify = searchForHcfInDbByCtepId(ctepOrgId, "ctep id");
-            HealthCareFacility duplicateOfHcfId = searchForHcfInDbByCtepId(duplicateOfId, "duplicate Of ctep id");
+            HealthCareFacility roleToNullify = getRequiredHcfInDbByCtepId(ctepOrgId, "ctep id");
+            HealthCareFacility duplicateOfHcfId = getRequiredHcfInDbByCtepId(duplicateOfId, "duplicate Of ctep id");
             roleToNullify.setStatus(RoleStatus.NULLIFIED);
             roleToNullify.setDuplicateOf(duplicateOfHcfId);
             hcfService.curate(roleToNullify);
-            
         } else if (orgType == OrganizationType.RESEARCHORGANIZATION) {
-            ResearchOrganization roleToNullify = searchForRoInDbByCtepId(ctepOrgId, "ctep id");
-            ResearchOrganization duplicateOfHcfId = searchForRoInDbByCtepId(duplicateOfId, "duplicate Of ctep id");
+            ResearchOrganization roleToNullify = getRequiredRoInDbByCtepId(ctepOrgId, "ctep id");
+            ResearchOrganization duplicateOfHcfId = getRequiredRoInDbByCtepId(duplicateOfId, "duplicate Of ctep id");
             roleToNullify.setStatus(RoleStatus.NULLIFIED);
             roleToNullify.setDuplicateOf(duplicateOfHcfId);
             roService.curate(roleToNullify);
-            
         } else {
             throw new IllegalArgumentException(orgType.name() + " is an invalid organization type");
         }
 
     }
-    
-    private HealthCareFacility searchForHcfInDbByCtepId(Ii ctepOrgId, String logStr) {
+
+    private HealthCareFacility getRequiredHcfInDbByCtepId(Ii ctepOrgId, String logStr) {
+        return searchForHcfInDbByCtepId(ctepOrgId, logStr, true);
+    }
+
+    private HealthCareFacility getHcfInDbByCtepId(Ii ctepOrgId, String logStr) {
+        return searchForHcfInDbByCtepId(ctepOrgId, logStr, false);
+    }
+
+    private HealthCareFacility searchForHcfInDbByCtepId(Ii ctepOrgId, String logStr, boolean required) {
         HealthCareFacility example = new HealthCareFacility();
         example.getOtherIdentifiers().add(ctepOrgId);
 
         SearchCriteria<HealthCareFacility> sc = new AnnotatedBeanSearchCriteria<HealthCareFacility>(example);
         List<HealthCareFacility> listOfHcfs = hcfService.search(sc);
-        checkRoleResults(listOfHcfs, "HealthCareFacility", logStr, ctepOrgId.getExtension());
+        checkRoleResults(listOfHcfs, "HealthCareFacility", logStr, ctepOrgId.getExtension(), required);
+        if (CollectionUtils.isEmpty(listOfHcfs)) {
+            return null;
+        }
         return listOfHcfs.get(0);
     }
-    
-    private ResearchOrganization searchForRoInDbByCtepId(Ii ctepOrgId, String logStr) {
+
+    private ResearchOrganization getRequiredRoInDbByCtepId(Ii ctepOrgId, String logStr) {
+        return searchForRoInDbByCtepId(ctepOrgId, logStr, true);
+    }
+
+    private ResearchOrganization getRoInDbByCtepId(Ii ctepOrgId, String logStr) {
+        return searchForRoInDbByCtepId(ctepOrgId, logStr, false);
+    }
+
+    private ResearchOrganization searchForRoInDbByCtepId(Ii ctepOrgId, String logStr, boolean required) {
         ResearchOrganization example = new ResearchOrganization();
         example.getOtherIdentifiers().add(ctepOrgId);
 
         SearchCriteria<ResearchOrganization> sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(example);
         List<ResearchOrganization> listOfRos = roService.search(sc);
-        checkRoleResults(listOfRos, "ResearchOrganization", logStr, ctepOrgId.getExtension());
-        return listOfRos.get(0);
-        
-    }
-    
-    private void checkRoleResults(List<? extends Correlation> listOfRos, String roleType, String logStr, String ext) {
+        checkRoleResults(listOfRos, "ResearchOrganization", logStr, ctepOrgId.getExtension(), required);
         if (CollectionUtils.isEmpty(listOfRos)) {
-            throw new IllegalArgumentException("The " + roleType + " " + logStr 
+            return null;
+        }
+        return listOfRos.get(0);
+
+    }
+
+    private void checkRoleResults(List<? extends Correlation> roles, String roleType, String logStr, String ext,
+            boolean required) {
+        if (required && CollectionUtils.isEmpty(roles)) {
+            throw new IllegalArgumentException("The " + roleType + " " + logStr
                     + " " + ext + " provided could not be found in our system.");
-        } else if (listOfRos.size() > 1) {
-            throw new IllegalArgumentException("The " + roleType + " " + logStr 
+        } else if (roles.size() > 1) {
+            throw new IllegalArgumentException("The " + roleType + " " + logStr
                     + " " + ext + " provided brought back more than 1 result.");
         }
     }
-    
+
 
     /**
      * @return {@link OrganizationServiceLocal} bean
