@@ -1,0 +1,19 @@
+function FileData_Pairs(x)
+{
+x.t("example","bristol-myers");
+x.t("study","responsible");
+x.t("responsible","data");
+x.t("organization","oversees");
+x.t("oversees","implementation");
+x.t("metadata","definitions");
+x.t("ame","primary");
+x.t("sponsor","metadata");
+x.t("sponsor","ame");
+x.t("sponsor","sponsor");
+x.t("primary","organization");
+x.t("implementation","study");
+x.t("data","analysis");
+x.t("definitions","sponsor");
+x.t("analysis","example");
+x.t("bristol-myers","squibb");
+}

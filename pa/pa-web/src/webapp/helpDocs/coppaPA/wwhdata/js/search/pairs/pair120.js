@@ -1,0 +1,16 @@
+function FileData_Pairs(x)
+{
+x.t("example","moitessier");
+x.t("study","example");
+x.t("responsible","aspects");
+x.t("aspects","conduct");
+x.t("metadata","definitions");
+x.t("nvestigator","responsible");
+x.t("investigator","metadata");
+x.t("investigator","nvestigator");
+x.t("investigator","principal");
+x.t("conduct","study");
+x.t("principal","investigator");
+x.t("moitessier","bernard");
+x.t("definitions","principal");
+}

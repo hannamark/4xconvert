@@ -1,0 +1,19 @@
+function FileData_Pairs(x)
+{
+x.t("example","10/28/2008");
+x.t("mm/dd/yyyy","example");
+x.t("current","trial");
+x.t("trial","status");
+x.t("trial","using");
+x.t("status","assigned");
+x.t("status","date");
+x.t("metadata","definitions");
+x.t("ate","trial");
+x.t("format","mm/dd/yyyy");
+x.t("assigned","trial");
+x.t("date","current");
+x.t("date","metadata");
+x.t("date","ate");
+x.t("using","format");
+x.t("definitions","current");
+}

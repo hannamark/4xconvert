@@ -1,0 +1,22 @@
+function FileData_Pairs(x)
+{
+x.t("example","ctep");
+x.t("trials","involving");
+x.t("summary","sponsor/source");
+x.t("responsible","funding");
+x.t("trial","pertains");
+x.t("organization","responsible");
+x.t("device","intervention");
+x.t("metadata","definitions");
+x.t("funding","trial");
+x.t("pertains","clinical");
+x.t("intervention","example");
+x.t("agent","device");
+x.t("sponsor/source","summary");
+x.t("sponsor/source","metadata");
+x.t("sponsor/source","rimary");
+x.t("rimary","organization");
+x.t("involving","agent");
+x.t("definitions","summary");
+x.t("clinical","trials");
+}
