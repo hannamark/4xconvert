@@ -74,6 +74,7 @@ function loadDiv(intid){
     <s:hidden name = "patient.studyProtocolId" />
     <s:hidden name = "patient.statusCode" />
     <s:hidden name = "patient.poIdentifier" />
+    <s:hidden name = "patient.performedSubjectMilestoneId" />
 <table class="form">
     <tr>
         <td class="label">
@@ -211,8 +212,7 @@ function loadDiv(intid){
         </td>
         <td class="value">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:textfield id ="registrationDate" readonly="true" name="patient.registrationDate" maxlength="10" size="10" 
-                cssStyle="width:70px;float:left" cssClass="readonly"/>
+            <s:textfield id ="registrationDate" name="patient.registrationDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
             <a href="javascript:showCal('Cal1')"><img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">

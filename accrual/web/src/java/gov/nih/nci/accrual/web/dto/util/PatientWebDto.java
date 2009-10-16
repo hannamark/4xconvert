@@ -370,7 +370,7 @@ public class PatientWebDto {
      * @param registrationDate the registrationDate to set
      */
     public void setRegistrationDate(String registrationDate) {
-        this.registrationDate = registrationDate;
+        this.registrationDate = PAUtil.normalizeDateString(registrationDate);
     }
     /**
      * @return the zip
