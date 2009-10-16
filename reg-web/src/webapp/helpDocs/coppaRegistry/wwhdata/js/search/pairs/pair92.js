@@ -1,0 +1,24 @@
+function FileData_Pairs(x)
+{
+x.t("example","nci-2010-abcd");
+x.t("trials","reporting");
+x.t("program","trial");
+x.t("trial","identifier");
+x.t("trial","registration");
+x.t("trial","nci");
+x.t("metadata","definitions");
+x.t("reporting","program");
+x.t("unique","identifier");
+x.t("assigned","trial");
+x.t("identifier","metadata");
+x.t("identifier","unique");
+x.t("identifier","assigned");
+x.t("identifier","nci");
+x.t("registration","site");
+x.t("site","application");
+x.t("application","example");
+x.t("nci","trial");
+x.t("nci","clinical");
+x.t("definitions","nci");
+x.t("clinical","trials");
+}

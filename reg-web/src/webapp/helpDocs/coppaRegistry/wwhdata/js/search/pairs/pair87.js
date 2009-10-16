@@ -1,0 +1,24 @@
+function FileData_Pairs(x)
+{
+x.t("example","nsabp-b-40");
+x.t("study","monitoring");
+x.t("lead","organization");
+x.t("responsible","overall");
+x.t("scientific","administrative");
+x.t("trial","example");
+x.t("organization","lead");
+x.t("organization","responsible");
+x.t("organization","organization");
+x.t("organization","metadata");
+x.t("overall","scientific");
+x.t("metadata","definitions");
+x.t("particular","clinical");
+x.t("coordination","study");
+x.t("administrative","coordination");
+x.t("monitoring","data");
+x.t("data","management");
+x.t("activities","particular");
+x.t("management","activities");
+x.t("definitions","lead");
+x.t("clinical","trial");
+}

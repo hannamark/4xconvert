@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpBook version="5.0" name="coppaRegistry" context="coppaRegistry" locale="en" xmlns="urn:WebWorks-Help-Book-Files-Schema">
+  <CommonWordsToSkip minlen="3">
+    a about after all also am an and another any are as at
+    be because been before being between both but by
+    came can come copyright corp corporation could
+    did do does
+    each etc
+    for from
+    get goes got
+    had has have he her here him himself his how
+    if in inc into is it its
+    let like
+    make many me might more most much must my
+    never nor not now
+    of off on one only or other our out over own
+    reserved rights
+    said same see set shall she should since so some still such
+    take than that the their them then there these they this those though through to too
+    under us use
+    very
+    was way we well were what when where which while who why will with would
+    yes yet you your
+   </CommonWordsToSkip>
+  <ScoringPrefs>
+    <meta name="keywords" weight="100" />
+    <meta name="description" weight="50" />
+    <meta name="summary" weight="50" />
+    <title weight="20" />
+    <h1 weight="15" />
+    <h2 weight="10" />
+    <caption weight="10" />
+    <h3 weight="7" />
+    <th weight="5" />
+    <h4 weight="5" />
+    <h5 weight="4" />
+    <h6 weight="3" />
+    <h7 weight="2" />
+  </ScoringPrefs>
+  <DocumentInfo>
+    <Document title="NCI Clinical Trials Reporting Program Trial Registration Site Online Help" href="welcome.1.1.html" />
+    <Document title="Using the Online Help" href="welcome.1.2.html" />
+    <Document title="Using Navigation Tools" href="welcome.1.3.html" />
+    <Document title="Getting Started" href="GettingStarted.2.1.html" />
+    <Document title="About the CTRP Registration Site" href="GettingStarted.2.2.html" />
+    <Document title="What’s New in This Release" href="GettingStarted.2.3.html" />
+    <Document title="Creating an Account" href="GettingStarted.2.4.html" />
+    <Document title="Logging In to the CTRP Registration Site" href="GettingStarted.2.5.html" />
+    <Document title="Using CTRP Trial Registration Templates and Resources" href="GettingStarted.2.6.html" />
+    <Document title="Downloading Trial Registration Templates" href="GettingStarted.2.7.html" />
+    <Document title="Using the Proprietary Trial Template" href="GettingStarted.2.8.html" />
+    <Document title="Using the Participating Sites Template" href="GettingStarted.2.9.html" />
+    <Document title="Using the Batch Upload Template" href="GettingStarted.2.10.html" />
+    <Document title="Searching For Trials" href="searchTrials.3.1.html" />
+    <Document title="About Clinical Trial Metadata" href="searchTrials.3.2.html" />
+    <Document title="Searching For Trials" href="searchTrials.3.3.html" />
+    <Document title="Working with Search Results" href="searchTrials.3.4.html" />
+    <Document title="Navigating Through the Search Results List" href="searchTrials.3.5.html" />
+    <Document title="Viewing Trial Details" href="searchTrials.3.6.html" />
+    <Document title="Viewing Trial-Related Documents" href="searchTrials.3.7.html" />
+    <Document title="Registering New Trials" href="register.4.1.html" />
+    <Document title="Registering Non-Proprietary Trials in the CTRP Registration Site" href="register.4.2.html" />
+    <Document title="Editing Trial Details" href="register.4.3.html" />
+    <Document title="Printing Trial Information" href="register.4.4.html" />
+    <Document title="Completing the Trial Details Section" href="register.4.5.html" />
+    <Document title="Completing the Lead Organization/Principal Investigator Section" href="register.4.6.html" />
+    <Document title="Completing the Sponsor/Responsible Party Section" href="register.4.7.html" />
+    <Document title="Completing the Summary 4 Information Section" href="register.4.8.html" />
+    <Document title="Completing the NIH Grant Information Section" href="register.4.9.html" />
+    <Document title="Completing the Trial Status/Dates Section" href="register.4.10.html" />
+    <Document title="Completing the IND/IDE Information Section" href="register.4.11.html" />
+    <Document title="Registering IND Trials" href="register.4.12.html" />
+    <Document title="Registering IDE Trials" href="register.4.13.html" />
+    <Document title="Completing the Trial Related Documents Section" href="register.4.14.html" />
+    <Document title="Registering Proprietary Trials in the CTRP Registration Site" href="register.4.15.html" />
+    <Document title="Completing the Trial Identification Section for Proprietary Trials" href="register.4.16.html" />
+    <Document title="Completing the Trial Details Section for Proprietary Trials" href="register.4.17.html" />
+    <Document title="Completing Summary 4 Information for Proprietary Trials" href="register.4.18.html" />
+    <Document title="Completing the Trial Status/Dates Section for Proprietary Trials" href="register.4.19.html" />
+    <Document title="Completing the Trial Related Documents Section for Proprietary Trials" href="register.4.20.html" />
+    <Document title="Registering Organizations" href="register.4.21.html" />
+    <Document title="Searching for Registered Organizations" href="register.4.22.html" />
+    <Document title="Adding Organizations" href="register.4.23.html" />
+    <Document title="Registering Persons" href="register.4.24.html" />
+    <Document title="Searching for Principal Investigators" href="register.4.25.html" />
+    <Document title="Adding Principal Investigators" href="register.4.26.html" />
+    <Document title="Registering Multiple Trials in a Batch" href="register.4.27.html" />
+    <Document title="Data Requirements for Batch Uploads" href="register.4.28.html" />
+    <Document title="Updating and Amending Registered Trials" href="amendTrial.5.1.html" />
+    <Document title="About Trial Updates" href="amendTrial.5.2.html" />
+    <Document title="Updating Accepted Trials" href="amendTrial.5.3.html" />
+    <Document title="About Trial Amendments" href="amendTrial.5.4.html" />
+    <Document title="Amendment Process Life Cycle" href="amendTrial.5.5.html" />
+    <Document title="Amending Verified Trials" href="amendTrial.5.6.html" />
+    <Document title="Amending Trial Details" href="amendTrial.5.7.html" />
+    <Document title="Amending Lead Organization and Principal Investigator Details" href="amendTrial.5.8.html" />
+    <Document title="Amending Sponsor and Summary 4 Details" href="amendTrial.5.9.html" />
+    <Document title="Amending NIH Grant Details" href="amendTrial.5.10.html" />
+    <Document title="Amending Trial Status Dates" href="amendTrial.5.11.html" />
+    <Document title="Amending IND/IDE Details" href="amendTrial.5.12.html" />
+    <Document title="Uploading Amendment-Specific Documents" href="amendTrial.5.13.html" />
+    <Document title="Reviewing and Submitting Trial Amendments and Updates" href="amendTrial.5.14.html" />
+    <Document title="Editing Amended and Updated Details" href="amendTrial.5.15.html" />
+    <Document title="Printing Amended and Updated Trial Information" href="amendTrial.5.16.html" />
+    <Document title="Managing Your Account" href="userAccount.6.1.html" />
+    <Document title="Managing Your User Account Profile" href="userAccount.6.2.html" />
+    <Document title="Managing Your Password" href="userAccount.6.3.html" />
+    <Document title="Changing Your Password" href="userAccount.6.4.html" />
+    <Document title="Resetting Your Password" href="userAccount.6.5.html" />
+    <Document title="Transferring Trial Ownership" href="userAccount.6.6.html" />
+    <Document title="Batch Upload Data Specifications" href="batchUpload.7.1.html" />
+    <Document title="Preparing the Trial Data File for Non-Proprietary Trials" href="batchUpload.7.2.html" />
+    <Document title="Preparing Trial-Related Documents" href="batchUpload.7.3.html" />
+    <Document title="Trial Data Element Specifications For Non-Proprietary Trials" href="batchUpload.7.4.html" />
+    <Document title="Preparing the Trial Data File for Proprietary Trials" href="batchUpload.7.5.html" />
+    <Document title="Trial Specification Rules For Proprietary Trials" href="batchUpload.7.6.html" />
+    <Document title="Participating Sites Document Specifications" href="participatingSites.8.1.html" />
+    <Document title="Participating Sites Document Rules" href="participatingSites.8.2.html" />
+    <Document title="Participating Site Data Element Specifications" href="participatingSites.8.3.html" />
+    <Document title="Metadata Definitions" href="metadata.9.1.html" />
+    <Document title="Allocation" href="metadata.9.2.html" />
+    <Document title="Amendment Number" href="metadata.9.3.html" />
+    <Document title="Current Trial Status Date" href="metadata.9.4.html" />
+    <Document title="Funding Mechanism" href="metadata.9.5.html" />
+    <Document title="Identifier Type" href="metadata.9.6.html" />
+    <Document title="Institute Code (NIH Grant Code)" href="metadata.9.7.html" />
+    <Document title="Intervention Model" href="metadata.9.8.html" />
+    <Document title="Lead Organization" href="metadata.9.9.html" />
+    <Document title="Lead Organization Trial Identifier (ID)" href="metadata.9.10.html" />
+    <Document title="Masking" href="metadata.9.11.html" />
+    <Document title="Milestones" href="metadata.9.12.html" />
+    <Document title="NCI Division/Program Code" href="metadata.9.13.html" />
+    <Document title="NCI Trial Identifier" href="metadata.9.14.html" />
+    <Document title="NIH Grant Information" href="metadata.9.15.html" />
+    <Document title="Non-proprietary Trial" href="metadata.9.16.html" />
+    <Document title="Primary Purpose" href="metadata.9.17.html" />
+    <Document title="Principal Investigator" href="metadata.9.18.html" />
+    <Document title="Processing Status" href="metadata.9.19.html" />
+    <Document title="Proprietary Trial" href="metadata.9.20.html" />
+    <Document title="Responsible Party" href="metadata.9.21.html" />
+    <Document title="Sponsor" href="metadata.9.22.html" />
+    <Document title="Study Classification" href="metadata.9.23.html" />
+    <Document title="Summary 4 Funding Category" href="metadata.9.24.html" />
+    <Document title="Summary 4 Sponsor/Source" href="metadata.9.25.html" />
+    <Document title="Title" href="metadata.9.26.html" />
+    <Document title="Trial Phase" href="metadata.9.27.html" />
+    <Document title="Trial Status" href="metadata.9.28.html" />
+    <Document title="Trial Type" href="metadata.9.29.html" />
+    <Document title="Glossary" href="glossary.10.1.html" />
+    <Document title="Application Support" href="appSupport.11.1.html" />
+  </DocumentInfo>
+  <TopicMap>
+    <Topic name="welcome" href="welcome.1.1.html#1078008" />
+    <Topic name="login" href="GettingStarted.2.5.html#1077668" />
+    <Topic name="search_trials" href="searchTrials.3.3.html#1078002" />
+    <Topic name="search_results" href="searchTrials.3.4.html#1078195" />
+    <Topic name="view_result" href="searchTrials.3.6.html#1078432" />
+    <Topic name="edit_trial" href="register.4.3.html#1080763" />
+    <Topic name="submit_trial_proprietary" href="register.4.15.html#1100834" />
+    <Topic name="amend_trial" href="amendTrial.5.4.html#1089306" />
+    <Topic name="my_account" href="userAccount.6.2.html#1077960" />
+  </TopicMap>
+</WebWorksHelpBook>
