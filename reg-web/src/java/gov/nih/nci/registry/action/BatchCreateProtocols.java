@@ -588,7 +588,31 @@ public class BatchCreateProtocols {
             } else {
                 trialDTO.setIdentifier(listofDto.get(0).getStudyProtocolId().toString());
             }
-            
+            //ignore duplicate inds and grants
+            if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) {
+                for (Iterator it = studyIndldeDTOs.iterator(); it.hasNext();) {
+                    StudyIndldeDTO indIdeDto = (StudyIndldeDTO) it.next();
+                    try {
+                        indIdeDto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+                                Long.valueOf(trialDTO.getIdentifier())));
+                        RegistryServiceLocator.getStudyIndldeService().validate(indIdeDto);
+                    } catch (PADuplicateException dupEx) {
+                        it.remove();
+                    }
+                }
+            }
+            if (studyResourcingDTOs != null && !studyResourcingDTOs.isEmpty()) {
+                for (Iterator it = studyResourcingDTOs.iterator(); it.hasNext();) {
+                    StudyResourcingDTO studyResourcingDTO = (StudyResourcingDTO) it.next();
+                    try {
+                        studyResourcingDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+                                Long.valueOf(trialDTO.getIdentifier())));
+                        RegistryServiceLocator.getStudyResourcingService().validate(studyResourcingDTO);
+                    } catch (PADuplicateException dupEx) {
+                        it.remove();
+                    }
+                }
+            }
             studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
             studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().
