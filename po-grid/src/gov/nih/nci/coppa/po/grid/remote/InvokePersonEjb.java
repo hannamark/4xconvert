@@ -19,7 +19,6 @@ import java.util.Map;
  */
 public class InvokePersonEjb implements PersonEntityServiceRemote {
 
-
     /**
      * {@inheritDoc}
      */
@@ -36,7 +35,7 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
      * {@inheritDoc}
      */
     public PersonDTO getPerson(Ii ii) throws NullifiedEntityException {
-        
+
         try {
             PersonDTO person = GridSecurityJNDIServiceLocator.newInstance().getPersonService().getPerson(ii);
             return person;
@@ -104,7 +103,8 @@ public class InvokePersonEjb implements PersonEntityServiceRemote {
      */
     public List<PersonDTO> search(PersonDTO person, LimitOffset page) throws TooManyResultsException {
         try {
-            List<PersonDTO> persons = GridSecurityJNDIServiceLocator.newInstance().getPersonService().search(person, page);
+            List<PersonDTO> persons = GridSecurityJNDIServiceLocator.newInstance().getPersonService().search(person,
+                    page);
             return persons;
         } catch (TooManyResultsException e) {
             throw e;
