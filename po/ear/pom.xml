@@ -13,6 +13,8 @@
     <url>../../ear/target/site</url>
 
     <properties>
+        <gridServicePrincipal>Gr1DU5er</gridServicePrincipal>
+        <gridServiceCredential>ltHZmZ1rqYq8j2uyHEABIQ==</gridServiceCredential>
         <log.level.default>WARN</log.level.default>
         <log.smtp.host>smtp.example.com</log.smtp.host>
         <log.smtp.from>changeme@example.com</log.smtp.from>

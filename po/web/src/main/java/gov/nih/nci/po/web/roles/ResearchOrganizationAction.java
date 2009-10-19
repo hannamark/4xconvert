@@ -386,7 +386,7 @@ public class ResearchOrganizationAction
     public void setRootKey(String rootKey) {
         this.rootKey = rootKey;
     }
-    
+
     /**
      * {@inheritDoc}
      */

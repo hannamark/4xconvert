@@ -15,10 +15,15 @@
                 mechanism.
             -->
             <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsLDAPLoginModule"
-                flag="optional">
+                flag="optional"> 
                 <module-option name="ldapHost">${ldap.host.url}</module-option>
                 <module-option name="ldapSearchableBase">${ldap.searchable.base}</module-option>
                 <module-option name="ldapUserIdLabel">{ldap.user.id.label}</module-option>
+            </login-module>
+            <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" flag="optional">
+                <module-option name="gridServicePrincipal">${gridServicePrincipal}</module-option>
+                <module-option name="gridServiceCredential">${gridServiceCredential}</module-option>
+                <module-option name="gridServicePrincipalSeparator">||</module-option>
             </login-module>
             <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional">
                 <module-option name="driver">${jdbc.driverClassName}</module-option>

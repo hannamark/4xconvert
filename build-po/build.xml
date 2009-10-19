@@ -204,6 +204,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </default>
   </switch>
 
+  <if>
+	  <not>
+		  <isset property="env.ANT_OPTS"/>
+	  </not>
+	  <then>
+		  <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator} set  ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m'  # for windows."/>
+	  </then>
+  </if>
   <!-- Targets -->
   <target name="diagnostics" description="diagnostics">
     <echoproperties/>
@@ -447,8 +455,43 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     depends="
     init,
     dist:tools:retrieve:jboss,
-    dist:tools:retrieve:jboss-bindings
+    dist:tools:retrieve:jboss-bindings,
+    dist:tools:retrieve:sync-gts
     " />
+	<!-- 
+	   See https://wiki.nci.nih.gov/display/BuildandDeploymentAutomation/How+to+configure+a+Secure+Grid+Listener for more details
+	-->
+    <target name="dist:tools:retrieve:sync-gts"  description="Downloads caGrid SyncGTS service file from binary repository and verifies checksum">
+	    <if>
+		    <not>
+			    <available file="${download.dir}/${sync-gts.binaries.file}"/>
+		    </not>
+		    <then>
+			    <get src="${sync-gts.src.url}" dest="${download.dir}/${sync-gts.binaries.file}" />
+		    </then>
+	    </if>
+	    <property name="sync-gts.dist.dir" location="${dist.exploded.dir}/${sync-gts.dist.relative.dir}"/>
+	    <unzip src="${download.dir}/${sync-gts.binaries.file}" dest="${sync-gts.dist.dir}"/>
+	    <property name="cagrid.target.co.dir" location="${target.dir}/cagrid-target"/>
+	    <mkdir dir="${cagrid.target.co.dir}"/>
+	    <if>
+		    <not>
+			    <available file="${cagrid-target.src.url}"/>
+		    </not>
+		    <then>
+			    <mkdir dir="${cagrid.target.co.dir}"/>
+			    <svn-co
+				    svn.checkout.url="${cagrid-target.src.url}"
+				    svn.checkout.dir="${cagrid.target.co.dir}"
+				    delete="false"
+				    />
+		    </then>
+	    </if>
+	    <copy todir="${sync-gts.dist.dir}/cagrid-target">
+		    <fileset dir="${cagrid.target.co.dir}"/>
+	    </copy>
+    </target>
+
 
   <target name="dist:tools:retrieve:jboss-bindings"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">
     <get src="${jboss-bindings.src.url}" dest="${dist.exploded.dir}/${jboss-bindings.file}" />
@@ -513,7 +556,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   </target>
 
   <!-- Copies install time resources into distribution tree -->
-  <target name="dist:upgrader:prep">
+  <target name="dist:upgrader:prep" depends="dist:tools:retrieve:sync-gts">
     <!-- Copy po database scripts -->
     <copy todir="${dist.exploded.dir}/${db.dist.relative.dir}" overwrite="true">
       <fileset dir="${db.src.dir}">

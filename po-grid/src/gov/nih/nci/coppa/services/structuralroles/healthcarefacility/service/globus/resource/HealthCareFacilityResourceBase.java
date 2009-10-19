@@ -89,11 +89,13 @@ import org.oasis.wsrf.lifetime.TerminationNotification;
  * 
  */
 public abstract class HealthCareFacilityResourceBase extends ReflectionResource implements Resource
+                                                  ,SecureResource
                                                   {
 
 	static final Log logger = LogFactory.getLog(HealthCareFacilityResourceBase.class);
 
 	private HealthCareFacilityResourceConfiguration configuration;
+	private ResourceSecurityDescriptor desc;
 	private ResourceKey key;
 
 	// this can be used to cancel the registration renewal
@@ -115,6 +117,7 @@ public abstract class HealthCareFacilityResourceBase extends ReflectionResource 
                            
         // Call the super initialize on the ReflectionResource                  
 	    super.initialize(resourceBean,resourceElementQName,id);
+		this.desc = null;
 
 
 		// register the service to the index service
@@ -129,7 +132,22 @@ public abstract class HealthCareFacilityResourceBase extends ReflectionResource 
 	
 
 
-	  
+	
+    /**
+     * Sets the security descriptor for this resource.  The default resource
+     * security will be null so it will fall back to method level then service
+     * level security.  If you want to protect this particular instance of this
+     * resource then provide a resource security descriptor to this resource
+     * through this method.
+     */
+	public void setSecurityDescriptor(ResourceSecurityDescriptor desc) {
+		this.desc = desc;
+	}
+	
+	
+	public ResourceSecurityDescriptor getSecurityDescriptor() {
+		return this.desc;
+	}  
 
 	
 	public HealthCareFacilityResourceConfiguration getConfiguration() {

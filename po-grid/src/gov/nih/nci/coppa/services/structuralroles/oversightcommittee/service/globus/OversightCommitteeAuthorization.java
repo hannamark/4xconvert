@@ -61,38 +61,65 @@ public class OversightCommitteeAuthorization implements PDP {
 	   				
 	public void authorizeCreate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetById(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetByIds(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeSearch(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdateStatus(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeValidate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeQuery(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetByPlayerIds(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   
 	
@@ -163,7 +190,10 @@ public class OversightCommitteeAuthorization implements PDP {
     		String serviceName = (String)config.getProperty(name, "serviceName");
     	    String etcPath = ContainerConfig.getBaseDirectory() + File.separator + (String)config.getProperty(name, "etcDirectoryPath");
 
-    	
+    	 
+	   		authorizationClassMap.put("enforce_auth",Class.forName("org.cagrid.enforce.authorization.extension.service.EnforceAuthorization").newInstance());
+			((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).initialize(serviceName, etcPath);
+			
     	} catch (Exception e){
         	throw new InitializeException(e.getMessage(),e);
 		}

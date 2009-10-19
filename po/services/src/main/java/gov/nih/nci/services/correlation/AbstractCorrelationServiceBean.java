@@ -127,11 +127,15 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 public abstract class AbstractCorrelationServiceBean
         <T extends Correlation, CR extends CorrelationChangeRequest<T>, DTO extends CorrelationDto> {
 
-    private static final Logger LOG = Logger.getLogger(AbstractCorrelationServiceBean.class);
+    /**
+     * grid client role.
+     */
+    protected static final String DEFAULT_ROLE_ALLOWED_GRID_CLIENT = "gridClient";
     /**
      * client role.
      */
-    protected static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
+    protected static final String DEFAULT_ROLE_ALLOWED_CLIENT = "client";
+    private static final Logger LOG = Logger.getLogger(AbstractCorrelationServiceBean.class);
 
     private static final String UNCHECKED = "unchecked";
 
@@ -170,7 +174,7 @@ public abstract class AbstractCorrelationServiceBean
      * @throws EntityValidationException on error
      * @throws CurationException if any unrecoverable error occurred
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @SuppressWarnings({UNCHECKED, "PMD.PreserveStackTrace" })
     public Ii createCorrelation(DTO dto) throws EntityValidationException, CurationException {
         T po = (T) PoXsnapshotHelper.createModel(dto);
@@ -187,7 +191,7 @@ public abstract class AbstractCorrelationServiceBean
      */
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public DTO getCorrelation(Ii id) {
         T bo = getLocalService().getById(IiConverter.convertToLong(id));
         return (DTO) PoXsnapshotHelper.createSnapshot(bo);
@@ -198,7 +202,7 @@ public abstract class AbstractCorrelationServiceBean
      */
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public List<DTO> getCorrelations(Ii[] ids) {
         Set<Long> longIds = new HashSet<Long>();
         for (Ii id : ids) {
@@ -213,7 +217,7 @@ public abstract class AbstractCorrelationServiceBean
      */
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public List<DTO> getCorrelationsByPlayerIds(Ii[] pids) {
         Set<Long> longIds = new HashSet<Long>();
         for (Ii id : pids) {
@@ -230,7 +234,7 @@ public abstract class AbstractCorrelationServiceBean
      */
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public Map<String, String[]> validate(DTO dto) {
         T hcpBo = (T) PoXsnapshotHelper.createModel(dto);
         return getLocalService().validate(hcpBo);
@@ -242,7 +246,7 @@ public abstract class AbstractCorrelationServiceBean
      */
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public List<DTO> search(DTO dto) {
         T model = (T) PoXsnapshotHelper.createModel(dto);
         List<T> search = getLocalService().search(getSearchCriteria(model));
@@ -257,7 +261,7 @@ public abstract class AbstractCorrelationServiceBean
      */
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public List<DTO> search(DTO dto, LimitOffset pagination) throws TooManyResultsException {
         T model = (T) PoXsnapshotHelper.createModel(dto);
         int maxLimit = Math.min(pagination.getLimit(), maxResults + 1);
@@ -273,7 +277,7 @@ public abstract class AbstractCorrelationServiceBean
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public void updateCorrelation(DTO proposedState) throws EntityValidationException {
         Long pId = IiDsetConverter.convertToId(proposedState.getIdentifier());
         if (pId != null) {
@@ -309,7 +313,7 @@ public abstract class AbstractCorrelationServiceBean
      */
     @SuppressWarnings(UNCHECKED)
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public void updateCorrelationStatus(Ii targetHCP, Cd statusCode) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(targetHCP);
         if (pId != null) {

@@ -17,14 +17,13 @@ import java.util.Map;
  * Wrapper class to call the OrganizationService remote EJB.
  */
 public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * {@inheritDoc}
      */
     public List<OrganizationDTO> search(OrganizationDTO org) {
         try {
-            return locator.getOrganizationService().search(org);
+            return GridSecurityJNDIServiceLocator.newInstance().getOrganizationService().search(org);
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -35,7 +34,7 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
      */
     public OrganizationDTO getOrganization(Ii ii) throws NullifiedEntityException {
         try {
-            return locator.getOrganizationService().getOrganization(ii);
+            return GridSecurityJNDIServiceLocator.newInstance().getOrganizationService().getOrganization(ii);
         } catch (NullifiedEntityException e) {
             throw e;
         } catch (Exception e) {
@@ -48,7 +47,7 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
      */
     public Ii createOrganization(OrganizationDTO org) throws EntityValidationException {
         try {
-            return locator.getOrganizationService().createOrganization(org);
+            return GridSecurityJNDIServiceLocator.newInstance().getOrganizationService().createOrganization(org);
         } catch (EntityValidationException e) {
             throw e;
         } catch (Exception e) {
@@ -61,7 +60,7 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
      */
     public void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException {
         try {
-            locator.getOrganizationService().updateOrganization(proposedState);
+            GridSecurityJNDIServiceLocator.newInstance().getOrganizationService().updateOrganization(proposedState);
         } catch (EntityValidationException e) {
             throw e;
         } catch (Exception e) {
@@ -74,7 +73,8 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
      */
     public void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         try {
-            locator.getOrganizationService().updateOrganizationStatus(targetOrg, statusCode);
+            GridSecurityJNDIServiceLocator.newInstance().getOrganizationService().updateOrganizationStatus(targetOrg,
+                    statusCode);
         } catch (EntityValidationException e) {
             throw e;
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
      */
     public Map<String, String[]> validate(OrganizationDTO org) {
         try {
-            return locator.getOrganizationService().validate(org);
+            return GridSecurityJNDIServiceLocator.newInstance().getOrganizationService().validate(org);
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
@@ -98,7 +98,7 @@ public class InvokeOrganizationEjb implements OrganizationEntityServiceRemote {
      */
     public List<OrganizationDTO> search(OrganizationDTO org, LimitOffset page) throws TooManyResultsException {
         try {
-            return locator.getOrganizationService().search(org, page);
+            return GridSecurityJNDIServiceLocator.newInstance().getOrganizationService().search(org, page);
         } catch (TooManyResultsException e) {
             throw e;
         } catch (Exception e) {

@@ -131,9 +131,10 @@ import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 @SecurityDomain("po")
 public class OrganizationEntityServiceBean implements OrganizationEntityServiceRemote {
 
+    private static final String DEFAULT_ROLE_ALLOWED_CLIENT = "client";
+    private static final String DEFAULT_ROLE_ALLOWED_GRID_CLIENT = "gridClient";
     private static final Logger LOG = Logger.getLogger(OrganizationEntityServiceBean.class);
     private static int maxResults = Utils.MAX_SEARCH_RESULTS;
-    private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
     private OrganizationServiceLocal orgService;
     private OrganizationCRServiceLocal orgCRService;
 
@@ -172,7 +173,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public OrganizationDTO getOrganization(Ii id) throws NullifiedEntityException {
         Organization org = orgService.getById(IiConverter.convertToLong(id));
         return (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
@@ -182,7 +183,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      * {@inheritDoc}
      * @throws CurationException 
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @SuppressWarnings("PMD.PreserveStackTrace")
     public Ii createOrganization(OrganizationDTO org) throws EntityValidationException, CurationException {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
@@ -197,7 +198,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Map<String, String[]> validate(OrganizationDTO org) {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
@@ -208,7 +209,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @Deprecated
     public List<OrganizationDTO> search(OrganizationDTO organization) {
@@ -222,7 +223,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<OrganizationDTO> search(OrganizationDTO organization, LimitOffset pagination)
             throws TooManyResultsException {
@@ -241,7 +242,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public void updateOrganization(OrganizationDTO proposedState) throws EntityValidationException {
         Long oId = IiConverter.convertToLong(proposedState.getIdentifier());
         if (oId != null) {
@@ -269,7 +270,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         Long oId = IiConverter.convertToLong(targetOrg);
         if (oId != null) {

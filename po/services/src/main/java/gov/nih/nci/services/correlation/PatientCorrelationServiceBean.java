@@ -180,7 +180,7 @@ public class PatientCorrelationServiceBean
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @Override
     public void updateCorrelation(PatientDTO proposedState) throws EntityValidationException {
         
@@ -208,7 +208,7 @@ public class PatientCorrelationServiceBean
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @Override
     public void updateCorrelationStatus(Ii targetPat, Cd statusCode) throws EntityValidationException {
         Long pId = IiConverter.convertToLong(targetPat);
@@ -267,7 +267,7 @@ public class PatientCorrelationServiceBean
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @Override
     public List<PatientDTO> getCorrelationsByPlayerIds(Ii[] pids) {
         

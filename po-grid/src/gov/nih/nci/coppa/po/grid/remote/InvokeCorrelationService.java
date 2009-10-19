@@ -18,7 +18,6 @@ import java.util.Map;
  * @param <DTO> correlation DTO type
  */
 public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationService<DTO> {
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
     private final Class<DTO> type;
 
     /**
@@ -142,11 +141,8 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public ServiceLocator getLocator() {
-        return locator;
+    private ServiceLocator getLocator() throws Exception {
+        return GridSecurityJNDIServiceLocator.newInstance();
     }
 
     /**

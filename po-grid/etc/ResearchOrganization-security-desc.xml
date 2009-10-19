@@ -5,10 +5,17 @@
       <none />
     </auth-method>
   </method>
+  <authz value="researchorganization:gov.nih.nci.coppa.services.structuralroles.researchorganization.service.globus.ResearchOrganizationAuthorization" />
   <auth-method>
-    <none />
+    <GSITransport>
+      <protection-level>
+        <privacy />
+      </protection-level>
+    </GSITransport>
   </auth-method>
-  <authz value="none" />
+  <run-as>
+    <system-identity />
+  </run-as>
 </securityConfig>
 
 

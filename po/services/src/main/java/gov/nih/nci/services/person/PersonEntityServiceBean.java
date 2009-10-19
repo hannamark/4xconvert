@@ -145,21 +145,22 @@ import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class, 
+@Interceptors({ AuthorizationInterceptor.class, PoHibernateSessionInterceptor.class,
     NullifiedEntityInterceptor.class  })
 @SecurityDomain("po")
 @SuppressWarnings({"PMD.TooManyMethods" })
 public class PersonEntityServiceBean implements PersonEntityServiceRemote {
 
+    private static final String DEFAULT_ROLE_ALLOWED_GRID_CLIENT = "gridClient";
+    private static final String DEFAULT_ROLE_ALLOWED_CLIENT = "client";
     private static final Logger LOG = Logger.getLogger(PersonEntityServiceBean.class);
     private PersonServiceLocal perService;
     private PatientServiceLocal patientService;
     private PersonCRServiceLocal perCRService;
-    private static final String DEFAULT_METHOD_ACCESS_ROLE = "client";
     private static int maxResults = Utils.MAX_SEARCH_RESULTS;
-    
+
     /**
-     * @param max set the maximum 
+     * @param max set the maximum
      * @deprecated only for testing
      */
     @Deprecated
@@ -208,7 +209,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      * @throws NullifiedEntityException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public PersonDTO getPerson(Ii id) throws NullifiedEntityException {
         if (isPatient(id)) {
              long targetId = IiConverter.convertPatientToLong(id);
@@ -259,7 +260,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @SuppressWarnings("PMD.PreserveStackTrace")
     public Ii createPerson(PersonDTO person) throws EntityValidationException, CurationException {
         Person perBO = (Person) PoXsnapshotHelper.createModel(person);
@@ -274,7 +275,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Map<String, String[]> validate(PersonDTO person) {
         Person perBO = (Person) PoXsnapshotHelper.createModel(person);
@@ -286,7 +287,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @Deprecated
     public List<PersonDTO> search(PersonDTO person) {
         Person personBO = (Person) PoXsnapshotHelper.createModel(person);
@@ -298,11 +299,11 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public List<PersonDTO> search(PersonDTO person, LimitOffset pagination) throws TooManyResultsException {
         Person personBO = (Person) PoXsnapshotHelper.createModel(person);
         int maxLimit = Math.min(pagination.getLimit(), maxResults + 1);
-        PageSortParams<Person> params = new PageSortParams<Person>(maxLimit, pagination.getOffset(), 
+        PageSortParams<Person> params = new PageSortParams<Person>(maxLimit, pagination.getOffset(),
                 PersonSortCriterion.PERSON_ID, false);
         List<Person> listBOs = getPersonServiceBean().search(new AnnotatedBeanSearchCriteria<Person>(personBO), params);
         if (listBOs.size() > maxResults) {
@@ -314,7 +315,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public void updatePerson(PersonDTO proposedState) throws EntityValidationException {
         if (isPatient(proposedState.getIdentifier())) {
             updatePatient(proposedState);
@@ -384,7 +385,7 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed(DEFAULT_METHOD_ACCESS_ROLE)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     public void updatePersonStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException {
         if (isPatient(targetOrg)) {
             updatePatientStatus(targetOrg, statusCode);

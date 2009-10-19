@@ -19,7 +19,7 @@
         <jboss.configuration>default</jboss.configuration>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.2.2</nci-commons.version>
+        <nci-commons.version>1.2.4-SNAPSHOT</nci-commons.version>
         <compileSource>1.5</compileSource>
         <hibernate.version>3.2.0.ga</hibernate.version>
         <hibernate.annotations.version>3.2.0.ga</hibernate.annotations.version>
@@ -330,7 +330,7 @@
                 <configuration>
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
-                        <totalBranchRate>82</totalBranchRate>
+                        <totalBranchRate>81</totalBranchRate>
                         <totalLineRate>90</totalLineRate>
                     </check>
                     <formats>

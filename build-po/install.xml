@@ -85,6 +85,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <!-- Jboss configurtion related properties -->
   <property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
   <property name="jboss.service.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/jboss-service.xml"/>
+  <!-- added for updated secure grid ssaksa 090826 -->
+   <property name="sync-gts.dir" location="${basedir}/${sync-gts.dist.relative.dir}"/>
+   <property name="sync-gts.build.dir" location="${sync-gts.dir}/syncgts"/>
+   <property name="cagrid-target.dir" location="${sync-gts.dir}/cagrid-target"/>
+   <property name="grid.dir.dest.jboss" value="wsrf.war" />
+
 
   <!-- *-ds.xml and WAR -->
   <property name="po-ear.dir.dist" value="${basedir}/${po-ear.dist.relative.dir}" />
@@ -92,6 +98,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <property name="po-ear.app-sec-conf.file" value="ApplicationSecurityConfig.xml" />
   <property name="po-ear.hibernate.file" value="hibernate.cfg.xml" />
   <property name="po-ear.ear.file" value="po.ear" />
+
 
   <!-- Default to false, properties can override -->
   <property name="grid.secure.enable" value="false"/>
@@ -203,7 +210,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <basename file="${grid.secure.cert.location}" property="grid.secure.cert.file"/>
   <dirname file="${grid.secure.cert.location}" property="grid.secure.dir"/>
   <basename file="${grid.secure.key.location}" property="grid.secure.key.file"/>
-
+  
+  <basename file="${pogrid.grid.secure.cert.location}" property="pogrid.grid.secure.cert.file"/>
+  <dirname file="${pogrid.grid.secure.cert.location}" property="pogrid.grid.secure.dir"/>
+  <basename file="${pogrid.grid.secure.key.location}" property="pogrid.grid.secure.key.file"/>
+  
   <!-- There is any issue with copying files with a filtersfile, any properties with a value of
     another property do not get expanded (xx=${yy} @xx@ will be replaced with ${yy} not the
     value).  I have defined a filter set below for these properties, I then two two copies
@@ -494,6 +505,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <!-- Configures installed po-grid application -->
     <target name="install:po-grid:configure" description="Configure po-grid service based on properties" unless="exclude.po-grid">
         <grid-appserver-configure
+	  appserver.home="${jboss.home}"
+	  appserver.server.name="${po-grid.jboss.server.name}"
           appserver.conf.dir="${jboss.home}/server/${po-grid.jboss.server.name}/conf"
           appserver.webapp.dir="${jboss.home}/server/${po-grid.jboss.server.name}/deploy"
           appserver.server-xml.file="${jboss.home}/server/${po-grid.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
@@ -505,7 +518,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           search.port="8080"
           grid.application.name="${po-grid.introduce.skeleton.service.name}"
           grid.application.relative.dir="${po-grid.dir.target}"
-          grid.secure.enable="false"
+          grid.secure.dir="${pogrid.grid.secure.dir}"
+          grid.secure.enable="${pogrid.grid.secure.enable}"
+          grid.secure.port="${pogrid.grid.secure.port}"
+          grid.secure.key.file="${pogrid.grid.secure.key.file}"
+          grid.secure.cert.file="${pogrid.grid.secure.cert.file}"
+          grid.external.secure.host="${pogrid.grid.external.secure.host}"
+          grid.external.secure.port="${pogrid.grid.external.secure.port}"
           appserver.external.http.host="${pogrid.jboss.external.http.host}"
         />
     </target>
@@ -587,6 +606,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             grid.secure.key.file="${grid.secure.key.file}"
             grid.secure.cert.file="${grid.secure.cert.file}"
             jboss.java.opts="${jboss.java.opts}"
+	    jboss.http-connector.remove="false"
             />
   </target>
 
@@ -597,7 +617,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                   filtering="true"
                   overwrite="true">
                   <filterset begintoken="@" endtoken="@">
-                      <filter token="jboss.server.port" value="@po-grid.jboss.server.port@"/>
+                      <filter token="jboss.server.port" value="@pogrid.grid.secure.port@"/>
                       <filter token="jboss.ejbinvoker.port" value="@po-grid.jboss.ejbinvoker.port@"/>
                       <filter token="jboss.server.rmi.port" value="@po-grid.jboss.server.rmi.port@"/>
                       <filter token="jboss.server.jndi.port" value="@po-grid.jboss.server.jndi.port@"/>
@@ -649,16 +669,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                   jboss.external.http.host="${pogrid.jboss.external.http.host}"
                   jboss.external.http.port="${pogrid.jboss.external.http.port}"
                   proxy.update.connector.port.http="8080"
-                  grid.external.secure.host="${grid.external.secure.host}"
-                  grid.external.secure.port="${grid.external.secure.port}"
+                  grid.external.secure.host="${pogrid.grid.external.secure.host}"
+                  grid.external.secure.port="${pogrid.grid.external.secure.port}"
                   jboss.server.hostname="${jboss.server.hostname}"
-                  jboss.grid.configure="false"
-                  grid.secure.dir="${grid.secure.dir}"
-                  grid.secure.enable="${grid.secure.enable}"
-                  grid.secure.port="${grid.secure.port}"
-                  grid.secure.key.file="${grid.secure.key.file}"
-                  grid.secure.cert.file="${grid.secure.cert.file}"
+                  jboss.grid.configure="true"
+                  grid.secure.dir="${pogrid.grid.secure.dir}"
+                  grid.secure.enable="${pogrid.grid.secure.enable}"
+                  grid.secure.port="${pogrid.grid.secure.port}"
+                  grid.secure.key.file="${pogrid.grid.secure.key.file}"
+                  grid.secure.cert.file="${pogrid.grid.secure.cert.file}"
                   jboss.java.opts="${jboss.java.opts}"
+                  jboss.http-connector.remove="true"
                   />
   </target>
 
@@ -731,6 +752,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                   grid.secure.key.file="${grid.secure.key.file}"
                   grid.secure.cert.file="${grid.secure.cert.file}"
                   jboss.java.opts="${jboss.java.opts}"
+                  jboss.http-connector.remove="false"
                   />
   </target>
 
