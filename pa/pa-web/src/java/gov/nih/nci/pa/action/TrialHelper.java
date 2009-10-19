@@ -355,7 +355,7 @@ public class TrialHelper {
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setKeywordText(StConverter.convertToSt(PAUtil.stringSetter(gtdDTO.getKeywordText(), KEYWORD)));
         if (gtdDTO != null && gtdDTO.getProprietarytrialindicator() != null 
-                || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
+                && gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
             spDTO.setPhaseCode(CdConverter.convertStringToCd(gtdDTO.getPhaseCode()));
             spDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(gtdDTO.getPrimaryPurposeCode()));
         }

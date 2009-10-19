@@ -112,7 +112,12 @@
     <s:actionerror/> 
     <table class="form">
     <h2>General Trial Details</h2>    
-
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+        <s:hidden name="gtdDTO.phaseCode" id= "gtdDTO.phaseCode"></s:hidden>
+        <s:hidden name="gtdDTO.phaseOtherText" id= "gtdDTO.phaseOtherText"></s:hidden>
+        <s:hidden name="gtdDTO.primaryPurposeCode" id= "gtdDTO.primaryPurposeCode"></s:hidden>
+        <s:hidden name="gtdDTO.primaryPurposeOtherText" id= "gtdDTO.primaryPurposeOtherText"></s:hidden>
+    </c:if>
     <tr>
         <td scope="row" class="label">
            <label for="nciIdentifier">

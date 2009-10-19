@@ -224,4 +224,8 @@
         <comment>execute pa_dev_23519.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_23519.sql"/>
     </changeSet>
+  <changeSet id="55" author="Vrushali">
+        <comment>execute pa_defect_23816.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/pa_defect_23816.sql"/>
+    </changeSet>
 </databaseChangeLog>

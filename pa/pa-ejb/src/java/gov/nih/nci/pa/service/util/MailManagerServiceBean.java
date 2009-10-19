@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
@@ -144,7 +145,8 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
-@SuppressWarnings({"PMD.FinalFieldCouldBeStatic", "PMD.TooManyMethods" })
+@SuppressWarnings({"PMD.FinalFieldCouldBeStatic", "PMD.TooManyMethods",
+    "PMD.CyclomaticComplexity", "PMD.NPathComplexity"  })
 public class MailManagerServiceBean implements MailManagerServiceRemote,
                             MailManagerServiceLocal {
 
@@ -182,6 +184,9 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
           String body = "";
           if (spDTO.getAmendmentDate() != null && !spDTO.getAmendmentDate().equals("")) {
               body = lookUpTableService.getPropertyValue("tsr.amend.body");
+          } else if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial()) 
+                  && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
+              body = lookUpTableService.getPropertyValue("tsr.proprietary.body");
           } else {
               body = lookUpTableService.getPropertyValue("tsr.body");
           }
@@ -192,43 +197,54 @@ public class MailManagerServiceBean implements MailManagerServiceRemote,
           body = body.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
           body = body.replace("${fileName}", TSR
                                              + spDTO.getNciIdentifier().toString() + HTML);
-          body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
+          if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial()) 
+                  || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
+              body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
+          }
           body = body.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
           
-          protocolQueryService.getTrialSummaryByStudyProtocolId(
-              IiConverter.convertToLong(studyProtocolIi));
-          //Format the xml
-          String xmlData = format(ctGovXmlGeneratorService.generateCTGovXml(studyProtocolIi));
-        
+          protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
           String folderPath = PaEarPropertyReader.getDocUploadPath();
           StringBuffer sb  = new StringBuffer(folderPath);
+          String xmlFile = new String(sb.append(File.separator).append(
+                  spDTO.getNciIdentifier().toString() + ".xml"));
 
-          String inputFile = new String(sb.append(File.separator).append(
-              spDTO.getNciIdentifier().toString() + ".xml"));
-          OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(inputFile));
-          oos.write(xmlData);
-          oos.close();
-          
+          if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial()) 
+                  || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
+              //Format the xml only for non proprietary
+              String xmlData = format(ctGovXmlGeneratorService.generateCTGovXml(studyProtocolIi));
+              OutputStreamWriter oos = new OutputStreamWriter(new FileOutputStream(xmlFile));
+              oos.write(xmlData);
+              oos.close();
+          }          
           StringBuffer sb2  = new StringBuffer(folderPath);
-          String outputFile = new String(sb2.append(File.separator).append(TSR).append(
+          String tsrFile = new String(sb2.append(File.separator).append(TSR).append(
               spDTO.getNciIdentifier().toString() + HTML));
 
           //File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
           String htmlData = tsrReportGeneratorService.generateTSRHtml(studyProtocolIi);
-          OutputStreamWriter oosHtml = new OutputStreamWriter(new FileOutputStream(outputFile));
+          OutputStreamWriter oosHtml = new OutputStreamWriter(new FileOutputStream(tsrFile));
           oosHtml.write(htmlData);
           oosHtml.close();
-          File[] attachments = {new File(inputFile), new File(outputFile)};
-
-          // Send Message
-          sendMailWithAttachment(spDTO.getUserLastCreated(), //Mail Recipient
-                  lookUpTableService.getPropertyValue("tsr.subject"), // Mail Subject
-                  body, // Mail Body
-                  attachments); // Mail Attachments if any
-
-          new File(inputFile).delete();
-          new File(outputFile).delete();
-
+          if (PAUtil.isNotEmpty(spDTO.getIsProprietaryTrial()) 
+                  && spDTO.getIsProprietaryTrial().equalsIgnoreCase("true")) {
+              File[] attachments = {new File(tsrFile)};
+              // Send Message
+              sendMailWithAttachment(spDTO.getUserLastCreated(), //Mail Recipient
+                      lookUpTableService.getPropertyValue("tsr.proprietary.subject"), // Mail Subject
+                      body, // Mail Body
+                      attachments); // Mail Attachments if any
+              new File(tsrFile).delete();
+          } else {
+              File[] attachments = {new File(xmlFile), new File(tsrFile)};
+              // Send Message
+              sendMailWithAttachment(spDTO.getUserLastCreated(), //Mail Recipient
+                      lookUpTableService.getPropertyValue("tsr.subject"), // Mail Subject
+                      body, // Mail Body
+                      attachments); // Mail Attachments if any
+              new File(tsrFile).delete();
+              new File(xmlFile).delete();
+          }
         } catch (Exception e) {
             LOG.error("Exception occured while emailing TSR Report " + e.getLocalizedMessage());
             throw new PAException("Exception occured while sending TSR Report to submitter", e);
