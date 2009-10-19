@@ -362,6 +362,37 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
+	<target name="ivy-get" description="Get dependencies">
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
+        	            dir="${pa-ear.base.dir}" >
+            <target name="ivy-get"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
+            dir="${accrual-ear.base.dir}" >
+            <target name="ivy-get"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
+            dir="${pa-web.base.dir}" >
+            <target name="ivy-get"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}"
+            dir="${reg-web.base.dir}" >
+            <target name="ivy-get"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
+            dir="${pa-ejb.base.dir}" >
+            <target name="ivy-get"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
+            dir="${viewer-services.base.dir}" >
+            <target name="ivy-get"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
+            dir="${viewer-web.base.dir}" >
+            <target name="ivy-get"/>
+        </ant>
+	</target>
+	
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
         depends="
@@ -643,6 +674,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <include name="**/*"/>
             </fileset>
         </copy>
+    	<copy todir="${dist.exploded.dir}" overwrite="true">
+    		<fileset file="${build.dir}/jboss-server-lib-deletes.txt" />
+    	</copy>
 
     <dist-prep />
 
@@ -683,6 +717,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <fileset dir="${db-upgrade.src.dir}">
                 <include name="**/*"/>
             </fileset>
+        </copy>
+        <copy todir="${dist.exploded.dir}" overwrite="true">
+            <fileset file="${build.dir}/jboss-server-lib-deletes.txt" />
         </copy>
 
     <dist-prep

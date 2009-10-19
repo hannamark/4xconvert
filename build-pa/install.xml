@@ -423,7 +423,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />j
         -->
 
-        <!-- deploy jars to server lib -->
+        <!-- deploy jars to server lib but remove old ones first -->
+        <delete verbose="true">
+            <fileset dir="${jboss.home}/server/${jboss.server.name}/lib" includesfile="jboss-server-lib-deletes.txt" />
+        </delete>
         <copy todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true">
             <fileset dir="${pa-container-jar.dist.dir}"/>
         </copy>
