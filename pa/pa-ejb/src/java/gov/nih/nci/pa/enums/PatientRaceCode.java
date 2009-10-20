@@ -90,32 +90,41 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum PatientRaceCode implements CodedEnum<String>  {
 
     /** White. */
-    WHITE("White"),
+    WHITE("White", false),
     /** American Indian or Alaska Native. */
-    AMERICAN_INDIAN("American_Indian_or_Alaska_Native"),
+    AMERICAN_INDIAN("American_Indian_or_Alaska_Native", false),
     /** Asian. */
-    ASIAN("Asian"),
+    ASIAN("Asian", false),
     /** Black or African American. */
-    BLACK("Black_or_African_American"),
+    BLACK("Black_or_African_American", false),
     /** Native Hawaiian or Other Pacific Islander. */
-    HAWAIIAN("Native_Hawaiian_or_Other_Pacific_Islander"),
+    HAWAIIAN("Native_Hawaiian_or_Other_Pacific_Islander", false),
     /** Not Reported. */
-    NOT_REPORTED("Not_Reported"),
+    NOT_REPORTED("Not_Reported", true),
     /** Unknown. */
-    UNKNOWN("Unknown");
+    UNKNOWN("Unknown", true);
 
     private final String code;
+    private final boolean unique;
     
     /**
      *
      * @param code
      */
-    private PatientRaceCode(String code) {
+    private PatientRaceCode(String code, boolean unique) {
         this.code = code;
+        this.unique = unique;
         register(this);
     }
     /**
-     * @return code code
+      * @return unique unique
+      */
+    public boolean isUnique() {
+       return unique;
+    }
+    
+    /**
+     * @return unique code
      */
     public String getCode() {
         return code;
