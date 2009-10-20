@@ -122,7 +122,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -403,18 +402,10 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                     + StudySiteFunctionalCode.LEAD_ORGANIZATION + "')");
         }
         List<Organization> queryList = new ArrayList<Organization>();
-        try {
-            Query query = null;
-            query = session.createQuery(sb.toString());
-            //query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving StudyProtocol for id = " + studyProtocolId , hbe);
-            throw new PAException(" Hibernate exception while retrieving "
-                    + "StudyProtocol for id = " + studyProtocolId , hbe);
-
-        }
-
+        Query query = null;
+        query = session.createQuery(sb.toString());
+        //query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
+        queryList = query.list();
         return queryList;
 
     }

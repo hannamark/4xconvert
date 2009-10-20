@@ -95,7 +95,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -127,20 +126,12 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         LOG.info("Entering getFundingMechanisms");
         Session session = null;
         List<FundingMechanism> fmList = new ArrayList<FundingMechanism>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select fm from FundingMechanism fm order by fundingMechanismCode";
-            query = session.createQuery(hql);
-            fmList = query.list();
-        }  catch (HibernateException hbe) {
-            LOG.error(" Unable to load funding Mechanism" , hbe);
-            throw new PAException(" Unable to load funding Mechanism", hbe);
-        } finally {
-            session.flush();
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        String hql = "select fm from FundingMechanism fm order by fundingMechanismCode";
+        query = session.createQuery(hql);
+        fmList = query.list();
         return fmList;
-
     }
 
     /**
@@ -154,20 +145,12 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         LOG.info("Entering getFundingMechanisms");
         Session session = null;
         List<NIHinstitute> nihList = new ArrayList<NIHinstitute>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select nih from NIHinstitute nih order by nihInstituteCode";
-            query = session.createQuery(hql);
-            nihList = query.list();
-        }  catch (HibernateException hbe) {
-            LOG.error(" Unable to load NIHinstitute" , hbe);
-            throw new PAException(" Unable to load NIHinstitute", hbe);
-        } finally {
-            session.flush();
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        String hql = "select nih from NIHinstitute nih order by nihInstituteCode";
+        query = session.createQuery(hql);
+        nihList = query.list();
         return nihList;
-
     }
 
     /**
@@ -181,16 +164,9 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         LOG.info("Entering getCountries");
         Session session = null;
         List<Country> countries = new ArrayList<Country>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = session.createQuery("select c from Country c order by name");
-            countries = query.list();
-        }  catch (HibernateException hbe) {
-            LOG.error(" Unable to load Country" , hbe);
-            throw new PAException(" Unable to load Country", hbe);
-        } finally {
-            session.flush();
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery("select c from Country c order by name");
+        countries = query.list();
         LOG.info("Leaving getCountries");
         return countries;
     }
@@ -207,20 +183,13 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         Session session = null;
         String value = "";
         List<PAProperties> paProperties = new ArrayList<PAProperties>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = session.createQuery("select p from PAProperties p where p.name = '" + name + "'");
-            paProperties =  query.list();
-            if (paProperties == null || paProperties.isEmpty()) {
-                throw new PAException(" PA_PROPERTIES does not have entry for  " + name);
-            }
-            value = paProperties.get(0).getValue();
-        }  catch (HibernateException hbe) {
-            LOG.error(" Unable to load value from PAProperties" , hbe);
-            throw new PAException(" Unable to load from PAProperties", hbe);
-        } finally {
-            session.flush();
+        session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery("select p from PAProperties p where p.name = '" + name + "'");
+        paProperties =  query.list();
+        if (paProperties == null || paProperties.isEmpty()) {
+            throw new PAException(" PA_PROPERTIES does not have entry for  " + name);
         }
+        value = paProperties.get(0).getValue();
         LOG.info("Leaving getPropertyValue");
         return value;
     }

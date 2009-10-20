@@ -96,7 +96,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 /**
@@ -129,27 +128,23 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
 
         Session session = null;
         List<BO> queryList = new ArrayList<BO>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = "select alias "
-                       + "from " + getTypeArgument().getName() + " alias "
-                       + "join alias.studyProtocol sp "
-                       + "where sp.id = :studyProtocolId "
-                       + "order by alias.id ";
-            getLogger().info("query " +  getTypeArgument().getName() + " = " + hql + ".  ");
+        // step 1: form the hql
+        String hql = "select alias "
+            + "from " + getTypeArgument().getName() + " alias "
+            + "join alias.studyProtocol sp "
+            + "where sp.id = :studyProtocolId "
+            + "order by alias.id ";
+        getLogger().info("query " +  getTypeArgument().getName() + " = " + hql + ".  ");
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getByStudyProtocol.  ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<DTO> resultList = new ArrayList<DTO>();
         for (BO bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));

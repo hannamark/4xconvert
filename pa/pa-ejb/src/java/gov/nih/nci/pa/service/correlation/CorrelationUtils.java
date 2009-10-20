@@ -114,7 +114,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
@@ -140,48 +139,43 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws NullifiedRoleException ex
      */
     public PAContactDTO getContactByPAOrganizationalContactId(Long poOrganizationalContactId) throws PAException,
-        NullifiedRoleException {
+    NullifiedRoleException {
         if (poOrganizationalContactId == null) {
             LOG.error("Po Organization Identifier is null ");
             throw new PAException("Po Organization Identifier is null  ");
         }
         PAContactDTO returnDto = new PAContactDTO();
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            OrganizationalContact exampleBo  = new OrganizationalContact();
-            exampleBo.setIdentifier(poOrganizationalContactId.toString());
-            Example example = Example.create(exampleBo);
-            Criteria criteria = session.createCriteria(OrganizationalContact.class).add(example);
-            List<OrganizationalContact> ocs = criteria.list();
-            if (ocs.isEmpty()) {
-                String errMsg = "Object not found using getContactByPAOrganizationalContactId() for id = "
-                    + poOrganizationalContactId + ".  ";
-                LOG.error(errMsg);
-                throw new PAException(errMsg);
-            }
-            OrganizationalContact oc = ocs.get(0);
-
-            if (oc.getStatusCode().getCode().equals(StructuralRoleStatusCode.NULLIFIED.getCode())) {
-                returnDto.setTitle(StructuralRoleStatusCode.NULLIFIED.getDisplayName());
-            } else {
-                Person paPerson = oc.getPerson();
-                if (paPerson != null) {
-                    returnDto.setFullName(paPerson.getFullName());
-                    returnDto.setPersonIdentifier(IiConverter.convertToIi(paPerson.getIdentifier()));
-                } else {
-                    //this means this is genericOrgContact
-                    OrganizationalContactDTO isoDto = PoRegistry.getOrganizationalContactCorrelationService()
-                        .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(
-                                oc.getIdentifier()));
-                    returnDto.setTitle(StConverter.convertToString(isoDto.getTitle()));
-                    returnDto.setSrIdentifier(DSetConverter.convertToIi(isoDto.getIdentifier()));
-                }
-            }
-        } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception in getPAPersonByPAOrganizationalContactId().  ", hbe);
-            throw new PAException("Hibernate exception in getPAPersonByPAOrganizationalContact().  ", hbe);
+        session = HibernateUtil.getCurrentSession();
+        OrganizationalContact exampleBo  = new OrganizationalContact();
+        exampleBo.setIdentifier(poOrganizationalContactId.toString());
+        Example example = Example.create(exampleBo);
+        Criteria criteria = session.createCriteria(OrganizationalContact.class).add(example);
+        List<OrganizationalContact> ocs = criteria.list();
+        if (ocs.isEmpty()) {
+            String errMsg = "Object not found using getContactByPAOrganizationalContactId() for id = "
+                + poOrganizationalContactId + ".  ";
+            LOG.error(errMsg);
+            throw new PAException(errMsg);
         }
+        OrganizationalContact oc = ocs.get(0);
+
+        if (oc.getStatusCode().getCode().equals(StructuralRoleStatusCode.NULLIFIED.getCode())) {
+            returnDto.setTitle(StructuralRoleStatusCode.NULLIFIED.getDisplayName());
+        } else {
+            Person paPerson = oc.getPerson();
+            if (paPerson != null) {
+                returnDto.setFullName(paPerson.getFullName());
+                returnDto.setPersonIdentifier(IiConverter.convertToIi(paPerson.getIdentifier()));
+            } else {
+                //this means this is genericOrgContact
+                OrganizationalContactDTO isoDto = PoRegistry.getOrganizationalContactCorrelationService()
+                .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(oc.getIdentifier()));
+                returnDto.setTitle(StConverter.convertToString(isoDto.getTitle()));
+                returnDto.setSrIdentifier(DSetConverter.convertToIi(isoDto.getIdentifier()));
+            }
+        }
+
         return returnDto;
     }
 
@@ -405,15 +399,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         LOG.debug("Entering createPA Domain ");
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.save(ae);
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while creating domain ", hbe);
-            throw new PAException(" Hibernate exception while creating domain", hbe);
-        } finally {
-            session.flush();
-        }
+        session = HibernateUtil.getCurrentSession();
+        session.save(ae);
         LOG.debug("Leaving create PA Domain ");
         return ae;
     }
@@ -481,19 +468,12 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         LOG.debug("Entering createOrganization ");
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = session.createQuery("select org from Organization org  where org.identifier = :poOrg");
-            query.setParameter("poOrg", organization.getIdentifier());
-            if (query.uniqueResult() == null) {
-                session.saveOrUpdate(organization);    
-            } 
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while createOrganization ", hbe);
-            throw new PAException(" Hibernate exception while createOrganization ", hbe);
-        } finally {
-            session.flush();
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery("select org from Organization org  where org.identifier = :poOrg");
+        query.setParameter("poOrg", organization.getIdentifier());
+        if (query.uniqueResult() == null) {
+            session.saveOrUpdate(organization);    
+        } 
         LOG.debug("Leaving createStudyResourcing ");
         return organization;
     }
@@ -512,18 +492,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         LOG.debug("Entering createPerson ");
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = session.createQuery("select per from Person per where per.identifier = :poId ");
-            query.setParameter("poId", person.getIdentifier());
-            if (query.uniqueResult() == null) {
-                session.saveOrUpdate(person);
-            }
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while createPerson ", hbe);
-            throw new PAException(" Hibernate exception while create Person ", hbe);
-        } finally {
-            session.flush();
+        session = HibernateUtil.getCurrentSession();
+        Query query = session.createQuery("select per from Person per where per.identifier = :poId ");
+        query.setParameter("poId", person.getIdentifier());
+        if (query.uniqueResult() == null) {
+            session.saveOrUpdate(person);
         }
         LOG.debug("Leaving create Person ");
         return person;

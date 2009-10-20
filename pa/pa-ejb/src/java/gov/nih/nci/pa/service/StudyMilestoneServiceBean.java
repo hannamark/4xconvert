@@ -115,7 +115,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Property;
@@ -606,7 +605,7 @@ public class StudyMilestoneServiceBean
     @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) throws PAException,
-            TooManyResultsException {
+    TooManyResultsException {
         if (dto == null) {
             LOG.error(" StudyMilestoneDTO should not be null ");
             throw new PAException(" StudyMilestoneDTO should not be null ");
@@ -614,29 +613,20 @@ public class StudyMilestoneServiceBean
         LOG.info("Entering search");
         Session session = null;
         List<StudyMilestone> studyMilestoneList = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            
-            DetachedCriteria maxId = DetachedCriteria.forClass(StudyMilestone.class, "sm2")
-                                                     .setProjection(Property.forName("id").max())
-                                                     .add(Restrictions.eq("milestoneCode", MilestoneCode.
-                                                           getByCode(dto.getMilestoneCode().getCode())))
-                                                     .add(Property.forName("sm1.studyProtocol")
-                                                                    .eqProperty("sm2.studyProtocol"));
-        
-            Criteria criteria = session.createCriteria(StudyMilestone.class, "sm1")
-                                       .add(Property.forName("sm1.id").in(maxId));
-                                       
-            int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
-            criteria.setMaxResults(maxLimit);
-            criteria.setFirstResult(pagingParams.getOffset());
-            studyMilestoneList = criteria.list();
-           
-            
-           } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving StudyMilestone for dto = " + hbe);
-            throw new PAException(" Hibernate exception while retrieving " + "StudyMilestone for dto = " + hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+
+        DetachedCriteria maxId = DetachedCriteria.forClass(StudyMilestone.class, "sm2")
+        .setProjection(Property.forName("id").max()).add(Restrictions.eq("milestoneCode", 
+                MilestoneCode.getByCode(dto.getMilestoneCode().getCode())))
+                .add(Property.forName("sm1.studyProtocol").eqProperty("sm2.studyProtocol"));
+
+        Criteria criteria = session.createCriteria(StudyMilestone.class, "sm1")
+        .add(Property.forName("sm1.id").in(maxId));
+
+        int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
+        criteria.setMaxResults(maxLimit);
+        criteria.setFirstResult(pagingParams.getOffset());
+        studyMilestoneList = criteria.list();
 
         if (studyMilestoneList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);

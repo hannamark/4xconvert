@@ -85,7 +85,6 @@ import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +95,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -123,22 +121,12 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
      * @throws PAException PAException
      */
     public RegistryUser createUser(RegistryUser user)
-                    throws PAException {
-
+    throws PAException {
         Session session = null;
-        try {
-            // first create the Registry user
-            session = HibernateUtil.getCurrentSession();
-            session.saveOrUpdate(user);
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate Exception while " + "creating registry user ",
-                                                            hbe);
-            throw new PAException(" Hibernate exception while "
-                    + "creating registry user ", hbe);
-        }
-
+        // first create the Registry user
+        session = HibernateUtil.getCurrentSession();
+        session.saveOrUpdate(user);
         return user;
-
     }
 
     /**
@@ -149,22 +137,12 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
      * @throws PAException PAException
      */
     public RegistryUser updateUser(RegistryUser user)
-                    throws PAException {
-
+    throws PAException {
         Session session = null;
-        try {
-            // first create the Registry user
-            session = HibernateUtil.getCurrentSession();
-            session.saveOrUpdate(user);
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate Exception while updating registry user ",
-                                                    hbe);
-            throw new PAException(" Hibernate exception while "
-                    + "updating registry user ", hbe);
-        }
-
+        // first create the Registry user
+        session = HibernateUtil.getCurrentSession();
+        session.saveOrUpdate(user);
         return user;
-
     }
 
     /**
@@ -209,12 +187,7 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
                 }
             }
 
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate Exception while retrieving user : "
-                                        + loginName, hbe);
-            throw new PAException(" Hibernate exception while "
-                    + "retrieving registry user :" + loginName, hbe);
-        } catch (CSException cse) {
+        } catch (Exception cse) {
             LOG.error(" CSM Exception while retrieving  user : "
                                         + loginName, cse);
             throw new PAException(" CSM exception while "

@@ -96,7 +96,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -135,32 +134,23 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
         List<Person> sortedPersons = new ArrayList<Person>();
         Set<Long> perSet = new  HashSet<Long>();
 
-        try {
-            List<Person> persons = null;
-            session = HibernateUtil.getCurrentSession();
-            StringBuffer hql = new StringBuffer();
-            hql.append(" select p from Person  p "
-                    + " join p.healthCareProviders as crs "
-                    + " join crs.studyContacts as sc"
-                    + " join sc.studyProtocol as sp"
-                    + " where sc.roleCode = '"
-                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'"
-                    +  " order by p.lastName , p.firstName");
+        List<Person> persons = null;
+        session = HibernateUtil.getCurrentSession();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select p from Person  p "
+                + " join p.healthCareProviders as crs "
+                + " join crs.studyContacts as sc"
+                + " join sc.studyProtocol as sp"
+                + " where sc.roleCode = '"
+                + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "'"
+                +  " order by p.lastName , p.firstName");
 
-            session = HibernateUtil.getCurrentSession();
-            persons = session.createQuery(hql.toString()).list();
-            for (Person p : persons) {
-                if (perSet.add(p.getId())) {
-                    sortedPersons.add(p);
-                }
+        session = HibernateUtil.getCurrentSession();
+        persons = session.createQuery(hql.toString()).list();
+        for (Person p : persons) {
+            if (perSet.add(p.getId())) {
+                sortedPersons.add(p);
             }
-        } catch (HibernateException hbe) {
-            LOG.error("  Hibernate exception while fetching "
-                     + "generateDistinctPersonResults ", hbe);
-            throw new PAException(" Hibernate exception while fetching "
-                    + "generateDistinctPersonResults ", hbe);
-        } finally {
-            LOG.debug("Leaving generateDistinctPersonResults ");
         }
         return sortedPersons;
     }

@@ -110,7 +110,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -155,37 +154,33 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     public Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException {
         Session session = null;
         List<Object[]> queryList = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select ss.id, org.name "
-                       + "from StudyProtocol sp "
-                       + "join sp.studySites ss "
-                       + "join ss.healthCareFacility hcf "
-                       + "join hcf.organization org "
-                       + "where sp.id = :spId "
-                       + "  and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
-                       + "order by org.name, ss.id ";
-            query = session.createQuery(hql);
-            query.setParameter("spId", studyProtocolId);
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.TreatingSites().", hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        String hql = "select ss.id, org.name "
+            + "from StudyProtocol sp "
+            + "join sp.studySites ss "
+            + "join ss.healthCareFacility hcf "
+            + "join hcf.organization org "
+            + "where sp.id = :spId "
+            + "  and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
+            + "order by org.name, ss.id ";
+        query = session.createQuery(hql);
+        query.setParameter("spId", studyProtocolId);
+        queryList = query.list();
         Map<Long, String> result = new LinkedHashMap<Long, String>();
         for (Object[] oArr : queryList) {
-                StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
-                .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteIi((Long) oArr[0]));
-                
-                RecruitmentStatusCode recruitmentStatus = null;
-               if (ssas != null) {
-                    recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
-                    if (recruitmentStatus.isEligibleForAccrual()) {                        
-                        result.put((Long) oArr[0], (String) oArr[1]);
-                    }
+            StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
+            .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteIi((Long) oArr[0]));
+
+            RecruitmentStatusCode recruitmentStatus = null;
+            if (ssas != null) {
+                recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
+                if (recruitmentStatus.isEligibleForAccrual()) {                        
+                    result.put((Long) oArr[0], (String) oArr[1]);
                 }
             }
-        
+        }
+
         return result;
     }
 
@@ -199,14 +194,10 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         validateElibibleForCreate(access);
         Session session = null;
         StudySiteAccrualAccess bo = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            bo = access.getDomainObject();
-            validateValues(bo);
-            session.saveOrUpdate(bo);
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.create().", hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        bo = access.getDomainObject();
+        validateValues(bo);
+        session.saveOrUpdate(bo);
         return getDTO(bo);
     }
 
@@ -216,12 +207,8 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     public StudySiteAccrualAccessDTO get(Long accessId) throws PAException {
         StudySiteAccrualAccess access = null;
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            access = (StudySiteAccrualAccess) session.get(StudySiteAccrualAccess.class, accessId);
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.get().", hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        access = (StudySiteAccrualAccess) session.get(StudySiteAccrualAccess.class, accessId);
         return getDTO(access);
     }
 
@@ -246,16 +233,12 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         }
         Session session = null;
         StudySiteAccrualAccess bo = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            bo = (StudySiteAccrualAccess) session.get(StudySiteAccrualAccess.class, access.getId());
-            bo.setRequestDetails(access.getRequestDetails());
-            bo.setStatusCode(access.getStatusCode());
-            validateValues(bo);
-            session.saveOrUpdate(bo);
-        } catch (HibernateException hbe) {
-            throw new PAException(" Hibernate exception in StudySiteAccrualAccess.update().", hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        bo = (StudySiteAccrualAccess) session.get(StudySiteAccrualAccess.class, access.getId());
+        bo.setRequestDetails(access.getRequestDetails());
+        bo.setStatusCode(access.getStatusCode());
+        validateValues(bo);
+        session.saveOrUpdate(bo);
         return getDTO(bo);
     }
 
@@ -263,21 +246,17 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     private List<StudySiteAccrualAccess> getBosByStudyProtocol(Long studyProtocolId) throws PAException {
         Session session = null;
         List<StudySiteAccrualAccess> queryList = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select ssaa "
-                       + "from StudyProtocol sp "
-                       + "join sp.studySites ss "
-                       + "join ss.studySiteAccrualAccess ssaa "
-                       + "where sp.id = :spId "
-                       + "order by ss.id, ssaa.id ";
-            query = session.createQuery(hql);
-            query.setParameter("spId", studyProtocolId);
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.getBosByStudyProtocol().", hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        String hql = "select ssaa "
+            + "from StudyProtocol sp "
+            + "join sp.studySites ss "
+            + "join ss.studySiteAccrualAccess ssaa "
+            + "where sp.id = :spId "
+            + "order by ss.id, ssaa.id ";
+        query = session.createQuery(hql);
+        query.setParameter("spId", studyProtocolId);
+        queryList = query.list();
         return queryList;
     }
 
@@ -285,20 +264,16 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     private List<StudySiteAccrualAccess> getBosByStudySite(Long studySiteId) throws PAException {
         Session session = null;
         List<StudySiteAccrualAccess> queryList = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select ssaa "
-                       + "from StudySite ss "
-                       + "join ss.studySiteAccrualAccess ssaa "
-                       + "where ss.id = :ssId "
-                       + "order by ss.id, ssaa.id ";
-            query = session.createQuery(hql);
-            query.setParameter("ssId", studySiteId);
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.getBosByStudySite().", hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        String hql = "select ssaa "
+            + "from StudySite ss "
+            + "join ss.studySiteAccrualAccess ssaa "
+            + "where ss.id = :ssId "
+            + "order by ss.id, ssaa.id ";
+        query = session.createQuery(hql);
+        query.setParameter("ssId", studySiteId);
+        queryList = query.list();
         return queryList;
     }
 
@@ -321,11 +296,7 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         result.setRequestDetails(bo.getRequestDetails());
 
         StudySite ss;
-        try {
-            ss = (StudySite) HibernateUtil.getCurrentSession().get(StudySite.class, bo.getStudySite().getId());
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in StudySiteAccrualAccess.getDTO().", hbe);
-        }
+        ss = (StudySite) HibernateUtil.getCurrentSession().get(StudySite.class, bo.getStudySite().getId());
         result.setSiteName(ss.getHealthCareFacility() ==  null ? null
                 : ss.getHealthCareFacility().getOrganization().getName());
         result.setSiteRecruitmentStatus(ssas == null ? null : CdConverter.convertCdToString(ssas.getStatusCode()));

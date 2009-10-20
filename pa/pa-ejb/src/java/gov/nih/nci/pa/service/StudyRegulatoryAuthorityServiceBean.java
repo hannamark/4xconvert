@@ -98,7 +98,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -138,30 +137,22 @@ implements StudyRegulatoryAuthorityServiceRemote , StudyRegulatoryAuthorityServi
        Timestamp now = new Timestamp((new Date()).getTime());
        Session session = null;
        List<StudyRegulatoryAuthority> queryList = new ArrayList<StudyRegulatoryAuthority>();
-       try {
-           session = HibernateUtil.getCurrentSession();
+       session = HibernateUtil.getCurrentSession();
 
-           Query query = null;
-           String hql = " select sra " + " from StudyRegulatoryAuthority sra " + " join sra.studyProtocol sp "
-           + " where sp.id = " + IiConverter.convertToLong(sraDTO.getStudyProtocolIdentifier());
-           LOG.info(" query StudyRegulatoryAuthority = " + hql);
-               query = session.createQuery(hql);
-               queryList = query.list();
-               StudyRegulatoryAuthority sra = queryList.get(0);
+       Query query = null;
+       String hql = " select sra " + " from StudyRegulatoryAuthority sra " + " join sra.studyProtocol sp "
+       + " where sp.id = " + IiConverter.convertToLong(sraDTO.getStudyProtocolIdentifier());
+       LOG.info(" query StudyRegulatoryAuthority = " + hql);
+       query = session.createQuery(hql);
+       queryList = query.list();
+       StudyRegulatoryAuthority sra = queryList.get(0);
 
-             RegulatoryAuthority ra = new RegulatoryAuthority();
-             ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityIdentifier()));
-             sra.setRegulatoryAuthority(ra);
-             sra.setDateLastUpdated(now);
-             sraDTO1 = super.update(
-                     Converters.get(StudyRegulatoryAuthorityConverter.class).convertFromDomainToDto(sra));
-
-       }  catch (HibernateException hbe) {
-           LOG.error(" Hibernate exception while updating StudyProtocol for id = "
-                   + sraDTO.getIdentifier().getExtension() , hbe);
-           throw new PAException(" Hibernate exception while updating StudyProtocol for id = "
-                     + sraDTO.getIdentifier().getExtension() , hbe);
-       }
+       RegulatoryAuthority ra = new RegulatoryAuthority();
+       ra.setId(IiConverter.convertToLong(sraDTO.getRegulatoryAuthorityIdentifier()));
+       sra.setRegulatoryAuthority(ra);
+       sra.setDateLastUpdated(now);
+       sraDTO1 = super.update(
+               Converters.get(StudyRegulatoryAuthorityConverter.class).convertFromDomainToDto(sra));
        return sraDTO1;
    }
 }

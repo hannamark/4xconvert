@@ -106,7 +106,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -247,27 +246,23 @@ public class PlannedActivityServiceBean
 
         Session session = null;
         List<PlannedActivity> queryList = new ArrayList<PlannedActivity>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = "select pa "
-                       + "from PlannedActivity pa "
-                       + "join pa.arms a "
-                       + "where a.id = :armId "
-                       + "order by pa.id ";
-            getLogger().info("query PlannedActivity = " + hql + ".  ");
+        // step 1: form the hql
+        String hql = "select pa "
+            + "from PlannedActivity pa "
+            + "join pa.arms a "
+            + "where a.id = :armId "
+            + "order by pa.id ";
+        getLogger().info("query PlannedActivity = " + hql + ".  ");
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("armId", IiConverter.convertToLong(ii));
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("armId", IiConverter.convertToLong(ii));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getByArm.  ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
         for (PlannedActivity bo : queryList) {
             resultList.add(Converters.get(PlannedActivityConverter.class)
@@ -284,33 +279,29 @@ public class PlannedActivityServiceBean
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii)
-            throws PAException {
+    throws PAException {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; found null.  ");
         }
 
         Session session = null;
         List<PlannedEligibilityCriterion> queryList = new ArrayList<PlannedEligibilityCriterion>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = "select pa "
-                       + "from PlannedEligibilityCriterion pa "
-                       + "join pa.studyProtocol sp "
-                       + "where sp.id = :studyProtocolId "
-                       + "order by pa.id ";
+        // step 1: form the hql
+        String hql = "select pa "
+            + "from PlannedEligibilityCriterion pa "
+            + "join pa.studyProtocol sp "
+            + "where sp.id = :studyProtocolId "
+            + "order by pa.id ";
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getByStudyProtocol.  ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<PlannedEligibilityCriterionDTO> resultList = new ArrayList<PlannedEligibilityCriterionDTO>();
         for (PlannedEligibilityCriterion bo : queryList) {
             resultList.add(PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo));
@@ -330,18 +321,14 @@ public class PlannedActivityServiceBean
         }
         PlannedEligibilityCriterionDTO resultDto = null;
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class
-                    , IiConverter.convertToLong(ii));
-            if (bo == null) {
-                throw new PAException("Object not found using get() for id = "
-                        + IiConverter.convertToString(ii) + ".  ");
-            }
-            resultDto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in get().", hbe);
+        session = HibernateUtil.getCurrentSession();
+        PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class
+                , IiConverter.convertToLong(ii));
+        if (bo == null) {
+            throw new PAException("Object not found using get() for id = "
+                    + IiConverter.convertToString(ii) + ".  ");
         }
+        resultDto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
         return resultDto;
     }
     /**
@@ -382,48 +369,37 @@ public class PlannedActivityServiceBean
             throw new PAException("Check the Ii value; null found.  ");
         }
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class
-                    , IiConverter.convertToLong(ii));
-            session.delete(bo);
-            session.flush();
-        }  catch (HibernateException hbe) {
-            throw new PAException(" Hibernate exception while deleting ii = "
-                + IiConverter.convertToString(ii) + ".  ", hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class
+                , IiConverter.convertToLong(ii));
+        session.delete(bo);
     }
     private PlannedEligibilityCriterionDTO createOrUpdatePlannedEligibilityCriterion(
             PlannedEligibilityCriterionDTO dto) throws PAException {
         PlannedEligibilityCriterion bo = null;
         PlannedEligibilityCriterionDTO resultDto = null;
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            if (PAUtil.isIiNull(dto.getIdentifier())) {
-                bo = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
-            } else {
-                bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class,
-                        IiConverter.convertToLong(dto.getIdentifier()));
+        session = HibernateUtil.getCurrentSession();
+        if (PAUtil.isIiNull(dto.getIdentifier())) {
+            bo = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
+        } else {
+            bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class,
+                    IiConverter.convertToLong(dto.getIdentifier()));
 
-                PlannedEligibilityCriterion delta = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
-                bo.setCriterionName(delta.getCriterionName());
-                bo.setInclusionIndicator(delta.getInclusionIndicator());
-                bo.setOperator(delta.getOperator());
-                bo.setCategoryCode(delta.getCategoryCode());
-                bo.setEligibleGenderCode(delta.getEligibleGenderCode());
-                bo.setValue(delta.getValue());
-                bo.setUnit(delta.getUnit());
-                bo.setTextDescription(delta.getTextDescription());
-                bo.setUserLastUpdated(delta.getUserLastCreated());
-            }
-            bo.setDateLastUpdated(new Date());
-            session.saveOrUpdate(bo);
-            session.flush();
-            resultDto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in createOrUpdate().  ", hbe);
+            PlannedEligibilityCriterion delta = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
+            bo.setCriterionName(delta.getCriterionName());
+            bo.setInclusionIndicator(delta.getInclusionIndicator());
+            bo.setOperator(delta.getOperator());
+            bo.setCategoryCode(delta.getCategoryCode());
+            bo.setEligibleGenderCode(delta.getEligibleGenderCode());
+            bo.setValue(delta.getValue());
+            bo.setUnit(delta.getUnit());
+            bo.setTextDescription(delta.getTextDescription());
+            bo.setUserLastUpdated(delta.getUserLastCreated());
         }
+        bo.setDateLastUpdated(new Date());
+        session.saveOrUpdate(bo);
+        resultDto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
         return resultDto;
     }
 

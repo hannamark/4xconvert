@@ -121,7 +121,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -363,26 +362,18 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         StringBuffer hql = new StringBuffer();
         Session session = null;
         long[] ids = getProtocolIds(spDtos);
-        try {
-            session = HibernateUtil.getCurrentSession();
-            hql.append(" select sp , soh from StudyProtocol as sp  "
-                    + "join sp.studyOnholds as soh  where sp.id in ( ");
-            for (int i = 0; i < ids.length; i++) {
-                hql.append(ids[i]);
-                hql.append((i < ids.length - 1 ? " ," : " "));
-            }
-            hql.append(" ) and soh.offholdDate is null");
-            Query query = null;
-            query = session.createQuery(hql.toString());
-            Map<Long , List<StudyOnhold>> studyOnHolds = generateOnholdMap(query.list());
-            populateOnHoldData(spDtos , studyOnHolds);
-
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getStudyProtocolByCriteria ",
-                    hbe);
-            throw new PAException(
-                    " Hibernate exception in getStudyProtocolByCriteria ", hbe);
+        session = HibernateUtil.getCurrentSession();
+        hql.append(" select sp , soh from StudyProtocol as sp  "
+                + "join sp.studyOnholds as soh  where sp.id in ( ");
+        for (int i = 0; i < ids.length; i++) {
+            hql.append(ids[i]);
+            hql.append((i < ids.length - 1 ? " ," : " "));
         }
+        hql.append(" ) and soh.offholdDate is null");
+        Query query = null;
+        query = session.createQuery(hql.toString());
+        Map<Long , List<StudyOnhold>> studyOnHolds = generateOnholdMap(query.list());
+        populateOnHoldData(spDtos , studyOnHolds);
         return spDtos;
     }
     private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object> onHoldReasons) {
@@ -459,24 +450,16 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         LOG.debug("Entering getStudyProtocolByCriteria ");
         List<Object> queryList = new ArrayList<Object>();
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            // step 1: form the hql
-            String hql = generateStudyProtocolQuery(studyProtocolQueryCriteria);
-            // String hql = "select sp from StudyProtocol sp";
-            LOG.info(" query protocol = " + hql);
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            // step 3: query the result
-            queryList = query.list();
-
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getStudyProtocolByCriteria ",
-                    hbe);
-            throw new PAException(
-                    " Hibernate exception in getStudyProtocolByCriteria ", hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        // step 1: form the hql
+        String hql = generateStudyProtocolQuery(studyProtocolQueryCriteria);
+        // String hql = "select sp from StudyProtocol sp";
+        LOG.info(" query protocol = " + hql);
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        // step 3: query the result
+        queryList = query.list();
         LOG.debug("Leaving getStudyProtocolByCriteria ");
         return queryList;
     }

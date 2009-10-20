@@ -95,7 +95,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -122,28 +121,24 @@ public class DiseaseParentServiceBean
 
         Session session = null;
         List<DiseaseParent> queryList = new ArrayList<DiseaseParent>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = "select dp "
-                       + "from DiseaseParent dp "
-                       + "join dp." + assoc + " dis "
-                       + "where dis.id = :diseaseId "
-                       + "  and dis.statusCode = 'ACTIVE' "
-                       + "order by dp.id ";
-            getLogger().info("query DiseaseParent = " + hql + ".  ");
+        // step 1: form the hql
+        String hql = "select dp "
+            + "from DiseaseParent dp "
+            + "join dp." + assoc + " dis "
+            + "where dis.id = :diseaseId "
+            + "  and dis.statusCode = 'ACTIVE' "
+            + "order by dp.id ";
+        getLogger().info("query DiseaseParent = " + hql + ".  ");
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("diseaseId", IiConverter.convertToLong(ii));
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("diseaseId", IiConverter.convertToLong(ii));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getByDisease.  ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<DiseaseParentDTO> resultList = new ArrayList<DiseaseParentDTO>();
         for (DiseaseParent bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));

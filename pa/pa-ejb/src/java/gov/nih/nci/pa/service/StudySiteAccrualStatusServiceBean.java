@@ -99,7 +99,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -143,34 +142,28 @@ public class StudySiteAccrualStatusServiceBean implements
         }
         StudySiteAccrualStatusDTO resultDto = null;
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-          StudySiteAccrualStatusDTO current
-                    = getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIi());
-            RecruitmentStatusCode oldCode = null;
-            Timestamp oldDate = null;
-            if (current != null) {
-                oldCode = RecruitmentStatusCode.getByCode(current.getStatusCode().getCode());
-                oldDate = TsConverter.convertToTimestamp(current.getStatusDate());
-            }
+        session = HibernateUtil.getCurrentSession();
+        StudySiteAccrualStatusDTO current = getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIi());
+        RecruitmentStatusCode oldCode = null;
+        Timestamp oldDate = null;
+        if (current != null) {
+            oldCode = RecruitmentStatusCode.getByCode(current.getStatusCode().getCode());
+            oldDate = TsConverter.convertToTimestamp(current.getStatusDate());
+        }
 
-            RecruitmentStatusCode newCode = RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode());
-            Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
+        RecruitmentStatusCode newCode = RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode());
+        Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
 
-            if (newCode == null) {
-                throw new PAException(" Study site accrual status must be set ");
-            }
-            if (newDate == null) {
-                throw new PAException(" Study site accrual status date must be set ");
-            }
-            if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
-                StudySiteAccrualStatus bo = StudySiteAccrualStatusConverter.convertFromDtoToDomain(dto);
-                session.saveOrUpdate(bo);
-                resultDto = StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo);
-            }
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in createStudySiteAccrualStatus ", hbe);
-            throw new PAException(" Hibernate exception in createStudySiteAccrualStatus ", hbe);
+        if (newCode == null) {
+            throw new PAException(" Study site accrual status must be set ");
+        }
+        if (newDate == null) {
+            throw new PAException(" Study site accrual status date must be set ");
+        }
+        if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
+            StudySiteAccrualStatus bo = StudySiteAccrualStatusConverter.convertFromDtoToDomain(dto);
+            session.saveOrUpdate(bo);
+            resultDto = StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo);
         }
         return resultDto;
     }
@@ -196,7 +189,7 @@ public class StudySiteAccrualStatusServiceBean implements
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi)
-            throws PAException {
+    throws PAException {
         if (PAUtil.isIiNull(studySiteIi)) {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
@@ -205,28 +198,23 @@ public class StudySiteAccrualStatusServiceBean implements
 
         Session session = null;
         List<StudySiteAccrualStatus> queryList = new ArrayList<StudySiteAccrualStatus>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = "select ssas "
-                       + "from StudySiteAccrualStatus ssas "
-                       + "join ssas.studySite sp "
-                       + "where sp.id = :studySiteId "
-                       + "order by ssas.id ";
-            LOG.info(" query StudySiteAccrualStatus = " + hql);
+        // step 1: form the hql
+        String hql = "select ssas "
+            + "from StudySiteAccrualStatus ssas "
+            + "join ssas.studySite sp "
+            + "where sp.id = :studySiteId "
+            + "order by ssas.id ";
+        LOG.info(" query StudySiteAccrualStatus = " + hql);
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getStudySiteByCriteria ", hbe);
-            throw new PAException(" Hibernate exception in getStudySiteByCriteria ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<StudySiteAccrualStatusDTO> resultList = new ArrayList<StudySiteAccrualStatusDTO>();
         for (StudySiteAccrualStatus bo : queryList) {
             resultList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));

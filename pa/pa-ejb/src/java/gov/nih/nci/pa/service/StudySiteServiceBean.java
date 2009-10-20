@@ -110,7 +110,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -313,37 +312,33 @@ public class StudySiteServiceBean
     private void enforceNoDuplicateTrial(StudySiteDTO dto) throws PAException {
         Session session = null;
         List<StudySite> queryList = new ArrayList<StudySite>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            // step 1: form the hql
-            String hql = " select spart "
-                       + " from StudySite spart "
-                       + " join spart.researchOrganization as ro "
-                       + " join spart.studyProtocol as sp "
-                       + " join sp.documentWorkflowStatuses as dws  "
-                       + " where spart.localStudyProtocolIdentifier = :localStudyProtocolIdentifier "
-                       + " and spart.functionalCode = '"
-                       +   StudySiteFunctionalCode.LEAD_ORGANIZATION  + "'"
-                       + " and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'"
-                       + " and sp.statusCode ='" + ActStatusCode.ACTIVE + "'"
-                       + " and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                       + "  where dws.studyProtocol = dws1.studyProtocol ) or dws.id is null ) "
-                       + " and ro.id = :orgIdentifier";
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        // step 1: form the hql
+        String hql = " select spart "
+            + " from StudySite spart "
+            + " join spart.researchOrganization as ro "
+            + " join spart.studyProtocol as sp "
+            + " join sp.documentWorkflowStatuses as dws  "
+            + " where spart.localStudyProtocolIdentifier = :localStudyProtocolIdentifier "
+            + " and spart.functionalCode = '"
+            +   StudySiteFunctionalCode.LEAD_ORGANIZATION  + "'"
+            + " and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'"
+            + " and sp.statusCode ='" + ActStatusCode.ACTIVE + "'"
+            + " and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
+            + "  where dws.studyProtocol = dws1.studyProtocol ) or dws.id is null ) "
+            + " and ro.id = :orgIdentifier";
 
-            getLogger().info("query study_Site = " + hql + ".  ");
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("localStudyProtocolIdentifier",
-                    StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
-            query.setParameter("orgIdentifier",
-                    IiConverter.convertToLong(dto.getResearchOrganizationIi()));
+        getLogger().info("query study_Site = " + hql + ".  ");
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("localStudyProtocolIdentifier",
+                StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
+        query.setParameter("orgIdentifier",
+                IiConverter.convertToLong(dto.getResearchOrganizationIi()));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getByLocalStudyProtocolIdentifier.  ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         for (StudySite sp : queryList) {
             //When create DTO get Id will be null and if queryList is having value then its duplicate
             //When update check if the record is same if not then throw ex
@@ -354,7 +349,7 @@ public class StudySiteServiceBean
             }
         }
         getLogger().info("Leaving enforceNoDuplicateTrial..");
-    
-        }
+
+    }
 
 }

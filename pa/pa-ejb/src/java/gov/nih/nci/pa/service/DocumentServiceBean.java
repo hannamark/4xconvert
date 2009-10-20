@@ -112,7 +112,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 /**
@@ -147,7 +146,7 @@ public class DocumentServiceBean extends
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi)
-            throws PAException {
+    throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
             LOG.error(" studyProtocol Identifer should not be null ");
             throw new PAException(" studyProtocol Identifer should not be null ");
@@ -155,36 +154,27 @@ public class DocumentServiceBean extends
         LOG.info("Entering getDocumentsByStudyProtocol");
         Session session = null;
         List<Document> queryList = new ArrayList<Document>();
-        try {
-            session = HibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
 
-            Query query = null;
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = " select doc "
-                       + " from Document doc "
-                       + " join doc.studyProtocol sp "
-                       + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
-                       + " and doc.activeIndicator =  '" + Boolean.TRUE + "'";
+        // step 1: form the hql
+        String hql = " select doc "
+            + " from Document doc "
+            + " join doc.studyProtocol sp "
+            + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
+            + " and doc.activeIndicator =  '" + Boolean.TRUE + "'";
 
-           LOG.info(" query getDocumentsByStudyProtocol = " + hql);
+        LOG.info(" query getDocumentsByStudyProtocol = " + hql);
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-
-
-        }  catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving getDocumentsByStudyProtocol" , hbe);
-            throw new PAException(" Hibernate exception while retrieving getDocumentsByStudyProtocol "  , hbe);
-        }
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        queryList = query.list();
 
         ArrayList<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
         for (Document bo : queryList) {
             resultList.add(new DocumentConverter().convertFromDomainToDto(bo));
         }
-        session.flush();
         LOG.info("Leaving getDocumentsByStudyProtocol");
         return resultList;
     }
@@ -214,16 +204,8 @@ public class DocumentServiceBean extends
 
         doc.setStudyProtocol(studyProtocol);*/
         doc.setActiveIndicator(true);
-        try {
-            session = HibernateUtil.getCurrentSession();
-
-            session.save(doc);
-            session.flush();
-        } catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while createTrialDocument " , hbe);
-            throw new PAException(" Hibernate exception while createTrialDocument " , hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        session.save(doc);
         docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
         saveFile(docDTO);
         LOG.debug("Leaving createStudyResourcing ");
@@ -245,28 +227,20 @@ public class DocumentServiceBean extends
         DocumentDTO docDTO = null;
         Document doc = null;
         List<Document> queryList = new ArrayList<Document>();
-        try {
-            session = HibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
 
-            Query query = null;
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = " select doc "
-                       + " from Document doc "
-                       + " where doc.id = " + IiConverter.convertToLong(id);
+        // step 1: form the hql
+        String hql = " select doc "
+            + " from Document doc "
+            + " where doc.id = " + IiConverter.convertToLong(id);
 
-           LOG.info(" query getTrialDocumentById = " + hql);
+        LOG.info(" query getTrialDocumentById = " + hql);
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-
-
-        }  catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving getTrialDocumentById" , hbe);
-            throw new PAException(" Hibernate exception while retrieving getTrialDocumentById "  , hbe);
-        }
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        queryList = query.list();
 
         if (!queryList.isEmpty()) {
             DocumentConverter dc = new DocumentConverter();
@@ -280,15 +254,14 @@ public class DocumentServiceBean extends
                     append(docDTO.getIdentifier().getExtension()).append('-').append(doc.getFileName());
                 File downloadFile = new File(sb.toString());
                 docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
-            
+
             } catch (FileNotFoundException fe) {
-               throw new PAException(" File Not found " + fe.getLocalizedMessage(), fe);
+                throw new PAException(" File Not found " + fe.getLocalizedMessage(), fe);
             } catch (IOException io) {
                 throw new PAException(" IO Exception" + io.getLocalizedMessage(), io);
             }
-                     
+
         }
-        session.flush();
         LOG.info("Leaving getTrialDocumentById");
         return docDTO;
     }
@@ -304,16 +277,10 @@ public class DocumentServiceBean extends
 
         validate(docDTO);
         DocumentDTO docRetDTO = null;
-        try {
-            docDTO.setInactiveCommentText(StConverter.convertToSt("A new record will be created"));
-            docDTO.setInactiveCommentText(null);
-            updateObjectToInActive(docDTO);
-            docRetDTO = create(docDTO);
-
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving updateTrialDocument" , hbe);
-            throw new PAException(" Hibernate exception while retrieving updateTrialDocument "  , hbe);
-        }
+        docDTO.setInactiveCommentText(StConverter.convertToSt("A new record will be created"));
+        docDTO.setInactiveCommentText(null);
+        updateObjectToInActive(docDTO);
+        docRetDTO = create(docDTO);
         LOG.debug("Leaving updateTrialDocument ");
         return docRetDTO;
     }
@@ -392,29 +359,22 @@ public class DocumentServiceBean extends
     private void updateObjectToInActive(DocumentDTO docDTO) throws PAException {
         Session session = null;
         Document doc = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
 
-            // step 1: form the hql
-            String hql = " select d from Document d"
-                       + " where d.id = " + IiConverter.convertToLong(docDTO.getIdentifier());
-            // step 2: construct query object
-            doc = (Document) session.createQuery(hql).list().get(0);
-            // set the values from paramter
-            doc.setActiveIndicator(false);
-            doc.setInactiveCommentText(StConverter.convertToString(
-                    docDTO.getInactiveCommentText()));
-            doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-            if (ejbContext != null) {
-                doc.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-            }
-            session.update(doc);
-            session.flush();
-        } catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving deleteTrialDocumentByID" , hbe);
-            throw new PAException(" Hibernate exception while retrieving deleteTrialDocumentByID "  , hbe);
+        // step 1: form the hql
+        String hql = " select d from Document d"
+            + " where d.id = " + IiConverter.convertToLong(docDTO.getIdentifier());
+        // step 2: construct query object
+        doc = (Document) session.createQuery(hql).list().get(0);
+        // set the values from paramter
+        doc.setActiveIndicator(false);
+        doc.setInactiveCommentText(StConverter.convertToString(
+                docDTO.getInactiveCommentText()));
+        doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
+        if (ejbContext != null) {
+            doc.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
         }
+        session.update(doc);
     }
     
     /**

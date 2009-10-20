@@ -103,7 +103,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -139,27 +138,23 @@ public class ArmServiceBean extends AbstractStudyIsoService<ArmDTO, Arm, ArmConv
 
         Session session = null;
         List<Arm> queryList = new ArrayList<Arm>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = "select ar "
-                       + "from Arm ar "
-                       + "join ar.interventions pa "
-                       + "where pa.id = :plannedActivityId "
-                       + "order by ar.id ";
-            getLogger().info("query Arm = " + hql + ".  ");
+        // step 1: form the hql
+        String hql = "select ar "
+            + "from Arm ar "
+            + "join ar.interventions pa "
+            + "where pa.id = :plannedActivityId "
+            + "order by ar.id ";
+        getLogger().info("query Arm = " + hql + ".  ");
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("plannedActivityId", IiConverter.convertToLong(ii));
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("plannedActivityId", IiConverter.convertToLong(ii));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getByArm.  ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<ArmDTO> resultList = new ArrayList<ArmDTO>();
         for (Arm bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));

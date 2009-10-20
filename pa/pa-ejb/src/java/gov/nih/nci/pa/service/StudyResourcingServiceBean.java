@@ -110,7 +110,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -157,34 +156,27 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
         Session session = null;
         StudyResourcing studyResourcing = null;
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
-        try {
-            session = HibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
 
-            Query query = null;
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = " select sr "
-                       + " from StudyResourcing sr "
-                       + " join sr.studyProtocol sp "
-                       + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
-                       + " and sr.summary4ReportedResourceIndicator =  '" + Boolean.TRUE + "'";
+        // step 1: form the hql
+        String hql = " select sr "
+            + " from StudyResourcing sr "
+            + " join sr.studyProtocol sp "
+            + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
+            + " and sr.summary4ReportedResourceIndicator =  '" + Boolean.TRUE + "'";
 
-           LOG.info(" query studyResourcing = " + hql);
+        LOG.info(" query studyResourcing = " + hql);
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        queryList = query.list();
 
-            if (queryList.size() > 1) {
-                session.flush();
-                LOG.error(" Summary 4 Reported Sourcing should not be more than 1 record ");
-                throw new PAException(" Summary 4 Reported Sourcing should not be more than 1 record ");
+        if (queryList.size() > 1) {
+            LOG.error(" Summary 4 Reported Sourcing should not be more than 1 record ");
+            throw new PAException(" Summary 4 Reported Sourcing should not be more than 1 record ");
 
-            }
-        }  catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving getsummary4ReportedResource" , hbe);
-            throw new PAException(" Hibernate exception while retrieving getsummary4ReportedResource "  , hbe);
         }
 
         if (!queryList.isEmpty()) {
@@ -192,7 +184,6 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
             studyResourcingDTO = src.convertFromDomainToDto(studyResourcing);
 
         }
-        session.flush();
         LOG.info("Leaving getsummary4ReportedResource");
         return studyResourcingDTO;
     }
@@ -247,7 +238,6 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
        studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
        studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
        session.update(studyResourcing);
-       session.flush();
        studyResourcingRetDTO = src.convertFromDomainToDto(studyResourcing);
    
       LOG.debug("Leaving updateStudyResourcing ");
@@ -262,13 +252,13 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
      */
     @SuppressWarnings("PMD.NPathComplexity")
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
-       
+
         if (studyResourcingDTO == null) {
             LOG.error(" studyResourcingDTO should not be null ");
             throw new PAException(" studyResourcingDTO should not be null ");
         }
         enforceValidation(studyResourcingDTO);
-        
+
         LOG.debug("Entering createStudyResourcing ");
         Session session = null;
         StudyResourcing studyResourcing = src.convertFromDtoToDomain(studyResourcingDTO);
@@ -282,15 +272,8 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
         studyProtocol.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
         studyResourcing.setStudyProtocol(studyProtocol);
         studyResourcing.setActiveIndicator(true);
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.save(studyResourcing);
-            session.flush();
-        } catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while createStudyResourcing " , hbe);
-            throw new PAException(" Hibernate exception while createStudyResourcing " , hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        session.save(studyResourcing);
         LOG.debug("Leaving createStudyResourcing ");
         return src.convertFromDomainToDto(studyResourcing);
     }
@@ -303,7 +286,7 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(Ii studyProtocolIi)
-            throws PAException {
+    throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
             LOG.error(" studyProtocol Identifer should not be null ");
             throw new PAException(" studyProtocol Identifer should not be null ");
@@ -311,37 +294,28 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
         LOG.info("Entering getstudyResourceByStudyProtocol");
         Session session = null;
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
-        try {
-            session = HibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
 
-            Query query = null;
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = " select sr "
-                       + " from StudyResourcing sr "
-                       + " join sr.studyProtocol sp "
-                       + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
-                       + " and sr.summary4ReportedResourceIndicator =  '" + Boolean.FALSE + "'"
-                       + " and sr.activeIndicator =  '" + Boolean.TRUE + "'";
+        // step 1: form the hql
+        String hql = " select sr "
+            + " from StudyResourcing sr "
+            + " join sr.studyProtocol sp "
+            + " where sp.id = " + IiConverter.convertToLong(studyProtocolIi)
+            + " and sr.summary4ReportedResourceIndicator =  '" + Boolean.FALSE + "'"
+            + " and sr.activeIndicator =  '" + Boolean.TRUE + "'";
 
-           LOG.info(" query getstudyResourceByStudyProtocol = " + hql);
+        LOG.info(" query getstudyResourceByStudyProtocol = " + hql);
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-
-
-        }  catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving getstudyResourceByStudyProtocol" , hbe);
-            throw new PAException(" Hibernate exception while retrieving getstudyResourceByStudyProtocol "  , hbe);
-        }
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        queryList = query.list();
 
         ArrayList<StudyResourcingDTO> resultList = new ArrayList<StudyResourcingDTO>();
         for (StudyResourcing bo : queryList) {
             resultList.add(src.convertFromDomainToDto(bo));
         }
-        session.flush();
         LOG.info("Leaving getstudyResourceByStudyProtocol");
         return resultList;
     }
@@ -373,35 +347,28 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
         Session session = null;
         StudyResourcing studyResourcing = null;
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
-        try {
-            session = HibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
 
-            Query query = null;
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = " select sr "
-                       + " from StudyResourcing sr "
-                       + " where sr.id = " + IiConverter.convertToLong(studyResourcingDTO.getIdentifier());
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            queryList = query.list();
-            studyResourcing = queryList.get(0);
-            // set the values from paramter
-            studyResourcing.setActiveIndicator(false);
-            studyResourcing.setInactiveCommentText(StConverter.convertToString(
-                    studyResourcingDTO.getInactiveCommentText()));
-            studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-            if (ejbContext != null) {
-                studyResourcing.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
-            }
-            session.update(studyResourcing);
-            session.flush();
-            result = true;
-        } catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving deleteStudyResourceByID" , hbe);
-            throw new PAException(" Hibernate exception while retrieving deleteStudyResourceByID "  , hbe);
+        // step 1: form the hql
+        String hql = " select sr "
+            + " from StudyResourcing sr "
+            + " where sr.id = " + IiConverter.convertToLong(studyResourcingDTO.getIdentifier());
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        queryList = query.list();
+        studyResourcing = queryList.get(0);
+        // set the values from paramter
+        studyResourcing.setActiveIndicator(false);
+        studyResourcing.setInactiveCommentText(StConverter.convertToString(
+                studyResourcingDTO.getInactiveCommentText()));
+        studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
+        if (ejbContext != null) {
+            studyResourcing.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
         }
+        session.update(studyResourcing);
+        result = true;
         LOG.debug("Leaving deleteStudyResourceByID ");
         return result;
     }

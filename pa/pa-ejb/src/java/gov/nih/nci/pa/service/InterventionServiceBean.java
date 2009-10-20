@@ -97,7 +97,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -133,33 +132,29 @@ public class InterventionServiceBean
         }
         getLogger().info("Entering search().  ");
         List<Intervention> queryList = new ArrayList<Intervention>();
-        try {
-            Session session = HibernateUtil.getCurrentSession();
-            StringBuffer hql = new StringBuffer();
-            Query query = null;
+        Session session = HibernateUtil.getCurrentSession();
+        StringBuffer hql = new StringBuffer();
+        Query query = null;
 
-            // step 1: form the hql
-            if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)) {
-                hql.append("select distinct int "
-                        + "from Intervention int ");
-            } else {
-                hql.append("select distinct int "
-                        + "from Intervention int " 
-                        + "left join int.interventionAlternateNames ian ");
-            }
-            hql.append(generateWhereClause(searchCriteria));   
-            hql.append("order by int.name asc");
-            getLogger().info("query Intervention = " + hql.toString());
-
-            // step 2: construct query object
-            query = session.createQuery(hql.toString());
-            //query.setParameter("name", );
-
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in search.().  ", hbe);
+        // step 1: form the hql
+        if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)) {
+            hql.append("select distinct int "
+                    + "from Intervention int ");
+        } else {
+            hql.append("select distinct int "
+                    + "from Intervention int " 
+                    + "left join int.interventionAlternateNames ian ");
         }
+        hql.append(generateWhereClause(searchCriteria));   
+        hql.append("order by int.name asc");
+        getLogger().info("query Intervention = " + hql.toString());
+
+        // step 2: construct query object
+        query = session.createQuery(hql.toString());
+        //query.setParameter("name", );
+
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<InterventionDTO> resultList = new ArrayList<InterventionDTO>();
         for (Intervention bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));

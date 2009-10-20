@@ -98,7 +98,6 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -228,18 +227,10 @@ public class HealthCareProviderCorrelationBean {
         }     
         LOG.debug("Entering HealthCareProvider ");
         Session session = null;
-        
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.save(hcp);
-        } catch (HibernateException hbe) {
-            
-            LOG.error(" Hibernate exception while creating HealthCareProvider " , hbe);
-            throw new PAException(" Hibernate exception while creating HealthCareProvider" , hbe);
-        } finally {
-            session.flush();
-        }
-        
+
+        session = HibernateUtil.getCurrentSession();
+        session.save(hcp);
+
         LOG.debug("Leaving create HealthCareProvider ");
         return hcp;
     }

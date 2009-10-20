@@ -100,7 +100,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Expression;
@@ -124,40 +123,35 @@ public class StudyRelationshipServiceBean extends
     */
    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
    public List<StudyRelationshipDTO> search(StudyRelationshipDTO dto, LimitOffset pagingParams) throws PAException,
-           TooManyResultsException {
+   TooManyResultsException {
        if (dto == null) {
            throw new PAException(" StudyRelationshipDTO should not be null ");
        }
        LOG.debug("Entering search");
        Session session = null;
        List <StudyRelationship> studyRelationshipList = null;
-       try {
-           session = HibernateUtil.getCurrentSession();
-           StudyRelationship exampleDO = new StudyRelationship();
-           Criteria criteria = session.createCriteria(StudyRelationship.class);
-           if (!PAUtil.isIiNull(dto.getIdentifier())) {
-               exampleDO.setId(IiConverter.convertToLong(dto.getIdentifier()));
-               Example example = Example.create(exampleDO);
-               criteria.add(example);
-           }
-           if (!PAUtil.isIiNull(dto.getSourceStudyProtocolIdentifier())) {
-              criteria.createAlias("sourceStudyProtocol", "sp")
-                  .add(Expression.eq("sp.id", IiConverter.convertToLong(dto.getSourceStudyProtocolIdentifier())));
-
-           }
-           if (!PAUtil.isIiNull(dto.getTargetStudyProtocolIdentifier())) {
-               criteria.createAlias("targetStudyProtocol", "sp2")
-                   .add(Expression.eq("sp2.id", IiConverter.convertToLong(dto.getTargetStudyProtocolIdentifier())));
-
-            }
-           int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
-           criteria.setMaxResults(maxLimit);
-           criteria.setFirstResult(pagingParams.getOffset());
-           studyRelationshipList = criteria.list();
-           session.flush();
-       }  catch (HibernateException hbe) {
-           throw new PAException("Hibernate exception while retrieving StudyRelationship for dto", hbe);
+       session = HibernateUtil.getCurrentSession();
+       StudyRelationship exampleDO = new StudyRelationship();
+       Criteria criteria = session.createCriteria(StudyRelationship.class);
+       if (!PAUtil.isIiNull(dto.getIdentifier())) {
+           exampleDO.setId(IiConverter.convertToLong(dto.getIdentifier()));
+           Example example = Example.create(exampleDO);
+           criteria.add(example);
        }
+       if (!PAUtil.isIiNull(dto.getSourceStudyProtocolIdentifier())) {
+           criteria.createAlias("sourceStudyProtocol", "sp")
+           .add(Expression.eq("sp.id", IiConverter.convertToLong(dto.getSourceStudyProtocolIdentifier())));
+
+       }
+       if (!PAUtil.isIiNull(dto.getTargetStudyProtocolIdentifier())) {
+           criteria.createAlias("targetStudyProtocol", "sp2")
+           .add(Expression.eq("sp2.id", IiConverter.convertToLong(dto.getTargetStudyProtocolIdentifier())));
+
+       }
+       int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
+       criteria.setMaxResults(maxLimit);
+       criteria.setFirstResult(pagingParams.getOffset());
+       studyRelationshipList = criteria.list();
        if (studyRelationshipList.size() > PAConstants.MAX_SEARCH_RESULTS) {
            throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
        }

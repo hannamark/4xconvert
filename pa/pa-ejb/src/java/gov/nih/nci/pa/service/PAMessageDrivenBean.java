@@ -99,7 +99,6 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -188,34 +187,23 @@ public class PAMessageDrivenBean implements MessageListener {
     }
     
     private Long createAuditMessageLog(Ii identifier) throws PAException {
-        try {
-            Session session = HibernateUtil.getCurrentSession();
-            MessageLog log = new MessageLog();
-            log.setAssignedIdentifier(identifier.getExtension());
-            log.setDateCreated(new Date());
-            log.setEntityName(identifier.getIdentifierName());
-            log.setMessageAction("Received");
-            log.setResult(Boolean.TRUE);
-            session.save(log);
-            session.flush();
-            return log.getId();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception while logging received message for id = "
-                    + identifier.getExtension(), hbe);
-        }
+        Session session = HibernateUtil.getCurrentSession();
+        MessageLog log = new MessageLog();
+        log.setAssignedIdentifier(identifier.getExtension());
+        log.setDateCreated(new Date());
+        log.setEntityName(identifier.getIdentifierName());
+        log.setMessageAction("Received");
+        log.setResult(Boolean.TRUE);
+        session.save(log);
+        return log.getId();
     }
     
     private void updateExceptionAuditMessageLog(Long id, String msgAction, String errorMessage, boolean result) {
-        try {
-            Session session = HibernateUtil.getCurrentSession();
-            MessageLog msg = (MessageLog) session.get(MessageLog.class, id);
-            msg.setMessageAction(msgAction);
-            msg.setResult(Boolean.valueOf(result));
-            msg.setExceptionMessage(errorMessage);           
-            session.update(msg);
-            session.flush();
-        } catch (HibernateException hbe) {
-            LOG.error("Hibernate exception while logging failed message for id = " + id, hbe);
-        }
+        Session session = HibernateUtil.getCurrentSession();
+        MessageLog msg = (MessageLog) session.get(MessageLog.class, id);
+        msg.setMessageAction(msgAction);
+        msg.setResult(Boolean.valueOf(result));
+        msg.setExceptionMessage(errorMessage);           
+        session.update(msg);
     }
 }

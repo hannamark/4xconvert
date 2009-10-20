@@ -98,7 +98,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -128,34 +127,26 @@ public class DocumentWorkflowStatusServiceBean extends
         }
         Session session = null;
         List<DocumentWorkflowStatus> queryList = new ArrayList<DocumentWorkflowStatus>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            // step 1: form the hql
-            String hql = "select dwfs from DocumentWorkflowStatus dwfs "
-                    + " join dwfs.studyProtocol sp where sp.id = :spId "
-                    + " and dwfs.statusCode = :statusCode";
-            query = session.createQuery(hql);
-            query.setParameter("spId", IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-            query.setParameter("statusCode", DocumentWorkflowStatusCode.getByCode(dto.getStatusCode().getCode()));
-            queryList = query.list();
-            dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp((new Date()).getTime()), null));
-            if (queryList == null || queryList.isEmpty()) {
-                super.create(dto);
-            } else if (queryList.size() == 1) {
-                dto.setIdentifier(IiConverter.convertToIi(queryList.get(0).getId()));
-                super.update(dto);
-            } else if (queryList.size() > 1) {
-                throw new PAException("There cannot be more than 1 record for a give protocol and status "
-                        + " protocol id = " + dto.getStudyProtocolIdentifier().getExtension() + " status code "
-                        + dto.getStatusCode().getCode());
-            }
-
-        }  catch (HibernateException hbe) {
-            session.flush();
-
-            throw new PAException("Hibernate exception while retrieving document workflow status  for protocol id  = "
-                    + dto.getStudyProtocolIdentifier().getExtension() , hbe);
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        // step 1: form the hql
+        String hql = "select dwfs from DocumentWorkflowStatus dwfs "
+            + " join dwfs.studyProtocol sp where sp.id = :spId "
+            + " and dwfs.statusCode = :statusCode";
+        query = session.createQuery(hql);
+        query.setParameter("spId", IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        query.setParameter("statusCode", DocumentWorkflowStatusCode.getByCode(dto.getStatusCode().getCode()));
+        queryList = query.list();
+        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp((new Date()).getTime()), null));
+        if (queryList == null || queryList.isEmpty()) {
+            super.create(dto);
+        } else if (queryList.size() == 1) {
+            dto.setIdentifier(IiConverter.convertToIi(queryList.get(0).getId()));
+            super.update(dto);
+        } else if (queryList.size() > 1) {
+            throw new PAException("There cannot be more than 1 record for a give protocol and status "
+                    + " protocol id = " + dto.getStudyProtocolIdentifier().getExtension() + " status code "
+                    + dto.getStatusCode().getCode());
         }
         return null;
     }

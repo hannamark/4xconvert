@@ -97,7 +97,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -134,33 +133,29 @@ public class DiseaseServiceBean
         }
         getLogger().info("Entering search().  ");
         List<Disease> queryList = new ArrayList<Disease>();
-        try {
-            Session session = HibernateUtil.getCurrentSession();
-            StringBuffer hql = new StringBuffer();
-            Query query = null;
+        Session session = HibernateUtil.getCurrentSession();
+        StringBuffer hql = new StringBuffer();
+        Query query = null;
 
-            // step 1: form the hql
-            if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)) {
-             hql.append("select distinct dis "
-                       + "from Disease dis ");
-                       
-            } else {
-                hql.append("select distinct dis "
-                        + "from Disease dis " 
-                        + "left join dis.diseaseAlternames alt ");
-            }
-            hql.append(generateWhereClause(searchCriteria));   
-            hql.append("order by dis.preferredName asc");
-            getLogger().info("query Disease = " + hql.toString());
+        // step 1: form the hql
+        if (!StConverter.convertToString(searchCriteria.getIncludeSynonym()).equals(TRUE)) {
+            hql.append("select distinct dis "
+                    + "from Disease dis ");
 
-            // step 2: construct query object
-            query = session.createQuery(hql.toString());
-            
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in search.().  ", hbe);
+        } else {
+            hql.append("select distinct dis "
+                    + "from Disease dis " 
+                    + "left join dis.diseaseAlternames alt ");
         }
+        hql.append(generateWhereClause(searchCriteria));   
+        hql.append("order by dis.preferredName asc");
+        getLogger().info("query Disease = " + hql.toString());
+
+        // step 2: construct query object
+        query = session.createQuery(hql.toString());
+
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<DiseaseDTO> resultList = new ArrayList<DiseaseDTO>();
         for (Disease bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));

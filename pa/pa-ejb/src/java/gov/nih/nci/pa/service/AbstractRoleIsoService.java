@@ -99,7 +99,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -138,56 +137,50 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         StringBuffer criteria = new StringBuffer();
         Session session = null;
         List<BO> queryList = new ArrayList<BO>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            StringBuffer hql = new StringBuffer("select spart from ");
-                               hql.append(getTypeArgument().getName());
-                               hql.append(" spart join spart.studyProtocol spro where spro.id = :studyProtocolId");
-                               boolean first = true;
-                               boolean appended = false;
-            for (DTO crit : dtos) {
+        session = HibernateUtil.getCurrentSession();
+        StringBuffer hql = new StringBuffer("select spart from ");
+        hql.append(getTypeArgument().getName());
+        hql.append(" spart join spart.studyProtocol spro where spro.id = :studyProtocolId");
+        boolean first = true;
+        boolean appended = false;
+        for (DTO crit : dtos) {
             if (first && crit != null) {
-                    hql.append(" and ");
-                    first = false;
-                } else {
-                    criteria.append("or ");
-                }
+                hql.append(" and ");
+                first = false;
+            } else {
+                criteria.append("or ");
+            }
 
             if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
-                    StudyContactDTO spcDTO = (StudyContactDTO) crit;
-                    criteria.append("spart.roleCode = '"
+                StudyContactDTO spcDTO = (StudyContactDTO) crit;
+                criteria.append("spart.roleCode = '"
                         + StudyContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
-                    appended = true;
-                }
-                if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
-                    StudySiteContactDTO spcDTO = (StudySiteContactDTO) crit;
-                    criteria.append("spart.roleCode = '"
-                        + StudySiteContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
-                    appended = true;
-                }
-                if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
-                    StudySiteDTO spcDTO = (StudySiteDTO) crit;
-                    criteria.append("spart.functionalCode = '"
-                            + StudySiteFunctionalCode.getByCode(spcDTO.getFunctionalCode().getCode()) + "' ");
-                    appended = true;
-                }
+                appended = true;
             }
-            if (appended) {
+            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
+                StudySiteContactDTO spcDTO = (StudySiteContactDTO) crit;
+                criteria.append("spart.roleCode = '"
+                        + StudySiteContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
+                appended = true;
+            }
+            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
+                StudySiteDTO spcDTO = (StudySiteDTO) crit;
+                criteria.append("spart.functionalCode = '"
+                        + StudySiteFunctionalCode.getByCode(spcDTO.getFunctionalCode().getCode()) + "' ");
+                appended = true;
+            }
+        }
+        if (appended) {
             hql.append('(');
             hql.append(criteria);
             hql.append(')');
-            }
-            hql.append(" order by spart.id ");
-            getLogger().info(" query  = " + hql);
-
-            Query query = session.createQuery(hql.toString());
-            query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
-            queryList = query.list();
-
-        }  catch (HibernateException hbe) {
-            throw new PAException(" Hibernate exception while retrieving "
-                     + getTypeArgument().getName() + " for pid = " + studyProtocolIi.getExtension() , hbe);
         }
+        hql.append(" order by spart.id ");
+        getLogger().info(" query  = " + hql);
+
+        Query query = session.createQuery(hql.toString());
+        query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
+        queryList = query.list();
 
         List<DTO> resultList = new ArrayList<DTO>();
         for (BO sc : queryList) {
@@ -222,56 +215,52 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
     public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
         List<BO> sps = null;
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            StringBuffer hql = new StringBuffer("select sps from ");
-            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
-                  if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudySite sps join sps.healthCareFacility as hcp where hcp.identifier = '" 
-                              + ii.getExtension() + "'");
-                  }
-                  if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudySite sps join sps.researchOrganization as ro where ro.identifier = '" 
-                              + ii.getExtension() + "'");
-                  }
-                  if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudySite sps join sps.oversightCommittee as oc where oc.identifier = '" 
-                              + ii.getExtension() + "'");
-                  }
+        session = HibernateUtil.getCurrentSession();
+        StringBuffer hql = new StringBuffer("select sps from ");
+        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
+            if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" StudySite sps join sps.healthCareFacility as hcp where hcp.identifier = '" 
+                        + ii.getExtension() + "'");
             }
-            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
-                  if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudyContact sps join sps.clinicalResearchStaff as crs where crs.identifier = '" 
-                          + ii.getExtension() + "'");
-                  }
-                  if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                      hql.append(" StudyContact sps join sps.healthCareProvider as hcp where hcp.identifier = '" 
-                          + ii.getExtension() + "'");
-                  }
+            if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" StudySite sps join sps.researchOrganization as ro where ro.identifier = '" 
+                        + ii.getExtension() + "'");
+            }
+            if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" StudySite sps join sps.oversightCommittee as oc where oc.identifier = '" 
+                        + ii.getExtension() + "'");
+            }
+        }
+        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
+            if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" StudyContact sps join sps.clinicalResearchStaff as crs where crs.identifier = '" 
+                        + ii.getExtension() + "'");
+            }
+            if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" StudyContact sps join sps.healthCareProvider as hcp where hcp.identifier = '" 
+                        + ii.getExtension() + "'");
+            }
 
+        }
+        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
+            if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" StudySiteContact sps join sps.clinicalResearchStaff as crs " 
+                        + "where crs.identifier = '" + ii.getExtension() + "'");
             }
-            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
-                if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                    hql.append(" StudySiteContact sps join sps.clinicalResearchStaff as crs " 
-                            + "where crs.identifier = '" + ii.getExtension() + "'");
-                }
-                if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                    hql.append(" StudySiteContact sps join sps.healthCareProvider as hcp " 
-                            + "where hcp.identifier = '" + ii.getExtension() + "'");
-                }
-                if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
-                    hql.append(" StudySiteContact sps join sps.organizationalContact as oc " 
-                            + " where oc.identifier = '" + ii.getExtension() + "'");
-                }
-          }
-    
+            if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" StudySiteContact sps join sps.healthCareProvider as hcp " 
+                        + "where hcp.identifier = '" + ii.getExtension() + "'");
+            }
+            if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(ii.getIdentifierName())) {    
+                hql.append(" StudySiteContact sps join sps.organizationalContact as oc " 
+                        + " where oc.identifier = '" + ii.getExtension() + "'");
+            }
+        }
+
         sps = session.createQuery(hql.toString()).list();
         for (BO sp : sps) {
             sp.setStatusCode(newFRStatusCode(roleStatusCode , ActStatusCode.ACTIVE));
             session.update(sp);
-        }
-        } catch (HibernateException hbe) {
-            throw new PAException(hbe);
         }
     }
 

@@ -123,7 +123,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
@@ -171,25 +170,15 @@ import org.hibernate.criterion.Example;
         LOG.info("Entering getStudyProtocol");
         Session session = null;
         StudyProtocol studyProtocol = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            studyProtocol = (StudyProtocol)
-            session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-            session.flush();
-
-        }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving StudyProtocol for id = " + ii.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving "
-                    + "StudyProtocol for id = " + ii.getExtension() , hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        studyProtocol = (StudyProtocol)
+        session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
 
         StudyProtocolDTO studyProtocolDTO =
             StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
 
-
         LOG.info("Leaving getStudyProtocol");
         return studyProtocolDTO;
-
     }
     /**
      *
@@ -210,27 +199,15 @@ import org.hibernate.criterion.Example;
 
         StudyProtocolDTO  spDTO = null;
         Session session = null;
+        session = HibernateUtil.getCurrentSession();
+        StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
+                Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
-        try {
-            session = HibernateUtil.getCurrentSession();
-            StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
-                    Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
-
-            StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
-            setDefaultValues(sp, spDTO, session, UPDATE);
-            session.update(sp);
-            spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
-        }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while updating StudyProtocol for id = "
-                    + studyProtocolDTO.getIdentifier().getExtension() , hbe);
-            throw new PAException(" Hibernate exception while updating StudyProtocol for id = "
-                    + studyProtocolDTO.getIdentifier().getExtension() , hbe);
-        } finally {
-            session.flush();
-        }
-
+        StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
+        setDefaultValues(sp, spDTO, session, UPDATE);
+        session.update(sp);
+        spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
         return spDTO;
-
     }
 
 
@@ -251,26 +228,14 @@ import org.hibernate.criterion.Example;
         Session session = null;
 
         InterventionalStudyProtocol isp = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            isp = (InterventionalStudyProtocol)
-            session.load(InterventionalStudyProtocol.class, Long.valueOf(ii.getExtension()));
-            session.flush();
-
-
-        }  catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving InterventionalStudyProtocol for id = "
-                    + ii.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving "
-                    + "InterventionalStudyProtocol for id = " + ii.getExtension() , hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        isp = (InterventionalStudyProtocol)
+        session.load(InterventionalStudyProtocol.class, Long.valueOf(ii.getExtension()));
         InterventionalStudyProtocolDTO ispDTO =
             InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
 
         LOG.info("Leaving getInterventionalStudyProtocol");
         return ispDTO;
-
     }
 
 
@@ -373,19 +338,9 @@ import org.hibernate.criterion.Example;
         Session session = null;
 
         ObservationalStudyProtocol osp = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            osp = (ObservationalStudyProtocol)
-            session.load(ObservationalStudyProtocol.class, Long.valueOf(ii.getExtension()));
-            session.flush();
-
-        }  catch (HibernateException hbe) {
-            session.flush();
-            LOG.error(" Hibernate exception while retrieving getObservationalStudyProtocol for id = "
-                    + ii.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving "
-                    + "getObservationalStudyProtocol for id = " + ii.getExtension() , hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        osp = (ObservationalStudyProtocol)
+        session.load(ObservationalStudyProtocol.class, Long.valueOf(ii.getExtension()));
         ObservationalStudyProtocolDTO ospDTO =
             ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
 
@@ -411,23 +366,14 @@ import org.hibernate.criterion.Example;
         enForceBusinessRules(ospDTO);
         ObservationalStudyProtocolDTO  ospRetDTO = null;
         Session session = null;
-
-        try {
-            session = HibernateUtil.getCurrentSession();
-            ObservationalStudyProtocol osp = (ObservationalStudyProtocol)
-            session.load(ObservationalStudyProtocol.class, Long.valueOf(ospDTO.getIdentifier().getExtension()));
-            ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
-            setDefaultValues(osp, ospDTO, session, UPDATE);
-            osp = upd;
-            session.merge(osp);
-            session.flush();
-            ospRetDTO =  ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
-        }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while updating ObservationalStudyProtocol for id = "
-                    + ospDTO.getIdentifier().getExtension() , hbe);
-            throw new PAException(" Hibernate exception while updating ObservationalStudyProtocol for id = "
-                    + ospDTO.getIdentifier().getExtension() , hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        ObservationalStudyProtocol osp = (ObservationalStudyProtocol)
+        session.load(ObservationalStudyProtocol.class, Long.valueOf(ospDTO.getIdentifier().getExtension()));
+        ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
+        setDefaultValues(osp, ospDTO, session, UPDATE);
+        osp = upd;
+        session.merge(osp);
+        ospRetDTO =  ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
         return ospRetDTO;
 
     }
@@ -453,21 +399,12 @@ import org.hibernate.criterion.Example;
         enForceBusinessRules(ospDTO);
         LOG.debug("Entering createObservationalStudyProtocol");
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
-            convertFromDTOToDomain(ospDTO);
+        convertFromDTOToDomain(ospDTO);
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            setDefaultValues(osp, ospDTO, session , CREATE);
-            session.save(osp);
-            LOG.info("Creating osp for id = " + osp.getId());
-        }  catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while creating createObservationalStudyProtocol for id = "
-                    + ospDTO.getIdentifier().getExtension() , hbe);
-            throw new PAException(" Hibernate exception while createObservationalStudyProtocol for id = "
-                    + ospDTO.getIdentifier().getExtension() , hbe);
-        } finally {
-            session.flush();
-        }
+        session = HibernateUtil.getCurrentSession();
+        setDefaultValues(osp, ospDTO, session , CREATE);
+        session.save(osp);
+        LOG.info("Creating osp for id = " + osp.getId());
         //createDocumentWorkFlowStatus(osp);
         LOG.debug("Leaving createInterventionalStudyProtocol");
         return IiConverter.convertToStudyProtocolIi(osp.getId());
@@ -517,11 +454,6 @@ import org.hibernate.criterion.Example;
                     }
                 }
             }
-        } catch (HibernateException hbe) {
-            ejbContext.setRollbackOnly();
-            LOG.error(" Hibernate exception while retrieving StudyProtocol for id = " + ii.getExtension() , hbe);
-            throw new PAException(" Hibernate exception while retrieving "
-                    + "StudyProtocol for id = " + ii.getExtension() , hbe);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -681,7 +613,7 @@ import org.hibernate.criterion.Example;
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
-            TooManyResultsException {
+    TooManyResultsException {
         if (dto == null) {
             LOG.error(" StudyProtocolDTO should not be null ");
             throw new PAException(" StudyProtocolDTO should not be null ");
@@ -689,42 +621,35 @@ import org.hibernate.criterion.Example;
         LOG.info("Entering search");
         Session session = null;
         List<StudyProtocol> studyProtocolList = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            StudyProtocol exampleDO = new StudyProtocol();
-            if (dto.getAssignedIdentifier() != null) {
-             exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
-            }
-            if (dto.getPhaseCode() != null) {
-                exampleDO.setPhaseCode(PhaseCode.getByCode(dto.getPhaseCode().getCode()));
-            }
-            if (dto.getOfficialTitle() != null) {
-                String title = "%" + StConverter.convertToString(dto.getOfficialTitle()) + "%";
-                exampleDO.setOfficialTitle(title);
-            }
-            if (dto.getPublicTitle() != null) {
-                String title = "%" + StConverter.convertToString(dto.getPublicTitle()) + "%";
-                exampleDO.setPublicTitle(title);
-            }
-            if (dto.getStatusCode() == null || dto.getStatusCode().getCode().equals(ActStatusCode.ACTIVE.getCode())) {
-                exampleDO.setStatusCode(ActStatusCode.ACTIVE);
-            }
-            if (dto.getStatusCode() != null && dto.getStatusCode().getCode().equals(ActStatusCode.INACTIVE.getCode())) {
-                exampleDO.setStatusCode(ActStatusCode.INACTIVE);
-            }
-            Example example = Example.create(exampleDO);
-            example.enableLike();
-            Criteria criteria = session.createCriteria(StudyProtocol.class).add(example);
-            int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
-            criteria.setMaxResults(maxLimit);
-            criteria.setFirstResult(pagingParams.getOffset());
-            studyProtocolList = criteria.list();
-            session.flush();
-
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception while retrieving StudyProtocol for dto = " + hbe);
-            throw new PAException(" Hibernate exception while retrieving " + "StudyProtocol for dto = " + hbe);
+        session = HibernateUtil.getCurrentSession();
+        StudyProtocol exampleDO = new StudyProtocol();
+        if (dto.getAssignedIdentifier() != null) {
+            exampleDO.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
         }
+        if (dto.getPhaseCode() != null) {
+            exampleDO.setPhaseCode(PhaseCode.getByCode(dto.getPhaseCode().getCode()));
+        }
+        if (dto.getOfficialTitle() != null) {
+            String title = "%" + StConverter.convertToString(dto.getOfficialTitle()) + "%";
+            exampleDO.setOfficialTitle(title);
+        }
+        if (dto.getPublicTitle() != null) {
+            String title = "%" + StConverter.convertToString(dto.getPublicTitle()) + "%";
+            exampleDO.setPublicTitle(title);
+        }
+        if (dto.getStatusCode() == null || dto.getStatusCode().getCode().equals(ActStatusCode.ACTIVE.getCode())) {
+            exampleDO.setStatusCode(ActStatusCode.ACTIVE);
+        }
+        if (dto.getStatusCode() != null && dto.getStatusCode().getCode().equals(ActStatusCode.INACTIVE.getCode())) {
+            exampleDO.setStatusCode(ActStatusCode.INACTIVE);
+        }
+        Example example = Example.create(exampleDO);
+        example.enableLike();
+        Criteria criteria = session.createCriteria(StudyProtocol.class).add(example);
+        int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
+        criteria.setMaxResults(maxLimit);
+        criteria.setFirstResult(pagingParams.getOffset());
+        studyProtocolList = criteria.list();
 
         if (studyProtocolList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);

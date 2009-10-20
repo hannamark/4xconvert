@@ -20,7 +20,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 /**
@@ -48,19 +47,15 @@ public  class StudySiteOverallStatusServiceBean  implements
         }
         StudySiteOverallStatusDTO resultDto = null;
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            validate(dto);
+        session = HibernateUtil.getCurrentSession();
+        validate(dto);
 
-            StudySiteOverallStatus bo = Converters.get(StudySiteOverallStatusConverter.class).
-                convertFromDtoToDomain(dto);
+        StudySiteOverallStatus bo = Converters.get(StudySiteOverallStatusConverter.class).
+        convertFromDtoToDomain(dto);
 
-            // update
-            session.saveOrUpdate(bo);
-            resultDto = Converters.get(StudySiteOverallStatusConverter.class).convertFromDomainToDto(bo);
-        } catch (HibernateException hbe) {
-        throw new PAException(" Hibernate exception in createStudySiteOverallStatus ", hbe);
-        }
+        // update
+        session.saveOrUpdate(bo);
+        resultDto = Converters.get(StudySiteOverallStatusConverter.class).convertFromDomainToDto(bo);
         return resultDto;
     }
     /**
@@ -120,7 +115,7 @@ public  class StudySiteOverallStatusServiceBean  implements
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteOverallStatusDTO> getByStudySite(Ii studySiteIi)
-            throws PAException {
+    throws PAException {
         if (PAUtil.isIiNull(studySiteIi)) {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
@@ -129,28 +124,23 @@ public  class StudySiteOverallStatusServiceBean  implements
 
         Session session = null;
         List<StudySiteOverallStatus> queryList = new ArrayList<StudySiteOverallStatus>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = "select ssos "
-                       + " from StudySiteOverallStatus as ssos "
-                       + " join ssos.studySite as sp "
-                       + " where sp.id = :studySiteId "
-                       + " order by ssos.id ";
-            LOG.info(" query StudySiteOverallStatus = " + hql);
+        // step 1: form the hql
+        String hql = "select ssos "
+            + " from StudySiteOverallStatus as ssos "
+            + " join ssos.studySite as sp "
+            + " where sp.id = :studySiteId "
+            + " order by ssos.id ";
+        LOG.info(" query StudySiteOverallStatus = " + hql);
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("studySiteId", IiConverter.convertToLong(studySiteIi));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getStudySiteOverallStatusByStudySite ", hbe);
-            throw new PAException(" Hibernate exception in getStudySiteOverallStatusByStudySite ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<StudySiteOverallStatusDTO> resultList = new ArrayList<StudySiteOverallStatusDTO>();
         for (StudySiteOverallStatus bo : queryList) {
             resultList.add(new StudySiteOverallStatusConverter().convertFromDomainToDto(bo));

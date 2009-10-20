@@ -95,7 +95,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -126,22 +125,16 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
     public List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException {
         LOG.debug("Entering  getPersonsByStudyParticpationId");
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            List<Object> queryList = new ArrayList<Object>();
-            Query query = null;
-            String queryStr = "select sp , spc , hcp , p from StudySite as sp  "
-                    + " join sp.studySiteContacts as spc " + " join spc.clinicalResearchStaff as hcp "
-                    + " join hcp.person as p " + " where sp.id = " + id + " and spc.roleCode = '" + roleCd + "'";
-            query = session.createQuery(queryStr);
-            queryList = query.list();
-            session.flush();
-            LOG.debug("Leaving  getPersonsByStudyParticpationId");
-            return createPersonWebDTO(queryList);
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getPersonsByStudyParticpationId ", hbe);
-            return null;
-        }
+        session = HibernateUtil.getCurrentSession();
+        List<Object> queryList = new ArrayList<Object>();
+        Query query = null;
+        String queryStr = "select sp , spc , hcp , p from StudySite as sp  "
+            + " join sp.studySiteContacts as spc " + " join spc.clinicalResearchStaff as hcp "
+            + " join hcp.person as p " + " where sp.id = " + id + " and spc.roleCode = '" + roleCd + "'";
+        query = session.createQuery(queryStr);
+        queryList = query.list();
+        LOG.debug("Leaving  getPersonsByStudyParticpationId");
+        return createPersonWebDTO(queryList);
     }
 
     private List<PaPersonDTO> createPersonWebDTO(List<Object> queryList) {
@@ -184,37 +177,30 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
         //HealthCareProvider
         ClinicalResearchStaff careProvider = null;
         PaPersonDTO personWebDTO = new PaPersonDTO();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            List<Object> queryList = new ArrayList<Object>();
-            Query query = null;
-            String queryStr = "select spc , hcp from StudySiteContact as spc"
-                    + " join spc.clinicalResearchStaff as hcp"
-                    + " where spc.id = " + id
-                    + " and spc.roleCode <> 'STUDY_PRIMARY_CONTACT'";
-            query = session.createQuery(queryStr);
-            queryList = query.list();
-            Object[] searchResult = null;
-            for (int i = 0; i < queryList.size();) {
-                searchResult = (Object[]) queryList.get(i);
-                if (searchResult == null) {
-                    return null;
-                }
-                careProvider = ((ClinicalResearchStaff) searchResult[1]);
-                personWebDTO.setFirstName(careProvider.getPerson().getFirstName());
-                personWebDTO.setLastName(careProvider.getPerson().getLastName());
-                personWebDTO.setMiddleName(careProvider.getPerson().getMiddleName());
-                personWebDTO.setSelectedPersId(Long.valueOf(careProvider.getPerson().getIdentifier()));
-                personWebDTO.setPaPersonId(careProvider.getPerson().getId());
-                break;
+        session = HibernateUtil.getCurrentSession();
+        List<Object> queryList = new ArrayList<Object>();
+        Query query = null;
+        String queryStr = "select spc , hcp from StudySiteContact as spc"
+            + " join spc.clinicalResearchStaff as hcp"
+            + " where spc.id = " + id
+            + " and spc.roleCode <> 'STUDY_PRIMARY_CONTACT'";
+        query = session.createQuery(queryStr);
+        queryList = query.list();
+        Object[] searchResult = null;
+        for (int i = 0; i < queryList.size();) {
+            searchResult = (Object[]) queryList.get(i);
+            if (searchResult == null) {
+                return null;
             }
-            LOG.debug("Leaving  getIdentifierBySPCId");
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate exception in getIdentifierBySPCId ", hbe);
-            return null;
-        } finally {
-            session.flush();
+            careProvider = ((ClinicalResearchStaff) searchResult[1]);
+            personWebDTO.setFirstName(careProvider.getPerson().getFirstName());
+            personWebDTO.setLastName(careProvider.getPerson().getLastName());
+            personWebDTO.setMiddleName(careProvider.getPerson().getMiddleName());
+            personWebDTO.setSelectedPersId(Long.valueOf(careProvider.getPerson().getIdentifier()));
+            personWebDTO.setPaPersonId(careProvider.getPerson().getId());
+            break;
         }
+        LOG.debug("Leaving  getIdentifierBySPCId");
         return personWebDTO;
     }
 

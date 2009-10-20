@@ -95,7 +95,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -129,27 +128,23 @@ public class InterventionAlternateNameServiceBean
 
         Session session = null;
         List<InterventionAlternateName> queryList = new ArrayList<InterventionAlternateName>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
 
-            // step 1: form the hql
-            String hql = "select ian "
-                       + "from InterventionAlternateName ian "
-                       + "join ian.intervention int "
-                       + "where int.id = :interventionId "
-                       + "order by ian.id ";
-            getLogger().info("query InterventionAlternateName = " + hql + "  ");
+        // step 1: form the hql
+        String hql = "select ian "
+            + "from InterventionAlternateName ian "
+            + "join ian.intervention int "
+            + "where int.id = :interventionId "
+            + "order by ian.id ";
+        getLogger().info("query InterventionAlternateName = " + hql + "  ");
 
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("interventionId", IiConverter.convertToLong(interventionIi));
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("interventionId", IiConverter.convertToLong(interventionIi));
 
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getIntervention.  ", hbe);
-        }
+        // step 3: query the result
+        queryList = query.list();
         ArrayList<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
         for (InterventionAlternateName bo : queryList) {
             resultList.add(convertFromDomainToDto(bo));

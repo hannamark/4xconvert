@@ -97,7 +97,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -155,41 +154,32 @@ public class PAOrganizationServiceBean implements
         LOG.info("Entering getOrganizationByIndetifers");
         Session session = null;
         List<Organization> queryList = new ArrayList<Organization>();
-        try {
-            session = HibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
 
-            Query query = null;
+        Query query = null;
 
-            // step 1: form the hql
-            StringBuffer hql = new StringBuffer();
-            hql.append(" select org from Organization org  where 1 = 1 ");
-            if (organization.getId() != null) {
-                hql.append(" and org.id = ").append(organization.getId());
-            }
-            if (organization.getIdentifier() != null) {
-                hql.append(" and org.identifier = '").append(organization.getIdentifier()).append('\'');
-            }
+        // step 1: form the hql
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select org from Organization org  where 1 = 1 ");
+        if (organization.getId() != null) {
+            hql.append(" and org.id = ").append(organization.getId());
+        }
+        if (organization.getIdentifier() != null) {
+            hql.append(" and org.identifier = '").append(organization.getIdentifier()).append('\'');
+        }
 
-           LOG.info(" query getOrganizationByPoIndetifer = " + hql);
+        LOG.info(" query getOrganizationByPoIndetifer = " + hql);
 
-            // step 2: construct query object
-            query = session.createQuery(hql.toString());
-            queryList = query.list();
+        // step 2: construct query object
+        query = session.createQuery(hql.toString());
+        queryList = query.list();
 
-            if (queryList.size() > 1) {
-                LOG.error(" Organization  should not be more than 1 record for a Po Indetifer = "
-                        + organization.getIdentifier());
-                throw new PAException(" Organization  should not be more than 1 "
-                        + "record for a Po Indetifer = " + organization.getIdentifier());
-
-            }
-        }  catch (HibernateException hbe) {
+        if (queryList.size() > 1) {
             LOG.error(" Organization  should not be more than 1 record for a Po Indetifer = "
                     + organization.getIdentifier());
             throw new PAException(" Organization  should not be more than 1 "
-                    + "record for a Po Indetifer = " + organization.getIdentifier(), hbe);
-        } finally {
-            session.flush();
+                    + "record for a Po Indetifer = " + organization.getIdentifier());
+
         }
 
         if (!queryList.isEmpty()) {
@@ -211,42 +201,32 @@ public class PAOrganizationServiceBean implements
         List<Organization> sortedOrganizations = new ArrayList<Organization>();
         Set<Long> orgSet = new  HashSet<Long>();
 
-        try {
-            session = HibernateUtil.getCurrentSession();
-            StringBuffer hql = new StringBuffer();
-            if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
-                hql.append(
-                        " Select o from Organization o  "
-                      + " join o.researchOrganizations as ros "
-                      + " join ros.studySites as sps "
-                      + " join sps.studyProtocol as sp "
-                      + "  where sps.functionalCode = '"
-                      +   StudySiteFunctionalCode.LEAD_ORGANIZATION  + "'"
-                      +  " order by o.name");
-            } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
-                hql.append(
-                        " Select o from Organization o  "
-                      + " join o.healthCareFacilities as hcf "
-                      + " join hcf.studySites as sps "
-                      + " join sps.studyProtocol as sp "
-                      + "  where sps.functionalCode = '"
-                      +   StudySiteFunctionalCode.TREATING_SITE  + "'"
-                      +  " order by o.name");
+        session = HibernateUtil.getCurrentSession();
+        StringBuffer hql = new StringBuffer();
+        if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
+            hql.append(
+                    " Select o from Organization o  "
+                    + " join o.researchOrganizations as ros "
+                    + " join ros.studySites as sps "
+                    + " join sps.studyProtocol as sp "
+                    + "  where sps.functionalCode = '"
+                    +   StudySiteFunctionalCode.LEAD_ORGANIZATION  + "'"
+                    +  " order by o.name");
+        } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
+            hql.append(
+                    " Select o from Organization o  "
+                    + " join o.healthCareFacilities as hcf "
+                    + " join hcf.studySites as sps "
+                    + " join sps.studyProtocol as sp "
+                    + "  where sps.functionalCode = '"
+                    +   StudySiteFunctionalCode.TREATING_SITE  + "'"
+                    +  " order by o.name");
+        }
+        organizations =  session.createQuery(hql.toString()).list();
+        for (Organization o : organizations) {
+            if (orgSet.add(o.getId())) {
+                sortedOrganizations.add(o);
             }
-            organizations =  session.createQuery(hql.toString()).list();
-            for (Organization o : organizations) {
-                if (orgSet.add(o.getId())) {
-                    sortedOrganizations.add(o);
-                }
-            }
-
-        } catch (HibernateException hbe) {
-            LOG.error("  Hibernate exception while fetching "
-                     + "getOrganizationsAssociatedWithStudyProtocol ", hbe);
-            throw new PAException(" Hibernate exception while fetching "
-                    + "getOrganizationsAssociatedWithStudyProtocol ", hbe);
-        } finally {
-            LOG.debug("Leaving generateDistinctOrganizationQuery ");
         }
         return sortedOrganizations;
     }

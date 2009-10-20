@@ -98,7 +98,6 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -222,18 +221,9 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         }     
         LOG.debug("Entering createClinicalResearchStaff ");
         Session session = null;
-        
-        try {
-            session = HibernateUtil.getCurrentSession();
-            session.save(crs);
-        } catch (HibernateException hbe) {
-            
-            LOG.error(" Hibernate exception while createClinicalResearchStaff " , hbe);
-            throw new PAException(" Hibernate exception while create ClinicalResearchStaff" , hbe);
-        } finally {
-            session.flush();
-        }
-        
+        session = HibernateUtil.getCurrentSession();
+        session.save(crs);
+
         LOG.debug("Leaving create ClinicalResearchStaff ");
         return crs;
     }

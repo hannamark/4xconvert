@@ -97,7 +97,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -135,27 +134,22 @@ implements StudySiteContactServiceRemote , StudySiteContactServiceLocal {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteContactDTO> getByStudySite(Ii studySiteIi) throws PAException {
         if ((studySiteIi == null) || PAUtil.isIiNull(studySiteIi)) {
-        throw new PAException(" Ii should not be null ");
+            throw new PAException(" Ii should not be null ");
         }
         LOG.info("Entering getByStudySite");
         Session session = null;
         List<StudySiteContact> queryList = new ArrayList<StudySiteContact>();
-        try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            // step 1: form the hql
-            String hql = "select spartcontact from StudySiteContact spartcontact "
-                    + "join spartcontact.studySite spart where spart.id = :studyPartId "
-                    + "order by spartcontact.id ";
-            LOG.info(" query StudySiteContact = " + hql);
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("studyPartId", IiConverter.convertToLong(studySiteIi));
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-        throw new PAException(" Hibernate exception while retrieving " + "StudySite for pid = "
-                    + studySiteIi.getExtension(), hbe);
-        }
+        session = HibernateUtil.getCurrentSession();
+        Query query = null;
+        // step 1: form the hql
+        String hql = "select spartcontact from StudySiteContact spartcontact "
+            + "join spartcontact.studySite spart where spart.id = :studyPartId "
+            + "order by spartcontact.id ";
+        LOG.info(" query StudySiteContact = " + hql);
+        // step 2: construct query object
+        query = session.createQuery(hql);
+        query.setParameter("studyPartId", IiConverter.convertToLong(studySiteIi));
+        queryList = query.list();
         List<StudySiteContactDTO> resultList = new ArrayList<StudySiteContactDTO>();
         for (StudySiteContact sp : queryList) {
             resultList.add(Converters.get(StudySiteContactConverter.class).convertFromDomainToDto(sp));

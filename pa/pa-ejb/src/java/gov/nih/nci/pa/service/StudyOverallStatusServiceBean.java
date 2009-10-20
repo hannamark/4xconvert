@@ -106,7 +106,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -158,60 +157,56 @@ extends AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus
         }
         StudyOverallStatusDTO resultDto = null;
         Session session = null;
-        try {
-            session = HibernateUtil.getCurrentSession();
-            // enforce business rules
-           StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(dto.getStudyProtocolIdentifier());
-           if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier())) {
-               //this means no change in update 
-               return oldStatus;   
-              } 
-           StudyStatusCode oldCode = null;
-            Timestamp oldDate = null;
+        session = HibernateUtil.getCurrentSession();
+        // enforce business rules
+        StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(dto.getStudyProtocolIdentifier());
+        if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier())) {
+            //this means no change in update 
+            return oldStatus;   
+        } 
+        StudyStatusCode oldCode = null;
+        Timestamp oldDate = null;
 
-            if (oldStatus != null) {
-                oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
-                oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
-            }
-            StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
-            Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
-            if (newCode == null) {
-                throw new PAException("Study status must be set.  ");
-            }
-            if (newDate == null) {
-                throw new PAException("Study status date must be set.  ");
-            }
-            if ((oldCode != null) && !oldCode.canTransitionTo(newCode)) {
-                throw new PAException("Illegal study status transition from " + oldCode.getCode()
-                        + " to " + newCode.getCode() + ".  ");
-            }
-            if ((oldDate != null) && newDate.before(oldDate)) {
-                throw new PAException("New current status date should be bigger/same as old date.  ");
-            }
-
-            StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
-            if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
-               || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
-               || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
-               || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
-                if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
-                throw new PAException("A reason must be entered when the study status is set to "
-                             + bo.getStatusCode().getCode() + ".  ");
-                }
-            } else {
-                bo.setCommentText(null);
-            }
-
-            // update
-            session.saveOrUpdate(bo);
-            StudyRecruitmentStatus srs = StudyRecruitmentStatusServiceBean.create(bo);
-            if (srs != null) {
-                session.saveOrUpdate(StudyRecruitmentStatusServiceBean.create(bo));
-            }
-            resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
-        } catch (HibernateException hbe) {
-        throw new PAException(" Hibernate exception in createStudyOverallStatus ", hbe);
+        if (oldStatus != null) {
+            oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
+            oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
         }
+        StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
+        Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
+        if (newCode == null) {
+            throw new PAException("Study status must be set.  ");
+        }
+        if (newDate == null) {
+            throw new PAException("Study status date must be set.  ");
+        }
+        if ((oldCode != null) && !oldCode.canTransitionTo(newCode)) {
+            throw new PAException("Illegal study status transition from " + oldCode.getCode()
+                    + " to " + newCode.getCode() + ".  ");
+        }
+        if ((oldDate != null) && newDate.before(oldDate)) {
+            throw new PAException("New current status date should be bigger/same as old date.  ");
+        }
+
+        StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
+        if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
+                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
+                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
+                || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
+            if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
+                throw new PAException("A reason must be entered when the study status is set to "
+                        + bo.getStatusCode().getCode() + ".  ");
+            }
+        } else {
+            bo.setCommentText(null);
+        }
+
+        // update
+        session.saveOrUpdate(bo);
+        StudyRecruitmentStatus srs = StudyRecruitmentStatusServiceBean.create(bo);
+        if (srs != null) {
+            session.saveOrUpdate(StudyRecruitmentStatusServiceBean.create(bo));
+        }
+        resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
         return resultDto;
     }
 
@@ -224,7 +219,7 @@ extends AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
         StudyOverallStatusDTO resultDto = null;
         Session session = null;
-        
+
         StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
         Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
         if (newCode == null) {
@@ -237,25 +232,21 @@ extends AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus
         if (IntConverter.convertToInteger(studyProtocolDto.getSubmissionNumber()) > 1) {
             throw new PAException("Study status Cannot be updated.  ");
         }
-        try {
-            session = HibernateUtil.getCurrentSession();
-            StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
-            if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
-               || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
-               || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
-               || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
-                if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
+        session = HibernateUtil.getCurrentSession();
+        StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
+        if (StudyStatusCode.WITHDRAWN.equals(bo.getStatusCode())
+                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(bo.getStatusCode())
+                || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(bo.getStatusCode())
+                || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(bo.getStatusCode())) {
+            if ((bo.getCommentText() == null) || (bo.getCommentText().length() < 1)) {
                 throw new PAException("A reason must be entered when the study status is set to "
-                             + bo.getStatusCode().getCode() + ".  ");
-                }
-            } else {
-                bo.setCommentText(null);
+                        + bo.getStatusCode().getCode() + ".  ");
             }
-            session.merge(bo);
-            resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
-        } catch (HibernateException hbe) {
-        throw new PAException(" Hibernate exception in createStudyOverallStatus ", hbe);
+        } else {
+            bo.setCommentText(null);
         }
+        session.merge(bo);
+        resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
         return resultDto;
     }
 

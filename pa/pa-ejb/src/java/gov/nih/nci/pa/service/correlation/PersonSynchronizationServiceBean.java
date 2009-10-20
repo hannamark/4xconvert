@@ -119,7 +119,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -563,31 +562,24 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
        Session session = null;
        List<OrganizationalContact> queryList = new ArrayList<OrganizationalContact>();
        StringBuffer hql = new StringBuffer();
-       
+
        hql.append(" select oc from OrganizationalContact oc  "
                + " where oc.identifier = :identifier");
-       try {
-           session = HibernateUtil.getCurrentSession();
-           Query query = null;
-           query = session.createQuery(hql.toString());
-           query.setParameter("identifier", identifier);
-           queryList = query.list();
+       session = HibernateUtil.getCurrentSession();
+       Query query = null;
+       query = session.createQuery(hql.toString());
+       query.setParameter("identifier", identifier);
+       queryList = query.list();
 
        if (queryList.size() > 1) {
            LOG.error(" Clinical Reasrch Staff should be more than 1 for any given criteria");
            throw new PAException(" Clinical Reasrch Staff should be more than 1 for any given criteria");
 
        }
-   }  catch (HibernateException hbe) {
-       LOG.error(" Error while retrieving Clinicial Research Staff" , hbe);
-       throw new PAException(" Error while retrieving Clinicial Research Staff" , hbe);
-   } finally {
-       session.flush();
-   }
 
-   if (!queryList.isEmpty()) {
-       ocOut = queryList.get(0);
-   }
-   return ocOut;
+       if (!queryList.isEmpty()) {
+           ocOut = queryList.get(0);
+       }
+       return ocOut;
    }
 }

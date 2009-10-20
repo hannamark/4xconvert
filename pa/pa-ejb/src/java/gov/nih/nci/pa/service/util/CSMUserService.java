@@ -93,7 +93,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 
 /**
  * Service for managing csm users (create, retrieve and update).
@@ -139,11 +138,6 @@ public class CSMUserService {
             upManager.assignUserToGroup(loginName, submitterGroup);
             createdCSMUser = upManager.getUser(loginName);
 
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate Exception while creating CSM user : "
-                                      + loginName, hbe);
-            throw new PAException(" Hibernate exception while "
-                    + "creating CSM user :" + loginName, hbe);
         } catch (CSException cse) {
             LOG.error(" CSM Exception while creating CSM user : "
                                      + loginName, cse);
@@ -191,11 +185,6 @@ public class CSMUserService {
             upManager.assignUserToGroup(loginName, submitterGroup);*/
             createdCSMUser = upManager.getUser(loginName);
 
-        } catch (HibernateException hbe) {
-            LOG.error(" Hibernate Exception while updating CSM user : "
-                                    + loginName, hbe);
-            throw new PAException(" Hibernate exception while "
-                    + "updating CSM user :" + loginName, hbe);
         } catch (CSException cse) {
             LOG.error(" CSM Exception while updating CSM user : "
                                     + loginName, cse);
