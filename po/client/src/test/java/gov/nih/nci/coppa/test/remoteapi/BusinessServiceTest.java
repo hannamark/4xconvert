@@ -1,8 +1,6 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -94,12 +92,12 @@ public class BusinessServiceTest {
         
         
         entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, null, null);        
-        assertNull(entityNodeDto.getPlayers());
-        assertNull(entityNodeDto.getScopers());
+        assertEquals(0, entityNodeDto.getPlayers().length);
+        assertEquals(0, entityNodeDto.getScopers().length);
 
         entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, new Cd[0], new Cd[0]);        
-        assertNull(entityNodeDto.getPlayers());
-        assertNull(entityNodeDto.getScopers());        
+        assertEquals(0, entityNodeDto.getPlayers().length);
+        assertEquals(0, entityNodeDto.getScopers().length);        
         
         PersonDTO p = new PersonDTO();
         p.setName(RemoteApiUtils.convertToEnPn("FirstName", "M", "LastName", null, null));
@@ -142,12 +140,12 @@ public class BusinessServiceTest {
         assertEquals(1, playersDto.length);
         
         entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, null, null);        
-        assertNull(entityNodeDto.getPlayers());
-        assertNull(entityNodeDto.getScopers());
+        assertEquals(0, entityNodeDto.getPlayers().length);
+        assertEquals(0, entityNodeDto.getScopers().length);
 
         entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, new Cd[0], new Cd[0]);        
-        assertNull(entityNodeDto.getPlayers());
-        assertNull(entityNodeDto.getScopers());   
+        assertEquals(0, entityNodeDto.getPlayers().length);
+        assertEquals(0, entityNodeDto.getScopers().length);   
         
     }
     
