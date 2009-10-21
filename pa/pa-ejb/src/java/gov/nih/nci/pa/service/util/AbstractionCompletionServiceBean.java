@@ -657,10 +657,10 @@ private void enforceStudyContactNullification(
     List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
     if (!(siList.isEmpty())) {
       checkDuplicateINDIDE(siList, abstractionList);  
-      if (!BlConverter.covertToBool(studyProtocolDto.getFdaRegulatedIndicator())) {
+     /* if (!BlConverter.covertToBool(studyProtocolDto.getFdaRegulatedIndicator())) {
           abstractionList.add(createError("Error", "Select Regulatory Information from Administrative Data menu.",
                   "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records."));
-      }
+      }*/
       //if IND is is there for Trial Oversight Authority Country  =USA
       //then Trial Oversight Authority Organization Name  shld be FDA if not throw err
       //get the country and check if its usa if so then check if Org name is FDA if not throw err
@@ -669,13 +669,19 @@ private void enforceStudyContactNullification(
       if (sraFromDatabaseDTO != null) {
       Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
       RegulatoryAuthority regAuth = regulatoryInfoBean.get(sraId);
-      if (regAuth.getCountry().getAlpha3().equals("USA") 
+     /* if (regAuth.getCountry().getAlpha3().equals("USA") 
+              && !regAuth.getAuthorityName().equalsIgnoreCase("Food and Drug Administration")) {
+          abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
+                  + " from Administrative Data menu.", "For IND protocols, Oversight Authorities " 
+                  + " must include United States: Food and Drug Administration."));
+      }*/
+      if (!regAuth.getCountry().getAlpha3().equals("USA") 
               && !regAuth.getAuthorityName().equalsIgnoreCase("Food and Drug Administration")) {
           abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
                   + " from Administrative Data menu.", "For IND protocols, Oversight Authorities " 
                   + " must include United States: Food and Drug Administration."));
       }
-    }
+     }
     } // if
   } // method
 

@@ -81,6 +81,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -231,6 +232,20 @@ public class PAUtil {
         }
         return isNull;
     }
+    
+    /**
+     * checks if Int is null.
+     * @param in Int
+     * @return boolean
+     */
+    public static boolean isIntNull(Int in) {
+        boolean isNull = false;
+        if (in == null || in.getValue() == null) {
+            return true;
+        }
+        return isNull;
+    }
+
 
     /**
      * Private class used to decode and normalize date strings.
