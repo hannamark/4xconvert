@@ -13,7 +13,6 @@ import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.external.CtepOrganizationImporterTest;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -31,6 +30,7 @@ import org.apache.commons.collections.set.ListOrderedSet;
 
 public class CurateOrganizationTest extends AbstractPoWebTest {
 
+    private static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
 
     private static final int DEFAULT_TEXT_COL_LENGTH = 160;
 
@@ -351,7 +351,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         status.setCode("PENDING");
         hcf.setStatus(status);
         Ii ctep = new Ii();
-        ctep.setRoot(CtepOrganizationImporterTest.CTEP_ORG_ROOT);
+        ctep.setRoot(CTEP_ORG_ROOT);
         ctep.setExtension("AAA");
         ctep.setIdentifierName("CTEP ID");
         hcf.setIdentifier(new DSet<Ii>());
