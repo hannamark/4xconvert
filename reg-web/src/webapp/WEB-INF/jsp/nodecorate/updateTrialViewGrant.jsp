@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <reg-web:failureMessage/>
-<c:if test="${fundingDtos != null}">
-    <c:if test="${fn:length(fundingDtos) > 0}">
+<s:if test="fundingDtos != null && fundingDtos.size() > 0">
 <table class="form">
                     <tbody> 
                        <tr>
@@ -61,5 +60,4 @@
                       </s:iterator>
                       </tbody>
                     </table>
-  </c:if>
-  </c:if>                  
+  </s:if>

@@ -100,8 +100,7 @@
     <s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
     <s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
  
-<c:if test="${indIdeUpdateDtos != null}">
-    <c:if test="${fn:length(indIdeUpdateDtos) > 0}">
+<s:if test="indIdeUpdateDtos != null && indIdeUpdateDtos.size > 0">
      <table class="form">    
         <tbody>
             <tr>
@@ -158,5 +157,4 @@
              </s:iterator>                    
          </tbody>
 </table>
-</c:if>
-</c:if>
+</s:if>
