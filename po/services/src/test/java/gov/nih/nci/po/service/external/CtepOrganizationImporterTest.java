@@ -55,6 +55,10 @@ import org.junit.Test;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
+    /**
+     * Root used by CTEP to identify organizations
+     */
+    public static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
     private CtepOrganizationImporter importer = null;
     private OrganizationServiceBean oSvc;
     private IdentifiedOrganizationServiceBean ioSvc;
@@ -112,7 +116,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         io.getAssignedIdentifier().setExtension("CTEP");
         io.getAssignedIdentifier().setIdentifierName("CTEP ID");
         io.getAssignedIdentifier().setReliability(IdentifierReliability.ISS);
-        io.getAssignedIdentifier().setRoot("Cancer Therapy Evaluation Program Organization Identifier");
+        io.getAssignedIdentifier().setRoot(CTEP_ORG_ROOT);
         io.getAssignedIdentifier().setScope(IdentifierScope.OBJ);
 
         ioSvc.curate(io);

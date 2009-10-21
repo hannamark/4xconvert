@@ -15,6 +15,7 @@ import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
+import gov.nih.nci.po.service.external.CtepOrganizationImporterTest;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
@@ -82,7 +83,7 @@ public class CTEPOrgServiceStubBuilder {
         Ii id = new Ii();
         id.setExtension("AAA");
         id.setIdentifierName("CTEP ID");
-        id.setRoot("Cancer Therapy Evaluation Program Organization Identifier");
+        id.setRoot(CtepOrganizationImporterTest.CTEP_ORG_ROOT);
 
         Cd status = new Cd();
         status.setCode("active");

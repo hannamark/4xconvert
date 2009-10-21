@@ -138,7 +138,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     /**
      * The value of the 'root' element of a ctep ii for an org.
      */
-    public static final String CTEP_ORG_ROOT = "Cancer Therapy Evaluation Program Organization Identifier";
+    public static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
 
     private final OrganizationServiceLocal orgService = PoRegistry.getOrganizationService();
     private final OrganizationCRServiceLocal orgCRService = PoRegistry.getInstance().getServiceLocator()

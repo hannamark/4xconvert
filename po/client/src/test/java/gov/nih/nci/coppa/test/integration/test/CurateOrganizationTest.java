@@ -13,6 +13,7 @@ import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.external.CtepOrganizationImporterTest;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -39,7 +40,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     protected OrganizationEntityServiceRemote getOrgService() {
         return orgService;
     }
-    
+
     protected HealthCareFacilityCorrelationServiceRemote getHcfService() {
         return hcfService;
     }
@@ -51,7 +52,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         if (orgService == null) {
             orgService = RemoteServiceHelper.getOrganizationEntityService();
         }
-        
+
         if (hcfService == null) {
             hcfService = RemoteServiceHelper.getHealthCareFacilityCorrelationService();
         }
@@ -173,11 +174,11 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
             assertEquals(dupId.getExtension(), nullifiedEntities.values().iterator().next().getExtension());
         }
     }
-    
+
     public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullifyWithNoDuplicateId() throws Exception {
         Ii orgId = createNewOrgWithCtepRoleThenCurateAsActive();
         openAndWait("po-web/protected/organization/curate/start.action?organization.id=" + orgId.getExtension());
-       
+
         waitForPageToLoad();
         waitForTelecomFormsToLoad();
 
@@ -188,7 +189,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         Thread.sleep(1000);
         saveAsNullifiedFail(orgId);
     }
-   
+
 
     public void testCurateNewOrgThenCurateAfterRemoteUpdateToInactive() throws Exception {
         Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
@@ -219,13 +220,13 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         saveAsActive(id);
         return id;
     }
-    
+
     private Ii createNewOrgWithCtepRoleThenCurateAsActive() throws EntityValidationException, URISyntaxException, CurationException {
         // create a new org via remote API.
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
         Ii id = remoteCreateAndCatalog(create(name));
         Ii hcfId = remoteCreateHcfWithCtepId(id);
-        
+
         if (!isLoggedIn()) {
             loginAsCurator();
         }
@@ -298,7 +299,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         assertEquals("PO: Persons and Organizations - Entity Inbox - Organization", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='org_id_" + id.getExtension() + "']/span/span"));
     }
-    
+
     private void saveAsNullifiedFail(Ii id) throws InterruptedException {
         selenium.select("curateEntityForm.organization.statusCode", "label=NULLIFIED");
         selenium.chooseOkOnNextConfirmation();
@@ -314,12 +315,12 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         catalogOrgs.put(id, org);
         return id;
     }
-    
+
     private Ii remoteCreateHcfWithCtepId(Ii orgId) throws EntityValidationException, CurationException, URISyntaxException {
         Ii id = this.getHcfService().createCorrelation(createHcfFromCtep(orgId));
         return id;
     }
-    
+
     private OrganizationDTO create(String name) throws URISyntaxException {
         return create(name, RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "VA", "12345", "USA"));
     }
@@ -341,16 +342,16 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         org.getTelecomAddress().getItem().add(url);
         return org;
     }
-    
+
     private HealthCareFacilityDTO createHcfFromCtep(Ii orgId) throws URISyntaxException {
-        HealthCareFacilityDTO hcf = new HealthCareFacilityDTO(); 
+        HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
         hcf.setPlayerIdentifier(orgId);
         hcf.setName(RemoteApiUtils.convertToEnOn("ctep role"));
         Cd status = new Cd();
         status.setCode("PENDING");
         hcf.setStatus(status);
         Ii ctep = new Ii();
-        ctep.setRoot("Cancer Therapy Evaluation Program Organization Identifier");
+        ctep.setRoot(CtepOrganizationImporterTest.CTEP_ORG_ROOT);
         ctep.setExtension("AAA");
         ctep.setIdentifierName("CTEP ID");
         hcf.setIdentifier(new DSet<Ii>());
@@ -361,10 +362,10 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         addys.setItem(set);
         addys.getItem().add(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
         hcf.setPostalAddress(addys);
-        
+
         hcf.setTelecomAddress(new DSet<Tel>());
         hcf.getTelecomAddress().setItem(new HashSet<Tel>());
-        
+
         TelPhone ph1 = new TelPhone();
         ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
         hcf.getTelecomAddress().getItem().add(ph1);
