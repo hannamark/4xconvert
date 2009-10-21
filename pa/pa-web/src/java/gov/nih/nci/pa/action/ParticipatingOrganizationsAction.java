@@ -195,6 +195,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private String dateOpenedForAccrual;
     private String dateClosedForAccrual;
     private Long studySiteIdentifier;
+    private String programCode;
     
     //
     private static final String DISPLAY_SP_CONTACTS = "display_StudyPartipants_Contacts";
@@ -277,6 +278,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         setRecStatus(ServletActionContext.getRequest().getParameter("recStatus"));
         setRecStatusDate(ServletActionContext.getRequest().getParameter(REC_STATUS_DATE));
         setTargetAccrualNumber(ServletActionContext.getRequest().getParameter("targetAccrualNumber"));
+        setProgramCode(ServletActionContext.getRequest().getParameter("programCode"));
         facilitySaveOrUpdate();
         if (hasFieldErrors()) {
             return "error_edit";
@@ -306,9 +308,21 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String errorOrgName = "editOrg.name";
         if (tab.getStudyParticipationId() != null) {
             sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
+            String prgCode = (getProgramCode() == null) ? null : getProgramCode();
             Integer iTargetAccrual = (targetAccrualNumber == null) ? null : Integer.parseInt(targetAccrualNumber);
+            boolean spTAUpdated = false;
+            boolean spPCUpdated = false;
             if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) != iTargetAccrual) {
                 sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
+                spTAUpdated = true;
+            } 
+            if (PAUtil.isStNull(sp.getProgramCodeText()) 
+                || (!PAUtil.isStNull(sp.getProgramCodeText()) 
+                    && !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode))) {
+               sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
+               spPCUpdated = true;
+            }
+            if (spTAUpdated || spPCUpdated) {
                 try {
                     sp = sPartService.update(sp);
                 } catch (PADuplicateException e) {
@@ -327,6 +341,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
             sp.setStudyProtocolIdentifier(spIi);
             sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
+            sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
             try {
                 sp = sPartService.create(sp);
             } catch (PADuplicateException e) {
@@ -380,6 +395,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             setTargetAccrualNumber(null);
         } else {
             setTargetAccrualNumber(IntConverter.convertToInteger(spDto.getTargetAccrualNumber()).toString());
+        }
+        if (StConverter.convertToString(spDto.getProgramCodeText()) == null) {
+            setProgramCode(null);
+        } else {
+            setProgramCode(StConverter.convertToString(spDto.getProgramCodeText()));
         }
         setStatusCode(spDto.getStatusCode().getCode());
         setNewParticipation(false);
@@ -458,6 +478,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             }
           // setStatusCode(sp.getStatusCode().getCode());
             orgWebDTO.setStatus(sp.getStatusCode().getCode());
+            orgWebDTO.setProgramCode(StConverter.convertToString(sp.getProgramCodeText()));
             List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
                 .getPersonsByStudySiteId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
                     StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
@@ -1609,5 +1630,18 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             List<StudyOverallStatusWebDTO> overallStatusList) {
         this.overallStatusList = overallStatusList;
     }
+    /**
+      * @return the programCode
+    */
+    public String getProgramCode() {
+      return programCode;
+    }
+
+    /**
+     * @param programCode the programCode to set
+     */
+     public void setProgramCode(String programCode) {
+       this.programCode = programCode;
+     }
     
 }

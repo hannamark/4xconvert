@@ -34,6 +34,17 @@
                         </span>                            
                     </td>               
 				</tr>
+				<tr>
+                    <td class="label"><s:label for="programCode">Program Code:</s:label></td>
+                    <td class="value" colspan="2">
+                        <s:textfield name="programCode" maxlength="10" size="10" cssStyle="text-align:left;width:70px;float:left"/>
+                        <span class="formErrorMsg"> 
+                              <s:fielderror>
+                              <s:param>programCode</s:param>
+                              </s:fielderror>                            
+                        </span>                            
+                    </td>               
+                </tr>
                 <tr>
                     <td class="label"><s:label for="targetAccrualNumber">Target Accrual Number:</s:label></td>
                     <td class="value" colspan="2">
