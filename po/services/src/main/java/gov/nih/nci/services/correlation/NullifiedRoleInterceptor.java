@@ -83,9 +83,7 @@
 package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.data.convert.CdConverter;
-import gov.nih.nci.po.data.convert.IiDsetConverter;
+import gov.nih.nci.services.AbstractBaseNullifiedInterceptor;
 import gov.nih.nci.services.CorrelationDto;
 
 import java.util.Collection;
@@ -96,12 +94,10 @@ import java.util.Map.Entry;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
-import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
-
 /**
  * Interceptor to catch any NULLIFIED roles and throw a NullifiedEntityException.
  */
-public class NullifiedRoleInterceptor {
+public class NullifiedRoleInterceptor extends AbstractBaseNullifiedInterceptor {
     /**
      * Ensures that no object(s) returned have a NULLIFIED role status.
      *
@@ -151,13 +147,6 @@ public class NullifiedRoleInterceptor {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Entry<Ii, Ii> handle(CorrelationDto dto) {
-        RoleStatus status = CdConverter.convertToRoleStatus(dto.getStatus());
-        if (RoleStatus.NULLIFIED.equals(status)) {
-            return new UnmodifiableMapEntry(IiDsetConverter.convertToIi(dto.getIdentifier()), dto.getDuplicateOf());
-        }
-        return null;
-    }
+
 
 }

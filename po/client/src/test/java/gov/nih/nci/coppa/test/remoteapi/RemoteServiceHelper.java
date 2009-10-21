@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
 import gov.nih.nci.coppa.test.TstProperties;
+import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -109,6 +110,7 @@ public class RemoteServiceHelper {
 
     static final String PERSON_SERVICE_BEAN_REMOTE = "po/PersonEntityServiceBean/remote";
     static final String ORG_SERVICE_BEAN_REMOTE = "po/OrganizationEntityServiceBean/remote";
+    static final String BUSINESS_SERVICE_BEAN_REMOTE = "po/BusinessServiceBean/remote";
 
     static final String HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareProviderCorrelationServiceBean/remote";
     static final String CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE = "po/ClinicalResearchStaffCorrelationServiceBean/remote";
@@ -209,6 +211,11 @@ public class RemoteServiceHelper {
     public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonCorrelationServiceRemote()
             throws NamingException {
         return (IdentifiedPersonCorrelationServiceRemote) lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
+    }
+
+    public static BusinessServiceRemote getBusinessService()
+            throws NamingException {
+        return (BusinessServiceRemote) lookup(BUSINESS_SERVICE_BEAN_REMOTE);
     }
 
     public static MBeanServerConnection lookupMBeanServerProxy() throws Exception {

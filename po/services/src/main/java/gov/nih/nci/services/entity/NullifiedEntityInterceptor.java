@@ -83,17 +83,9 @@
 package gov.nih.nci.services.entity;
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.convert.IdConverter;
-import gov.nih.nci.po.data.convert.IdConverterRegistry;
-import gov.nih.nci.po.data.convert.IiConverter;
-import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.services.AbstractBaseNullifiedInterceptor;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.services.person.PersonEntityServiceBean;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -103,12 +95,10 @@ import java.util.Map.Entry;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
-import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
-
 /**
  * Interceptor to catch any NULLIFIED entities and throw a NullifiedEntityException.
  */
-public class NullifiedEntityInterceptor {
+public class NullifiedEntityInterceptor extends AbstractBaseNullifiedInterceptor {
     /**
      * Ensures that no object(s) returned have a NULLIFIED entity status.
      *
@@ -166,23 +156,7 @@ public class NullifiedEntityInterceptor {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Entry<Ii, Ii> handle(InvocationContext invContext, OrganizationDTO dto) {
-        EntityStatus status = StatusCodeConverter.convertToStatusEnum(dto.getStatusCode());
-        if (EntityStatus.NULLIFIED.equals(status)) {
-            OrganizationEntityServiceBean bean = (OrganizationEntityServiceBean) invContext.getTarget();
-            Organization org = bean.getOrganizationServiceBean()
-                    .getById(IiConverter.convertToLong(dto.getIdentifier()));
 
-            Ii duplicateOfIi = null;
-            if (org.getDuplicateOf() != null) {
-                IdConverter idConverter = IdConverterRegistry.find(Organization.class);
-                duplicateOfIi = idConverter.convertToIi(org.getDuplicateOf().getId());
-            }
-            return new UnmodifiableMapEntry(dto.getIdentifier(), duplicateOfIi);
-        }
-        return null;
-    }
 
     private void handlePersonDTO(InvocationContext invContext, PersonDTO dto) throws NullifiedEntityException {
         Entry<Ii, Ii> entry = handle(invContext, dto);
@@ -191,20 +165,4 @@ public class NullifiedEntityInterceptor {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Entry<Ii, Ii> handle(InvocationContext invContext, PersonDTO dto) {
-        EntityStatus status = StatusCodeConverter.convertToStatusEnum(dto.getStatusCode());
-        if (EntityStatus.NULLIFIED.equals(status)) {
-            PersonEntityServiceBean bean = (PersonEntityServiceBean) invContext.getTarget();
-            Person person = bean.getPersonServiceBean().getById(IiConverter.convertToLong(dto.getIdentifier()));
-
-            Ii duplicateOfIi = null;
-            if (person.getDuplicateOf() != null) {
-                IdConverter idConverter = IdConverterRegistry.find(Person.class);
-                duplicateOfIi = idConverter.convertToIi(person.getDuplicateOf().getId());
-            }
-            return new UnmodifiableMapEntry(dto.getIdentifier(), duplicateOfIi);
-        }
-        return null;
-    }
 }
