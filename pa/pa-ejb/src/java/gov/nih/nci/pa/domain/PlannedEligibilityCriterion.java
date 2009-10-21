@@ -104,6 +104,7 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     //private UnitsCode unit;
     private String unit;
     private EligibleGenderCode eligibleGenderCode;
+    private Integer displayOrder;
     /**
      * @return inclusionIndicator
      */
@@ -197,6 +198,19 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
      */
     public void setUnit(String unit) {
       this.unit = unit;
+    }
+    /**
+     * @return the displayOrder
+     */
+    @Column(name = "DISPLAY_ORDER")
+    public Integer getDisplayOrder() {
+      return displayOrder;
+    }
+    /**
+     * @param displayOrder the displayOrder to set
+     */
+    public void setDisplayOrder(Integer displayOrder) {
+      this.displayOrder = displayOrder;
     }
 
 }

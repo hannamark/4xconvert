@@ -193,6 +193,7 @@ BubbleTips.activateTipOn("dfn");
             <display:column titleKey="isdesign.eligibilitycriteria.operator" property="operator" sortable="true" headerClass="sortable" />
             <display:column titleKey="isdesign.eligibilitycriteria.value" property="value"  sortable="true" headerClass="sortable" />
             <display:column titleKey="isdesign.eligibilitycriteria.unit" property="unit" sortable="true" headerClass="sortable" />
+            <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriaDisplayOrder" property="displayOrder" sortable="true" headerClass="sortable" />
             <display:column title="Edit" class="action">
         		<s:url id="url" action="eligibilityCriteriaedit"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
         		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>

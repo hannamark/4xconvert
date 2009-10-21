@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -295,11 +296,13 @@ public String input() {
    * @return result
    */
   public String create() {
-    enforceEligibilityBusinessRules();
-    if (hasFieldErrors()) {
-      return ELIGIBILITYADD;
-    }
-    try {
+   
+   try {
+      enforceEligibilityBusinessRules();
+      if (hasFieldErrors()) {
+       return ELIGIBILITYADD;
+      }
+    
       Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
       .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
       PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
@@ -323,6 +326,7 @@ public String input() {
       pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
       pecDTO.setTextDescription(StConverter.convertToSt(webDTO.getTextDescription()));
       pecDTO.setOperator(StConverter.convertToSt(webDTO.getOperator()));
+      pecDTO.setDisplayOrder(IntConverter.convertToInt(webDTO.getDisplayOrder()));
       PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO);
       query();
       ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
@@ -351,13 +355,12 @@ public String input() {
    * @return result
    */
   public String update() {
+   try { 
     enforceEligibilityBusinessRules();
     if (hasFieldErrors()) {
       return ELIGIBILITYADD;
     }
-    try {
-
-      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+     Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
       .getAttribute(Constants.STUDY_PROTOCOL_II);
       PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
       pecDTO.setIdentifier(IiConverter.convertToIi(id));
@@ -450,6 +453,9 @@ public String input() {
       if (dto.getValue().getUnit() != null) {
         webdto.setUnit(dto.getValue().getUnit());
       }
+      if (dto.getDisplayOrder() != null) {
+          webdto.setDisplayOrder(IntConverter.convertToString(dto.getDisplayOrder()));
+        }
 
     }
     return webdto;
@@ -506,10 +512,18 @@ public String input() {
     }
   }
   
-  private void enforceEligibilityBusinessRules() {
-//    if (PAUtil.isEmpty(webDTO.getInclusionIndicator())) {
-//      addFieldError("webDTO.inclusionIndicator", getText("error.inclusionIndicator"));
-//    }
+  private void enforceEligibilityBusinessRules() throws PAException {
+   
+    if (PAUtil.isEmpty(webDTO.getDisplayOrder())) {
+      addFieldError("webDTO.displayOrder", getText("error.displayOrder"));
+    }
+    if (PAUtil.isNotEmpty(webDTO.getDisplayOrder())) {
+      try {
+        Integer.parseInt(webDTO.getDisplayOrder());
+      } catch (NumberFormatException e) {
+         addFieldError("webDTO.displayOrder", getText("error.numeric"));
+      }
+       }
     if (PAUtil.isNotEmpty(webDTO.getTextDescription())
         && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
       addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));        
@@ -531,7 +545,41 @@ public String input() {
 
       }
     }
+    String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder());
+    if (dispOrder != null && !dispOrder.equals("")) {
+      addFieldError("webDTO.displayOrder", dispOrder);
+    }
   }
+  
+  
+  private String checkDisplayOrderExists(String displayOrder) throws PAException {
+     StringBuffer order = new StringBuffer();
+     boolean exists = false;
+     Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+     .getAttribute(Constants.STUDY_PROTOCOL_II);
+     List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
+         .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+     if (pecList != null && !pecList.isEmpty()) {
+       order.append("Display Order(s) exist: ");
+       for (PlannedEligibilityCriterionDTO dto : pecList) {
+        if (dto.getCategoryCode() != null 
+             && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
+          if (!IntConverter.convertToString(dto.getDisplayOrder()).equals(displayOrder)) {
+               order.append(IntConverter.convertToString(dto.getDisplayOrder())).append(" ,");
+          } else {
+             order.append(IntConverter.convertToString(dto.getDisplayOrder())).append(" ,");
+             exists = true;
+          }
+       }
+      }
+     }
+     if (exists) {
+      return order.toString().substring(0, order.length() - 1);
+     } else {
+      return "";
+     }
+   }
+ 
   /**
    * @return webDTO
    */

@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
@@ -114,6 +115,7 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
          pq.setUnit(pec.getUnit());
        }
        pecDTO.setValue(pq);
+       pecDTO.setDisplayOrder(IntConverter.convertToInt(pec.getDisplayOrder()));
        //pecDTO.setValue(PqvConverter.convertToPqv(pec.getValue()));
        //pecDTO.setUnit(CdConverter.convertToCd(pec.getUnit()));
        return pecDTO;
@@ -138,6 +140,7 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
          pec.setValue(pecDTO.getValue().getValue());
          pec.setUnit(pecDTO.getValue().getUnit());
        }
+       pec.setDisplayOrder(IntConverter.convertToInteger(pecDTO.getDisplayOrder()));
        return pec;
    }
 }

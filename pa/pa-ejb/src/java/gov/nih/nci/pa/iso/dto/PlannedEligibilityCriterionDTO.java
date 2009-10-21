@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
 /**
@@ -98,6 +99,7 @@ public class PlannedEligibilityCriterionDTO extends PlannedActivityDTO {
     private St operator;
     private Pq value;
     private Cd eligibleGenderCode;
+    private Int displayOrder;
     /**
      * @return inclusionIndicator
      */
@@ -157,5 +159,17 @@ public class PlannedEligibilityCriterionDTO extends PlannedActivityDTO {
      */
     public void setValue(Pq value) {
       this.value = value;
-    }        
+    }
+    /**
+     * @return the displayOrder
+     */
+    public Int getDisplayOrder() {
+       return displayOrder;
+    }
+    /**
+     * @param displayOrder the displayOrder to set
+     */
+    public void setDisplayOrder(Int displayOrder) {
+       this.displayOrder = displayOrder;
+    }
 }
