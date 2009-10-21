@@ -809,11 +809,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             paServiceUtils.executeSql(sql);
             sql = "Delete from STUDY_ONHOLD WHERE STUDY_PROTOCOL_IDENTIFIER  = "  + studyProtocolIi.getExtension();
             paServiceUtils.executeSql(sql);
-            paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
             studyProtocolDTO.setAmendmentReasonCode(null);
             studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(
                     paServiceUtils.generateSubmissionNumber(studyProtocolDTO.getAssignedIdentifier().getExtension())));
             studyProtocolDTO.setStatusDate(TsConverter.convertToTs(null));
+           
         }
         if (UPDAT.equalsIgnoreCase(operation)) {
             studyProtocolDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
@@ -866,6 +866,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                   principalInvestigatorDTO , StudyTypeCode.INTERVENTIONAL);
           overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
           createStudyRelationship(studyProtocolIi , toStudyProtocolIi , studyProtocolDTO);
+          paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
       } 
       studyOverallStatusService.create(overallStatusDTO);
       paServiceUtils.createOrUpdate(documentDTOs , IiConverter.convertToDocumentIi(null) , 
@@ -1128,8 +1129,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         if (REJECTION.equalsIgnoreCase(operation)) {
             DocumentWorkflowStatusDTO dws = docWrkFlowStatusService.getCurrentByStudyProtocol(
                     studyProtocolDTO.getIdentifier());
-            if (!DocumentWorkflowStatusCode.SUBMITTED.getCode().equals(dws.getStatusCode().getCode())) {
-                errorMsg.append("Protocol can be rejected only when Document Workflow status is REJECTED");
+            if (!DocumentWorkflowStatusCode.SUBMITTED.getCode().equals(dws.getStatusCode().getCode())
+                && !DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.getCode().equals(dws.getStatusCode().getCode())) {
+                errorMsg.append("Only Trials with SUBMITTED can be REJECTED");
             }
         } else {
             studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);

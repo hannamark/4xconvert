@@ -291,7 +291,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         String action = "";
         if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
             action = DocumentWorkflowStatusCode.REJECTED.getCode();
-        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)) {
+        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)
+                   || DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.equals(dwsCode)) {
             action = DocumentWorkflowStatusCode.SUBMITTED.getCode();
         } else {
             action = DocumentWorkflowStatusCode.ACCEPTED.getCode();

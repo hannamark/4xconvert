@@ -599,7 +599,8 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             where.append(" or (sp.userLastCreated <> '").append(
                                     studyProtocolQueryCriteria.getUserLastCreated() + "'");
                             where.append(" and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "',"
-                                    + "'" + DocumentWorkflowStatusCode.SUBMITTED + "')");
+                                    + "'" + DocumentWorkflowStatusCode.SUBMITTED + "'" 
+                                    + "'" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED + "')");
                             // add the subquery to pick the latest record
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                                             + "                where dws.studyProtocol = dws1.studyProtocol )"

@@ -103,6 +103,8 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
 
     /** Submitted. */
     SUBMITTED("Submitted", false),
+    /** Amendment Submitted. */
+    AMENDMENT_SUBMITTED("Amendment Submitted", false),
     /** Accepted. */
     ACCEPTED("Accepted", false),
     /** Rejected. */
@@ -180,6 +182,10 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
         tmpSet.add(ACCEPTED);
         tmpSet.add(REJECTED);
         tmp.put(SUBMITTED, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet.add(ACCEPTED);
+        tmpSet.add(REJECTED);
+        tmp.put(AMENDMENT_SUBMITTED, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
         tmpSet.add(ABSTRACTED);

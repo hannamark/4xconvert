@@ -907,16 +907,16 @@ public class PAServiceUtils {
                     + " if study includes at least one intervention with type \'device\'.");
             }
             if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) { 
-                if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
+                /*if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
                         studyProtocolDTO.getFdaRegulatedIndicator()))) {
                     errMsg.append("FDA Regulated Intervention Indicator must be Yes " 
                       +                       " since it has Trial IND/IDE records.\n");         
-                }
+                }*/
                 Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
                 //doing this just to load the country since its lazy loaded. 
                 Country country = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId);
                 String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
-                if (country.getAlpha3().equals("USA")  
+                if (!country.getAlpha3().equals("USA")  
                     && !regAuthName.equalsIgnoreCase("Food and Drug Administration")) {
                     errMsg.append("For IND protocols, Oversight Authorities "
                           + " must include United States: Food and Drug Administration.\n");

@@ -112,7 +112,21 @@ public class ISDesignDetailsWebDTO {
     private String unit;
     private String textDescription;
     
+    private String displayOrder;
+    
     /**
+     * @return the displayOrder
+     */
+    public String getDisplayOrder() {
+      return displayOrder;
+    }
+    /**
+     * @param displayOrder the displayOrder to set
+     */
+     public void setDisplayOrder(String displayOrder) {
+       this.displayOrder = displayOrder;
+     }
+     /**
      * @return primaryPurposeCode
      */
     public String getPrimaryPurposeCode() {

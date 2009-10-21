@@ -1,4 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+<s:form name="qForm"><s:actionerror/>   
 <li class="stdnav"><div>Protocol Abstraction</div> 
 	<ul>
 		<li><a href="studyProtocolexecute.action" >Trial Search</a></li>
@@ -20,9 +23,11 @@
 					<li><a href="milestone.action" >Trial Milestones</a></li>
                     <li><a href="onhold.action" >On-hold Information</a></li>
                     <li><a href="manageAccrualAccess.action">Manage Accrual Access</a></li>
+                     <li><a href="#" onclick="generateTSRWord();" >View TSR</a></li>
 				</ul>
 			</li>
-			<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+			<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted' 
+			|| sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Amendment Submitted'}">
 			<div>Validation</div>
                 <ul>
                     <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
@@ -43,8 +48,7 @@
 			<c:if test="${docWFSMenu  == 'Accepted'}">
     			<li><div>Administrative Data</div>
     				<ul>
-    				    <li><a href="ajaxAbstractionCompletionviewTSR.action" >View TSR</a></li>
-                        <li><a href="generalTrialDesignquery.action" >General Trial Details</a></li>
+    				    <li><a href="generalTrialDesignquery.action" >General Trial Details</a></li>
     					<li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
                         <li class="hassubmenu">Regulatory Information
                            <ul id="part_sites">
@@ -108,5 +112,13 @@
 		</ul>
 	</li>
 </c:if>
-        
+</s:form>        
+<SCRIPT LANGUAGE="JavaScript">
 
+function generateTSRWord() {
+  document.qForm.target = "TSR";
+   document.qForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSRWord.action";
+   document.qForm.submit();
+
+}
+</SCRIPT>

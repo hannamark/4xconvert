@@ -723,6 +723,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       Boolean incIndicator = null;
       html.append(appendData("Accepts Healthy Volunteers?",
           convertBLToString(spDTO.getAcceptHealthyVolunteersIndicator(), false), true , true));
+    //sorts the list on display order
+      Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
+          public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
+            return (!PAUtil.isIntNull(o1.getDisplayOrder()) && !PAUtil.isIntNull(o2.getDisplayOrder())) 
+                   ? o1.getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
+           }
+       });
       for (PlannedEligibilityCriterionDTO paEC : paECs) {
           criterionName = StConverter.convertToString(paEC.getCriterionName());
           descriptionText  = StConverter.convertToString(paEC.getTextDescription());

@@ -25,7 +25,7 @@ function generateTSR() {
    document.aForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSR.action";
    document.aForm.submit();
    
-   }
+}
 function generateTSRWord() {
   document.aForm.target = "TSR";
    document.aForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSRWord.action";
@@ -63,11 +63,12 @@ function generateTSRWord() {
         <del class="btnwrapper">
             <ul class="btnrow">
                 <s:if test="abstractionError == false">
-                    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">                                    
+                 <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">                                    
                         <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
-                    </c:if>
-                    <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>
-                     <li><a href="#"  class="btn" onclick="generateTSRWord();"><span class="btn_img"><span class="save">View TSR in Word</span></span></a></li>                                
+                    </c:if>                                  
+                    <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
+                   <!-- <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li> -->
+                     <li><a href="#"  class="btn" onclick="generateTSRWord();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>                                
                 </s:if>
             </ul>   
         </del>

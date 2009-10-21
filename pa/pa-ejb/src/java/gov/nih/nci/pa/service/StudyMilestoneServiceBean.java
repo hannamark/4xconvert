@@ -471,28 +471,33 @@ public class StudyMilestoneServiceBean
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
         DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+        StudyProtocolDTO sp = getStudyProtocolService().getStudyProtocol(dto.getStudyProtocolIdentifier());
         
-        if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED)) {
+        if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED) && sp.getSubmissionNumber().getValue().intValue() == 1) {
                   
-                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMITTED , dto);
+           createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMITTED , dto);
+        }
+        if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED) && sp.getSubmissionNumber().getValue().intValue() > 1) {
+            
+            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED , dto);
         }
         if (newCode.equals(MilestoneCode.SUBMISSION_ACCEPTED) 
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.ACCEPTED)) {
                     
-                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ACCEPTED , dto);
+            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ACCEPTED , dto);
         }
         if (newCode.equals(MilestoneCode.SUBMISSION_REJECTED)
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.REJECTED)) {
                     
-                    createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
+            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
         }
         if (newCode.equals(MilestoneCode.QC_COMPLETE)
                      && (dwStatus != null) 
                      && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)
                      && canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTED)) {
                 
-                      createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTED , dto);
-            }
+             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTED , dto);
+        }
         
         if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY) 
                         && (dwStatus != null) 
