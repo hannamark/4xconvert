@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.convert.Converters;
+
 import gov.nih.nci.accrual.convert.PatientConverter;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
@@ -92,15 +93,16 @@ import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
-
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -108,7 +110,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.DataFormatException;
-
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
@@ -153,10 +154,16 @@ public class PatientBean implements PatientService {
      * {@inheritDoc}
      */
     public void enforceBusinessRules(PatientDto dto) throws RemoteException {
-        
-        throw new RemoteException("Business Rule is violated.");
-        
-    }
+       String prc = DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, dto.getRaceCode());
+       final int valid = 12; 
+      if ((prc.contains(PatientRaceCode.NOT_REPORTED.getName())
+         || prc.contains(PatientRaceCode.UNKNOWN.getName())) && prc.length() > valid) {
+         
+         throw new RemoteException("Business Rule is violated. No multiple selection"
+                + " when race code is not reported or unknown");
+         
+       }
+     }
 
     /**
      * {@inheritDoc}
