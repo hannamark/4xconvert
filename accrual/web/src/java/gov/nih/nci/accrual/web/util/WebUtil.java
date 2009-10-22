@@ -84,6 +84,7 @@ import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * @author Hugh Reinhart
@@ -110,5 +111,51 @@ public class WebUtil {
             result = (String) obj;
         }
         return result == null ? "" : result;
+    }
+
+    /**
+     * Null safe implementation of String.contains().
+     * @param value string value
+     * @param criteria string criteria being checked
+     * @return true if criteria is empty or value contains criteria
+     */
+    public static boolean stringContains(String value, String criteria) {
+        if (PAUtil.isEmpty(criteria)) {
+            return true;
+        }
+        if (PAUtil.isEmpty(value)) {
+            return false;
+        }
+        return value.contains(criteria);
+    }
+    /**
+     * Null safe implementation of String.equals().
+     * @param value string value
+     * @param criteria string criteria being checked
+     * @return true if criteria is empty or value equals criteria
+     */
+    public static boolean stringEquals(String value, String criteria) {
+        if (PAUtil.isEmpty(criteria)) {
+            return true;
+        }
+        if (PAUtil.isEmpty(value)) {
+            return false;
+        }
+        return value.equals(criteria);
+    }
+    /**
+     * Null safe implementation of Long.equals().
+     * @param value string value
+     * @param criteria string criteria being checked
+     * @return true if criteria is null or value equals criteria
+     */
+    public static boolean longEquals(Long value, Long criteria) {
+        if (criteria == null) {
+            return true;
+        }
+        if (value == null) {
+            return false;
+        }
+        return value.equals(criteria);
     }
 }

@@ -110,8 +110,13 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
 public class AbstractAccrualActionTest {
     protected static final String TEST_USER = "joe@barngrill.com";
 
-    private class TestAction extends AbstractAccrualAction{
+    private class TestAction extends AbstractListEditAccrualAction<Object>{
         private static final long serialVersionUID = 8637312133341800224L;
+
+        @Override
+        public void loadDisplayList() {
+            // test method
+        }
     };
 
     private final TestAction action = new TestAction();

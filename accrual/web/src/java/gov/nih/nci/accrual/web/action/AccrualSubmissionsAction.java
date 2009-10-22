@@ -73,15 +73,16 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
+
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
-import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
@@ -93,9 +94,8 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
-import java.security.GeneralSecurityException;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -105,7 +105,7 @@ import org.apache.struts2.ServletActionContext;
  * @author Rajani Kumar
  * @since  Aug 31, 2009
  */
-public class AccrualSubmissionsAction extends AbstractAccrualAction {
+public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<SubmissionDto> {
 
     private static final long serialVersionUID = -6859130106987908815L;
 
@@ -114,9 +114,20 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
 
     private SearchTrialResultDto trialSummary = new SearchTrialResultDto();
     private String studyProtocolId = null;
-    private List<SubmissionDto> listOfSubmissions = null;
     private SubmissionDto submission = new SubmissionDto();
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void loadDisplayList() {
+        try {
+            setDisplayTagList(submissionSvc.getByStudyProtocol(getSpIi()));
+        } catch (RemoteException e) {
+            setDisplayTagList(null);
+            addActionError(e.getLocalizedMessage());
+        }
+    }
     /**
      * {@inheritDoc}
      */
@@ -130,12 +141,6 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
                 // put an entry in the session
                 ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
             }
-            SubmissionService service = AccrualServiceLocator.getInstance().getSubmissionService();
-            listOfSubmissions = new ArrayList<SubmissionDto>();
-            listOfSubmissions = service.getByStudyProtocol(getSpIi());
-            ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
-        } catch (GeneralSecurityException e) {
-            return ERROR;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }
@@ -150,22 +155,22 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
     }
 
     /**
-      * @return action result
-      */
+     * @return action result
+     */
     public String viewSubmissionDetails() {
-      try {
-           submission = submissionSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-      } catch (Exception e) {
-             addActionError(e.getLocalizedMessage());
-      }
-      setCurrentAction(AR_VIEW_SUBMISSION_DETAILS);
-      return AR_VIEW_SUBMISSION_DETAILS;
+        try {
+            submission = submissionSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+        }
+        return AR_VIEW_SUBMISSION_DETAILS;
     }
 
     /**
      * @return action result
+     * @throws RemoteException exception
      */
-    public String submit() {
+    public String submit() throws RemoteException {
         try {
             SubmissionDto dto = submissionSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
             dto.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.SUBMITTED));
@@ -173,7 +178,7 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             ivl.setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
             dto.setStatusDateRange(ivl);
             dto.setSubmitUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
-                getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
+                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             submissionSvc.update(dto);
 
             List<StudySubjectDto> subList = studySubjectSvc.getByStudyProtocol(getSpIi());
@@ -190,73 +195,37 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.FALSE);
             ServletActionContext.getRequest().removeAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE);
-            listOfSubmissions = new ArrayList<SubmissionDto>();
-            listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
-            ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
+            return SUCCESS;
         }
-       // return super.execute();
-        return edit();
+        return super.edit();
     }
 
     /**
-     * {@inheritDoc}
+     * @return action result
+     * @throws RemoteException exception
      */
-    public String addNew() {
+    public String addNew() throws RemoteException {
         try {
-            listOfSubmissions = new ArrayList<SubmissionDto>();
-            listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
             submission.setStudyProtocolIdentifier(getSpIi());
             submission.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.OPENED));
             submission.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
-                  new Timestamp(new Date().getTime()), null));
+                    new Timestamp(new Date().getTime()), null));
             submission.setCreateUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
-                  getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
-            listOfSubmissions.add(submissionSvc.create(submission));
+                    getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
+            submissionSvc.create(submission);
             ServletActionContext.getRequest().getSession().
                     setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.TRUE);
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE,
                     TsConverter.convertToTimestamp(submission.getCutOffDate()));
-            ServletActionContext.getRequest().setAttribute("listOfSubmissions", listOfSubmissions);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return AR_NEW_SUBMISSION;
         }
-        setCurrentAction(AR_VIEW_SUBMISSION_DETAILS);
-        //return super.execute();
-        return add();
+        return super.add();
     }
-
-    /**
-      * {@inheritDoc}
-      */
-     @Override
-     public String add() {
-       try {
-               ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
-                 AccrualConstants.CREATE_MESSAGE);
-        } catch (Exception e) {
-             addActionError(e.getLocalizedMessage());
-       }
-        return super.execute();
-     }
-
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public String edit() {
-       try {
-             ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
-                AccrualConstants.UPDATE_MESSAGE);
-        } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-        }
-           return super.execute();
-     }
-
 
     /**
      *
@@ -285,18 +254,6 @@ public class AccrualSubmissionsAction extends AbstractAccrualAction {
      */
     public void setTrialSummary(SearchTrialResultDto trialSummary) {
         this.trialSummary = trialSummary;
-    }
-    /**
-     * @return the listOfSubmissions
-     */
-    public List<SubmissionDto> getListOfSubmissions() {
-        return listOfSubmissions;
-    }
-    /**
-     * @param listOfSubmissions the listOfSubmissions to set
-     */
-    public void setListOfSubmissions(List<SubmissionDto> listOfSubmissions) {
-        this.listOfSubmissions = listOfSubmissions;
     }
     /**
      *

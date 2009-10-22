@@ -77,11 +77,6 @@ function handleAction(){
        </s:form>
        
        <div class="line"></div>
-         <c:if test="${listOfTrials != null}">
-                <jsp:include page="/WEB-INF/jsp/listTrials.jsp">
-                    <jsp:param name="listOfTrials" value="listOfTrials" />
-                </jsp:include>
-         </c:if>
-         
-</body>
+       <jsp:include page="/WEB-INF/jsp/listTrials.jsp"/>
+ </body>
 </html>

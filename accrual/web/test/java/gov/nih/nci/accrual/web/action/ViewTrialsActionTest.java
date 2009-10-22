@@ -76,7 +76,8 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
@@ -108,11 +109,12 @@ public class ViewTrialsActionTest extends AbstractAccrualActionTest {
         action = new ViewTrialsAction();
     	HttpSession session = ServletActionContext.getRequest().getSession();
         session.setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER, AccrualConstants.DISCLAIMER_ACCEPTED);
-        
+
         criteria = new SearchTrialCriteriaDto();
         listOfTrials = new ArrayList<SearchTrialResultDto>();
     }
 
+    @Override
     @Test
     public void executeTest() throws Exception {
         String strDisclaimer = (String) ServletActionContext.getRequest().getSession().
@@ -121,15 +123,10 @@ public class ViewTrialsActionTest extends AbstractAccrualActionTest {
         assertEquals(AccrualConstants.DISCLAIMER_ACCEPTED, strDisclaimer);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
-    
+
     @Test
      public void criteriaPropertyTest() {
         action.setCriteria(criteria);
         assertNotNull(action.getCriteria());
-    }
-    
-    @Test
-    public void listOfTrialsPropertyTest() {
-        assertNull(action.getListOfTrials());
     }
 }

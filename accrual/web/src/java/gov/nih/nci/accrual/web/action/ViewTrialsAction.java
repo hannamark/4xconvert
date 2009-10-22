@@ -78,49 +78,28 @@ package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-
-import java.util.List;
-
-import org.apache.struts2.ServletActionContext;
 
 /**
  * @author Rajani Kumar
  * @since  Aug 13, 2009
  */
 
-public class ViewTrialsAction extends AbstractAccrualAction {
-
+public class ViewTrialsAction extends AbstractListEditAccrualAction<SearchTrialResultDto> {
 
     private static final long serialVersionUID = 7699464509053550016L;
-    private SearchTrialCriteriaDto criteria = new SearchTrialCriteriaDto();
-    private List<SearchTrialResultDto> listOfTrials = null;
 
+    private SearchTrialCriteriaDto criteria = new SearchTrialCriteriaDto();
 
     /**
      * {@inheritDoc}
      */
-
     @Override
-    public String execute() {
+    public void loadDisplayList() {
         try {
-            SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
-            listOfTrials = service.search(criteria, getAuthorizedUser());
-            ServletActionContext.getRequest().setAttribute("listOfTrials", listOfTrials);
+            setDisplayTagList(searchTrialSvc.search(criteria, getAuthorizedUser()));
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            return ERROR;
         }
-        return super.execute();
-    }
-
-    /**
-     *
-     * @return listOfTrials
-     */
-    public List<SearchTrialResultDto> getListOfTrials() {
-        return listOfTrials;
     }
     /**
      *

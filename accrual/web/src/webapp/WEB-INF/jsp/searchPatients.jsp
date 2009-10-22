@@ -125,7 +125,7 @@ function handleDelete(rowId){
    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 
    <display:table class="data" summary="This table contains your Study Subject search results.  Please use column headers to sort results" 
-                  sort="list" pagesize="10" id="row" name="listOfPatients" requestURI="patients.action" export="false"> 
+                  sort="list" pagesize="10" id="row" name="displayTagList" requestURI="patients.action" export="false"> 
        <display:column titleKey="patient.assignedIdentifier"
          sortable="true" headerClass="sortable" headerScope="col">
             <s:a href="#" onclick="handleRetrieve(%{#attr.row.identifier})">

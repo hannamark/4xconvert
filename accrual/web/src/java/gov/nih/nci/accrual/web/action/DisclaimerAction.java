@@ -89,7 +89,7 @@ public class DisclaimerAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 5729242514602833613L;
 
     /**
-     * @return s
+     * {@inheritDoc}
      */
     public String accept() {
         ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER,

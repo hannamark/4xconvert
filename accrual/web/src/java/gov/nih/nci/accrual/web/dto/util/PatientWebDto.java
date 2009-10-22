@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -142,6 +143,33 @@ public class PatientWebDto {
     private String diseasePreferredName;
     private Long diseaseIdentifier;
 
+
+    /**
+     * Perform basic validations.
+     * @param dto dto
+     * @param action action to add for errors
+     */
+    public static void validate(PatientWebDto dto, AbstractAccrualAction action) {
+        action.clearActionErrors();
+        action.addActionErrorIfEmpty(dto, "Error inputing study subject data.");
+        if (!action.hasActionErrors()) {
+            action.addActionErrorIfEmpty(dto.getAssignedIdentifier(), "Study Subject ID is required.");
+            action.addActionErrorIfEmpty(dto.getBirthDate(), "Birth date is required.");
+            action.addActionErrorIfEmpty(dto.getGenderCode(), "Gender is required.");
+            action.addActionErrorIfEmpty(dto.getRaceCode(), "Race is required.");
+            action.addActionErrorIfEmpty(dto.getEthnicCode(), "Ethnicity is required.");
+            action.addActionErrorIfEmpty(dto.getCountryIdentifier(), "Country is required.");
+            action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
+            action.addActionErrorIfEmpty(dto.getStudySiteId(), "Participating site is required.");
+        }
+        if (!action.hasActionErrors() && !PAUtil.isEmpty(dto.getRegistrationDate())) {
+            Timestamp registration = AccrualUtil.yearMonthStringToTimestamp(dto.getRegistrationDate());
+            Timestamp birth = AccrualUtil.yearMonthStringToTimestamp(dto.getBirthDate());
+            if (birth.after(registration)) {
+                action.addActionError("The birth date must be less then or equal to the registration date.");
+            }
+        }
+    }
     /**
      * Default constructor.
      */
@@ -257,7 +285,6 @@ public class PatientWebDto {
         psm.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(getRegistrationDate())));
         return psm;
     }
-
     /**
      * @return the raceCode
      */

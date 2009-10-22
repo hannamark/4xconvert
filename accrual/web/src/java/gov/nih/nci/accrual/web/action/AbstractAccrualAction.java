@@ -115,21 +115,6 @@ import com.opensymphony.xwork2.Preparable;
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
 
-    /** String value for currentAction property when doing a create. */
-    private static final String CA_CREATE = "create";
-    /** String value for currentAction property when doing a create. */
-    private static final String CA_RETRIEVE = "retrieve";
-    /** String value for currentAction property when doing a create. */
-    private static final String CA_UPDATE = "update";
-    /** Action result returned to display the detail page. */
-    private static final String AR_DETAIL = "detail";
-
-    /** Bean to store current action. */
-    private String currentAction;
-    /** Bean to store row id selected from list view. */
-    private String selectedRowIdentifier;
-
-
     /** SearchTrialService. */
     protected SearchTrialService searchTrialSvc;
     /** SearchStudySiteService. */
@@ -189,88 +174,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         return SUCCESS;
     }
     /**
-     * Method called to begin create workflow.
-     * @return action result to display detail page
-     */
-    public String create() {
-        setCurrentAction(CA_CREATE);
-        return AR_DETAIL;
-    }
-    /**
-     * Method called to begin retrieve workflow.
-     * @return action result to display detail page
-     */
-    public String retrieve() {
-        setCurrentAction(CA_RETRIEVE);
-        return AR_DETAIL;
-    }
-    /**
-     * Method called to begin update workflow.
-     * @return action result to display detail page
-     */
-    public String update() {
-        setCurrentAction(CA_UPDATE);
-        return AR_DETAIL;
-    }
-
-    /**
-     * Add a new record to database (needs to be overridden).  Returns to list jsp.
-     * @return result
-     * @throws RemoteException exception
-     */
-    public String add() throws RemoteException {
-        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
-                AccrualConstants.CREATE_MESSAGE);
-        return execute();
-    }
-
-    /**
-     * Update a record in the database (needs to be overridden).  Returns to list jsp.
-     * @return result
-     * @throws RemoteException exception
-     */
-    public String edit() throws RemoteException {
-        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
-                AccrualConstants.UPDATE_MESSAGE);
-        return execute();
-    }
-
-    /**
-     * Delete a record from database (needs to be overridden). Returns to list jsp.
-     * @return action result
-     * @throws RemoteException exception
-     */
-    public String delete() throws RemoteException {
-        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
-                AccrualConstants.DELETE_MESSAGE);
-        return execute();
-    }
-
-    /**
-     * @return the currentAction
-     */
-    public String getCurrentAction() {
-        return currentAction;
-    }
-    /**
-     * @param currentAction the currentAction to set
-     */
-    public void setCurrentAction(String currentAction) {
-        this.currentAction = currentAction;
-    }
-    /**
-     * @return the selectedRowIdentifier
-     */
-    public String getSelectedRowIdentifier() {
-        return selectedRowIdentifier;
-    }
-    /**
-     * @param selectedRowIdentifier the selectedRowIdentifier to set
-     */
-    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
-        this.selectedRowIdentifier = selectedRowIdentifier;
-    }
-    /**
      * @return the role from the session
      */
     protected String getUserRole() {
@@ -328,13 +231,11 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
             }
         }
     }
-
-
     /**
      * @param value object being tested
      * @param errorMsg action error message to put on stack if object is empty
      */
-    protected void addActionErrorIfEmpty(Object value, String errorMsg) {
+    public void addActionErrorIfEmpty(Object value, String errorMsg) {
         if (value instanceof String) {
             if (PAUtil.isEmpty((String) value)) {
                 addActionError(errorMsg);

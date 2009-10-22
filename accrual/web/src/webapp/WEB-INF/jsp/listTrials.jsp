@@ -5,7 +5,7 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <display:table class="data" summary="This table contains your trial search results.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SearchTrialResultDecorator"
-      sort="list" pagesize="10" id="row" name="listOfTrials" requestURI="viewTrials.action" export="false"> 
+      sort="list" pagesize="10" id="row" name="displayTagList" requestURI="viewTrials.action" export="false"> 
    
        <display:column titleKey="accrual.list.trials.protocolNumber" property="assignedIdentifier" sortable="true"
          href="accrualSubmissions.action" paramId="studyProtocolId" 

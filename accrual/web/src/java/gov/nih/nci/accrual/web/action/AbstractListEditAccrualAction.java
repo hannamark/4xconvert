@@ -73,134 +73,156 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
 package gov.nih.nci.accrual.web.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
-import gov.nih.nci.pa.iso.util.IiConverter;
 
-import java.util.ArrayList;
+import java.rmi.RemoteException;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.opensymphony.xwork2.ActionSupport;
-
+import org.apache.struts2.ServletActionContext;
 
 /**
- * @author Rajani Kumar
- * @since  Aug 31, 2009
+ * @author Hugh Reinhart
+ * @since Oct 19, 2009
+ * @param <DTO> class for dto's displayed in list
  */
-public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
+public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrualAction {
+    private static final long serialVersionUID = -8797184349026635679L;
 
-	AccrualSubmissionsAction action;
-    private SearchTrialResultDto trialSummary;
-    private List<SubmissionDto> listOfSubmissions;
-    private SubmissionDto submission;
+    /** String value for currentAction property when doing a create. */
+    private static final String CA_CREATE = "create";
+    /** String value for currentAction property when doing a create. */
+    private static final String CA_RETRIEVE = "retrieve";
+    /** String value for currentAction property when doing a create. */
+    private static final String CA_UPDATE = "update";
+    /** Action result returned to display the detail page. */
+    private static final String AR_DETAIL = "detail";
+    /** Identifier for request bean to hold displaytag list. */
+    private static final String REQUEST_ATTR_DISPLAY_LIST = "displayTagList";
 
-    @Before
-    public void initAction() throws Exception {
-        action = new AccrualSubmissionsAction();
-        action.prepare();
-        action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
-        trialSummary = new SearchTrialResultDto();
-        listOfSubmissions = new ArrayList<SubmissionDto>();
-        submission = new SubmissionDto();
-        }
+    /** Bean to store current action. */
+    private String currentAction;
+    /** Bean to store row id selected from list view. */
+    private String selectedRowIdentifier;
+    /** List to be displayed in displaytag table. */
+    protected List<DTO> displayTagList;
 
+    /**
+     * Set request bean with list to be displayed using displaytag table.
+     */
+    public abstract void loadDisplayList();
+
+    /**
+     * Default execute method for action classes.
+     * @return action result
+     */
     @Override
-    @Test
-    public void executeTest() throws Exception{
-
-       // show list of submissions
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-
+    public String execute() {
+        loadDisplayList();
+        return super.execute();
+    }
+    /**
+     * Method called to begin create workflow.
+     * @return action result to display detail page
+     */
+    public String create() {
+        setCurrentAction(CA_CREATE);
+        return AR_DETAIL;
+    }
+    /**
+     * Method called to begin retrieve workflow.
+     * @return action result to display detail page
+     */
+    public String retrieve() {
+        setCurrentAction(CA_RETRIEVE);
+        return AR_DETAIL;
+    }
+    /**
+     * Method called to begin update workflow.
+     * @return action result to display detail page
+     */
+    public String update() {
+        setCurrentAction(CA_UPDATE);
+        return AR_DETAIL;
     }
 
-    @Test
-    public void displayNewSubmissionTest() {
-        assertEquals(AccrualConstants.AR_NEW_SUBMISSION, action.displayNewSubmission());
-
+    /**
+     * Add a new record to database (needs to be overridden).  Returns to list jsp.
+     * @return result
+     * @throws RemoteException exception
+     */
+    public String add() throws RemoteException {
+        loadDisplayList();
+        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                AccrualConstants.CREATE_MESSAGE);
+        return execute();
     }
 
-    @Test
-    public void viewSubmissionDetailsTest() throws Exception {
-        assertEquals(AccrualConstants.AR_VIEW_SUBMISSION_DETAILS, action.viewSubmissionDetails());
-
+    /**
+     * Update a record in the database (needs to be overridden).  Returns to list jsp.
+     * @return result
+     * @throws RemoteException exception
+     */
+    public String edit() throws RemoteException {
+        loadDisplayList();
+        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                AccrualConstants.UPDATE_MESSAGE);
+        return execute();
     }
 
-    @Test
-    public void submitTest() throws Exception {
-      assertEquals(ActionSupport.SUCCESS, action.submit());
+    /**
+     * Delete a record from database (needs to be overridden). Returns to list jsp.
+     * @return action result
+     * @throws RemoteException exception
+     */
+    public String delete() throws RemoteException {
+        loadDisplayList();
+        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                AccrualConstants.DELETE_MESSAGE);
+        return execute();
     }
 
-    @Test
-    public void addNewTest() throws Exception {
-      assertEquals(ActionSupport.SUCCESS, action.addNew());
+    /**
+     * @return the currentAction
+     */
+    public String getCurrentAction() {
+        return currentAction;
+    }
+    /**
+     * @param currentAction the currentAction to set
+     */
+    public void setCurrentAction(String currentAction) {
+        this.currentAction = currentAction;
+    }
+    /**
+     * @return the selectedRowIdentifier
+     */
+    public String getSelectedRowIdentifier() {
+        return selectedRowIdentifier;
+    }
+    /**
+     * @param selectedRowIdentifier the selectedRowIdentifier to set
+     */
+    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
+        this.selectedRowIdentifier = selectedRowIdentifier;
     }
 
-    @Test
-    public void studyProtocolIdPropertyTest(){
-        assertNull(action.getStudyProtocolId());
-        action.setStudyProtocolId("1L");
-        assertNotNull(action.getStudyProtocolId());
+    /**
+     * @return the displayTaglist
+     */
+    public List<DTO> getDisplayTagList() {
+        return displayTagList;
     }
 
-    @Test
-    public void trialSummaryPropertyTest() {
-    	action.setTrialSummary(trialSummary);
-    	assertNotNull(action.getTrialSummary());
-    }
-
-    @Test
-    public void submissionsPropertyTest() {
-        action.setSubmission(submission);
-        assertNotNull(action.getSubmission());
-    }
-
-    @Test
-    public void submissionLabelPropertyTest() {
-        assertNotNull(action.getSubmissionLabel());
-    }
-
-    @Test
-    public void submissionDescriptionPropertyTest() {
-        assertNotNull(action.getSubmissionDescription());
-    }
-
-    @Test
-    public void submissionCutOffDatePropertyTest() {
-      assertNotNull(action.getSubmissionCutOffDate());
-    }
-
-    @Test
-    public void submissionStatusPropertyTest() {
-      assertNull(action.getSubmissionStatus());
-    }
-
-    @Test
-    public void submissionCreateUserPropertyTest() {
-      assertNotNull(action.getSubmissionCreateUser());
-    }
-
-    @Test
-    public void submissionCreatedDatePropertyTest() {
-      assertNotNull(action.getSubmissionCreatedDate());
-    }
-
-    @Test
-    public void submissionSubmitUserPropertyTest() {
-      assertNotNull(action.getSubmissionSubmitUser());
-    }
-
-    @Test
-    public void submissionSubmittedDatePropertyTest() {
-      assertNotNull(action.getSubmissionSubmittedDate());
+    /**
+     * @param displayTaglist the displayTaglist to set
+     */
+    public void setDisplayTagList(List<DTO> displayTaglist) {
+        this.displayTagList = displayTaglist;
+        ServletActionContext.getRequest().setAttribute(REQUEST_ATTR_DISPLAY_LIST , getDisplayTagList());
     }
 }
