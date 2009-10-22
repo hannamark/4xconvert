@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -102,7 +103,7 @@ public class StudyRegulatoryAuthorityConverterTest {
   public void setUp() throws Exception {
     TestSchema.reset1();
     TestSchema.primeData();
-    sess = TestSchema.getSession();  
+    sess = HibernateUtil.getCurrentSession();
     Country c = CountryTest.createCountryObj();
     TestSchema.addUpdObject(c);
     assertNotNull(c.getId());

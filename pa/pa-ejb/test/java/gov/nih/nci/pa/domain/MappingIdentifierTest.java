@@ -3,6 +3,7 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -29,7 +30,7 @@ public class MappingIdentifierTest {
         
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         MappingIdentifier create = createMappingIdentifierobj(sp);
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         
         TestSchema.addUpdObject(sp);
         assertNotNull(sp);

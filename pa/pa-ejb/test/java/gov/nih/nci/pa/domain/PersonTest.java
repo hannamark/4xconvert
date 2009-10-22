@@ -81,6 +81,7 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -116,7 +117,7 @@ public class PersonTest {
         try {
             Person create = createPersonObj();
             
-            Session session  = TestSchema.getSession();
+            Session session  = HibernateUtil.getCurrentSession();
             Transaction t = session.beginTransaction();
             TestSchema.addUpdObject(create);
             Serializable cid = create.getId();

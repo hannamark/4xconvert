@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -104,7 +105,7 @@ public class StudyOverallStatusConverterTest {
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
-        sess = TestSchema.getSession();
+        sess = HibernateUtil.getCurrentSession();
     }
 
     @Test

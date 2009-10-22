@@ -94,6 +94,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -127,7 +128,7 @@ public class StudyProtocolTest  {
      */
     @Test
     public void createStudyProtocolTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         
         StudyProtocol sp = new StudyProtocol();   
         StudyProtocol create = createStudyProtocolObj(sp);
@@ -149,7 +150,7 @@ public class StudyProtocolTest  {
      */
     @Test
     public void createStudyProtocolWithWFStatusTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
 
         StudyProtocol sp = createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
@@ -173,7 +174,7 @@ public class StudyProtocolTest  {
 
     @Test
     public void createInterventionalStudyProtocolTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
 
         InterventionalStudyProtocol create = new InterventionalStudyProtocol();  
          create = (InterventionalStudyProtocol) createStudyProtocolObj(create);    
@@ -196,7 +197,7 @@ public class StudyProtocolTest  {
 
     @Test
     public void createObservationalStudyProtocolTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
 
         ObservationalStudyProtocol create = new ObservationalStudyProtocol();  
          create = (ObservationalStudyProtocol) createStudyProtocolObj(create);    

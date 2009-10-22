@@ -78,18 +78,21 @@
 */
 package gov.nih.nci.pa.util;
 
-
 import gov.nih.nci.security.AuthorizationManager;
 import gov.nih.nci.security.authorization.domainobjects.Group;
 import gov.nih.nci.security.authorization.instancelevel.InstanceLevelSecurityHelper;
 
+import java.io.Serializable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.ConnectionReleaseMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -104,9 +107,14 @@ import org.hibernate.mapping.Collection;
  * Class to help initialize hibernate in the nci environment.
  * Originally created by caArray team.  Modified for PA.
  */
-public class HibernateHelper {
+public class PAHibernateHelper implements CtrpHibernateHelper {
+    /**
+     * The maximum number of elements that can be in a single in clause. This is due to bug
+     * http://opensource.atlassian.com/projects/hibernate/browse/HHH-2166
+     */
+    public static final int MAX_IN_CLAUSE_LENGTH = 500;
 
-    private static final Logger LOG = Logger.getLogger(HibernateHelper.class);
+    private static final Logger LOG = Logger.getLogger(PAHibernateHelper.class);
 
     private static final Class<?>[] CSM_CLASSES = {gov.nih.nci.security.authorization.domainobjects.Application.class,
         gov.nih.nci.security.authorization.domainobjects.Group.class,
@@ -121,22 +129,21 @@ public class HibernateHelper {
 
     private Configuration configuration;
     private SessionFactory sessionFactory;
-    private Session testSession;
 
     /**
      * Default constructor.
      */
-    public HibernateHelper() {
+    public PAHibernateHelper() {
         this(null, null, null);
     }
 
     /**
      * Constructor to build the hibernate helper.
-     * @param authManager the auth manager, if one is needed, null otherwise.
+     * @param authManager The CSM AuthorizationManager instance for this application, if one is needed, null otherwise.
      * @param namingStrategy the name strategy, if one is needed, null otherwise.
      * @param interceptor the interceptor, if one is needed, null otherwise.
      */
-    public HibernateHelper(AuthorizationManager authManager, NamingStrategy namingStrategy, Interceptor interceptor) {
+    public PAHibernateHelper(AuthorizationManager authManager, NamingStrategy namingStrategy, Interceptor interceptor) {
         try {
             configuration = new AnnotationConfiguration();
             initializeConfig(namingStrategy, interceptor);
@@ -161,9 +168,21 @@ public class HibernateHelper {
             }
             sessionFactory = configuration.buildSessionFactory();
         } catch (HibernateException e) {
+//            LOG.error(e.getMessage(), e);
+//            throw new ExceptionInInitializerError(e);
             LOG.warn("Failed to initialize HibernateHelper using hibernate.cfg.xml.  "
-                     + "This is expected behavior during unit testing.");
-         }
+                    + "This is expected behavior during unit testing.");
+        }
+    }
+
+    /**
+     * Reinitialize the hibernate CSM filters from the database.  The session factory will be rebuilt, so existing
+     * sessions will be closed.
+     * @param authManager The CSM AuthorizationManager instance for this application
+     */
+    public void reinitializeCsmFilters(AuthorizationManager authManager) {
+        InstanceLevelSecurityHelper.addFilters(authManager, configuration);
+        sessionFactory = configuration.buildSessionFactory();
     }
 
     private void initializeConfig(NamingStrategy namingStrategy, Interceptor interceptor) {
@@ -186,13 +205,6 @@ public class HibernateHelper {
     }
 
     /**
-     * @param configuration the configuration to set
-     */
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
-    }
-
-    /**
      * @return the sessionFactory
      */
     public SessionFactory getSessionFactory() {
@@ -200,20 +212,10 @@ public class HibernateHelper {
     }
 
     /**
-     * @param sessionFactory the sessionFactory to set
-     */
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
-    /**
      * Get the session that is bound to the current context.
      * @return the current session
      */
     public Session getCurrentSession() {
-        if (testSession != null) {
-            return testSession;
-        }
         return getSessionFactory().getCurrentSession();
     }
 
@@ -263,13 +265,44 @@ public class HibernateHelper {
      */
     public void unbindAndCleanupSession() {
         org.hibernate.classic.Session currentSession = ManagedSessionContext.unbind(getSessionFactory());
-        currentSession.close();
+        if (currentSession != null) {
+            currentSession.close();
+        }
     }
 
     /**
-     * Open an HQLDB session for use during unit testing.
+     * Break up a list of items into separate in clauses, to avoid limits imposed by databases or by Hibernate bug
+     * http://opensource.atlassian.com/projects/hibernate/browse/HHH-2166.
+     * @param items list of items to include in the in clause
+     * @param columnName name of column to match against the list
+     * @param blocks empty Map of HQL param name to param list of values to be set in the HQL query - it will be
+     *               populated by the method
+     * @return full HQL "in" clause, of the form: " columnName in (:block1) or ... or columnName in (:blockN)"
      */
-    public void openTestSession() {
-        this.testSession = this.sessionFactory.openSession();
+    public static String buildInClause(List<? extends Serializable> items, String columnName,
+            Map<String, List<? extends Serializable>> blocks) {
+        StringBuffer inClause = new StringBuffer();
+        for (int i = 0; i < items.size(); i += MAX_IN_CLAUSE_LENGTH) {
+            List<? extends Serializable> block = items.subList(i, Math.min(items.size(), i + MAX_IN_CLAUSE_LENGTH));
+            String paramName = "block" + (i / MAX_IN_CLAUSE_LENGTH);
+            if (inClause.length() > 0) {
+                inClause.append(" or");
+            }
+            inClause.append(" " + columnName + " in (:" + paramName + ")");
+            blocks.put(paramName, block);
+        }
+        return inClause.toString();
     }
+
+    /**
+     * Bind the parameters returned by {@link #buildInClause(List, String, Map)} to a hibernate Query.
+     * @param query hibernate query to bind to
+     * @param blocks blocks to be bound to query
+     */
+    public static void bindInClauseParameters(Query query, Map<String, List<? extends Serializable>> blocks) {
+        for (Map.Entry<String, List<? extends Serializable>> block : blocks.entrySet()) {
+            query.setParameterList(block.getKey(), block.getValue());
+        }
+    }
+
 }

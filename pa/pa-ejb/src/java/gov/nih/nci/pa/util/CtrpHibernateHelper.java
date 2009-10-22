@@ -76,66 +76,42 @@
 *
 *
 */
-package gov.nih.nci.pa.iso.convert;
-
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.pa.domain.StudyObjective;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
-import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.TestSchema;
+package gov.nih.nci.pa.util;
 
 import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 /**
- * @author hreinhart
+ * @author Hugh Reinhart
+ * @since 08/06/2009
  *
  */
-public class StudyObjectiveConverterTest {
-    private Session sess;
+public interface CtrpHibernateHelper {
 
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset1();
-        TestSchema.primeData();
-        sess = HibernateUtil.getCurrentSession();
-    }
+    /**
+     * @return the sessionFactory
+     */
+    SessionFactory getSessionFactory();
 
-    @Test
-    public void convertFromDomainToDTO() throws Exception {
-        StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
-        StudyObjective bo = new StudyObjective();
-        bo.setId(123L);
-        bo.setStudyObjectiveTypeCode(StudyObjectiveTypeCode.PRIMARY);
-        bo.setDescription("Primary objective");
-        bo.setStudyProtocol(sp);
+    /**
+     * Get the session that is bound to the current context.
+     * @return the current session
+     */
+    Session getCurrentSession();
 
-        StudyObjectiveDTO dto = Converters.get(StudyObjectiveConverter.class).convertFromDomainToDto(bo);
-        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(bo.getStudyObjectiveTypeCode().getCode(), dto.getTypeCode().getCode());
-        assertEquals(bo.getDescription(), StConverter.convertToString(dto.getDescription()));
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-    }
+    /**
+     * @return the configuration
+     */
+    Configuration getConfiguration();
 
-    @Test
-    public void convertFromDTOToDomain() throws Exception {
-        StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
-        StudyObjectiveDTO dto = new StudyObjectiveDTO();
-        dto.setIdentifier(IiConverter.convertToIi((Long) null));
-        dto.setTypeCode(CdConverter.convertToCd(StudyObjectiveTypeCode.PRIMARY));
-        dto.setDescription(StConverter.convertToSt("Primary Objective"));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
+    /**
+     * Open a hibernate session and bind it as the current session.
+     */
+    void openAndBindSession();
 
-        StudyObjective bo = Converters.get(StudyObjectiveConverter.class).convertFromDtoToDomain(dto);
-        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(bo.getStudyObjectiveTypeCode().getCode(), dto.getTypeCode().getCode());
-        assertEquals(bo.getDescription(), StConverter.convertToString(dto.getDescription()));
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-    }
+    /**
+     * Close the current session and unbind it.
+     */
+    void unbindAndCleanupSession();
 }

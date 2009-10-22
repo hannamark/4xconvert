@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -99,7 +100,7 @@ private Session sess;
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
-        sess = TestSchema.getSession();
+        sess = HibernateUtil.getCurrentSession();
     }
 
     @Test

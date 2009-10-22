@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -103,7 +104,7 @@ public class StudyProtocolConverterTest  {
      */
     @Before
     public void setUp() throws Exception {
-        //TestSchema.reset();
+        TestSchema.reset();
                
     }    
 
@@ -112,7 +113,7 @@ public class StudyProtocolConverterTest  {
      */
     @Test
     public void convertFromDomainToDTOTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
 
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
         session.save(sp);
@@ -126,7 +127,7 @@ public class StudyProtocolConverterTest  {
 
     @Test
     public void convertFromDomainToDTOTest1() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
 
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
         session.save(sp);
@@ -143,7 +144,7 @@ public class StudyProtocolConverterTest  {
      */
     @Test    
     public void convertFromDtoToDomainTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
         //TestSchema.addUpdObject(create);
         session.save(create);
@@ -157,7 +158,7 @@ public class StudyProtocolConverterTest  {
 
     @Test    
     public void convertFromDtoToDomainTest1() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
         //TestSchema.addUpdObject(create);
         session.save(create);

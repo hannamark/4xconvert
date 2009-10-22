@@ -90,59 +90,36 @@ import gov.nih.nci.pa.domain.DiseaseParentTest;
 import gov.nih.nci.pa.domain.DiseaseTest;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareFacilityTest;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.HealthCareProviderTest;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
-import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.MappingIdentifier;
-import gov.nih.nci.pa.domain.NIHinstitute;
-import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
-import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OversightCommittee;
-import gov.nih.nci.pa.domain.PAProperties;
-import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.domain.PerformedActivity;
-import gov.nih.nci.pa.domain.PerformedAdministrativeActivity;
-import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyCoordinatingCenter;
-import gov.nih.nci.pa.domain.StudyCoordinatingCenterRole;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyDiseaseTest;
-import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyMilestoneTest;
-import gov.nih.nci.pa.domain.StudyObjective;
-import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
-import gov.nih.nci.pa.domain.StudyRelationship;
-import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
-import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -177,8 +154,7 @@ import java.util.Date;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
+
 /**
  *
  * @author Hugh
@@ -201,103 +177,28 @@ public class TestSchema {
         public static ArrayList<Long> outcomeIds;
         public static ArrayList<Long> regAuthIds;
         public static ArrayList<Long> personIds;
-
-        static {
-            Configuration config = new AnnotationConfiguration().
-
-            addAnnotatedClass(StudyProtocol.class).
-            addAnnotatedClass(StudyRelationship.class).
-            addAnnotatedClass(InterventionalStudyProtocol.class).
-            addAnnotatedClass(Organization.class).
-            addAnnotatedClass(StudyCoordinatingCenter.class).
-            addAnnotatedClass(StudyCoordinatingCenterRole.class).
-            addAnnotatedClass(StudyOverallStatus.class).
-            addAnnotatedClass(DocumentWorkflowStatus.class).
-            addAnnotatedClass(Person.class).
-            addAnnotatedClass(HealthCareProvider.class).
-            addAnnotatedClass(StudyContact.class).
-            addAnnotatedClass(StudySite.class).
-            addAnnotatedClass(Country.class).
-            addAnnotatedClass(RegulatoryAuthority.class).
-            addAnnotatedClass(StudyRegulatoryAuthority.class).
-            addAnnotatedClass(HealthCareFacility.class).
-            addAnnotatedClass(StudyResourcing.class).
-            addAnnotatedClass(FundingMechanism.class).
-            addAnnotatedClass(StudySiteAccrualStatus.class).
-            addAnnotatedClass(StudySiteContact.class).
-            addAnnotatedClass(OversightCommittee.class).
-            addAnnotatedClass(Document.class).
-            addAnnotatedClass(StudyRecruitmentStatus.class).
-            addAnnotatedClass(StratumGroup.class).
-            addAnnotatedClass(ResearchOrganization.class).
-            addAnnotatedClass(PlannedActivity.class).
-            addAnnotatedClass(PlannedEligibilityCriterion.class).
-            addAnnotatedClass(Intervention.class).
-            addAnnotatedClass(InterventionAlternateName.class).
-            addAnnotatedClass(ObservationalStudyProtocol.class).
-            addAnnotatedClass(StudyOutcomeMeasure.class).
-            addAnnotatedClass(StudyIndlde.class).
-            addAnnotatedClass(Arm.class).
-            addAnnotatedClass(ClinicalResearchStaff.class).
-            addAnnotatedClass(OrganizationalContact.class).
-            addAnnotatedClass(Disease.class).
-            addAnnotatedClass(DiseaseAltername.class).
-            addAnnotatedClass(DiseaseParent.class).
-            addAnnotatedClass(StudyDisease.class).
-            addAnnotatedClass(StudyMilestone.class).
-            addAnnotatedClass(StudyOnhold.class).
-            addAnnotatedClass(NIHinstitute.class).
-            addAnnotatedClass(PAProperties.class).
-            addAnnotatedClass(RegistryUser.class).
-            addAnnotatedClass(StudyRelationship.class).
-            addAnnotatedClass(StudyObjective.class).
-            addAnnotatedClass(MappingIdentifier.class).
-            addAnnotatedClass(StudySiteAccrualAccess.class).
-            addAnnotatedClass(StudyInbox.class).
-            addAnnotatedClass(StudyCheckout.class).
-           
-            // Accrual classes
-            addAnnotatedClass(Patient.class).
-            addAnnotatedClass(PerformedActivity.class).
-            addAnnotatedClass(PerformedAdministrativeActivity.class).
-            addAnnotatedClass(PerformedSubjectMilestone.class).
-            addAnnotatedClass(StudySubject.class).
-            addAnnotatedClass(Submission.class).
-
-            setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
-            setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
-            setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:ctods").
-            setProperty("hibernate.connection.username", "sa").
-            setProperty("hibernate.connection.password", "").
-            setProperty("hibernate.connection.pool_size", "1").
-            setProperty("hibernate.connection.autocommit", "true").
-            setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
-            setProperty("hibernate.hbm2ddl.auto", "create-drop").
-            setProperty("hibernate.show_sql", TestProperties.getShowSQL()); // set using test.schema.showsql in build.properties
-            HibernateUtil.getHibernateHelper().setConfiguration(config);
-            HibernateUtil.getHibernateHelper().setSessionFactory(config.buildSessionFactory());
-        }
-
-        /**
-         *
-         * @return Session
-         */
-        public static Session getSession() {
-            return HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
-        }
+        
+        private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
+        
         /**
          *
          */
         public static void reset() {
-            HibernateUtil.getHibernateHelper().openTestSession();
+//            HibernateUtil.getHibernateHelper().openTestSession();
+        	HibernateUtil.testHelper = testHelper;   
+        	HibernateUtil.getCurrentSession().clear();
+        	
         }
 
         /**
          *
          */
         public static void reset1() {
-            // clean up HQLDB schema
-            Session session = HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
+            // clean up HQLDB schema            
+//            Session session = HibernateUtil.getHibernateHelper().getSessionFactory().openSession();
+            HibernateUtil.testHelper = testHelper;
+            Session session = HibernateUtil.getCurrentSession();
+            session.clear();
             try {
                 Connection connection = session.connection();
                 try {
@@ -357,11 +258,12 @@ public class TestSchema {
             } catch (SQLException e) {
                 //throw new RuntimeException(e);
             } finally {
-                session.close();
+//                session.close();
+            	session.clear();
             }
 
             // start session
-            HibernateUtil.getHibernateHelper().openTestSession();
+//            HibernateUtil.getHibernateHelper().openTestSession();
         }
 
         /**

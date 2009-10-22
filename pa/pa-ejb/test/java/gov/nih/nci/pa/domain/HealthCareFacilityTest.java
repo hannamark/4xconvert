@@ -81,6 +81,7 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -112,7 +113,7 @@ public class HealthCareFacilityTest {
      */
     @Test
     public void createHealthCareFacilityTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         try {
         Transaction t = session.beginTransaction();    
         Organization o = OrganizationTest.createOrganizationObj();

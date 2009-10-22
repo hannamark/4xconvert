@@ -83,6 +83,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.Serializable;
 
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -106,7 +107,7 @@ public class StratumGroupTest {
 
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         StratumGroup create = createStratumGroupobj(sp);
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         
         TestSchema.addUpdObject(sp);
         assertNotNull(sp);

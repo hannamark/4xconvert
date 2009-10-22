@@ -83,6 +83,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -120,7 +121,7 @@ public class StudySubjectTest {
         Serializable id = ss.getId();
         ss.setPaymentMethodCode(PaymentMethodCode.MEDICAID_AND_MEDICARE);
         TestSchema.addUpdObject(ss);
-        StudySubject result = (StudySubject) TestSchema.getSession().load(StudySubject.class, id);
+        StudySubject result = (StudySubject) HibernateUtil.getCurrentSession().load(StudySubject.class, id);
         assertEquals(PaymentMethodCode.MEDICAID_AND_MEDICARE, result.getPaymentMethodCode());
     }
 
@@ -131,9 +132,9 @@ public class StudySubjectTest {
         TestSchema.addUpdObject(p);
         Serializable id = p.getId();
         assertNotNull(p.getId());
-        TestSchema.getSession().clear();
+        HibernateUtil.getCurrentSession().clear();
 
-        StudyProtocol sp = (StudyProtocol) TestSchema.getSession().load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        StudyProtocol sp = (StudyProtocol) HibernateUtil.getCurrentSession().load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
         List<StudySubject> sss = sp.getStudySubjects();
         boolean bFound = false;
         for (StudySubject ss : sss) {

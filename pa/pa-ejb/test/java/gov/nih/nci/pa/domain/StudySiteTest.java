@@ -82,6 +82,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -109,7 +110,7 @@ public class StudySiteTest  {
 
     @Test
     public void createStudySite() {
-        Session session = TestSchema.getSession();
+        Session session = HibernateUtil.getCurrentSession();
 
         Organization o  = OrganizationTest.createOrganizationObj();
         TestSchema.addUpdObject(o);
@@ -139,7 +140,7 @@ public class StudySiteTest  {
     @SuppressWarnings("unchecked")
     @Test
     public void getOrganizationAssociatedWithProtcol() {
-        Session session = TestSchema.getSession();
+        Session session = HibernateUtil.getCurrentSession();
         Organization o  = OrganizationTest.createOrganizationObj();
         TestSchema.addUpdObject(o);
         assertNotNull(o.getId());

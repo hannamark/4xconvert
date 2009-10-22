@@ -83,6 +83,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -118,7 +119,7 @@ public class SubmissionTest {
         Serializable id = ss.getId();
         ss.setLabel("new label");
         TestSchema.addUpdObject(ss);
-        Submission result = (Submission) TestSchema.getSession().load(Submission.class, id);
+        Submission result = (Submission) HibernateUtil.getCurrentSession().load(Submission.class, id);
         assertEquals("new label", result.getLabel());
     }
 
@@ -128,9 +129,9 @@ public class SubmissionTest {
         TestSchema.addUpdObject(p);
         Serializable id = p.getId();
         assertNotNull(p.getId());
-        TestSchema.getSession().clear();
+        HibernateUtil.getCurrentSession().clear();
 
-        StudyProtocol sp = (StudyProtocol) TestSchema.getSession().load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        StudyProtocol sp = (StudyProtocol) HibernateUtil.getCurrentSession().load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
         List<Submission> sss = sp.getSubmissions();
         boolean bFound = false;
         for (Submission ss : sss) {

@@ -85,6 +85,7 @@ import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -110,7 +111,7 @@ public class StudyIndldeTest {
 
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         StudyIndlde create = createStudyIndldeobj(sp);
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         
         TestSchema.addUpdObject(sp);
         assertNotNull(sp);

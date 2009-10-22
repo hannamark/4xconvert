@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -100,7 +101,7 @@ public class PAPropertiesTest {
 
     @Test
     public void paPropertiesTest() throws Exception {
-        Session session = TestSchema.getSession();
+        Session session = HibernateUtil.getCurrentSession();
         PAProperties prop = createPAPropertiesObj();
         TestSchema.addUpdObject(prop);
         assertNotNull(prop.getIdentifier());

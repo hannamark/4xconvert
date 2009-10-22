@@ -82,6 +82,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public class StudyResourcingTest {
         StudyResourcing create = createStudyResourcingObj(sp);
         TestSchema.addUpdObject(create);
         assertNotNull(create.getId());
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         StudyResourcing saved = (StudyResourcing) session.load(StudyResourcing.class, create.getId());
 
         assertEquals("DateLastUpdated does not match " , create.getDateLastUpdated(), saved.getDateLastUpdated());
@@ -133,7 +134,7 @@ public class StudyResourcingTest {
      */
     @Test
     public void summary4Funding(){
-        Session session = TestSchema.getSession();
+        Session session = HibernateUtil.getCurrentSession();
         StudyResourcing studyResourcing = null;
         List<StudyResourcing> queryList = new ArrayList<StudyResourcing>();
         try {

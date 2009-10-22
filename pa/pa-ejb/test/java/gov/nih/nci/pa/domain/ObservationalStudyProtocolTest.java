@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -110,7 +111,7 @@ public class ObservationalStudyProtocolTest {
     @Test
     public void createObservationalStudyProtocolTest() {
         ObservationalStudyProtocol create = createObservationalStudyProtocolObj();
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         Serializable cid = session.save(create);
         assertNotNull(cid);
         ObservationalStudyProtocol saved = (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class, cid);

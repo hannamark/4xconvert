@@ -102,6 +102,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -270,7 +271,7 @@ public class StudyProtocolServiceBeanTest {
         spd.setId(IiConverter.convertToLong(ii));
         StudyRelationship srd = StudyRelationshipTest.createStudyRelationshipObj(spd);
         srd.setTargetStudyProtocol(targetD);
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         session.save(srd);
         
         remoteEjb.deleteStudyProtocol(ii);

@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -105,7 +106,7 @@ public class StudyDiseaseTest {
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
-        sess = TestSchema.getSession();
+        sess = HibernateUtil.getCurrentSession();
         sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
     }
 

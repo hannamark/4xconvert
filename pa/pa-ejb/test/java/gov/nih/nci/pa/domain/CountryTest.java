@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -104,7 +105,7 @@ public class CountryTest {
      */
     @Test
     public void createCountryTest() {
-        Session session = TestSchema.getSession();
+        Session session = HibernateUtil.getCurrentSession();
         Country create = createCountryObj();
         TestSchema.addUpdObject(create);
         assertNotNull(create.getId());

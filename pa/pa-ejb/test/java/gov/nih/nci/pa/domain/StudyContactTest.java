@@ -82,6 +82,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -112,7 +113,7 @@ public class StudyContactTest   {
      */
     @Test
     public void createStudyContactTest() {
-        Session session = TestSchema.getSession();
+        Session session = HibernateUtil.getCurrentSession();
         Person p = PersonTest.createPersonObj();
         TestSchema.addUpdObject(p);
         Person savedP = (Person) session.load(Person.class, p.getId());
@@ -168,7 +169,7 @@ public class StudyContactTest   {
     
     @Test
     public void getPersonsAssociatedWithProtcol() {
-        Session session = TestSchema.getSession();
+        Session session = HibernateUtil.getCurrentSession();
         
         Person p = PersonTest.createPersonObj();
         TestSchema.addUpdObject(p);

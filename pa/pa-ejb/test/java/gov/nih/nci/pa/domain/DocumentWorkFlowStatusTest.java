@@ -81,6 +81,7 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -115,7 +116,7 @@ public class DocumentWorkFlowStatusTest {
         
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         Serializable spid = sp.getId();
         StudyProtocol spSaved = (StudyProtocol) session.load(StudyProtocol.class, spid);
         assertNotNull(spid);

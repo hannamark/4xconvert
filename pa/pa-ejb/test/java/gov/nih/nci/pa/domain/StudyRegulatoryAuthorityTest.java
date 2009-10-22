@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.domain;
 
 import static org.junit.Assert.*;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -109,7 +110,7 @@ public class StudyRegulatoryAuthorityTest  {
      */
     @Test
     public void createRegulatoryAuthority() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());

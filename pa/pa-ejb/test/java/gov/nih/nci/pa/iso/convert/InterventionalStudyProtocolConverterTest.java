@@ -87,6 +87,7 @@ import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -110,7 +111,7 @@ public class InterventionalStudyProtocolConverterTest   {
      */
     @Test
     public void convertFromDomainToDTOTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol) 
             StudyProtocolTest.createStudyProtocolObj(new InterventionalStudyProtocol());
         isp.setAllocationCode(AllocationCode.NON_RANDOMIZED_TRIAL);
@@ -134,7 +135,7 @@ public class InterventionalStudyProtocolConverterTest   {
      */
     @Test
     public void convertFromDTOToDomainTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
 
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol) 
             StudyProtocolTest.createStudyProtocolObj(new InterventionalStudyProtocol());

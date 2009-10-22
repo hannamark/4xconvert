@@ -82,6 +82,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -100,10 +101,10 @@ public class StudyMilestoneTest {
     Session sess;
     
     @Before
-    public void setUp() throws Exception {
-        sess = TestSchema.getSession();
+    public void setUp() throws Exception {        
         TestSchema.reset1();
         TestSchema.primeData();
+        sess = HibernateUtil.getCurrentSession();
     }
     public static StudyMilestone createStudyMilestoneObj(String comment, StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();

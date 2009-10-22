@@ -105,7 +105,7 @@ public class ClinicalResearchStaffTest   {
     @Test
     public void createClinicalResearchStaffTest() {
         
-        Session session  = TestSchema.getSession();
+        //Session session  = TestSchema.getSession();
         Organization o = OrganizationTest.createOrganizationObj();
         //session.save(o);
         TestSchema.addUpdObject(o);

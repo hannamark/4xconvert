@@ -85,6 +85,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
@@ -105,9 +106,9 @@ public class PlannedActivityTest {
     
     @Before
     public void setUp() throws Exception {
-        sess = TestSchema.getSession();
         TestSchema.reset1();
         TestSchema.primeData();
+        sess = HibernateUtil.getCurrentSession();
     }
     @Test
     public void getTest() {

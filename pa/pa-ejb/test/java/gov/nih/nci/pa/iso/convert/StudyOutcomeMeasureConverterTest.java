@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -99,7 +100,7 @@ public class StudyOutcomeMeasureConverterTest {
     public void setUp() throws Exception {
         TestSchema.reset1();
         TestSchema.primeData();
-        sess = TestSchema.getSession();
+        sess = HibernateUtil.getCurrentSession();
     }
 
     @Test

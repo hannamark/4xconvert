@@ -87,6 +87,7 @@ import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -110,7 +111,7 @@ public class ObservationalStudyProtocolConverterTest   {
      */
     @Test
     public void convertFromDomainToDTOTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
 
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol) 
             StudyProtocolTest.createStudyProtocolObj(new ObservationalStudyProtocol());
@@ -138,7 +139,7 @@ public class ObservationalStudyProtocolConverterTest   {
      */
     @Test
     public void convertFromDTOToDomainTest() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
 
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol) 
             StudyProtocolTest.createStudyProtocolObj(new ObservationalStudyProtocol());

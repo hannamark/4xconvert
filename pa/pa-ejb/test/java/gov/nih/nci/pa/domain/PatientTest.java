@@ -81,6 +81,7 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -116,7 +117,7 @@ public class PatientTest {
         Serializable id = p.getId();
         p.setIdentifier("new id");
         TestSchema.addUpdObject(p);
-        Patient result = (Patient) TestSchema.getSession().load(Patient.class, id);
+        Patient result = (Patient) HibernateUtil.getCurrentSession().load(Patient.class, id);
         assertEquals("new id", result.getIdentifier());
     }
 

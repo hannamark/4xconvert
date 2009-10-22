@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -109,7 +110,7 @@ public class InterventionalStudyProtocolTest {
     @Test
     public void createInterventionalStudyProtocolTest() {
         InterventionalStudyProtocol create = createInterventionalStudyProtocolObj();
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         Serializable cid = session.save(create);
         assertNotNull(cid);
         InterventionalStudyProtocol saved = (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class, cid);

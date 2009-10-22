@@ -81,6 +81,7 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.ResponsibilityCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -112,7 +113,7 @@ public class StudyCoordinatingCenterRoleTest  {
      */
     @Test
     public void createStudyCoordinatingCenterRole() {
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);

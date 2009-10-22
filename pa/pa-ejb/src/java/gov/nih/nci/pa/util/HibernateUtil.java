@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.util;
 
-
 import org.hibernate.Session;
 
 /**
@@ -86,14 +85,19 @@ import org.hibernate.Session;
  * caArray team.  Modified for the PA project.
  */
 public class HibernateUtil {
-    private static final HibernateHelper HIBERNATE_HELPER = new HibernateHelper();
+    private static final CtrpHibernateHelper HIBERNATE_HELPER = new PAHibernateHelper();
+    static CtrpHibernateHelper testHelper = null;
 
     /**
      * Get the hibernate helper.
      * @return the helper.
      */
-    public static HibernateHelper getHibernateHelper() {
-        return HIBERNATE_HELPER;
+    public static CtrpHibernateHelper getHibernateHelper() {
+        if (testHelper != null) {
+            return testHelper;
+        } else {
+            return HIBERNATE_HELPER;
+        }
     }
 
     /**

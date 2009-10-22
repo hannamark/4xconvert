@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -104,7 +105,7 @@ public class RegulatoryAuthorityServiceBeanTest {
   public void setUp() throws Exception {
     TestSchema.reset1();
     TestSchema.primeData();
-    sess = TestSchema.getSession();
+    sess = HibernateUtil.getCurrentSession();
     reg = (RegulatoryAuthority) sess.get(RegulatoryAuthority.class, TestSchema.regAuthIds.get(0));
     c = CountryTest.createCountryObj();
     TestSchema.addUpdObject(c);

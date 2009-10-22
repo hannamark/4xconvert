@@ -14,6 +14,7 @@ import gov.nih.nci.pa.service.StudyContactServiceBean;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceBean;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
@@ -51,7 +52,7 @@ public class PersonSynchronizationServiceBeanTest {
         Ii roIi = IiConverter.convertToPoPersonIi("abc");
         remoteEjb.synchronizePerson(roIi);
         Person np = null;
-        np = (Person) TestSchema.getSession().load(Person.class, personId);
+        np = (Person) HibernateUtil.getCurrentSession().load(Person.class, personId);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
     }    
@@ -122,7 +123,7 @@ public class PersonSynchronizationServiceBeanTest {
         assertNotNull(p.getId());
         personId = p.getId();
         Person np = null;
-        np = (Person) TestSchema.getSession().load(Person.class, personId);
+        np = (Person) HibernateUtil.getCurrentSession().load(Person.class, personId);
 //        System.out.println("id = "+personId);
 //        System.out.println("id = "+np.getId());
 //        System.out.println("name id = "+np.getFirstMiddleLastName());

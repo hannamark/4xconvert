@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -213,7 +214,7 @@ public class StudyMilestoneServiceTest {
         ohDto.setStudyProtocolIdentifier(spIi);
         ohs.create(ohDto);
         DocumentWorkflowStatus dwf = new DocumentWorkflowStatus();
-        dwf.setStudyProtocol((StudyProtocol) TestSchema.getSession().get(StudyProtocol.class, IiConverter.convertToLong(spIi)));
+        dwf.setStudyProtocol((StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, IiConverter.convertToLong(spIi)));
         dwf.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         dwf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         TestSchema.addUpdObject(dwf);

@@ -98,7 +98,6 @@ public class RegulatoryAuthorityConverterTest {
   public void setUp() throws Exception {
     TestSchema.reset1();
     TestSchema.primeData();
-    TestSchema.getSession();  
     c = CountryTest.createCountryObj();
     TestSchema.addUpdObject(c);
     assertNotNull(c.getId());

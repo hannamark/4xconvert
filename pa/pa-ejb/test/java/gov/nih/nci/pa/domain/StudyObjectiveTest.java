@@ -81,6 +81,7 @@ package gov.nih.nci.pa.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.enums.StudyObjectiveTypeCode;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.Serializable;
@@ -114,7 +115,7 @@ public class StudyObjectiveTest  {
         
         StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
         StudyObjective create = createStudyObjectiveobj(sp);
-        Session session  = TestSchema.getSession();
+        Session session  = HibernateUtil.getCurrentSession();
         
         TestSchema.addUpdObject(sp);
         assertNotNull(sp);
