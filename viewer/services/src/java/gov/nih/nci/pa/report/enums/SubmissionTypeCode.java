@@ -124,8 +124,7 @@ public enum SubmissionTypeCode implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
-    public String getNameByCode(String str)
-    {
+    public String getNameByCode(String str) {
         return getByCode(str).name();
     }
 }
