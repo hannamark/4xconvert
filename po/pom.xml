@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa.po</groupId>
     <artifactId>po</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>po</name>
     <inceptionYear>2008</inceptionYear>
