@@ -181,7 +181,14 @@
           	<td colspan="2" class="space">&nbsp;</td>
           </tr>           
           <tr>
+            <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+                || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
           	<th colspan="2"><fmt:message key="view.trial.leadOrgInvestigator"/></th>
+          	</c:if>
+          	<c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null 
+                && requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
+            <th colspan="2"><fmt:message key="view.trial.leadOrganization"/></th>
+            </c:if>
           </tr>
           <tr>     
         	<td scope="row" class="label">
@@ -193,6 +200,8 @@
            		<c:out value="${requestScope.studyProtocolIi.leadOrganizationName }"/>
              </td>
        </tr> 
+      <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+        || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
        <tr>     
       		<td scope="row" class="label">
       			<label for="Principal Investigator">
@@ -203,6 +212,7 @@
          		<c:out value="${requestScope.studyProtocolIi.piFullName }"/>
          		</td>
        </tr>
+       </c:if>
        <tr>
             <td colspan="2" class="space">&nbsp;</td>
        </tr> 
@@ -307,6 +317,8 @@
               <td colspan="2" class="space">&nbsp;</td>
           </tr>
         </c:if>        
+        <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null 
+        || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
       <tr>
           <th colspan="2"><fmt:message key="view.trial.statusDates"/></th>
       </tr>
@@ -364,6 +376,7 @@
              <c:out value="${requestScope.trialSummary.primaryCompletionDateTypeCode.code }"/>
         </td>
       </tr> 
+      </c:if>
      </table>
      <c:if test="${requestScope.studyIndIde != null}">
      	<div class="box">     								

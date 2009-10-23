@@ -502,7 +502,7 @@ public class TrialUtil {
             return null;
         }
         OrganizationDTO isoDto = new OrganizationDTO();
-        isoDto.setIdentifier(IiConverter.convertToIi(trialDTO.getSummaryFourOrgIdentifier()));
+        isoDto.setIdentifier(IiConverter.convertToPoOrganizationIi(trialDTO.getSummaryFourOrgIdentifier()));
         return isoDto;
     }
     
@@ -516,7 +516,7 @@ public class TrialUtil {
         if (trialDTO != null && isoDto != null && trialDTO.getSummaryFourOrgIdentifier() != null 
                 && !trialDTO.getSummaryFourOrgIdentifier().equals("")) {
            
-        isoDto.setIdentifier(IiConverter.convertToIi(trialDTO.getSummaryFourOrgIdentifier()));
+        isoDto.setIdentifier(IiConverter.convertToPoOrganizationIi(trialDTO.getSummaryFourOrgIdentifier()));
         } 
        
     }
@@ -530,7 +530,7 @@ public class TrialUtil {
      */
     public OrganizationDTO convertToLeadOrgDTO(TrialDTO trialDTO) {
         OrganizationDTO isoDto = new OrganizationDTO();
-        isoDto.setIdentifier(IiConverter.convertToIi(trialDTO.getLeadOrganizationIdentifier()));
+        isoDto.setIdentifier(IiConverter.convertToPoOrganizationIi(trialDTO.getLeadOrganizationIdentifier()));
         return isoDto;
     }
     
@@ -543,7 +543,7 @@ public class TrialUtil {
      */
     public OrganizationDTO convertToSponsorOrgDTO(TrialDTO trialDTO) {
         OrganizationDTO isoDto = new OrganizationDTO();
-        isoDto.setIdentifier(IiConverter.convertToIi(trialDTO.getSponsorIdentifier()));
+        isoDto.setIdentifier(IiConverter.convertToPoOrganizationIi(trialDTO.getSponsorIdentifier()));
         return isoDto;
     }
     
@@ -556,7 +556,7 @@ public class TrialUtil {
      */
     public PersonDTO convertToLeadPI(TrialDTO trialDTO) {
         PersonDTO  isoDto = new PersonDTO();
-        isoDto.setIdentifier(IiConverter.convertToIi(trialDTO.getPiIdentifier()));
+        isoDto.setIdentifier(IiConverter.convertToPoPersonIi(trialDTO.getPiIdentifier()));
         return isoDto;
     }
     
@@ -720,10 +720,11 @@ public class TrialUtil {
            isoDTO.setFileName(StConverter.convertToSt(dto.getFileName()));
            isoDTO.setText(EdConverter.convertToEd(dto.getText()));
            if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
-               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));
+               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.valueOf(
+                       dto.getStudyProtocolId())));
            }
            if (PAUtil.isNotEmpty(dto.getId())) {
-               isoDTO.setIdentifier(IiConverter.convertToIi(dto.getId()));
+               isoDTO.setIdentifier(IiConverter.convertToDocumentIi(Long.valueOf((dto.getId()))));
            }
            studyDocDTOList.add(isoDTO);
        }
@@ -852,7 +853,8 @@ public class TrialUtil {
            }
            isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getExpandedAccessType()));
            if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
-               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));
+               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.valueOf(
+                       dto.getStudyProtocolId())));
            }
            if (PAUtil.isNotEmpty(dto.getIndIdeId())) {
                isoDTO.setIdentifier(IiConverter.convertToIi(dto.getIndIdeId()));            
@@ -923,7 +925,8 @@ public class TrialUtil {
            isoDTO.setNihInstitutionCode(CdConverter.convertStringToCd(dto.getNihInstitutionCode()));
            isoDTO.setSerialNumber(StConverter.convertToSt(dto.getSerialNumber()));
            if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
-               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(dto.getStudyProtocolId()));            
+               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.valueOf(
+                       dto.getStudyProtocolId())));            
            }
            if (PAUtil.isNotEmpty(dto.getId())) {
                isoDTO.setIdentifier(IiConverter.convertToIi(dto.getId()));            
