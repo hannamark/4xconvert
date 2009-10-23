@@ -64,4 +64,8 @@
        <comment>Upgrade for PO-1309 - Change CTEP org root</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1369.sql"/>
     </changeSet>
+    <changeSet id="PO-1214-data" author="slustbader">
+       <comment>Upgrade for PO-1214 - Setting name for HealthCareFacility and ResearchOrganizaiton based on Organization name</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1214-data.sql"/>
+    </changeSet>
 </databaseChangeLog>
