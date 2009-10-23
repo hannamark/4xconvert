@@ -80,10 +80,12 @@ package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Qty;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 /**
@@ -97,9 +99,49 @@ import java.sql.Timestamp;
 public class IvlConverter<Iso extends Qty, T> {
     private static IvlConverter<Ts, Timestamp> tsInstance = new IvlConverter<Ts, Timestamp>(Ts.class);
     private static IvlConverter<Int, Integer> intInstance = new IvlConverter<Int, Integer>(Int.class);
+    private static IvlConverter<Pq, IvlConverter.JavaPq>
+            pqInstance = new IvlConverter<Pq, IvlConverter.JavaPq>(Pq.class);
 
     private final Class<Iso> aggregatedType;
 
+    /**
+     * Inner java class containing all elements required by iso Pq.
+     * @author Hugh Reinhart
+     * @since Oct 22, 2009
+     */
+    public static class JavaPq {
+        private final String unit;
+        private final BigDecimal value;
+        private final Integer precision;
+        /**
+         * @param unit unit
+         * @param value value
+         * @param precision precision
+         */
+        public JavaPq(String unit, BigDecimal value, Integer precision) {
+            this.unit = unit;
+            this.value = value;
+            this.precision = precision;
+        }
+        /**
+         * @return the unit
+         */
+        public String getUnit() {
+            return unit;
+        }
+        /**
+         * @return the value
+         */
+        public BigDecimal getValue() {
+            return value;
+        }
+        /**
+         * @return the precision
+         */
+        public Integer getPrecision() {
+            return precision;
+        }
+     }
     /**
      * @param clazz the iso type aggregated in Ivl
      */
@@ -114,12 +156,18 @@ public class IvlConverter<Iso extends Qty, T> {
         return tsInstance;
     }
     /**
-     * @return the converter for Ts type Ivl's
+     * @return the converter for Int type Ivl's
      */
     public static IvlConverter<Int, Integer> convertInt() {
         return intInstance;
     }
 
+    /**
+     * @return the converter for Pq type Ivl's
+     */
+    public static IvlConverter<Pq, IvlConverter.JavaPq> convertPq() {
+        return pqInstance;
+    }
 
     /**
      * @param low the low value
@@ -146,6 +194,17 @@ public class IvlConverter<Iso extends Qty, T> {
                     ? IntConverter.convertToInt((Integer) high)
                      : IntConverter.convertToInt((Integer) high));
             result = (Ivl<Iso>) wrk;
+        } else if (aggregatedType.equals(Pq.class)) {
+            Ivl<Pq> wrk = new Ivl<Pq>();
+            if (low instanceof IvlConverter.JavaPq) {
+                wrk.setLow(PqConverter.convertToPq(((JavaPq) low).value, ((JavaPq) low).precision,
+                        ((JavaPq) low).unit));
+            }
+            if (high instanceof IvlConverter.JavaPq) {
+                wrk.setHigh(PqConverter.convertToPq(((JavaPq) high).value, ((JavaPq) high).precision,
+                        ((JavaPq) high).unit));
+            }
+            result = (Ivl<Iso>) wrk;
         }
         return result;
     }
@@ -163,6 +222,9 @@ public class IvlConverter<Iso extends Qty, T> {
             result = (T) TsConverter.convertToTimestamp((Ts) ivl.getLow());
         } else if (aggregatedType.equals(Int.class)) {
             result = (T) IntConverter.convertToInteger((Int) ivl.getLow());
+        } else if (aggregatedType.equals(Pq.class)) {
+            Pq pq = (Pq) ivl.getLow();
+            result = (T) new IvlConverter.JavaPq(pq.getUnit(), pq.getValue(), pq.getPrecision());
         }
         return result;
     }
@@ -180,6 +242,9 @@ public class IvlConverter<Iso extends Qty, T> {
             result = (T) TsConverter.convertToTimestamp((Ts) ivl.getHigh());
         } else if (aggregatedType.equals(Int.class)) {
             result = (T) IntConverter.convertToInteger((Int) ivl.getHigh());
+        } else if (aggregatedType.equals(Pq.class)) {
+            Pq pq = (Pq) ivl.getHigh();
+            result = (T) new IvlConverter.JavaPq(pq.getUnit(), pq.getValue(), pq.getPrecision());
         }
         return result;
     }
@@ -214,6 +279,38 @@ public class IvlConverter<Iso extends Qty, T> {
             result = TsConverter.convertToString((Ts) ivl.getHigh());
         } else if (aggregatedType.equals(Int.class)) {
             result = IntConverter.convertToString((Int) ivl.getHigh());
+        }
+        return result;
+    }
+
+    /**
+     * @param ivl ivl
+     * @return java pq
+     */
+    public IvlConverter.JavaPq convertLowToJavaPq(Ivl ivl) {
+        if (ivl == null) {
+            return null;
+        }
+        IvlConverter.JavaPq result = null;
+        if (aggregatedType.equals(Pq.class) && ivl.getLow() instanceof Pq) {
+            Pq pq = (Pq) ivl.getLow();
+            result = new IvlConverter.JavaPq(pq.getUnit(), pq.getValue(), pq.getPrecision());
+        }
+        return result;
+    }
+
+    /**
+     * @param ivl ivl
+     * @return java pq
+     */
+    public IvlConverter.JavaPq convertHighToJavaPq(Ivl ivl) {
+        if (ivl == null) {
+            return null;
+        }
+        IvlConverter.JavaPq result = null;
+        if (aggregatedType.equals(Pq.class) && ivl.getHigh() instanceof Pq) {
+            Pq pq = (Pq) ivl.getLow();
+            result = new IvlConverter.JavaPq(pq.getUnit(), pq.getValue(), pq.getPrecision());
         }
         return result;
     }

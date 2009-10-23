@@ -79,20 +79,31 @@
 
 package gov.nih.nci.pa.iso.util;
 
-import java.math.BigDecimal;
-
 import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.coppa.iso.Qty;
+
+import java.math.BigDecimal;
 
 /**
  * @author Naveen Amiruddin
  * @since 7/13/2009
- * @param <Iso> iso type which is aggregated in Pq
  */
-public class PqConverter <Iso extends Qty>   {
-    
+public class PqConverter {
+
     /**
-     * 
+     * @param value value
+     * @param precision precision
+     * @param unit unit
+     * @return pq
+     */
+    public static Pq convertToPq(BigDecimal value , Integer precision, String unit) {
+        Pq pq = new Pq();
+        pq.setValue(value);
+        pq.setPrecision(precision);
+        pq.setUnit(unit);
+        return pq;
+    }
+
+    /**
      * @param value value
      * @param unit unit
      * @return pq
@@ -105,7 +116,6 @@ public class PqConverter <Iso extends Qty>   {
     }
 
     /**
-     * 
      * @param pq pq
      * @return bd
      */
@@ -118,7 +128,6 @@ public class PqConverter <Iso extends Qty>   {
     }
 
     /**
-     * 
      * @param pq pq
      * @return value
      */
