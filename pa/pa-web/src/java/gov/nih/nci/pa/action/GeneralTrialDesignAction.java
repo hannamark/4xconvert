@@ -125,6 +125,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 getAttribute(Constants.STUDY_PROTOCOL_II);
                 TrialHelper helper = new TrialHelper();
                 gtdDTO = helper.getTrialDTO(studyProtocolIi, "Abstraction");
+                
+            } catch (NullifiedRoleException e) {
+                ServletActionContext.getRequest().setAttribute("failureMessage", 
+                        e.getLocalizedMessage());
             } catch (Exception e) {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             }

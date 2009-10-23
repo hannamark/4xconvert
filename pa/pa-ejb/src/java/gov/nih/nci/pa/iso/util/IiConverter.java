@@ -185,9 +185,7 @@ public class IiConverter {
 
     /** The ii root value. */
     public static final String STUDY_ONHOLD_ROOT = "2.16.840.1.113883.3.26.4.3.14";
- 
    
-    
     /** The identifier name for org ii's. */
     public static final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
 
@@ -258,10 +256,6 @@ public class IiConverter {
 
     /** The ii root value. */
     public static final String STUDY_REGULATORY_AUTHORITY_ROOT = "2.16.840.1.113883.3.26.4.4.9";
-    
-    
-
-
     /** The identifier name for. */
     public static final String PERSON_RESOURCE_PROVIDER_IDENTIFIER_NAME = "Person Resource Provider identifier";
 
@@ -283,18 +277,9 @@ public class IiConverter {
     /** The CTEP Person ii root value. */
     public static final String CTEP_PERSON_IDENTIFIER_ROOT = 
                                     "Cancer Therapy Evaluation Program Person Other Identifier";
-    
     /** The CTEP Organization ii root value. */
     public static final String CTEP_ORG_IDENTIFIER_ROOT = 
-                                    "Cancer Therapy Evaluation Program Organization Identifier";
-    
-    
-   
-
-    
-    
-    
-    
+                                    "2.16.840.1.113883.3.26.6.2";
     /** The Constant STUDY_CONTACT_IDENTIFIER_NAME. */
     public static final String STUDY_CONTACT_IDENTIFIER_NAME = "Study Contact identifier";
     

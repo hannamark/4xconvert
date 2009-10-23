@@ -134,6 +134,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -1033,5 +1034,52 @@ public class PAServiceUtils {
             retValue = false;
         }
      return retValue;   
+    }
+    /**
+     * 
+     * @param poDTO poDTO
+     * @return s
+     */
+    public String isDTOValidInPO(PoDto poDTO) {
+        String retValue = "";
+        if (poDTO == null) {
+            return "";
+        }
+            
+        try {
+            if (poDTO instanceof OrganizationDTO) {
+                Map <String, String[]> errMap = PoRegistry.getOrganizationEntityService().validate(
+                    (OrganizationDTO) poDTO);
+                retValue = PAUtil.getErrorMsg(errMap);
+            }
+            if (poDTO instanceof PersonDTO) {
+                Map <String, String[]> errMap = PoRegistry.getPersonEntityService().validate((PersonDTO) poDTO);
+                retValue = PAUtil.getErrorMsg(errMap);    
+            }
+        } catch (PAException e) {
+            retValue = e.getMessage();
+        }
+        return retValue;
+    }
+    /**
+     * 
+     * @param listOfObject to create
+     * @throws PAException e
+     *
+     */
+    @SuppressWarnings({"PMD.PreserveStackTrace" })
+    public void createPoObject(List<PoDto> listOfObject) throws PAException {
+      for (PoDto poDto : listOfObject) {
+         try {   
+             if (poDto instanceof OrganizationDTO) {
+                 PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) poDto);
+             }
+             if (poDto instanceof PersonDTO) {
+                 PoRegistry.getPersonEntityService().createPerson((PersonDTO) poDto);
+             }
+         } catch (Exception e) {
+            throw new PAException(e.getMessage());
+         }
+      }
     }
 }

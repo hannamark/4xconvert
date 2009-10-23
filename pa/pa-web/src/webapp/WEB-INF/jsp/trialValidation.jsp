@@ -168,6 +168,7 @@
           </span>
         </td>
     </tr>
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
     <tr>
         <td   scope="row" class="label"><label><fmt:message key="isdesign.details.phase.comment"/></label></td>
         <td>
@@ -178,7 +179,8 @@
              </s:fielderror>                            
             </span>
         </td>
-    </tr>    
+    </tr>
+    </c:if>    
     <tr>
         <td  scope="row" class="label"><label>
             <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
@@ -193,6 +195,7 @@
           </span>
         </td>
     </tr>
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
     <tr>
         <td   scope="row" class="label"><label>
             <fmt:message key="isdesign.details.primary.purpose.other"/></label></td>
@@ -205,6 +208,7 @@
           </span>
         </td>
     </tr>
+    </c:if>
 	<%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>    
     <tr>
         <th colspan="2"> Summary 4 Information </th>
