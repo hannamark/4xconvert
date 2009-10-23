@@ -232,4 +232,12 @@
         <comment>execute pa_dev_22421.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_22421.sql"/>
     </changeSet>
+    <changeSet id="57" author="Kalpana">
+        <comment>execute pa_dev_23886_1.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_23886_1.sql"/>
+    </changeSet>
+    <changeSet id="58" author="Kalpana">
+        <comment>execute pa_dev_23886_2.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_23886_2.sql"/>
+    </changeSet>
 </databaseChangeLog>

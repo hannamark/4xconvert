@@ -76,87 +76,156 @@
 * 
 * 
 */
-package gov.nih.nci.pa.enums;
+package gov.nih.nci.pa.iso.dto;
 
-import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
-import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
-import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.coppa.iso.St;
 
 /**
- * @author Hugh Reinhart
- * @since 10/28/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * The Class PlannedSubstanceAdministrationDTO.
+ * 
+ * @author Kalpana Guthikonda
+ * @since 21/10/2009
  */
-public enum ActivityCategoryCode implements CodedEnum<String> {
+public class PlannedSubstanceAdministrationDTO extends PlannedActivityDTO {
     
-    /** Intervention. */
-    INTERVENTION("Intervention"), 
-    /** Eligibility Criterion. */
-    ELIGIBILITY_CRITERION("Eligibility Criterion"),
-    /** Substance Administration. */
-    SUBSTANCE_ADMINISTRATION("Substance Administration"), 
-    /** Other. */
-    OTHER("Other");
-     
-    private String code;
+    private static final long serialVersionUID = 1L;
+    private Ivl<Pq> dose;   
+    private St doseDescription;    
+    private Cd doseFormCode;    
+    private Cd doseFrequencyCode;    
+    private St doseRegimen;    
+    private Ivl<Pq> doseTotal;  
+    private Cd routeOfAdministrationCode;
+    private Pq doseDuration;  
+              
     /**
-     * 
-     * @param code
+     * Gets the dose.
+     * @return the dose
      */
-    private ActivityCategoryCode(String code) {
-        this.code = code;
-        register(this);
-    }
-    /**
-     * @return code code
-     */
-    public String getCode() {
-        return code;
+    public Ivl<Pq> getDose() {
+        return dose;
     }
 
     /**
-     *@return String DisplayName 
+     * Sets the dose.
+     * @param dose the new dose
      */
-    public String getDisplayName() {
-        return sentenceCasedName(this);
+    public void setDose(Ivl<Pq> dose) {
+        this.dose = dose;
     }
 
     /**
-     * 
-     * @return String name
+     * Gets the dose description.
+     * @return the dose description
      */
-    public String getName() {
-        return name();
+    public St getDoseDescription() {
+        return doseDescription;
+    }
+    
+    /**
+     * Sets the dose description.
+     * @param doseDescription the new dose description
+     */
+    public void setDoseDescription(St doseDescription) {
+        this.doseDescription = doseDescription;
+    }
+    
+    /**
+     * Gets the dose form code.
+     * @return the dose form code
+     */
+    public Cd getDoseFormCode() {
+        return doseFormCode;
+    }
+    
+    /**
+     * Sets the dose form code.
+     * @param doseFormCode the new dose form code
+     */
+    public void setDoseFormCode(Cd doseFormCode) {
+        this.doseFormCode = doseFormCode;
+    }
+    
+    /**
+     * Gets the dose frequency code.
+     * @return the dose frequency code
+     */
+    public Cd getDoseFrequencyCode() {
+        return doseFrequencyCode;
+    }
+    
+    /**
+     * Sets the dose frequency code.
+     * @param doseFrequencyCode the new dose frequency code
+     */
+    public void setDoseFrequencyCode(Cd doseFrequencyCode) {
+        this.doseFrequencyCode = doseFrequencyCode;
+    }
+    
+    /**
+     * Gets the dose regimen.
+     * @return the dose regimen
+     */
+    public St getDoseRegimen() {
+        return doseRegimen;
+    }
+    
+    /**
+     * Sets the dose regimen.
+     * @param doseRegimen the new dose regimen
+     */
+    public void setDoseRegimen(St doseRegimen) {
+        this.doseRegimen = doseRegimen;
     }
 
     /**
-     * 
-     * @param code code
-     * @return TrialPhaseType 
+     * Gets the dose total.
+     * @return the dose total
      */
-    public static ActivityCategoryCode getByCode(String code) {
-        return getByClassAndCode(ActivityCategoryCode.class, code);
+    public Ivl<Pq> getDoseTotal() {
+        return doseTotal;
+    }
+
+    /**
+     * Sets the dose total.
+     * @param doseTotal the new dose total
+     */
+    public void setDoseTotal(Ivl<Pq> doseTotal) {
+        this.doseTotal = doseTotal;
+    }
+
+    /**
+     * Gets the route of administration code.
+     * @return the route of administration code
+     */
+    public Cd getRouteOfAdministrationCode() {
+        return routeOfAdministrationCode;
     }
     
     /**
-     * @return String[] display names of enums
+     * Sets the route of administration code.
+     * @param routeOfAdministrationCode the new route of administration code
      */
-    public static String[]  getDisplayNames() {
-        ActivityCategoryCode[] l = ActivityCategoryCode.values();
-        String[] a = new String[l.length];
-        for (int i = 0; i < l.length; i++) {
-            a[i] = l[i].getCode();
-        }
-        return a;
+    public void setRouteOfAdministrationCode(Cd routeOfAdministrationCode) {
+        this.routeOfAdministrationCode = routeOfAdministrationCode;
     }
-    
+
     /**
-     * {@inheritDoc}
+     * Gets the dose duration.
+     * @return the dose duration
      */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
+    public Pq getDoseDuration() {
+        return doseDuration;
     }
-}    
- 
+
+    /**
+     * Sets the dose duration.
+     * @param doseDuration the new dose duration
+     */
+    public void setDoseDuration(Pq doseDuration) {
+        this.doseDuration = doseDuration;
+    }
+}

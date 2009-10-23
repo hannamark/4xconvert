@@ -88,6 +88,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -491,5 +492,11 @@ public final class PaRegistry {
         return getInstance().getServiceLocator().getStudyCheckoutService();
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public static PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
+        return getInstance().getServiceLocator().getPlannedSubstanceAdministrationService();
+    }
 }
 

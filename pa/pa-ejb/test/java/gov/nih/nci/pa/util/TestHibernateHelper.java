@@ -84,6 +84,8 @@ import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.domain.DiseaseParent;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.DoseForm;
+import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
@@ -104,9 +106,11 @@ import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
+import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.RouteOfAdministration;
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -132,6 +136,7 @@ import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySiteOverallStatus;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.domain.Submission;
+import gov.nih.nci.pa.domain.UnitOfMeasurement;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -214,6 +219,11 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(MappingIdentifier.class).
         addAnnotatedClass(StudySiteOverallStatus.class).
         addAnnotatedClass(StudyCheckout.class).
+        addAnnotatedClass(PlannedSubstanceAdministration.class).
+        addAnnotatedClass(DoseForm.class).
+        addAnnotatedClass(DoseFrequency.class).
+        addAnnotatedClass(RouteOfAdministration.class).
+        addAnnotatedClass(UnitOfMeasurement.class).
 
         // hibernate properties
         setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").

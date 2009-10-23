@@ -83,17 +83,18 @@ import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
-import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.JNDIUtil;
@@ -258,4 +259,13 @@ public class PoPaServiceBeanLookup {
         return (StudyMilestoneServiceRemote) JNDIUtil.lookup("pa/StudyMilestoneServiceBean/remote");
     }
 
+    /**
+     * @return PlannedSubstanceAdministrationServiceRemote
+     * @throws PAException on error
+     */
+    public static PlannedSubstanceAdministrationServiceRemote
+        getPlannedSubstanceAdministrationService() throws PAException {
+        return (PlannedSubstanceAdministrationServiceRemote) 
+                JNDIUtil.lookup("/pa/PlannedSubstanceAdministrationServiceBean/remote");
+    } 
 }

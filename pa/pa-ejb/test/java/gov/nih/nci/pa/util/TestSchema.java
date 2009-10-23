@@ -103,6 +103,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
+import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
@@ -177,7 +178,7 @@ public class TestSchema {
         public static ArrayList<Long> outcomeIds;
         public static ArrayList<Long> regAuthIds;
         public static ArrayList<Long> personIds;
-        
+
         private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
         
         /**
@@ -537,6 +538,7 @@ public class TestSchema {
             addUpdObject(ssas);
 
             PlannedEligibilityCriterion pec = new PlannedEligibilityCriterion();
+            pec.setCategoryCode(ActivityCategoryCode.ELIGIBILITY_CRITERION);
             pec.setCriterionName("WHC");
             pec.setInclusionIndicator(Boolean.TRUE);
             pec.setOperator(">");
@@ -585,6 +587,21 @@ public class TestSchema {
             scheckout.setUserIdentifier("Abstractor");
             addUpdObject(scheckout);
 
+            PlannedSubstanceAdministration psa = new PlannedSubstanceAdministration();
+            psa.setDoseMinValue(new BigDecimal("2"));
+            psa.setDoseMinUnit("10Milligrams");
+            psa.setDoseMaxValue(new BigDecimal("4"));
+            psa.setDoseMaxUnit("15Milligrams");
+            psa.setDoseDescription("TestDose");
+            psa.setDoseFormCode("Tablet");
+            psa.setDoseFrequencyCode("BID");
+            psa.setDoseRegimen("doseRegimen");
+            psa.setDoseTotalMinUnit("doseTotalUom");
+            psa.setDoseTotalMinValue(new BigDecimal("5"));
+            psa.setRouteOfAdministrationCode("Oral");
+            psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
+            psa.setStudyProtocol(sp);
+            addUpdObject(psa);            
             
             HibernateUtil.getCurrentSession().clear();
         }

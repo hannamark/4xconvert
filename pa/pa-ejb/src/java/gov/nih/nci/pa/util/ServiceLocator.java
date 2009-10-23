@@ -88,6 +88,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -362,5 +363,10 @@ public interface ServiceLocator {
      * @return StudyCheckoutService
      */
     StudyCheckoutServiceLocal getStudyCheckoutService(); 
+    
+    /**
+     * @return PlannedSubstanceAdministrationServiceRemote
+     */
+    PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService();
 }
 

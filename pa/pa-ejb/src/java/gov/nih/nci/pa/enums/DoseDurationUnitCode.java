@@ -83,33 +83,41 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * @author Hugh Reinhart
- * @since 10/28/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * The Enum DoseDurationUnitCode.
+ * 
+ * @author Kalpana Guthikonda
+ * @since 21/10/2009
  */
-public enum ActivityCategoryCode implements CodedEnum<String> {
-    
-    /** Intervention. */
-    INTERVENTION("Intervention"), 
-    /** Eligibility Criterion. */
-    ELIGIBILITY_CRITERION("Eligibility Criterion"),
-    /** Substance Administration. */
-    SUBSTANCE_ADMINISTRATION("Substance Administration"), 
-    /** Other. */
-    OTHER("Other");
-     
+public enum DoseDurationUnitCode  implements CodedEnum<String> {
+
+    /** Seconds. */
+    SECONDS("Seconds"),
+    /** Minutes. */
+    MINUTES("Minutes"),
+    /** Hours. */
+    HOURS("Hours"),
+    /** Days. */
+    DAYS("Days"),
+    /** Weeks. */
+    WEEKS("Weeks"),
+    /** Months. */
+    MONTHS("Months"),
+    /** Years. */
+    YEARS("Years");   
+
     private String code;
+
     /**
-     * 
-     * @param code
+     * The Constructor.
+     * @param code the code
      */
-    private ActivityCategoryCode(String code) {
+    private DoseDurationUnitCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
+     * Gets the code.
      * @return code code
      */
     public String getCode() {
@@ -117,14 +125,15 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     }
 
     /**
-     *@return String DisplayName 
+     * Gets the display name.
+     * @return String DisplayName
      */
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     * 
+     * Gets the name.
      * @return String name
      */
     public String getName() {
@@ -132,31 +141,31 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     }
 
     /**
-     * 
+     * Gets the by code.
      * @param code code
-     * @return TrialPhaseType 
+     * @return DoseDurationUnitCode
      */
-    public static ActivityCategoryCode getByCode(String code) {
-        return getByClassAndCode(ActivityCategoryCode.class, code);
+    public static DoseDurationUnitCode getByCode(String code) {
+        return getByClassAndCode(DoseDurationUnitCode.class, code);
     }
-    
+
     /**
+     * Gets the display names.
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNames() {
-        ActivityCategoryCode[] l = ActivityCategoryCode.values();
+        DoseDurationUnitCode[] l = DoseDurationUnitCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();
         }
         return a;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
-}    
- 
+}

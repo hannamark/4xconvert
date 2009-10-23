@@ -90,6 +90,8 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceBean;
+import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceBean;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StratumGroupServiceBean;
@@ -191,6 +193,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
     private final StudyInboxServiceLocal studyInboxService = new StudyInboxServiceBean();
     private final StudyCheckoutServiceLocal studyCheckoutService = new StudyCheckoutServiceBean();
+    private final PlannedSubstanceAdministrationServiceRemote plannedSAService = new PlannedSubstanceAdministrationServiceBean(); 
     
     /**
      * @return mock service
@@ -522,5 +525,9 @@ public class MockServiceLocator implements ServiceLocator {
 
     public StudyCheckoutServiceLocal getStudyCheckoutService() {
         return studyCheckoutService;
+    }
+
+    public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
+        return plannedSAService;
     }
 }

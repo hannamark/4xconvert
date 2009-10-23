@@ -76,87 +76,64 @@
 * 
 * 
 */
-package gov.nih.nci.pa.enums;
+package gov.nih.nci.pa.service;
 
-import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
-import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
-import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
+
+import java.util.List;
 
 /**
- * @author Hugh Reinhart
- * @since 10/28/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * The Class PlannedSubstanceAdministrationServiceRemote.
+ * 
+ * @author Kalpana Guthikonda
+ * @since 21/10/2009
  */
-public enum ActivityCategoryCode implements CodedEnum<String> {
-    
-    /** Intervention. */
-    INTERVENTION("Intervention"), 
-    /** Eligibility Criterion. */
-    ELIGIBILITY_CRITERION("Eligibility Criterion"),
-    /** Substance Administration. */
-    SUBSTANCE_ADMINISTRATION("Substance Administration"), 
-    /** Other. */
-    OTHER("Other");
-     
-    private String code;
-    /**
-     * 
-     * @param code
-     */
-    private ActivityCategoryCode(String code) {
-        this.code = code;
-        register(this);
-    }
-    /**
-     * @return code code
-     */
-    public String getCode() {
-        return code;
-    }
 
-    /**
-     *@return String DisplayName 
-     */
-    public String getDisplayName() {
-        return sentenceCasedName(this);
-    }
+public interface PlannedSubstanceAdministrationService extends StudyPaService<PlannedActivityDTO> {
 
-    /**
-     * 
-     * @return String name
-     */
-    public String getName() {
-        return name();
-    }
-
-    /**
-     * 
-     * @param code code
-     * @return TrialPhaseType 
-     */
-    public static ActivityCategoryCode getByCode(String code) {
-        return getByClassAndCode(ActivityCategoryCode.class, code);
-    }
     
     /**
-     * @return String[] display names of enums
+     * Gets the planned substance administration by study protocol.
+     * @param ii the ii
+     * @return the planned substance administration by study protocol
+     * @throws PAException the PA exception
      */
-    public static String[]  getDisplayNames() {
-        ActivityCategoryCode[] l = ActivityCategoryCode.values();
-        String[] a = new String[l.length];
-        for (int i = 0; i < l.length; i++) {
-            a[i] = l[i].getCode();
-        }
-        return a;
-    }
+    List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
+                throws PAException;
     
     /**
-     * {@inheritDoc}
+     * Gets the planned substance administration.
+     * @param ii the ii
+     * @return the planned substance administration
+     * @throws PAException the PA exception
      */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}    
- 
+    PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(Ii ii) throws PAException;
+    
+    /**
+     * Creates the planned substance administration.
+     * @param dto the dto
+     * @return the planned substance administration dto
+     * @throws PAException the PA exception
+     */
+    PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(
+            PlannedSubstanceAdministrationDTO dto) throws PAException;
+    
+    /**
+     * Planned substance administration.
+     * @param dto the dto
+     * @return the planned substance administration dto
+     * @throws PAException the PA exception
+     */
+    PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(
+            PlannedSubstanceAdministrationDTO dto) throws PAException;
+    
+    /**
+     * Delete planned substance administration.
+     * @param ii the ii
+     * @throws PAException the PA exception
+     */
+    void deletePlannedSubstanceAdministration(Ii ii) throws PAException;
+
+}

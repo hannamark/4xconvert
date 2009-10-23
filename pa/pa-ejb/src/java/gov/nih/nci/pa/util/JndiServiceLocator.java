@@ -88,6 +88,7 @@ import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -435,5 +436,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public StudyCheckoutServiceLocal getStudyCheckoutService() {
         return (StudyCheckoutServiceLocal) JNDIUtil.lookup("/pa/StudyCheckoutServiceBean/local");
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
+        return (PlannedSubstanceAdministrationServiceRemote) 
+                        JNDIUtil.lookup("pa/PlannedSubstanceAdministrationServiceBean/remote");
     }
 }
