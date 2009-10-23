@@ -95,7 +95,7 @@ import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import java.util.List;
 
 /**
  * Converter from Correlation to CorrelationNodeDTO and back. Boolean flags are provided to allow the 
@@ -112,8 +112,8 @@ public class CorrelationNodeDTOConverter {
      * @param convertPlayer boolean to convert player.
      * @return CorrelationNodeDTO.
      */
-    public CorrelationNodeDTO convertToCorrelationNodeDTO(Correlation correlation, 
-            boolean convertScoper, boolean convertPlayer) {
+    public static CorrelationNodeDTO convertToCorrelationNodeDTO(Correlation correlation, 
+            boolean convertPlayer, boolean convertScoper) {
         CorrelationNodeDTO cNode = new CorrelationNodeDTO();
        
         cNode.setCorrelation((CorrelationDto) PoXsnapshotHelper.createSnapshot(correlation));
@@ -135,7 +135,7 @@ public class CorrelationNodeDTOConverter {
      * @param cNode correlation node dto.
      * @return BO object.
      */
-    public PersistentObject convertFromCorrelationNodeDTO(CorrelationNodeDTO cNode) {
+    public static Correlation convertFromCorrelationNodeDTO(CorrelationNodeDTO cNode) {
         Correlation role = null;
         Entity scoper = null;
         Entity player = null;
@@ -164,13 +164,13 @@ public class CorrelationNodeDTOConverter {
     
    
     
-    private void addScoper(Correlation role, Entity scoper) {
+    private static void addScoper(Correlation role, Entity scoper) {
         if (role instanceof ScopedRole) {
             ((ScopedRole) role).setScoper((Organization) scoper);
         }
     }
     
-    private void addPlayer(Correlation role, Entity player) {
+    private static void addPlayer(Correlation role, Entity player) {
         if (role instanceof PlayedRole<?>) {
             if (player instanceof Person) {
                 ((PlayedRole<Person>) role).setPlayer((Person) player);
@@ -180,5 +180,18 @@ public class CorrelationNodeDTOConverter {
                 ((PlayedRole<Organization>) role).setPlayer((Organization) player);
             }
         } 
+    }
+    
+    /**
+     * Store list as array.
+     * @param cList list of correlations node dtos.
+     * @return array of correlation node dtos.
+     */
+    public static CorrelationNodeDTO[] listToArray(List<CorrelationNodeDTO> cList) {
+        if (cList == null || cList.isEmpty()) {
+            return new CorrelationNodeDTO[] {};
+        }
+        
+        return (CorrelationNodeDTO[]) cList.toArray(new CorrelationNodeDTO[cList.size()]);  
     }
 }

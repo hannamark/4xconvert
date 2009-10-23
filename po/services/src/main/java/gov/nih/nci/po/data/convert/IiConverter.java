@@ -93,8 +93,10 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -270,5 +272,18 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         dset.setItem(new LinkedHashSet<Ii>());
         dset.getItem().add(value);
         return dset;
+    }
+    
+    /**
+     * Convert from array to set of ids.
+     * @param ids array of Ii.
+     * @return set of Long.
+     */
+    public static Set<Long> convertToLongs(Ii[] ids) {
+        Set<Long> longIds = new HashSet<Long>();
+        for (Ii id : ids) {
+            longIds.add(IiConverter.convertToLong(id));
+        }
+        return longIds;
     }
 }

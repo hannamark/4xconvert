@@ -88,6 +88,8 @@ import gov.nih.nci.po.util.EjbInterceptorHandler;
 import gov.nih.nci.po.util.RemoteBeanHandler;
 import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
 import gov.nih.nci.po.util.jms.TopicStub;
+import gov.nih.nci.services.BusinessServiceBean;
+import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceBean;
@@ -398,6 +400,21 @@ public class EjbTestHelper {
     public static OrganizationalContactServiceLocal getOrganizationalContactService() {
         OrganizationalContactServiceBean svc = new OrganizationalContactServiceBean();
         svc.setPublisher(getMessageProducer());
+        return svc;
+    }
+    
+    public static BusinessServiceRemote getBusinessService() {
+        BusinessServiceBean svc = new BusinessServiceBean();
+        svc.setCrsService(getClinicalResearchStaffServiceBean());
+        svc.setHcfService(getHealthCareFacilityServiceBean());
+        svc.setHcpService(getHealthCareProviderServiceBean());
+        svc.setIdfOrgService(getIdentifiedOrganizationServiceBean());
+        svc.setIdfPerService(getIdentifiedPersonServiceBean());
+        svc.setOrganizationServiceBean(getOrganizationServiceBean());
+        svc.setOrgContService(getOrganizationalContactService());
+        svc.setOvSightCommService(getOversightCommitteeServiceBean());
+        svc.setPersonServiceBean(getPersonServiceBean());
+        svc.setResearchOrgService(getResearchOrganizationServiceBean());
         return svc;
     }
 

@@ -4,32 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.Entity;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationPlayedRole;
-import gov.nih.nci.po.data.bo.OrganizationScopedRole;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.Entity;
-import gov.nih.nci.po.data.bo.PersonPlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -42,7 +32,11 @@ import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import org.globus.myproxy.GetParams;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 
 /**
@@ -183,33 +177,33 @@ public class EntityNodeDtoConverterTest {
         
         Cd[] playerFilters = new Cd[4];
         Cd cd = new Cd();
-        cd.setCode(OrganizationPlayedRole.RESEARCH_ORGANIZATION.toString());
+        cd.setCode(RoleList.RESEARCH_ORGANIZATION.toString());
         playerFilters[0] = cd;
         cd = new Cd();
-        cd.setCode(OrganizationPlayedRole.OVERSIGHT_COMMITTEE.toString());
+        cd.setCode(RoleList.OVERSIGHT_COMMITTEE.toString());
         playerFilters[1] = cd;
         cd = new Cd();
-        cd.setCode(OrganizationPlayedRole.HEALTH_CARE_FACILITY.toString());
+        cd.setCode(RoleList.HEALTH_CARE_FACILITY.toString());
         playerFilters[2] = cd;
         cd = new Cd();
-        cd.setCode(OrganizationPlayedRole.IDENTIFIED_ORGANIZATION.toString());
+        cd.setCode(RoleList.IDENTIFIED_ORGANIZATION.toString());
         playerFilters[3] = cd;
  
         Cd[] scoperFilters = new Cd[5];
         cd = new Cd();
-        cd.setCode(OrganizationScopedRole.ORGANIZATIONAL_CONTACT.toString());
+        cd.setCode(RoleList.ORGANIZATIONAL_CONTACT.toString());
         scoperFilters[0] = cd;
         cd = new Cd();
-        cd.setCode(OrganizationScopedRole.IDENTIFIED_ORGANIZATION.toString());
+        cd.setCode(RoleList.IDENTIFIED_ORGANIZATION.toString());
         scoperFilters[1] = cd;
         cd = new Cd();
-        cd.setCode(OrganizationScopedRole.CLINICAL_RESEARCH_STAFF.toString());
+        cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.toString());
         scoperFilters[2] = cd;
         cd = new Cd();
-        cd.setCode(OrganizationScopedRole.HEALTH_CARE_PROVIDER.toString());
+        cd.setCode(RoleList.HEALTH_CARE_PROVIDER.toString());
         scoperFilters[3] = cd;
         cd = new Cd();
-        cd.setCode(OrganizationScopedRole.IDENTIFIED_PERSON.toString());
+        cd.setCode(RoleList.IDENTIFIED_PERSON.toString());
         scoperFilters[4] = cd;
         
         
@@ -299,12 +293,12 @@ public class EntityNodeDtoConverterTest {
         // try selecting only a few filters
         playerFilters = new Cd[1];
         cd = new Cd();
-        cd.setCode(OrganizationPlayedRole.HEALTH_CARE_FACILITY.toString());
+        cd.setCode(RoleList.HEALTH_CARE_FACILITY.toString());
         playerFilters[0] = cd;
 
         scoperFilters = new Cd[1];
         cd = new Cd();
-        cd.setCode(OrganizationScopedRole.CLINICAL_RESEARCH_STAFF.toString());
+        cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.toString());
         scoperFilters[0] = cd;
                 
         entityNodeDto = EntityNodeDtoConverter.convertToEntityNodeDto(org, playerFilters, scoperFilters);
@@ -345,7 +339,7 @@ public class EntityNodeDtoConverterTest {
         
         Cd[] filters = new Cd[2];
         Cd cd = new Cd();
-        cd.setCode(OrganizationScopedRole.CLINICAL_RESEARCH_STAFF.toString());
+        cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.toString());
         filters[0] = cd;
         
         // try out scoper cd with no code.
@@ -371,7 +365,7 @@ public class EntityNodeDtoConverterTest {
         
         Cd[] filters = new Cd[2];
         Cd cd = new Cd();
-        cd.setCode(OrganizationPlayedRole.HEALTH_CARE_FACILITY.toString());
+        cd.setCode(RoleList.HEALTH_CARE_FACILITY.toString());
         filters[0] = cd;
         
         // try out player cd with no code.
@@ -396,7 +390,7 @@ public class EntityNodeDtoConverterTest {
         
         Cd[] filters = new Cd[1];
         Cd cd = new Cd();
-        cd.setCode(PersonPlayedRole.ORGANIZATIONAL_CONTACT.toString());
+        cd.setCode(RoleList.ORGANIZATIONAL_CONTACT.toString());
         filters[0] = cd;
         
         EntityNodeDto entityNodeDto = EntityNodeDtoConverter.convertToEntityNodeDto(person, filters, null);
@@ -429,16 +423,16 @@ public class EntityNodeDtoConverterTest {
         
         Cd[] playerFilters = new Cd[4];
         Cd cd = new Cd();
-        cd.setCode(PersonPlayedRole.ORGANIZATIONAL_CONTACT.toString());
+        cd.setCode(RoleList.ORGANIZATIONAL_CONTACT.toString());
         playerFilters[0] = cd;
         cd = new Cd();
-        cd.setCode(PersonPlayedRole.HEALTH_CARE_PROVIDER.toString());
+        cd.setCode(RoleList.HEALTH_CARE_PROVIDER.toString());
         playerFilters[1] = cd;
         cd = new Cd();
-        cd.setCode(PersonPlayedRole.CLINICAL_RESEARCH_STAFF.toString());
+        cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.toString());
         playerFilters[2] = cd;
         cd = new Cd();
-        cd.setCode(PersonPlayedRole.IDENTIFIED_PERSON.toString());
+        cd.setCode(RoleList.IDENTIFIED_PERSON.toString());
         playerFilters[3] = cd;
   
         EntityNodeDto entityNodeDto = EntityNodeDtoConverter.convertToEntityNodeDto(person, playerFilters, null);
@@ -472,7 +466,7 @@ public class EntityNodeDtoConverterTest {
 
         playerFilters = new Cd[1];
         cd = new Cd();
-        cd.setCode(PersonPlayedRole.ORGANIZATIONAL_CONTACT.toString());
+        cd.setCode(RoleList.ORGANIZATIONAL_CONTACT.toString());
         playerFilters[0] = cd;
 
         entityNodeDto = EntityNodeDtoConverter.convertToEntityNodeDto(person, playerFilters, null);

@@ -188,7 +188,7 @@ public class CorrelationNodeConverterTest  {
         HealthCareProvider hcp = this.createHcpForTest();
         
         CorrelationNodeDTOConverter cNodeConv = new CorrelationNodeDTOConverter();
-        CorrelationNodeDTO cNode = cNodeConv.convertToCorrelationNodeDTO(hcp, true, false);
+        CorrelationNodeDTO cNode = cNodeConv.convertToCorrelationNodeDTO(hcp, false, true);
         
         assertNull(cNode.getPlayer());
         verifyOrg(cNode);
@@ -200,7 +200,7 @@ public class CorrelationNodeConverterTest  {
         HealthCareProvider hcp = this.createHcpForTest();
         
         CorrelationNodeDTOConverter cNodeConv = new CorrelationNodeDTOConverter();
-        CorrelationNodeDTO cNode = cNodeConv.convertToCorrelationNodeDTO(hcp, false, true);
+        CorrelationNodeDTO cNode = cNodeConv.convertToCorrelationNodeDTO(hcp, true, false);
         
         verifyPerson(cNode);
         assertNull(cNode.getScoper());

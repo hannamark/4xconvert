@@ -1,11 +1,11 @@
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.services;
 
 /**
- * Enumeration of roles scoped by an organization.
+ * Enumeration of roles both played and scoped.
  * @author ludetc
  *
  */
-public enum OrganizationScopedRole {
+public enum RoleList {
     /**
      * Clinical Research Staff.
      */
@@ -25,5 +25,18 @@ public enum OrganizationScopedRole {
     /**
      * Indentified Organization.
      */
-    IDENTIFIED_ORGANIZATION
+    IDENTIFIED_ORGANIZATION,
+    /**
+     * Health Care Facility.
+     */
+    HEALTH_CARE_FACILITY,
+    /**
+     * Oversight Committee.
+     */
+    OVERSIGHT_COMMITTEE,
+    /**
+     * Research Organization.
+     */
+    RESEARCH_ORGANIZATION;
+   
 }

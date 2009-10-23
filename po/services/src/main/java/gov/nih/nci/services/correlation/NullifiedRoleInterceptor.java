@@ -83,6 +83,8 @@
 package gov.nih.nci.services.correlation;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.services.AbstractBaseNullifiedInterceptor;
 import gov.nih.nci.services.CorrelationDto;
 
@@ -140,13 +142,33 @@ public class NullifiedRoleInterceptor extends AbstractBaseNullifiedInterceptor {
         }
     }
 
-    private void handleDTO(CorrelationDto dto) throws NullifiedRoleException {
+    /**
+     * Handle Correlation dto.
+     * @param dto correlation.
+     * @throws NullifiedRoleException thrown if correlation is nullified.
+     */
+    protected void handleDTO(CorrelationDto dto) throws NullifiedRoleException {
         Entry<Ii, Ii> entry = handle(dto);
         if (entry != null) {
             throw new NullifiedRoleException(entry.getKey(), entry.getValue());
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected OrganizationServiceLocal getOrganizationServiceBean(InvocationContext invContext) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected PersonServiceLocal getPersonServiceBean(InvocationContext invContext) {
+        return null;
+    }
 
 
 }

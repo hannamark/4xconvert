@@ -11,10 +11,10 @@ import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
+import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.services.person.PersonEntityServiceBean;
 
 import java.util.Map.Entry;
 
@@ -41,8 +41,8 @@ public abstract class AbstractBaseNullifiedInterceptor {
     protected Entry<Ii, Ii> handle(InvocationContext invContext, OrganizationDTO dto) {
         EntityStatus status = StatusCodeConverter.convertToStatusEnum(dto.getStatusCode());
         if (EntityStatus.NULLIFIED.equals(status)) {
-            OrganizationEntityServiceBean bean = (OrganizationEntityServiceBean) invContext.getTarget();
-            Organization org = bean.getOrganizationServiceBean()
+          
+            Organization org = getOrganizationServiceBean(invContext)
                     .getById(IiConverter.convertToLong(dto.getIdentifier()));
 
             Ii duplicateOfIi = null;
@@ -66,8 +66,8 @@ public abstract class AbstractBaseNullifiedInterceptor {
     protected Entry<Ii, Ii> handle(InvocationContext invContext, PersonDTO dto) {
         EntityStatus status = StatusCodeConverter.convertToStatusEnum(dto.getStatusCode());
         if (EntityStatus.NULLIFIED.equals(status)) {
-            PersonEntityServiceBean bean = (PersonEntityServiceBean) invContext.getTarget();
-            Person person = bean.getPersonServiceBean().getById(IiConverter.convertToLong(dto.getIdentifier()));
+           
+            Person person = getPersonServiceBean(invContext).getById(IiConverter.convertToLong(dto.getIdentifier()));
 
             Ii duplicateOfIi = null;
             if (person.getDuplicateOf() != null) {
@@ -93,4 +93,18 @@ public abstract class AbstractBaseNullifiedInterceptor {
         }
         return null;
     }
+    
+    /**
+     * Return Organization service bean.
+     * @param invContext context.
+     * @return  organization service bean.
+     */
+    protected abstract OrganizationServiceLocal getOrganizationServiceBean(InvocationContext invContext);
+    
+    /**
+     * Return PersoinServiceBean.
+     * @param invContext context.
+     * @return person service bean.
+     */
+    protected abstract PersonServiceLocal getPersonServiceBean(InvocationContext invContext);
 }

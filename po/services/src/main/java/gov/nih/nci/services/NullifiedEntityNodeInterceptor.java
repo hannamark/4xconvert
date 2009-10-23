@@ -1,11 +1,14 @@
 package gov.nih.nci.services;
 
 import gov.nih.nci.coppa.iso.Ii;
-
+import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,7 +20,7 @@ import javax.interceptor.InvocationContext;
 /**
  * Interceptor to catch any NULLIFIED entities and throw a NullifiedEntityNodeException.
  */
-public class NullifiedEntityNodeInterceptor extends AbstractBaseNullifiedInterceptor {
+public class NullifiedEntityNodeInterceptor extends NullifiedEntityInterceptor {
         
     /**
      * Ensures that no object(s) returned have a NULLIFIED entity status.
@@ -33,8 +36,22 @@ public class NullifiedEntityNodeInterceptor extends AbstractBaseNullifiedInterce
         Object returnValue = invContext.proceed();
         if (returnValue instanceof EntityNodeDto) {
             handleEntityNodeDto(invContext, (EntityNodeDto) returnValue);
+        } else if (returnValue instanceof Collection) {
+            handleCollection(invContext, (Collection<?>) returnValue);
         }
         return returnValue;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Entry<Ii, Ii> handleCollectionElement(InvocationContext invContext, Object element) {
+        Entry<Ii, Ii> entry = null;
+        if (element instanceof EntityNodeDto) {
+            entry = handleEntity(invContext, (EntityNodeDto) element);
+        } 
+        return entry;
     }
     
     private void handleEntityNodeDto(InvocationContext invContext, EntityNodeDto dto) 
@@ -47,29 +64,13 @@ public class NullifiedEntityNodeInterceptor extends AbstractBaseNullifiedInterce
             nullifiedEntities.put(entry.getKey(), entry.getValue());
         }
         
-        nullifiedEntities.putAll(handleCorrelations(dto));
-
         if (!nullifiedEntities.isEmpty()) {
             throw new NullifiedEntityException(nullifiedEntities);
         }
     }
-    
-    private Map<Ii, Ii> handleCorrelations(EntityNodeDto dto) {
-        Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-
-        if (dto.getPlayers() != null) {
-            nullifiedEntities.putAll(handle(dto.getPlayers()));        
-        }
-        if (dto.getScopers() != null) {
-            nullifiedEntities.putAll(handle(dto.getScopers()));
-        }
-            
-        return nullifiedEntities;
-    }
 
     private Entry<Ii, Ii> handleEntity(InvocationContext invContext, EntityNodeDto dto) {
         EntityDto entityDto = dto.getEntityDto();
-        
         if (entityDto instanceof OrganizationDTO) {
             return handle(invContext, (OrganizationDTO) entityDto);
         } else if (entityDto instanceof PersonDTO) {
@@ -78,19 +79,25 @@ public class NullifiedEntityNodeInterceptor extends AbstractBaseNullifiedInterce
         
         return null;
     }
-   
-    
-    
-    private Map<Ii, Ii> handle(CorrelationDto[] corDtos) {
-        Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-        for (CorrelationDto corDto : corDtos) {
-            Entry<Ii, Ii> entry = handle(corDto);
-            if (entry != null) {
-               nullifiedEntities.put(entry.getKey(), entry.getValue()); 
-            }
-        }
-        
-        return nullifiedEntities;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected OrganizationServiceLocal getOrganizationServiceBean(InvocationContext invContext) {
+        BusinessServiceBean bBean = (BusinessServiceBean) invContext.getTarget();
+        return bBean.getOrganizationServiceBean();
         
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected PersonServiceLocal getPersonServiceBean(InvocationContext invContext) {
+        BusinessServiceBean bBean = (BusinessServiceBean) invContext.getTarget();
+        return bBean.getPersonServiceBean();
+    }
+   
+   
 }

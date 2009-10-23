@@ -1,24 +1,17 @@
 package gov.nih.nci.services;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.Entity;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationPlayedRole;
-import gov.nih.nci.po.data.bo.OrganizationScopedRole;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.Entity;
-import gov.nih.nci.po.data.bo.PersonPlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -30,6 +23,10 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.AbstractOrganizationDTOHelper;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * EntityNodeConverter transforms from EntityNode to EntityNodeDto.
@@ -95,39 +92,39 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
 
         addToListByFilter(playerDtoList, PoXsnapshotHelper.createSnapshotList(
                 organization.getResearchOrganizations()),
-                playerFilters, OrganizationPlayedRole.RESEARCH_ORGANIZATION.toString());
+                playerFilters, RoleList.RESEARCH_ORGANIZATION.toString());
         
         addToListByFilter(playerDtoList, PoXsnapshotHelper.createSnapshotList(
                 organization.getHealthCareFacilities()), 
-                playerFilters, OrganizationPlayedRole.HEALTH_CARE_FACILITY.toString());
+                playerFilters, RoleList.HEALTH_CARE_FACILITY.toString());
         
         addToListByFilter(playerDtoList, PoXsnapshotHelper.createSnapshotList(
                 organization.getOversightCommittees()), 
-                playerFilters, OrganizationPlayedRole.OVERSIGHT_COMMITTEE.toString());
+                playerFilters, RoleList.OVERSIGHT_COMMITTEE.toString());
         
         addToListByFilter(scoperDtoList, PoXsnapshotHelper.createSnapshotList(
                 organization.getOrganizationalContacts()), 
-                scoperFilters, OrganizationScopedRole.ORGANIZATIONAL_CONTACT.toString());
+                scoperFilters, RoleList.ORGANIZATIONAL_CONTACT.toString());
 
         addToListByFilter(scoperDtoList, PoXsnapshotHelper.createSnapshotList(
                 organization.getClinicalResearchStaff()), 
-                scoperFilters, OrganizationScopedRole.CLINICAL_RESEARCH_STAFF.toString()); 
+                scoperFilters, RoleList.CLINICAL_RESEARCH_STAFF.toString()); 
         
         addToListByFilter(scoperDtoList, PoXsnapshotHelper.createSnapshotList(
                 organization.getIdentifiedPersons()), 
-                scoperFilters, OrganizationScopedRole.IDENTIFIED_PERSON.toString()); 
+                scoperFilters, RoleList.IDENTIFIED_PERSON.toString()); 
         
         addToListByFilter(scoperDtoList, PoXsnapshotHelper.createSnapshotList(
                 organization.getHealthCareProviders()), 
-                scoperFilters, OrganizationScopedRole.HEALTH_CARE_PROVIDER.toString()); 
+                scoperFilters, RoleList.HEALTH_CARE_PROVIDER.toString()); 
             
         for (IdentifiedOrganization idOrg : organization.getIdentifiedOrganizations()) {
             if (idOrg.getPlayer().equals(organization) 
-                    && playerFilters.contains(OrganizationPlayedRole.IDENTIFIED_ORGANIZATION.toString())) {
+                    && playerFilters.contains(RoleList.IDENTIFIED_ORGANIZATION.toString())) {
                 playerDtoList.add((CorrelationDto) PoXsnapshotHelper.createSnapshot(idOrg));        
             }   
             if (idOrg.getScoper().equals(organization) 
-                    && playerFilters.contains(OrganizationScopedRole.IDENTIFIED_ORGANIZATION.toString())) {
+                    && playerFilters.contains(RoleList.IDENTIFIED_ORGANIZATION.toString())) {
                 scoperDtoList.add((CorrelationDto) PoXsnapshotHelper.createSnapshot(idOrg));
             }
         }
@@ -171,16 +168,16 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
 
         addToListByFilter(playerDtoList, 
                     PoXsnapshotHelper.createSnapshotList(person.getOrganizationalContacts()), 
-                    filters, PersonPlayedRole.ORGANIZATIONAL_CONTACT.toString());
+                    filters, RoleList.ORGANIZATIONAL_CONTACT.toString());
         addToListByFilter(playerDtoList, 
                         PoXsnapshotHelper.createSnapshotList(person.getClinicalResearchStaff()), 
-                        filters, PersonPlayedRole.CLINICAL_RESEARCH_STAFF.toString());
+                        filters, RoleList.CLINICAL_RESEARCH_STAFF.toString());
         addToListByFilter(playerDtoList, 
                         PoXsnapshotHelper.createSnapshotList(person.getHealthCareProviders()), 
-                        filters, PersonPlayedRole.HEALTH_CARE_PROVIDER.toString());
+                        filters, RoleList.HEALTH_CARE_PROVIDER.toString());
         addToListByFilter(playerDtoList, 
                         PoXsnapshotHelper.createSnapshotList(person.getIdentifiedPersons()), 
-                        filters, PersonPlayedRole.IDENTIFIED_PERSON.toString());         
+                        filters, RoleList.IDENTIFIED_PERSON.toString());         
 
         Bl bl = new Bl();
         if (playerDtoList.size() > Utils.MAX_SEARCH_RESULTS) {

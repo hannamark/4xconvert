@@ -83,9 +83,13 @@
 package gov.nih.nci.services.entity;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.services.AbstractBaseNullifiedInterceptor;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonEntityServiceBean;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -99,6 +103,7 @@ import javax.interceptor.InvocationContext;
  * Interceptor to catch any NULLIFIED entities and throw a NullifiedEntityException.
  */
 public class NullifiedEntityInterceptor extends AbstractBaseNullifiedInterceptor {
+    
     /**
      * Ensures that no object(s) returned have a NULLIFIED entity status.
      *
@@ -122,7 +127,13 @@ public class NullifiedEntityInterceptor extends AbstractBaseNullifiedInterceptor
         return returnValue;
     }
 
-    private void handleCollection(InvocationContext invContext,
+    /**
+     * Check items in a collection for nullified.
+     * @param invContext context.
+     * @param collection to check.
+     * @throws NullifiedEntityException if item is nullified.
+     */
+    protected void handleCollection(InvocationContext invContext,
                                   Collection<?> collection) throws NullifiedEntityException {
         if (collection == null) {
             return;
@@ -138,8 +149,14 @@ public class NullifiedEntityInterceptor extends AbstractBaseNullifiedInterceptor
             throw new NullifiedEntityException(nullifiedEntities);
         }
     }
-
-    private Entry<Ii, Ii> handleCollectionElement(InvocationContext invContext, Object element) {
+    
+    /**
+     * Handle an element in the collection.
+     * @param invContext context.
+     * @param element to handle.
+     * @return Map entry.
+     */
+    protected Entry<Ii, Ii> handleCollectionElement(InvocationContext invContext, Object element) {
         Entry<Ii, Ii> entry = null;
         if (element instanceof PersonDTO) {
             entry = handle(invContext, (PersonDTO) element);
@@ -163,6 +180,24 @@ public class NullifiedEntityInterceptor extends AbstractBaseNullifiedInterceptor
         if (entry != null) {
             throw new NullifiedEntityException(entry.getKey(), entry.getValue());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected OrganizationServiceLocal getOrganizationServiceBean(InvocationContext invContext) {
+        OrganizationEntityServiceBean bean = (OrganizationEntityServiceBean) invContext.getTarget();
+        return bean.getOrganizationServiceBean();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected PersonServiceLocal getPersonServiceBean(InvocationContext invContext) {
+        PersonEntityServiceBean bean = (PersonEntityServiceBean) invContext.getTarget();
+        return bean.getPersonServiceBean();
     }
 
 }

@@ -1,18 +1,19 @@
 package gov.nih.nci.services;
 
-import static org.junit.Assert.*;
-
-import java.util.Map;
-
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.services.entity.NullifiedEntityInterceptorTest.OSvcBean;
+import gov.nih.nci.po.services.entity.NullifiedEntityInterceptorTest.PSvcBean;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.correlation.CorrelationNodeDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.NullifiedRoleInterceptorTest.TestInvocationContext;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -20,6 +21,8 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.util.HibernateUtil;
 
 
 public class NullifiedEntityNodeInterceptorTest {
@@ -32,13 +35,33 @@ public class NullifiedEntityNodeInterceptorTest {
         testContext = new TestInvocationContext();
     }
 
-    @Test
-    public void testCheckForNullifiedWithNullifiedPlayer() throws Exception {
+    @Test(expected = NullifiedEntityException.class)
+    public void testCheckForNullifiedWithOrgEntity() throws Exception {
+        HibernateUtil.getHibernateHelper().beginTransaction();
+        
         EntityNodeDto entityNodeDto = new EntityNodeDto();
 
+        Organization dup = new Organization();
+        dup.setId(2L);
+        dup.setStatusCode(EntityStatus.PENDING);
+        
         Organization org = new Organization();
-        entityNodeDto.setEntityDto((OrganizationDTO) PoXsnapshotHelper.createSnapshot(org));
-
+        org.setStatusCode(EntityStatus.NULLIFIED);
+        org.setId(1L);
+        org.setDuplicateOf(dup);
+        
+        BusinessServiceBean bsb = new BusinessServiceBean();
+        OSvcBean svcLocal = new OSvcBean();
+        svcLocal.setOrgForTesting(org);
+        bsb.setOrganizationServiceBean(svcLocal);
+        PSvcBean psvcLocal = new PSvcBean();
+        bsb.setPersonServiceBean(psvcLocal);
+        testContext.target = bsb;
+        
+        OrganizationDTO orgDto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(org);
+        
+        entityNodeDto.setEntityDto(orgDto);
+        
         ResearchOrganization ro = new ResearchOrganization();
         ro.setStatus(RoleStatus.PENDING);
         ro.setId(1L);
@@ -55,31 +78,35 @@ public class NullifiedEntityNodeInterceptorTest {
         entityNodeDto.setScopers(null);
         
         testContext.returnValue = entityNodeDto;
-        try {
-            interceptor.checkForNullified(testContext);
-            fail("Expected NullifiedEntityNodeException");
-        } catch (NullifiedEntityException ex) {
-            Map<Ii, Ii> nullifiedEntities = ex.getNullifiedEntities();
-            assertEquals(nullifiedEntities.size(), 1);
-            
-            assertTrue(ex.getNullifiedEntities().containsKey(
-                    players[0].getIdentifier().getItem().iterator().next()));
-            Ii duplicateIi =
-                    ex.getNullifiedEntities().get(
-                            players[0].getIdentifier().getItem().iterator().next());
-            assertNotNull(duplicateIi);
-            assertEquals(duplicateIi.getExtension(), ro.getId().toString());
-        }
-        
+       
+        interceptor.checkForNullified(testContext);
+       
     }
-    
-    @Test
-    public void testCheckForNullifiedWithNullifiedScoper() throws Exception {
+
+    @Test(expected = NullifiedEntityException.class)
+    public void testCheckForNullifiedWithPersonEntity() throws Exception {
+        HibernateUtil.getHibernateHelper().beginTransaction();
         EntityNodeDto entityNodeDto = new EntityNodeDto();
 
-        Organization org = new Organization();
-        entityNodeDto.setEntityDto((OrganizationDTO) PoXsnapshotHelper.createSnapshot(org));
-  
+        Person dup = new Person();
+        dup.setId(2L);
+        dup.setStatusCode(EntityStatus.PENDING);
+        
+        Person per = new Person();
+        per.setStatusCode(EntityStatus.NULLIFIED);
+        per.setId(1L);
+        per.setDuplicateOf(dup);
+        
+        BusinessServiceBean bsb = new BusinessServiceBean();
+        OSvcBean svcLocal = new OSvcBean();
+        bsb.setOrganizationServiceBean(svcLocal);
+        PSvcBean psvcLocal = new PSvcBean();
+        psvcLocal.setPersonForTesting(per);
+        bsb.setPersonServiceBean(psvcLocal);
+        testContext.target = bsb;
+        
+        entityNodeDto.setEntityDto((PersonDTO) PoXsnapshotHelper.createSnapshot(per));
+        
         IdentifiedOrganization idOrg1 = new IdentifiedOrganization();
         idOrg1.setStatus(RoleStatus.PENDING);
         idOrg1.setId(3L);        
@@ -96,26 +123,19 @@ public class NullifiedEntityNodeInterceptorTest {
         entityNodeDto.setScopers(scopers);
         
         testContext.returnValue = entityNodeDto;
-        try {
-            interceptor.checkForNullified(testContext);
-            fail("Expected NullifiedEntityNodeException");
-        } catch (NullifiedEntityException ex) {
-            Map<Ii, Ii> nullifiedEntities = ex.getNullifiedEntities();
-            assertEquals(nullifiedEntities.size(), 1);
-            
-            assertTrue(ex.getNullifiedEntities().containsKey(
-                    scopers[0].getIdentifier().getItem().iterator().next()));
-            Ii duplicateIi =
-                    ex.getNullifiedEntities().get(
-                            scopers[0].getIdentifier().getItem().iterator().next());
-            assertNotNull(duplicateIi);
-            assertEquals(duplicateIi.getExtension(), idOrg1.getId().toString());
-        }
-        
+        interceptor.checkForNullified(testContext);
     }
     
     @Test
     public void testCheckForNullifiedSuccess() throws Exception {
+        HibernateUtil.getHibernateHelper().beginTransaction();
+        BusinessServiceBean bsb = new BusinessServiceBean();
+        OSvcBean svcLocal = new OSvcBean();
+        bsb.setOrganizationServiceBean(svcLocal);
+        PSvcBean psvcLocal = new PSvcBean();
+        bsb.setPersonServiceBean(psvcLocal);
+            
+        testContext.target = bsb;
         EntityNodeDto entityNodeDto = new EntityNodeDto();
 
         Organization org = new Organization();
@@ -141,53 +161,26 @@ public class NullifiedEntityNodeInterceptorTest {
         assertEquals(testContext.returnValue, interceptor.checkForNullified(testContext));
     }
     
-    @Test
-    public void testCheckForNullifiedWithErrorCombinations() throws Exception {
-        EntityNodeDto entityNodeDto = new EntityNodeDto();
-
-        Person p = new Person();
-        p.setId(1L);
-        entityNodeDto.setEntityDto((PersonDTO) PoXsnapshotHelper.createSnapshot(p));
-
-        Person p2 = new Person();
-        p2.setId(2L);
-        p2.setStatusCode(EntityStatus.NULLIFIED);
-        p2.setDuplicateOf(p);
+    public static class BSvcBean implements BusinessServiceRemote {        
         
-        ClinicalResearchStaff crs1 = new ClinicalResearchStaff();
-        crs1.setId(3L);
-        crs1.setStatus(RoleStatus.PENDING);
-        
-        ClinicalResearchStaff crs2 = new ClinicalResearchStaff();
-        crs2.setId(4L);
-        crs2.setStatus(RoleStatus.NULLIFIED);
-        crs2.setDuplicateOf(crs1);
-
-        CorrelationDto[] players = new CorrelationDto[2];
-        players[0] = (CorrelationDto) PoXsnapshotHelper.createSnapshot(crs1);
-        players[1] = (CorrelationDto) PoXsnapshotHelper.createSnapshot(crs2);
-        
-        entityNodeDto.setPlayers(players);
-        entityNodeDto.setScopers(null);
-        
-        testContext.returnValue = entityNodeDto;
-        try {
-            interceptor.checkForNullified(testContext);
-            fail("Expected NullifiedEntityNodeException");
-        } catch (NullifiedEntityException ex) {
-            Map<Ii, Ii> nullifiedEntities = ex.getNullifiedEntities();
-            assertEquals(nullifiedEntities.size(), 1);
-            
-            assertTrue(ex.getNullifiedEntities().containsKey(
-                    players[1].getIdentifier().getItem().iterator().next()));
-            Ii duplicateIi =
-                    ex.getNullifiedEntities().get(
-                            players[1].getIdentifier().getItem().iterator().next());
-            assertNotNull(duplicateIi);
-            assertEquals(duplicateIi.getExtension(), crs1.getId().toString());
+        public CorrelationNodeDTO getCorrelationByIdWithEntities(Ii id, boolean player, boolean scoper)
+                throws NullifiedRoleException {
+            return null;
         }
-        
+
+        public CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, boolean player, boolean scoper)
+                throws NullifiedRoleException {
+            return null;
+        }
+
+        public CorrelationNodeDTO[] getCorrelationsByPlayerIdsWithEntities(Cd correlationType, Ii[] playerIds,
+                boolean player, boolean scoper) throws NullifiedRoleException {
+            return null;
+        }
+        public EntityNodeDto getEntityByIdWithCorrelations(Ii id, Cd[] players, Cd[] scopers)
+                throws NullifiedEntityException {
+            return null;
+        }
     }
-    
 
 }

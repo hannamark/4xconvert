@@ -274,7 +274,7 @@ public class NullifiedEntityInterceptorTest {
         }
     }
 
-    private Organization createOrganization(long id, EntityStatus entityStatus, Organization duplicateOf) {
+    public static Organization createOrganization(long id, EntityStatus entityStatus, Organization duplicateOf) {
         Organization o1 = new Organization();
         o1.setId(id);
         o1.setStatusCode(entityStatus);
@@ -282,7 +282,7 @@ public class NullifiedEntityInterceptorTest {
         return o1;
     }
 
-    private static class PSvcBean implements PersonServiceLocal {
+    public static class PSvcBean implements PersonServiceLocal {
         private Person getById;
 
         public long create(Person person) throws EntityValidationException {
@@ -291,6 +291,10 @@ public class NullifiedEntityInterceptorTest {
 
         public Person getById(long id) {
             return getById;
+        }
+        
+        public void setPersonForTesting(Person per) {
+            getById = per;
         }
 
         public void update(Person updatedEntity) {
@@ -318,7 +322,7 @@ public class NullifiedEntityInterceptorTest {
         }
     }
 
-    private static class OSvcBean implements OrganizationServiceLocal {
+    public static class OSvcBean implements OrganizationServiceLocal {
 
         private Organization getById;
 
@@ -332,6 +336,10 @@ public class NullifiedEntityInterceptorTest {
 
         public Organization getById(long id) {
             return getById;
+        }
+        
+        public void setOrgForTesting(Organization org) {
+            getById = org;
         }
 
         public void update(Organization updatedEntity) {
