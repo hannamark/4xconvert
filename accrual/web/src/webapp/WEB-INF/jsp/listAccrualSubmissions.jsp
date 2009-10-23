@@ -68,7 +68,7 @@
 <%
 String overAllStat = "";
 %>
-   <s:iterator id="sub" value="listOfSubmissions" >  
+   <s:iterator id="sub" value="displayTagList" >  
      <s:set name="stat" value="%{statusCode.code}"/>
    
     <s:if test="%{#stat=='Opened'}">

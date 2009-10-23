@@ -235,7 +235,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         StudySubjectDto ssub = patient.getStudySubjectDto();
         ssub.setStudyProtocolIdentifier(getSpIi());
         PerformedSubjectMilestoneDto psm = patient.getPerformedStudySubjectMilestoneDto();
-        pat = patientSvc.create(pat);
+        try {
+            pat = patientSvc.create(pat);
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            return super.create();
+        }
         ssub.setPatientIdentifier(pat.getIdentifier());
         ssub = studySubjectSvc.create(ssub);
         psm.setStudySubjectIdentifier(ssub.getIdentifier());
@@ -258,7 +263,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         pat.setOrganizationIdentifier(IiConverter.convertToIi(organizationId));
         StudySubjectDto ssub = patient.getStudySubjectDto();
         PerformedSubjectMilestoneDto psm = patient.getPerformedStudySubjectMilestoneDto();
-        pat = patientSvc.update(pat);
+        try {
+            pat = patientSvc.update(pat);
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            return super.update();
+        }
         ssub = studySubjectSvc.update(ssub);
         setRegistrationDate(psm);
         return super.edit();

@@ -79,7 +79,6 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.convert.Converters;
-
 import gov.nih.nci.accrual.convert.PatientConverter;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
@@ -103,13 +102,16 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.DataFormatException;
+
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
@@ -134,7 +136,7 @@ public class PatientBean implements PatientService {
     CountryService countryServ;
     @EJB
     PatientServiceRemote patientCorrelationSvc;
-    
+
     @Resource
     void setSessionContext(SessionContext ctx) {
         ejbContext = ctx;
@@ -146,24 +148,27 @@ public class PatientBean implements PatientService {
     public PatientDto create(PatientDto dto) throws RemoteException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Update method should be used to modify existing.");
-        }        
+        }
         return createOrUpdate(dto);
     }
-    
+
     /**
-     * {@inheritDoc}
+     * @param dto dto
+     * @throws RemoteException exception
      */
-    public void enforceBusinessRules(PatientDto dto) throws RemoteException {
-       String prc = DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, dto.getRaceCode());
-       final int valid = 12; 
-      if ((prc.contains(PatientRaceCode.NOT_REPORTED.getName())
-         || prc.contains(PatientRaceCode.UNKNOWN.getName())) && prc.length() > valid) {
-         
-         throw new RemoteException("Business Rule is violated. No multiple selection"
-                + " when race code is not reported or unknown");
-         
-       }
-     }
+    void enforceBusinessRules(PatientDto dto) throws RemoteException {
+        Set<String> raceCodes = DSetEnumConverter.convertDSetToSet(dto.getRaceCode());
+        boolean containsUnique = false;
+        for (String raceCode : raceCodes) {
+            if (PatientRaceCode.getByCode(raceCode).isUnique()) {
+                containsUnique = true;
+            }
+        }
+        if (raceCodes.size() > 1 && containsUnique) {
+           throw new RemoteException("Business rule is violated. No multiple selection"
+                + " when race code is Not Reported or Unknown.");
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -200,11 +205,12 @@ public class PatientBean implements PatientService {
     public PatientDto update(PatientDto dto) throws RemoteException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.");
-        }        
+        }
         return createOrUpdate(dto);
     }
 
     private PatientDto createOrUpdate(PatientDto dto) throws RemoteException {
+        enforceBusinessRules(dto);
         Patient bo = null;
         try {
             updatePOPatientCorrelation(dto);
@@ -245,9 +251,9 @@ public class PatientBean implements PatientService {
         }
         return resultDto;
     }
-   
+
     private void updatePOPatientDetails(PatientDto dto) throws RemoteException {
-        
+
         gov.nih.nci.services.person.PersonDTO poPersonDTO = new gov.nih.nci.services.person.PersonDTO();
         try {
             PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
@@ -255,8 +261,8 @@ public class PatientBean implements PatientService {
              poPersonDTO = peService.getPerson(personID);
         } catch (NullifiedEntityException e) {
             LOG.info("This Person is nullified " + dto.getPersonIdentifier().getExtension());
-        } 
-        
+        }
+
         poPersonDTO.setBirthDate(dto.getBirthDate());
         poPersonDTO.setRaceCode(dto.getRaceCode());
         poPersonDTO.setSexCode(dto.getGenderCode());
@@ -280,12 +286,12 @@ public class PatientBean implements PatientService {
         popDTO.setScoperIdentifier(scoper);
 
         Country country = countryServ.getCountry(dto.getCountryIdentifier());
-        String zip = !dto.getZip().getValue().equals("") ? dto.getZip().getValue() : "11111";   
-        
+        String zip = !dto.getZip().getValue().equals("") ? dto.getZip().getValue() : "11111";
+
         Ad ad = AddressConverterUtil.create("Street", null, "City", "VA", zip, country.getAlpha3());
         popDTO.setPostalAddress(new DSet<Ad>());
         popDTO.getPostalAddress().setItem(Collections.singleton(ad));
-        
+
         POPatientDTO poPatientDTO = null;
             if (dto.getAssignedIdentifier() != null && dto.getAssignedIdentifier().getExtension() != null) {
                 poPatientDTO = patientCorrelationSvc.get(IiConverter.convertToPOPatientIi(

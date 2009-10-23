@@ -86,7 +86,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.MockPoServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
@@ -102,12 +101,15 @@ import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.USStateCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -121,11 +123,11 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
     private final CountryService cs = new CountryBean();
     private final PatientServiceRemote psb = new PatientServiceBean();
     Ii countryIi;
-    
+
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        //bean = new PatientBean();        
+        //bean = new PatientBean();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         bean.countryServ = cs;
         bean.patientCorrelationSvc = psb;
@@ -163,7 +165,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
             // expected behavior
         }
     }
-    
+
     @Test
     public void enforceBusinessRules() throws Exception {
         PatientDto dto = new PatientDto();
@@ -171,19 +173,29 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setCountryIdentifier(countryIi);
         dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.BLACK.getName()));
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
         dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
-    	
+        bean.enforceBusinessRules(dto);
+        Set<String> races = new HashSet<String>();
+        races.add(PatientRaceCode.AMERICAN_INDIAN.getCode());
+        dto.setRaceCode(DSetEnumConverter.convertSetToDSet(races));
+        bean.enforceBusinessRules(dto);
+        races = new HashSet<String>();
+        races.add(PatientRaceCode.NOT_REPORTED.getCode());
+        dto.setRaceCode(DSetEnumConverter.convertSetToDSet(races));
+        bean.enforceBusinessRules(dto);
+        races.add(PatientRaceCode.BLACK.getCode());
+        dto.setRaceCode(DSetEnumConverter.convertSetToDSet(races));
         try {
-           bean.enforceBusinessRules(dto);
-         } catch (RemoteException e) {
-           // expected behavior
+            bean.enforceBusinessRules(dto);
+            fail("Should have failed for unique code violation.");
+        } catch (RemoteException e) {
+            // expected behavior
         }
     }
-    
+
     @Test
     public void create() throws Exception {
         PatientDto dto = new PatientDto();
@@ -215,25 +227,25 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
        assertTrue(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
 
     }
-    
+
     @Test
     public void patientExceptions() throws Exception {
         PatientDto dto = new PatientDto();
-        
+
         try {
             bean.get(null);
             fail();
         } catch (RemoteException ex) {
             // expected
         }
-        
+
         try {
             bean.update(dto);
             fail();
         } catch (RemoteException ex) {
             // expected
         }
-        
+
         Ii ii = IiConverter.convertToIi(Long.valueOf(1));
         dto.setIdentifier(ii);
         try {
