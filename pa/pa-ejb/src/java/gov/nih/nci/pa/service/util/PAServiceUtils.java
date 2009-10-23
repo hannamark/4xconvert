@@ -235,7 +235,7 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public void createOrUpdate(List<? extends StudyDTO> dtos, Ii id, Ii studyProtocolIi) throws PAException {
-        if (dtos == null || dtos.isEmpty()) {
+        if (PAUtil.isListEmpty(dtos)) {
             return;
         }
         for (StudyDTO dto : dtos) {
@@ -307,7 +307,7 @@ public class PAServiceUtils {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
-        if (scDtos != null && !scDtos.isEmpty()) {
+        if (PAUtil.isListNotEmpty(scDtos)) {
             scDto = scDtos.get(0);
             PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
         } else {
@@ -317,7 +317,7 @@ public class PAServiceUtils {
                   StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
               List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                   .getByStudyProtocol(studyProtocolIi, spart);
-            if (spDtos != null && !spDtos.isEmpty()) {
+            if (PAUtil.isListNotEmpty(spDtos)) {
                 PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
             }
 
@@ -725,7 +725,7 @@ public class PAServiceUtils {
     public void enforceNoDuplicateIndIde(List<StudyIndldeDTO> studyIndldeDTOs, StudyProtocolDTO studyProtocolDTO) 
     throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (studyIndldeDTOs != null  && !studyIndldeDTOs.isEmpty()) {
+        if (PAUtil.isListNotEmpty(studyIndldeDTOs)) {
             for (int i = 0; i < studyIndldeDTOs.size(); i++) {
                 StudyIndldeDTO sp = (StudyIndldeDTO) studyIndldeDTOs.get(i);
                 if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyIndIdeIi(
@@ -758,7 +758,7 @@ public class PAServiceUtils {
     @SuppressWarnings(UNCHECKED)
     public void enforceNoDuplicateGrants(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (studyResourcingDTOs != null  && !studyResourcingDTOs.isEmpty()) {
+        if (PAUtil.isListNotEmpty(studyResourcingDTOs)) {
             for (int i = 0; i < studyResourcingDTOs.size(); i++) {
                 StudyResourcingDTO sp =  studyResourcingDTOs.get(i);
                 if (PAUtil.isIiNotNull(sp.getIdentifier()) && !isIiExistInPA(IiConverter.convertToStudyIndIdeIi(
@@ -815,7 +815,7 @@ public class PAServiceUtils {
                                          List<StudySiteAccrualStatusDTO> participatingSites, 
                                          StudyRecruitmentStatusDTO recruitmentStatusDto) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (participatingSites != null && !participatingSites.isEmpty()) { 
+        if (PAUtil.isListNotEmpty(participatingSites)) { 
                if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
                       equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {
                   boolean recruiting = false;
@@ -1068,13 +1068,13 @@ public class PAServiceUtils {
      *
      */
     @SuppressWarnings({"PMD.PreserveStackTrace" })
-    public void createPoObject(List<PoDto> listOfObject) throws PAException {
+    public void createPoObject(List<? extends PoDto> listOfObject) throws PAException {
       for (PoDto poDto : listOfObject) {
          try {   
-             if (poDto instanceof OrganizationDTO) {
-                 PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) poDto);
-             }
-             if (poDto instanceof PersonDTO) {
+             if (poDto instanceof OrganizationDTO && PAUtil.isIiNull(((OrganizationDTO) poDto).getIdentifier())) {
+                     PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) poDto);
+                 }
+             if (poDto instanceof PersonDTO && PAUtil.isIiNull(((PersonDTO) poDto).getIdentifier())) {
                  PoRegistry.getPersonEntityService().createPerson((PersonDTO) poDto);
              }
          } catch (Exception e) {
@@ -1082,4 +1082,4 @@ public class PAServiceUtils {
          }
       }
     }
-}
+ }

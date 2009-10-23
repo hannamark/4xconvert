@@ -735,6 +735,27 @@ public class PAUtil {
       }
       return retValue;
     }
-
-
+    /**
+     * 
+     * @param <E> e
+     * @param list listt
+     * @return f
+     */
+    public static <E> boolean isListNotEmpty(List<? extends E> list) {
+        return !isListEmpty(list);
+        
+    }
+    /**
+     * 
+     * @param <E> e
+     * @param list listt
+     * @return f
+     */
+    public static <E> boolean isListEmpty(List<? extends E> list) {
+        if (list == null || list.isEmpty()) {
+            return true;
+        }
+        return false;
+        
+    }
 }
