@@ -126,6 +126,7 @@ public class TrialValidationAction extends ActionSupport {
     private static final int MAXIMUM_CHAR = 200;
     private static final String SPONSOR = "sponsor";
     private static final String UNDEFINED = "undefined";
+    private static final String REJECT_OPERATION = "Reject";
     private List<Country> countryList = new ArrayList<Country>();
 
     /**
@@ -148,7 +149,7 @@ public class TrialValidationAction extends ActionSupport {
      * @return String
      */
     public String update() {
-        enforceBusinessRules();
+        enforceBusinessRules("");
         if (hasFieldErrors()) {
             return EDIT;
         }
@@ -164,7 +165,7 @@ public class TrialValidationAction extends ActionSupport {
      * @return String
      */
     public String accept() {
-        enforceBusinessRules();
+        enforceBusinessRules("");
         //check if submission number is greater than 1 then it is amend
         if (isTrialForAmendment(gtdDTO.getSubmissionNumber())
                 && PAUtil.isEmpty(gtdDTO.getAmendmentReasonCode())) {
@@ -201,7 +202,7 @@ public class TrialValidationAction extends ActionSupport {
      * @return String
      */
     public String reject() {
-        enforceBusinessRules();
+        enforceBusinessRules(REJECT_OPERATION);
         if (hasFieldErrors()) {
             return EDIT;
         }
@@ -296,18 +297,31 @@ public class TrialValidationAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
     }
-    private void enforceBusinessRules() {   
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
+    private void enforceBusinessRules(String operation) {   
         if (PAUtil.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
             addFieldError("gtdDTO.LocalProtocolIdentifier", getText("Organization Trial ID must be Entered"));
         }
         if (PAUtil.isEmpty(gtdDTO.getOfficialTitle())) {
             addFieldError("gtdDTO.OfficialTitle", getText("OfficialTitle must be Entered"));
         }
-        if (PAUtil.isEmpty(gtdDTO.getPhaseCode())) {
-            addFieldError("gtdDTO.phaseCode", getText("error.phase"));
-        }
-        if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
-            addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
+        if (REJECT_OPERATION.equalsIgnoreCase(operation) && PAUtil.isNotEmpty(gtdDTO.getProprietarytrialindicator()) 
+                && gtdDTO.getProprietarytrialindicator().equalsIgnoreCase("true")) {
+            if (PAUtil.isEmpty(gtdDTO.getNctIdentifier())) {
+                if (PAUtil.isEmpty(gtdDTO.getPhaseCode())) {
+                    addFieldError("gtdDTO.phaseCode", getText("error.phase"));
+                }
+                if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
+                    addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
+                }
+            }
+        } else {
+            if (PAUtil.isEmpty(gtdDTO.getPhaseCode())) {
+                addFieldError("gtdDTO.phaseCode", getText("error.phase"));
+            }
+            if (PAUtil.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
+                addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
+            }
         }
         if (gtdDTO.getProprietarytrialindicator() == null 
                 || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
