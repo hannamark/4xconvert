@@ -1,6 +1,7 @@
 #exclude.viewer=true
 jboss.deploy.directory=D:/jboss-4.0.5.GAJEMS/server/default/deploy
-jboss.port=8280
+jboss.server.jndi.port=11299
+jboss.port=19280
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 db.username=ctods
 db.password=ctods
