@@ -10,6 +10,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
@@ -39,7 +40,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
 
     private OrganizationDTO create(String name, Ad postalAddress, DSet<Tel> telecomAddress) throws URISyntaxException {
         OrganizationDTO org = new OrganizationDTO();
-        org.setName(RemoteApiUtils.convertToEnOn(name));
+        org.setName(TestConvertHelper.convertToEnOn(name));
         org.setPostalAddress(postalAddress);
         if (telecomAddress != null) {
             org.setTelecomAddress(telecomAddress);
@@ -167,18 +168,18 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
 
     private Ad createPostalAddress(String street, String delivery, String city, String state, String zip,
             String countryAlpha3) {
-        return RemoteApiUtils.createAd(street, delivery, city, state, zip, countryAlpha3);
+        return TestConvertHelper.createAd(street, delivery, city, state, zip, countryAlpha3);
     }
 
     private DSet<Tel> createDSetTel(List<String> email, List<String> fax, List<String> phone, List<String> url,
             List<String> text) {
-        return RemoteApiUtils.convertToDSetTel(email, fax, phone, url, text);
+        return TestConvertHelper.convertToDSetTel(email, fax, phone, url, text);
     }
 
     @Test
     public void findOrgByNameExact() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(RemoteApiUtils.convertToEnOn("Z Inc."));
+        crit.setName(TestConvertHelper.convertToEnOn("Z Inc."));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(1, results.size());
     }
@@ -186,7 +187,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findOrgByNameInsensitiveExact() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(RemoteApiUtils.convertToEnOn("z inc."));
+        crit.setName(TestConvertHelper.convertToEnOn("z inc."));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(1, results.size());
     }
@@ -194,7 +195,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findOrgByNameSubstring() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(RemoteApiUtils.convertToEnOn("QQ"));
+        crit.setName(TestConvertHelper.convertToEnOn("QQ"));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(3, results.size());
     }
@@ -202,7 +203,7 @@ public class OrganizationEntityServiceSearchTest extends AbstractOrganizationEnt
     @Test
     public void findOrgByNameSubstringInsensitive() throws Exception {
         OrganizationDTO crit = new OrganizationDTO();
-        crit.setName(RemoteApiUtils.convertToEnOn("QQ"));
+        crit.setName(TestConvertHelper.convertToEnOn("QQ"));
         List<OrganizationDTO> results = getOrgService().search(crit);
         assertEquals(3, results.size());
     }

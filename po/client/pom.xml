@@ -51,6 +51,13 @@
             <groupId>${pom.parent.groupId}</groupId>
             <artifactId>po-services</artifactId>
             <version>${pom.parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${pom.parent.groupId}</groupId>
+            <artifactId>po-services</artifactId>
+            <version>${pom.parent.version}</version>
             <type>ejb-client</type>
             <exclusions>
                 <exclusion>

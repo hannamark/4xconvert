@@ -5,10 +5,10 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
@@ -539,8 +539,8 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected Ii createRemoteOrg(String orgName) throws EntityValidationException, NamingException, URISyntaxException, CurationException {
 
         OrganizationDTO dto = new OrganizationDTO();
-        dto.setName(RemoteApiUtils.convertToEnOn(orgName));
-        dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+        dto.setName(TestConvertHelper.convertToEnOn(orgName));
+        dto.setPostalAddress(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         dto.setTelecomAddress(telco);

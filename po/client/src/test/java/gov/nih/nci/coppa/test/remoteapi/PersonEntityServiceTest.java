@@ -99,7 +99,6 @@ import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.PersonEthnicGroup;
 import gov.nih.nci.po.data.bo.PersonRace;
 import gov.nih.nci.po.data.bo.PersonSex;
@@ -108,9 +107,9 @@ import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.EthnicGroupCodeConverter;
 import gov.nih.nci.po.data.convert.RaceCodeConverter;
 import gov.nih.nci.po.data.convert.SexCodeConverter;
-import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.data.convert.TsConverter;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -162,7 +161,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             part = new Enxp(EntityNamePartType.FAM);
             part.setValue(ENXP_FAM);
             dto.getName().getPart().add(part);
-            dto.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", "WY", "zip", "USA"));
+            dto.setPostalAddress(TestConvertHelper.createAd("street", "delivery", "city", "WY", "zip", "USA"));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);
@@ -190,8 +189,8 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         try {
             Ii orgId = null;
             OrganizationDTO dto = new OrganizationDTO();
-            dto.setName(RemoteApiUtils.convertToEnOn("_"));
-            dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+            dto.setName(TestConvertHelper.convertToEnOn("_"));
+            dto.setPostalAddress(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);
@@ -268,7 +267,7 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
             part = new Enxp(EntityNamePartType.FAM);
             part.setValue(ENXP_FAM);
             dto.getName().getPart().add(part);
-            dto.setPostalAddress(RemoteApiUtils.createAd("street", "delivery", "city", "WY", "zip", "USA"));
+            dto.setPostalAddress(TestConvertHelper.createAd("street", "delivery", "city", "WY", "zip", "USA"));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);

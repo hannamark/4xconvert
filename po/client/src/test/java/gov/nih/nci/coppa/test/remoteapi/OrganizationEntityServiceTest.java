@@ -95,6 +95,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
@@ -127,11 +128,11 @@ public class OrganizationEntityServiceTest extends AbstractOrganizationEntitySer
     @Test(expected = EntityValidationException.class)
     public void testCreateIncomplete() throws Exception {
         OrganizationDTO dto1 = new OrganizationDTO();
-        dto1.setName(RemoteApiUtils.convertToEnOn("Test Name"));
+        dto1.setName(TestConvertHelper.convertToEnOn("Test Name"));
         Ii id = getOrgService().createOrganization(dto1);
         assertNotNull(id);
         assertNotNull(id.getExtension());
-        assertTrue(RemoteApiUtils.convertToLong(id) > 0);
+        assertTrue(TestConvertHelper.convertToLong(id) > 0);
         OrganizationDTO dto2 = getOrgService().getOrganization(id);
         assertEquals(dto1, dto2);
     }
@@ -143,8 +144,8 @@ public class OrganizationEntityServiceTest extends AbstractOrganizationEntitySer
         }
         try {
             OrganizationDTO dto = new OrganizationDTO();
-            dto.setName(RemoteApiUtils.convertToEnOn("_"));
-            dto.setPostalAddress(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+            dto.setName(TestConvertHelper.convertToEnOn("_"));
+            dto.setPostalAddress(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
             DSet<Tel> telco = new DSet<Tel>();
             telco.setItem(new HashSet<Tel>());
             dto.setTelecomAddress(telco);
@@ -159,7 +160,7 @@ public class OrganizationEntityServiceTest extends AbstractOrganizationEntitySer
             orgId = getOrgService().createOrganization(dto);
             assertNotNull(orgId);
             assertNotNull(orgId.getExtension());
-            assertTrue(RemoteApiUtils.convertToLong(orgId) > 0);
+            assertTrue(TestConvertHelper.convertToLong(orgId) > 0);
         } catch (EntityValidationException e) {
             fail(e.getErrorMessages());
         }

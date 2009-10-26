@@ -10,6 +10,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
@@ -41,7 +42,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
 
     private static PersonDTO create(String fName, String mName, String lName, String prefix, String suffix, Ad postalAddress, DSet<Tel> telecomAddress) throws URISyntaxException {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(fName, mName, lName, prefix, suffix));
+        p.setName(TestConvertHelper.convertToEnPn(fName, mName, lName, prefix, suffix));
         p.setPostalAddress(postalAddress);
         if (telecomAddress != null) {
             p.setTelecomAddress(telecomAddress);
@@ -63,7 +64,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
 
     private static Ad createPostalAddress(String street, String delivery, String city, String state, String zip,
             String countryAlpha3) {
-        return RemoteApiUtils.createAd(street, delivery, city, state, zip, countryAlpha3);
+        return TestConvertHelper.createAd(street, delivery, city, state, zip, countryAlpha3);
     }
 
     @BeforeClass
@@ -164,13 +165,13 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
 
     private static DSet<Tel> createDSetTel(List<String> email, List<String> fax,
             List<String> phone, List<String> url, List<String> text) {
-        return RemoteApiUtils.convertToDSetTel(email, fax, phone, url, text);
+        return TestConvertHelper.convertToDSetTel(email, fax, phone, url, text);
     }
 
     @Test
     public void findByFamilyNameExact() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, "Klm", null, null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, "Klm", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -178,7 +179,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByFamilyNameExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, "klm", null, null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, "klm", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -186,7 +187,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByFamilyNameSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, "lm", null, null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, "lm", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -194,7 +195,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByFamilyNameInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, "LM", null, null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, "LM", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -202,7 +203,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findNoneByFamilyNameSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, "lmz", null, null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, "lmz", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(0, results.size());
     }
@@ -210,7 +211,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findNoneByFamilyNameInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, "LMZ", null, null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, "LMZ", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(0, results.size());
     }
@@ -218,7 +219,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByFamilyNameContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, "K", null, null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, "K", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
@@ -226,7 +227,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByFamilyNameInsensitiveContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, "k", null, null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, "k", null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
@@ -234,7 +235,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenNameExact() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("Abc", null, null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("Abc", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -242,7 +243,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenNameExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("abc", null, null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("abc", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -250,7 +251,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenNameSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("e", null, null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("e", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
@@ -258,7 +259,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenNameInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("E", null, null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("E", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
@@ -266,7 +267,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenNameContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("b", null, null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("b", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
@@ -274,7 +275,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenNameInsensitiveContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("B", null, null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("B", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(2, results.size());
     }
@@ -282,7 +283,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findNoneByGivenNameInsensitiveContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("IDONTEXIST", null, null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("IDONTEXIST", null, null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(0, results.size());
     }
@@ -290,7 +291,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenName2Exact() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("%", "Mid1", null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("%", "Mid1", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -298,7 +299,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenName2ExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("%", "mid1", null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("%", "mid1", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -306,7 +307,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenName2Substring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("%", "id", null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("%", "id", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(5, results.size());
     }
@@ -314,7 +315,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenName2InsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("%", "ID", null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("%", "ID", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(5, results.size());
     }
@@ -322,7 +323,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findNoneByGivenName2InsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("%", "DI", null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("%", "DI", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(0, results.size());
     }
@@ -330,7 +331,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenName2Contains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("%", "Mid", null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("%", "Mid", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(5, results.size());
     }
@@ -338,7 +339,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByGivenName2InsensitiveContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn("%", "mID", null, null, null));
+        p.setName(TestConvertHelper.convertToEnPn("%", "mID", null, null, null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(5, results.size());
     }
@@ -346,7 +347,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByPrefixExact() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "Mr.", null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, "Mr.", null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -354,7 +355,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByPrefixExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "mr.", null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, "mr.", null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -362,7 +363,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByPrefixSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "r", null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, "r", null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(8, results.size());
     }
@@ -370,7 +371,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByPrefixInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "R", null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, "R", null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(8, results.size());
     }
@@ -378,7 +379,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findNoneByPrefixInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "IDONTEXIST", null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, "IDONTEXIST", null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(0, results.size());
     }
@@ -386,7 +387,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByPrefixContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "M", null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, "M", null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(3, results.size());
     }
@@ -394,7 +395,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findByPrefixInsensitiveContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, "m", null));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, "m", null));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(3, results.size());
     }
@@ -402,7 +403,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findBySuffixExact() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "Suf1"));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, null, "Suf1"));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -410,7 +411,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findBySuffixExactInsensitive() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "suf1"));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, null, "suf1"));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(1, results.size());
     }
@@ -418,7 +419,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findBySuffixSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "uf"));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, null, "uf"));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(4, results.size());
     }
@@ -426,7 +427,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findBySuffixInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "UF"));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, null, "UF"));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(4, results.size());
     }
@@ -434,7 +435,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findNoneBySuffixInsensitiveSubstring() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "FU"));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, null, "FU"));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(0, results.size());
     }
@@ -442,7 +443,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findBySuffixContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "Suf"));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, null, "Suf"));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(4, results.size());
     }
@@ -450,7 +451,7 @@ public class PersonEntityServiceSearchTest extends AbstractPersonEntityService {
     @Test
     public void findBySuffixInsensitiveContains() {
         PersonDTO p = new PersonDTO();
-        p.setName(RemoteApiUtils.convertToEnPn(null, null, null, null, "suf"));
+        p.setName(TestConvertHelper.convertToEnPn(null, null, null, null, "suf"));
         List<PersonDTO> results = getPersonService().search(p);
         assertEquals(4, results.size());
     }

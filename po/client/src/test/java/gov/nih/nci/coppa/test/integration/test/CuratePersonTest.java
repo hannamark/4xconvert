@@ -8,10 +8,10 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
-import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -201,7 +201,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         PersonDTO proposedState = remoteGetPerson(id);
         String newFirstName = "newFirstName";
         String newLastName = "newLastName";
-        proposedState.setName(RemoteApiUtils.convertToEnPn(newFirstName, null, newLastName, null, null));
+        proposedState.setName(TestConvertHelper.convertToEnPn(newFirstName, null, newLastName, null, null));
         remoteUpdate(proposedState);
 
         openEntityInboxPerson();
@@ -249,12 +249,12 @@ public class CuratePersonTest extends AbstractPoWebTest {
     }
 
     private PersonDTO create(String firstName, String lastName) throws URISyntaxException {
-        return create(firstName, null, lastName, null, null, RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "VA", "12345", "USA"));
+        return create(firstName, null, lastName, null, null, TestConvertHelper.createAd("123 abc ave.", null, "mycity", "VA", "12345", "USA"));
     }
 
     private PersonDTO create(String firstName, String middleName, String lastName, String prefix, String suffix, Ad postalAddress) throws URISyntaxException {
         PersonDTO person = new PersonDTO();
-        person.setName(RemoteApiUtils.convertToEnPn(firstName, middleName, lastName, prefix, suffix));
+        person.setName(TestConvertHelper.convertToEnPn(firstName, middleName, lastName, prefix, suffix));
 
         person.setPostalAddress(postalAddress);
         DSet<Tel> telco = new DSet<Tel>();

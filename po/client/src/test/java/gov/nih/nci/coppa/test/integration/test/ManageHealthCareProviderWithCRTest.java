@@ -88,9 +88,9 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -249,7 +249,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         id.setRoot("2.16.840.1.113883.3.26.4.5.3");
         id.setIdentifierName("NCI health care provider identifier");
         HealthCareProviderDTO dto = RemoteServiceHelper.getHealthCareProviderCorrelationService().getCorrelation(id);
-        dto.setCertificateLicenseText(RemoteApiUtils.convertToSt("CR cert license change"));
+        dto.setCertificateLicenseText(TestConvertHelper.convertToSt("CR cert license change"));
 
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());

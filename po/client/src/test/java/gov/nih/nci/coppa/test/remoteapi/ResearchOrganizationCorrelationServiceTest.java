@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
@@ -117,12 +118,12 @@ public class ResearchOrganizationCorrelationServiceTest
         type.setCode("CCR");
         dto.setTypeCode(type);
 
-        dto.setName(RemoteApiUtils.convertToEnOn("my name"));
+        dto.setName(TestConvertHelper.convertToEnOn("my name"));
 
         DSet<Ad> addys = new DSet<Ad>();
         Set<Ad> set = new ListOrderedSet();
         addys.setItem(set);
-        addys.getItem().add(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+        addys.getItem().add(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
         dto.setPostalAddress(addys);
 
         dto.setTelecomAddress(new DSet<Tel>());

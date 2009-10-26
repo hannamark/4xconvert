@@ -9,10 +9,10 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
-import gov.nih.nci.coppa.test.remoteapi.RemoteApiUtils;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -253,7 +253,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         OrganizationDTO proposedState = remoteGetOrganization(id);
         String newCrName = "a realistic name";
-        proposedState.setName(RemoteApiUtils.convertToEnOn(newCrName));
+        proposedState.setName(TestConvertHelper.convertToEnOn(newCrName));
         remoteUpdate(proposedState);
 
         openEntityInboxOrganization();
@@ -322,12 +322,12 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private OrganizationDTO create(String name) throws URISyntaxException {
-        return create(name, RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "VA", "12345", "USA"));
+        return create(name, TestConvertHelper.createAd("123 abc ave.", null, "mycity", "VA", "12345", "USA"));
     }
 
     private OrganizationDTO create(String name, Ad postalAddress) throws URISyntaxException {
         OrganizationDTO org = new OrganizationDTO();
-        org.setName(RemoteApiUtils.convertToEnOn(name));
+        org.setName(TestConvertHelper.convertToEnOn(name));
         org.setPostalAddress(postalAddress);
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
@@ -346,7 +346,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     private HealthCareFacilityDTO createHcfFromCtep(Ii orgId) throws URISyntaxException {
         HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
         hcf.setPlayerIdentifier(orgId);
-        hcf.setName(RemoteApiUtils.convertToEnOn("ctep role"));
+        hcf.setName(TestConvertHelper.convertToEnOn("ctep role"));
         Cd status = new Cd();
         status.setCode("PENDING");
         hcf.setStatus(status);
@@ -360,7 +360,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         DSet<Ad> addys = new DSet<Ad>();
         Set<Ad> set = new ListOrderedSet();
         addys.setItem(set);
-        addys.getItem().add(RemoteApiUtils.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
+        addys.getItem().add(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
         hcf.setPostalAddress(addys);
 
         hcf.setTelecomAddress(new DSet<Tel>());

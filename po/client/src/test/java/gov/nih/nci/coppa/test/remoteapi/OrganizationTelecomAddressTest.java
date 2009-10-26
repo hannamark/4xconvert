@@ -10,6 +10,7 @@ import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.net.URI;
@@ -36,7 +37,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     private OrganizationDTO createOrgDTO(String name, Ad postalAddress, DSet<Tel> telecomAddress)
             throws URISyntaxException {
         OrganizationDTO org = new OrganizationDTO();
-        org.setName(RemoteApiUtils.convertToEnOn(name));
+        org.setName(TestConvertHelper.convertToEnOn(name));
         org.setPostalAddress(postalAddress);
         if (telecomAddress != null) {
             org.setTelecomAddress(telecomAddress);
@@ -61,19 +62,19 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Before
     public void loadData() throws Exception {
         if (!testDataLoaded) {
-            DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(Arrays
+            DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(Arrays
                     .asList(new String[] { "myorgtestI@mygor.com" }), Arrays.asList(new String[] { "+1 342 fax" }),
                     Arrays.asList(new String[] { "+1 603 telephone with ext" }), Arrays
                             .asList(new String[] { "http://testurl.org" }), null);
 
             String state = "WY";
-            remoteCreateAndCatalog(createOrgDTO("WEE Org Inc. I", RemoteApiUtils.createAd("123 abc ave.", null,
+            remoteCreateAndCatalog(createOrgDTO("WEE Org Inc. I", TestConvertHelper.createAd("123 abc ave.", null,
                     "mycity", state, "12345", "USA"), telecomAddress));
-            DSet<Tel> telecomAddress1 = RemoteApiUtils.convertToDSetTel(Arrays
+            DSet<Tel> telecomAddress1 = TestConvertHelper.convertToDSetTel(Arrays
                     .asList(new String[] { "myorg@mygor.com" }), Arrays.asList(new String[] { "+1 342 453 5655" }),
                     Arrays.asList(new String[] { "+1 603.123.4567 ext 204" }), Arrays
                             .asList(new String[] { "http://testmail.org.com" }), null);
-            remoteCreateAndCatalog(createOrgDTO("ZEE Org Inc. I", RemoteApiUtils.createAd("123 abc ave.", null,
+            remoteCreateAndCatalog(createOrgDTO("ZEE Org Inc. I", TestConvertHelper.createAd("123 abc ave.", null,
                     "mycity", state, "12345", "USA"), telecomAddress1));
             testDataLoaded = true;
         }
@@ -85,7 +86,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
         List<String> urls = Arrays.asList(new String[] { "http://testmail.org.com" });
         List<String> email = Arrays.asList(new String[] { "myorg@mygor.com" });
 
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, tels, urls, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, tels, urls, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -95,7 +96,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByEmailExact() {
         List<String> email = Arrays.asList(new String[] { "myorg@mygor.com" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -105,7 +106,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByEmailInsensitive() {
         List<String> email = Arrays.asList(new String[] { "MYORG@mygor.com" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -115,7 +116,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByEmailContains() {
         List<String> email = Arrays.asList(new String[] { "mygor" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -125,7 +126,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByEmailSubString() {
         List<String> email = Arrays.asList(new String[] { "gor" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -135,7 +136,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findNoTelcomAddressOnlyByEmailSubString() {
         List<String> email = Arrays.asList(new String[] { "gorr" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -145,7 +146,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByPhoneExact() {
         List<String> tels = Arrays.asList(new String[] { "+1 603.123.4567 ext 204" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, null, tels, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, null, tels, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -155,7 +156,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByPhoneContains() {
         List<String> tels = Arrays.asList(new String[] { "+1 603" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, null, tels, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, null, tels, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -165,7 +166,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByPhoneSubString() {
         List<String> tels = Arrays.asList(new String[] { "603" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, null, tels, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, null, tels, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -175,7 +176,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByFaxExact() {
         List<String> fax = Arrays.asList(new String[] { "+1 342 453 5655" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, fax, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, fax, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -185,7 +186,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByFaxContains() {
         List<String> fax = Arrays.asList(new String[] { "+1 342" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, fax, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, fax, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -195,7 +196,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByFaxSubString() {
         List<String> fax = Arrays.asList(new String[] { "342" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, fax, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, fax, null, null, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -205,7 +206,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByUrlExact() {
         List<String> url = Arrays.asList(new String[] { "http://testmail.org.com" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, null, null, url, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, null, null, url, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -215,7 +216,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void findTelcomAddressOnlyByUrlContains() {
         List<String> url = Arrays.asList(new String[] { "http://test" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(null, null, null, url, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(null, null, null, url, null);
         OrganizationDTO p = new OrganizationDTO();
         p.setTelecomAddress(telecomAddress);
         List<OrganizationDTO> results = getOrgService().search(p);
@@ -227,7 +228,7 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     public void findTelcomAddressOnlyByUrlSubString() {
         try {
             List<String> url = Arrays.asList(new String[] { "test" });
-            RemoteApiUtils.convertToDSetTel(null, null, null, url, null);
+            TestConvertHelper.convertToDSetTel(null, null, null, url, null);
             fail();
         } catch (IllegalArgumentException e) {
         }
@@ -237,9 +238,9 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     @Test
     public void createTelcomAddressOnlyByEmailNotValid() throws CurationException {
         List<String> email = Arrays.asList(new String[] { "test" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, null, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, null, null, null);
         try {
-            remoteCreateAndCatalog(createOrgDTO("In valid email id", RemoteApiUtils.createAd("123 abc ave.", null,
+            remoteCreateAndCatalog(createOrgDTO("In valid email id", TestConvertHelper.createAd("123 abc ave.", null,
                     "mycity", "MD", "12345", "USA"), telecomAddress));
             fail();
         } catch (EntityValidationException e) {
@@ -254,9 +255,9 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
     public void createTelcomAddressOnlyByPhoneNotValid() throws CurationException {
         List<String> phone = Arrays.asList(new String[] { ";?:&type=ds#/^`" });
         List<String> email = Arrays.asList(new String[] { "mailAdd@add.com" });
-        DSet<Tel> telecomAddress = RemoteApiUtils.convertToDSetTel(email, null, phone, null, null);
+        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, phone, null, null);
         try {
-            remoteCreateAndCatalog(createOrgDTO("In valid phone-23o4n", RemoteApiUtils.createAd("123 abc ave.", null,
+            remoteCreateAndCatalog(createOrgDTO("In valid phone-23o4n", TestConvertHelper.createAd("123 abc ave.", null,
                     "mycity", "MD", "12345", "USA"), telecomAddress));
             // fail();
         } catch (EntityValidationException e) {
