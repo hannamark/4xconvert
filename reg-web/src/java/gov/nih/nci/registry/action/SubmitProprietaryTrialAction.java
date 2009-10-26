@@ -153,9 +153,19 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
         ClassValidator<ProprietaryTrialDTO> classValidator = new ClassValidator(trialDTO.getClass());
         invalidValues = classValidator.getInvalidValues(trialDTO);
         for (int i = 0; i < invalidValues.length; i++) {
-            addFieldError("trialDTO." + invalidValues[i].getPropertyName(), 
+            if (PAUtil.isNotEmpty(trialDTO.getNctIdentifier())) {
+                if (!invalidValues[i].getPropertyName().equalsIgnoreCase("phaseCode")
+                    && !invalidValues[i].getPropertyName().equalsIgnoreCase("primaryPurposeCode")) {
+                //if the nct Number is present ignore the phase code and primary purpose codes
+                addFieldError("trialDTO." + invalidValues[i].getPropertyName(), 
                             getText(invalidValues[i].getMessage().trim()));
+                }
+            } else {
+                addFieldError("trialDTO." + invalidValues[i].getPropertyName(), 
+                        getText(invalidValues[i].getMessage().trim()));
+            }
         }
+            
         if (PAUtil.isEmpty(trialDTO.getNctIdentifier()) && PAUtil.isEmpty(protocolDocFileName)) {
             addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
             addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");
