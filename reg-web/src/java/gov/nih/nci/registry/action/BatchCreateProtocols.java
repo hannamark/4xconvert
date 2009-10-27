@@ -104,6 +104,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -358,7 +359,8 @@ public class BatchCreateProtocols {
                 RegistryServiceLocator.getTrialRegistrationService().
                     update(studyProtocolDTO, overallStatusDTO, ssNctIdDto, studyIndldeDTOs, studyResourcingDTOs, 
                     documentDTOs, studyContactDTO, studySiteContactDTO, summary4orgDTO, summary4studyResourcingDTO, 
-                    responsiblePartyContactIi, studyRegAuthDTO, null, null, null);
+                    responsiblePartyContactIi, studyRegAuthDTO, null, null, null, 
+                    BlConverter.convertToBl(Boolean.TRUE));
                
              return studyProtocolIi;
     }
@@ -576,7 +578,8 @@ public class BatchCreateProtocols {
                 createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                         studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO,
                         leadOrgSiteIdDTO, nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
-                        summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi);
+                        summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
+                        BlConverter.convertToBl(Boolean.TRUE));
         } else if (dto.getSubmissionType().equalsIgnoreCase("A")) {
             //get the Identifier of study protocol by giving nci identifier
             StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
@@ -619,7 +622,8 @@ public class BatchCreateProtocols {
                 amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                     documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
                     nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
-                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi);
+                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
+                    BlConverter.convertToBl(Boolean.TRUE));
              
         }
         return studyProtocolIi;

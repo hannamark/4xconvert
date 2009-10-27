@@ -137,10 +137,10 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         if ((dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE))
                 && loginUser.equalsIgnoreCase(userCreated)
-                && (!statusCode.equals(StudyStatusCode.DISAPPROVED) 
-                        || !statusCode.equals(StudyStatusCode.WITHDRAWN)
-                        || !statusCode.equals(StudyStatusCode.COMPLETE) 
-                        || !statusCode.equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE))) {
+                && (!(statusCode.equals(StudyStatusCode.DISAPPROVED) 
+                        || statusCode.equals(StudyStatusCode.WITHDRAWN)
+                        || statusCode.equals(StudyStatusCode.COMPLETE) 
+                        || statusCode.equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE)))) {
             return "Amend";
         } else  {
             return "";
@@ -168,7 +168,8 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         if ((dwfs.equals(DocumentWorkflowStatusCode.ACCEPTED)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
-                || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE))
+                || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)
+                || dwfs.equals(DocumentWorkflowStatusCode.VERIFICATION_PENDING))
                 && loginUser.equalsIgnoreCase(userCreated)
                 && (!(statusCode.equals(StudyStatusCode.DISAPPROVED) 
                       || statusCode.equals(StudyStatusCode.WITHDRAWN) 

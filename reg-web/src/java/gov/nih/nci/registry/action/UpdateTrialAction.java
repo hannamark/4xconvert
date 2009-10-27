@@ -940,10 +940,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                                 studyContactDTO, studyParticipationContactDTO,
                                summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
                               studyRegAuthDTO, collaboratorsDTOList, 
-                              pssDTOList, prgCdUpdatedList);  
+                              pssDTOList, prgCdUpdatedList, BlConverter.convertToBl(Boolean.FALSE));  
             TrialValidator.removeSessionAttributes();
-            //send mail
-            RegistryServiceLocator.getMailManagerService().sendUpdateNotificationMail(updateId);
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", updateId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", updateId);
         } catch (PAException e) {

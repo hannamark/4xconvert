@@ -385,9 +385,8 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             createProprietaryInterventionalStudyProtocol(studyProtocolDTO, siteOverallStatusDTO,  
                     documentDTOs, leadOrganizationDTO, siteInvestigatorDTO,
                     leadOrganizationTrialIdentifierDTO, studySiteOrgDTO, siteDTO, 
-                    nctIdentifierDTO, summary4organizationDTO, studyResourcingDTO);
-          //send a notification mail
-            RegistryServiceLocator.getMailManagerService().sendNotificationMail(studyProtocolIi);  
+                    nctIdentifierDTO, summary4organizationDTO, studyResourcingDTO, 
+                    BlConverter.convertToBl(Boolean.FALSE));
             StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
             TrialValidator.removeSessionAttributes();

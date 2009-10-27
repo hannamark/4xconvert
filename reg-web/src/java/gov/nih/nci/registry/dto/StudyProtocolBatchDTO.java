@@ -438,7 +438,7 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the nihGrantSrNumber
      */
-    @Pattern(message = "Serial Number must be numeric.\n", regex = "^[0-9;]+$")
+    @Pattern(message = "Serial Number must be numeric.\n", regex = "^[0-9; ]+$")
     public String getNihGrantSrNumber() {
         return nihGrantSrNumber;
     }

@@ -5,6 +5,7 @@ package gov.nih.nci.registry.service;
 
 import java.util.List;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
@@ -45,7 +46,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             StudySiteContactDTO studySiteContactDTO,
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
-            Ii responsiblePartyContactIi) throws PAException {
+            Ii responsiblePartyContactIi, Bl isBatchMode) throws PAException {
                 if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
                     throw new PAException("test");
                 }
@@ -67,7 +68,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             StudySiteContactDTO studySiteContactDTO,
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
-            Ii responsiblePartyContactIi) throws PAException {
+            Ii responsiblePartyContactIi, Bl isBatchMode) throws PAException {
         if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
             throw new PAException("test");
         }
@@ -91,7 +92,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
             List<StudySiteDTO> collaborators, 
             List<StudySiteAccrualStatusDTO> participatingSites,
-            List<StudySiteDTO> pgCdUpdatedList) throws PAException {
+            List<StudySiteDTO> pgCdUpdatedList, Bl isBatchMode) throws PAException {
        
      }
     
@@ -110,7 +111,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
             OrganizationDTO summary4OrganizationDTO,
-            StudyResourcingDTO summary4StudyResourcingDTO) throws PAException {
+            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -127,7 +128,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
             StudyRegulatoryAuthorityDTO studyRegAuthDTO,
             List<StudySiteDTO> collaborators,
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatuses,
-            List<StudySiteDTO> studySites) throws PAException {
+            List<StudySiteDTO> studySites, Bl isBatchMode) throws PAException {
         // TODO Auto-generated method stub
         
     }

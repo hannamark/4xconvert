@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -220,9 +221,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                     studyResourcingDTOs, documentDTOs,
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
                     nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
-                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi);
-             //send a notification mail
-             RegistryServiceLocator.getMailManagerService().sendNotificationMail(studyProtocolIi);
+                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
+                    BlConverter.convertToBl(Boolean.FALSE));
              TrialValidator.removeSessionAttributes();
              ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
              ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
