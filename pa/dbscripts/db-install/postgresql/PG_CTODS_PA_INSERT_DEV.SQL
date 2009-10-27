@@ -4,8 +4,19 @@ DELETE FROM organization
 ;
 DELETE FROM person
 ;
-DELETE FROM patient;
+DELETE FROM patient
+;
 
+-- provisioning
+DELETE FROM CSM_USER WHERE LOGIN_NAME = 'outcomes';
+DELETE FROM CSM_GROUP WHERE GROUP_NAME = 'Outcomes';
+INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Outcomes', 'Outcome Submitter group - security role', (select application_id from csm_application where application_name = 'pa'),current_date);
+-- Password is pass
+INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('outcomes', 'Test', 'Outcomes','BtM2GNbiAxg=',current_date);
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'outcomes'), (select group_id from csm_group where group_name = 'Outcomes'));
+
+
+-- studies
 INSERT INTO study_protocol (identifier, assigned_identifier, official_title , study_protocol_type, PRI_COMPL_DATE, PRI_COMPL_DATE_TYPE_CODE, START_DATE, START_DATE_TYPE_CODE, status_code, submission_number)  
     values ( 1, 'NCI-2008-00001','Interventional-NCI-2008-00001 test test test test test test test test test test test test test test test test test test test test test test test test',
     'InterventionalStudyProtocol', '2010-12-31', 'ANTICIPATED', '2010-12-31', 'ANTICIPATED', 'ACTIVE', 1);
