@@ -40,7 +40,6 @@
                 <param name="namespace">/</param>
                 <param name="actionName">logout</param>
             </result>
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
         </global-results> 
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
@@ -56,11 +55,20 @@
         </action> 
     </package>
 
-    <package name="protected" namespace="/protected" extends="default">
+    <package name="common" namespace="/common" extends="default">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
-            <result name="show_Disclaimer_Page">disClaimerAction.action</result>
+            <result name="protectedNamespace" type="redirectAction">
+                <param name="namespace">../protected</param>
+                <param name="actionName">disClaimerAction</param>
+            </result>
+            <result name="outcomesNamespace" type="redirectAction">
+                <param name="namespace">../outcomes</param>
+                <param name="actionName">disClaimerAction</param>
+            </result>
         </action>
+    </package>
 
+    <package name="protected" namespace="/protected" extends="default">
         <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
             <result>viewTrials.action</result>
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
@@ -89,5 +97,12 @@
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
         
+    </package>
+
+    <package name="outcomes" namespace="/outcomes" extends="default">
+        <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
+            <result>viewTrials.action</result>
+            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
+        </action>
     </package>
 </struts>

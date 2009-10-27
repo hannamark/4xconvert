@@ -29,7 +29,7 @@ This Site enables you to report accrual information for a trial with NCI's Clini
 <ul class="padme10">
   <c:choose>
     <c:when test="${pageContext.request.remoteUser == null}">
-      <li><a href="/accrual/protected/welcome.action">Log In</a> to your account and</li>
+      <li><a href="/accrual/common/welcome.action">Log In</a> to your account and</li>
       <menu> 
          <li>Report Accruals on Multiple Trials</li>
          <li>Generate Basic Results report for <a href="http://www.clinicaltrials.gov/">ClinicalTrials.gov</a></li>

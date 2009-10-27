@@ -91,6 +91,8 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_ROLE = "accrualRole";
     /** Role-name for the public role. */
     public static final String ROLE_PUBLIC = "Submitter";
+    /** Role-name for the outcomes role. */
+    public static final String ROLE_OUTCOMES = "Outcomes";
     /** Attribute used to store the role in session. */
     public static final String SESSION_ATTR_DISCLAIMER = "accrualDisclaimer";
     /** Role-name for the public role. */

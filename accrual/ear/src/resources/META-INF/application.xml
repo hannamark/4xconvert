@@ -23,4 +23,5 @@
         <java>pa-ejb-client-3.1-alpha1.jar</java>
     </module>
     <security-role><role-name>Submitter</role-name></security-role>
+    <security-role><role-name>Outcomes</role-name></security-role>
 </application>

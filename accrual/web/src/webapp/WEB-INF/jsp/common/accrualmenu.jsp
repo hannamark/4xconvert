@@ -44,10 +44,10 @@
             <c:otherwise>
                <c:choose>
                    <c:when test="${requestScope.topic == 'login'}">
-                      <li><a href="/accrual/protected/welcome.action" class="selected">Log In</a></li>
+                      <li><a href="/accrual/common/welcome.action" class="selected">Log In</a></li>
                    </c:when>
                    <c:otherwise>
-                      <li><a href="/accrual/protected/welcome.action" >Log In</a></li>
+                      <li><a href="/accrual/common/welcome.action" >Log In</a></li>
                    </c:otherwise>
                </c:choose>
             </c:otherwise>

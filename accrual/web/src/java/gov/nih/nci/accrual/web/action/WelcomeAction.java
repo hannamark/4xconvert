@@ -86,17 +86,26 @@ import org.apache.struts2.ServletActionContext;
  */
 public class WelcomeAction extends AbstractAccrualAction {
     private static final long serialVersionUID = -8671171197398815729L;
+    static final String AR_PROTECTED = "protectedNamespace";
+    static final String AR_OUTCOMES = "outcomesNamespace";
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String execute() {
-        if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_PUBLIC)) {
+        if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_OUTCOMES)) {
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_OUTCOMES);
+            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER,
+                    ServletActionContext.getRequest().getRemoteUser());
+            return AR_OUTCOMES;
+        } else if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_PUBLIC)) {
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_PUBLIC);
             ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER,
                     ServletActionContext.getRequest().getRemoteUser());
+            return AR_PROTECTED;
         }
         return super.execute();
     }
