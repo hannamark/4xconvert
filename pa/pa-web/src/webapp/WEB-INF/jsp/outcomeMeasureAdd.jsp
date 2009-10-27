@@ -14,7 +14,14 @@
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
+
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <SCRIPT LANGUAGE="JavaScript">
+
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();        
+}
 
 function handleAction(){
 var page;
@@ -35,7 +42,7 @@ BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
 } 
 </SCRIPT>
-<body onload="setFocusToFirstControl();">
+<body>
 <c:set var="topic" scope="request" value="abstract_outcome"/>
  <h1><c:choose>
      <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">

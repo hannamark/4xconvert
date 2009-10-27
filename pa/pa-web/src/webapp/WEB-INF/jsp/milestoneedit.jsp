@@ -15,6 +15,11 @@
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
 
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();         
+    }
+    
     function milestoneAdd(){
         input_box=confirm("Click OK to add milestone.  Cancel to Abort.");
         if (input_box==true){
@@ -30,7 +35,7 @@
     }
 </script>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="milestone.details.title" /></h1>
 <c:set var="topic" scope="request" value="trial_milestones"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

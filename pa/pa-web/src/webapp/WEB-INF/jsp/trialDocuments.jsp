@@ -8,7 +8,14 @@
 	<title><fmt:message key="trialDocument.title"/></title>
 	<s:head />
 </head>
- <body onload="setFocusToFirstControl();">
+<SCRIPT LANGUAGE="JavaScript">
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
+</SCRIPT>
+ <body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 <c:set var="topic" scope="request" value="review_docs"/>
 </c:if>

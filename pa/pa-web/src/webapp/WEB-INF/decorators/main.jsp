@@ -19,7 +19,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/wwhbaseurl.js"/>"></script> 
         <decorator:head/>
     </head>
-    <body onload="setFocusToFirstControl();">
+    <body onload="callOnloadFunctions();">
     <div id="wrapper" class="curate">
         <jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
         <jsp:include page="/WEB-INF/jsp/common/paheader.jsp"/>

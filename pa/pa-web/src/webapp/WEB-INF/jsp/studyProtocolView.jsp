@@ -7,8 +7,13 @@
 <head>
     <title><fmt:message key="studyProtocol.view.title"/></title>
     <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
     <script type="text/javascript"> 
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();        
+    }
     function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
@@ -25,7 +30,7 @@
 	</SCRIPT>
 </head>
 
-<body onload="setFocusToFirstControl();">
+<body>
  <c:set var="topic" scope="request" value="trial_details"/>
 <!-- <div id="contentwide"> -->
  <h1>Trial Identification</h1>

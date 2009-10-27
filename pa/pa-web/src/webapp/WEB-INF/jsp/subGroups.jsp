@@ -8,7 +8,15 @@
 	<title><fmt:message key="subGroups.title"/></title>
 	<s:head />
 </head>
- <body onload="setFocusToFirstControl();">
+<SCRIPT LANGUAGE="JavaScript">
+
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
+</SCRIPT>
+ <body>
 <c:set var="topic" scope="request" value="abstract_subgroups"/>
  <h1><fmt:message key="subGroups.title"/></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

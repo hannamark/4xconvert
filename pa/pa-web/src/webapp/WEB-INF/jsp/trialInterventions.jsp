@@ -8,12 +8,15 @@
 <title><fmt:message key="interventions.details.title" /></title>
 <s:head />
 <script type="text/javascript"
-    src='<c:url value="/scripts/js/coppa.js"/>'></script>
-<script type="text/javascript"
     src='<c:url value="/scripts/js/scriptaculous.js"/>'></script>
 
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
 function handleEdit(rowId){
     document.interventionForm.selectedRowIdentifier.value = rowId;
     document.interventionForm.action="trialInterventionsedit.action";
@@ -33,7 +36,7 @@ function handleCreate(){
 }
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="interventions.details.title" /></h1>
 <c:set var="topic" scope="request" value="abstract_interventions"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

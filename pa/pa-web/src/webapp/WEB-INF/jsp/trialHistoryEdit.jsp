@@ -7,6 +7,7 @@
 <head>
     <title><fmt:message key="trialHistory.edittitle"/></title>
     <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
     <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
     <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
@@ -16,6 +17,11 @@
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
     
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();        
+}
+
 function handleAction(){
  document.forms[0].action="trialHistoryupdate.action";
  document.forms[0].submit(); 
@@ -23,7 +29,7 @@ function handleAction(){
 } 
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <c:set var="topic" scope="request" value="trial_history"/>
  <h1><fmt:message key="trialHistory.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

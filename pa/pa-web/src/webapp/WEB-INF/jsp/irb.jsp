@@ -16,13 +16,16 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <c:url value="/protected/popuplookuporgs.action" var="lookupUrl" />
 <script type="text/javascript">
+// this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();         
+    }
 function irbSave(){
      document.irbForm.action="irbsave.action";
      document.irbForm.submit();     
 }
 function statusChange() {
     var newStatus=document.irbForm.approvalStatus.value;
-    var rads = document.irbForm.siteRelated;
     if(newStatus=="Submission not required"){
         document.irbForm.approvalNumber.disabled=true;
         document.getElementById('name').disabled=true;
@@ -47,9 +50,6 @@ function statusChange() {
         document.getElementById('name').disabled=true;
         setContactDisabled(true);
         document.irbForm.contactAffiliation.disabled=true;    
-    }
-    if(document.irbForm.siteRelated[1].checked){
-        document.irbForm.contactAffiliation.disabled=true;
     }
 }
 function setContactDisabled(value){
@@ -82,7 +82,7 @@ function loadDiv(orgid){
 </script>
 
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="irb.main.title" /></h1>
 <c:set var="topic" scope="request" value="abstract_safety"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

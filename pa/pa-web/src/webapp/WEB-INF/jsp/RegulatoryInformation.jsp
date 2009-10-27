@@ -1,30 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<%@ taglib prefix="sx" uri="/struts-dojo-tags" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<sx:head />
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title><fmt:message key="regulatory.title" /></title>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript">	
-	window.onload=checkAllonLoad;
+	
+	// this function is called from body onload in main.jsp (decorator)
+	function callOnloadFunctions(){
+        setFocusToFirstControl();
+        checkAllonLoad();         
+    }
 	
 	function checkAllonLoad(){
 		if (document.getElementById('fdaindid').value == '' | document.getElementById('fdaindid').value == 'false'){
-				document.getElementById('sec801id').value ='';
-				document.getElementById('delpostindid').value ='';
-				hideRow(document.getElementById('sec801row'));
-		} else {
-			showRow(document.getElementById('sec801row'));
-		}
-			
-		if (document.getElementById('sec801id').value == '' | document.getElementById('sec801id').value == 'false') {	
+			hideRow(document.getElementById('sec801row'));
 			hideRow(document.getElementById('delpostindrow'));
-			document.getElementById('indideid').value ='';
-			document.getElementById('delpostindid').value ='';
-		} else {
-			showRow(document.getElementById('delpostindrow'));
+		} else if (document.getElementById('sec801id').value == '' | document.getElementById('sec801id').value == 'false') {	
+			hideRow(document.getElementById('delpostindrow'));
 		}			
 	}
 
@@ -36,6 +31,7 @@
 				document.getElementById('sec801id').value ='';
 				document.getElementById('delpostindid').value ='';
 				hideRow(document.getElementById('sec801row'));
+				hideRow(document.getElementById('delpostindrow'));
 			} else {
 				document.getElementById('fdaindid').value = 'true';
 			}
@@ -49,7 +45,6 @@
 			input_box=confirm("Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
 			if (input_box==true){
 				hideRow(document.getElementById('delpostindrow'));
-				document.getElementById('indideid').value ='';
 				document.getElementById('delpostindid').value ='';
 			} else {
 				document.getElementById('sec801id').value = 'true';
@@ -59,36 +54,6 @@
 		}    
     }
 	
-	/**/
-	function checkAll(){
-		if (document.getElementById('fdaindid').value == '' | document.getElementById('fdaindid').value == 'false'){			
-			input_box=confirm("Section 801 and Delayed posting indicators will be NULLIFIED? \nPlease Click OK to continue or Cancel");
-			if (input_box==true){
-				document.getElementById('sec801id').value ='';
-				document.getElementById('delpostindid').value ='';
-				hideRow(document.getElementById('sec801row'));
-				hideRow(document.getElementById('delpostindid'));
-			} else {
-				document.getElementById('fdaindid').value = 'true';
-			}
-		} else {
-			showRow(document.getElementById('sec801row'));
-		}
-			
-		if (document.getElementById('sec801id').value == '' | document.getElementById('sec801id').value == 'false') {	
-			input_box=confirm("Delayed posting indicators will be NULLIFIED? \nPlease Click OK to continue or Cancel");
-			if (input_box==true){
-				hideRow(document.getElementById('delpostindrow'));
-				document.getElementById('indideid').value ='';
-				document.getElementById('delpostindid').value ='';
-			} else {
-				document.getElementById('sec801id').value = 'true';
-			}
-		} else {
-			showRow(document.getElementById('delpostindrow'));
-		}			
-	}
-	/**/
 	function hideRow(row){			
 		row.style.display = 'none';	
 	}
@@ -103,8 +68,8 @@
 	}
 	function handleAction(){
 		if(!checkReqFields()) {
-			document.regulatoryInfoupdate.action="regulatoryInfoupdate.action";
-			document.regulatoryInfoupdate.submit();
+			document.saveRegAuthority.action="regulatoryInfoupdate.action";
+			document.saveRegAuthority.submit();
 		}
 		
 	}
@@ -125,12 +90,12 @@
 				alert("The Section801 Indicator cannot be empty");
 				return true;
 			}
-		}
-		if(document.getElementById('sec801id').value == 'true'){
-			if(document.getElementById('delpostindid').value == ''){
-			 	alert("The Delayed posting Indicator cannot be empty");
-				return true;
-			}
+		    if(document.getElementById('sec801id').value == 'true'){
+			    if(document.getElementById('delpostindid').value == ''){
+			 	    alert("The Delayed posting Indicator cannot be empty");
+				    return true;
+			    }
+		    }
 		}	
 		return false;
 	}
@@ -146,7 +111,7 @@
    <pa:sucessMessage/>
    <pa:failureMessage/>
 
-<s:form action="regulatoryInfoupdate" id="saveRegAuthority" theme="simple">
+<s:form action="regulatoryInfoupdate" name="saveRegAuthority" theme="simple">
 <s:actionerror/>
 <h2><fmt:message key="regulatory.title" /></h2>
 <!--Help Content--> 
@@ -227,7 +192,7 @@
 		<ul class="btnrow">			
 			<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
 								|| (sessionScope.role == 'SuAbstractor')}">
-			<li><sx:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></sx:a></li>
+			<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
 			</c:if>
 			<li><a href="nciSpecificInformationquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 			<li><a href="irb.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>

@@ -11,6 +11,7 @@
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <script type="text/javascript" src="scripts/js/prototype.js"></script>
 <script type="text/javascript" src="scripts/js/scriptaculous.js"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
@@ -32,6 +33,12 @@
     addCalendar("Cal1", "Select Date", "recStatusDate", "facility");
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
+    
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();         
+    }
+    
 	function facilitySave(){		
 		document.facility.action="participatingOrganizationsfacilitySave.action";
 		document.facility.submit();
@@ -206,7 +213,7 @@
 	
 </script>      
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.subtitle" /></h1>
 <c:set var="topic" scope="request" value="abstract_site"/>

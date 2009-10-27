@@ -7,10 +7,14 @@
 <head>
 <title><fmt:message key="arms.details.title" /></title>
 <s:head />
-<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
 function handleEditArm(rowId){
     document.armForm.selectedArmIdentifier.value = rowId;
     document.armForm.action="trialArmsedit.action";
@@ -39,7 +43,7 @@ function handleCreateGroup(){
 }
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="arms.details.title" /></h1>
 <c:set var="topic" scope="request" value="abstract_arms"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

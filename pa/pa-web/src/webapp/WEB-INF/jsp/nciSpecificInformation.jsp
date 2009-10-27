@@ -8,12 +8,18 @@
 <title><fmt:message key="nciSpecificInformation.title"/></title>
 <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 <c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
 <script type="text/javascript">    
+	
+	// this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();        
+    }
 	
 	function handleAction(){
 	     document.nciSpecificInformationupdate.action="nciSpecificInformationupdate.action";
@@ -46,7 +52,7 @@ function setorgid(orgid){
 	
 </SCRIPT>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="nciSpecificInformation.title" /></h1>
 <c:set var="topic" scope="request" value="abstract_nci"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

@@ -7,6 +7,7 @@
 <head>
     <title><fmt:message key="inboxTrial.title"/></title>   
     <s:head/>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
@@ -16,6 +17,11 @@
 
 </head>
 <SCRIPT LANGUAGE="JavaScript">
+
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();         
+}
 
 function handleAction(){
      document.forms[0].action="inboxProcessingquery.action";

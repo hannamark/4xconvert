@@ -17,6 +17,12 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
+
 function handleAction(){
      document.forms[0].action="studyProtocolquery.action";
      document.forms[0].submit();     

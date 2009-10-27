@@ -17,6 +17,12 @@
      
 </head>
 <SCRIPT LANGUAGE="JavaScript">
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
+
 function handleEdit(studyResourcingId){
 	
     document.partOrgs.cbValue.value = studyResourcingId;
@@ -33,7 +39,7 @@ function handleDelete(studyResourcingId){
 }
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <!-- <div id="contentwide"> -->
 <h1><fmt:message key="participatingOrganizations.title" /></h1>
 <c:set var="topic" scope="request" value="abstract_site"/>

@@ -17,6 +17,12 @@
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
+
 function generateReport(pid) {
     showPopWin('/pa/protected/ajaxCTGovgenerateXML.action?studyProtocolId='+pid, 900, 400, '', 'CLinical Trial XML Generation');
 }
@@ -34,7 +40,7 @@ function generateTSRWord() {
 }
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <c:set  var="topic" scope="request" value="validate_abstract"/>
  <h1>Abstraction Validation</h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

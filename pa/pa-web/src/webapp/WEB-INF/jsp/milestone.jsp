@@ -7,16 +7,20 @@
 <head>
 <title><fmt:message key="milestone.details.title" /></title>
 <s:head />
-<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
 function handleCreate(){
     document.milestoneForm.action="milestonecreate.action";
     document.milestoneForm.submit(); 
 }
 </SCRIPT>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="milestone.details.title"/></h1>
 <c:set var="topic" scope="request" value="trial_milestones"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

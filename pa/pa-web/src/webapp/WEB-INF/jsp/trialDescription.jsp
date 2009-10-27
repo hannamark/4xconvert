@@ -19,6 +19,11 @@
 
 <script type="text/javascript">
    
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();        
+    }
+    
     function handleAction() {
         input_box=confirm("Click OK to save changes or Cancel to Abort.");
         if (input_box==true){
@@ -29,7 +34,7 @@
 </script>
      
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="trial.description" /></h1>
 <c:set var="topic" scope="request" value="abstract_description"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

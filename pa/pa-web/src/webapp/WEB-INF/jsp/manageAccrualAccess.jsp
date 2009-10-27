@@ -8,9 +8,13 @@
 <head>
 <title><fmt:message key="manageAccrualAccess.title" /></title>
 <s:head />
-<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
 function handleCreate(){
     document.listForm.action="manageAccrualAccesscreate.action";
     document.listForm.submit(); 
@@ -22,7 +26,7 @@ function handleEdit(rowId){
 }
 </SCRIPT>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="manageAccrualAccess.title"/></h1>
 <c:set var="topic" scope="request" value="accrual_access"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

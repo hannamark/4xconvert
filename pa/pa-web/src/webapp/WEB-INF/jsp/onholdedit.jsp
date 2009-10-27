@@ -16,6 +16,11 @@
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
 
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();        
+    }
+    
     function onholdAdd(){
         input_box=confirm("Click OK to add the on-hold information.  Cancel to Abort.");
         if (input_box==true){
@@ -36,7 +41,7 @@
     }
 </script>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="onhold.title" /></h1>
 <c:set var="topic" scope="request" value="trial_onhold"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

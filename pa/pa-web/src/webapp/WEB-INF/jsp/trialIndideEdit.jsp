@@ -7,23 +7,26 @@
 <head>
     <title><fmt:message key="trialIndide.edittitle"/></title>
     <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
-window.onload=checkAll;
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();
+    checkAll();         
+}
 function checkAll(){
 		if (document.getElementById('group4').value == 'Yes'){
-			showRow(document.getElementById('expandedStatus'));
+			showRow(document.getElementById('expandedStatusRow'));
 		} else {
-			hideRow(document.getElementById('expandedStatus'));
+			hideRow(document.getElementById('expandedStatusRow'));
 		}
 		if (document.getElementById('group3').value == 'IND'){
 			addOption(document.getElementById('SubCat'),"CDER", "CDER");
 			addOption(document.getElementById('SubCat'),"CBER", "CBER");
-			showRow(document.getElementById('SubCat'));
 		} else {
 			addOption(document.getElementById('SubCat'),"CDRH", "CDRH");
-			showRow(document.getElementById('SubCat'));
 		}
 		if (document.getElementById('holderType').value == 'NIH'){
 			showRow(document.getElementById('programcodenihid'));
@@ -45,9 +48,9 @@ function showRow(row){
 }
 function checkIndicator() {
 	if (document.getElementById('group4').value == 'Yes'){
-		showRow(document.getElementById('expandedStatus'));
+		showRow(document.getElementById('expandedStatusRow'));
 	} else {
-		hideRow(document.getElementById('expandedStatus'));
+		hideRow(document.getElementById('expandedStatusRow'));
 	}
 }
 function checkCode() {
@@ -153,7 +156,7 @@ function tooltip() {
 }
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 <c:set var="topic" scope="request" value="review_ind"/>
 </c:if>
@@ -218,7 +221,7 @@ function tooltip() {
 					</tr>
 					<tr>
 						<td scope="row"  class="label"><label>
-							<fmt:message key="trialIndide.holderType"/>:<span class="required">*</span><label>
+							<fmt:message key="trialIndide.holderType"/>:<span class="required">*</span></label>
 						</td>
 						<td class="value">
 							<s:select id="holderType" name="studyIndldeWebDTO.holderType" headerKey="" headerValue="-Select-" cssStyle="width:150px" onclick="setProgramCodes(this);"
@@ -262,7 +265,7 @@ function tooltip() {
                          </span>
 						</td>
 					</tr>
-					<tr>
+					<tr id="expandedStatusRow">
 						<td scope="row"  class="label"><label>
 							<fmt:message key="trialIndide.expandedAccessStatusCode"/>:<span class="required">*</span></label>
 						</td>

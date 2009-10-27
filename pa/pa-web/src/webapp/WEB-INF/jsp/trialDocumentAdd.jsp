@@ -7,10 +7,15 @@
 <head>
     <title><fmt:message key="trialDocument.addtitle" /></title>
     <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();       
+}
 function handleAction(){
 var page;
 page=document.forms[0].page.value;
@@ -30,7 +35,7 @@ BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
 }
 </SCRIPT>
-<body onload="setFocusToFirstControl();">
+<body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 <c:set var="topic" scope="request" value="review_docs"/>
 </c:if>

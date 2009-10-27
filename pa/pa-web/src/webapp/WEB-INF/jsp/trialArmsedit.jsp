@@ -12,6 +12,11 @@
 
 
 <script type="text/javascript">
+
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();        
+    }
     function armAdd(){
         document.armForm.action="trialArmsadd.action";
         document.armForm.submit();     

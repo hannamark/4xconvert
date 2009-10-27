@@ -8,8 +8,13 @@
     <title><fmt:message key="trialDocument.title"/></title>
     <s:head />
 </head>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <SCRIPT LANGUAGE="JavaScript">
 
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();        
+}
 
 function handleAction(){
 input_box=confirm("Click OK to save changes or Cancel to Abort.");
@@ -21,7 +26,7 @@ input_box=confirm("Click OK to save changes or Cancel to Abort.");
 
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 <c:set var="topic" scope="request" value="review_docs"/>
 </c:if>

@@ -11,6 +11,7 @@
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <script type="text/javascript" src="scripts/js/prototype.js"></script>
 <script type="text/javascript" src="scripts/js/scriptaculous.js"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
@@ -35,6 +36,10 @@
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
     var orgid;
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();        
+    }
     function save() {
     	document.proprietarySite.action="participatingOrganizationsproprietarySave.action";
         document.proprietarySite.submit();	

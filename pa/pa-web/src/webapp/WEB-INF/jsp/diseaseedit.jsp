@@ -17,6 +17,10 @@
 <c:url value="/protected/popupDis.action" var="lookupUrl" />
 
 <script type="text/javascript">
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();         
+    }
     function diseaseAdd(){
         document.diseaseForm.action="diseaseadd.action";
         document.diseaseForm.submit();
@@ -43,7 +47,7 @@
     }   
 </script>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="disease.details.title" /></h1>
 <c:set var="topic" scope="request" value="abstract_disease"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

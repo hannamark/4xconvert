@@ -10,6 +10,11 @@
 <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
 <script type="text/javascript">
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();        
+    }
+    
     function accessAdd(){
         input_box=confirm("Click OK to add the access information.  Cancel to Abort.");
         if (input_box==true){
@@ -63,7 +68,7 @@
     }
 </script>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="onhold.title" /></h1>
 <c:set var="topic" scope="request" value="accrual_edit"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

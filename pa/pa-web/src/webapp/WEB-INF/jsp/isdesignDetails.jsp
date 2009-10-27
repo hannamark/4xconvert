@@ -5,9 +5,15 @@
 <title><fmt:message key="isdesign.details.title"/></title>
 <s:head />
 </head>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 <SCRIPT LANGUAGE="JavaScript">
-window.onload=activate;
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();
+    activate();         
+}
+
 function activate(){
 	var input="webDTO.primaryPurposeCode";
   	var inputElement = document.forms[0].elements[input];

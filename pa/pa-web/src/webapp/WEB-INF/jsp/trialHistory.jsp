@@ -8,9 +8,13 @@
 <head>
 <title><fmt:message key="trialHistory.title" /></title>
 <s:head />
-<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
 function handleEdit(rowId){
     document.listForm.selectedRowIdentifier.value = rowId;
     document.listForm.action="trialHistoryedit.action";
@@ -24,7 +28,7 @@ function handlePopup(a,b,c)  // write corresponding content to the popup window
 
 </SCRIPT>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="trialHistory.title"/></h1>
 <c:set var="topic" scope="request" value="trial_history"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

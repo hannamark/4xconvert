@@ -7,9 +7,14 @@
 <head>
     <title><fmt:message key="trialIndide.addtitle"/></title>
     <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();        
+}
 function trim(val) {
 	var ret = val.replace(/^\s+/, '');
 	ret = ret.replace(/\s+$/, '');
@@ -137,7 +142,7 @@ function SelectSubCat(i){
 }
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 <c:set var="topic" scope="request" value="review_ind"/>
 </c:if>

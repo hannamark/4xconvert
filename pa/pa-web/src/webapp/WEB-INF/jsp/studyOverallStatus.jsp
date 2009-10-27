@@ -24,20 +24,24 @@
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
 
+    // this function is called from body onload in main.jsp (decorator)
+    function callOnloadFunctions(){
+        setFocusToFirstControl();         
+    }
     function lookup(){
         showPopWin('${lookupUrl}', 900, 400, '', 'Status History');
     }   
     function statusChange() {
-        newStatus=document.studyOverallStatus.currentTrialStatus.value;
+        var newStatus=document.getElementById('currentTrialStatus').value;
         if((newStatus=="Administratively Complete")
            || (newStatus=="Withdrawn")
            || (newStatus=="Temporarily Closed to Accrual")
            || (newStatus=="Temporarily Closed to Accrual and Intervention")) {
-          document.studyOverallStatus.statusReason.disabled=false;
-          document.studyOverallStatus.statusReason.readonly=false;
+          document.getElementById('statusReason').disabled=false;
+          document.getElementById('statusReason').readonly=false;
         } else {
-          document.studyOverallStatus.statusReason.disabled=true;
-          document.studyOverallStatus.statusReason.readonly=true;
+          document.getElementById('statusReason').disabled=true;
+          document.getElementById('statusReason').readonly=true;
         }
     }
     function handleAction() {
@@ -50,7 +54,7 @@
 </script>
      
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="trialStatus.title" /></h1>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 <c:set var="topic" scope="request" value="review_status"/>
@@ -74,7 +78,7 @@
             <s:set name="currentTrialStatusValues"
                 value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
             <td class="value"><s:select onchange="statusChange()" onfocus="statusChange()"
-                name="currentTrialStatus"
+                id="currentTrialStatus"
                 list="#currentTrialStatusValues" /></td>
             <td>
             	<ul class="btnrow">			
@@ -98,7 +102,7 @@
         <tr>
             <td class="label"><s:label name="statusReasonLabel" for="statusReason">
                 <fmt:message key="trialStatus.current.trial.status.reason"/></s:label></td>
-            <td colspan="2" class="value"><s:textarea name="statusReason" rows="3"
+            <td colspan="2" class="value"><s:textarea id="statusReason" rows="3"
                 cssStyle="width:280px;float:left" /></td>
         </tr>        
         <tr><td>&nbsp</td></tr>

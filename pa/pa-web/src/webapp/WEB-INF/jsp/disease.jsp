@@ -16,6 +16,11 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+// this function is called from body onload in main.jsp (decorator) 
+function callOnloadFunctions(){
+    // there are no onload functions to call for this jsp
+    // leave this function to prevent 'error on page' 
+}
 function handleView(diseaseId){
     var url = '/pa/protected/popupDiseaseDetails.action?diseaseId='+diseaseId;
     showPopWin(url, 900, 400, '', 'Disease');
@@ -39,7 +44,7 @@ function handleCreate(){
 }
 </SCRIPT>
 </head>
-<body onload="setFocusToFirstControl();">
+<body>
 <h1><fmt:message key="disease.details.title"/></h1>
 <c:set var="topic" scope="request" value="abstract_disease"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />

@@ -7,10 +7,15 @@
 <head>
     <title><fmt:message key="subGroups.addtitle" /></title>
     <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();         
+}
 function handleAction(){
 var page;
 page=document.forms[0].page.value;
@@ -30,7 +35,7 @@ BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
 }
 </SCRIPT>
-<body onload="setFocusToFirstControl();">
+<body>
 <c:set var="topic" scope="request" value="abstract_subgroups"/>
  <h1><fmt:message key="subGroups.addtitle" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>

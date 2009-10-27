@@ -7,7 +7,11 @@
 </head>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 <SCRIPT LANGUAGE="JavaScript">
-window.onload=activate;
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    activate();         
+}
+
 function activate(){
 	var input="webDTO.studyModelCode";
   	var inputElement = document.forms[0].elements[input];

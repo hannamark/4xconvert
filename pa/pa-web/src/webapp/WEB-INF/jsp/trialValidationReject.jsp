@@ -8,8 +8,13 @@
     <title><fmt:message key="trialValidation.page.title"/></title>
     <s:head />
 </head>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <SCRIPT LANGUAGE="JavaScript">
 
+// this function is called from body onload in main.jsp (decorator)
+function callOnloadFunctions(){
+    setFocusToFirstControl();        
+}
 
 function handleAction(){
  document.forms[0].action="trialValidationrejectReason.action";
@@ -18,7 +23,7 @@ function handleAction(){
 
 </SCRIPT>
 
-<body onload="setFocusToFirstControl();">
+<body>
 <c:set var="topic" scope="request" value="validate_trial"/>
  <h1><fmt:message key="trialValidation.page.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
