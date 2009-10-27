@@ -4,14 +4,18 @@
     <accrual:sucessMessage /> 
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <display:table class="data" summary="This table contains your trial search results.
-    Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SearchTrialResultDecorator"
-      sort="list" pagesize="10" id="row" name="displayTagList" requestURI="viewTrials.action" export="false"> 
+    Please use column headers to sort results"
+      sort="list" pagesize="10" uid="row" name="displayTagList" requestURI="viewTrials.action" export="false"> 
    
-       <display:column titleKey="accrual.list.trials.protocolNumber" property="assignedIdentifier" sortable="true"
-         href="accrualSubmissions.action" paramId="studyProtocolId" 
-         paramProperty="studyProtocolIdentifier.extension" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.trials.protocolTitle" property="officialTitle" sortable="true" 
-         headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.trials.trialStatus" property="studyStatusCode" sortable="true" headerClass="sortable"
-         headerScope="col"/>
+       <display:column titleKey="accrual.list.trials.protocolNumber" sortable="true" headerClass="sortable"
+         headerScope="col">
+         <s:a href="#" onclick="window.location='accrualSubmissions.action?studyProtocolId=%{#attr.row.studyProtocolIdentifier.extension}';">
+         <s:label value="%{#attr.row.assignedIdentifier}" cssStyle="font-weight:normal"/>
+         </s:a></display:column>
+       <display:column titleKey="accrual.list.trials.protocolTitle" sortable="true" headerClass="sortable"
+         headerScope="col"><s:label value="%{#attr.row.officialTitle}"
+         cssStyle="font-weight:normal"/></display:column>
+       <display:column titleKey="accrual.list.trials.trialStatus" sortable="true" headerClass="sortable"
+         headerScope="col"><s:label value="%{#attr.row.studyStatusCode}"
+         cssStyle="font-weight:normal"/></display:column>
    </display:table>
