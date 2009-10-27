@@ -1,13 +1,18 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <pa:failureMessage/>
 <c:if test="${disWebList != null}">
-<display:table class="data" decorator="gov.nih.nci.accrual.web.decorator.SubmissionDecorator" sort="list" uid="row" 
+<display:table class="data" sort="list" uid="row" 
     name="disWebList" export="false">
-    <display:column title="Name" property="preferredName"  headerClass="sortable"/>
-    <display:column title="Code" property="code"  headerClass="sortable"/> 
-    <display:column title="NCI Thesaurus Concept ID" property="conceptId"  headerClass="sortable"/> 
-    <display:column title="Menu Display Name" property="menuDisplayName"  headerClass="sortable"/> 
-    <display:column title="Parent Name" property="parentPreferredName"  headerClass="sortable"/> 
+    <display:column title="Name"  headerClass="sortable"><s:label value="%{#attr.row.preferredName}"
+         cssStyle="font-weight:normal"/></display:column>
+    <display:column title="Code" headerClass="sortable"><s:label value="%{#attr.row.code}"
+         cssStyle="font-weight:normal"/></display:column> 
+    <display:column title="NCI Thesaurus Concept ID" headerClass="sortable"><s:label value="%{#attr.row.conceptId}"
+         cssStyle="font-weight:normal"/></display:column> 
+    <display:column title="Menu Display Name" headerClass="sortable"><s:label value="%{#attr.row.menuDisplayName}"
+         cssStyle="font-weight:normal"/></display:column> 
+    <display:column title="Parent Name" headerClass="sortable"><s:label value="%{#attr.row.parentPreferredName}"
+         cssStyle="font-weight:normal"/></display:column> 
     <display:column title="Select" headerClass="centered" class="action" sortable="false">
         <c:choose>
         <c:when test="${(row.menuDisplayName!=null)&&(row.menuDisplayName!='')}">
