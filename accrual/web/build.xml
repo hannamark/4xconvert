@@ -139,6 +139,9 @@
             </filterset>
             <fileset dir="${basedir}/src/webapp" includes = "**/login.jsp"/>
         </copy>
+    	<copy todir="${web.build.outputDir}">
+    		<fileset dir="${web.build.srcDir}" includes="**/*.properties"/>
+    	</copy>
     </target>
 
 
