@@ -76,11 +76,12 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.web.converter;
 
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.util.Map;
 
@@ -89,10 +90,11 @@ import org.apache.struts2.util.StrutsTypeConverter;
 import com.opensymphony.xwork2.conversion.TypeConversionException;
 
 /**
- * @author Hugh Reinhart
- * @since Oct 19, 2009
+ * 
+ * @author lhebel
+ *
  */
-public class StrutsTsConverter extends StrutsTypeConverter {
+public class StrutsActStatusCodeConverter extends StrutsTypeConverter {
 
     /**
      * {@inheritDoc}
@@ -102,10 +104,10 @@ public class StrutsTsConverter extends StrutsTypeConverter {
     public Object convertFromString(Map map, String[] strings, Class aClass) {
         if (strings.length != 1) {
             throw new TypeConversionException(
-                    "Error in custom struts2 converter StrutsTsConverter.convertFromString().  "
+                    "Error in custom struts2 converter StrutsActStatusCodeConverter.convertFromString().  "
                     + "Expecting 1 string; " + strings.length + "were passed in.");
         }
-        return TsConverter.convertToTs(PAUtil.dateStringToTimestamp(strings[0]));
+        return CdConverter.convertToCd(ActStatusCode.getByCode(strings[0]));
     }
 
     /**
@@ -117,6 +119,6 @@ public class StrutsTsConverter extends StrutsTypeConverter {
         if (object == null) {
             return "";
         }
-        return TsConverter.convertToString((Ts) object);
+        return CdConverter.convertCdToString((Cd) object);
     }
 }
