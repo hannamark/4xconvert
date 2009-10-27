@@ -32,29 +32,37 @@
 <h1><fmt:message key="accrual.list.accrual.submissions.page.header"/> </h1>
     <accrual:sucessMessage /> 
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <s:set name="displayTagList" value="displayTagList" scope="request"/>
     <display:table class="data" summary="This table contains list of Accrual Submissions.
-          Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SubmissionDecorator"
-          sort="list" pagesize="10" id="row" name="displayTagList" requestURI="accrualSubmissions.action" export="false"> 
+          Please use column headers to sort results" 
+          sort="list" pagesize="10" uid="row" name="displayTagList" requestURI="accrualSubmissions.action" export="false"> 
 
          <display:column titleKey="accrual.list.submissions.label" headerClass="centered" sortable="true" class="action">
              <s:a href="#" onclick="viewDetails(%{#attr.row.identifier.extension})">
-                    ${row.label.value}
+                    <s:label value="%{#attr.row.label}" cssStyle="font-weight:normal"/>
              </s:a>
         </display:column>
-       <display:column titleKey="accrual.list.submissions.description" property="description" sortable="true" 
-         headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.cutOffDate" property="cutOffDate" sortable="true" 
-         headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.createdDate" property="createdDate" sortable="true" 
-         headerClass="sortable" headerScope="col"/>
-         <display:column titleKey="accrual.list.submissions.createUser" property="createUser" sortable="true" 
-         headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.submittedDate" property="submittedDate" sortable="true"
-         headerClass="sortable" headerScope="col"/>
-         <display:column titleKey="accrual.list.submissions.submitUser" property="submitUser" sortable="true" 
-         headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="accrual.list.submissions.status" property="status" sortable="true" 
-         headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.submissions.description" sortable="true" 
+         headerClass="sortable" headerScope="col"><s:label value="%{#attr.row.description}"
+         cssStyle="font-weight:normal"/></display:column>
+       <display:column titleKey="accrual.list.submissions.cutOffDate" sortable="true" 
+         headerClass="sortable" headerScope="col"><s:label value="%{#attr.row.cutOffDate}"
+         cssStyle="font-weight:normal"/></display:column>
+       <display:column titleKey="accrual.list.submissions.createdDate" sortable="true" 
+         headerClass="sortable" headerScope="col"><s:label value="%{#attr.row.createdDate}"
+         cssStyle="font-weight:normal"/></display:column>
+         <display:column titleKey="accrual.list.submissions.createUser" sortable="true" 
+         headerClass="sortable" headerScope="col"><s:label value="%{#attr.row.createUser}"
+         cssStyle="font-weight:normal"/></display:column>
+       <display:column titleKey="accrual.list.submissions.submittedDate" sortable="true"
+         headerClass="sortable" headerScope="col"><s:label value="%{#attr.row.submittedDate}"
+         cssStyle="font-weight:normal"/></display:column>
+         <display:column titleKey="accrual.list.submissions.submitUser" sortable="true" 
+         headerClass="sortable" headerScope="col"><s:label value="%{#attr.row.submitUser}"
+         cssStyle="font-weight:normal"/></display:column>
+       <display:column titleKey="accrual.list.submissions.status" sortable="true" 
+         headerClass="sortable" headerScope="col"><s:label value="%{#attr.row.statusCode}"
+         cssStyle="font-weight:normal"/></display:column>
        <display:column titleKey="accrual.list.submissions.submit" headerClass="centered" class="action">
                   <s:if test="%{#attr.row.statusCode.code=='Opened'}">
                       <s:a href="#" onclick="accessAdd(%{#attr.row.identifier.extension})">
