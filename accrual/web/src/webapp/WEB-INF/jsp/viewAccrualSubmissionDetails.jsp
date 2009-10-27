@@ -30,7 +30,7 @@ function cancel(){
           </label>
         </td>
         <td class="value">
-            <s:label name="submission.label.value" cssStyle="font-weight:normal"/>
+            <s:label name="submission.label" cssStyle="font-weight:normal"/>
            </td>
       </tr> 
       
@@ -41,7 +41,7 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-          <s:label name="submission.description.value" cssStyle="font-weight:normal"/>
+          <s:label name="submission.description" cssStyle="font-weight:normal"/>
           </td>
        </tr> 
        <tr>     
@@ -51,7 +51,7 @@ function cancel(){
            </label>
          </td>
           <td class="value">
-           <s:label name="submissionCutOffDate" cssStyle="font-weight:normal"/>
+           <s:label name="submission.cutOffDate" cssStyle="font-weight:normal"/>
            </td>
       </tr> 
       
@@ -62,7 +62,7 @@ function cancel(){
            </label>
          </td>
           <td class="value">
-            <s:label name="submissionStatus" cssStyle="font-weight:normal"/>
+            <s:label name="submission.statusCode" cssStyle="font-weight:normal"/>
           </td>
          
       </tr> 
@@ -74,7 +74,7 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-             <s:label name="submissionCreatedDate" cssStyle="font-weight:normal"/>
+             <s:label name="submission.createdDate" cssStyle="font-weight:normal"/>
           </td>
          
       </tr> 
@@ -86,7 +86,7 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-            <s:label name="submissionCreateUser" cssStyle="font-weight:normal"/>
+            <s:label name="submission.createUser" cssStyle="font-weight:normal"/>
           </td>
          
       </tr> 
@@ -98,7 +98,7 @@ function cancel(){
            </label>
          </td>
         <td class="value">
-            <s:label name="submissionSubmittedDate" cssStyle="font-weight:normal"/>
+            <s:label name="submission.submittedDate" cssStyle="font-weight:normal"/>
           </td>
          
       </tr> 
@@ -110,7 +110,7 @@ function cancel(){
            </label>
          </td>
          <td class="value">
-           <s:label name="submissionSubmitUser" cssStyle="font-weight:normal"/>
+           <s:label name="submission.submitUser" cssStyle="font-weight:normal"/>
           </td>
          
       </tr> 
