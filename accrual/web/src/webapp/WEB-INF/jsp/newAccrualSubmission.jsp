@@ -22,7 +22,7 @@ function handleAction(){
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
-        addCalendar("Cal1", "Select Date", "submission.cutOffDate.value", "addNew");
+        addCalendar("Cal1", "Select Date", "submission.cutOffDate", "addNew");
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 </script>
@@ -45,7 +45,7 @@ function handleAction(){
           </label>
         </td>
         <td class="value">
-            <s:textfield id ="label" name="submission.label.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px" />
+            <s:textfield id ="label" name="submission.label" maxlength="400" size="50" cssStyle="width:98%;max-width:250px" />
         </td>
       </tr> 
     
@@ -58,7 +58,7 @@ function handleAction(){
           </label>
          </td>
                    
-           <td class="value"><s:textfield name="submission.cutOffDate.value"
+           <td class="value"><s:textfield name="submission.cutOffDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
@@ -73,7 +73,7 @@ function handleAction(){
           </label>
          </td>
          <td class="value">
-           <s:textfield id ="description" name="submission.description.value" maxlength="400" size="50" 
+           <s:textfield id ="description" name="submission.description" maxlength="400" size="50" 
             cssStyle="width:98%;max-width:250px" />
       </tr> 
     
