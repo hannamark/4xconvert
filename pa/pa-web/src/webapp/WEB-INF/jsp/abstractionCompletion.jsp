@@ -72,8 +72,8 @@ function generateTSRWord() {
                  <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">                                    
                         <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
                     </c:if>                                  
-                    <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
-                   <!-- <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li> -->
+                   <!-- <li><a href="#" class="btn" onclick="generateReport('${sessionScope.trialSummary.studyProtocolId}');"><span class="btn_img"><span class="save">View XML</span></span></a></li>
+                    <li><a href="#"  class="btn" onclick="generateTSR();"><span class="btn_img"><span class="save">View TSR</span></span></a></li> -->
                      <li><a href="#"  class="btn" onclick="generateTSRWord();"><span class="btn_img"><span class="save">View TSR</span></span></a></li>                                
                 </s:if>
             </ul>   

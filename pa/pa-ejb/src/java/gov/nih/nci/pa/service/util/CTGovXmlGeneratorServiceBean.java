@@ -1086,18 +1086,10 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         return responsibleParty;
     }
     private Element createLeadSponsor(Ii studyProtocolIi , Document doc) throws PAException {
-        StudySiteDTO srDTO = new StudySiteDTO();
-        srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
-        List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
-        CorrelationUtils cUtils = new CorrelationUtils();
+        Organization sponsor = ocsr.getOrganizationByFunctionRole(
+                studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
         Element lead = doc.createElement("lead_sponsor");
-        for (StudySiteDTO sp : spList) {
-            Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-            appendElement(lead ,
-                    createElement("agency" , orgBo.getName() , PAAttributeMaxLen.LEN_160, doc));
-            break;
-        }
-
+        appendElement(lead, createElement("agency" , sponsor.getName() , PAAttributeMaxLen.LEN_160, doc));
         return lead;
     }
 

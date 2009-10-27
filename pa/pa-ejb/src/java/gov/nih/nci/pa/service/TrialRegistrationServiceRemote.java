@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -139,6 +140,7 @@ public interface TrialRegistrationServiceRemote {
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi Id of the person when sponsor is responsible
+     * @param isBatchMode to identify if  batch is caller
      * @return ii of Study Protocol
      * @throws PAException on error
      */
@@ -158,7 +160,8 @@ public interface TrialRegistrationServiceRemote {
             StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO , 
             StudyResourcingDTO summary4studyResourcingDTO , 
-            Ii responsiblePartyContactIi)
+            Ii responsiblePartyContactIi ,
+            Bl isBatchMode)
     throws PAException;
     
     /**
@@ -182,6 +185,7 @@ public interface TrialRegistrationServiceRemote {
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param isBatchMode to identify if  batch is caller
      * @return ii of Study Protocol
      * @throws PAException on error
      */
@@ -201,7 +205,8 @@ public interface TrialRegistrationServiceRemote {
             StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO , 
             StudyResourcingDTO summary4studyResourcingDTO , 
-            Ii responsiblePartyContactIi)
+            Ii responsiblePartyContactIi ,
+            Bl isBatchMode)
     throws PAException;
 
 
@@ -227,6 +232,7 @@ public interface TrialRegistrationServiceRemote {
      * @param collaboratorDTOs list of updated collaborators
      * @param studySiteAccrualStatusDTOs  list of updated participating sites 
      * @param studySiteDTOs  list of StudySite DTOs with updated program code
+     * @param isBatchMode to identify if  batch is caller
      * @throws PAException on error
      */
 
@@ -246,7 +252,8 @@ public interface TrialRegistrationServiceRemote {
         StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
         List<StudySiteDTO> collaboratorDTOs, 
         List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
-        List<StudySiteDTO> studySiteDTOs)
+        List<StudySiteDTO> studySiteDTOs ,
+        Bl isBatchMode)
      throws PAException;
    
    /**
@@ -262,6 +269,7 @@ public interface TrialRegistrationServiceRemote {
     * @param nctIdentifierDTO nctIdentifierDTO
     * @param summary4OrganizationDTO summary4OrganizationDTO
     * @param summary4StudyResourcingDTO summary4StudyResourcingDTO
+    * @param isBatchMode to identify if  batch is caller
     * @return Ii
     * @throws PAException e
     */
@@ -277,7 +285,8 @@ public interface TrialRegistrationServiceRemote {
            StudySiteDTO studySiteDTO ,
            StudySiteDTO nctIdentifierDTO,
            OrganizationDTO summary4OrganizationDTO ,
-           StudyResourcingDTO summary4StudyResourcingDTO)
+           StudyResourcingDTO summary4StudyResourcingDTO ,
+           Bl isBatchMode)
    throws PAException;
     
 

@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -95,6 +96,7 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -130,6 +132,7 @@ import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
@@ -225,6 +228,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     AbstractionCompletionServiceRemote abstractionCompletionService = null;
     @EJB
     StudyInboxServiceLocal studyInboxServiceLocal = null;
+    @EJB
+    MailManagerServiceLocal mailManagerSerivceLocal = null;
     
     private static final String CREATE = "Create";
     private static final String AMENDMENT = "Amendment";
@@ -270,6 +275,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param isBatchMode to identify if  batch is caller 
      * @return ii of Study Protocol
      * @throws PAException on error
      */
@@ -290,7 +296,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
-            Ii responsiblePartyContactIi)
+            Ii responsiblePartyContactIi ,
+            Bl isBatchMode)
     throws PAException {
 
         Ii studyProtocolIi = null;
@@ -318,7 +325,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 studySiteContactDTO ,
                 summary4organizationDTO ,
                 summary4studyResourcingDTO ,
-                responsiblePartyContactIi, CREATE);
+                responsiblePartyContactIi, CREATE, isBatchMode);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -349,6 +356,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param isBatchMode to identify if  batch is caller
      * @return ii of Study Protocol
      * @throws PAException on error
      */
@@ -369,7 +377,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
-            Ii responsiblePartyContactIi)
+            Ii responsiblePartyContactIi ,
+            Bl isBatchMode)
     throws PAException {
         
         try {      
@@ -393,7 +402,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 null, 
                 null, 
                 null,
-                null , AMENDMENT);
+                null , AMENDMENT, isBatchMode);
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
@@ -424,6 +433,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param collaboratorDTOs list of updated collaborators
      * @param studySiteAccrualStatusDTOs list of updated participating sites 
      * @param studySiteDTOs  list of StudySite DTOs with updated program code
+     * @param isBatchMode to identify if  batch is caller
      * @throws PAException on error
      */
     @SuppressWarnings({"PMD.ExcessiveMethodLength" })
@@ -443,7 +453,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
         List<StudySiteDTO> collaboratorDTOs, 
         List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
-        List<StudySiteDTO> studySiteDTOs) throws PAException {
+        List<StudySiteDTO> studySiteDTOs ,
+        Bl isBatchMode) throws PAException {
        
         try {
             validateStudyExist(studyProtocolDTO, UPDAT);
@@ -500,7 +511,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                     studyRegAuthDTO, 
                     collaboratorDTOs, 
                     studySiteAccrualStatusDTOs,
-                    studySiteDTOs, UPDAT);
+                    studySiteDTOs, UPDAT, isBatchMode);
 
            } catch (Exception e) {
             ejbContext.setRollbackOnly();
@@ -538,6 +549,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
      * @param nctIdentifierDTO nctIdentifierDTO
      * @param summary4OrganizationDTO summary4OrganizationDTO
      * @param summary4StudyResourcingDTO summary4StudyResourcingDTO
+     * @param isBatchMode to identify if  batch is caller
      * @return Ii s
      * @throws PAException e
      */
@@ -554,18 +566,27 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudySiteDTO studySiteDTO ,
             StudySiteDTO nctIdentifierDTO,
             OrganizationDTO summary4OrganizationDTO ,
-            StudyResourcingDTO summary4StudyResourcingDTO)
+            StudyResourcingDTO summary4StudyResourcingDTO ,
+            Bl isBatchMode)
     throws PAException {
         Ii studyProtocolIi = null;
         StudyTypeCode studyTypeCode = null;
         //validate method needs to be here
-        StringBuffer sb = new StringBuffer();
-        sb.append(validatePoObjects(leadOrganizationDTO, "Lead Organization "));
-        sb.append(validatePoObjects(studySiteOrganizationDTO, "Study Site Organization "));
-        sb.append(validatePoObjects(summary4OrganizationDTO, "Summary 4 Organization "));
-        sb.append(validatePoObjects(studySiteInvestigatorDTO, "Study Site Investigator "));
-        if (sb.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + sb.toString());
+        StringBuffer errorMsg = new StringBuffer();
+        errorMsg.append(enforceBusinessRulesForProprietary(studyProtocolDTO,
+                studySiteOverallStatusDTO ,
+                documentDTOs ,
+                leadOrganizationDTO ,
+                studySiteInvestigatorDTO ,
+                leadOrganizationStudySiteDTO ,
+                studySiteOrganizationDTO ,
+                studySiteDTO ,
+                nctIdentifierDTO,
+                summary4OrganizationDTO ,
+                summary4StudyResourcingDTO));
+        
+        if (errorMsg.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
         List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
         listOfDTOToCreateInPO.add(leadOrganizationDTO);
@@ -603,11 +624,11 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             createStudySiteContact(studySiteIi, studyProtocolIi, studySiteOrganizationDTO,
                     studySiteInvestigatorDTO, studyTypeCode);
             //
+            sendMail(CREATE, isBatchMode, studyProtocolIi);            
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e.getMessage());
         }
-
         return studyProtocolIi;
     }
     
@@ -771,7 +792,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
           List<StudySiteDTO> collaborators, 
           List<StudySiteAccrualStatusDTO> participatingSites,
-          List<StudySiteDTO> pgCdUpdatedList , String operation) throws PAException {
+          List<StudySiteDTO> pgCdUpdatedList , String operation,
+          Bl isBatchMode) throws PAException {
         
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         Ii toStudyProtocolIi = null;
@@ -873,6 +895,28 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       if (UPDAT.equalsIgnoreCase(operation)) {
           createInboxProcessingComments(documentDTOs, studyProtocolDTO);
       }
+      //do not send the mail when its batch mode 
+      sendMail(operation, isBatchMode, studyProtocolIi);
+    }
+
+
+    /**
+     * @param operation
+     * @param isBatchMode
+     * @param studyProtocolIi
+     * @throws PAException
+     */
+    private void sendMail(String operation, Bl isBatchMode, Ii studyProtocolIi)
+            throws PAException {
+        if (PAUtil.isBlNull(isBatchMode) || !BlConverter.covertToBool(isBatchMode)) {
+              if (AMENDMENT.equalsIgnoreCase(operation)) {
+                  mailManagerSerivceLocal.sendAmendNotificationMail(studyProtocolIi);
+              } else if (UPDAT.equalsIgnoreCase(operation)) {
+                  mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi);
+              } else if (CREATE.equalsIgnoreCase(operation)) {
+                 mailManagerSerivceLocal.sendNotificationMail(studyProtocolIi);
+              }
+          }
     }
 
     private Ii createStudyProtocolObjs(
@@ -890,7 +934,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO ,
             StudyResourcingDTO summary4studyResourcingDTO ,
-            Ii responsiblePartyContactIi , String operation)
+            Ii responsiblePartyContactIi , String operation, Bl isBatchMode)
     throws PAException {
         validate(studyProtocolDTO, overallStatusDTO, operation, studyResourcingDTOs, documentDTOs,
                 leadOrganizationDTO, sponsorOrganizationDTO, summary4organizationDTO, principalInvestigatorDTO
@@ -951,6 +995,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         paServiceUtils.createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO, 
                 sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
         paServiceUtils.manageNCTIdentifier(studyProtocolIi, nctIdentifierDTO);
+        sendMail(operation, isBatchMode, studyProtocolIi);
         return studyProtocolIi;
     }
 
@@ -1121,13 +1166,14 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             Ii responsiblePartyContactIi) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
         //is user valid
-        String loginName = studyProtocolDTO.getUserLastCreated().getValue();
-        if (PAUtil.isNotEmpty(loginName)) {
-           CSMUserService userService = new CSMUserService();
-           User user = userService.getCSMUser(loginName);
-           if (user == null) {
-               errorMsg.append("Submitter " + loginName + " does not exist.");
-           }
+        String loginName = "";
+        if (!PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
+            loginName = studyProtocolDTO.getUserLastCreated().getValue();
+            CSMUserService userService = new CSMUserService();
+            User user = userService.getCSMUser(loginName);
+            if (user == null) {
+               errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");
+            }
         } else {
             errorMsg.append("Submitter is required.");
         }
@@ -1522,5 +1568,79 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         studyInboxServiceLocal.create(studyInboxDTO);
        } 
     }   
+  private String enforceBusinessRulesForProprietary(StudyProtocolDTO studyProtocolDTO,
+          StudySiteOverallStatusDTO studySiteOverallStatusDTO ,
+          List<DocumentDTO> documentDTOs ,
+          OrganizationDTO leadOrganizationDTO ,
+          PersonDTO studySiteInvestigatorDTO ,
+          StudySiteDTO leadOrganizationStudySiteDTO ,
+          OrganizationDTO studySiteOrganizationDTO ,
+          StudySiteDTO studySiteDTO ,
+          StudySiteDTO nctIdentifierDTO,
+          OrganizationDTO summary4OrganizationDTO ,
+          StudyResourcingDTO summary4StudyResourcingDTO) throws PAException {
+      StringBuffer errorMsg = new StringBuffer();
+      errorMsg.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
+      errorMsg.append(studySiteOverallStatusDTO == null ? "Study Site OverallStatus DTO cannot be null , " : "");
 
+      errorMsg.append(leadOrganizationDTO == null ? "Lead Organization DTO cannot be null , " : "");
+      errorMsg.append(studySiteInvestigatorDTO == null ? "Principal Investigator DTO cannot be null , " : "");
+      errorMsg.append(studySiteOrganizationDTO == null ? "Study Site Organization DTO cannot be null , " : "");
+      
+      errorMsg.append(leadOrganizationStudySiteDTO == null ? "Lead Organization Study SiteDTO cannot be null , " : "");
+      errorMsg.append(studySiteDTO == null ? "Study Site DTO cannot be null , " : "");
+      
+      String loginName = "";
+      if (!PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
+          loginName = studyProtocolDTO.getUserLastCreated().getValue();
+         CSMUserService userService = new CSMUserService();
+         User user = userService.getCSMUser(loginName);
+         if (user == null) {
+             errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");
+         }
+      } else {
+          errorMsg.append("Submitter is required.");
+      }
+      // validates for attributes
+      errorMsg.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null , " : "");
+      if (nctIdentifierDTO != null) { 
+          if (PAUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
+              errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
+              errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode()) 
+                      ? "Purpose cannot be null , " : "");
+              if (PAUtil.isListEmpty(documentDTOs) 
+                      || !paServiceUtils.isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_DOCUMENT)) {
+                  errorMsg.append("Proprietary template document is mandatory if NCT number is not provided");
+              }
+          }
+      } else {
+          errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
+          errorMsg.append(PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode()) ? "Purpose cannot be null , " : "");
+      }
+      if (studySiteDTO != null) {
+          errorMsg.append(PAUtil.isStNull(studySiteDTO.getLocalStudyProtocolIdentifier())
+                  ? "Submitting Organization Local Trial Identifier cannot be null, " : "");
+      } 
+      if (leadOrganizationStudySiteDTO != null) {
+          errorMsg.append(PAUtil.isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier())
+                  ? "Lead Organization Trial Identifier cannot be null, " : "");
+      } 
+      if (studySiteOverallStatusDTO != null) {
+          errorMsg.append(PAUtil.isCdNull(studySiteOverallStatusDTO.getStatusCode())
+                  ? "Current Trial Status Code cannot be null , " : "");
+          errorMsg.append(PAUtil.isTsNull(studySiteOverallStatusDTO.getStatusDate())
+                  ? "Current Trial Status Date cannot be null , " : "");
+      }
+      if (summary4StudyResourcingDTO != null && null == SummaryFourFundingCategoryCode.getByCode(
+                  CdConverter.convertCdToString(summary4StudyResourcingDTO.getTypeCode()))) {
+           errorMsg.append(CdConverter.convertCdToString(summary4StudyResourcingDTO.getTypeCode()))
+           .append(" is not valid Summary Four Funding Category Code");   
+      }
+      errorMsg.append(validatePoObjects(leadOrganizationDTO, "Lead Organization "));
+      errorMsg.append(validatePoObjects(studySiteOrganizationDTO, "Study Site Organization "));
+      errorMsg.append(validatePoObjects(summary4OrganizationDTO, "Summary 4 Organization "));
+      errorMsg.append(validatePoObjects(studySiteInvestigatorDTO, "Study Site Investigator "));
+      
+      return errorMsg.toString();
+  }
 }
