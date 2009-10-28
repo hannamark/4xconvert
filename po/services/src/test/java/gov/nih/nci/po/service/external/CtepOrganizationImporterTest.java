@@ -40,7 +40,6 @@ import gov.nih.nci.po.service.external.stubs.CTEPOrganizationServiceStub;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +51,7 @@ import javax.naming.Context;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.CollectionUtils;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
@@ -136,28 +136,6 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             return null;
         }
         return identifiedOrgs.get(0);
-    }
-
-    @Test
-    public void areEmailListsEqual() {
-        List<Email> list1 = new ArrayList<Email>();
-        List<Email> list2 = new ArrayList<Email>();
-        assertTrue(CtepUtils.areEmailListsEqual(list1, list2));
-
-        Email email1 = new Email("1@example.com");
-        Email email1copy = new Email("1@example.com");
-        Email email2 = new Email("2@example.com");
-        Email email2copy = new Email("2@example.com");
-
-        list1.add(email1);
-        assertFalse(CtepUtils.areEmailListsEqual(list1, list2));
-
-        list2.add(email2);
-        assertFalse(CtepUtils.areEmailListsEqual(list1, list2));
-
-        list1.add(email2copy);
-        list2.add(email1copy);
-        assertTrue(CtepUtils.areEmailListsEqual(list1, list2));
     }
 
     /**
@@ -527,14 +505,13 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
     }
 
     /**
-     * CTEP Integration - Scenario 4
+     * CTEP Integration - Scenario 4 - a user creates an org w/ an ro in the po-web system. this ro will be one that is
+     * going to be modified by ctep
      *
      * @throws Exception
      */
     @Test
     public void verifyScenario4() throws Exception {
-        // a user creates an org w/ an ro in the po-web system. this ro will be one that is
-        // going to be modified by ctep
         final Country c = getDefaultCountry();
         final ResearchOrganizationServiceBean getService = roSvc;
         ResearchOrganizationServiceTest test = new ResearchOrganizationServiceTest() {
@@ -557,6 +534,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         assertNotNull(org1);
         assertEquals(RoleStatus.PENDING, ro.getStatus());
         assertTrue(ro.isCtepOwned());
+        assertTrue(CollectionUtils.isEmpty(ro.getPostalAddresses()));
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -605,6 +583,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
                 ResearchOrganization.class).uniqueResult();
         assertEquals("NAME", freshRo.getName());
         assertFalse(ro.getFundingMechanism().getCode().equals(freshRo.getFundingMechanism().getCode()));
+        assertEquals("20110", freshRo.getPostalAddresses().iterator().next().getPostalCode());
 
         // only update here is the adding of the ctep id
         MessageProducerTest.assertMessageCreated(importedOrg.getHealthCareFacilities().iterator().next(),
@@ -613,8 +592,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
                 HealthCareFacility.class).uniqueResult();
         Ii ctepIdForHcf = freshHcf.getOtherIdentifiers().iterator().next();
         assertEquals(CtepOrganizationImporter.CTEP_ORG_ROOT, ctepIdForHcf.getRoot());
-
-
+        assertEquals("20110", freshHcf.getPostalAddresses().iterator().next().getPostalCode());
     }
 
     /**

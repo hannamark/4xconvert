@@ -1,6 +1,7 @@
 package gov.nih.nci.po.service.external;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -12,6 +13,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AbstractCuratableServiceBean;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareFacilityServiceBean;
 import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
 import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
@@ -43,6 +45,7 @@ import org.junit.Test;
  * @author gax
  */
 public class CtepMessageBeanTest extends AbstractServiceBeanTest {
+    private boolean serviceCalled = false;
 
     @Test
     public void skipMessage() throws Exception {
@@ -88,7 +91,7 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
      */
     @Test
     public void testOnMessage() throws IOException, JMSException {
-        int tests = 17;
+        int tests = 18;
         MockTextMessage[] messages = new MockTextMessage[tests];
         for (int i = 0; i < tests; i++) {
             messages[i] = new MockTextMessage(i);
@@ -117,12 +120,13 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
                 "at org.apache.commons.digester.Digester.parse"*/);
         checkers[idx] = new Checker(false, null, null, null, idx++/*,
                 "Failed to process JMS message ID:14",
-                "java.lang.IllegalArgumentException: Unsuported Record Type in message BOGUS_TYPE",
+                "java.lang.IllegalArgumentException: Unsupported Record Type in message BOGUS_TYPE",
                 "at gov.nih.nci.po.service.external.CtepMessageBean.processMessage"*/);
         checkers[idx] = new Checker(true, TransactionType.REJECT, RecordType.ORGANIZATION, "abc", idx++);
         checkers[idx] = new Checker(true, TransactionType.DUPLICATE, RecordType.ORGANIZATION, "abc", idx++);
+        checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.ORGANIZATION_ADDRESS, "03013", idx++);
 
-        for(int i = 0; i < tests; i++) {
+        for (int i = 0; i < tests; i++) {
             testOnMessage(messages[i], checkers[i]);
         }
     }
@@ -144,6 +148,7 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         logWriter.getBuffer().trimToSize();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testMsg4Full() throws Exception {
         HealthCareFacilityServiceBean hcfSvc =
@@ -151,7 +156,7 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
 
         // create org and 2 hcfs for this test
         final Country c = getDefaultCountry();
-        final HealthCareFacilityServiceBean getService = (HealthCareFacilityServiceBean) hcfSvc;
+        final HealthCareFacilityServiceBean getService = hcfSvc;
         HealthCareFacilityServiceTest test = new HealthCareFacilityServiceTest() {
             @Override
             public Country getDefaultCountry() {
@@ -174,8 +179,8 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        List<HealthCareFacility> hcfList = (List<HealthCareFacility>) PoHibernateUtil.getCurrentSession().createCriteria(
-                HealthCareFacility.class).list();
+        List<HealthCareFacility> hcfList =
+                PoHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class).list();
 
         HealthCareFacility hcf1 = hcfList.get(0);
         Organization org1 = hcf1.getPlayer();
@@ -241,7 +246,53 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
                 HealthCareFacility.class, hcf1.getId());
         assertEquals(RoleStatus.NULLIFIED, freshRo.getStatus());
         assertEquals(hcf2.getId(), freshRo.getDuplicateOf().getId());
+    }
 
+    @Test
+    public void testIgnoredMessages() throws Exception {
+        serviceCalled = false;
+        MockTextMessage msg15 = new MockTextMessage(15);
+        MockTextMessage msg16 = new MockTextMessage(16);
+        MockTextMessage msg17 = new MockTextMessage(17);
+        CtepMessageBean bean = new CtepMessageBean();
+
+        final CtepOrganizationImporter importer = new CtepOrganizationImporter(null) {
+            @Override
+            protected void initCtepServices(Context ctepContext) {
+            }
+
+            @Override
+            public void nullifyCtepOrganization(Ii ctepOrgId, Ii duplicateOfId, OrganizationType orgType)
+                    throws JMSException {
+                serviceCalled = true;
+            }
+
+            @Override
+            public Organization importOrganization(Ii ctepOrgId) throws JMSException, EntityValidationException {
+                serviceCalled = true;
+                return null;
+            }
+
+        };
+
+        CtepImportServiceBean importServiceBean = new CtepImportServiceBean() {
+            @Override
+            protected void initImporters() {
+                try {
+                    setOrgImporter(importer);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
+        bean.setCtepImportService(importServiceBean);
+        bean.onMessage(msg15);
+        assertFalse("Should be ignoring this message", serviceCalled);
+        bean.onMessage(msg16);
+        assertFalse("Should be ignoring this message", serviceCalled);
+        bean.onMessage(msg17);
+        assertFalse("Should be ignoring this message", serviceCalled);
     }
 
     class Checker {
@@ -305,7 +356,7 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
             // check logger entries.
             StringBuffer log = logWriter.getBuffer();
             if (log.length() > 0 && errors.length == 0) {
-                Assert.fail("unexpected log entry for msg " + idx + "  :" + log);
+                Assert.fail("unexpected log entry for msg " + idx + ": " + log);
             }
             for (String m : errors) {
                 Assert.assertTrue("expected error not found for msg " + idx + ": " + m + "within \n " + log.toString(),

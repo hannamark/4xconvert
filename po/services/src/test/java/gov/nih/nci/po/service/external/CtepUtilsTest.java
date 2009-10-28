@@ -17,7 +17,9 @@ import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.URL;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -216,4 +218,28 @@ public class CtepUtilsTest {
         assertTrue(o2.getTty().isEmpty());
         assertTrue(o2.getUrl().isEmpty());
     }
+
+    @Test
+    public void areEmailListsEqual() {
+        List<Email> list1 = new ArrayList<Email>();
+        List<Email> list2 = new ArrayList<Email>();
+        assertTrue(CtepUtils.areEmailListsEqual(list1, list2));
+
+        Email email1 = new Email("1@example.com");
+        Email email1copy = new Email("1@example.com");
+        Email email2 = new Email("2@example.com");
+        Email email2copy = new Email("2@example.com");
+
+        list1.add(email1);
+        assertFalse(CtepUtils.areEmailListsEqual(list1, list2));
+
+        list2.add(email2);
+        assertFalse(CtepUtils.areEmailListsEqual(list1, list2));
+
+        list1.add(email2copy);
+        list2.add(email1copy);
+        assertTrue(CtepUtils.areEmailListsEqual(list1, list2));
+    }
+
+
 }

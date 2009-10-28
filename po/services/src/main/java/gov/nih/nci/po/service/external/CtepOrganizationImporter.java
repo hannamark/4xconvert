@@ -534,22 +534,21 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private boolean checkAddressSetsEqual(Set<Address> dbAddresses, Set<Address> ctepAddresses) {
+        boolean dbAddrEmpty = CollectionUtils.isEmpty(dbAddresses);
+        boolean ctepAddrEmpty = CollectionUtils.isEmpty(ctepAddresses);
+
         // case #1 - both are either null or empty
-        if (CollectionUtils.isEmpty(dbAddresses) && CollectionUtils.isEmpty(ctepAddresses)) {
+        if (dbAddrEmpty && ctepAddrEmpty) {
             return true;
         }
 
-        // case #2 - either db or ctep is null, but not both
-        if (checkForNullAddressSets(dbAddresses, ctepAddresses)) {
+        // case #2 - either db or ctep is null or empty, but not both
+        if ((dbAddrEmpty && !ctepAddrEmpty) || (!dbAddrEmpty && ctepAddrEmpty)) {
             return false;
         }
 
         // case #3 - neither is null or empty
         return compareNotEmptyAddressSets(dbAddresses, ctepAddresses);
-    }
-
-    private boolean checkForNullAddressSets(Set<Address> dbAddresses, Set<Address> ctepAddresses) {
-        return (dbAddresses == null && ctepAddresses != null) || (dbAddresses != null && ctepAddresses == null);
     }
 
     private boolean compareNotEmptyAddressSets(Set<Address> dbAddresses, Set<Address> ctepAddresses) {

@@ -349,6 +349,7 @@ public class CtepMessageBean implements MessageListener {
         case DELETE:
         case DUPLICATE:
             LOG.warn(getSkipMessage(trxType, msgType, id));
+            break;
         default:
             switch (msgType) {
             case ORGANIZATION:
