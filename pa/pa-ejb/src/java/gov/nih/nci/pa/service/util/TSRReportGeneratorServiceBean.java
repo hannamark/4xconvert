@@ -425,12 +425,19 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     List<StratumGroupDTO> sraDTO = 
           stratumGroupService.getByStudyProtocol(spDto.getIdentifier());
   
-    if (sraDTO != null && !sraDTO.isEmpty()) {
+    if (PAUtil.isListNotEmpty(sraDTO)) {
        appendTitle(html, appendBoldData("Sub Group Information"));
-         html.append(BR);
-         StratumGroupDTO dto = sraDTO.get(0);
-         html.append(appendData("Code: ", StConverter.convertToString(dto.getGroupNumberText()), true , true));
-         html.append(appendData("Description: ", StConverter.convertToString(dto.getDescription()), true , true));
+       html.append(BR).append(BR).append(TBL_B);
+       html.append(TR_B);
+       appendTDAndData(html, appendTRBold("Code"));
+       appendTDAndData(html, appendTRBold("Description"));
+       html.append(TR_E);
+         for (StratumGroupDTO dto : sraDTO) {
+             html.append(TR_B);
+             appendTDAndData(html, StConverter.convertToString(dto.getGroupNumberText()));
+             appendTDAndData(html, StConverter.convertToString(dto.getDescription()));
+             html.append(TR_E);
+         }
     }
   }  
 
