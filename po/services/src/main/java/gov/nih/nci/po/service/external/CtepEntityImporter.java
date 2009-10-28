@@ -84,17 +84,10 @@ package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.coppa.services.OrganizationService;
 import gov.nih.nci.coppa.services.PersonService;
-import gov.nih.nci.po.data.bo.Email;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.TransformerUtils;
 
 /**
  * @author Scott Miller
@@ -154,20 +147,5 @@ public class CtepEntityImporter {
      */
     protected void setCtepPersonService(PersonService ctepPersonService) {
         this.ctepPersonService = ctepPersonService;
-    }
-
-    /**
-     * Checks if two lists of email addresses contain the same addresses, regardless of order.
-     * @param list1 first list of email addresses
-     * @param list2 other list of email addresses
-     * @return true if both lists contain the same addresses, ignoring order
-     */
-    protected static boolean areEmailListsEqual(List<Email> list1, List<Email> list2) {
-        Transformer valueTransformer = TransformerUtils.invokerTransformer("getValue");
-        List<Email> transformedList1 = new ArrayList<Email>(list1);
-        List<Email> transformedList2 = new ArrayList<Email>(list2);
-        CollectionUtils.transform(transformedList1, valueTransformer);
-        CollectionUtils.transform(transformedList2, valueTransformer);
-        return CollectionUtils.isEqualCollection(transformedList1, transformedList2);
     }
 }

@@ -49,6 +49,7 @@ import java.util.Set;
 import javax.jms.JMSException;
 import javax.naming.Context;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,6 +60,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      * Root used by CTEP to identify organizations
      */
     public static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
+    private static final String CURATED_ORG_NAME_VALUE ="curatedNameValue";
     private CtepOrganizationImporter importer = null;
     private OrganizationServiceBean oSvc;
     private IdentifiedOrganizationServiceBean ioSvc;
@@ -140,7 +142,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
     public void areEmailListsEqual() {
         List<Email> list1 = new ArrayList<Email>();
         List<Email> list2 = new ArrayList<Email>();
-        assertTrue(CtepEntityImporter.areEmailListsEqual(list1, list2));
+        assertTrue(CtepUtils.areEmailListsEqual(list1, list2));
 
         Email email1 = new Email("1@example.com");
         Email email1copy = new Email("1@example.com");
@@ -148,14 +150,14 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         Email email2copy = new Email("2@example.com");
 
         list1.add(email1);
-        assertFalse(CtepEntityImporter.areEmailListsEqual(list1, list2));
+        assertFalse(CtepUtils.areEmailListsEqual(list1, list2));
 
         list2.add(email2);
-        assertFalse(CtepEntityImporter.areEmailListsEqual(list1, list2));
+        assertFalse(CtepUtils.areEmailListsEqual(list1, list2));
 
         list1.add(email2copy);
         list2.add(email1copy);
-        assertTrue(CtepEntityImporter.areEmailListsEqual(list1, list2));
+        assertTrue(CtepUtils.areEmailListsEqual(list1, list2));
     }
 
     /**
@@ -259,7 +261,35 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
                 .buildCreateHCFWithNameUpdateStub(hcfPOID);
 
         helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(
-                importedOrg, service);
+                importedOrg, service, EntityStatus.PENDING);
+    }
+
+    /**
+     * Verifies that updates to ACTIVE orgs are persisted as change requests and NOT directly to the org.
+     * @throws Exception on error
+     * @see https://jira.5amsolutions.com/browse/PO-1379
+     */
+    @Test
+    public void testUpdateToActiveOrg() throws Exception {
+        // start off by creating initial data.
+        Organization importedOrg = helperOrgAndAllHCFRolesAreSetToPendingOnCreate();
+        // and then *curate* - key difference from above
+        importedOrg.setStatusCode(EntityStatus.ACTIVE);
+        importedOrg.setName(CURATED_ORG_NAME_VALUE);
+        oSvc.curate(importedOrg);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        clearMessages();
+        // get the II for the HCF that was added during the 1st pass (creation)
+        Ii hcfPOID = getHCFII(importedOrg);
+
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE
+                .buildCreateHCFWithNameUpdateStub(hcfPOID);
+
+        helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(
+                importedOrg, service, EntityStatus.ACTIVE);
+
     }
 
     /**
@@ -283,11 +313,11 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
         CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROWithNameUpdateStub(roPOID);
 
-        helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(importedOrg, service);
+        helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(importedOrg, service, EntityStatus.PENDING);
     }
 
     private void helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(
-            Organization importedOrg, CTEPOrganizationServiceStub service) throws JMSException,
+            Organization importedOrg, CTEPOrganizationServiceStub service, EntityStatus initialOrgStatus) throws JMSException,
             EntityValidationException {
         importer.setCtepOrgService(service);
         OrganizationDTO org = service.getOrg();
@@ -296,8 +326,12 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         Organization updatedOrg = importer.importOrganization(org.getIdentifier());
         assertNotNull(updatedOrg);
 
-        MessageProducerTest.assertMessageCreated(updatedOrg, (OrganizationServiceBean) importer.getOrgService(), false);
-
+        if (initialOrgStatus.equals(EntityStatus.PENDING)) {
+            // if the org was already active, we shouldn't message out that it was updated
+            MessageProducerTest.assertMessageCreated(updatedOrg, (OrganizationServiceBean) importer.getOrgService(), false);
+        } else {
+            MessageProducerTest.assertNoMessageCreated(updatedOrg, (OrganizationServiceBean) importer.getOrgService());
+        }
         IdentifiedOrganization io = getByCtepOrgId(service.getOrgId());
         assertEquals(ctep.getId(), io.getScoper().getId());
         MessageProducerTest.assertMessageCreated(io, (IdentifiedOrganizationServiceBean) importer
@@ -305,25 +339,42 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
         Organization persistedOrg = io.getPlayer();
         assertNotNull(persistedOrg);
-        assertEquals(EntityStatus.PENDING, persistedOrg.getStatusCode());
+        assertEquals(initialOrgStatus, updatedOrg.getStatusCode());
+        if (initialOrgStatus.equals(EntityStatus.ACTIVE)) {
+            // check for a change request to the org
+            assertFalse(updatedOrg.getChangeRequests().isEmpty());
+            // and that the name remains the curated value
+            assertEquals(CURATED_ORG_NAME_VALUE, updatedOrg.getName());
+        } else {
+            // shouldn't be any change requests
+            assertTrue(updatedOrg.getChangeRequests().isEmpty());
+        }
 
         if (service.getHcf() != null) {
             List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
             assertEquals(1, hcfs.size());
 
             HealthCareFacility persistedHCF = hcfs.get(0);
-            assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
             MessageProducerTest.assertMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
                     .getHCFService(), false);
+            if (initialOrgStatus.equals(EntityStatus.PENDING)) {
+                assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
+            } else {
+                assertEquals(RoleStatus.ACTIVE, persistedHCF.getStatus());
+            }
         }
         if (service.getRo() != null) {
             List<ResearchOrganization> ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
             assertEquals(1, ros.size());
 
             ResearchOrganization persistedRO = ros.get(0);
-            assertEquals(RoleStatus.PENDING, persistedRO.getStatus());
             MessageProducerTest.assertMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
                     .getROService(), false);
+            if (initialOrgStatus.equals(EntityStatus.PENDING)) {
+                assertEquals(RoleStatus.PENDING, persistedRO.getStatus());
+            } else {
+                assertEquals(RoleStatus.ACTIVE, persistedRO.getStatus());
+            }
         }
     }
 
@@ -453,7 +504,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
     private Ii getHCFII(Organization importedOrg) {
         List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, hcfs.size());
-        HealthCareFacility persistedHCF = hcfs.get(0);
+        hcfs.get(0);
         Ii hcfPOID = new IdConverter.HealthCareFacilityIdConverter().convertToIi(hcfs.get(0).getId());
         return hcfPOID;
     }
@@ -461,16 +512,18 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
     private Ii getROII(Organization importedOrg) {
         List<ResearchOrganization> ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, ros.size());
-        ResearchOrganization persistedRO = ros.get(0);
         Ii hcfPOID = new IdConverter.ResearchOrganizationIdConverter().convertToIi(ros.get(0).getId());
         return hcfPOID;
     }
 
-    private void clearMessages() {
+    @After
+    public void clearMessages() {
         MessageProducerTest.clearMessages((OrganizationServiceBean) importer.getOrgService());
         MessageProducerTest.clearMessages((IdentifiedOrganizationServiceBean) importer.getIdentifiedOrgService());
         MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHCFService());
         MessageProducerTest.clearMessages((ResearchOrganizationServiceBean) importer.getROService());
+        MessageProducerTest.clearMessages(getHealthCareFacilityServiceBean());
+        MessageProducerTest.clearMessages(getResearchOrganizationServiceBean());
     }
 
     /**
@@ -509,7 +562,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().clear();
 
         // see message sent to out on ro creation
-        MessageProducerTest.assertMessageCreated(ro, (ResearchOrganizationServiceBean) getService, true);
+        MessageProducerTest.assertMessageCreated(ro, getService, true);
         assertNull(ro.getName());
         assertNotNull(ro.getFundingMechanism());
 
