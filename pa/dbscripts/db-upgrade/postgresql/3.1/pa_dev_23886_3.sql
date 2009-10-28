@@ -58,6 +58,8 @@ INSERT INTO DOSE_FREQUENCY (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,
 
 -- uom
 
+-- uom
+
 DELETE FROM UNIT_OF_MEASUREMENT ;
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Unit/g','Unit per gram','Unit per gram',NULL,'2576426');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mcg/m2','Microgram per meter squared','Microgram per meter squared',NULL,'2576427');
@@ -69,6 +71,7 @@ INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEP
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'IU/mg','International unit per milligram','International unit per milligram',NULL,'2578156');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'IVRP','Infectious Viral Replicon Particles','Infectious Viral Replicon Particles',NULL,'2684842');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mBq','Millibecquerel','Millibecquerel',NULL,'2761970');
+
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Unit/mL','Unit per milliliter','Unit per milliliter',NULL,'2567624');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Capful','Capful','Capful',NULL,'2789561');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'BPM','Breaths per Minute','The number of breaths (inhalation and exhalation) taken per minute time.','C49674','2581031');
@@ -85,10 +88,11 @@ INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEP
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Applcatn','Application','Application; the work of applying something.','C25397','2569373');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'au','Atomic Unit','Atomic Unit',NULL,'2569374');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'bill PFU','Billion PFU','Billion Plaque Forming Units',NULL,'2569375');
+
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Cells','Cells','Cells',NULL,'2567135');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'cGy','Centigray','The metric unit of absorbed radiation dose equal to the absorption of one hundredth of joule of radiation energy per kilogram of matter.','C64693','2569067');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Ci','Curie','A unit of radioactivity in the CGS system, defined as 3.7 E10 atomic disintegrations or other nuclear transformations per second. One curie is equal to 37 gigabecquerels.','C48466','2569376');
-INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Course','Course','A period of protocol-prescribed activity or intervention.','C25379','2569377');
+--INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Course','Course','A period of protocol-prescribed activity or intervention.','C25379','2569377');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'dL','Deciliter','The unit of volume equal to one tenth of a liter. Accepted for use with the SI.','C64697','2569378');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Dose','Dose','The amount of medicine taken, or radiation given, at one time.','C25488','2569379');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Eq','Equivalent','Equivalent',NULL,'2569380');
@@ -104,6 +108,7 @@ INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEP
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Jcm2','Joules per centimeter squared','Joules per centimeter squared',NULL,'2569387');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'KeV','Kib-electron volt','Kib-electron volt',NULL,'2569388');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'kg','Kilograms','Kilograms',NULL,'2567608');
+
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'kHz','Kilohertz','A unit of measure denoting the frequency equal to 1000 cycles per second meaning e.g. that the cylical waveform changes from one state to the other (from one polarity to the other) 1000 times per second.','C67279','2569389');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'kPa','Kilopascal','A SI derived unit of pressure equivalent to 1000 newtons per square meter or 10000 bars or to 0.145 pound per square inch.','C67284','2569390');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'kU','Kilounit','A quantity equivalent to one thousand units (10E3 units).','C67309','2569391');
@@ -126,6 +131,7 @@ INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEP
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'microL','Microliter','A metric unit of volume equal to one millionth of a liter or one one thousandth of a milliliter.','C48153','2567626');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'micromol','Micromole','A unit of amount of substance equal to a millionth of a mole.','C48509','2567136');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Million','Million','A natural number following 999999 and preceding 100001 and the quantity that it denotes: one thousand thousand.','C67238','2569409');
+
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mL','Milliliter','A measure of volume for a liquid.  A milliliter is approximately 950 times smaller than a quart and 30 times smaller than a fluid ounce.  A milliliter of liquid and a cubic centimeter (cc) of liquid are the same.','C28254','2567406');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mL/kg','Milliliter per kilogram','Milliliter per kilogram',NULL,'2569412');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mmol','Millimole','A unit of amount of substance equal to 0.001 mole.','C48513','2569413');
@@ -146,6 +152,7 @@ INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEP
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'oz','Ounce','The traditional unit of mass. The avoirdupois ounce is equal to 1/16 pound, or 28.3495 grams, or 0.911 457 troy ounce.','C48519','2569429');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Pa','Pascal','A SI derived unit of pressure equivalent to one newton per square meter or 10 bars or to 1.45x10E-4 pounds per square inch.','C42547','2569430');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'packet','Packet','Packet',NULL,'2569431');
+
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'PFU','Plaque Forming Units','Plaque Forming Units',NULL,'2569432');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'pg','Picograms','Picograms',NULL,'2569433');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'psi','Pounds per square inch','Pounds per square inch',NULL,'2569434');
@@ -164,6 +171,7 @@ INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEP
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'IU Vit A','IU Vitamin A','International Units Vitamin A',NULL,'2569662');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mg','Milligram','A measure of weight.  A milligram is approximately 450,000 times smaller than a pound and 28, 000 times smaller than an ounce.','C28253','2569666');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'IU/mg A-TE','International Units OR milligram alpha Tocopherol','International Units OR milligram alpha Tocopherol',NULL,'2569667');
+
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'MU','Million units','Million units',NULL,'2569417');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mill PFU','Million Plaque Forming Units','A measure of viable infectious entities expressed in millions in the specimen or product defined as the smallest quantity that can produce a cytopathic effect in the host cell culture challenged with the defined inoculum, visible under the microscope or/and to the naked eye as a plaque.','C67268','2569408');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'millunit','Milliunit','A quantity equivalent to the one thousandth unit (10E-3 unit).','C67315','2569410');
@@ -184,6 +192,7 @@ INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEP
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Seed','Seed','Seed (Radioactive)',NULL,'2571185');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Session','Session','Time, period, or term devoted to some activity.','C67447','2571186');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'10E7 PFU','10E7 Plaque Forming Units','10E7 Plaque Forming Units',NULL,'2571187');
+
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'10E8 PFU','10E8 Plaque Forming Units','10E8 Plaque Forming Units',NULL,'2571188');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'AUC','Area under the curve','Area under the curve',NULL,'2573848');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Bottle','Bottle','Bottle',NULL,'2573849');
@@ -191,7 +200,7 @@ INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEP
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'L/min','Liters per minute','Liters per minute',NULL,'2573851');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mg/24hr','Milligram per 24 hours','Milligram per 24 hours',NULL,'2573852');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mg/inh','Milligram per Inhalation','An inhalation dosing unit equal to the quantity of medicinal substance(s) expressed in milligrams delivered per a single act of taking in breath.','C67400','2573853');
-INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mL','Cubic centimeter (cc)','Cubic centimeter (cc)',NULL,'2573854');
+--INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'mL','Cubic centimeter (cc)','Cubic centimeter (cc)',NULL,'2573854');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'Unit/m2','Unit per meter squared','Unit per meter squared',NULL,'2573855');
 INSERT INTO UNIT_OF_MEASUREMENT (IDENTIFIER,CODE,DISPLAY_NAME,DESCRIPTION,CONCEPT_ID,PUBLIC_ID) VALUES(nextval('serial'),'1X','One Time','One Time',NULL,'2593238');
 
