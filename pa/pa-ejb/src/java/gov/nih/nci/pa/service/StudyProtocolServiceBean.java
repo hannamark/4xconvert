@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -88,6 +89,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
@@ -125,7 +127,11 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 
 /**
  * @author Hugh Reinhart
@@ -167,7 +173,7 @@ import org.hibernate.criterion.Example;
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.info("Entering getStudyProtocol");
+        LOG.debug("Entering getStudyProtocol");
         Session session = null;
         StudyProtocol studyProtocol = null;
         session = HibernateUtil.getCurrentSession();
@@ -177,7 +183,7 @@ import org.hibernate.criterion.Example;
         StudyProtocolDTO studyProtocolDTO =
             StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
 
-        LOG.info("Leaving getStudyProtocol");
+        LOG.debug("Leaving getStudyProtocol");
         return studyProtocolDTO;
     }
     /**
@@ -224,7 +230,7 @@ import org.hibernate.criterion.Example;
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.info("Entering getInterventionalStudyProtocol");
+        LOG.debug("Entering getInterventionalStudyProtocol");
         Session session = null;
 
         InterventionalStudyProtocol isp = null;
@@ -234,7 +240,7 @@ import org.hibernate.criterion.Example;
         InterventionalStudyProtocolDTO ispDTO =
             InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
 
-        LOG.info("Leaving getInterventionalStudyProtocol");
+        LOG.debug("Leaving getInterventionalStudyProtocol");
         return ispDTO;
     }
 
@@ -334,7 +340,7 @@ import org.hibernate.criterion.Example;
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.info("Entering getObservationalStudyProtocol");
+        LOG.debug("Entering getObservationalStudyProtocol");
         Session session = null;
 
         ObservationalStudyProtocol osp = null;
@@ -344,7 +350,7 @@ import org.hibernate.criterion.Example;
         ObservationalStudyProtocolDTO ospDTO =
             ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
 
-        LOG.info("Leaving getObservationalStudyProtocol");
+        LOG.debug("Leaving getObservationalStudyProtocol");
         return ospDTO;
 
     }
@@ -404,7 +410,7 @@ import org.hibernate.criterion.Example;
         session = HibernateUtil.getCurrentSession();
         setDefaultValues(osp, ospDTO, session , CREATE);
         session.save(osp);
-        LOG.info("Creating osp for id = " + osp.getId());
+        LOG.debug("Creating osp for id = " + osp.getId());
         //createDocumentWorkFlowStatus(osp);
         LOG.debug("Leaving createInterventionalStudyProtocol");
         return IiConverter.convertToStudyProtocolIi(osp.getId());
@@ -421,7 +427,7 @@ import org.hibernate.criterion.Example;
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
-        LOG.info("Entering getStudyProtocol");
+        LOG.debug("Entering getStudyProtocol");
         Session session = null;
         StudyProtocol studyProtocol = null;
         Ii targetSpIi = null;
@@ -618,7 +624,7 @@ import org.hibernate.criterion.Example;
             LOG.error(" StudyProtocolDTO should not be null ");
             throw new PAException(" StudyProtocolDTO should not be null ");
         }
-        LOG.info("Entering search");
+        LOG.debug("Entering search");
         Session session = null;
         List<StudyProtocol> studyProtocolList = null;
         session = HibernateUtil.getCurrentSession();
@@ -645,7 +651,14 @@ import org.hibernate.criterion.Example;
         }
         Example example = Example.create(exampleDO);
         example.enableLike();
-        Criteria criteria = session.createCriteria(StudyProtocol.class).add(example);
+        
+        DetachedCriteria protocolId = DetachedCriteria.forClass(DocumentWorkflowStatus.class, "dws")
+            .setProjection(Projections.distinct(Property.forName("dws.studyProtocol")))
+            .add(Expression.eq("dws.statusCode", DocumentWorkflowStatusCode.REJECTED));
+            
+        
+        Criteria criteria = session.createCriteria(StudyProtocol.class, "sp").add(example) 
+            .add(Property.forName("sp.id").notIn(protocolId));
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
         criteria.setMaxResults(maxLimit);
         criteria.setFirstResult(pagingParams.getOffset());
@@ -655,7 +668,7 @@ import org.hibernate.criterion.Example;
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
         List<StudyProtocolDTO> studyProtocolDTOList = convertFromDomainToDTO(studyProtocolList);
-        LOG.info("Leaving search");
+        LOG.debug("Leaving search");
         return studyProtocolDTOList;
     }
 

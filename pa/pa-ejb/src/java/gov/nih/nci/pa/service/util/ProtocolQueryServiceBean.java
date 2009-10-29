@@ -455,7 +455,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         // step 1: form the hql
         String hql = generateStudyProtocolQuery(studyProtocolQueryCriteria);
         // String hql = "select sp from StudyProtocol sp";
-        LOG.info(" query protocol = " + hql);
+        LOG.debug(" query protocol = " + hql);
         // step 2: construct query object
         query = session.createQuery(hql);
         // step 3: query the result
