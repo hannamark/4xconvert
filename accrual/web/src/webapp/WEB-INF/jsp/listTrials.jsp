@@ -10,7 +10,7 @@
        <display:column titleKey="accrual.list.trials.protocolNumber" sortable="true" headerClass="sortable"
          headerScope="col">
          <s:a href="#" onclick="window.location='accrualSubmissions.action?studyProtocolId=%{#attr.row.studyProtocolIdentifier.extension}';">
-         <s:label value="%{#attr.row.assignedIdentifier}" cssStyle="font-weight:normal"/>
+         <s:label value="%{#attr.row.assignedIdentifier}" cssStyle="font-weight:normal; color:blue"/>
          </s:a></display:column>
        <display:column titleKey="accrual.list.trials.protocolTitle" sortable="true" headerClass="sortable"
          headerScope="col"><s:label value="%{#attr.row.officialTitle}"

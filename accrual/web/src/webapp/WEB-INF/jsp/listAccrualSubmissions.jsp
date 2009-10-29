@@ -39,7 +39,7 @@
 
          <display:column titleKey="accrual.list.submissions.label" headerClass="centered" sortable="true" class="action">
              <s:a href="#" onclick="viewDetails(%{#attr.row.identifier.extension})">
-                    <s:label value="%{#attr.row.label}" cssStyle="font-weight:normal"/>
+                    <s:label value="%{#attr.row.label}" cssStyle="font-weight:normal; color:blue"/>
              </s:a>
         </display:column>
        <display:column titleKey="accrual.list.submissions.description" sortable="true" 
