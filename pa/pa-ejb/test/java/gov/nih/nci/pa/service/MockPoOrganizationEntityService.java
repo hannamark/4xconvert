@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -99,6 +100,7 @@ public class MockPoOrganizationEntityService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.OrganizationDTO)
      */
+    @Deprecated
     public List<OrganizationDTO> search(OrganizationDTO arg0) {
         List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
         String inputName = EnOnConverter.convertEnOnToString(arg0.getName());
@@ -136,11 +138,35 @@ public class MockPoOrganizationEntityService implements
         // TODO Auto-generated method stub
         return null;
     }
-
+    
+    /* (non-Javadoc)
+     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.OrganizationDTO, gov.nih.nci.coppa.services.LimitOffset)
+     */
     public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1)
-            throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+        throws TooManyResultsException {
+    	List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
+        String inputName = EnOnConverter.convertEnOnToString(arg0.getName());
+        for(OrganizationDTO dto:orgDtoList){
+            String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
+            if(dtoName .equals(inputName)){
+                matchingDtosList.add(dto);
+            }
+        }
+
+        int fromIndex = (arg1.getOffset() < 0 ? 0 : arg1.getOffset());
+        int toIndex = Math.min(fromIndex + arg1.getLimit(), matchingDtosList.size());
+
+        try {
+	        matchingDtosList = matchingDtosList.subList(fromIndex, toIndex);
+        } catch (IndexOutOfBoundsException e) { // fromIndex > toIndex
+	        matchingDtosList.clear();  // return empty list
+        }
+
+        if (matchingDtosList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+            throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
+        }
+
+        return matchingDtosList ;
     }
 
 }

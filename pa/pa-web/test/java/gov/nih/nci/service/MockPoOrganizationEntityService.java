@@ -100,6 +100,7 @@ public class MockPoOrganizationEntityService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.OrganizationDTO)
      */
+    @Deprecated
     public List<OrganizationDTO> search(OrganizationDTO arg0) {
         List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
         if(arg0.getIdentifier() != null) {

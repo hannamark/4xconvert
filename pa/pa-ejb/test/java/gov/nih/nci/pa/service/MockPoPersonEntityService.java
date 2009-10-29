@@ -24,6 +24,7 @@ import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
@@ -94,6 +95,7 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.services.person.PersonEntityServiceRemote#search(gov.nih.nci.services.person.PersonDTO)
      */
+    @Deprecated
     public List<PersonDTO> search(PersonDTO arg0) {
         List<PersonDTO> matchingDTO = new ArrayList<PersonDTO>();
         List<Enxp> nameList = arg0.getName().getPart();
@@ -132,9 +134,29 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
     }
 
     public List<PersonDTO> search(PersonDTO arg0, LimitOffset arg1)
-            throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+        throws TooManyResultsException {
+    	List<PersonDTO> matchingDTO = new ArrayList<PersonDTO>();
+        List<Enxp> nameList = arg0.getName().getPart();
+        for(PersonDTO dto:personList){
+            List<Enxp> dtoNameList = dto.getName().getPart();
+            if(dtoNameList.get(0).getValue().equals(nameList.get(0).getValue())){
+                matchingDTO.add(dto);
+            }
+        }
+        
+        int fromIndex = (arg1.getOffset() < 0 ? 0 : arg1.getOffset());
+        int toIndex = Math.min(fromIndex + arg1.getLimit(), matchingDTO.size());
+
+        try {
+        	matchingDTO = matchingDTO.subList(fromIndex, toIndex);
+        } catch (IndexOutOfBoundsException e) { // fromIndex > toIndex
+        	matchingDTO.clear();  // return empty list
+        }
+
+        if (matchingDTO.size() > PAConstants.MAX_SEARCH_RESULTS) {
+            throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
+        }
+        return matchingDTO;
     }
 
 }
