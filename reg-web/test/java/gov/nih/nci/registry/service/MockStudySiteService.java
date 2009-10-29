@@ -4,6 +4,8 @@
 package gov.nih.nci.registry.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -49,7 +51,10 @@ public class MockStudySiteService extends MockAbstractRoleIsoService<StudySiteDT
         return matchDtosList;
     }
 
-
-
+    public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams)
+            throws PAException, TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

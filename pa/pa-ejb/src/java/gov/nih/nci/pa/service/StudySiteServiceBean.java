@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -93,10 +95,14 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -110,15 +116,18 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Expression;
 
 /**
  * @author Hugh Reinhart
  * @since 09/23/2008
  */
 @Stateless
-@SuppressWarnings("PMD.CyclomaticComplexity")
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySiteServiceBean
@@ -351,5 +360,123 @@ public class StudySiteServiceBean
         getLogger().info("Leaving enforceNoDuplicateTrial..");
 
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams) throws PAException,
+    TooManyResultsException {
+        if (dto == null) {
+            getLogger().error(" StudySiteDTO should not be null ");
+            throw new PAException(" StudySiteDTO should not be null ");
+        }
+        getLogger().info("Entering search");
+        Session session = null;
+        List<StudySite> studySiteList = null;
+        session = HibernateUtil.getCurrentSession();
+        StudySite exampleDO = new StudySite();
+        Criteria criteria = session.createCriteria(StudySite.class);
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            exampleDO.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        }
+        if (!PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+            criteria.createAlias("studyProtocol", "sp")
+            .add(Expression.eq("sp.id", IiConverter.convertToLong(dto.getStudyProtocolIdentifier())));
+        }
+        if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
+            if (PAConstants.PA_INTERNAL.equals(dto.getHealthcareFacilityIi().getIdentifierName())) { 
+                criteria.createAlias("healthCareFacility", "hcf")
+                .add(Expression.eq("hcf.id", IiConverter.convertToLong(dto.getHealthcareFacilityIi())));
+            } else {
+                criteria.createAlias("healthCareFacility", "hcf")
+                .add(Expression.eq("hcf.identifier", IiConverter.convertToLong(dto.getHealthcareFacilityIi())));
+            }
+        }
+
+        if (!PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
+            if (PAConstants.PA_INTERNAL.equals(dto.getResearchOrganizationIi().getIdentifierName())) {
+                criteria.createAlias("researchOrganization", "ro")
+                .add(Expression.eq("ro.id", IiConverter.convertToLong(dto.getResearchOrganizationIi())));
+            } else {
+                criteria.createAlias("researchOrganization", "ro")
+                .add(Expression.eq("ro.identifier", IiConverter.convertToLong(dto.getResearchOrganizationIi())));
+            }
+
+        }
+
+        if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+            if (PAConstants.PA_INTERNAL.equals(dto.getOversightCommitteeIi().getIdentifierName())) { 
+                criteria.createAlias("oversightCommittee", "oc")
+                .add(Expression.eq("oc.id", IiConverter.convertToLong(dto.getOversightCommitteeIi())));
+            } else {
+                criteria.createAlias("oversightCommittee", "oc")
+                .add(Expression.eq("oc.identifier", IiConverter.convertToLong(dto.getOversightCommitteeIi())));
+            }
+        }
+
+       if (dto.getFunctionalCode() != null) {
+           exampleDO.setFunctionalCode(StudySiteFunctionalCode.getByCode(dto.getFunctionalCode().getCode()));
+        }
+        if (dto.getLocalStudyProtocolIdentifier() != null) {
+            exampleDO.setLocalStudyProtocolIdentifier(StConverter.convertToString(
+                    dto.getLocalStudyProtocolIdentifier()));
+        }
+        if (dto.getStatusCode() != null) {
+            exampleDO.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
+        }
+        if (dto.getReviewBoardApprovalDate() != null) {
+            exampleDO.setReviewBoardApprovalDate(TsConverter.convertToTimestamp(dto.getReviewBoardApprovalDate()));
+        }
+        if (dto.getReviewBoardApprovalNumber() != null) {
+            exampleDO.setReviewBoardApprovalNumber(StConverter.convertToString(dto.getReviewBoardApprovalNumber()));
+        }
+        if (dto.getTargetAccrualNumber() != null) {
+            exampleDO.setTargetAccrualNumber(IntConverter.convertToInteger(dto.getTargetAccrualNumber()));
+        }
+        if (dto.getReviewBoardOrganizationalAffiliation() != null) {
+            exampleDO.setReviewBoardOrganizationalAffiliation(
+                    StConverter.convertToString(dto.getReviewBoardOrganizationalAffiliation()));
+        }
+        if (dto.getReviewBoardApprovalStatusCode() != null) {
+            exampleDO.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(
+                    dto.getReviewBoardApprovalStatusCode().getCode()));
+        }
+        if (dto.getProgramCodeText() != null) {
+            exampleDO.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
+        }
+        if (dto.getAccrualDateRange() != null) {
+            exampleDO.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getAccrualDateRange()));
+            exampleDO.setAccrualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getAccrualDateRange()));
+        }
+        Example example = Example.create(exampleDO);
+        criteria.add(example);
+        int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
+        criteria.setMaxResults(maxLimit);
+        criteria.setFirstResult(pagingParams.getOffset());
+        studySiteList = criteria.list();
+
+        if (studySiteList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+            throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
+        }
+        List<StudySiteDTO> studySiteDTOList = convertFromDomainToDTO(studySiteList);
+        getLogger().info("Leaving search");
+        return studySiteDTOList;
+    }
+    
+    private List<StudySiteDTO> convertFromDomainToDTO(List<StudySite> studySiteList) throws PAException {
+        List<StudySiteDTO> studySiteDTOList = null;
+        StudySiteConverter ssConverter = new StudySiteConverter();
+        if (studySiteList != null) { 
+            studySiteDTOList = new ArrayList<StudySiteDTO>();
+            for (StudySite ss : studySiteList) {
+                StudySiteDTO studySiteDTO = ssConverter.convertFromDomainToDto(ss);
+                studySiteDTOList.add(studySiteDTO);
+            }
+        }
+        return studySiteDTOList;
+    }
+
 
 }

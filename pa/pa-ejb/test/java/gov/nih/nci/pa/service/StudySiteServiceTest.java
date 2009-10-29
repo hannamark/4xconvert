@@ -84,6 +84,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
@@ -168,6 +169,12 @@ public class StudySiteServiceTest {
         assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())
                 , CdConverter.convertCdToString(result.getFunctionalCode()));
         assertTrue(accrualNum == IntConverter.convertToInteger(result.getTargetAccrualNumber()));
+
+        LimitOffset pagingParams = new LimitOffset(1, 1);
+        StudySiteDTO dto2 = new StudySiteDTO();
+        dto2.setStudyProtocolIdentifier(studyIi);
+        List<StudySiteDTO> list = remoteEjb.search(dto2, pagingParams);
+        assertEquals(1,list.size());
     }
     @Test
     public void delete() throws Exception {

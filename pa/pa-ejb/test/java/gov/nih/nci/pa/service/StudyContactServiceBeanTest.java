@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -133,7 +134,14 @@ public class StudyContactServiceBeanTest {
     remoteEjb.create(dto);
     assertEquals(dto.getStudyProtocolIdentifier()
         , pid);
+
+    LimitOffset pagingParams = new LimitOffset(1, 1);
+    StudyContactDTO dto2 = new StudyContactDTO();
+    dto2.setStudyProtocolIdentifier(pid);
+    List<StudyContactDTO> list = remoteEjb.search(dto2, pagingParams);
+    assertEquals(1,list.size());
   }
+  
   @Test 
   public void iiRootTest() throws Exception {
       List<StudyContactDTO> statusList = remoteEjb.getByStudyProtocol(pid);

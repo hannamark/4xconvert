@@ -78,7 +78,11 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+
+import java.util.List;
 
 /**
  * @author Bala Nair
@@ -89,5 +93,15 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
  */
 public interface StudyContactService extends RolePaService<StudyContactDTO> {
     
+    /**
+     * Search.
+     * @param dto the dto
+     * @param pagingParams the paging params
+     * @return the list< study site dto>
+     * @throws PAException the PA exception
+     * @throws TooManyResultsException the too many results exception
+     */
+    List<StudyContactDTO> search(StudyContactDTO dto, LimitOffset pagingParams) throws PAException,
+    TooManyResultsException;
     
 }

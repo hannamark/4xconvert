@@ -80,6 +80,8 @@ package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -252,6 +254,12 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
     public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
         // TODO Auto-generated method stub
 
+    }
+
+    public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams)
+            throws PAException, TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
