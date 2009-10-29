@@ -354,7 +354,7 @@ public class CtepMessageBean implements MessageListener {
             switch (msgType) {
             case ORGANIZATION:
                 if (trxType == TransactionType.NULLIFY) {
-                    ctepImportService.nullifyCtepOrganization(id, duplicateOf, orgType);
+                    nullifyOrganization(id, orgType, duplicateOf);
                     break;
                 }
             case ORGANIZATION_ADDRESS:
@@ -369,6 +369,14 @@ public class CtepMessageBean implements MessageListener {
                 LOG.error(String.format("Unexpected RecordType enum %s", msgType.name()));
             }
 
+        }
+    }
+
+    private void nullifyOrganization(Ii id, OrganizationType orgType, Ii duplicateOf) throws JMSException {
+        if (duplicateOf != null) {
+            ctepImportService.nullifyCtepOrganization(id, duplicateOf, orgType);
+        } else {
+            LOG.error(String.format("Cannot nullify ID %s because duplicateOf is null", id.getExtension()));
         }
     }
 

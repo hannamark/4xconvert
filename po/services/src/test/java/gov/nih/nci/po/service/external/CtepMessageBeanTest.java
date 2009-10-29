@@ -219,6 +219,16 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().clear();
 
         MockTextMessage msg = new MockTextMessage(4);
+        CtepMessageBean bean = setupCtepMessageBean();
+        bean.onMessage(msg);
+
+        HealthCareFacility freshRo = (HealthCareFacility) PoHibernateUtil.getCurrentSession().get(
+                HealthCareFacility.class, hcf1.getId());
+        assertEquals(RoleStatus.NULLIFIED, freshRo.getStatus());
+        assertEquals(hcf2.getId(), freshRo.getDuplicateOf().getId());
+    }
+
+    private CtepMessageBean setupCtepMessageBean() {
         CtepMessageBean bean = new CtepMessageBean();
 
         final CtepOrganizationImporter importer = new CtepOrganizationImporter(null) {
@@ -231,7 +241,6 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
             @Override
             protected void initImporters() {
                 try {
-
                     setOrgImporter(importer);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -240,12 +249,7 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         };
 
         bean.setCtepImportService(importServiceBean);
-        bean.onMessage(msg);
-
-        HealthCareFacility freshRo = (HealthCareFacility) PoHibernateUtil.getCurrentSession().get(
-                HealthCareFacility.class, hcf1.getId());
-        assertEquals(RoleStatus.NULLIFIED, freshRo.getStatus());
-        assertEquals(hcf2.getId(), freshRo.getDuplicateOf().getId());
+        return bean;
     }
 
     @Test
@@ -254,6 +258,16 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         MockTextMessage msg15 = new MockTextMessage(15);
         MockTextMessage msg16 = new MockTextMessage(16);
         MockTextMessage msg17 = new MockTextMessage(17);
+        CtepMessageBean bean = setupCtepMessageBeanWithDummyImporter();
+        bean.onMessage(msg15);
+        assertFalse("Should be ignoring this message", serviceCalled);
+        bean.onMessage(msg16);
+        assertFalse("Should be ignoring this message", serviceCalled);
+        bean.onMessage(msg17);
+        assertFalse("Should be ignoring this message", serviceCalled);
+    }
+
+    private CtepMessageBean setupCtepMessageBeanWithDummyImporter() {
         CtepMessageBean bean = new CtepMessageBean();
 
         final CtepOrganizationImporter importer = new CtepOrganizationImporter(null) {
@@ -287,12 +301,16 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         };
 
         bean.setCtepImportService(importServiceBean);
-        bean.onMessage(msg15);
-        assertFalse("Should be ignoring this message", serviceCalled);
-        bean.onMessage(msg16);
-        assertFalse("Should be ignoring this message", serviceCalled);
-        bean.onMessage(msg17);
-        assertFalse("Should be ignoring this message", serviceCalled);
+        return bean;
+    }
+
+    @Test
+    public void testNullifyWithNoDuplicate() throws Exception {
+        serviceCalled = false;
+        MockTextMessage msg = new MockTextMessage("4-noduplicate");
+        CtepMessageBean bean = setupCtepMessageBeanWithDummyImporter();
+        bean.onMessage(msg);
+        assertFalse("Should be ignoring NULLIFY messages without duplicateOf ID", serviceCalled);
     }
 
     class Checker {
@@ -368,8 +386,11 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
 
     private class MockTextMessage implements TextMessage {
         private final String text;
-        private final int id;
+        private final String id;
         MockTextMessage(int id) throws IOException {
+            this(String.valueOf(id));
+        }
+        MockTextMessage(String id) throws IOException {
             byte[] b = new byte[512];
             int c = CtepMessageBeanTest.class.getResourceAsStream("msg"+id+".xml").read(b);
             text = new String(b, 0, c);
@@ -385,7 +406,7 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         }
 
         public String getJMSMessageID() throws JMSException {
-            return String.valueOf(id);
+            return id;
         }
 
         public void setJMSMessageID(String arg0) throws JMSException {
