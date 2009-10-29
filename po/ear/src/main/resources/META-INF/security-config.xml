@@ -6,6 +6,7 @@
 <policy>
     <application-policy name="po">
         <authentication>
+	        <login-module code="com.fiveamsolutions.nci.commons.authentication.SessionFixationProtectionLoginModule" flag="required"/>
             <!--
                 Notes on the policy here:
                 - Designed to work in both dev and production, which is why the first two are optional.

@@ -460,7 +460,27 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
 
-  <target name="install:jboss:po-ear" description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" unless="exclude.po-ear">
+  <!-- The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
+       security-config.xml login-module definitions.
+  -->
+  <target name="find-server-xml" unless="exclude.po-ear">
+    <available file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml" property="server-xml.present"/>
+  </target>
+  <target name="fix-server-xml" depends="find-server-xml" if="server-xml.present">
+    <copy file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml" todir="${po-ear.dir.dist}" overwrite="true"/>
+    <copy file="${po-ear.dir.dist}/server.xml" todir="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar" overwrite="true">
+      <filterchain>
+        <tokenfilter>
+          <replacestring from="emptySessionPath=&quot;true&quot;" to="emptySessionPath=&quot;false&quot;"/>
+        </tokenfilter>
+      </filterchain>
+    </copy>
+  </target>
+
+  <target name="install:jboss:po-ear" 
+  	      description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" 
+  	      depends="fix-server-xml" 
+  	      unless="exclude.po-ear">
     <!-- added to ensure working.dirs are fresh for our install -->
     <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
     <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
