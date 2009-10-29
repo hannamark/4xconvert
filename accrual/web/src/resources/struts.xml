@@ -121,50 +121,6 @@
         <action name="popup*" class="gov.nih.nci.accrual.web.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
-        
-        <!--<action name="diagnosis*" class="gov.nih.nci.accrual.web.action.DiagnosisAction" method="{1}">
-            <result>/WEB-INF/jsp/diagnosis.jsp</result>
-        </action>
-        
-        <action name="staging*" class="gov.nih.nci.accrual.web.action.StagingAction" method="{1}">
-            <result>/WEB-INF/jsp/staging.jsp</result>
-        </action>
-        
-        <action name="pathology*" class="gov.nih.nci.accrual.web.action.PathologyAction" method="{1}">
-            <result>/WEB-INF/jsp/pathology.jsp</result>
-        </action>
-        
-        <action name="priorTherapies*" class="gov.nih.nci.accrual.web.action.PriorTherapiesAction" method="{1}">
-            <result>/WEB-INF/jsp/priorTherapies.jsp</result>
-        </action>
-        
-        <action name="treatment*" class="gov.nih.nci.accrual.web.action.TreatmentAction" method="{1}">
-            <result>/WEB-INF/jsp/treatment.jsp</result>
-        </action>
-        
-        <action name="drugBiologics*" class="gov.nih.nci.accrual.web.action.DrugBiologicsAction" method="{1}">
-            <result>/WEB-INF/jsp/drugBiologics.jsp</result>
-        </action>
-        
-        <action name="procedure*" class="gov.nih.nci.accrual.web.action.ProcedureAction" method="{1}">
-            <result>/WEB-INF/jsp/procedure.jsp</result>
-        </action>
-        
-        <action name="radiation*" class="gov.nih.nci.accrual.web.action.RadiationAction" method="{1}">
-            <result>/WEB-INF/jsp/radiation.jsp</result>
-        </action>
-        
-        <action name="offTreatment*" class="gov.nih.nci.accrual.web.action.OffTreatmentAction" method="{1}">
-            <result>/WEB-INF/jsp/offTreatment.jsp</result>
-        </action>
-        
-        <action name="patientOutcomes*" class="gov.nih.nci.accrual.web.action.PatientOutcomesAction" method="{1}">
-            <result>/WEB-INF/jsp/patientOutcomes.jsp</result>
-        </action>
-        
-        <action name="deathInformation*" class="gov.nih.nci.accrual.web.action.DeathInfoAction" method="{1}">
-            <result>/WEB-INF/jsp/deathInformation.jsp</result>
-        </action> -->
     
     	<action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action">
             <result>/WEB-INF/jsp/{1}.jsp</result>
