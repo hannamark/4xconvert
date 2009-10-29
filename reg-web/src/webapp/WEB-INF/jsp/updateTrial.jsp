@@ -303,8 +303,8 @@ function toggledisplay2 (it) {
     <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
     <s:hidden name="trialDTO.localProtocolIdentifier" id="trialDTO.localProtocolIdentifier"/>
     
-        <input type="hidden" name="page" />
-        <input type="hidden" name="uuidhidden"/>  
+        <s:hidden name="page" />
+        <s:hidden name="uuidhidden"/>  
     <p>Update trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
     <table class="form">
           <tr>

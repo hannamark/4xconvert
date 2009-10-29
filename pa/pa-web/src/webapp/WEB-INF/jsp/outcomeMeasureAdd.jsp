@@ -55,8 +55,8 @@ BubbleTips.activateTipOn("dfn");
    <pa:failureMessage/>
     <s:form><s:actionerror/>    
     <h2><fmt:message key="osdesign.outcome.subtitle"/></h2>
-    <input type="hidden" name="page" value="${page}" />
-    <input type="hidden" name="id" value="${id}" />
+    <s:hidden name="page"/>
+    <s:hidden name="id" />
     <table class="form">
     			<tr>
 					<td scope="row"  class="label"><label>

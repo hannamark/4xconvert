@@ -38,7 +38,7 @@ input_box=confirm("Click OK to save changes or Cancel to Abort.");
   <div class="box">  
     <s:form>
     <h2><fmt:message key="trialDocument.subtitle" /></h2>
-    <input type="hidden" name="id" value="${id}" />
+    <s:hidden name="id"/>
     <table class="form">
                 <tr>
                     <td scope="row" class="label">

@@ -26,7 +26,7 @@ function handleAction(){
     <s:form name="myAccount" method="POST" ><s:actionerror/>
         <s:hidden name="registryUserWebDTO.id" />
         <s:hidden name="registryUserWebDTO.csmUserId" />
-        <input type="hidden" name="page" />
+        <s:hidden name="page" />
         <c:choose>
             <c:when test="${requestScope.isNewUser  == true}">
                 <p>To register for NCI Clinical Trials Reporting Program, 

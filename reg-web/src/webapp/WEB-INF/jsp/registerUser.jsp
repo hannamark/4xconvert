@@ -37,7 +37,7 @@ function handleAction(){
     <c:set var="topic" scope="request" value="register"/> 
     <div class="box" id="filters">
     <s:form name="registerUser" validate="true" method="POST" ><s:actionerror />
-        <input type="hidden" name="page" />
+        <s:hidden name="page" />
         <c:choose>
             <c:when test="${param.resetPassword == true}">
                   <p>To reset your password, please begin by entering your login name and new password. </p>

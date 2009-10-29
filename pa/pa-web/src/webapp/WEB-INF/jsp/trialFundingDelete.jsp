@@ -35,8 +35,8 @@ function handleAction(){
   <div class="box">  
     <s:form>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
-   <input type="hidden" name="page" value="${page}" />
-    <input type="hidden" name="cbValue" value="${cbValue}" />
+   <s:hidden name="page"/>
+    <s:hidden name="cbValue"/>
     <table class="form">
                 <tr>
                     <td scope="row" class="label">

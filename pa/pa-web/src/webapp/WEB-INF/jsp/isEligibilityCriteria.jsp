@@ -110,7 +110,7 @@ BubbleTips.activateTipOn("dfn");
                     <s:param>eligibleGenderCode</s:param>
                    </s:fielderror>                            
              </span>
-             <input type="hidden" name="eligibleGenderCodeId" value="${eligibleGenderCodeId}"/>
+             <s:hidden name="eligibleGenderCodeId"/>
           </td>
     </tr> 
     <tr>
@@ -142,7 +142,7 @@ BubbleTips.activateTipOn("dfn");
                     <s:param>minimumUnit</s:param>
                    </s:fielderror>                            
              </span>
-             <input type="hidden" name="minimumValueId" value="${minimumValueId}"/>
+             <s:hidden name="minimumValueId"/>
           </td>           
     </tr> 
     <tr> 
@@ -178,7 +178,7 @@ BubbleTips.activateTipOn("dfn");
                     <s:param>maximumUnit</s:param>
                    </s:fielderror>                            
              </span>
-             <input type="hidden" name="maximumValueId" value="${maximumValueId}"/>
+             <s:hidden name="maximumValueId"/>
           </td>            
     </tr> 
     <tr> 
@@ -188,8 +188,8 @@ BubbleTips.activateTipOn("dfn");
     </table>
     <h2><fmt:message key="eligibilitycriteria.other" /></h2>
     <s:if test="eligibilityList != null">    
-    	<input type="hidden" name="page" />
-    	<input type="hidden" name="id" /> 
+    	<s:hidden name="page" />
+    	<s:hidden name="id" /> 
     	<s:set name="eligibilityList" value="eligibilityList" scope="request"/>
     	<display:table name="eligibilityList" id="row" class="data" 
     	       sort="list"  pagesize="200" requestURI="eligibilityCriteriaquery.action" export="false">

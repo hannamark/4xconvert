@@ -45,8 +45,8 @@ function handleDelete(studyResourcingId){
     <s:form><s:actionerror/>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
     <s:if test="trialFundingList != null">
-    <input type="hidden" name="page" />
-    <input type="hidden" name="cbValue" />
+    <s:hidden name="page" />
+    <s:hidden name="cbValue" />
 	<s:set name="trialFundingList" value="trialFundingList" scope="request"/>
 	<display:table name="trialFundingList" id="row" class="data" sort="list"  pagesize="200" requestURI="trialFundingquery.action" export="false">    
 	    <display:column titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />

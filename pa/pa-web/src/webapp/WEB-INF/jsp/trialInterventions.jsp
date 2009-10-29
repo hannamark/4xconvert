@@ -49,7 +49,7 @@ function handleCreate(){
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr>
-            <td colspan="2"><input type="hidden" name="cbValue" /> 
+            <td colspan="2"><s:hidden name="cbValue" /> 
             <s:set name="interventionsList" value="interventionsList" scope="request"/>
             <display:table name="interventionsList" id="row" class="data" sort="list" pagesize="200" 
                     requestURI="trialInterventions.action" export="false">

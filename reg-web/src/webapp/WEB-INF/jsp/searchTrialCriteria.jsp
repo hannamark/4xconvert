@@ -59,7 +59,7 @@ function handleMyAction(){
     <div class="box" id="filters">
     <reg-web:failureMessage/>
     <s:form name="searchTrial">
-    <input type="hidden" name="criteria.myTrialsOnly" id="myTrialsOnly" value="false"/>
+    <s:hidden name="criteria.myTrialsOnly" id="myTrialsOnly" value="false"/>
         <table class="form">
         
         	<tr>

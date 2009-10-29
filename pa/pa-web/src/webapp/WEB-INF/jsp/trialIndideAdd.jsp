@@ -156,8 +156,8 @@ function SelectSubCat(i){
    <pa:failureMessage/>
     <s:form><s:actionerror/>
     <h2><fmt:message key="trialIndide.addtitle" /></h2>
-    	<input type="hidden" name="page" value="${page}" />
-    	<input type="hidden" name="cbValue" value="${cbValue}" />
+    	<s:hidden name="page" />
+    	<s:hidden name="cbValue" />
     	<s:set name="phaseCodeValuesNIH" value="@gov.nih.nci.pa.enums.NihInstituteCode@getDisplayNames()" />
 		<s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 		<s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />

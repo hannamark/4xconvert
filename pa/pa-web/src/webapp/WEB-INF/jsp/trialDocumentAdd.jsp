@@ -49,8 +49,8 @@ BubbleTips.activateTipOn("dfn");
    <pa:failureMessage/>
     <s:form method="POST" enctype="multipart/form-data"><s:actionerror/>    
     <h2><fmt:message key="trialDocument.addtitle" /></h2>
-    <input type="hidden" name="page" value="${page}" />
-    <input type="hidden" name="id" value="${id}" />
+    <s:hidden name="page" />
+    <s:hidden name="id" />
     <table class="form">                
                 <tr>
                      <td scope="row" class="label">
@@ -66,7 +66,7 @@ BubbleTips.activateTipOn("dfn");
                            		list="#typeCodeValues"  
                            		cssStyle="width:206px" disabled="true"/>   
                            		
-                           		<input type="hidden" name="trialDocumentWebDTO.typeCode" value="${trialDocumentWebDTO.typeCode}" />              
+                           		<s:hidden name="trialDocumentWebDTO.typeCode" />              
     					</s:if>
     					<s:else>
                     		<s:select headerKey="" headerValue="" 

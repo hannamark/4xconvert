@@ -48,8 +48,8 @@ function handleDelete(studyProtocolIi){
     <s:form><s:actionerror/>
     <h2><fmt:message key="trialIndide.subtitle" /></h2>
     <s:if test="studyIndideList != null">
-    <input type="hidden" name="page" />
-    <input type="hidden" name="cbValue" />
+    <s:hidden name="page" />
+    <s:hidden name="cbValue" />
     <s:set name="studyIndideList" value="studyIndideList" scope="request"/>
     <display:table name="studyIndideList" id="row" class="data" sort="list"  pagesize="200" requestURI="trialIndidequery.action" export="false">    
         <display:column titleKey="trialIndide.indldeType" property="indldeType" sortable="true" headerClass="sortable" />

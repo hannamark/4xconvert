@@ -53,7 +53,7 @@ function handleDelete(studyResourcingId){
     <table class="form">
         <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr><td colspan="2">
-    <input type="hidden" name="cbValue" />
+    <s:hidden name="cbValue" />
     <s:hidden name="proprietaryTrialIndicator" id="proprietaryTrialIndicator"></s:hidden>
     <s:set name="organizationList" value="organizationList" scope="request"/>
     <display:table name="organizationList" id="row" class="data" pagesize="200">  

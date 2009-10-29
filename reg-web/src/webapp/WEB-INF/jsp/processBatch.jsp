@@ -22,7 +22,7 @@ function handleAction(){
     <div class="box" id="filters">
     <reg-web:failureMessage/>
     <s:form name="batchUpload" method="POST" enctype="multipart/form-data"><s:actionerror/>
-        <input type="hidden" name="page" />
+        <s:hidden name="page" />
         <p>Register multiple trials into NCI Clinical Trials Reporting Portal by uploading the Trial Data file and documents zip. Please note: All fields are required. </p>
         <table class="form"> 
           <tr><td colspan="2" class="space">&nbsp;</td></tr>

@@ -250,7 +250,7 @@ function toggledisplay2 (it) {
         <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
         <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
     
-        <input type="hidden" name="page" />
+        <s:hidden name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
         <table class="form"> 
           <tr>
@@ -891,7 +891,7 @@ function toggledisplay2 (it) {
                 </ul>   
             </del>
         </div>
-      <input type="hidden" name="uuidhidden"/>  
+      <s:hidden name="uuidhidden"/>  
    </s:form>
 
  </div> 
