@@ -58,34 +58,34 @@
 		         <ul id="part_sites">      	
 		                     		<c:choose>      	                           
                             			<c:when test="${(requestScope.topic == 'diagnosis_detail')}">
-		                                		<li><a href="diagnosis.action" class="selected">Diagnosis</a></li>     		                                
+		                                		<li><a href="executeDiagnosis.action" class="selected">Diagnosis</a></li>     		                                
                             			</c:when>
 		                            	<c:otherwise>
-					                          <li><a href="diagnosis.action" >Diagnosis</a></li>
+					                          <li><a href="executeDiagnosis.action" >Diagnosis</a></li>
 					                     </c:otherwise> 
 					                   </c:choose>
 					                   <c:choose>  
                             			<c:when test="${(requestScope.topic == 'staging_detail')}">
-		                                	<li><a href="staging.action"  class="selected">Staging</a></li>
+		                                	<li><a href="executeStaging.action"  class="selected">Staging</a></li>
 		                                </c:when>
 		                            	<c:otherwise>
-					                          <li><a href="staging.action" >Staging</a></li>
+					                          <li><a href="executeStaging.action" >Staging</a></li>
 					                     </c:otherwise>
 					                   </c:choose>
 					                   <c:choose>   
 		                                <c:when test="${(requestScope.topic == 'pathology_detail')}">	
-		                                	<li><a href="pathology.action"  class="selected">Pathology</a></li>
+		                                	<li><a href="executePathology.action"  class="selected">Pathology</a></li>
 		                                </c:when>
 		                            	<c:otherwise>
-					                          <li><a href="pathology.action" >Pathology</a></li>
+					                          <li><a href="executePathology.action" >Pathology</a></li>
 					                     </c:otherwise> 
 					                   </c:choose>
 					                   <c:choose>  
 		                                <c:when test="${(requestScope.topic == 'priorTherapies_detail')}">	
-		                                	<li><a href="priorTherapies.action"  class="selected">Prior Therapies</a></li>
+		                                	<li><a href="executePriorTherapies.action"  class="selected">Prior Therapies</a></li>
 		                                </c:when>
 		                            	<c:otherwise>
-					                          <li><a href="priorTherapies.action" >Prior Therapies</a></li>
+					                          <li><a href="executePriorTherapies.action" >Prior Therapies</a></li>
 					                     </c:otherwise> 		                             
                         			</c:choose>
 		            </ul>
@@ -96,43 +96,43 @@
                <li class="hassubmenu">
                		<c:choose>                              	                           
 		               		<c:when test="${(requestScope.topic == 'treatment_detail')}">
-               					<a href="treatment.action"  class="selected">Treatment</a>
+               					<a href="executeTreatment.action"  class="selected">Treatment</a>
                				</c:when>
 		                    <c:otherwise>
-					               <a href="treatment.action">Treatment</a>     		              
+					               <a href="executeTreatment.action">Treatment</a>     		              
 					         </c:otherwise> 
 		              </c:choose>
 		             <ul id="part_sites">
 		                       				<c:choose>                              	                           
 		                            			<c:when test="${(requestScope.topic == 'drugBiologics_detail')}">
-				                                		<li><a href="drugBiologics.action" class="selected">Drug/Biologics</a></li>     		                                
+				                                		<li><a href="executeDrugBiologics.action" class="selected">Drug/Biologics</a></li>     		                                
 		                            			</c:when>
 		                            			<c:otherwise>
-					                                <li><a href="drugBiologics.action">Drug/Biologics</a></li>     		              
+					                                <li><a href="executeDrugBiologics.action">Drug/Biologics</a></li>     		              
 					                            </c:otherwise> 
 						                   </c:choose>
 						                   <c:choose>  
 		                            			<c:when test="${(requestScope.topic == 'procedure_detail')}">
-				                                	<li><a href="procedure.action"  class="selected">Procedure</a></li>
+				                                	<li><a href="executeProcedure.action"  class="selected">Procedure</a></li>
 				                                </c:when>
 		                            			<c:otherwise>
-					                                <li><a href="procedure.action" >Procedure</a></li>
+					                                <li><a href="executeProcedure.action" >Procedure</a></li>
 					                            </c:otherwise> 
 						                   </c:choose>
 						                   <c:choose>  
 				                                <c:when test="${(requestScope.topic == 'radiation_detail')}">	
-				                                	<li><a href="radiation.action"  class="selected">Radiation</a></li>
+				                                	<li><a href="executeRadiation.action"  class="selected">Radiation</a></li>
 				                                </c:when>
 		                            			<c:otherwise>
-					                                <li><a href="radiation.action" >Radiation</a></li>
+					                                <li><a href="executeRadiation.action" >Radiation</a></li>
 					                            </c:otherwise> 
 						                   </c:choose>
 						                   <c:choose>  
 				                                <c:when test="${(requestScope.topic == 'offTreatment_detail')}">	
-				                                	<li><a href="offTreatment.action"  class="selected">Off Treatment</a></li>
+				                                	<li><a href="executeOffTreatment.action"  class="selected">Off Treatment</a></li>
 				                                </c:when>
 		                            			<c:otherwise>
-					                                <li><a href="offTreatment.action" >Off Treatment</a></li>
+					                                <li><a href="executeOffTreatment.action" >Off Treatment</a></li>
 					                            </c:otherwise>
                         				</c:choose>
 		                </ul>
@@ -143,19 +143,19 @@
                 <li class="hassubmenu">
                		<c:choose>                              	                           
 		               		<c:when test="${(requestScope.topic == 'patientOutcomes_detail')}">
-               					<a href="patientOutcomes.action"  class="selected">Patient Outcomes</a>
+               					<a href="executePatientOutcomes.action"  class="selected">Patient Outcomes</a>
                				</c:when>
 		                    <c:otherwise>
-					               <a href="patientOutcomes.action">Patient Outcomes</a>     		              
+					               <a href="executePatientOutcomes.action">Patient Outcomes</a>     		              
 					         </c:otherwise> 
 		              </c:choose>
 		              <ul id="part_sites"> 
 		                           <c:choose>                                 	                           
                             			<c:when test="${(requestScope.topic == 'deathInformation_detail')}">
-		                                		<li><a href="deathInformation.action" class="selected">Death Information</a></li>     		                                
+		                                		<li><a href="executeDeathInformation.action" class="selected">Death Information</a></li>     		                                
                             			</c:when>
                             			<c:otherwise>
-			                                <li><a href="deathInformation.action" >Death Information</a></li>
+			                                <li><a href="executeDeathInformation.action" >Death Information</a></li>
 			                            </c:otherwise>
                         			</c:choose>
 		               </ul>

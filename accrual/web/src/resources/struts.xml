@@ -122,7 +122,7 @@
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
         
-        <action name="diagnosis*" class="gov.nih.nci.accrual.web.action.DiagnosisAction" method="{1}">
+        <!--<action name="diagnosis*" class="gov.nih.nci.accrual.web.action.DiagnosisAction" method="{1}">
             <result>/WEB-INF/jsp/diagnosis.jsp</result>
         </action>
         
@@ -164,7 +164,12 @@
         
         <action name="deathInformation*" class="gov.nih.nci.accrual.web.action.DeathInfoAction" method="{1}">
             <result>/WEB-INF/jsp/deathInformation.jsp</result>
+        </action> -->
+    
+    	<action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action">
+            <result>/WEB-INF/jsp/{1}.jsp</result>
         </action>
-        
+    	
+    	
     </package>
 </struts>

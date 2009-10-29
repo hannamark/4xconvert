@@ -81,12 +81,12 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.web.dto.util.DeathInfoWebDto;
 
 /**
- * The Class DeathInfoAction.
+ * The Class DeathInformationAction.
  * 
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
-public class DeathInfoAction extends AbstractEditAccrualAction<DeathInfoWebDto> {
+public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoWebDto> {
 
     private static final long serialVersionUID = 1L;
 
