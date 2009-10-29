@@ -642,7 +642,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
-            validate(studyProtocolDto, null , REJECTION, null, null, null, null, null, null, null);
+            validate(studyProtocolDto, null , REJECTION, null, null, null, null, null, null, null, null);
             //Original trial Rejection
             if (studyProtocolDto.getSubmissionNumber().getValue().intValue() == 1) {
                 StudyMilestoneDTO smDto = new StudyMilestoneDTO();
@@ -799,7 +799,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         Ii toStudyProtocolIi = null;
         validate(studyProtocolDTO, overallStatusDTO , operation, studyResourcingDTOs, documentDTOs,
                 leadOrganizationDTO, sponsorOrganizationDTO, summary4organizationDTO,  principalInvestigatorDTO
-                , responsiblePartyContactIi);
+                , responsiblePartyContactIi, studyIndldeDTOs);
         
         enforceBusinessRulesForUpdate(studyProtocolDTO ,
                                      overallStatusDTO ,
@@ -938,7 +938,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     throws PAException {
         validate(studyProtocolDTO, overallStatusDTO, operation, studyResourcingDTOs, documentDTOs,
                 leadOrganizationDTO, sponsorOrganizationDTO, summary4organizationDTO, principalInvestigatorDTO
-                , responsiblePartyContactIi);
+                , responsiblePartyContactIi, studyIndldeDTOs);
         enforceBusinessRules(
                 studyProtocolDTO,
                 overallStatusDTO,
@@ -1163,7 +1163,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs ,
             OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
             OrganizationDTO summary4organizationDTO , PersonDTO piPersonDTO ,
-            Ii responsiblePartyContactIi) throws PAException {
+            Ii responsiblePartyContactIi, List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
         //is user valid
         String loginName = "";
@@ -1185,11 +1185,29 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
                 errorMsg.append("Only Trials with SUBMITTED can be REJECTED");
             }
         } else {
+            try {
             studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
-            if (studyResourcingDTOs != null && !studyResourcingDTOs.isEmpty()) {
+            } catch (PAException e) {
+                errorMsg.append(e.getMessage());
+            }
+            if (PAUtil.isListNotEmpty(studyResourcingDTOs)) {
                 for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
+                    try {
                     studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
                     studyResourcingService.validate(studyResourcingDTO);
+                    } catch (PAException e) {
+                        errorMsg.append(e.getMessage());
+                    }
+                }
+            }
+            if (PAUtil.isListNotEmpty(studyIndldeDTOs)) {
+                for (StudyIndldeDTO indIdeDto : studyIndldeDTOs) {
+                    try {
+                    indIdeDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+                    studyIndldeService.validate(indIdeDto);
+                    } catch (PAException e) {
+                        errorMsg.append(e.getMessage());
+                    }
                 }
             }
         }

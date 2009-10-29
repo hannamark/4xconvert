@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
@@ -87,7 +88,9 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.NihInstHolderCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -151,7 +154,7 @@ public class StudyIndldeServiceBeanTest {
         dto.setStudyProtocolIdentifier(pid);
         dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
-        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstHolderCode.NCRR));
+        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCRR));
         dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
         dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
         dto.setIndldeNumber(StConverter.convertToSt("123456"));
@@ -170,5 +173,53 @@ public class StudyIndldeServiceBeanTest {
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_IND_IDE_ROOT);
         assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
+    @Test
+    public void validate() {
+        StudyIndldeDTO dto = new StudyIndldeDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
+        dto.setStudyProtocolIdentifier(pid);
+        dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
+        dto.setNihInstHolderCode(CdConverter.convertToCd(NciDivisionProgramCode.CCR));
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
+        dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        try {
+            remoteEjb.validate(dto);
+        } catch (PAException e) {
+            assertEquals("Validation Exception Please enter valid value for IND/IDE NIH Institution.\n", e.getMessage());
+        }
+        dto = new StudyIndldeDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
+        dto.setStudyProtocolIdentifier(pid);
+        dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setHolderTypeCode(null);
+        dto.setNihInstHolderCode(null);
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
+        dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        try {
+            remoteEjb.validate(dto);
+        } catch (PAException e) {
+            assertEquals("Validation Exception All IND/IDE values are required.\n", e.getMessage());
+        }
+        dto = new StudyIndldeDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
+        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCRR));
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
+        dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        try {
+            remoteEjb.validate(dto);
+        } catch (PAException e) {
+            assertNull(e.getMessage());
+        }
     }
 }
