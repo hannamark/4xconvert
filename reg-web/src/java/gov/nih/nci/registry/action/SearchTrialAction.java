@@ -321,7 +321,10 @@ public class SearchTrialAction extends ActionSupport {
         queryCriteria.setMyTrialsOnly(new Boolean(criteria.getMyTrialsOnly()));
         queryCriteria.setUserLastCreated(ServletActionContext.getRequest().getRemoteUser());
         // exclude rejected protocols during search
-        queryCriteria.setExcludeRejectProtocol(new Boolean(true));        
+        queryCriteria.setExcludeRejectProtocol(new Boolean(true));
+        if (PAUtil.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
+            queryCriteria.setPrincipalInvestigatorId(criteria.getPrincipalInvestigatorId());
+        }
         return queryCriteria;
     }
 

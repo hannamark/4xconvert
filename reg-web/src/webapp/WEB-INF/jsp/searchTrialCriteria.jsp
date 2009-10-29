@@ -150,6 +150,25 @@ function handleMyAction(){
                     </span>  
                 </td>
 			</tr>
+			<s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
+             <tr>
+                <td  scope="row" class="label">
+                    <label for="principalInvestigator"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
+                </td>
+
+                <td align=left>
+                    <s:select  
+                        name="criteria.principalInvestigatorId" 
+                        id="principalInvestigatorId"
+                        list="#principalInvs"  
+                        listKey="id" 
+                        listValue="fullName" 
+                        headerKey="" 
+                        headerValue="All"
+                        value="criteria.principalInvestigatorId" />
+
+                </td>                    
+			</tr>
         </table>
         <div class="actionsrow">
             <del class="btnwrapper">

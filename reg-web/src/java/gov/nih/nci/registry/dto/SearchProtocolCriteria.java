@@ -19,7 +19,7 @@ public class SearchProtocolCriteria {
     private String primaryPurposeCode;
     private String organizationType;
     private String myTrialsOnly;
-    
+    private String principalInvestigatorId;
     /**
      * @return the identifierType
      */
@@ -128,6 +128,18 @@ public class SearchProtocolCriteria {
      */
     public void setMyTrialsOnly(String myTrialsOnly) {
         this.myTrialsOnly = myTrialsOnly;
+    }
+    /**
+     * @return the principalInvestigatorId
+     */
+    public String getPrincipalInvestigatorId() {
+        return principalInvestigatorId;
+    }
+    /**
+     * @param principalInvestigatorId the principalInvestigatorId to set
+     */
+    public void setPrincipalInvestigatorId(String principalInvestigatorId) {
+        this.principalInvestigatorId = principalInvestigatorId;
     }
 
 
