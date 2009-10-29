@@ -1,43 +1,10 @@
 <ns1:ServiceDescription introduceVersion="1.3" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns2:Namespace location="./PatientTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/types" packageName="gov.nih.nci.coppa.services.structuralroles.patient.stubs.types" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="PatientReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" packageName="org.oasis.wsrf.faults" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./../ws/xml.xsd" namespace="http://www.w3.org/XML/1998/namespace" packageName="namespace" xsi:type="ns2:NamespaceType"/>
-  <ns2:Namespace location="./CoppaCommonsFaults.xsd" namespace="http://faults.common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common.faults" xsi:type="ns2:NamespaceType"/>
-  <ns2:Namespace location="./CoppaPOFaults.xsd" namespace="http://faults.po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po.faults" xsi:type="ns2:NamespaceType"/>
-  <ns2:Namespace location="./CoppaCommonsFaults.xsd" namespace="http://faults.common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common.faults" xsi:type="ns2:NamespaceType"/>
-  <ns2:Namespace generateStubs="true" location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace generateStubs="false" location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement className="Cd" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Cd" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="ClinicalResearchStaff" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ClinicalResearchStaff" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="CorrelationNode" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="CorrelationNode" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="EntityNode" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="EntityNode" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="HealthCareFacility" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareFacility" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="HealthCareProvider" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareProvider" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
@@ -75,6 +42,41 @@
    <ns2:SchemaElement type="thead" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="tr" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
+  <ns2:Namespace location="./PatientTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/types" packageName="gov.nih.nci.coppa.services.structuralroles.patient.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="PatientReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" packageName="org.oasis.wsrf.faults" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/xml.xsd" namespace="http://www.w3.org/XML/1998/namespace" packageName="namespace" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./CoppaCommonsFaults.xsd" namespace="http://faults.common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common.faults" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./CoppaPOFaults.xsd" namespace="http://faults.po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po.faults" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./CoppaCommonsFaults.xsd" namespace="http://faults.common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common.faults" xsi:type="ns2:NamespaceType"/>
   <ns2:Namespace location="./ResearchOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
