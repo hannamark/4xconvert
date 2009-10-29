@@ -83,7 +83,6 @@ import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
@@ -258,14 +257,4 @@ public class PoPaServiceBeanLookup {
     public static StudyMilestoneServiceRemote getStudyMilestoneService() {
         return (StudyMilestoneServiceRemote) JNDIUtil.lookup("pa/StudyMilestoneServiceBean/remote");
     }
-
-    /**
-     * @return PlannedSubstanceAdministrationServiceRemote
-     * @throws PAException on error
-     */
-    public static PlannedSubstanceAdministrationServiceRemote
-        getPlannedSubstanceAdministrationService() throws PAException {
-        return (PlannedSubstanceAdministrationServiceRemote) 
-                JNDIUtil.lookup("/pa/PlannedSubstanceAdministrationServiceBean/remote");
-    } 
 }

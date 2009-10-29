@@ -206,6 +206,7 @@ public class DocumentServiceBean extends
         doc.setActiveIndicator(true);
         session = HibernateUtil.getCurrentSession();
         session.save(doc);
+        session.flush();
         docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
         saveFile(docDTO);
         LOG.debug("Leaving createStudyResourcing ");
@@ -375,6 +376,7 @@ public class DocumentServiceBean extends
             doc.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
         }
         session.update(doc);
+        session.flush();
     }
     
     /**

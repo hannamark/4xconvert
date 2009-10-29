@@ -230,7 +230,7 @@ public class HealthCareProviderCorrelationBean {
 
         session = HibernateUtil.getCurrentSession();
         session.save(hcp);
-
+        session.flush();
         LOG.debug("Leaving create HealthCareProvider ");
         return hcp;
     }

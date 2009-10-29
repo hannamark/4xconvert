@@ -401,6 +401,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Session session = null;
         session = HibernateUtil.getCurrentSession();
         session.save(ae);
+        session.flush();
         LOG.debug("Leaving create PA Domain ");
         return ae;
     }
@@ -474,6 +475,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         if (query.uniqueResult() == null) {
             session.saveOrUpdate(organization);    
         } 
+        session.flush();
         LOG.debug("Leaving createStudyResourcing ");
         return organization;
     }
@@ -498,6 +500,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         if (query.uniqueResult() == null) {
             session.saveOrUpdate(person);
         }
+        session.flush();
         LOG.debug("Leaving create Person ");
         return person;
     }

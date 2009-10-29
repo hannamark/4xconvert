@@ -223,7 +223,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         Session session = null;
         session = HibernateUtil.getCurrentSession();
         session.save(crs);
-
+        session.flush();
         LOG.debug("Leaving create ClinicalResearchStaff ");
         return crs;
     }
