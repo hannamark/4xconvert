@@ -163,10 +163,6 @@
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.ClinicalResearchStaff" qname="ns2:ClinicalResearchStaff" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
-<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.CorrelationNode" qname="ns2:CorrelationNode" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
-
-<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.EntityNode" qname="ns2:EntityNode" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
-
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.HealthCareFacility" qname="ns2:HealthCareFacility" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.HealthCareProvider" qname="ns2:HealthCareProvider" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
