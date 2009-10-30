@@ -21,6 +21,11 @@
                                      id="fundingMechanismCode"
                                      value="%{fundingMechanismCode}" 
                                      cssStyle="width:150px" />
+                                     <span class="formErrorMsg" >
+                                        <s:fielderror>
+                                        <s:param>updfundingMechanismCode</s:param>
+                                       </s:fielderror>                            
+                                     </span>
                             </td>
                             <s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
                             <td>                                             
@@ -34,7 +39,7 @@
                                      cssStyle="width:150px"  />
                                      <span class="formErrorMsg" >
                                         <s:fielderror>
-                                        <s:param>nihInstitutionCode</s:param>
+                                        <s:param>updnihInstitutionCode</s:param>
                                        </s:fielderror>                            
                                      </span>
                             </td>
@@ -42,7 +47,7 @@
                                 <s:textfield name="fundingDtos[%{#fundstats.index}].serialNumber" value="%{serialNumber}" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px"  />
                                 <span class="formErrorMsg"> 
                                     <s:fielderror>
-                                    <s:param>serialNumber</s:param>
+                                    <s:param>updserialNumber</s:param>
                                     </s:fielderror>                            
                                 </span>
                             </td>
@@ -51,7 +56,7 @@
                                 <s:select headerKey="" headerValue="--Select--" name="fundingDtos[%{#fundstats.index}].nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="%{nciDivisionProgramCode}" cssStyle="width:150px" />
                                 <span class="formErrorMsg"> 
                                    <s:fielderror>
-                                   <s:param>nciDivisionProgramCode</s:param>
+                                   <s:param>updnciDivisionProgramCode</s:param>
                                   </s:fielderror>                            
                                 </span>
                                 <s:hidden  name="fundingDtos[%{#fundstats.index}].id" value="%{id}"/>      

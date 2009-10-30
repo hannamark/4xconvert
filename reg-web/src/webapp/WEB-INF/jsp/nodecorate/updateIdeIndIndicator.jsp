@@ -117,9 +117,15 @@
                 <tr>
                  <td style="white-space:nowrap;">                            
                   <s:select id="group3Update" name="indIdeUpdateDtos[%{#indidestats.index}].indldeType" value="%{indIdeUpdateDtos[#indidestats.index].indldeType}" list="#{'IND':'IND', 'IDE':'IDE'}" onclick="SelectSubCatUpdate(this);"/>
+                   
                  </td>
                  <td>
-                  <s:textfield id="indIdesDTOs.indldeNumberUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].indldeNumber" value="%{indIdeUpdateDtos[#indidestats.index].indldeNumber}" size="10" /> 
+                  <s:textfield id="indIdesDTOs.indldeNumberUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].indldeNumber" value="%{indIdeUpdateDtos[#indidestats.index].indldeNumber}" size="10" />
+                   <span class="formErrorMsg" >
+                                        <s:fielderror>
+                                        <s:param>updindideNumber</s:param>
+                                       </s:fielderror>                            
+                                     </span> 
                  </td>
                  <td> 
                   <s:if test="%{indIdeUpdateDtos[#indidestats.index].indldeType == 'IND'}">
@@ -128,17 +134,37 @@
                   <s:else>
                     <s:select id="SubCatUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDRH':'CDRH'}" cssStyle="width:75px" ></s:select>
                   </s:else>
+                   <span class="formErrorMsg" >
+                                        <s:fielderror>
+                                        <s:param>updindideGrantor</s:param>
+                                       </s:fielderror>                            
+                                     </span>
                  </td>   
                  <td>
                  <s:select id="holderTypeUpdate%{#indidestats.index}" name="indIdeUpdateDtos[%{#indidestats.index}].holderType"  value="%{indIdeUpdateDtos[#indidestats.index].holderType}" headerKey="" headerValue="-Select-" cssStyle="width:75px" onclick="setProgramCodesUpdate(this,%{#indidestats.index});"
                    list="#{'Investigator':'Investigator','Organization':'Organization','Industry':'Industry','NIH':'NIH','NCI':'NCI'}" />
+                   <span class="formErrorMsg" >
+                                        <s:fielderror>
+                                        <s:param>updindideHolderType</s:param>
+                                       </s:fielderror>                            
+                                     </span>
                 </td>
                 <td>
                  <s:div id="programcodenihidUpdate%{#indidestats.index}" cssStyle="display:''">
                   <s:select id="programcodenihselectedvalueUpdate%{#indidestats.index}" headerKey="" headerValue="-Select-" cssStyle="width:300px" name="indIdeUpdateDtos[%{#indidestats.index}].nihInstHolder" value="%{indIdeUpdateDtos[#indidestats.index].nihInstHolder}" list="#phaseCodeValuesNIH" />
+                   <span class="formErrorMsg" >
+                                        <s:fielderror>
+                                        <s:param>updindideNihInstHolder</s:param>
+                                       </s:fielderror>                            
+                                     </span>
                 </s:div>
                 <s:div id="programcodenciidUpdate%{#indidestats.index}" cssStyle="display:none">
                   <s:select id="programcodenciselectedvalueUpdate%{#indidestats.index}" headerKey="" headerValue="-Select-" cssStyle="width:300px" name="indIdeUpdateDtos[%{#indidestats.index}].nciDivProgHolder" value="%{indIdeUpdateDtos[#indidestats.index].nciDivProgHolder}" list="#phaseCodeValuesNCI" />
+                   <span class="formErrorMsg" >
+                                        <s:fielderror>
+                                        <s:param>updindideNciDivPrgHolder</s:param>
+                                       </s:fielderror>                            
+                                     </span>
                 </s:div>
                 <s:div id="programcodeidUpdate%{#indidestats.index}" cssStyle="display:none">
                   <s:select id="programcodenoneselectedUpdate%{#indidestats.index}" list="#{'-Select-':'-Select-'}"  cssStyle="width:300px"/>
@@ -150,6 +176,11 @@
                <td>
                <s:div id="show%{#indidestats.index}" cssStyle="display:''">
                   <s:select id="expanded_status_update" headerKey="" headerValue="-Select-" name="indIdeUpdateDtos[%{#indidestats.index}].expandedAccessStatus" value="%{indIdeUpdateDtos[#indidestats.index].expandedAccessStatus}" list="#expandedAccessStatusCodeValues" />
+                 <span class="formErrorMsg" >
+                                        <s:fielderror>
+                                        <s:param>updindideExpandedStatus</s:param>
+                                       </s:fielderror>                            
+                                     </span>  
                </s:div> 
                <s:hidden  name="indIdeUpdateDtos[%{#indidestats.index}].id" value="%{id}"/>     
               </td> 

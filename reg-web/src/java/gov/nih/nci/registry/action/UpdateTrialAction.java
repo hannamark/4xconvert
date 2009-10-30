@@ -1008,6 +1008,62 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 }
             }
         }
+        
+        if (getFundingDtos() != null && !getFundingDtos().isEmpty()) {
+            for (TrialFundingWebDTO fm : getFundingDtos()) {
+                if (fm.getFundingMechanismCode() == null) {
+                    addFieldError("updfundingMechanismCode", "Funding Mechanism Code should not be null");
+                    break;
+                }
+                if (fm.getNciDivisionProgramCode() == null) {
+                    addFieldError("updnciDivisionProgramCode", "NCI Division Code should not be null");
+                    break;
+                }
+                if (fm.getNihInstitutionCode() == null) {
+                    addFieldError("updnihInstitutionCode", "NIH Institution Code  should not be null");
+                    break;
+                }
+                if (fm.getSerialNumber() == null) {
+                    addFieldError("updserialNumber", "Serial Number should not be null");
+                    break;
+                }
+                
+            }
+        }
+        
+        if (getIndIdeUpdateDtos() != null && !getIndIdeUpdateDtos().isEmpty()) {
+            for (StudyIndldeWebDTO indide : getIndIdeUpdateDtos()) {
+                if (indide.getGrantor() == null) {
+                    addFieldError("updindideGrantor", "Grantor should not be null");
+                    break;
+                }
+                if (indide.getIndldeNumber() == null) {
+                    addFieldError("updindideNumber", "IND/IDE Number should not be null");
+                    break;
+                }
+                if (indide.getHolderType() == null) {
+                    addFieldError("updindideHolderType", "Ind/IDE Holder Type should not be null");
+                    break;
+                }
+                if (indide.getHolderType() != null &&  indide.getHolderType().equalsIgnoreCase("NIH")
+                  && indide.getNihInstHolder() == null) {
+                    addFieldError("updindideNihInstHolder", "NIH Institute holder should not be null");
+                    break;
+                }
+                if (indide.getHolderType() != null &&  indide.getHolderType().equalsIgnoreCase("NCI")
+                   && indide.getNciDivProgHolder() == null) {
+                      addFieldError("updindideNciDivPrgHolder", "NCI Divsion Program holder should not be null");
+                      break;
+                }
+                if (indide.getExpandedAccessIndicator() != null 
+                    && indide.getExpandedAccessIndicator().equalsIgnoreCase("yes")
+                    && indide.getExpandedAccessStatus() == null) {
+                      addFieldError("updindideExpandedStatus", "Expanded Access Status should not be null");
+                      break;
+                }
+                
+            }
+        }
     }   
     
     
