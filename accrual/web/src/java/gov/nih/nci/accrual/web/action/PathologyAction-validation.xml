@@ -1,0 +1,14 @@
+<!DOCTYPE validators PUBLIC "-//OpenSymphony Group//XWork Validator 1.0.2//EN"   
+       "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">  
+<validators>
+    <field name="pathology.grade">  
+        <field-validator type="requiredstring">  
+            <message>Please select a Pathology Grade</message>  
+        </field-validator>  
+    </field>  
+    <field name="pathology.gradeSystem">  
+        <field-validator type="requiredstring">  
+            <message>Please select a Pathology Grade System</message>  
+        </field-validator>  
+    </field>
+</validators>

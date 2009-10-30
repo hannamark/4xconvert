@@ -141,6 +141,7 @@
         </copy>
     	<copy todir="${web.build.outputDir}">
     		<fileset dir="${web.build.srcDir}" includes="**/*.properties"/>
+            <fileset dir="${web.build.srcDir}" includes="**/*.xml"/>
     	</copy>
     </target>
 

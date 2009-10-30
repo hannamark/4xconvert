@@ -6,6 +6,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <script type="text/javascript">
+	function handleEditAction() {
+		document.forms[0].action = "savePathology.action";
+		document.forms[0].submit();
+	}
+
+	function handleCancelAction() {
+        document.forms[0].action = "cancelPathology.action";
+        document.forms[0].submit();
+	}
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
@@ -22,10 +31,17 @@
     Pathology
 </h1>
 <div class="box">
-    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <s:if test="hasActionErrors() && !hasFieldErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<table class="form">
-
+<table class="form"> 
+    <tr><td class="label">Pathology Grades</td>
+    <td class="value"><s:select required="true" id="pathologyGrades" name="pathology.grade" list="pathology.grades" 
+                       listKey="id" listValue="name" headerKey="" headerValue="--Select--"/>
+                       <s:fielderror cssStyle="color:red"><s:param>pathology.grade</s:param></s:fielderror></td></tr>
+    <tr><td class="label">Grade Systems</td>
+    <td class="value"><s:select required="true" id="pathologyGradeSystems" name="pathology.gradeSystem" list="pathology.gradeSystems" 
+                       listKey="id" listValue="name" headerKey="" headerValue="--Select--"/>
+                       <s:fielderror cssStyle="color:red"><s:param>pathology.gradeSystem</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
 

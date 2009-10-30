@@ -76,7 +76,10 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.web.action;
+
+import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import gov.nih.nci.accrual.web.dto.util.PathologyWebDto;
 
@@ -89,4 +92,49 @@ import gov.nih.nci.accrual.web.dto.util.PathologyWebDto;
 public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> {
 
     private static final long serialVersionUID = 1L;
+    
+    private PathologyWebDto pathology = new PathologyWebDto();
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD")
+    @Override
+    @SkipValidation
+    public String execute() {
+        return super.execute();
+    }
+
+    /**
+     * Cancel and ignore input.
+     * @return result for next action
+     */
+    @SkipValidation
+    public String cancel() {
+        return super.execute();
+    }
+
+    /**
+     * Save user entries.
+     * @return result for next action
+     */
+    public String save() {
+        return super.execute();
+    }
+
+    /**
+     * Get the form data.
+     * @return the form data object
+     */
+    public PathologyWebDto getPathology() {
+        return pathology;
+    }
+
+    /**
+     * Set the form data object.
+     * @param obj the form data object
+     */
+    public void setPathology(PathologyWebDto obj) {
+        pathology = obj;
+    }
 }

@@ -77,91 +77,42 @@
 *
 */
 
-package gov.nih.nci.accrual.web.dto.util;
-
-import gov.nih.nci.accrual.web.enums.PathologyGrades;
-import gov.nih.nci.accrual.web.enums.PathologyGradeSystems;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
+package gov.nih.nci.accrual.web.enums;
 
 /**
- * The Class PathologyWebDto.
+ * The permissible values for Pathology Grading Systems.
  * 
  * @author lhebel
- * @since 10/28/2009
  */
-public class PathologyWebDto implements Serializable {
-
-    private static final long serialVersionUID = -2586539583138557774L;
-
-    private String id = "";    
-    private String grade = ""; // PathologyGrades.GRADE1.getId();
-    private String gradeSystem = ""; // PathologyGradeSystems.GRADESYS1.getId();
-
-    /**
-     * Instantiates a new pathology web dto.
-     */
-    public PathologyWebDto() {
-        // default constructor
-    }
-
-    /**
-     * @return the grade
-     */
-    public String getGrade() {
-        return grade;
-    }
-
-    /**
-     * @param grade the grade to set
-     */
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
-    /**
-     * @return the gradeSystem
-     */
-    public String getGradeSystem() {
-        return gradeSystem;
-    }
-
-    /**
-     * @param gradeSystem the gradeSystem to set
-     */
-    public void setGradeSystem(String gradeSystem) {
-        this.gradeSystem = gradeSystem;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
+public enum PathologyGradeSystems {
+    /** system 1. */
+    GRADESYS1("1", "System 1"),
+    /** system 2. */
+    GRADESYS2("2", "System 2"),
+    /** system 3. */
+    GRADESYS3("3", "System 3");
+    
+    private String id;
+    private String name;
+    
+    private PathologyGradeSystems(String id, String name) {
         this.id = id;
+        this.name = name;
     }
 
     /**
-     * @return the id
+     * Get the Grading System id.
+     * @return the grading system id
      */
     public String getId() {
         return id;
     }
-
-    /**
-     * Get the list of Grade permissible values.
-     * @return the grade permissible values
-     */
-    public List<PathologyGrades> getGrades() {
-        return Arrays.asList(PathologyGrades.values());
-    }
     
     /**
-     * Get the list of Grade System permissible values.
-     * @return the grade system permissible values
+     * Get the Grading System display name.
+     * @return the grading system display name
      */
-    public List<PathologyGradeSystems> getGradeSystems() {
-        return Arrays.asList(PathologyGradeSystems.values());
+    public String getName() {
+        return name;
     }
 }
