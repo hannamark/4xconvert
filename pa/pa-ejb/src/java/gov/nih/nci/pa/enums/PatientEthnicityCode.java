@@ -83,6 +83,9 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * @author Hugh Reinhart
  * @since Aug 28, 2009
@@ -155,5 +158,19 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
      */
     public String getNameByCode(String str) {
         return getByCode(str).name();
+    }
+    
+    /**
+     * Gets the display map.
+     * @return the display map
+     */
+    public static Map<String, String> getDisplayMap() {
+        PatientEthnicityCode[] l = PatientEthnicityCode.values();
+        Map<String, String> a = new TreeMap<String, String>();
+        for (int i = 0; i < l.length; i++) {
+            String value = l[i].getCode().replace('_', ' ');
+           a.put(l[i].getCode(), value);
+        }
+        return a;
     }
 }

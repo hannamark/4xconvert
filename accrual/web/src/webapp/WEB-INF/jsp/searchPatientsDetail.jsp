@@ -138,7 +138,7 @@ function loadDiv(intid){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:set name="raceCodeValues" value="@gov.nih.nci.pa.enums.PatientRaceCode@getDisplayNames()" />
+            <s:set name="raceCodeValues" value="@gov.nih.nci.pa.enums.PatientRaceCode@getDisplayMap()" />
             <s:select id ="raceCode" name="patient.raceCode" multiple="true" size="7" list="#raceCodeValues" />
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
@@ -159,7 +159,7 @@ function loadDiv(intid){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:set name="ethnicCodeValues" value="@gov.nih.nci.pa.enums.PatientEthnicityCode@getDisplayNames()" />
+            <s:set name="ethnicCodeValues" value="@gov.nih.nci.pa.enums.PatientEthnicityCode@getDisplayMap()" />
             <s:select id ="ethnicCode" name="patient.ethnicCode" headerKey="" headerValue="--Select--"
                       list="#ethnicCodeValues"/>
           </s:if>
