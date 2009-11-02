@@ -106,6 +106,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setOfficialTitle(new STTransformerTest().makeDtoSimple());
         result.setPhaseOtherText(new STTransformerTest().makeDtoSimple());
         result.setPrimaryPurposeOtherText(new STTransformerTest().makeDtoSimple());
+        result.setProgramCodeText(new STTransformerTest().makeDtoSimple());
         result.setPublicDescription(new STTransformerTest().makeDtoSimple());
         result.setPublicTitle(new STTransformerTest().makeDtoSimple());
         result.setScientificDescription(new STTransformerTest().makeDtoSimple());
@@ -119,6 +120,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setFdaRegulatedIndicator(new BLTransformerTest().makeDtoSimple());
         result.setReviewBoardApprovalRequiredIndicator(new BLTransformerTest().makeDtoSimple());
         result.setSection801Indicator(new BLTransformerTest().makeDtoSimple());
+        result.setProprietaryTrialIndicator(new BLTransformerTest().makeDtoSimple());
         //CD
         result.setAccrualReportingMethodCode(new CDTransformerTest().makeDtoSimple());
         result.setAmendmentReasonCode(new CDTransformerTest().makeDtoSimple());
@@ -154,6 +156,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setOfficialTitle(new STTransformerTest().makeXmlSimple());
         result.setPhaseOtherText(new STTransformerTest().makeXmlSimple());
         result.setPrimaryPurposeOtherText(new STTransformerTest().makeXmlSimple());
+        result.setProgramCodeText(new STTransformerTest().makeXmlSimple());
         result.setPublicDescription(new STTransformerTest().makeXmlSimple());
         result.setPublicTitle(new STTransformerTest().makeXmlSimple());
         result.setScientificDescription(new STTransformerTest().makeXmlSimple());
@@ -167,6 +170,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setFdaRegulatedIndicator(new BLTransformerTest().makeXmlSimple());
         result.setReviewBoardApprovalRequiredIndicator(new BLTransformerTest().makeXmlSimple());
         result.setSection801Indicator(new BLTransformerTest().makeXmlSimple());
+        result.setProprietaryTrialIndicator(new BLTransformerTest().makeXmlSimple());
         //CD
         result.setAccrualReportingMethodCode(new CDTransformerTest().makeXmlSimple());
         result.setAmendmentReasonCode(new CDTransformerTest().makeXmlSimple());
@@ -201,6 +205,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new STTransformerTest().verifyDtoSimple(x.getOfficialTitle());
         new STTransformerTest().verifyDtoSimple(x.getPhaseOtherText());
         new STTransformerTest().verifyDtoSimple(x.getPrimaryPurposeOtherText());
+        new STTransformerTest().verifyDtoSimple(x.getProgramCodeText());
         new STTransformerTest().verifyDtoSimple(x.getPublicDescription());
         new STTransformerTest().verifyDtoSimple(x.getPublicTitle());
         new STTransformerTest().verifyDtoSimple(x.getScientificDescription());
@@ -214,6 +219,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new BLTransformerTest().verifyDtoSimple(x.getFdaRegulatedIndicator());
         new BLTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalRequiredIndicator());
         new BLTransformerTest().verifyDtoSimple(x.getSection801Indicator());
+        new BLTransformerTest().verifyDtoSimple(x.getProprietaryTrialIndicator());
         //CD
         new CDTransformerTest().verifyDtoSimple(x.getAccrualReportingMethodCode());
         new CDTransformerTest().verifyDtoSimple(x.getAmendmentReasonCode());
@@ -246,6 +252,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new STTransformerTest().verifyXmlSimple(x.getOfficialTitle());
         new STTransformerTest().verifyXmlSimple(x.getPhaseOtherText());
         new STTransformerTest().verifyXmlSimple(x.getPrimaryPurposeOtherText());
+        new STTransformerTest().verifyXmlSimple(x.getProgramCodeText());
         new STTransformerTest().verifyXmlSimple(x.getPublicDescription());
         new STTransformerTest().verifyXmlSimple(x.getPublicTitle());
         new STTransformerTest().verifyXmlSimple(x.getScientificDescription());
@@ -259,6 +266,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new BLTransformerTest().verifyXmlSimple(x.getFdaRegulatedIndicator());
         new BLTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalRequiredIndicator());
         new BLTransformerTest().verifyXmlSimple(x.getSection801Indicator());
+        new BLTransformerTest().verifyXmlSimple(x.getProprietaryTrialIndicator());
         //CD
         new CDTransformerTest().verifyXmlSimple(x.getAccrualReportingMethodCode());
         new CDTransformerTest().verifyXmlSimple(x.getAmendmentReasonCode());

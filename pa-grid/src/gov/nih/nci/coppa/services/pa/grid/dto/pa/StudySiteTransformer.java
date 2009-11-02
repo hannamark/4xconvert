@@ -132,12 +132,16 @@ public final class StudySiteTransformer
         //ST
         result.setLocalStudyProtocolIdentifier(STTransformer.INSTANCE.toDto(input.getLocalStudyProtocolIdentifier()));
         result.setReviewBoardApprovalNumber(STTransformer.INSTANCE.toDto(input.getReviewBoardApprovalNumber()));
+        result.setReviewBoardOrganizationalAffiliation(STTransformer.INSTANCE.toDto(
+                input.getReviewBoardOrganizationalAffiliation()));
+        result.setProgramCodeText(STTransformer.INSTANCE.toDto(input.getProgramCodeText()));
 
         //TS
         result.setReviewBoardApprovalDate(TSTransformer.INSTANCE.toDto(input.getReviewBoardApprovalDate()));
 
         //IVLTS
         result.setStatusDateRange(IVLTSTransformer.INSTANCE.toDto(input.getStatusDateRange()));
+        result.setAccrualDateRange(IVLTSTransformer.INSTANCE.toDto(input.getAccrualDateRange()));
 
         //INT
         result.setTargetAccrualNumber(INTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
@@ -167,13 +171,16 @@ public final class StudySiteTransformer
         //ST
         result.setLocalStudyProtocolIdentifier(STTransformer.INSTANCE.toXml(input.getLocalStudyProtocolIdentifier()));
         result.setReviewBoardApprovalNumber(STTransformer.INSTANCE.toXml(input.getReviewBoardApprovalNumber()));
+        result.setProgramCodeText(STTransformer.INSTANCE.toXml(input.getProgramCodeText()));
+        result.setReviewBoardOrganizationalAffiliation(STTransformer.INSTANCE.toXml(
+                        input.getReviewBoardOrganizationalAffiliation()));
 
         //TS
         result.setReviewBoardApprovalDate(TSTransformer.INSTANCE.toXml(input.getReviewBoardApprovalDate()));
 
         //IVLTS
         result.setStatusDateRange(IVLTSTransformer.INSTANCE.toXml(input.getStatusDateRange()));
-
+        result.setAccrualDateRange(IVLTSTransformer.INSTANCE.toXml(input.getAccrualDateRange()));
         //INT
         result.setTargetAccrualNumber(INTTransformer.INSTANCE.toXml(input.getTargetAccrualNumber()));
 

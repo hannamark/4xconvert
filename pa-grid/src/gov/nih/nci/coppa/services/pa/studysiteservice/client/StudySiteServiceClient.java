@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 
 /**
@@ -25,6 +27,8 @@ import org.globus.gsi.GlobusCredential;
  */
 public class StudySiteServiceClient extends StudySiteServiceClientBase implements StudySiteServiceI {
 
+    private static String protocolExtention = "27426";
+    private static String siteExtention = "27471";
     public StudySiteServiceClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
@@ -73,20 +77,23 @@ public class StudySiteServiceClient extends StudySiteServiceClientBase implement
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27426");
+        id.setExtension(protocolExtention);
         StudySite[] stCont = client.getByStudyProtocol(id);
         System.out.println("get by study protocol brought back set sized " + stCont.length);
     }
 
     private static void getById(StudySiteServiceClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("27469");
+        id.setExtension(siteExtention);
+        id.setRoot(IiConverter.STUDY_SITE_ROOT);
+        id.setIdentifierName(IiConverter.STUDY_SITE_IDENTIFIER_NAME);
         StudySite stCont = client.get(id);
         if (stCont == null) {
             System.out.println("could not find StudySite");
         } else {
-            System.out.println("StudySite 27435 found.");
+            System.out.println("StudySite found = " + siteExtention);
         }
+        System.out.println(ToStringBuilder.reflectionToString(stCont, ToStringStyle.MULTI_LINE_STYLE));
     }
 
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {

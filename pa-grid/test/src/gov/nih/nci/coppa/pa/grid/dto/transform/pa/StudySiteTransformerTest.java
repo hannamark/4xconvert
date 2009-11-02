@@ -114,12 +114,14 @@ public class StudySiteTransformerTest
         //ST
         result.setLocalStudyProtocolIdentifier(new STTransformerTest().makeDtoSimple());
         result.setReviewBoardApprovalNumber(new STTransformerTest().makeDtoSimple());
-
+        result.setReviewBoardOrganizationalAffiliation(new STTransformerTest().makeDtoSimple());
+        result.setProgramCodeText(new STTransformerTest().makeDtoSimple());
         //TS
         result.setReviewBoardApprovalDate(new TSTransformerTest().makeDtoSimple());
 
         //IVLTS
         result.setStatusDateRange(new IVLTSTransformerTest().makeDtoSimple());
+        result.setAccrualDateRange(new IVLTSTransformerTest().makeDtoSimple());
 
         //INT
         result.setTargetAccrualNumber(new INTTransformerTest().makeDtoSimple());
@@ -145,12 +147,15 @@ public class StudySiteTransformerTest
         //ST
         result.setLocalStudyProtocolIdentifier(new STTransformerTest().makeXmlSimple());
         result.setReviewBoardApprovalNumber(new STTransformerTest().makeXmlSimple());
+        result.setReviewBoardOrganizationalAffiliation(new STTransformerTest().makeXmlSimple());
+        result.setProgramCodeText(new STTransformerTest().makeXmlSimple());
 
         //TS
         result.setReviewBoardApprovalDate(new TSTransformerTest().makeXmlSimple());
 
         //IVLTS
         result.setStatusDateRange(new IVLTSTransformerTest().makeXmlSimple());
+        result.setAccrualDateRange(new IVLTSTransformerTest().makeXmlSimple());
 
         //INT
         result.setTargetAccrualNumber(new INTTransformerTest().makeXmlSimple());
@@ -168,7 +173,10 @@ public class StudySiteTransformerTest
         new CDTransformerTest().verifyDtoSimple(x.getFunctionalCode());
         new STTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalNumber());
         new STTransformerTest().verifyDtoSimple(x.getLocalStudyProtocolIdentifier());
+        new STTransformerTest().verifyDtoSimple(x.getReviewBoardOrganizationalAffiliation());
+        new STTransformerTest().verifyDtoSimple(x.getProgramCodeText());
         new IVLTSTransformerTest().verifyDtoSimple(x.getStatusDateRange());
+        new IVLTSTransformerTest().verifyDtoSimple(x.getAccrualDateRange());
         new TSTransformerTest().verifyDtoSimple(x.getReviewBoardApprovalDate());
         new INTTransformerTest().verifyDtoSimple(x.getTargetAccrualNumber());
     }
@@ -184,7 +192,10 @@ public class StudySiteTransformerTest
         new CDTransformerTest().verifyXmlSimple(x.getFunctionalCode());
         new STTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalNumber());
         new STTransformerTest().verifyXmlSimple(x.getLocalStudyProtocolIdentifier());
+        new STTransformerTest().verifyXmlSimple(x.getReviewBoardOrganizationalAffiliation());
+        new STTransformerTest().verifyXmlSimple(x.getProgramCodeText());
         new IVLTSTransformerTest().verifyXmlSimple(x.getStatusDateRange());
+        new IVLTSTransformerTest().verifyXmlSimple(x.getAccrualDateRange());
         new TSTransformerTest().verifyXmlSimple(x.getReviewBoardApprovalDate());
         new INTTransformerTest().verifyXmlSimple(x.getTargetAccrualNumber());
     }

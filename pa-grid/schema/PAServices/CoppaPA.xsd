@@ -120,6 +120,7 @@
                     <xs:element name="primaryCompletionDateTypeCode" type="ISO:CD" />
                     <xs:element name="primaryPurposeCode" type="ISO:CD" />
                     <xs:element name="primaryPurposeOtherText" type="ISO:ST" />
+                    <xs:element name="programCodeText" type="ISO:ST" />
                     <xs:element name="publicDescription" type="ISO:ST" />
                     <xs:element name="publicTitle" type="ISO:ST" />
                     <xs:element name="recordVerificationDate" type="ISO:TS" />
@@ -137,6 +138,7 @@
                     <xs:element name="amendmentDate" type="ISO:TS" />
                     <xs:element name="amendmentReasonCode" type="ISO:CD" />
                     <xs:element name="submissionNumber" type="ISO:INT" />
+                    <xs:element name="proprietaryTrialIndicator" type="ISO:BL" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -388,9 +390,12 @@
                         <xs:element name="oversightCommittee" type="ISO:II" />
                         <xs:element name="localStudyProtocolIdentifier" type="ISO:ST" />
                         <xs:element name="reviewBoardApprovalStatusCode" type="ISO:CD" />
+                        <xs:element name="reviewBoardOrganizationalAffiliation" type="ISO:ST" />
                         <xs:element name="reviewBoardApprovalNumber" type="ISO:ST" />
                         <xs:element name="reviewBoardApprovalDate" type="ISO:TS" />
                         <xs:element name="targetAccrualNumber" type="ISO:INT" />
+                        <xs:element name="programCodeText" type="ISO:ST" />
+                        <xs:element name="accrualDateRange" type="ISO:IVL_TS" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

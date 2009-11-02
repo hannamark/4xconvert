@@ -29,6 +29,7 @@ import org.globus.gsi.GlobusCredential;
  */
 public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase implements StudyProtocolServiceI {
 
+    private static String protocolExtention = "27426";
     public StudyProtocolServiceClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
@@ -57,6 +58,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
               StudyProtocolServiceClient client = new StudyProtocolServiceClient(args[1]);
 
               System.out.println("Getting study protocol");
+              System.out.println("Getting study protocol client = "+client);
               getStudyProtocol(client);
 
               System.out.println("Getting interventional study protocol");
@@ -83,7 +85,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27453");
+        id.setExtension(protocolExtention);
         StudyProtocol result = client.getStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
@@ -92,7 +94,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension("27453");
+        id.setExtension(protocolExtention);
         InterventionalStudyProtocol result = client.getInterventionalStudyProtocol(id);
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }

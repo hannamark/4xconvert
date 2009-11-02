@@ -136,6 +136,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setOfficialTitle(STTransformer.INSTANCE.toDto(input.getOfficialTitle()));
         result.setPhaseOtherText(STTransformer.INSTANCE.toDto(input.getPhaseOtherText()));
         result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toDto(input.getPrimaryPurposeOtherText()));
+        result.setProgramCodeText(STTransformer.INSTANCE.toDto(input.getProgramCodeText()));
         result.setPublicDescription(STTransformer.INSTANCE.toDto(input.getPublicDescription()));
         result.setPublicTitle(STTransformer.INSTANCE.toDto(input.getPublicTitle()));
         result.setScientificDescription(STTransformer.INSTANCE.toDto(input.getScientificDescription()));
@@ -152,6 +153,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setReviewBoardApprovalRequiredIndicator(BLTransformer.INSTANCE.toDto(input
                 .getReviewBoardApprovalRequiredIndicator()));
         result.setSection801Indicator(BLTransformer.INSTANCE.toDto(input.getSection801Indicator()));
+        result.setProprietaryTrialIndicator(BLTransformer.INSTANCE.toDto(input.getProprietaryTrialIndicator()));
         // CD
         result.setAccrualReportingMethodCode(CDTransformer.INSTANCE.toDto(input.getAccrualReportingMethodCode()));
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toDto(input.getAmendmentReasonCode()));
@@ -194,6 +196,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setOfficialTitle(STTransformer.INSTANCE.toXml(input.getOfficialTitle()));
         result.setPhaseOtherText(STTransformer.INSTANCE.toXml(input.getPhaseOtherText()));
         result.setPrimaryPurposeOtherText(STTransformer.INSTANCE.toXml(input.getPrimaryPurposeOtherText()));
+        result.setProgramCodeText(STTransformer.INSTANCE.toXml(input.getProgramCodeText()));
         result.setPublicDescription(STTransformer.INSTANCE.toXml(input.getPublicDescription()));
         result.setPublicTitle(STTransformer.INSTANCE.toXml(input.getPublicTitle()));
         result.setScientificDescription(STTransformer.INSTANCE.toXml(input.getScientificDescription()));
@@ -210,6 +213,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setReviewBoardApprovalRequiredIndicator(BLTransformer.INSTANCE.toXml(input
                 .getReviewBoardApprovalRequiredIndicator()));
         result.setSection801Indicator(BLTransformer.INSTANCE.toXml(input.getSection801Indicator()));
+        result.setProprietaryTrialIndicator(BLTransformer.INSTANCE.toXml(input.getProprietaryTrialIndicator()));
         // CD
         result.setAccrualReportingMethodCode(CDTransformer.INSTANCE.toXml(input.getAccrualReportingMethodCode()));
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toXml(input.getAmendmentReasonCode()));

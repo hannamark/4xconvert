@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.services.pa.trialregistrationservice.service;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
@@ -74,11 +75,14 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
+            Bl isBatch = new Bl();
+            isBatch.setValue(Boolean.FALSE);
+
             Ii ii = service.createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, nctIdentifierSiteIdentifierDTO,
                             studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                            responsiblePartyContactIi);
+                            responsiblePartyContactIi, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -106,11 +110,13 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
+            Bl isBatch = new Bl();
+            isBatch.setValue(Boolean.FALSE);
             Ii ii = service.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                             documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
                             leadOrganizationSiteIdentifierDTO, nctIdentifierSiteIdentifierDTO, studyContactDTO,
                             studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                            responsiblePartyContactIi);
+                            responsiblePartyContactIi, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -138,12 +144,14 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs =
                     StudySiteAccrualStatusTransformer.INSTANCE.convert(studySiteAccrualStatuses);
             List<StudySiteDTO> studySiteDTOs = StudySiteTransformer.INSTANCE.convert(studySites);
+            Bl isBatch = new Bl();
+            isBatch.setValue(Boolean.FALSE);
 
             service.update(studyProtocolDTO, overallStatusDTO, studySiteDTO, studyIndldeDTOs, studyResourcingDTOs,
                     documentDTOs,
                     studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                     responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, studySiteAccrualStatusDTOs,
-                    studySiteDTOs);
+                    studySiteDTOs, isBatch);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
@@ -165,10 +173,12 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             OrganizationDTO summary4organizationDTO = OrganizationTransformer.INSTANCE.toDto(summaryForOrganization);
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
+            Bl isBatch = new Bl();
+            isBatch.setValue(Boolean.FALSE);
             Ii ii = service.createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteOverallStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                             studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
-                            summary4studyResourcingDTO);
+                            summary4studyResourcingDTO, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
