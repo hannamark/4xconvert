@@ -391,7 +391,7 @@ public class StudySiteServiceBean
                 .add(Expression.eq("hcf.id", IiConverter.convertToLong(dto.getHealthcareFacilityIi())));
             } else {
                 criteria.createAlias("healthCareFacility", "hcf")
-                .add(Expression.eq("hcf.identifier", IiConverter.convertToLong(dto.getHealthcareFacilityIi())));
+                .add(Expression.eq("hcf.identifier", IiConverter.convertToString(dto.getHealthcareFacilityIi())));
             }
         }
 
@@ -401,7 +401,7 @@ public class StudySiteServiceBean
                 .add(Expression.eq("ro.id", IiConverter.convertToLong(dto.getResearchOrganizationIi())));
             } else {
                 criteria.createAlias("researchOrganization", "ro")
-                .add(Expression.eq("ro.identifier", IiConverter.convertToLong(dto.getResearchOrganizationIi())));
+                .add(Expression.eq("ro.identifier", IiConverter.convertToString(dto.getResearchOrganizationIi())));
             }
 
         }
@@ -412,7 +412,7 @@ public class StudySiteServiceBean
                 .add(Expression.eq("oc.id", IiConverter.convertToLong(dto.getOversightCommitteeIi())));
             } else {
                 criteria.createAlias("oversightCommittee", "oc")
-                .add(Expression.eq("oc.identifier", IiConverter.convertToLong(dto.getOversightCommitteeIi())));
+                .add(Expression.eq("oc.identifier", IiConverter.convertToString(dto.getOversightCommitteeIi())));
             }
         }
 

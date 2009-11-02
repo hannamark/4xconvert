@@ -150,7 +150,7 @@ public class StudyContactServiceBean
                 .add(Expression.eq("hcp.id", IiConverter.convertToLong(dto.getHealthCareProviderIi())));
             } else {
                 criteria.createAlias("healthCareProvider", "hcp")
-                .add(Expression.eq("hcp.identifier", IiConverter.convertToLong(dto.getHealthCareProviderIi())));
+                .add(Expression.eq("hcp.identifier", IiConverter.convertToString(dto.getHealthCareProviderIi())));
             }
         }
 
@@ -160,7 +160,7 @@ public class StudyContactServiceBean
                 .add(Expression.eq("crs.id", IiConverter.convertToLong(dto.getClinicalResearchStaffIi())));
             } else {
                 criteria.createAlias("clinicalResearchStaff", "crs")
-                .add(Expression.eq("crs.identifier", IiConverter.convertToLong(dto.getClinicalResearchStaffIi())));
+                .add(Expression.eq("crs.identifier", IiConverter.convertToString(dto.getClinicalResearchStaffIi())));
             }
         }
 
@@ -170,7 +170,7 @@ public class StudyContactServiceBean
                 .add(Expression.eq("oc.id", IiConverter.convertToLong(dto.getOrganizationalContactIi())));
             } else {
                 criteria.createAlias("organizationalContact", "oc")
-                .add(Expression.eq("oc.identifier", IiConverter.convertToLong(dto.getOrganizationalContactIi())));
+                .add(Expression.eq("oc.identifier", IiConverter.convertToString(dto.getOrganizationalContactIi())));
             }
         }
 
