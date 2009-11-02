@@ -129,6 +129,9 @@ public class PDQDisease extends AbstractPDQProcessor {
             if(Rule.ATTR_NAME_ID.equals(attribute.getNodeName())) {
                 d.setDiseaseCode(attribute.getNodeValue());
             }
+            if (Rule.ATTR_NAME_NCI_TERM.equals(attribute.getNodeName())) {
+                d.setNtTermIdentifier(attribute.getNodeValue());
+            }
         }
 
         NodeList children = node.getChildNodes();
