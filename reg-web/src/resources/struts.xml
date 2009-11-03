@@ -8,9 +8,7 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
-			<interceptor name="nci-commonsParams" 
-			    class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
-			<interceptor name="parameterTrim" 
+			 <interceptor name="parameterTrim" 
 			    class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
 			 <interceptor name="maliciousInput"
                 class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
@@ -72,7 +70,15 @@
     <package name="admin" namespace="/admin" extends="default">
         <action name="batchUpload*" class="gov.nih.nci.registry.action.BatchUploadAction" method="{1}">
 	        <interceptor-ref name="fileUpload"/>
-	        <interceptor-ref name="nci-commonsParams" />
+	         <interceptor-ref name="params">
+          <!--
+              Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+           -->
+          <param name="excludeParams">
+            _,d-\d+?-[sop]
+         </param>
+        </interceptor-ref>
+                
 	        <result>/WEB-INF/jsp/processBatch.jsp</result>
 	        <result name="error">/WEB-INF/jsp/processBatch.jsp</result>
 	        <result name="batch_confirm">/WEB-INF/jsp/batchUploadConfirm.jsp</result>
@@ -80,7 +86,15 @@
     </package>
     <package name="protected" namespace="/protected" extends="default">
         <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
-		<interceptor-ref name="nci-commonsParams" />
+		 <interceptor-ref name="params">
+          <!--
+              Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+           -->
+          <param name="excludeParams">
+            _,d-\d+?-[sop]
+         </param>
+        </interceptor-ref>
+                
 		<result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
 		<result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
 		<result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
