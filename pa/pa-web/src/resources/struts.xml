@@ -8,10 +8,15 @@
  <constant name="struts.devMode" value="true" />
 	<package name="default" extends="struts-default">
 		<interceptors>
-		    <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
-		    <interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
-		    <interceptor name="servletConfig" class="org.apache.struts2.interceptor.ServletConfigInterceptor"/>
-		    
+		    <interceptor name="nci-commonsParams" 
+		       class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
+		    <interceptor name="parameterTrim" 
+		       class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+		    <interceptor name="servletConfig" 
+		       class="org.apache.struts2.interceptor.ServletConfigInterceptor"/>
+		    <interceptor name="maliciousInput"
+               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
+                
 		    <interceptor-stack name="paDefaultInterceptor">
                 <interceptor-ref name="exception"/>
                 <interceptor-ref name="servletConfig"/>
@@ -20,6 +25,7 @@
                 <interceptor-ref name="conversionError"/>
                 <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="nci-commonsParams"/>
+                <interceptor-ref name="maliciousInput"/>
                 <interceptor-ref name="parameterTrim">
                     <param name="trimToNull">true</param>
                     <param name="trimFromFront">true</param>
