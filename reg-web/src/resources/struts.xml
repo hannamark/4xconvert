@@ -8,8 +8,13 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
-			<interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
-			<interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+			<interceptor name="nci-commonsParams" 
+			    class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
+			<interceptor name="parameterTrim" 
+			    class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+			 <interceptor name="maliciousInput"
+                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
+			
 			<interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="exception" /> 
                 <interceptor-ref name="alias" />
@@ -27,10 +32,11 @@
                 <interceptor-ref name="workflow">
                     <param name="excludeMethods">input,back,cancel,reviewUpdate</param>
                 </interceptor-ref>
+                <interceptor-ref name="maliciousInput" />
                 <interceptor-ref name="parameterTrim">
                     <param name="trimToNull">true</param>
                     <param name="trimFromFront">true</param>
-                </interceptor-ref>
+                </interceptor-ref>               
 			  </interceptor-stack>
         </interceptors>
         <global-results>
