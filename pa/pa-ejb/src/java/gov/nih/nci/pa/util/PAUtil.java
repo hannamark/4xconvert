@@ -86,8 +86,10 @@ import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
@@ -924,5 +926,25 @@ public class PAUtil {
           precision = javapq.getPrecision();
         }
         return precision;
+    }
+    
+    /**
+     * Checks if is type intervention.
+     * 
+     * @param cd the cd
+     * 
+     * @return true, if is type intervention
+     */
+    public static boolean isTypeIntervention(Cd cd) {
+      boolean isTypeIntervention = false;
+      if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
+                 .convertCdToString(cd)))
+            || ActivityCategoryCode.PLANNED_PROCEDURE.equals(ActivityCategoryCode.getByCode(CdConverter
+                     .convertCdToString(cd)))
+            || ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.equals(ActivityCategoryCode.getByCode(CdConverter
+                     .convertCdToString(cd)))) {
+        isTypeIntervention = true;
+      }
+       return isTypeIntervention;
     }
 }

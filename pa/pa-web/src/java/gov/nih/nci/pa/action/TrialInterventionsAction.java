@@ -269,12 +269,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         setInterventionsList(new ArrayList<InterventionWebDTO>());
         List<PlannedActivityDTO> paList = plannedActivitySvc.getByStudyProtocol(spIi);
         for (PlannedActivityDTO pa : paList) {
-            if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
-                    .convertCdToString(pa.getCategoryCode()))) 
-                || ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.equals(ActivityCategoryCode.getByCode(CdConverter
-                        .convertCdToString(pa.getCategoryCode())))
-                || ActivityCategoryCode.PLANNED_PROCEDURE.equals(ActivityCategoryCode.getByCode(CdConverter
-                                .convertCdToString(pa.getCategoryCode())))) {
+            if (PAUtil.isTypeIntervention(pa.getCategoryCode())) {
                 getInterventionsList().add(generateWebDto(pa));
             }
         }

@@ -970,7 +970,11 @@ private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletio
     boolean interventionsList = false;
     for (PlannedActivityDTO pa : paList) {
       if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
-              .convertCdToString(pa.getCategoryCode())))) {
+              .convertCdToString(pa.getCategoryCode()))) 
+          || ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.equals(ActivityCategoryCode.getByCode(CdConverter
+                  .convertCdToString(pa.getCategoryCode())))
+          || ActivityCategoryCode.PLANNED_PROCEDURE.equals(ActivityCategoryCode.getByCode(CdConverter
+                  .convertCdToString(pa.getCategoryCode())))) {
         interventionsList = true;
         //validation rules for inactive interventions
         InterventionDTO iDto = interventionSvc.get(pa.getInterventionIdentifier());
@@ -1169,8 +1173,7 @@ private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletio
     List<PlannedActivityDTO> paList =   plannedActivityService.getByStudyProtocol(studyProtocolIi);
     HashMap<String, String> intervention = new HashMap<String, String>();
     for (PlannedActivityDTO pa : paList) {
-      if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
-              .convertCdToString(pa.getCategoryCode())))) {
+      if (PAUtil.isTypeIntervention(pa.getCategoryCode())) {
           List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier()); 
     
           if (armDtos == null || armDtos.isEmpty()) {

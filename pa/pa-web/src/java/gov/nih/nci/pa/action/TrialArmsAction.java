@@ -84,7 +84,6 @@ import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialArmsWebDTO;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
@@ -353,8 +352,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         setCheckBoxEntry("");
         List<PlannedActivityDTO> plaList = plaService.getByStudyProtocol(spIdIi);
         for (PlannedActivityDTO pla : plaList) {
-            if ((ActivityCategoryCode.INTERVENTION.equals(
-                    ActivityCategoryCode.getByCode(CdConverter.convertCdToString(pla.getCategoryCode()))))
+            if (PAUtil.isTypeIntervention(pla.getCategoryCode())
                  && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
                 InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
                 InterventionWebDTO intWebDto = new InterventionWebDTO();
@@ -374,9 +372,8 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         setIntList(new ArrayList<InterventionWebDTO>());
         List<PlannedActivityDTO> plaList = plaService.getByStudyProtocol(spIdIi);
         for (PlannedActivityDTO pla : plaList) {
-            if ((ActivityCategoryCode.INTERVENTION.equals(
-                    ActivityCategoryCode.getByCode(CdConverter.convertCdToString(pla.getCategoryCode()))))
-                 && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
+            if (PAUtil.isTypeIntervention(pla.getCategoryCode())
+                && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
                 InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
                 InterventionWebDTO intWebDto = new InterventionWebDTO();
                 intWebDto.setDescription(StConverter.convertToString(pla.getTextDescription()));

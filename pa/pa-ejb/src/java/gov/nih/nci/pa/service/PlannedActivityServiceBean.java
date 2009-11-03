@@ -83,7 +83,6 @@ import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.PlannedProcedure;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
@@ -706,9 +705,7 @@ public class PlannedActivityServiceBean
         if (PAUtil.isCdNull(dto.getCategoryCode())) {
             throw new PAException("PlannedActivity.categoryCode must be set.");
         }
-        ActivityCategoryCode cc = ActivityCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode()));
-        if (ActivityCategoryCode.INTERVENTION.equals(cc) || ActivityCategoryCode.PLANNED_PROCEDURE.equals(cc) 
-            || ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.equals(cc)) {
+        if (PAUtil.isTypeIntervention(dto.getCategoryCode())) {
             
             if (PAUtil.isCdNull(dto.getSubcategoryCode())) {
                 throw new PAException("Intervention type must be set.");
