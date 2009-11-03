@@ -1,0 +1,49 @@
+<!DOCTYPE validators PUBLIC "-//OpenSymphony Group//XWork Validator 1.0.2//EN"   
+       "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">  
+<validators>
+    <field name="stagingWebDto.method">  
+        <field-validator type="requiredstring">  
+            <message>Please select a Staging Method</message>  
+        </field-validator>  
+    </field>
+    <field name="stagingWebDto.tt">  
+        <field-validator type="requiredstring">  
+            <message>Please enter a T</message>  
+        </field-validator>  
+    </field>
+    <field name="stagingWebDto.nn">  
+        <field-validator type="requiredstring">  
+            <message>Please enter an N</message>  
+        </field-validator>  
+    </field>
+    <field name="stagingWebDto.mm">  
+        <field-validator type="requiredstring">  
+            <message>Please enter an M</message>  
+        </field-validator>  
+    </field>
+    <field name="stagingWebDto.stage">  
+        <field-validator type="requiredstring">  
+            <message>Please enter a Stage</message>  
+        </field-validator>  
+    </field>
+    <field name="stagingWebDto.system">  
+        <field-validator type="requiredstring">  
+            <message>Please select a Staging System</message>  
+        </field-validator>  
+    </field>
+    <field name="stagingWebDto.tumorMarker">  
+        <field-validator type="requiredstring">  
+            <message>Please select a Tumor Marker</message>  
+        </field-validator>  
+    </field>
+    <field name="stagingWebDto.tumorMarkerValue">  
+        <field-validator type="requiredstring">  
+            <message>Please enter a Tumor Marker Value</message>  
+        </field-validator>  
+    </field>
+    <field name="stagingWebDto.tmvUom">  
+        <field-validator type="requiredstring">  
+            <message>Please select a Tumor Marker Value UOM</message>  
+        </field-validator>  
+    </field>
+</validators>

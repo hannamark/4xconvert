@@ -6,6 +6,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <script type="text/javascript">
+    function handleEditAction() {
+        document.forms[0].action = "saveStaging.action";
+        document.forms[0].submit();
+    }
+
+    function handleCancelAction() {
+        document.forms[0].action = "cancelStaging.action";
+        document.forms[0].submit();
+    }
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
@@ -25,6 +34,87 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <table class="form">
+
+    <!-- Staging Method -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.method.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:select id="stagingMethods" headerValue="--Select--" headerKey="" list="stagingMethods" listKey="id" listValue="name" name="stagingWebDto.method"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.method</s:param></s:fielderror></span>
+        </td>      
+    </tr>
+    
+    <!-- T Value -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.t.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:textfield id="tValue" name="stagingWebDto.tt" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.tt</s:param></s:fielderror></span>
+        </td>
+    </tr>
+    
+    <!-- N Value -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.n.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:textfield id="nValue" name="stagingWebDto.nn" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.nn</s:param></s:fielderror></span>
+        </td>      
+    </tr>
+    
+    <!-- M Value -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.m.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:textfield id="mValue" name="stagingWebDto.mm" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.mm</s:param></s:fielderror></span>
+        </td>      
+    </tr>
+    
+    <!-- Stage -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.stage.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:textfield id="stage" name="stagingWebDto.stage" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.stage</s:param></s:fielderror></span>
+        </td>      
+    </tr>
+    
+    <!-- Staging System -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.system.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:select id="stagingSystems" headerValue="--Select--" headerKey="" list="stagingSystems" listKey="id" listValue="name" name="stagingWebDto.system"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.system</s:param></s:fielderror></span>
+        </td>      
+    </tr>
+    
+    <!-- Tumor Marker -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.tumor.marker.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:select id="tumorMarkers" headerValue="--Select--" headerKey="" list="tumorMarkers" listKey="id" listValue="name" name="stagingWebDto.tumorMarker"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.tumorMarker</s:param></s:fielderror></span>
+        </td>      
+    </tr>
+    
+    <!-- Tumor Marker Value -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.tumor.marker.value.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:textfield id="tumorMarkerValue" name="stagingWebDto.tumorMarkerValue" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.tumorMarkerValue</s:param></s:fielderror></span>
+        </td>      
+    </tr>
+    
+    <!-- Tumor Marker Value UOM -->
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="staging.tumor.marker.value.uom.label"/><span class="required">*</span></label></td>
+        <td class="value">
+            <s:select id="tumorMarkerValueUoms" headerValue="--Select--" headerKey="" list="tumorMarkerValueUoms" listKey="id" listValue="name" name="stagingWebDto.tmvUom"/>
+            <span class="formErrorMsg"><s:fielderror><s:param>stagingWebDto.tmvUom</s:param></s:fielderror></span>
+        </td>      
+    </tr>
 
 </table>
 </s:form>
