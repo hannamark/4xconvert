@@ -85,6 +85,8 @@ import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.PlannedProcedureDTO;
+import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -345,5 +347,52 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
         return null;
         
     }
+
+	public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(
+			PlannedSubstanceAdministrationDTO dto) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public PlannedProcedureDTO getPlannedProcedure(Ii ii) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(
+			Ii ii) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(
+			Ii ii) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(
+			PlannedSubstanceAdministrationDTO dto) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

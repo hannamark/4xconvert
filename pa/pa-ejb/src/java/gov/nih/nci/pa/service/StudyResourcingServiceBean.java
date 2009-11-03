@@ -94,9 +94,6 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -461,27 +458,6 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
        
     }
     
-    private boolean checkIfValueExists(String value, String tableName, String column) throws PAException {
-      String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = '" + value + "'";
-      Session session = null;
-      boolean exists = true;
-      int count = 0;
-      try { 
-        session = HibernateUtil.getCurrentSession();
-        Statement st = session.connection().createStatement();
-        ResultSet rs = st.executeQuery(sql);
-         while (rs.next()) {
-           count++;
-         }
-         if (count == 0) {
-           exists = false;
-         }
-     
-      }  catch (SQLException sqle) {
-          LOG.error(" Hibernate exception while checking for value " + value + " from table " + tableName , sqle);
-      } 
-      return exists;
-    }
     @SuppressWarnings("PMD.NPathComplexity")
     private void enforceValidation(StudyResourcingDTO studyResourcingDTO) throws PAException {
       StringBuffer errorBuffer =  new StringBuffer();
@@ -493,7 +469,7 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
               //check if nih institute code exists
               if (!PAUtil.isCdNull(studyResourcingDTO.getNihInstitutionCode())) {
                 boolean nihExists = 
-                   checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
+                  PAUtil.checkIfValueExists(studyResourcingDTO.getNihInstitutionCode().getCode(),
                                       "NIH_INSTITUTE", "nih_institute_code");
                   if (!nihExists) {
                      errorBuffer.append("Error while checking for value ")
@@ -503,7 +479,7 @@ public class StudyResourcingServiceBean extends AbstractStudyIsoService
               }
               if (!PAUtil.isCdNull(studyResourcingDTO.getFundingMechanismCode())) {
                  //check if Funding mechanism code exists 
-                 boolean fmExists = checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(), 
+                 boolean fmExists = PAUtil.checkIfValueExists(studyResourcingDTO.getFundingMechanismCode().getCode(), 
                      "FUNDING_MECHANISM", "funding_mechanism_code");
                
                  if (!fmExists) {

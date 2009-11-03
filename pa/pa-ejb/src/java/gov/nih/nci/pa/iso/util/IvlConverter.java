@@ -197,12 +197,12 @@ public class IvlConverter<Iso extends Qty, T> {
         } else if (aggregatedType.equals(Pq.class)) {
             Ivl<Pq> wrk = new Ivl<Pq>();
             if (low instanceof IvlConverter.JavaPq) {
-                wrk.setLow(PqConverter.convertToPq(((JavaPq) low).value, ((JavaPq) low).precision,
-                        ((JavaPq) low).unit));
+                wrk.setLow(PqConverter.convertToPq((PAUtil.convertPqToDecimal((JavaPq) low)) , 
+                     PAUtil.convertPqToPrecision((JavaPq) low), PAUtil.convertPqToUnit((JavaPq) low)));
             }
             if (high instanceof IvlConverter.JavaPq) {
-                wrk.setHigh(PqConverter.convertToPq(((JavaPq) high).value, ((JavaPq) high).precision,
-                        ((JavaPq) high).unit));
+                wrk.setHigh(PqConverter.convertToPq((PAUtil.convertPqToDecimal((JavaPq) high)) , 
+                        PAUtil.convertPqToPrecision((JavaPq) high), PAUtil.convertPqToUnit((JavaPq) high)));
             }
             result = (Ivl<Iso>) wrk;
         }

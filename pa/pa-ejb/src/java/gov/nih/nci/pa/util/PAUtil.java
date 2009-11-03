@@ -82,18 +82,25 @@ import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -109,6 +116,9 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+
 /**
  *
  * @author Naveen Amiruddin
@@ -121,7 +131,7 @@ import java.util.regex.Pattern;
 public class PAUtil {
 
     private static final int MAXF = 1024;
-    
+    private static final Logger LOG = Logger.getLogger(PAUtil.class);
     /**
      * checks if Ii is null.
      * @param ii ii
@@ -246,7 +256,67 @@ public class PAUtil {
         return isNull;
     }
 
+    /**
+     * checks if pq value is null.
+     * @param pq Pq
+     * @return boolean
+     */
+    public static boolean isPqValueNull(Pq pq) {
+        boolean isNull = false;
+        if (pq == null || pq.getValue() == null) {
+            return true;
+        }
+        return isNull;
+    }
+    /**
+     * checks if pq Unit is null.
+     * @param pq Pq
+     * @return boolean
+     */
+    public static boolean isPqUnitNull(Pq pq) {
+        boolean isNull = false;
+        if (pq == null || pq.getUnit() == null) {
+            return true;
+        }
+        return isNull;
+    }
 
+    /**
+     * checks if ivl high is null.
+     * @param ivl Ivl
+     * @return boolean
+     */
+    public static boolean isIvlHighNull(Ivl<Pq> ivl) {
+        boolean isNull = false;
+        if (ivl == null || ivl.getHigh().getValue() == null) {
+            return true;
+        }
+        return isNull;
+    }
+    /**
+     * checks if ivl low is null.
+     * @param ivl Ivl
+     * @return boolean
+     */
+    public static boolean isIvlLowNull(Ivl<Pq> ivl) {
+        boolean isNull = false;
+        if (ivl == null || ivl.getLow().getValue() == null) {
+            return true;
+        }
+        return isNull;
+    }
+    /**
+     * checks if ivl unit is null.
+     * @param ivl Ivl
+     * @return boolean
+     */
+    public static boolean isIvlUnitNull(Ivl<Pq> ivl) {
+        boolean isNull = false;
+        if (ivl == null || ivl.getHigh().getUnit() == null || ivl.getLow().getUnit() == null) {
+            return true;
+        }
+        return isNull;
+    }
     /**
      * Private class used to decode and normalize date strings.
      */
@@ -757,5 +827,102 @@ public class PAUtil {
         }
         return false;
         
+    }
+    
+    /**
+     * Check if value exists.
+     * 
+     * @param value the value
+     * @param tableName the table name
+     * @param column the column
+     * 
+     * @return true, if successful
+     * 
+     * @throws PAException the PA exception
+     */
+    public static boolean checkIfValueExists(String value, String tableName, String column) throws PAException {
+        String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = '" + value + "'";
+        Session session = null;
+        boolean exists = true;
+        int count = 0;
+        try { 
+          session = HibernateUtil.getCurrentSession();
+          Statement st = session.connection().createStatement();
+          ResultSet rs = st.executeQuery(sql);
+           while (rs.next()) {
+             count++;
+           }
+           if (count == 0) {
+             exists = false;
+           }
+       
+        }  catch (SQLException sqle) {
+            LOG.error(" Hibernate exception while checking for value " + value + " from table " + tableName , sqle);
+        } 
+        return exists;
+      }
+    
+    /**
+     * @param value value
+     * @return bd
+     */
+    public static BigDecimal convertStringToDecimal(String value) {
+        BigDecimal bd = null;
+        if (value != null && isNumber(value)) {
+            bd = BigDecimal.valueOf(Long.parseLong(value));
+        }
+        return bd;
+    }
+    
+    /**
+     * Checks if is number.
+     * 
+     * @param value the value
+     * 
+     * @return true, if is number
+     */
+    public static boolean isNumber(String value) {
+      boolean isNumber = true;
+      try {
+         Long.parseLong(value);
+      } catch (NumberFormatException e) {
+         isNumber = false;
+      }
+       return isNumber;
+    }
+    /**
+     * @param javapq javapq
+     * @return bd
+     */
+    public static String convertPqToUnit(JavaPq javapq) {
+        String unit = null;
+        if (javapq != null && javapq.getUnit() != null) {
+           unit = javapq.getUnit();
+        }
+        return unit;
+    }
+    
+    /**
+     * @param javapq javapq
+     * @return bd
+     */
+    public static BigDecimal convertPqToDecimal(JavaPq javapq) {
+        BigDecimal bd = null;
+        if (javapq != null && javapq.getValue() != null) {
+            bd = javapq.getValue();
+        }
+        return bd;
+    }
+    
+    /**
+     * @param javapq javapq
+     * @return bd
+     */
+    public static Integer convertPqToPrecision(JavaPq javapq) {
+        Integer precision = null;
+        if (javapq != null && javapq.getPrecision() != null) {
+          precision = javapq.getPrecision();
+        }
+        return precision;
     }
 }

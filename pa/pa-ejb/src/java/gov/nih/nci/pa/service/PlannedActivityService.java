@@ -82,6 +82,8 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.PlannedProcedureDTO;
+import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 
 import java.util.List;
 
@@ -141,4 +143,97 @@ public interface PlannedActivityService  extends StudyPaService<PlannedActivityD
      */
     void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
     
+    /**
+     * Creates the planned substance administration.
+     * 
+     * @param dto the dto
+     * 
+     * @return the planned substance administration dto
+     * 
+     * @throws PAException the PA exception
+     */
+    PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(
+            PlannedSubstanceAdministrationDTO dto) throws PAException;
+    
+    
+    /**
+     * Gets the planned substance administration by study protocol.
+     * 
+     * @param ii the ii
+     * 
+     * @return the planned substance administration by study protocol
+     * 
+     * @throws PAException the PA exception
+     */
+    List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
+    throws PAException;
+    
+    /**
+     * Update planned substance administration.
+     * 
+     * @param dto the dto
+     * 
+     * @return the planned substance administration dto
+     * 
+     * @throws PAException the PA exception
+     */
+    PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(
+            PlannedSubstanceAdministrationDTO dto) throws PAException;
+    
+    /**
+     * Gets the planned substance administration.
+     * 
+     * @param ii the ii
+     * 
+     * @return the planned substance administration
+     * 
+     * @throws PAException the PA exception
+     */
+    PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(Ii ii) throws PAException;
+    
+    /**
+     * Creates the planned substance administration.
+     * 
+     * @param dto the dto
+     * 
+     * @return the planned substance administration dto
+     * 
+     * @throws PAException the PA exception
+     */
+    PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto) throws PAException;
+    
+    
+    /**
+     * Gets the planned substance administration by study protocol.
+     * 
+     * @param ii the ii
+     * 
+     * @return the planned substance administration by study protocol
+     * 
+     * @throws PAException the PA exception
+     */
+    List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii)
+    throws PAException;
+    
+    /**
+     * Update planned substance administration.
+     * 
+     * @param dto the dto
+     * 
+     * @return the planned substance administration dto
+     * 
+     * @throws PAException the PA exception
+     */
+    PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto) throws PAException;
+    
+    /**
+     * Gets the planned substance administration.
+     * 
+     * @param ii the ii
+     * 
+     * @return the planned substance administration
+     * 
+     * @throws PAException the PA exception
+     */
+    PlannedProcedureDTO getPlannedProcedure(Ii ii) throws PAException;
 }

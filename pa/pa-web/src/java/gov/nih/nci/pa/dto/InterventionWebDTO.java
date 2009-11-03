@@ -83,6 +83,7 @@ package gov.nih.nci.pa.dto;
  * @author Hugh Reinhart
  * @since 11/01/2008
  */
+@SuppressWarnings({"PMD" })
 public class InterventionWebDTO {
     private String identifier;
     private String plannedActivityIdentifier;
@@ -93,6 +94,31 @@ public class InterventionWebDTO {
     private String type;
     private Boolean armAssignment;
     private String ctGovType;
+    
+  //DRUG & RADIATION Attribures
+    
+    private String minDoseValue;
+    private String maxDoseValue;
+    private String doseUOM;
+    private String doseDurationValue;
+    private String doseDurationUOM;
+    private String doseRegimen;
+    private String minDoseTotalValue;
+    private String maxDoseTotalValue;
+    private String doseTotalUOM;
+    private String routeOfAdministration;
+    private String doseForm;
+    private String doseFrequency;
+    
+    private String approachSite;
+    private String targetSite;
+    
+    
+    //PLANNED PROCEDURE Attributes
+    private String procedureName;
+    
+    
+    
     /**
      * @return the identifier
      */
@@ -201,4 +227,185 @@ public class InterventionWebDTO {
     public void setCtGovType(String ctGovType) {
         this.ctGovType = ctGovType;
     }
+    /**
+     * @return the minDoseValue
+     */ 
+    public String getMinDoseValue() {
+      return minDoseValue;
+    }
+    /**
+     * @param minDoseValue the minDoseValue to set
+     */
+    public void setMinDoseValue(String minDoseValue) {
+       this.minDoseValue = minDoseValue;
+    }
+    /**
+     * @return the maxDoseValue
+     */
+     public String getMaxDoseValue() {
+      return maxDoseValue;
+     }
+    /**
+     * @param maxDoseValue the maxDoseValue to set
+     */
+    public void setMaxDoseValue(String maxDoseValue) {
+      this.maxDoseValue = maxDoseValue;
+    }
+    /**
+     * @return the doseUOM
+     */
+     public String getDoseUOM() {
+      return doseUOM;
+     }
+    /**
+     * @param doseUOM the doseUOM to set
+     */
+     public void setDoseUOM(String doseUOM) {
+      this.doseUOM = doseUOM;
+     }
+     /**
+      * @return the doseDurationValue 
+      */
+     public String getDoseDurationValue() {
+       return doseDurationValue;
+     }
+ /**
+  * @param doseDurationValue the doseDurationValue to set
+  */
+   public void setDoseDurationValue(String doseDurationValue) {
+     this.doseDurationValue = doseDurationValue;
+   }
+  /**
+   * @return the doseDurationUOM
+   */
+   public String getDoseDurationUOM() {
+     return doseDurationUOM;
+   }
+    /**
+     * @param doseDurationUOM the doseDurationUOM to set
+     */
+     public void setDoseDurationUOM(String doseDurationUOM) {
+       this.doseDurationUOM = doseDurationUOM;
+     }
+    /**
+     * @return the doseRegimen
+     */
+     public String getDoseRegimen() {
+       return doseRegimen;
+     }
+    /**
+     * @param doseRegimen the doseRegimen to set
+     */
+     public void setDoseRegimen(String doseRegimen) {
+        this.doseRegimen = doseRegimen;
+     }
+    /**
+     * @return the minDoseTotalValue
+     */
+     public String getMinDoseTotalValue() {
+       return minDoseTotalValue;
+    }
+    /**
+     * @param minDoseTotalValue the minDoseTotalValue to set
+     */
+    public void setMinDoseTotalValue(String minDoseTotalValue) {
+       this.minDoseTotalValue = minDoseTotalValue;
+    }
+    /**
+     * @return the maxDoseTotalValue
+     */
+     public String getMaxDoseTotalValue() {
+       return maxDoseTotalValue;
+     }
+    /**
+     * @param maxDoseTotalValue the maxDoseTotalValue to set
+     */
+     public void setMaxDoseTotalValue(String maxDoseTotalValue) {
+        this.maxDoseTotalValue = maxDoseTotalValue;
+     }
+     /**
+      * @return the doseTotalUOM
+      */
+      public String getDoseTotalUOM() {
+        return doseTotalUOM;
+      }
+     /**
+      * @param doseTotalUOM the doseTotalUOM to set
+      */
+     public void setDoseTotalUOM(String doseTotalUOM) {
+       this.doseTotalUOM = doseTotalUOM;
+     }
+    /**
+     * @return the routeOfAdministration
+     */
+     public String getRouteOfAdministration() {
+      return routeOfAdministration;
+     }
+    /**
+     * @param routeOfAdministration the routeOfAdministration to set
+     */
+     public void setRouteOfAdministration(String routeOfAdministration) {
+      this.routeOfAdministration = routeOfAdministration;
+     }
+     /**
+      * @return the doseForm
+      */
+      public String getDoseForm() {
+       return doseForm;
+      }
+      /**
+       * @param doseForm the doseForm to set
+       */
+       public void setDoseForm(String doseForm) {
+         this.doseForm = doseForm;
+       }
+     /**
+      * @return the doseFrequency
+      */
+      public String getDoseFrequency() {
+       return doseFrequency;
+     }
+     /**
+      * @param doseFrequency the doseFrequency to set
+      */
+      public void setDoseFrequency(String doseFrequency) {
+        this.doseFrequency = doseFrequency;
+      }
+     /**
+      * @return the procedureName
+      */
+     public String getProcedureName() {
+       return procedureName;
+     }
+    /**
+     * @param procedureName the procedureName to set
+     */
+     public void setProcedureName(String procedureName) {
+       this.procedureName = procedureName;
+     }
+    /**
+     * @return the approachSite
+     */
+    public String getApproachSite() {
+       return approachSite;
+    }
+    /**
+     * @param approachSite the approachSite to set
+     */
+     public void setApproachSite(String approachSite) {
+       this.approachSite = approachSite;
+     }
+    /**
+     * @return the targetSite
+     */
+     public String getTargetSite() {
+       return targetSite;
+     }
+    /**
+     * @param targetSite the targetSite to set
+     */
+     public void setTargetSite(String targetSite) {
+       this.targetSite = targetSite;
+     }
+    
 }

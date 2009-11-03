@@ -17,8 +17,9 @@ function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
     // leave this function to prevent 'error on page' 
 }
-function handleEdit(rowId){
+function handleEdit(rowId, type){
     document.interventionForm.selectedRowIdentifier.value = rowId;
+    document.interventionForm.selectedType.value = type;
     document.interventionForm.action="trialInterventionsedit.action";
     document.interventionForm.submit(); 
 }
@@ -44,6 +45,7 @@ function handleCreate(){
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if> <s:form name="interventionForm"><s:hidden name="selectedRowIdentifier"/> 
+<s:hidden name="selectedType"/>
     <h2><fmt:message
         key="interventions.details.title" /></h2>
     <table class="form">
@@ -69,7 +71,7 @@ function handleCreate(){
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 					|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="interventions.edit" headerClass="centered" class="action">
-                    <s:a href="#" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier})">
+                    <s:a href="#" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier},'%{#attr.row.type}')">
                         <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                             alt="Edit" width="16" height="16" />
                     </s:a>

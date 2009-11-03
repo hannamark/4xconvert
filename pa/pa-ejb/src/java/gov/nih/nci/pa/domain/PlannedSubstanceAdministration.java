@@ -92,6 +92,7 @@ import javax.persistence.Entity;
  * @since 21/10/2009
  */
 @Entity
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.TooManyFields" })
 @DiscriminatorColumn(name = "PlannedSubstanceAdministration", discriminatorType = DiscriminatorType.STRING)
 public class PlannedSubstanceAdministration extends PlannedActivity {
 
@@ -111,7 +112,8 @@ public class PlannedSubstanceAdministration extends PlannedActivity {
     private String routeOfAdministrationCode;
     private BigDecimal doseDurationValue;
     private String doseDurationUnit;
-    
+    private String targetSiteCode;
+    private String approachSiteCode;
     /**
      * Gets the dose min value.
      * @return the dose min value
@@ -366,5 +368,35 @@ public class PlannedSubstanceAdministration extends PlannedActivity {
     public void setDoseDurationUnit(String doseDurationUnit) {
         this.doseDurationUnit = doseDurationUnit;
     }
+
+    /**
+     * @return the targetSiteCode
+     */
+    @Column(name = "TARGET_SITE_CODE")
+    public String getTargetSiteCode() {
+      return targetSiteCode;
+    }
+
+    /**
+     * @param targetSiteCode the targetSiteCode to set
+     */
+     public void setTargetSiteCode(String targetSiteCode) {
+       this.targetSiteCode = targetSiteCode;
+     }
+
+    /**
+     * @return the approachSiteCode
+     */
+     @Column(name = "APPROACH_SITE_CODE")
+     public String getApproachSiteCode() {
+       return approachSiteCode;
+     }
+
+    /**
+     * @param approachSiteCode the approachSiteCode to set
+     */
+     public void setApproachSiteCode(String approachSiteCode) {
+       this.approachSiteCode = approachSiteCode;
+     }
     
 }

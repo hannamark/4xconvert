@@ -127,6 +127,7 @@ public class Converters {
     private static StudyInboxConverter studyInboxConverter = new StudyInboxConverter();
     private static StudyCheckoutConverter studyCheckoutConverter = new StudyCheckoutConverter();
     private static PlannedSubstanceAdministrationConverter psaConverter = new PlannedSubstanceAdministrationConverter();
+    private static PlannedProcedureConverter plannedProcedureConverter = new PlannedProcedureConverter();
     
 /**
      * @param clazz class
@@ -222,6 +223,9 @@ public class Converters {
         }
         if (clazz.equals(PlannedSubstanceAdministrationConverter.class)) {
             return (TYPE) psaConverter;
+        }
+        if (clazz.equals(PlannedProcedureConverter.class)) {
+            return (TYPE) plannedProcedureConverter;
         }
         throw new PAException("Converter needs to be added to gov.nih.nci.pa.iso.convert.Converters.  ");
     }

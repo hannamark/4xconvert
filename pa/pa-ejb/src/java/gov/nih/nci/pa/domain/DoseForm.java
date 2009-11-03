@@ -79,7 +79,6 @@
 
 package gov.nih.nci.pa.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -91,133 +90,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "DOSE_FORM")
-public class DoseForm extends AbstractEntity {
+public class DoseForm extends AbstractLookUpEntity {
    
     private static final long serialVersionUID = 1L;
-    private String code;
-    private String displayName;
-    private String description;
-    private String conceptId;
-    private String publicId;
-    private String codingSystem;
-    private String codingSystemName;
     
-    /**
-     * Gets the code.
-     * @return the code
-     */
-    @Column(name = "CODE")
-    public String getCode() {
-        return code;
-    }
-    
-    /**
-     * Sets the code.
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-    
-    /**
-     * Gets the display name.
-     * @return the display name
-     */
-    @Column(name = "DISPLAY_NAME")
-    public String getDisplayName() {
-        return displayName;
-    }
-    
-    /**
-     * Sets the display name.
-     * @param displayName the new display name
-     */
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-    
-    /**
-     * Gets the description.
-     * @return the description
-     */
-    @Column(name = "DESCRIPTION")
-    public String getDescription() {
-        return description;
-    }
-    
-    /**
-     * Sets the description.
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
-    /**
-     * Gets the concept id.
-     * @return the concept id
-     */
-    @Column(name = "CONCEPT_ID")
-    public String getConceptId() {
-        return conceptId;
-    }
-    
-    /**
-     * Sets the concept id.
-     * @param conceptId the new concept id
-     */
-    public void setConceptId(String conceptId) {
-        this.conceptId = conceptId;
-    }
-    
-    /**
-     * Gets the public id.
-     * @return the public id
-     */
-    @Column(name = "PUBLIC_ID")
-    public String getPublicId() {
-        return publicId;
-    }
-    
-    /**
-     * Sets the public id.
-     * @param publicId the new public id
-     */
-    public void setPublicId(String publicId) {
-        this.publicId = publicId;
-    }
-    
-    /**
-     * Gets the coding system.
-     * @return the coding system
-     */
-    @Column(name = "CODING_SYSTEM")
-    public String getCodingSystem() {
-        return codingSystem;
-    }
-    
-    /**
-     * Sets the coding system.
-     * @param codingSystem the new coding system
-     */
-    public void setCodingSystem(String codingSystem) {
-        this.codingSystem = codingSystem;
-    }
-    
-    /**
-     * Gets the coding system name.
-     * @return the coding system name
-     */
-    @Column(name = "CODING_SYSTEM_NAME")
-    public String getCodingSystemName() {
-        return codingSystemName;
-    }
-    
-    /**
-     * Sets the coding system name.
-     * @param codingSystemName the new coding system name
-     */
-    public void setCodingSystemName(String codingSystemName) {
-        this.codingSystemName = codingSystemName;
-    }      
 }

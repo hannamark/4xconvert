@@ -96,7 +96,9 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     /** Eligibility Criterion. */
     ELIGIBILITY_CRITERION("Eligibility Criterion"),
     /** Substance Administration. */
-    SUBSTANCE_ADMINISTRATION("Substance Administration"), 
+    SUBSTANCE_ADMINISTRATION("Substance Administration"),
+    /** Substance Administration. */
+    PLANNED_PROCEDURE("Planned Procedure"), 
     /** Other. */
     OTHER("Other");
      

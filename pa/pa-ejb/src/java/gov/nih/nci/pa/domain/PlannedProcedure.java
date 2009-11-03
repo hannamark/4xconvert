@@ -76,103 +76,55 @@
 * 
 * 
 */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.domain.Intervention;
-import gov.nih.nci.pa.domain.PlannedActivity;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
 
 /**
- * The Class PlannedActivityConverter.
+ * The Class PlannedProcedure.
  * 
- * @author Hugh Reinhart
- * @since 10/29/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the copyright holder, NCI.
- *
+ * @author Anupama Sharma
+ * @since 29/10/2009
  */
+@Entity
+@DiscriminatorColumn(name = "PlannedProcedure", discriminatorType = DiscriminatorType.STRING)
+public class PlannedProcedure extends PlannedActivity {
 
-/// @param <BO> domain object
-//* @param <DTO> Dto class <DTO extends PlannedActivityDTO, BO extends PlannedActivity >
-public class PlannedActivityConverter
-extends AbstractConverter<PlannedActivityDTO, PlannedActivity> {   
-
-/**
- * @param pa PlannedActivity
- * @return PlannedActivityDTO
- */
-@Override
-public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
-       return convertFromDomainToDTO(pa, new PlannedActivityDTO());
-   }
-   
-   /**
-   *
-   * @param paDTO PlannedActivityDTO
-   * @return PlannedActivity PlannedActivity
-   */
-@Override
-  public PlannedActivity convertFromDtoToDomain(PlannedActivityDTO paDTO) {
-      return convertFromDTOToDomain(paDTO , new PlannedActivity());
-  }
-  
+    private static final long serialVersionUID = 1L;    
+    private String targetSiteCode;
+    private String methodCode;
+    
     /**
-     * 
-     * @param bo PlannedActivity domain object
-     * @param dto PlannedActivityDTO
-     * @return dto PlannedActivityDTO
+     * @return the targetSiteCode
      */
-    public static PlannedActivityDTO convertFromDomainToDTO(PlannedActivity bo, PlannedActivityDTO dto) {
-        dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
-        dto.setIdentifier(IiConverter.convertToActivityIi(bo.getId()));
-        if (bo.getIntervention() != null) {
-            dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
-        }
-        dto.setLeadProductIndicator(BlConverter.convertToBl(bo.getLeadProductIndicator()));
-        if (bo.getStudyProtocol() != null) {
-            dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
-        }
-        dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
-        dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
-        return dto;
+    @Column(name = "TARGET_SITE_CODE")
+    public String getTargetSiteCode() {
+      return targetSiteCode;
     }
 
     /**
-     * Create a new domain object from a given dto.
-     * @param dto PlannedActivityDTO
-     * @param bo PlannedActivity
-     * @return PlannedActivity
+     * @param targetSiteCode the targetSiteCode to set
      */
-    public static PlannedActivity convertFromDTOToDomain(PlannedActivityDTO dto , PlannedActivity bo) {
-        StudyProtocol spBo = null;
-        if (!PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            spBo = new StudyProtocol();
-            spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-        }
+     public void setTargetSiteCode(String targetSiteCode) {
+       this.targetSiteCode = targetSiteCode;
+     }
 
-        Intervention invBo = null;
-        if (!PAUtil.isIiNull(dto.getInterventionIdentifier())) {
-            invBo = new Intervention();
-            invBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
-        }
-        
-        bo.setCategoryCode(ActivityCategoryCode.getByCode(CdConverter.convertCdToString(dto.getCategoryCode())));
-        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        bo.setIntervention(invBo);
-        bo.setLeadProductIndicator(BlConverter.covertToBoolean(dto.getLeadProductIndicator()));
-        bo.setStudyProtocol(spBo);
-        bo.setSubcategoryCode(ActivitySubcategoryCode.
-                getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
-        bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
-        return bo;
-    }
+    /**
+     * @return the methodCode
+     */
+     @Column(name = "METHOD_CODE")
+     public String getMethodCode() {
+       return methodCode;
+     }
 
+    /**
+     * @param methodCode the methodCode to set
+     */
+     public void setMethodCode(String methodCode) {
+       this.methodCode = methodCode;
+     }
+    
 }

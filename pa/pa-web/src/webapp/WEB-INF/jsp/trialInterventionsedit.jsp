@@ -21,7 +21,17 @@
     src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript"
     src="<c:url value='/scripts/js/prototype.js'/>"></script>
+    
 <c:url value="/protected/popupInt.action" var="lookupUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=DoseForm&divName=loadDoseFormDetails" var="lookupDoseFormUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=RouteOfAdministration&divName=loadDoseROADetails" var="lookupROAUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=DoseFrequency&divName=loadDoseFreqDetails" var="lookupDoseFreqUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=UnitOfMeasurement&divName=loadDoseUOMDetails" var="lookupDoseUOMUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=UnitOfMeasurement&divName=loadDoseDurationUOMDetails" var="lookupDoseDurationUOMUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=UnitOfMeasurement&divName=loadTotalDoseUOMDetails" var="lookupTotalDoseUOMUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=TargetSite&divName=loadTargetSiteDetails" var="lookupTargetSiteUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=TargetSite&divName=loadApproachSiteDetails" var="lookupApproachSiteUrl" />
+<c:url value="/protected/popupTypeInterventiontype.action?className=MethodCode&divName=loadMethodCodeDetails" var="lookupMethodCodeUrl" />
 
 
 <script type="text/javascript">
@@ -41,19 +51,62 @@
             document.interventionForm.submit();
         }
     }
-    function statusChange() {
-        newType=document.interventionForm.interventionType.value;
-        if(newType=="Drug"){
-          document.interventionForm.interventionLeadIndicator.disabled=false;
-          document.interventionForm.leadIndicatorLabel.disabled=false;
-        } else {
-          document.interventionForm.interventionLeadIndicator.disabled=true;
-          document.interventionForm.leadIndicatorLabel.disabled=true;
-        }
+     function statusChange() {
+            newType=document.interventionForm.interventionType.value;
+            if(newType=="Drug"){
+              document.interventionForm.interventionLeadIndicator.disabled=false;
+              document.getElementById("leadIndicatorLabel").disabled=false;         
+            } else {
+              document.interventionForm.interventionLeadIndicator.disabled=true;
+              document.getElementById("leadIndicatorLabel").disabled=true;          
+            }
+            
+          var interventionName = document.interventionForm.interventionName.value;
+          var interventionOtherNames =  document.interventionForm.interventionOtherNames.value;
+          var interventionId =  document.interventionForm.interventionIdentifier.value;
+            var url = '/pa/protected/ajaxptpInterventiondisplaySubPage.action?interventionType='+newType+'&interventionName='+interventionName+'&interventionOtherNames='+interventionOtherNames+'&interventionId='+interventionId;
+                var div = document.getElementById('loadDetails');   
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                var aj = new Ajax.Updater(div, url, {
+                   asynchronous: true,
+                   method: 'get',
+                   evalScripts: false
+                });
+         return false;
+         
+         
     }
+    
     function lookup(){
         showPopWin('${lookupUrl}', 900, 400, '', 'Intervention');
     }   
+    function lookupDoseForm(){
+        showPopWin('${lookupDoseFormUrl}', 900, 400, '', 'Dose Form');
+    }
+    function lookupROA(){
+        showPopWin('${lookupROAUrl}', 900, 400, '', 'Route of Administration');
+    }
+    function lookupDoseFreq(){
+        showPopWin('${lookupDoseFreqUrl}', 900, 400, '', 'Dose Frequency');
+    }
+    function lookupDoseUOM(){
+        showPopWin('${lookupDoseUOMUrl}', 900, 400, '', 'Dose Unit Of Measure');
+    }
+    function lookupDoseDurationUOM(){
+        showPopWin('${lookupDoseDurationUOMUrl}', 900, 400, '', 'Dose Duration Unit Of Measure');
+    }
+    function lookupTotalDoseUOM(){
+        showPopWin('${lookupTotalDoseUOMUrl}', 900, 400, '', 'Total Dose Unit Of Measure');
+    }
+    function lookupTargetSite(){
+        showPopWin('${lookupTargetSiteUrl}', 900, 400, '', 'Target Site');
+    }
+    function lookupApproachSite(){
+        showPopWin('${lookupApproachSiteUrl}', 900, 400, '', 'Approach Site');
+    }
+    function lookupMethodCode(){
+        showPopWin('${lookupMethodCodeUrl}', 900, 400, '', 'Method Code');
+    }
     function loadDiv(intid){
          var url = '/pa/protected/ajaxptpInterventiondisplay.action?interventionId='+intid;
          var div = document.getElementById('loadDetails');   
@@ -113,7 +166,7 @@
                     <span class="btn_img"><span class="cancel">Cancel</span></span>
                 </s:a>
             </li>
-        </ul>
+         </ul>
         </del></div>
         </td>
     </tr>

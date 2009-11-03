@@ -100,6 +100,8 @@ public class PlannedSubstanceAdministrationDTO extends PlannedActivityDTO {
     private Ivl<Pq> doseTotal;  
     private Cd routeOfAdministrationCode;
     private Pq doseDuration;  
+    private Cd targetSiteCode; 
+    private Cd approachSiteCode; 
               
     /**
      * Gets the dose.
@@ -228,4 +230,32 @@ public class PlannedSubstanceAdministrationDTO extends PlannedActivityDTO {
     public void setDoseDuration(Pq doseDuration) {
         this.doseDuration = doseDuration;
     }
+
+    /**
+     * @return the targetSiteCode
+     */
+     public Cd getTargetSiteCode() {
+       return targetSiteCode;
+     }
+
+    /**
+     * @param targetSiteCode the targetSiteCode to set
+     */
+     public void setTargetSiteCode(Cd targetSiteCode) {
+       this.targetSiteCode = targetSiteCode;
+     }
+
+    /**
+     * @return the approachSiteCode
+     */
+     public Cd getApproachSiteCode() {
+       return approachSiteCode;
+     }
+
+    /**
+     * @param approachSiteCode the approachSiteCode to set
+     */
+    public void setApproachSiteCode(Cd approachSiteCode) {
+     this.approachSiteCode = approachSiteCode;
+   }
 }

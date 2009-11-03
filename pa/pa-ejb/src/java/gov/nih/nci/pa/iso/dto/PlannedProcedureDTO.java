@@ -76,132 +76,49 @@
 * 
 * 
 */
-package gov.nih.nci.pa.action;
+package gov.nih.nci.pa.iso.dto;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.service.MockInterventionService;
-
-import org.apache.struts2.ServletActionContext;
-import org.junit.Before;
-import org.junit.Test;
+import gov.nih.nci.coppa.iso.Cd;
 
 /**
- * @author hreinhart
- *
+ * The Class PlannedProcedureDTO.
+ * 
+ * @author Anupama Sharma
+ * @since 29/10/2009
  */
-public class TrialInterventionsActionTest extends AbstractPaActionTest {
-    private static TrialInterventionsAction act;
+public class PlannedProcedureDTO extends PlannedActivityDTO {
     
-    @Before
-    public void prepare() throws Exception {
-        act = new TrialInterventionsAction();
-        act.prepare();
-    }
-
-    @Test
-    public void listTest() throws Exception {
-        // select from menu
-        assertEquals(AbstractListEditAction.AR_LIST, act.execute());
-    }
+    private static final long serialVersionUID = 1L;
     
-    @Test
-    public void updateTest() throws Exception {
-        // select from menu
-        String ar = act.execute();
-        assertEquals(AbstractListEditAction.AR_LIST, ar);
-        assertFalse(act.getInterventionsList().isEmpty());
+    private Cd targetSiteCode; 
+    private Cd methodCode; 
+              
+    
+    /**
+     * @return the targetSiteCode
+     */
+     public Cd getTargetSiteCode() {
+       return targetSiteCode;
+     }
 
-        // click edit
-        act.setSelectedRowIdentifier(act.getInterventionsList().get(0).getPlannedActivityIdentifier());
-        assertEquals(AbstractListEditAction.AR_EDIT, act.edit());
-        assertEquals("edit", act.getCurrentAction());
+    /**
+     * @param targetSiteCode the targetSiteCode to set
+     */
+     public void setTargetSiteCode(Cd targetSiteCode) {
+       this.targetSiteCode = targetSiteCode;
+     }
 
-        String frmDesc = act.getInterventionDescription();
-        Boolean frmLead = act.getInterventionLeadIndicator();
-        String newDesc = "New Description";
-        assertFalse(newDesc.equals(frmDesc));
-        Boolean newLead = !frmLead;
+    /**
+     * @return the methodCode
+     */
+     public Cd getMethodCode() {
+       return methodCode;
+     }
 
-        // handle service exception during update
-        act.setSelectedRowIdentifier(null);
-        assertEquals(AbstractListEditAction.AR_EDIT, act.update());
-        assertTrue(act.hasErrors());
-        act.clearErrorsAndMessages();
-
-        // enter a description and change lead indicator
-        act.setSelectedRowIdentifier(act.getInterventionsList().get(0).getPlannedActivityIdentifier());
-        act.setInterventionDescription(newDesc);
-        act.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
-        act.setInterventionLeadIndicator(newLead);
-        assertEquals(AbstractListEditAction.AR_LIST, act.update());
-        assertEquals(newDesc, act.getInterventionsList().get(0).getDescription());
-        if (newLead) {
-            assertTrue(TrialInterventionsAction.LEAD_TEXT.equals(act.getInterventionsList().get(0).getLeadIndicator()));
-        } else {
-            assertNull(act.getInterventionsList().get(0).getLeadIndicator());
-        }
-        assertFalse(act.hasErrors());
-        String message = (String)ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE);
-        assertEquals(Constants.UPDATE_MESSAGE, message);
-    }
-
-    @Test
-    public void deleteTest() throws Exception {
-        // select from menu
-        String ar = act.execute();
-        assertEquals(AbstractListEditAction.AR_LIST, ar);
-        assertFalse(act.getInterventionsList().isEmpty());
-        int initialSize = act.getInterventionsList().size();
-        
-        // handle service exception during delete
-        act.setSelectedRowIdentifier(null);
-        assertEquals(AbstractListEditAction.AR_LIST, act.delete());
-        assertTrue(act.hasErrors());
-        assertEquals(initialSize, act.getInterventionsList().size());
-        act.clearErrorsAndMessages();
-
-        // delete intervention
-        act.setSelectedRowIdentifier(act.getInterventionsList().get(0).getPlannedActivityIdentifier());
-        assertEquals(AbstractListEditAction.AR_LIST, act.delete());
-        assertFalse(act.hasErrors());
-        String message = (String)ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE);
-        assertEquals(Constants.DELETE_MESSAGE, message);
-        assertEquals(initialSize - 1, act.getInterventionsList().size());
-        
-    }
-
-    @Test
-    public void addTest() throws Exception {
-        // select from menu
-        String ar = act.execute();
-        assertEquals(AbstractListEditAction.AR_LIST, ar);
-        int initialCount = act.getInterventionsList().size();
-
-        // click add
-        assertEquals(AbstractListEditAction.AR_EDIT, act.create());
-        assertEquals("create", act.getCurrentAction());
-
-        // save w/o entering data
-        assertEquals(AbstractListEditAction.AR_EDIT, act.add());
-        assertTrue(act.hasErrors());
-        act.clearErrorsAndMessages();
-        
-        // select an intervention
-        assertEquals(AbstractListEditAction.AR_EDIT, act.display());
-        act.setInterventionIdentifier(MockInterventionService.list.get(0).getId().toString());
-
-        // enter data and save
-        act.setInterventionDescription("desc");
-        act.setInterventionType(ActivitySubcategoryCode.OTHER.getCode());
-        assertEquals(AbstractListEditAction.AR_LIST, act.add());
-        assertEquals(initialCount + 1, act.getInterventionsList().size());
-        assertFalse(act.hasErrors());
-        String message = (String)ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE);
-        assertEquals(Constants.CREATE_MESSAGE, message);
-    }
+    /**
+     * @param methodCode the methodCode to set
+     */
+    public void setMethodCode(Cd methodCode) {
+     this.methodCode = methodCode;
+   }
 }

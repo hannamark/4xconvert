@@ -119,7 +119,17 @@
         <action name="ajaxptpIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>  
         </action>
-         
+         <action name="ajaxptpTypeIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
+            <result name="loadDoseUOMDetails">/WEB-INF/jsp/nodecorate/displayDoseUOM.jsp</result>  
+            <result name="loadDoseFormDetails">/WEB-INF/jsp/nodecorate/displayDoseForm.jsp</result>  
+            <result name="loadDoseFreqDetails">/WEB-INF/jsp/nodecorate/displayDoseFrequency.jsp</result>  
+            <result name="loadDoseROADetails">/WEB-INF/jsp/nodecorate/displayRouteOfAdmin.jsp</result>  
+            <result name="loadDoseDurationUOMDetails">/WEB-INF/jsp/nodecorate/displayDoseDurationUOM.jsp</result>  
+            <result name="loadTotalDoseUOMDetails">/WEB-INF/jsp/nodecorate/displayTotalDoseUOM.jsp</result>  
+            <result name="loadTargetSiteDetails">/WEB-INF/jsp/nodecorate/displayTargetSite.jsp</result>  
+            <result name="loadApproachSiteDetails">/WEB-INF/jsp/nodecorate/displayApproachSite.jsp</result>  
+            <result name="loadMethodCodeDetails">/WEB-INF/jsp/nodecorate/displayMethodCode.jsp</result>  
+        </action>
         <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">    
         	<result name="edit">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>
         	<result name="facilitySave">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
@@ -178,7 +188,10 @@
         <action name="popupInt*" class="gov.nih.nci.pa.action.PopUpIntAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupinterventions{1}.jsp</result>
         </action>
-
+        <action name="popupTypeIntervention*" class="gov.nih.nci.pa.action.PopUpTypeInterventionAction" method="{1}">
+           <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
+           <result name="lookUp">/WEB-INF/jsp/nodecorate/lookUpInterventionTypes.jsp</result>            
+        </action>
         <action name="popup*" class="gov.nih.nci.pa.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>

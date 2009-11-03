@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * The Class PlannedSubstanceAdministrationConverter.
@@ -92,7 +93,9 @@ import gov.nih.nci.pa.iso.util.StConverter;
  * @author Kalpana Guthikonda
  * @since 21/10/2009
  */
-public class PlannedSubstanceAdministrationConverter  extends PlannedActivityConverter {
+@SuppressWarnings({"PMD" })
+public class PlannedSubstanceAdministrationConverter  
+extends PlannedActivityConverter {
     
     /**
      * Convert from domain to dto.
@@ -126,7 +129,8 @@ public class PlannedSubstanceAdministrationConverter  extends PlannedActivityCon
            doseDuration.setUnit(psa.getDoseDurationUnit());
        }
        psaDTO.setDoseDuration(doseDuration);
-       
+       psaDTO.setApproachSiteCode(CdConverter.convertStringToCd(psa.getApproachSiteCode()));
+       psaDTO.setTargetSiteCode(CdConverter.convertStringToCd(psa.getTargetSiteCode()));
        return psaDTO;
    }
 
@@ -135,30 +139,66 @@ public class PlannedSubstanceAdministrationConverter  extends PlannedActivityCon
     * @param psaDTO PlannedSubstanceAdministrationDTO
     * @return PlannedSubstanceAdministration PlannedSubstanceAdministration
     */
+   @SuppressWarnings({"PMD" })
    public static PlannedSubstanceAdministration convertFromDTOToDomain(PlannedSubstanceAdministrationDTO psaDTO) {
        PlannedSubstanceAdministration psa =  (PlannedSubstanceAdministration) PlannedActivityConverter
                                      .convertFromDTOToDomain(psaDTO , new PlannedSubstanceAdministration());
-       psa.setDoseDescription(StConverter.convertToString(psaDTO.getDoseDescription()));
-       psa.setDoseRegimen(StConverter.convertToString(psaDTO.getDoseRegimen()));
-       psa.setDoseFormCode(CdConverter.convertCdToString(psaDTO.getDoseFormCode())); 
-       psa.setDoseFrequencyCode(CdConverter.convertCdToString(psaDTO.getDoseFrequencyCode())); 
-       psa.setRouteOfAdministrationCode(CdConverter.convertCdToString(psaDTO.getRouteOfAdministrationCode())); 
-              
+       if (!PAUtil.isStNull(psaDTO.getDoseDescription())) {
+        psa.setDoseDescription(StConverter.convertToString(psaDTO.getDoseDescription()));
+       }
+       if (!PAUtil.isStNull(psaDTO.getDoseRegimen())) {
+        psa.setDoseRegimen(StConverter.convertToString(psaDTO.getDoseRegimen()));
+       } 
+       if (!PAUtil.isCdNull(psaDTO.getDoseFormCode())) {
+        psa.setDoseFormCode(CdConverter.convertCdToString(psaDTO.getDoseFormCode()));
+       }
+       if (!PAUtil.isCdNull(psaDTO.getDoseFrequencyCode())) {
+        psa.setDoseFrequencyCode(CdConverter.convertCdToString(psaDTO.getDoseFrequencyCode())); 
+       }
+       if (!PAUtil.isCdNull(psaDTO.getRouteOfAdministrationCode())) {
+        psa.setRouteOfAdministrationCode(CdConverter.convertCdToString(psaDTO.getRouteOfAdministrationCode()));
+       } 
+       if (!PAUtil.isCdNull(psaDTO.getApproachSiteCode())) {
+        psa.setApproachSiteCode(CdConverter.convertCdToString(psaDTO.getApproachSiteCode()));
+       }
+       if (!PAUtil.isCdNull(psaDTO.getTargetSiteCode())) {
+        psa.setTargetSiteCode(CdConverter.convertCdToString(psaDTO.getTargetSiteCode()));
+       }       
        if (psaDTO.getDose() != null) {
-           psa.setDoseMinValue(psaDTO.getDose().getLow().getValue());
+         if (!PAUtil.isIvlLowNull(psaDTO.getDose())) {
+            psa.setDoseMinValue(psaDTO.getDose().getLow().getValue());
+         }
+         if (!PAUtil.isIvlUnitNull(psaDTO.getDose())) {
            psa.setDoseMinUnit(psaDTO.getDose().getLow().getUnit());
+         }  
+         if (!PAUtil.isIvlHighNull(psaDTO.getDose())) {
            psa.setDoseMaxValue(psaDTO.getDose().getHigh().getValue());
+         }  
+         if (!PAUtil.isIvlUnitNull(psaDTO.getDose())) {  
            psa.setDoseMaxUnit(psaDTO.getDose().getHigh().getUnit());
+         }  
        }
        if (psaDTO.getDoseTotal() != null) {
-           psa.setDoseTotalMinValue(psaDTO.getDoseTotal().getLow().getValue());
-           psa.setDoseTotalMinUnit(psaDTO.getDoseTotal().getLow().getUnit());       
-           psa.setDoseTotalMaxValue(psaDTO.getDoseTotal().getHigh().getValue());
-           psa.setDoseTotalMaxUnit(psaDTO.getDoseTotal().getHigh().getUnit());
+         if (!PAUtil.isIvlLowNull(psaDTO.getDoseTotal())) {
+             psa.setDoseTotalMinValue(psaDTO.getDoseTotal().getLow().getValue());
+         }
+         if (!PAUtil.isIvlUnitNull(psaDTO.getDoseTotal())) {
+            psa.setDoseTotalMinUnit(psaDTO.getDoseTotal().getLow().getUnit());
+         }
+         if (!PAUtil.isIvlHighNull(psaDTO.getDoseTotal())) { 
+            psa.setDoseTotalMaxValue(psaDTO.getDoseTotal().getHigh().getValue());
+         } 
+         if (!PAUtil.isIvlUnitNull(psaDTO.getDoseTotal())) {
+            psa.setDoseTotalMaxUnit(psaDTO.getDoseTotal().getHigh().getUnit());
+         }  
        }
        if (psaDTO.getDoseDuration() != null) {
-           psa.setDoseDurationValue(psaDTO.getDoseDuration().getValue());
+         if (!PAUtil.isPqValueNull(psaDTO.getDoseDuration())) {
+            psa.setDoseDurationValue(psaDTO.getDoseDuration().getValue());
+         }
+         if (!PAUtil.isPqUnitNull(psaDTO.getDoseDuration())) {
            psa.setDoseDurationUnit(psaDTO.getDoseDuration().getUnit());
+         }
        }
        return psa;
    }

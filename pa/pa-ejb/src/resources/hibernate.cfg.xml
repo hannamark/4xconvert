@@ -75,7 +75,10 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.DoseForm" />
         <mapping class="gov.nih.nci.pa.domain.RouteOfAdministration" />
         <mapping class="gov.nih.nci.pa.domain.UnitOfMeasurement" />
-     
+        <mapping class="gov.nih.nci.pa.domain.TargetSite" />
+        <mapping class="gov.nih.nci.pa.domain.MethodCode" />
+        <mapping class="gov.nih.nci.pa.domain.PlannedProcedure" />
+             
         <!-- mapping classes for Accrual -->
         <mapping class="gov.nih.nci.pa.domain.Patient" />
         <mapping class="gov.nih.nci.pa.domain.PerformedActivity" />

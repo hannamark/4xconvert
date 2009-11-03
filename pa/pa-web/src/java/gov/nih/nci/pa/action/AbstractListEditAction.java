@@ -178,7 +178,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
         accrualStatusSvc = PaRegistry.getStudySiteAccrualStatusService();
         spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-        spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
+        spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
     }
 
     /**
