@@ -114,7 +114,8 @@ public class PathologyWebDto implements Serializable {
     /**
      * @return the grade
      */
-    @FieldExpressionValidator(expression="grade.code != null && grade.code.length() > 0", message="Please select a Pathology Grade")
+    @FieldExpressionValidator(expression = "grade.code != null && grade.code.length() > 0",
+            message = "Please select a Pathology Grade")
     public Cd getGrade() {
         return grade;
     }
@@ -129,7 +130,8 @@ public class PathologyWebDto implements Serializable {
     /**
      * @return the gradeSystem
      */
-    @FieldExpressionValidator(expression="gradeSystem.code != null && gradeSystem.code.length() > 0", message="Please select a Pathology Grade System")
+    @FieldExpressionValidator(expression = "gradeSystem.code != null && gradeSystem.code.length() > 0",
+            message = "Please select a Pathology Grade System")
     public Cd getGradeSystem() {
         return gradeSystem;
     }

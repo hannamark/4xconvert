@@ -127,7 +127,7 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      * Get the form data.
      * @return the form data object
      */
-    @VisitorFieldValidator(message="> ")
+    @VisitorFieldValidator(message = "> ")
     public PathologyWebDto getPathology() {
         return pathology;
     }
