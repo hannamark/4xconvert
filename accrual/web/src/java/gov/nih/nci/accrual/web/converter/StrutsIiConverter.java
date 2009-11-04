@@ -76,66 +76,48 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.action;
+
+package gov.nih.nci.accrual.web.converter;
+
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.util.IiConverter;
+
+import java.util.Map;
+
+import org.apache.struts2.util.StrutsTypeConverter;
+
+import com.opensymphony.xwork2.conversion.TypeConversionException;
 
 /**
- * The Class AbstractEditAccrualAction.
+ * Basic Ii struts type converter.
  * 
- * @author Kalpana Guthikonda
- * @since 10/28/2009
- * @param <DTO> class for dto's 
+ * @author lhebel
  */
-public abstract class AbstractEditAccrualAction<DTO> extends AbstractAccrualAction {
+public class StrutsIiConverter extends StrutsTypeConverter {
 
-    /** Serialized version marker. */
-    private static final long serialVersionUID = 1051062078457176080L;
-
-    /** Action result returned to display the detail page. */
-    private static final String AR_DETAIL = "detail";
-    
-    /** Bean to store current action. */
-    private String currentAction;
-    
-    /** Name of the next target when needed. */
-    private String nextTarget = null;
-    
-    /** The action result to perform a redirect using "next". */
-    public static final String NEXT = "next";
-    
     /**
-     * Default execute method for action classes.
-     * @return action result
+     * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public String execute() {
-        setCurrentAction(AR_DETAIL);
-        return super.execute();
-    }  
-
-    /**
-     * @return the currentAction
-     */
-    public String getCurrentAction() {
-        return currentAction;
-    }
-    /**
-     * @param currentAction the currentAction to set
-     */
-    public void setCurrentAction(String currentAction) {
-        this.currentAction = currentAction;
+    public Object convertFromString(Map map, String[] strings, Class aClass) {
+        if (strings.length != 1) {
+            throw new TypeConversionException(
+                    "Error in custom struts2 converter StrutsBlConverter.convertFromString().  "
+                    + "Expecting 1 string; " + strings.length + "were passed in.");
+        }
+        return IiConverter.convertToIi(strings[0]);
     }
 
     /**
-     * @param nextTarget the nextTarget to set
+     * {@inheritDoc}
      */
-    public void setNextTarget(String nextTarget) {
-        this.nextTarget = nextTarget;
-    }
-
-    /**
-     * @return the nextTarget
-     */
-    public String getNextTarget() {
-        return nextTarget;
+    @SuppressWarnings("unchecked")
+    @Override
+    public String convertToString(Map map, Object object) {
+        if (object == null) {
+            return "";
+        }
+        return IiConverter.convertToString((Ii) object);
     }
 }

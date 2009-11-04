@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
 
 /**
@@ -89,4 +93,56 @@ import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
 public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> {
 
     private static final long serialVersionUID = 1L;
+    
+    private DiagnosisWebDto diagnosis = new DiagnosisWebDto();
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD")
+    @SkipValidation
+    @Override
+    public String execute() {
+        return super.execute();
+    }
+
+    /**
+     * Cancel and ignore input.
+     * @return result for next action
+     */
+    public String cancel() {
+        return super.execute();
+    }
+
+    /**
+     * Save user entries.
+     * @return result for next action
+     */
+    public String save() {
+        return super.execute();
+    }
+
+    /**
+     * Save user entries.
+     * @return result for next action
+     */
+    public String next() {
+        String rc = save();
+        return (SUCCESS.equals(rc)) ? NEXT : rc;
+    }
+    
+    /**
+     * @param diagnosis the diagnosis to set
+     */
+    public void setDiagnosis(DiagnosisWebDto diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+
+    /**
+     * @return the diagnosis
+     */
+    @VisitorFieldValidator(message = "> ")
+    public DiagnosisWebDto getDiagnosis() {
+        return diagnosis;
+    }
 }

@@ -79,8 +79,13 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+
 import java.io.Serializable;
-import java.sql.Date;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * Supports DiagnosisAction and diagnosis.jsp.
@@ -92,10 +97,9 @@ public class DiagnosisWebDto implements Serializable {
 
     private static final long serialVersionUID = -2554496551018810110L;
     
-    private String id;    
-    private String name;    
-    private Date createDate;    
-    private String procedure;
+    private Ii identifier = new Ii();
+    private St name = new St();    
+    private Ts createDate = new Ts();
     
     /**
      * Instantiates a new diagnosis web dto.
@@ -107,56 +111,46 @@ public class DiagnosisWebDto implements Serializable {
     /**
      * @return the name
      */
-    public String getName() {
+    @FieldExpressionValidator(expression = "name.value != null && name.value.length() > 0",
+            message = "Please provide a Diagnosis")
+    public St getName() {
         return name;
     }
 
     /**
      * @param name the name to set
      */
-    public void setName(String name) {
+    public void setName(St name) {
         this.name = name;
     }
 
     /**
      * @return the createDate
      */
-    public Date getCreateDate() {
+    @FieldExpressionValidator(expression = "createDate.value != null",
+            message = "Please provide a Diagnosis Date")
+    public Ts getCreateDate() {
         return createDate;
     }
 
     /**
      * @param createDate the createDate to set
      */
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(Ts createDate) {
         this.createDate = createDate;
-    }
-
-    /**
-     * @return the procedure
-     */
-    public String getProcedure() {
-        return procedure;
-    }
-
-    /**
-     * @param procedure the procedure to set
-     */
-    public void setProcedure(String procedure) {
-        this.procedure = procedure;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setIdentifier(Ii id) {
+        this.identifier = id;
     }
 
     /**
      * @return the id
      */
-    public String getId() {
-        return id;
+    public Ii getIdentifier() {
+        return identifier;
     }
 }
