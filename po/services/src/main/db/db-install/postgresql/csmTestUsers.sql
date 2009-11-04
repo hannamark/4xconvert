@@ -32,9 +32,3 @@ INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID) VALUES ((select protecti
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'firebird-nci'), (select group_id from csm_group where group_name = 'client'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'firebird-nci'), (select group_id from csm_group where group_name = 'Subscriber'));
-
-INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID) VALUES ('gridClient', 'Grid Service Invocation Group', (select application_id from csm_application where application_name = 'po'));
-
---adding /O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=coppagridtest as a grid client test user account
-INSERT INTO CSM_USER (LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ('/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=coppagridtest','Test','GridClientUser','');
-INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = '/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=coppagridtest'), (select group_id from csm_group where group_name = 'gridClient'));
