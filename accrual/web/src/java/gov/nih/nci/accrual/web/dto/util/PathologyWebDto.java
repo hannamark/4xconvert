@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.web.enums.PathologyGrades;
 import gov.nih.nci.accrual.web.enums.PathologyGradeSystems;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -103,6 +104,7 @@ public class PathologyWebDto implements Serializable {
     private Ii id = new Ii();
     private Cd grade = new Cd();
     private Cd gradeSystem = new Cd();
+    private St description = new St();
 
     /**
      * Instantiates a new pathology web dto.
@@ -171,5 +173,21 @@ public class PathologyWebDto implements Serializable {
      */
     public List<PathologyGradeSystems> getGradeSystems() {
         return Arrays.asList(PathologyGradeSystems.values());
+    }
+
+    /**
+     * @param description the description to set
+     */
+    @FieldExpressionValidator(expression = "description.value != null && description.value.length() > 0",
+            message = "Please provide a Pathology Description")
+    public void setDescription(St description) {
+        this.description = description;
+    }
+
+    /**
+     * @return the description
+     */
+    public St getDescription() {
+        return description;
     }
 }

@@ -44,6 +44,9 @@
                       headerKey="" headerValue="--Select--"
                       list="pathology.gradeSystems" listKey="code" listValue="code" value="pathology.gradeSystem.code"/>
                        <s:fielderror cssStyle="color:red"><s:param>pathology.gradeSystem</s:param></s:fielderror></td></tr>
+    <tr><td scope="row" class="label"><label><fmt:message key="pathology.label.description"/><span class="required">*</span></label></td>
+    <td class="value"><s:textarea cols="60" rows="4" name="pathology.description"/>
+                       <s:fielderror cssStyle="color:red"><s:param>pathology.description</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
 
