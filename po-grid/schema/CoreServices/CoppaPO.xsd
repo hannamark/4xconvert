@@ -53,6 +53,14 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
+    
+    <xs:element name="Bl">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ISO:BL" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
 
     <!--  At some point, we'll move Entities over to DSET_II, too, so we can recombine Entity and Correlation
           back into one BaseType abstract type -->
@@ -329,6 +337,72 @@
                         <xs:element name="name" type="ISO:EN.ON"/>
                     </xs:sequence>
                 </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    
+    
+     <xs:complexType name="EntityNodeType">
+            <xs:annotation>
+                <xs:documentation>
+                    A EntityNodeDto ...
+                </xs:documentation>
+             </xs:annotation>
+             <xs:sequence>
+               <xs:element name="correlationOverflow"
+                    type="ISO:BL" />
+               <xs:element name="players" type="COPPA-PO:CorrelationType"/>
+               <xs:element name="scopers" type="COPPA-PO:CorrelationType"/>
+               <xs:element name="entity" type="COPPA-PO:EntityType"/>
+                
+            </xs:sequence>
+     </xs:complexType>
+     
+     <xs:complexType name="EntityType" mixed="true" >
+        <xs:choice>
+            <xs:element ref="COPPA-PO:Person"/>
+            <xs:element ref="COPPA-PO:Organization"/>
+        </xs:choice>
+     </xs:complexType>
+     
+     <xs:complexType name="CorrelationType" mixed="true">
+        <xs:choice>
+            <xs:element ref="COPPA-PO:ClinicalResearchStaff"/>
+            <xs:element ref="COPPA-PO:HealthCareFacility"/>
+            <xs:element ref="COPPA-PO:HealthCareProvider"/>
+            <xs:element ref="COPPA-PO:IdentifiedOrganization"/>
+            <xs:element ref="COPPA-PO:IdentifiedPerson"/>
+            <xs:element ref="COPPA-PO:OrganizationalContact"/>
+            <xs:element ref="COPPA-PO:OversightCommittee"/>
+            <xs:element ref="COPPA-PO:ResearchOrganization"/>
+        </xs:choice>
+     </xs:complexType>
+     
+     <xs:complexType name="CorrelationNodeType">
+            <xs:annotation>
+                <xs:documentation>
+                    A CorrelationNodeDTO ...
+                </xs:documentation>
+             </xs:annotation>
+             <xs:sequence>
+                <xs:element name="player" type="COPPA-PO:EntityType"/>
+                <xs:element name="scoper" type="COPPA-PO:EntityType"/>
+                <xs:element name="correlation" type="COPPA-PO:CorrelationType"/>
+            </xs:sequence>
+     </xs:complexType>
+     
+    <xs:element name="EntityNode">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:EntityNodeType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    
+     <xs:element name="CorrelationNode">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:CorrelationNodeType" />
             </xs:complexContent>
         </xs:complexType>
     </xs:element>

@@ -100,6 +100,11 @@ public abstract class PatientImplBase {
 		return (gov.nih.nci.coppa.services.structuralroles.researchorganization.service.globus.resource.ResearchOrganizationResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.business.business.service.globus.resource.BusinessResourceHome getBusinessResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("businessHome");
+		return (gov.nih.nci.coppa.services.business.business.service.globus.resource.BusinessResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

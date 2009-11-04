@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/business/Business" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns16="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/entities/Person/types" xmlns:ns21="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns3="http://faults.common.coppa.nci.nih.gov" xmlns:ns6="uri:iso.org:21090" xmlns:ns5="http://po.coppa.nci.nih.gov" xmlns:ns13="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" xmlns:ns4="http://faults.po.coppa.nci.nih.gov" xmlns:ns12="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" xmlns:ns20="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns10="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" xmlns:ns14="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" xmlns:ns18="http://common.coppa.nci.nih.gov" xmlns:ns0="http://enterpriseservices.nci.nih.gov/business/Business/types" xmlns:ns17="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" xmlns:ns7="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" xmlns:ns11="http://enterpriseservices.nci.nih.gov/entities/Organization/types" xmlns:ns15="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns19="http://enterpriseservices.nci.nih.gov/CoreServices/types" xmlns:ns2="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="Business" targetNamespace="http://enterpriseservices.nci.nih.gov/business/Business">
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
+  <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/business/Business" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="./../ws/xml.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility/types" schemaLocation="./HealthCareFacilityTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/entities/Person/types" schemaLocation="./PersonTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
+      <import namespace="http://faults.common.coppa.nci.nih.gov" schemaLocation="./CoppaCommonsFaults.xsd" />
+      <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+      <import namespace="http://po.coppa.nci.nih.gov" schemaLocation="./CoppaPO.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization/types" schemaLocation="./IdentifiedOrganizationTypes.xsd" />
+      <import namespace="http://faults.po.coppa.nci.nih.gov" schemaLocation="./CoppaPOFaults.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact/types" schemaLocation="./OrganizationalContactTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" schemaLocation="./OversightCommitteeTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson/types" schemaLocation="./IdentifiedPersonTypes.xsd" />
+      <import namespace="http://common.coppa.nci.nih.gov" schemaLocation="./CoppaCommons.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/business/Business/types" schemaLocation="./BusinessTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types" schemaLocation="./ClinicalResearchStaffTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/types" schemaLocation="./PatientTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" schemaLocation="./ResearchOrganizationTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/entities/Organization/types" schemaLocation="./OrganizationTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider/types" schemaLocation="./HealthCareProviderTypes.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/CoreServices/types" schemaLocation="./CoreServicesTypes.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetEntityByIdWithCorrelationsRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="players">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Cd" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="scopers">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Cd" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetEntityByIdWithCorrelationsResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns5:EntityNode" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCorrelationByIdWithEntitiesRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="player">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="scoper">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCorrelationByIdWithEntitiesResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns5:CorrelationNode" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCorrelationsByIdsWithEntitiesRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Id" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="player">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="scoper">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCorrelationsByIdsWithEntitiesResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns5:CorrelationNode" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCorrelationsByPlayerIdsWithEntitiesRequest">
+        <complexType>
+          <sequence>
+            <element name="cd">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Cd" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Id" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="player">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="scoper">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetCorrelationsByPlayerIdsWithEntitiesResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns5:CorrelationNode" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="BusinessResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="GetEntityByIdWithCorrelationsRequest">
+    <part name="parameters" element="tns:GetEntityByIdWithCorrelationsRequest" />
+  </message>
+  <message name="GetEntityByIdWithCorrelationsResponse">
+    <part name="parameters" element="tns:GetEntityByIdWithCorrelationsResponse" />
+  </message>
+  <message name="GetCorrelationByIdWithEntitiesRequest">
+    <part name="parameters" element="tns:GetCorrelationByIdWithEntitiesRequest" />
+  </message>
+  <message name="GetCorrelationByIdWithEntitiesResponse">
+    <part name="parameters" element="tns:GetCorrelationByIdWithEntitiesResponse" />
+  </message>
+  <message name="GetCorrelationsByIdsWithEntitiesRequest">
+    <part name="parameters" element="tns:GetCorrelationsByIdsWithEntitiesRequest" />
+  </message>
+  <message name="GetCorrelationsByIdsWithEntitiesResponse">
+    <part name="parameters" element="tns:GetCorrelationsByIdsWithEntitiesResponse" />
+  </message>
+  <message name="GetCorrelationsByPlayerIdsWithEntitiesRequest">
+    <part name="parameters" element="tns:GetCorrelationsByPlayerIdsWithEntitiesRequest" />
+  </message>
+  <message name="GetCorrelationsByPlayerIdsWithEntitiesResponse">
+    <part name="parameters" element="tns:GetCorrelationsByPlayerIdsWithEntitiesResponse" />
+  </message>
+  <message name="NullifiedEntityFaultFaultMessage">
+    <part name="fault" element="ns0:NullifiedEntityFault" />
+  </message>
+  <message name="NullifiedRoleFaultFaultMessage">
+    <part name="fault" element="ns0:NullifiedRoleFault" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="BusinessPortType" wsrp:ResourceProperties="tns:BusinessResourceProperties">
+    <operation name="getEntityByIdWithCorrelations">
+      <input message="tns:GetEntityByIdWithCorrelationsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetEntityByIdWithCorrelationsRequest" />
+      <output message="tns:GetEntityByIdWithCorrelationsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetEntityByIdWithCorrelationsResponse" />
+      <fault name="NullifiedEntityFault" message="tns:NullifiedEntityFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/NullifiedEntityFaultFaultMessage" />
+    </operation>
+    <operation name="getCorrelationByIdWithEntities">
+      <input message="tns:GetCorrelationByIdWithEntitiesRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetCorrelationByIdWithEntitiesRequest" />
+      <output message="tns:GetCorrelationByIdWithEntitiesResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetCorrelationByIdWithEntitiesResponse" />
+      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/NullifiedRoleFaultFaultMessage" />
+    </operation>
+    <operation name="getCorrelationsByIdsWithEntities">
+      <input message="tns:GetCorrelationsByIdsWithEntitiesRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetCorrelationsByIdsWithEntitiesRequest" />
+      <output message="tns:GetCorrelationsByIdsWithEntitiesResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetCorrelationsByIdsWithEntitiesResponse" />
+      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/NullifiedRoleFaultFaultMessage" />
+    </operation>
+    <operation name="getCorrelationsByPlayerIdsWithEntities">
+      <input message="tns:GetCorrelationsByPlayerIdsWithEntitiesRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetCorrelationsByPlayerIdsWithEntitiesRequest" />
+      <output message="tns:GetCorrelationsByPlayerIdsWithEntitiesResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetCorrelationsByPlayerIdsWithEntitiesResponse" />
+      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/NullifiedRoleFaultFaultMessage" />
+    </operation>
+    <operation name="getServiceSecurityMetadata">
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+    </operation>
+  </portType>
+</definitions>
+

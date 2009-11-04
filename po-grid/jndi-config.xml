@@ -1,5 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jndiConfig xmlns="http://wsrf.globus.org/jndi/config">
+  <service name="SERVICE-INSTANCE-PREFIX/Business">
+    <resource name="configuration" type="gov.nih.nci.coppa.services.business.business.service.globus.resource.BusinessResourceConfiguration">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>performRegistration</name>
+          <!-- Set this to false to skip ServiceGroup registration -->
+          <value>PERFORM_REGISTRATION</value>
+        </parameter>
+        <parameter>
+          <name>registrationTemplateFile</name>
+          <!-- Set this to the relative path (from the container root, e.g GLOBUS_LOCATION for globus container) of the registration parameters template file (ignored if performRegistration is false) -->
+          <value>ETC-PATH/Business_registration.xml</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resource name="home" type="gov.nih.nci.coppa.services.business.business.service.globus.resource.BusinessResourceHome">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>resourceClass</name>
+          <value>gov.nih.nci.coppa.services.business.business.service.globus.resource.BusinessResource</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyName</name>
+          <value>{http://enterpriseservices.nci.nih.gov/business/Business}BusinessResultsKey</value>
+        </parameter>
+        <parameter>
+          <name>resourceKeyType</name>
+          <value>java.lang.String</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/CoreServices/serviceconfiguration" />
+    <resourceLink name="coreServicesHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/CoreServices/home" />
+    <resourceLink name="personHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Person/home" />
+    <resourceLink name="organizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Organization/home" />
+    <resourceLink name="healthCareFacilityHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/HealthCareFacility/home" />
+    <resourceLink name="clinicalResearchStaffHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ClinicalResearchStaff/home" />
+    <resourceLink name="healthCareProviderHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/HealthCareProvider/home" />
+    <resourceLink name="identifiedOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/IdentifiedOrganization/home" />
+    <resourceLink name="identifiedPersonHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/IdentifiedPerson/home" />
+    <resourceLink name="organizationalContactHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OrganizationalContact/home" />
+    <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
+    <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
+    <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/Patient">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.patient.service.globus.resource.PatientResourceConfiguration">
       <resourceParams>
@@ -51,6 +104,7 @@
     <resourceLink name="organizationalContactHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OrganizationalContact/home" />
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/ResearchOrganization">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.researchorganization.service.globus.resource.ResearchOrganizationResourceConfiguration">
@@ -103,6 +157,7 @@
     <resourceLink name="organizationalContactHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OrganizationalContact/home" />
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/OversightCommittee">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.oversightcommittee.service.globus.resource.OversightCommitteeResourceConfiguration">
@@ -156,6 +211,7 @@
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/OrganizationalContact">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.organizationalcontact.service.globus.resource.OrganizationalContactResourceConfiguration">
@@ -210,6 +266,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/IdentifiedPerson">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.identifiedperson.service.globus.resource.IdentifiedPersonResourceConfiguration">
@@ -265,6 +322,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/IdentifiedOrganization">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.identifiedorganization.service.globus.resource.IdentifiedOrganizationResourceConfiguration">
@@ -321,6 +379,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/HealthCareProvider">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.healthcareprovider.service.globus.resource.HealthCareProviderResourceConfiguration">
@@ -378,6 +437,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/ClinicalResearchStaff">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.service.globus.resource.ClinicalResearchStaffResourceConfiguration">
@@ -436,6 +496,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/HealthCareFacility">
     <resource name="configuration" type="gov.nih.nci.coppa.services.structuralroles.healthcarefacility.service.globus.resource.HealthCareFacilityResourceConfiguration">
@@ -495,6 +556,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/Organization">
     <resource name="configuration" type="gov.nih.nci.coppa.services.entities.organization.service.globus.resource.OrganizationResourceConfiguration">
@@ -547,6 +609,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/Person">
     <resource name="configuration" type="gov.nih.nci.coppa.services.entities.person.service.globus.resource.PersonResourceConfiguration">
@@ -600,6 +663,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/CoreServices">
     <resource name="configuration" type="gov.nih.nci.coppa.services.service.globus.resource.CoreServicesResourceConfiguration">
@@ -660,6 +724,7 @@
     <resourceLink name="oversightCommitteeHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OversightCommittee/home" />
     <resourceLink name="researchOrganizationHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ResearchOrganization/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="businessHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Business/home" />
   </service>
 </jndiConfig>
 

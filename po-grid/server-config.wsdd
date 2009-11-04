@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:aggr="http://mds.globus.org/aggregator/types" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="defaultServerConfig">
+  <service name="SERVICE-INSTANCE-PREFIX/Business" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.business.business.service.globus.BusinessProviderImpl" />
+    <wsdlFile>share/schema/CoreServices/Business_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/Business-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/Business-security-metadata.xml" />
+    <parameter name="business-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="business-serviceName" value="Business" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/Patient" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.structuralroles.patient.service.globus.PatientProviderImpl" />
     <wsdlFile>share/schema/CoreServices/Patient_service.wsdl</wsdlFile>
@@ -159,9 +172,15 @@
   <typeMapping name="AggregatorContent" qname="aggr:AggregatorContent" type="java:org.globus.mds.aggregator.types.AggregatorContent" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" />
   <ns3:typeMapping xmlns:ns3="http://xml.apache.org/axis/wsdd/" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.StringMapType" qname="ns2:StringMapType" />
   <!-- START INTRODUCE TYPEMAPPINGS -->
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.Bl" qname="ns2:Bl" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.Cd" qname="ns2:Cd" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.ClinicalResearchStaff" qname="ns2:ClinicalResearchStaff" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.CorrelationNode" qname="ns2:CorrelationNode" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.EntityNode" qname="ns2:EntityNode" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.po.HealthCareFacility" qname="ns2:HealthCareFacility" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://po.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 

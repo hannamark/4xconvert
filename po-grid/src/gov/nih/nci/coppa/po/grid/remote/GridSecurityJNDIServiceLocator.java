@@ -85,10 +85,13 @@ package gov.nih.nci.coppa.po.grid.remote;
 import gov.nih.nci.cagrid.introduce.servicetools.security.SecurityUtils;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.coppa.services.service.CoreServicesConfiguration;
+import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.EntityNodeDto;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -102,6 +105,7 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -163,6 +167,12 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             values.put(OversightCommitteeDTO.class, this.getClass().getMethod("getOversightCommitteeService"));
             values.put(OrganizationalContactDTO.class, this.getClass().getMethod(
                     "getOrganizationalContactService"));
+            values.put(PatientDTO.class, this.getClass().getMethod(
+                "getPatientService"));
+            values.put(EntityNodeDto.class, this.getClass().getMethod(
+                "getBusinessService"));
+            values.put(CorrelationNodeDTO.class, this.getClass().getMethod(
+                "getBusinessService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -301,6 +311,16 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             lookup("po/PatientCorrelationServiceBean/remote");
         return object;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public BusinessServiceRemote getBusinessService() throws NamingException {
+        BusinessServiceRemote object = (BusinessServiceRemote)
+            lookup("po/BusinessServiceBean/remote");
+        return object;
+    }
+    
     /**
      * {@inheritDoc}
      */

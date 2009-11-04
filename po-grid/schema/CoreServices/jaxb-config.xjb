@@ -15,5 +15,4 @@
             <jxb:package name="org.iso._21090"/>
         </jxb:schemaBindings>
     </jxb:bindings>
-    
 </jxb:bindings>

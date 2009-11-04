@@ -100,6 +100,11 @@ public abstract class IdentifiedOrganizationImplBase {
 		return (gov.nih.nci.coppa.services.structuralroles.patient.service.globus.resource.PatientResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.business.business.service.globus.resource.BusinessResourceHome getBusinessResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("businessHome");
+		return (gov.nih.nci.coppa.services.business.business.service.globus.resource.BusinessResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

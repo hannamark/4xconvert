@@ -1,6 +1,8 @@
 package gov.nih.nci.coppa.po.grid.dto.transform;
 
 import gov.nih.nci.coppa.po.grid.dto.transform.po.ClinicalResearchStaffTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.CorrelationNodeTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.EntityNodeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareFacilityTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareProviderTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdentifiedOrganizationTransformer;
@@ -10,7 +12,9 @@ import gov.nih.nci.coppa.po.grid.dto.transform.po.OversightCommitteeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PatientTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.ResearchOrganizationTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.services.EntityNodeDto;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -44,6 +48,9 @@ public final class TransformerRegistry {
         values.put(OversightCommitteeDTO.class, OversightCommitteeTransformer.INSTANCE);
         values.put(OrganizationalContactDTO.class, OrganizationalContactTransformer.INSTANCE);
         values.put(PatientDTO.class, PatientTransformer.INSTANCE);
+        values.put(CorrelationNodeDTO.class, CorrelationNodeTransformer.INSTANCE);
+        values.put(EntityNodeDto.class, EntityNodeTransformer.INSTANCE);
+        
     }
 
     /**

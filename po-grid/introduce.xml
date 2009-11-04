@@ -1,9 +1,10 @@
 <ns1:ServiceDescription introduceVersion="1.3" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns2:Namespace location="./PatientTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/types" packageName="gov.nih.nci.coppa.services.structuralroles.patient.stubs.types" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace location="./BusinessTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/business/Business/types" packageName="gov.nih.nci.coppa.services.business.business.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="BusinessReference" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedEntityFault" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="PatientReference" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
@@ -35,9 +36,12 @@
   <ns2:Namespace location="./CoppaCommonsFaults.xsd" namespace="http://faults.common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common.faults" xsi:type="ns2:NamespaceType"/>
   <ns2:Namespace location="./CoppaPOFaults.xsd" namespace="http://faults.po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po.faults" xsi:type="ns2:NamespaceType"/>
   <ns2:Namespace location="./CoppaCommonsFaults.xsd" namespace="http://faults.common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common.faults" xsi:type="ns2:NamespaceType"/>
-  <ns2:Namespace generateStubs="true" location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace generateStubs="false" location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="Bl" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Bl" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Cd" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Cd" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="ClinicalResearchStaff" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ClinicalResearchStaff" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="CorrelationNode" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="CorrelationNode" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="EntityNode" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="EntityNode" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="HealthCareFacility" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareFacility" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="HealthCareProvider" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareProvider" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
@@ -74,6 +78,12 @@
    <ns2:SchemaElement type="th" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="thead" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="tr" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./PatientTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/types" packageName="gov.nih.nci.coppa.services.structuralroles.patient.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NullifiedRoleFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="PatientReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./ResearchOrganizationTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization/types" packageName="gov.nih.nci.coppa.services.structuralroles.researchorganization.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="EntityValidationFault" xsi:type="ns2:SchemaElementType"/>
@@ -1490,11 +1500,93 @@
     <ns347:Extension extensionType="AUTHORIZATION" name="enforce_auth" xsi:type="ns347:ExtensionType"/>
    </ns347:Extensions>
   </ns3:Service>
+  <ns3:Service name="Business" namespace="http://enterpriseservices.nci.nih.gov/business/Business" packageName="gov.nih.nci.coppa.services.business.business" xsi:type="ns3:ServiceType">
+   <ns348:Methods xsi:type="ns348:MethodsType" xmlns:ns348="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns348:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns348:MethodType">
+     <ns348:Output qName="ns349:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns349="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns350:MethodSecurity xsi:type="ns350:MethodSecurity" xmlns:ns350="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns350:SecuritySetting xsi:type="ns350:SecuritySetting">None</ns350:SecuritySetting>
+      <ns350:MethodAuthorization xsi:type="ns350:MethodAuthorization">
+       <ns350:NoAuthorization xsi:type="ns350:NoAuthorization"/>
+      </ns350:MethodAuthorization>
+     </ns350:MethodSecurity>
+     <ns348:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns348:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns348:Method>
+    <ns348:Method description="getEntityByIdWithCorrelations" isImported="false" isProvided="false" name="getEntityByIdWithCorrelations" xsi:type="ns348:MethodType">
+     <ns348:Inputs>
+      <ns348:Input qName="ns351:Id" description="" isArray="false" name="id" xmlns:ns351="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns352:Cd" description="" isArray="true" name="players" xmlns:ns352="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns353:Cd" description="" isArray="true" name="scopers" xmlns:ns353="http://po.coppa.nci.nih.gov"/>
+     </ns348:Inputs>
+     <ns348:Output qName="ns354:EntityNode" description="" isArray="false" xmlns:ns354="http://po.coppa.nci.nih.gov"/>
+     <ns348:Exceptions>
+      <ns348:Exception description="" name="NullifiedEntityFault" qname="ns355:NullifiedEntityFault" xmlns:ns355="http://enterpriseservices.nci.nih.gov/business/Business/types"/>
+     </ns348:Exceptions>
+     <ns356:Extensions xsi:type="ns356:ExtensionsType" xmlns:ns356="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns348:Method>
+    <ns348:Method description="getCorrelationByIdWithEntities" isImported="false" isProvided="false" name="getCorrelationByIdWithEntities" xsi:type="ns348:MethodType">
+     <ns348:Inputs>
+      <ns348:Input qName="ns357:Id" description="" isArray="false" name="id" xmlns:ns357="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns358:Bl" description="" isArray="false" name="player" xmlns:ns358="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns359:Bl" description="" isArray="false" name="scoper" xmlns:ns359="http://po.coppa.nci.nih.gov"/>
+     </ns348:Inputs>
+     <ns348:Output qName="ns360:CorrelationNode" description="" isArray="false" xmlns:ns360="http://po.coppa.nci.nih.gov"/>
+     <ns348:Exceptions>
+      <ns348:Exception description="" name="NullifiedRoleFault" qname="ns361:NullifiedRoleFault" xmlns:ns361="http://enterpriseservices.nci.nih.gov/business/Business/types"/>
+     </ns348:Exceptions>
+     <ns362:Extensions xsi:type="ns362:ExtensionsType" xmlns:ns362="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns348:Method>
+    <ns348:Method description="getCorrelationsByIdsWithEntities" isImported="false" isProvided="false" name="getCorrelationsByIdsWithEntities" xsi:type="ns348:MethodType">
+     <ns348:Inputs>
+      <ns348:Input qName="ns363:Id" description="" isArray="true" name="id" xmlns:ns363="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns364:Bl" description="" isArray="false" name="player" xmlns:ns364="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns365:Bl" description="" isArray="false" name="scoper" xmlns:ns365="http://po.coppa.nci.nih.gov"/>
+     </ns348:Inputs>
+     <ns348:Output qName="ns366:CorrelationNode" description="" isArray="true" xmlns:ns366="http://po.coppa.nci.nih.gov"/>
+     <ns348:Exceptions>
+      <ns348:Exception description="" name="NullifiedRoleFault" qname="ns367:NullifiedRoleFault" xmlns:ns367="http://enterpriseservices.nci.nih.gov/business/Business/types"/>
+     </ns348:Exceptions>
+     <ns368:Extensions xsi:type="ns368:ExtensionsType" xmlns:ns368="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns348:Method>
+    <ns348:Method description="getCorrelationsByPlayerIdsWithEntities" isImported="false" isProvided="false" name="getCorrelationsByPlayerIdsWithEntities" xsi:type="ns348:MethodType">
+     <ns348:Inputs>
+      <ns348:Input qName="ns369:Cd" description="" isArray="false" name="cd" xmlns:ns369="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns370:Id" description="" isArray="true" name="id" xmlns:ns370="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns371:Bl" description="" isArray="false" name="player" xmlns:ns371="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns372:Bl" description="" isArray="false" name="scoper" xmlns:ns372="http://po.coppa.nci.nih.gov"/>
+     </ns348:Inputs>
+     <ns348:Output qName="ns373:CorrelationNode" description="" isArray="true" xmlns:ns373="http://po.coppa.nci.nih.gov"/>
+     <ns348:Exceptions>
+      <ns348:Exception description="" name="NullifiedRoleFault" qname="ns374:NullifiedRoleFault" xmlns:ns374="http://enterpriseservices.nci.nih.gov/business/Business/types"/>
+     </ns348:Exceptions>
+     <ns375:Extensions xsi:type="ns375:ExtensionsType" xmlns:ns375="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns348:Method>
+   </ns348:Methods>
+   <ns376:ResourcePropertiesList xsi:type="ns376:ResourcePropertiesListType" xmlns:ns376="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns377:ServiceSecurity xsi:type="ns377:ServiceSecurity" xmlns:ns377="gme://gov.nih.nci.cagrid.introduce/1/Security">
+    <ns377:SecuritySetting xsi:type="ns377:SecuritySetting">Custom</ns377:SecuritySetting>
+    <ns377:TransportLevelSecurity xsi:type="ns377:TransportLevelSecurity">
+     <ns377:CommunicationMethod xsi:type="ns377:CommunicationMethod">Privacy</ns377:CommunicationMethod>
+    </ns377:TransportLevelSecurity>
+    <ns377:RunAsMode xsi:type="ns377:RunAsMode">System</ns377:RunAsMode>
+    <ns377:AnonymousClients xsi:type="ns377:AnonymousCommunication">No</ns377:AnonymousClients>
+    <ns377:ServiceAuthorization xsi:type="ns377:ServiceAuthorization">
+     <ns377:NoAuthorization xsi:type="ns377:NoAuthorization"/>
+    </ns377:ServiceAuthorization>
+   </ns377:ServiceSecurity>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+    <ns3:Secure xsi:type="ns3:Secure"/>
+   </ns3:ResourceFrameworkOptions>
+   <ns378:Extensions xsi:type="ns378:ExtensionsType" xmlns:ns378="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+  </ns3:Service>
  </ns3:Services>
- <ns348:Extensions xsi:type="ns348:ExtensionsType" xmlns:ns348="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns348:Extension name="cagrid_metadata" version="1.3" xsi:type="ns348:ExtensionType"/>
- </ns348:Extensions>
- <ns349:ServiceProperties xmlns:ns349="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns349:Property description="The separator used to encord the gridServicePrincipal and grid user's identity when Using the com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" isFromETC="false" key="gridServicePrincipalSeparator" value="||"/>
- </ns349:ServiceProperties>
+ <ns379:Extensions xsi:type="ns379:ExtensionsType" xmlns:ns379="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns379:Extension name="cagrid_metadata" version="1.3" xsi:type="ns379:ExtensionType"/>
+ </ns379:Extensions>
+ <ns380:ServiceProperties xmlns:ns380="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns380:Property description="The separator used to encord the gridServicePrincipal and grid user's identity when Using the com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" isFromETC="false" key="gridServicePrincipalSeparator" value="||"/>
+ </ns380:ServiceProperties>
 </ns1:ServiceDescription>

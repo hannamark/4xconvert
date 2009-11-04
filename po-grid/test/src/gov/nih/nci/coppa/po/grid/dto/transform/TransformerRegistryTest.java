@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.ClinicalResearchStaffTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.CorrelationNodeTransformer;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.EntityNodeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareFacilityTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.HealthCareProviderTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.IdentifiedOrganizationTransformer;
@@ -13,7 +15,9 @@ import gov.nih.nci.coppa.po.grid.dto.transform.po.OversightCommitteeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PatientTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.ResearchOrganizationTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.services.EntityNodeDto;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -34,7 +38,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(9, tMap.size());
+        assertEquals(11, tMap.size());
         tMap.clear();
     }
 
@@ -68,6 +72,12 @@ public class TransformerRegistryTest {
         //#9
         trans = TransformerRegistry.INSTANCE.getTransformer(PatientDTO.class);
         assertTrue(trans instanceof PatientTransformer);
+        //#10
+        trans = TransformerRegistry.INSTANCE.getTransformer(CorrelationNodeDTO.class);
+        assertTrue(trans instanceof CorrelationNodeTransformer);
+        //#11
+        trans = TransformerRegistry.INSTANCE.getTransformer(EntityNodeDto.class);
+        assertTrue(trans instanceof EntityNodeTransformer);
     }
 
     @Test (expected=RuntimeException.class)

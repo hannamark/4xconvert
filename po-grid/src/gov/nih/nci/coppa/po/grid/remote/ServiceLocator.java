@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.po.grid.remote;
 
+import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
@@ -107,4 +108,11 @@ public interface ServiceLocator {
      * @throws NamingException on error looking up the service
      */
     PatientCorrelationServiceRemote getPatientService() throws NamingException;
+    
+    /**
+     * Gets the BusinessService.
+     * @return BusinessService.
+     * @throws NamingException on error looking up the service.
+     */
+    BusinessServiceRemote getBusinessService() throws NamingException;
 }

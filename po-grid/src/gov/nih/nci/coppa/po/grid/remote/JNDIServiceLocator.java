@@ -1,10 +1,13 @@
 package gov.nih.nci.coppa.po.grid.remote;
 
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.EntityNodeDto;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -66,6 +69,10 @@ public final class JNDIServiceLocator implements ServiceLocator {
                     "getOrganizationalContactService"));
             values.put(PatientDTO.class, getInstance().getClass().getMethod(
                 "getPatientService"));
+            values.put(EntityNodeDto.class, getInstance().getClass().getMethod(
+                "getBusinessService"));
+            values.put(CorrelationNodeDTO.class, getInstance().getClass().getMethod(
+                "getBusinessService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -200,6 +207,15 @@ public final class JNDIServiceLocator implements ServiceLocator {
     public PatientCorrelationServiceRemote getPatientService() throws NamingException {
         PatientCorrelationServiceRemote object = (PatientCorrelationServiceRemote)
             lookup("po/PatientCorrelationServiceBean/remote");
+        return object;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public BusinessServiceRemote getBusinessService() throws NamingException {
+        BusinessServiceRemote object = (BusinessServiceRemote)
+            lookup("po/BusinessServiceBean/remote");
         return object;
     }
 

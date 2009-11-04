@@ -37,7 +37,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
     /**
      * The ii root value for healthCare Provider.
      */
-    public static final String HEALTH_CARE_PROVIDER_ROOT = "2.16.840.1.113883.3.26.4.5.3";
+    public static final String HEALTH_CARE_PROVIDER_ROOT = "2.16.840.1.113883.3.26.4.4.2";
 
     public HealthCareProviderClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
