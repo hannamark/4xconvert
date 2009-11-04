@@ -79,38 +79,53 @@
 
 package gov.nih.nci.accrual.web.enums;
 
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
+
 /**
  * The permissible values for Pathology Grade.
  * 
  * @author lhebel
  */
-public enum PathologyGrades {
+public enum PathologyGrades implements CodedEnum<String> {
     /** grade 1. */
-    GRADE1("1", "Grade 1"),
+    GRADE1("Grade 1"),
     /** grade 2. */
-    GRADE2("2", "Grade 2");
+    GRADE2("Grade 2");
     
-    private String id;
-    private String name;
+    private String code;
     
-    private PathologyGrades(String id, String name) {
-        this.id = id;
-        this.name = name;
+    private PathologyGrades(String code) {
+        this.code = code;
     }
 
     /**
-     * Get the Grade id.
-     * @return the grade id
+     * {@inheritDoc}
      */
-    public String getId() {
-        return id;
+    public String getCode() {
+        return code;
     }
     
     /**
-     * Get the Grade display name.
-     * @return the grade display name
+     * {@inheritDoc}
      */
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     * @param code code
+     * @return StatusCode 
+     */
+    public static PathologyGrades getByCode(String code) {
+        return getByClassAndCode(PathologyGrades.class, code);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }

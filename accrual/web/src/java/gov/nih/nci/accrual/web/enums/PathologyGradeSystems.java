@@ -79,40 +79,57 @@
 
 package gov.nih.nci.accrual.web.enums;
 
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
+
 /**
  * The permissible values for Pathology Grading Systems.
  * 
  * @author lhebel
  */
-public enum PathologyGradeSystems {
+public enum PathologyGradeSystems implements CodedEnum<String> {
     /** system 1. */
-    GRADESYS1("1", "System 1"),
+    GRADESYS1("System 1"),
     /** system 2. */
-    GRADESYS2("2", "System 2"),
+    GRADESYS2("System 2"),
     /** system 3. */
-    GRADESYS3("3", "System 3");
+    GRADESYS3("System 3");
     
-    private String id;
-    private String name;
+    private String code;
     
-    private PathologyGradeSystems(String id, String name) {
-        this.id = id;
-        this.name = name;
+    private PathologyGradeSystems(String code) {
+        this.code = code;
+        register(this);
     }
 
     /**
-     * Get the Grading System id.
-     * @return the grading system id
+     * {@inheritDoc}
      */
-    public String getId() {
-        return id;
+    public String getCode() {
+        return code;
     }
     
     /**
-     * Get the Grading System display name.
-     * @return the grading system display name
+     * {@inheritDoc}
      */
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     * @param code code
+     * @return StatusCode 
+     */
+    public static PathologyGradeSystems getByCode(String code) {
+        return getByClassAndCode(PathologyGradeSystems.class, code);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }

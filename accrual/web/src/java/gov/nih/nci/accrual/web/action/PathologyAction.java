@@ -81,6 +81,8 @@ package gov.nih.nci.accrual.web.action;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 import gov.nih.nci.accrual.web.dto.util.PathologyWebDto;
 
 /**
@@ -99,8 +101,8 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      * {@inheritDoc}
      */
     @SuppressWarnings("PMD")
-    @Override
     @SkipValidation
+    @Override
     public String execute() {
         return super.execute();
     }
@@ -109,7 +111,6 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      * Cancel and ignore input.
      * @return result for next action
      */
-    @SkipValidation
     public String cancel() {
         return super.execute();
     }
@@ -126,6 +127,7 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      * Get the form data.
      * @return the form data object
      */
+    @VisitorFieldValidator(message="> ")
     public PathologyWebDto getPathology() {
         return pathology;
     }

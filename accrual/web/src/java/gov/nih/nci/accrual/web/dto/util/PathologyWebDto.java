@@ -81,10 +81,14 @@ package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.web.enums.PathologyGrades;
 import gov.nih.nci.accrual.web.enums.PathologyGradeSystems;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * The Class PathologyWebDto.
@@ -93,12 +97,12 @@ import java.util.List;
  * @since 10/28/2009
  */
 public class PathologyWebDto implements Serializable {
-
+    
     private static final long serialVersionUID = -2586539583138557774L;
 
-    private String id = "";    
-    private String grade = ""; // PathologyGrades.GRADE1.getId();
-    private String gradeSystem = ""; // PathologyGradeSystems.GRADESYS1.getId();
+    private Ii id = new Ii();
+    private Cd grade = new Cd();
+    private Cd gradeSystem = new Cd();
 
     /**
      * Instantiates a new pathology web dto.
@@ -110,42 +114,44 @@ public class PathologyWebDto implements Serializable {
     /**
      * @return the grade
      */
-    public String getGrade() {
+    @FieldExpressionValidator(expression="grade.code != null && grade.code.length() > 0", message="Please select a Pathology Grade")
+    public Cd getGrade() {
         return grade;
     }
 
     /**
      * @param grade the grade to set
      */
-    public void setGrade(String grade) {
+    public void setGrade(Cd grade) {
         this.grade = grade;
     }
 
     /**
      * @return the gradeSystem
      */
-    public String getGradeSystem() {
+    @FieldExpressionValidator(expression="gradeSystem.code != null && gradeSystem.code.length() > 0", message="Please select a Pathology Grade System")
+    public Cd getGradeSystem() {
         return gradeSystem;
     }
 
     /**
      * @param gradeSystem the gradeSystem to set
      */
-    public void setGradeSystem(String gradeSystem) {
+    public void setGradeSystem(Cd gradeSystem) {
         this.gradeSystem = gradeSystem;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Ii id) {
         this.id = id;
     }
 
     /**
      * @return the id
      */
-    public String getId() {
+    public Ii getId() {
         return id;
     }
 

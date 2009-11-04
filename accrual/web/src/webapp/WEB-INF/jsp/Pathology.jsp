@@ -35,12 +35,14 @@
 <s:form name="detailForm">
 <table class="form"> 
     <tr><td class="label">Pathology Grades</td>
-    <td class="value"><s:select required="true" id="pathologyGrades" name="pathology.grade" list="pathology.grades" 
-                       listKey="id" listValue="name" headerKey="" headerValue="--Select--"/>
+    <td class="value"><s:select required="true" id ="pathologyGrades" name="pathology.grade"
+                      headerKey="" headerValue="--Select--"
+                      list="pathology.grades" listKey="code" listValue="code" value="pathology.grade.code"/>
                        <s:fielderror cssStyle="color:red"><s:param>pathology.grade</s:param></s:fielderror></td></tr>
     <tr><td class="label">Grade Systems</td>
-    <td class="value"><s:select required="true" id="pathologyGradeSystems" name="pathology.gradeSystem" list="pathology.gradeSystems" 
-                       listKey="id" listValue="name" headerKey="" headerValue="--Select--"/>
+    <td class="value"><s:select required="true" id ="pathologyGradeSystems" name="pathology.gradeSystem"
+                      headerKey="" headerValue="--Select--"
+                      list="pathology.gradeSystems" listKey="code" listValue="code" value="pathology.gradeSystem.code"/>
                        <s:fielderror cssStyle="color:red"><s:param>pathology.gradeSystem</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
