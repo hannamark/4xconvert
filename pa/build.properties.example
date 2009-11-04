@@ -38,3 +38,8 @@ csm.submitter.group=Submitter
 
 # Use the tier-specific Registration application url
 register.mail.body.url=http://localhost:8080/registry
+
+#Pre-shared JNDI principal & credential for pa-grid <-> pa.ear authentication
+gridServicePrincipal=Gr1DU5er
+#decrypted password is 'Pa44Wurd' (excluding apostrophes)
+gridServiceCredential=ltHZmZ1rqYq8j2uyHEABIQ\=\=
