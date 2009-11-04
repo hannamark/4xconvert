@@ -56,7 +56,14 @@
        <comment>Upgrade for PO-1309 - add index on otheridentifier join tables</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1309.sql"/>
     </changeSet>
-    <changeSet id="PO-1292" author="smatyas">
+    <changeSet id="PO-1292-cleanup" author="smatyas">
+       <comment>Upgrade for PO-1292 - cleans up the broken version of PO-1292.sql if it has already been run</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1292-cleanup.sql"/>
+    </changeSet>
+    <changeSet id="PO-1292" author="smatyas" runOnChange="true">
+       <!--  The initial version of this file would have failed on production, so it was corrected.  runOnChange is
+             set to true so that the corrected version will be run, even if the broken version had already been run
+             (after running the PO-1292-cleanup.sql script). -->
        <comment>Upgrade for PO-1292 - updates to support grid security</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1292.sql"/>
     </changeSet>
