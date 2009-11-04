@@ -15,8 +15,6 @@ import java.util.List;
 public class InvokeStudyRelationshipEjb extends InvokePaServiceEjb<StudyRelationshipDTO> implements
         StudyRelationshipServiceRemote {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
     /**
      * Const.
      */
@@ -30,7 +28,7 @@ public class InvokeStudyRelationshipEjb extends InvokePaServiceEjb<StudyRelation
     public List<StudyRelationshipDTO> search(StudyRelationshipDTO arg0, LimitOffset arg1) throws PAException,
             TooManyResultsException {
         try {
-            return locator.getStudyRelationshipService().search(arg0, arg1);
+            return GridSecurityJNDIServiceLocator.newInstance().getStudyRelationshipService().search(arg0, arg1);
         } catch (PAException e) {
             throw e;
         } catch (TooManyResultsException e) {

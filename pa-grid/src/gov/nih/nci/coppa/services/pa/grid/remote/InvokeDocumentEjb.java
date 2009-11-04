@@ -20,15 +20,13 @@ public class InvokeDocumentEjb extends InvokeStudyPaServiceEjb<DocumentDTO> impl
         super(DocumentDTO.class);
     }
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
     /**
      * {@inheritDoc}
      */
-    public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi)
-            throws PAException {
+    public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
-            return locator.getDocumentService().getDocumentsByStudyProtocol(studyProtocolIi);
+            return GridSecurityJNDIServiceLocator.newInstance().getDocumentService().getDocumentsByStudyProtocol(
+                    studyProtocolIi);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

@@ -17,15 +17,13 @@ import java.util.List;
  */
 public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
     /**
      * {@inheritDoc}
      */
     public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException {
         try {
-            InterventionalStudyProtocolDTO result =
-                    locator.getStudyProtocolService().getInterventionalStudyProtocol(ii);
+            InterventionalStudyProtocolDTO result = GridSecurityJNDIServiceLocator.newInstance()
+                    .getStudyProtocolService().getInterventionalStudyProtocol(ii);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -39,7 +37,8 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
      */
     public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
         try {
-            StudyProtocolDTO result = locator.getStudyProtocolService().getStudyProtocol(ii);
+            StudyProtocolDTO result = GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService()
+                    .getStudyProtocol(ii);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -54,7 +53,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         try {
-            return locator.getStudyProtocolService().search(dto, pagingParams);
+            return GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().search(dto, pagingParams);
         } catch (PAException pae) {
             throw pae;
         } catch (TooManyResultsException tmre) {
@@ -98,7 +97,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     *
+     * 
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -109,7 +108,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     *
+     * 
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -120,7 +119,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     *
+     * 
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -135,7 +134,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
      */
     public void validate(StudyProtocolDTO studyProtocolDto) throws PAException {
         try {
-            locator.getStudyProtocolService().validate(studyProtocolDto);
+            GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().validate(studyProtocolDto);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

@@ -12,11 +12,8 @@ import java.util.List;
 /**
  * Wrapper class for invoking the PlannedActivity remote EJB.
  */
-public class InvokePlannedActivityEjb
-    extends InvokeStudyPaServiceEjb<PlannedActivityDTO>
-    implements PlannedActivityServiceRemote {
-
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+public class InvokePlannedActivityEjb extends InvokeStudyPaServiceEjb<PlannedActivityDTO> implements
+        PlannedActivityServiceRemote {
 
     /**
      * Const.
@@ -28,10 +25,9 @@ public class InvokePlannedActivityEjb
     /**
      * {@inheritDoc}
      */
-    public void copyPlannedEligibilityStudyCriterions(Ii from, Ii to)
-            throws PAException {
+    public void copyPlannedEligibilityStudyCriterions(Ii from, Ii to) throws PAException {
         try {
-            locator.getPlannedActivityService().copy(from, to);
+            GridSecurityJNDIServiceLocator.newInstance().getPlannedActivityService().copy(from, to);
         } catch (PAException pe) {
             throw pe;
         } catch (Exception e) {
@@ -43,11 +39,11 @@ public class InvokePlannedActivityEjb
     /**
      * {@inheritDoc}
      */
-    public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(
-            PlannedEligibilityCriterionDTO id) throws PAException {
+    public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(PlannedEligibilityCriterionDTO id)
+            throws PAException {
         try {
-            PlannedEligibilityCriterionDTO result =
-                locator.getPlannedActivityService().createPlannedEligibilityCriterion(id);
+            PlannedEligibilityCriterionDTO result = GridSecurityJNDIServiceLocator.newInstance()
+                    .getPlannedActivityService().createPlannedEligibilityCriterion(id);
             return result;
         } catch (PAException pe) {
             throw pe;
@@ -61,7 +57,8 @@ public class InvokePlannedActivityEjb
      */
     public void deletePlannedEligibilityCriterion(Ii id) throws PAException {
         try {
-                locator.getPlannedActivityService().deletePlannedEligibilityCriterion(id);
+            GridSecurityJNDIServiceLocator.newInstance().getPlannedActivityService().deletePlannedEligibilityCriterion(
+                    id);
         } catch (PAException pe) {
             throw pe;
         } catch (Exception e) {
@@ -74,8 +71,8 @@ public class InvokePlannedActivityEjb
      */
     public List<PlannedActivityDTO> getByArm(Ii id) throws PAException {
         try {
-            List<PlannedActivityDTO> result =
-                locator.getPlannedActivityService().getByArm(id);
+            List<PlannedActivityDTO> result = GridSecurityJNDIServiceLocator.newInstance().getPlannedActivityService()
+                    .getByArm(id);
             return result;
         } catch (PAException pe) {
             throw pe;
@@ -87,11 +84,42 @@ public class InvokePlannedActivityEjb
     /**
      * {@inheritDoc}
      */
-    public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii id)
+    public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii id) throws PAException {
+        try {
+            PlannedEligibilityCriterionDTO result = GridSecurityJNDIServiceLocator.newInstance()
+                    .getPlannedActivityService().getPlannedEligibilityCriterion(id);
+            return result;
+        } catch (PAException pe) {
+            throw pe;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii id) 
+        throws PAException {
+        try {
+            List<PlannedEligibilityCriterionDTO> result = GridSecurityJNDIServiceLocator.newInstance()
+                    .getPlannedActivityService().getPlannedEligibilityCriterionByStudyProtocol(id);
+            return result;
+        } catch (PAException pe) {
+            throw pe;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(PlannedEligibilityCriterionDTO id)
             throws PAException {
         try {
-            PlannedEligibilityCriterionDTO result =
-                locator.getPlannedActivityService().getPlannedEligibilityCriterion(id);
+            PlannedEligibilityCriterionDTO result = GridSecurityJNDIServiceLocator.newInstance()
+                    .getPlannedActivityService().updatePlannedEligibilityCriterion(id);
             return result;
         } catch (PAException pe) {
             throw pe;
@@ -99,38 +127,5 @@ public class InvokePlannedActivityEjb
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(
-            Ii id) throws PAException {
-        try {
-            List<PlannedEligibilityCriterionDTO> result =
-                locator.getPlannedActivityService().getPlannedEligibilityCriterionByStudyProtocol(id);
-            return result;
-        } catch (PAException pe) {
-            throw pe;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(
-            PlannedEligibilityCriterionDTO id) throws PAException {
-        try {
-            PlannedEligibilityCriterionDTO result =
-                locator.getPlannedActivityService().updatePlannedEligibilityCriterion(id);
-            return result;
-        } catch (PAException pe) {
-            throw pe;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
 
 }

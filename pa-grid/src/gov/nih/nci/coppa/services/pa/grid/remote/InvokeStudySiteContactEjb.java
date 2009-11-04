@@ -15,8 +15,6 @@ import java.util.List;
 public class InvokeStudySiteContactEjb extends InvokeStudyPaServiceEjb<StudySiteContactDTO> implements
         StudySiteContactServiceRemote {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
     /**
      * Const.
      */
@@ -29,8 +27,8 @@ public class InvokeStudySiteContactEjb extends InvokeStudyPaServiceEjb<StudySite
      */
     public List<StudySiteContactDTO> getByStudySite(Ii studySiteIi) throws PAException {
         try {
-            List<StudySiteContactDTO> result =
-                    locator.getStudySiteContactService().getByStudySite(studySiteIi);
+            List<StudySiteContactDTO> result = GridSecurityJNDIServiceLocator.newInstance()
+                    .getStudySiteContactService().getByStudySite(studySiteIi);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -42,11 +40,27 @@ public class InvokeStudySiteContactEjb extends InvokeStudyPaServiceEjb<StudySite
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteContactDTO> getByStudyProtocol(Ii studyProtocolIi, StudySiteContactDTO dto)
+    public List<StudySiteContactDTO> getByStudyProtocol(Ii studyProtocolIi, StudySiteContactDTO dto) 
+        throws PAException {
+        try {
+            List<StudySiteContactDTO> result = GridSecurityJNDIServiceLocator.newInstance()
+                    .getStudySiteContactService().getByStudyProtocol(studyProtocolIi, dto);
+            return result;
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudySiteContactDTO> getByStudyProtocol(Ii studyProtocolIi, List<StudySiteContactDTO> dtos)
             throws PAException {
         try {
-            List<StudySiteContactDTO> result =
-                    locator.getStudySiteContactService().getByStudyProtocol(studyProtocolIi, dto);
+            List<StudySiteContactDTO> result = GridSecurityJNDIServiceLocator.newInstance()
+                    .getStudySiteContactService().getByStudyProtocol(studyProtocolIi, dtos);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -58,25 +72,9 @@ public class InvokeStudySiteContactEjb extends InvokeStudyPaServiceEjb<StudySite
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteContactDTO> getByStudyProtocol(Ii studyProtocolIi,
-            List<StudySiteContactDTO> dtos) throws PAException {
+    public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
         try {
-            List<StudySiteContactDTO> result =
-                    locator.getStudySiteContactService().getByStudyProtocol(studyProtocolIi, dtos);
-            return result;
-        } catch (PAException pae) {
-            throw pae;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
-        try {
-            locator.getStudyContactService().cascadeRoleStatus(ii, roleStatusCode);
+            GridSecurityJNDIServiceLocator.newInstance().getStudyContactService().cascadeRoleStatus(ii, roleStatusCode);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

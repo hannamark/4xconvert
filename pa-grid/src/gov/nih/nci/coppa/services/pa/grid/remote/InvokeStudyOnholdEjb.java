@@ -12,7 +12,6 @@ import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
  */
 public class InvokeStudyOnholdEjb extends InvokeStudyPaServiceEjb<StudyOnholdDTO> implements StudyOnholdServiceRemote {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * Const.
@@ -26,7 +25,7 @@ public class InvokeStudyOnholdEjb extends InvokeStudyPaServiceEjb<StudyOnholdDTO
      */
     public Bl isOnhold(Ii ii) throws PAException {
         try {
-            Bl result = locator.getStudyOnholdService().isOnhold(ii);
+            Bl result = GridSecurityJNDIServiceLocator.newInstance().getStudyOnholdService().isOnhold(ii);
             return result;
         } catch (PAException pae) {
             throw pae;

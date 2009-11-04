@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * Wrapper class for invoking the StudyParticipant remote EJB.
  */
-public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> implements
-        StudySiteServiceRemote {
+public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> implements StudySiteServiceRemote {
 
     /**
      * Const.
@@ -22,16 +21,13 @@ public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> im
         super(StudySiteDTO.class);
     }
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi, StudySiteDTO dto)
-            throws PAException {
+    public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi, StudySiteDTO dto) throws PAException {
         try {
-            List<StudySiteDTO> result =
-                    locator.getStudySiteService().getByStudyProtocol(studyProtocolIi, dto);
+            List<StudySiteDTO> result = GridSecurityJNDIServiceLocator.newInstance().getStudySiteService()
+                    .getByStudyProtocol(studyProtocolIi, dto);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -45,7 +41,8 @@ public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> im
      */
     public List<StudySiteDTO> getByStudyProtocol(Ii ii, List<StudySiteDTO> dto) throws PAException {
         try {
-            List<StudySiteDTO> result = locator.getStudySiteService().getByStudyProtocol(ii, dto);
+            List<StudySiteDTO> result = GridSecurityJNDIServiceLocator.newInstance().getStudySiteService()
+                    .getByStudyProtocol(ii, dto);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -59,7 +56,7 @@ public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> im
      */
     public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
         try {
-            locator.getStudySiteService().cascadeRoleStatus(ii, roleStatusCode);
+            GridSecurityJNDIServiceLocator.newInstance().getStudySiteService().cascadeRoleStatus(ii, roleStatusCode);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

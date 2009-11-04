@@ -46,7 +46,7 @@
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="runtime->master"/>
     <dependency org="springsource"           name="spring"                  rev="2.0.8"           conf="runtime->default"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="runtime->master"/>
-    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.3"           conf="runtime->default"/>
+    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.4-SNAPSHOT"           conf="runtime->default"/>
 
     <!-- compile -->
     <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.1-alpha1"             conf="compile->master"/>

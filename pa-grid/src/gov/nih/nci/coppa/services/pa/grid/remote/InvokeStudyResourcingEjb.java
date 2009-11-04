@@ -14,8 +14,6 @@ import java.util.List;
 public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResourcingDTO> implements
         StudyResourcingServiceRemote {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
     /**
      * Default constructor.
      */
@@ -28,7 +26,8 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
      */
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         try {
-            StudyResourcingDTO result = locator.getStudyResourcingService().createStudyResourcing(studyResourcingDTO);
+            StudyResourcingDTO result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
+                    .createStudyResourcing(studyResourcingDTO);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -42,7 +41,8 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
      */
     public Boolean deleteStudyResourceByID(StudyResourcingDTO studyResourcingDTO) throws PAException {
         try {
-            Boolean result = locator.getStudyResourcingService().deleteStudyResourceByID(studyResourcingDTO);
+            Boolean result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
+                    .deleteStudyResourceByID(studyResourcingDTO);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -56,7 +56,8 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
      */
     public StudyResourcingDTO getStudyResourceByID(Ii ii) throws PAException {
         try {
-            StudyResourcingDTO result = locator.getStudyResourcingService().getStudyResourceByID(ii);
+            StudyResourcingDTO result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
+                    .getStudyResourceByID(ii);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -70,8 +71,8 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
      */
     public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
-            List<StudyResourcingDTO> result =
-                    locator.getStudyResourcingService().getstudyResourceByStudyProtocol(studyProtocolIi);
+            List<StudyResourcingDTO> result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
+                    .getstudyResourceByStudyProtocol(studyProtocolIi);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -85,8 +86,8 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
      */
     public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi) throws PAException {
         try {
-            StudyResourcingDTO result =
-                    locator.getStudyResourcingService().getsummary4ReportedResource(studyProtocolIi);
+            StudyResourcingDTO result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
+                    .getsummary4ReportedResource(studyProtocolIi);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -100,7 +101,8 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
      */
     public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         try {
-            StudyResourcingDTO result = locator.getStudyResourcingService().updateStudyResourcing(studyResourcingDTO);
+            StudyResourcingDTO result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
+                    .updateStudyResourcing(studyResourcingDTO);
             return result;
         } catch (PAException pae) {
             throw pae;

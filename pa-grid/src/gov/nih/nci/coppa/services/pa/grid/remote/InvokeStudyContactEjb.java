@@ -11,13 +11,11 @@ import java.util.List;
 
 /**
  * Wrapper class for invoking the StudyContact remote EJB.
+ * 
  * @author mshestopalov
  */
-public class InvokeStudyContactEjb
-    extends InvokeStudyPaServiceEjb<StudyContactDTO>
-    implements StudyContactServiceRemote {
-
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+public class InvokeStudyContactEjb extends InvokeStudyPaServiceEjb<StudyContactDTO> implements
+        StudyContactServiceRemote {
 
     /**
      * Const.
@@ -31,8 +29,8 @@ public class InvokeStudyContactEjb
      */
     public List<StudyContactDTO> getByStudyProtocol(Ii studyProtocolIi, StudyContactDTO dto) throws PAException {
         try {
-            List<StudyContactDTO> result =
-                locator.getStudyContactService().getByStudyProtocol(studyProtocolIi, dto);
+            List<StudyContactDTO> result = GridSecurityJNDIServiceLocator.newInstance().getStudyContactService()
+                    .getByStudyProtocol(studyProtocolIi, dto);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -46,8 +44,8 @@ public class InvokeStudyContactEjb
      */
     public List<StudyContactDTO> getByStudyProtocol(Ii studyProtocolIi, List<StudyContactDTO> dtos) throws PAException {
         try {
-            List<StudyContactDTO> result =
-                locator.getStudyContactService().getByStudyProtocol(studyProtocolIi, dtos);
+            List<StudyContactDTO> result = GridSecurityJNDIServiceLocator.newInstance().getStudyContactService()
+                    .getByStudyProtocol(studyProtocolIi, dtos);
             return result;
         } catch (PAException pae) {
             throw pae;
@@ -59,9 +57,9 @@ public class InvokeStudyContactEjb
     /**
      * {@inheritDoc}
      */
-    public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
+    public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
         try {
-            locator.getStudyContactService().cascadeRoleStatus(ii, roleStatusCode);
+            GridSecurityJNDIServiceLocator.newInstance().getStudyContactService().cascadeRoleStatus(ii, roleStatusCode);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

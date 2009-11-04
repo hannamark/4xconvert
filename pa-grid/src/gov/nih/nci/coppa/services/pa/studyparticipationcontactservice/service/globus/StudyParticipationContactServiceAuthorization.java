@@ -100,7 +100,10 @@ public class StudyParticipationContactServiceAuthorization implements PDP {
     		String serviceName = (String)config.getProperty(name, "serviceName");
     	    String etcPath = ContainerConfig.getBaseDirectory() + File.separator + (String)config.getProperty(name, "etcDirectoryPath");
 
-    	
+    	 
+	   		authorizationClassMap.put("enforce_auth",Class.forName("org.cagrid.enforce.authorization.extension.service.EnforceAuthorization").newInstance());
+			((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).initialize(serviceName, etcPath);
+			
     	} catch (Exception e){
         	throw new InitializeException(e.getMessage(),e);
 		}

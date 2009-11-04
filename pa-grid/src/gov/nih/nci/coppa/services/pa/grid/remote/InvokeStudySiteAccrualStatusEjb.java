@@ -10,20 +10,18 @@ import java.util.List;
 
 /**
  * Wrapper class for invoking the StudySiteAccrualStatusService remote EJB.
- *
+ * 
  * @author Hugh Reinhart
  */
 public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusServiceRemote {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi)
-            throws PAException {
+    public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
         try {
-            StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
+            StudySiteAccrualStatusServiceRemote service = GridSecurityJNDIServiceLocator.newInstance()
+                    .getStudySiteAccrualStatusService();
             return service.getCurrentStudySiteAccrualStatusByStudySite(studySiteIi);
         } catch (PAException pae) {
             throw pae;
@@ -37,7 +35,8 @@ public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusSe
      */
     public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii) throws PAException {
         try {
-            StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
+            StudySiteAccrualStatusServiceRemote service = GridSecurityJNDIServiceLocator.newInstance()
+                    .getStudySiteAccrualStatusService();
             StudySiteAccrualStatusDTO result = service.getStudySiteAccrualStatus(ii);
             return result;
         } catch (PAException pae) {
@@ -50,12 +49,11 @@ public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusSe
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi)
-            throws PAException {
+    public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
         try {
-            StudySiteAccrualStatusServiceRemote service = locator.getStudySiteAccrualStatusService();
-            List<StudySiteAccrualStatusDTO> result =
-                    service.getStudySiteAccrualStatusByStudySite(studySiteIi);
+            StudySiteAccrualStatusServiceRemote service = GridSecurityJNDIServiceLocator.newInstance()
+                    .getStudySiteAccrualStatusService();
+            List<StudySiteAccrualStatusDTO> result = service.getStudySiteAccrualStatusByStudySite(studySiteIi);
             return result;
         } catch (PAException pae) {
             throw pae;

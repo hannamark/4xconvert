@@ -14,7 +14,6 @@ import java.util.Map;
  */
 public class InvokeArmEjb extends InvokeStudyPaServiceEjb<ArmDTO> implements ArmServiceRemote {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * Const.
@@ -28,7 +27,7 @@ public class InvokeArmEjb extends InvokeStudyPaServiceEjb<ArmDTO> implements Arm
      */
     public List<ArmDTO> getByPlannedActivity(Ii ii) throws PAException {
         try {
-            List<ArmDTO> result = locator.getArmService().getByPlannedActivity(ii);
+            List<ArmDTO> result = GridSecurityJNDIServiceLocator.newInstance().getArmService().getByPlannedActivity(ii);
             return result;
         } catch (PAException pae) {
             throw pae;

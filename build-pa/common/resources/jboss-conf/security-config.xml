@@ -6,6 +6,9 @@
 <policy>
     <application-policy name="pa">
         <authentication>   
+            <login-module code="com.fiveamsolutions.nci.commons.authentication.SessionFixationProtectionLoginModule" flag="required">
+              <module-option name="migrateSessionAttributes">true</module-option>
+            </login-module>
             <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional">
                 <module-option name="driver">@database.driver@</module-option>
                 <module-option name="url">@database.url@</module-option>
@@ -13,6 +16,11 @@
                 <module-option name="passwd">@database.password@</module-option>
                 <module-option name="query">SELECT * FROM csm_user WHERE login_name=? and password=?</module-option>
                 <module-option name="encryption-enabled">YES</module-option>
+            </login-module>
+            <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" flag="optional">
+                <module-option name="gridServicePrincipal">@gridServicePrincipal@</module-option>
+                <module-option name="gridServiceCredential">@gridServiceCredential@</module-option>
+                <module-option name="gridServicePrincipalSeparator">||</module-option>
             </login-module>
             <login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="required">
                 <module-option name="password-stacking">useFirstPass</module-option>

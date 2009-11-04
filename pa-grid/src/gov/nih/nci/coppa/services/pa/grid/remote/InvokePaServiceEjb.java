@@ -12,7 +12,6 @@ import gov.nih.nci.pa.service.PAException;
  */
 public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DTO> {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
     private final Class<DTO> type;
 
     /**
@@ -98,9 +97,10 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
 
     /**
      * {@inheritDoc}
+     * @throws Exception 
      */
-    public ServiceLocator getLocator() {
-        return locator;
+    public ServiceLocator getLocator() throws Exception {
+        return GridSecurityJNDIServiceLocator.newInstance();
     }
 
     /**

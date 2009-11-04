@@ -226,7 +226,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <path id="jdbc.driver.classpath">
         <pathelement location="${database.driver.file}"/>
     </path>
-
+    <if>
+        <not>
+            <isset property="env.ANT_OPTS"/>
+        </not>
+        <then>
+            <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator} set  ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m'  # for windows."/>
+        </then>
+    </if>
     <!-- Targets -->
     <target name="diagnostics" description="diagnostics">
         <echoproperties/>
@@ -396,7 +403,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
         depends="
-      validate:pre:build,
+        validate:pre:build,
         clean,
         init,
         build:pa-ear,
@@ -431,7 +438,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.password" value="${po.topic.password}"/>
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-
+            <property name="gridServicePrincipal" value="${pagrid.jndi.principal}"/>
+            <property name="gridServiceCredential" value="${pagrid.jndi.credentials.encrytped}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
         </ant>
@@ -452,7 +460,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.jnp.url" value="${accrual.po.jnp.url}" />
             <property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
             <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
-	    <property name="po.port.number" value="${po.port.number}" />
+            <property name="po.port.number" value="${po.port.number}" />
             <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
             <target name="${accrual-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
@@ -618,9 +626,42 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="dist:tools:retrieve" description="Downloads binary support tools form common tools repository"
         depends="
         init,
-        dist:tools:retrieve:jboss
+        dist:tools:retrieve:jboss,
+        dist:tools:retrieve:sync-gts
         " />
-
+    <!-- 
+       See https://wiki.nci.nih.gov/display/BuildandDeploymentAutomation/How+to+configure+a+Secure+Grid+Listener for more details
+    -->
+    <target name="dist:tools:retrieve:sync-gts"  description="Downloads caGrid SyncGTS service file from binary repository and verifies checksum">
+        <if>
+            <not>
+                <available file="${download.dir}/${sync-gts.binaries.file}"/>
+            </not>
+            <then>
+                <get src="${sync-gts.src.url}" dest="${download.dir}/${sync-gts.binaries.file}" />
+            </then>
+        </if>
+        <property name="sync-gts.dist.dir" location="${dist.exploded.dir}/${sync-gts.dist.relative.dir}"/>
+        <unzip src="${download.dir}/${sync-gts.binaries.file}" dest="${sync-gts.dist.dir}"/>
+        <property name="cagrid.target.co.dir" location="${target.dir}/cagrid-target"/>
+        <mkdir dir="${cagrid.target.co.dir}"/>
+        <if>
+            <not>
+                <available file="${cagrid-target.src.url}"/>
+            </not>
+            <then>
+                <mkdir dir="${cagrid.target.co.dir}"/>
+                <svn-co
+                    svn.checkout.url="${cagrid-target.src.url}"
+                    svn.checkout.dir="${cagrid.target.co.dir}"
+                    delete="false"
+                    />
+            </then>
+        </if>
+        <copy todir="${sync-gts.dist.dir}/cagrid-target">
+            <fileset dir="${cagrid.target.co.dir}"/>
+        </copy>
+    </target>
     <!-- Downloads jboss from tools repository and compares checksum, based on properties set in project.properties -->
     <target name="dist:tools:retrieve:jboss" unless="jboss.tools.exists">
         <get src="${jboss.src.url}"
@@ -703,7 +744,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <!-- Copies install time resources into distribution tree -->
-    <target name="dist:upgrader:prep">
+    <target name="dist:upgrader:prep" depends="dist:tools:retrieve:sync-gts">
         <!-- Cleans up files copied by dist:*:prep targets to ensure only required files are present becaue this target is run after dist:installer:prep -->
         <!-- Copy pa database scripts, temporarily added to include installer scripts in upgrade path -->
         <copy todir="${db-install.dist.dir}" overwrite="true">

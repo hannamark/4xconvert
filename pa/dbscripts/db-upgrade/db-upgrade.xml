@@ -256,4 +256,9 @@
         <comment>execute pa_dev_23886_5.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_23886_5.sql"/>
     </changeSet>
+    <changeSet id="63" author="smatyas">
+        <comment>execute PO-1366.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/PO-1366.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

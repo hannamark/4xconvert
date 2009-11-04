@@ -227,6 +227,8 @@
                 <filter token="db.password" value="${db.password}"/>
                 <filter token="po.topic.serverName" value="${po.topic.serverName}"/>
                 <filter token="po.topic.port" value="${po.topic.port}"/>
+                <filter token="gridServicePrincipal" value="${gridServicePrincipal}"/>
+                <filter token="gridServiceCredential" value="${gridServiceCredential}"/>
             </filterset>
             <fileset dir="${pa-ear.build.resourceDir.0}" 
                      includes="**/*" 

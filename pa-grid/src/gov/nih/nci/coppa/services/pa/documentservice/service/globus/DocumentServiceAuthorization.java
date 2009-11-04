@@ -61,22 +61,37 @@ public class DocumentServiceAuthorization implements PDP {
 	   				
 	public void authorizeGetDocumentsByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGet(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeCreate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeDelete(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   
 	
@@ -135,7 +150,10 @@ public class DocumentServiceAuthorization implements PDP {
     		String serviceName = (String)config.getProperty(name, "serviceName");
     	    String etcPath = ContainerConfig.getBaseDirectory() + File.separator + (String)config.getProperty(name, "etcDirectoryPath");
 
-    	
+    	 
+	   		authorizationClassMap.put("enforce_auth",Class.forName("org.cagrid.enforce.authorization.extension.service.EnforceAuthorization").newInstance());
+			((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).initialize(serviceName, etcPath);
+			
     	} catch (Exception e){
         	throw new InitializeException(e.getMessage(),e);
 		}

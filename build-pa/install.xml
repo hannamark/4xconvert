@@ -72,7 +72,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Jboss configurtion related properties -->
     <property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
     <property name="jboss.service.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/jboss-service.xml"/>
-
+    
+    <!-- added for updated secure grid ssaksa 090826 -->
+     <property name="sync-gts.dir" location="${basedir}/${sync-gts.dist.relative.dir}"/>
+     <property name="sync-gts.build.dir" location="${sync-gts.dir}/syncgts"/>
+     <property name="cagrid-target.dir" location="${sync-gts.dir}/cagrid-target"/>
+     <property name="grid.dir.dest.jboss" value="wsrf.war" />
+    
     <!-- *-ds.xml and WAR -->
     <property name="pa-ear.dir.dist" value="${basedir}/${pa-ear.dist.relative.dir}" />
     <property name="pa-ear.ds.file" value="pa-ds.xml" />
@@ -154,7 +160,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <dirname file="${grid.secure.cert.location}" property="grid.secure.dir"/>
     <basename file="${grid.secure.key.location}" property="grid.secure.key.file"/>
 
-
+    <basename file="${pagrid.grid.secure.cert.location}" property="pagrid.grid.secure.cert.file"/>
+    <dirname file="${pagrid.grid.secure.cert.location}" property="pagrid.grid.secure.dir"/>
+    <basename file="${pagrid.grid.secure.key.location}" property="pagrid.grid.secure.key.file"/>
+    
     <!-- figure out whether to use install-properties.template or upgrade-proprties.template based on the name of the properties file -->
     <propertyregex property="properties.file.type"
         input="${properties.file}"
@@ -211,6 +220,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <filter token="database.driver" value="${database.driver}"/>
         <filter token="database.dialect" value="${database.dialect}"/>
         <filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
+        <filter token="grid" value="${hibernate.cfg.file.path}"/>
+        <filter token="gridServicePrincipal" value="${pagrid.jndi.principal}"/>
+        <filter token="gridServiceCredential" value="${pagrid.jndi.credentials.encrytped}"/>
     </filterset>
 
 
@@ -532,8 +544,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
     <!-- Configures installed pa-grid application -->
     <target name="install:pa-grid:configure" description="Configure pa-grid service based on properties" unless="exclude.pa-grid">
+        <!--
+        NOTE: During an upgrade, the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) copies over 
+        the -cert.pem and -key.pem host cert file to the ${jboss.home}/server/${jboss.server.name.grid}/conf directory.  
+        Therefore, we're changing the appserver.conf.dir property to point to pagrid.grid.secure.dir instead.
+        
+        This is required whenever the host certs are not installed within the ${jboss.home}/server/${jboss.server.name.grid}/conf directory   
+        -->
         <grid-appserver-configure
-            appserver.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
+            appserver.home="${jboss.home}"
+            appserver.server.name="${jboss.server.name.grid}"
+            appserver.conf.dir="${pagrid.grid.secure.dir}"
             appserver.webapp.dir="${jboss.home}/server/${jboss.server.name.grid}/deploy"
             appserver.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
             appserver.server-xml.service.name="jboss.web"
@@ -544,7 +565,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             search.port="8080"
             grid.application.name="${pa-grid.introduce.skeleton.service.name}"
             grid.application.relative.dir="${pa-grid.dir.target}"
-            grid.secure.enable="false"
+            grid.secure.dir="${pagrid.grid.secure.dir}"
+            grid.secure.enable="${pagrid.grid.secure.enable}"
+            grid.secure.port="${pagrid.grid.secure.port}"
+            grid.secure.key.file="${pagrid.grid.secure.key.file}"
+            grid.secure.cert.file="${pagrid.grid.secure.cert.file}"
+            grid.external.secure.host="${pagrid.grid.external.secure.host}"
+            grid.external.secure.port="${pagrid.grid.external.secure.port}"
         	appserver.external.http.host="${jboss.external.grid.http.host}"
         />
     </target>
@@ -619,6 +646,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <jboss-configure
             jboss.server.ports.name="bda-ports"
             jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding.xml"
+            
                 />
         <!-- Default values for all attributes if you are using standard NCICB port configurations
         <jboss-configure
@@ -632,7 +660,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                     filtering="true"
                     overwrite="true">
                     <filterset begintoken="@" endtoken="@">
-                        <filter token="jboss.server.port" value="@jboss.server.grid.port@"/>
+                        <filter token="jboss.server.port" value="@pagrid.grid.secure.port@"/>
                         <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
                         <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
                         <filter token="jboss.server.jndi.port" value="@jboss.server.grid.jndi.port@"/>
@@ -671,7 +699,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                     jboss.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
                     jboss.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
                     jboss.server-xml.service.name="jboss.web"
-                    jboss.ssl.enable="${jboss.ssl.enable}"
+                    jboss.ssl.enable="false"
                     jboss.ssl.port="8443"
                     jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
                     jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
@@ -684,16 +712,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                     jboss.external.http.host="${jboss.external.grid.http.host}"
                     jboss.external.http.port="${jboss.external.grid.http.port}"
                     proxy.update.connector.port.http="8080"
-                    grid.external.secure.host="${grid.external.secure.host}"
-                    grid.external.secure.port="${grid.external.secure.port}"
+                    grid.external.secure.host="${pagrid.grid.external.secure.host}"
+                    grid.external.secure.port="${pagrid.grid.external.secure.port}"
                     jboss.server.hostname="${jboss.server.hostname}"
-                    jboss.grid.configure="false"
-                    grid.secure.dir="${grid.secure.dir}"
-                    grid.secure.enable="${grid.secure.enable}"
-                    grid.secure.port="${grid.secure.port}"
-                    grid.secure.key.file="${grid.secure.key.file}"
-                    grid.secure.cert.file="${grid.secure.cert.file}"
+                    jboss.grid.configure="true"
+                    grid.secure.dir="${pagrid.grid.secure.dir}"
+                    grid.secure.enable="${pagrid.grid.secure.enable}"
+                    grid.secure.port="${pagrid.grid.secure.port}"
+                    grid.secure.key.file="${pagrid.grid.secure.key.file}"
+                    grid.secure.cert.file="${pagrid.grid.secure.cert.file}"
                     jboss.java.opts="${jboss.java.opts}"
+                    jboss.http-connector.remove="true"
                     />
     </target>
 
@@ -835,7 +864,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:pa-grid:application,
         install:pa-grid:configure,
         install:jboss:configure,
-    install:post,
+        install:post,
         install:jboss:start
         " />
 
@@ -849,7 +878,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:init,
         install:database,
         install:jboss,
-    install:post,
+        install:post,
         install:jboss:start,
         install:validation:post-install
         "/>
