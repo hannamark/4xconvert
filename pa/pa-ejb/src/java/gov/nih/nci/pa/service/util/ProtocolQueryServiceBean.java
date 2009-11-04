@@ -103,7 +103,6 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolServiceBean;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -137,7 +136,7 @@ import org.hibernate.Session;
         "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength"  })
 public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
 
-    private static final Logger LOG = Logger.getLogger(StudyProtocolServiceBean.class);
+    private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
     private static final int STUDY_PROTOCOL_INDEX = 0;
     private static final int WORKFLOW_STATUS_INDEX = 1;
     private static final int MILESTONE_INDEX = 2;

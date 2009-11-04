@@ -98,10 +98,10 @@ import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.internal.StudyProtocolBeanLocal;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -119,12 +119,11 @@ import org.junit.Test;
  */
 public class StudyProtocolServiceBeanTest {
 
-    private StudyProtocolServiceBean bean = new StudyProtocolServiceBean();
-    private StudyProtocolServiceRemote remoteEjb = bean;
-    private StudyRelationshipServiceBean srb = new StudyRelationshipServiceBean();
+    
+    private StudyProtocolBeanLocal bean = new StudyProtocolBeanLocal();
+    private StudyProtocolServiceLocal remoteEjb = bean;
     @Before
     public void setUp() throws Exception {
-        bean.studyRelationshipService = srb;
         TestSchema.reset();
     }
 

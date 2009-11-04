@@ -134,7 +134,6 @@ public class StudyMilestoneServiceBean
 
     private static final Logger LOG  = Logger.getLogger(StudyMilestoneServiceBean.class);
     DocumentWorkflowStatusServiceRemote documentWorkflowStatusService = null;
-    StudyProtocolServiceRemote studyProtocolService = null;
 
     @EJB
     StudyOnholdServiceRemote studyOnholdService;
@@ -142,6 +141,8 @@ public class StudyMilestoneServiceBean
     AbstractionCompletionServiceRemote abstractionCompletionService;
     @EJB
     MailManagerServiceLocal mailManagerService;
+    @EJB
+    StudyProtocolServiceLocal studyProtocolService = null;
 
     /** For testing purposes only.  Set to false to bypass abstraction validations. */
     boolean validateAbstractions = true;
@@ -189,12 +190,6 @@ public class StudyMilestoneServiceBean
         return documentWorkflowStatusService;
     }
 
-    private StudyProtocolServiceRemote getStudyProtocolService() {
-        if (studyProtocolService == null) {
-            studyProtocolService = (StudyProtocolServiceRemote) JNDIUtil.lookup("pa/StudyProtocolServiceBean/remote");
-        }
-        return studyProtocolService;
-    }
 
     private DocumentWorkflowStatusCode getCurrentDocumentWorkflowStatus(Ii studyProtocolIi) throws PAException {
         DocumentWorkflowStatusDTO dw = getDocumentWorkflowStatusService().getCurrentByStudyProtocol(studyProtocolIi);
@@ -471,7 +466,7 @@ public class StudyMilestoneServiceBean
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
         DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-        StudyProtocolDTO sp = getStudyProtocolService().getStudyProtocol(dto.getStudyProtocolIdentifier());
+        StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
         
         if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED) && sp.getSubmissionNumber().getValue().intValue() == 1) {
                   
@@ -563,7 +558,7 @@ public class StudyMilestoneServiceBean
     }
 
     private void updateRecordVerificationDate(StudyMilestoneDTO dto) throws PAException {
-        StudyProtocolDTO sp = getStudyProtocolService().getStudyProtocol(dto.getStudyProtocolIdentifier());
+        StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
         sp.setRecordVerificationDate(dto.getMilestoneDate());
         studyProtocolService.updateStudyProtocol(sp);
     }

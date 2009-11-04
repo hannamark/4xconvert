@@ -153,6 +153,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -161,6 +162,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.Session;
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Naveen Amiruddin
@@ -174,6 +176,8 @@ import org.hibernate.Session;
 @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.NPathComplexity" , "PMD.ExcessiveParameterList" ,
     "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" , "PMD.ExcessiveMethodLength" , "PMD.TooManyFields" })
 @Interceptors(HibernateSessionInterceptor.class)
+@SecurityDomain("pa")
+@RolesAllowed({"client" , "Abstractor" , "Submitter" })
 public class TrialRegistrationServiceBean implements TrialRegistrationServiceRemote {
 
     @EJB
@@ -222,7 +226,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
     @EJB
     StudyObjectiveServiceRemote studyObjectiveService = null;
-     @EJB
+    @EJB
     StudySiteOverallStatusServiceLocal studySiteOverallStatusService = null;
     @EJB
     AbstractionCompletionServiceRemote abstractionCompletionService = null;

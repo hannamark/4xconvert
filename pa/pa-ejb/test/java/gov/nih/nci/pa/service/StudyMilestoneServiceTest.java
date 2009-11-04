@@ -38,8 +38,7 @@
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
-* documentation and/or other materials provided with the distribution, if any.
-*
+* documentation and/or other materials provided with the distribution, if any.*
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
 * shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
@@ -98,6 +97,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.internal.StudyProtocolBeanLocal;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -118,7 +118,7 @@ public class StudyMilestoneServiceTest {
     private final StudyMilestoneServiceRemote remote = bean;
     private final DocumentWorkflowStatusServiceBean dws = new DocumentWorkflowStatusServiceBean();
     private final StudyOnholdServiceRemote ohs = new StudyOnholdServiceBean();
-    private final StudyProtocolServiceRemote sps = new StudyProtocolServiceBean();
+    private final StudyProtocolServiceLocal sps = new StudyProtocolBeanLocal();
     private Ii spIi;
 
     @Before
