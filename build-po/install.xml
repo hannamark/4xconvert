@@ -478,9 +478,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="install:jboss:po-ear" 
-  	      description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" 
-  	      depends="fix-server-xml" 
-  	      unless="exclude.po-ear">
+            description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" 
+            depends="fix-server-xml" 
+            unless="exclude.po-ear">
     <!-- added to ensure working.dirs are fresh for our install -->
     <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
     <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
@@ -524,10 +524,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
     <!-- Configures installed po-grid application -->
     <target name="install:po-grid:configure" description="Configure po-grid service based on properties" unless="exclude.po-grid">
+        <!--
+        NOTE: during an upgrade the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) 
+        which copies over the -cert.pem and -key.pem host cert file over to the ${jboss.home}/server/${po-grid.jboss.server.name}/conf directory
+        therefore we're changing the appserver.conf.dir property to point to pogrid.grid.secure.dir instead.
+        
+        This is required whenever the host certs are not installed within the ${jboss.home}/server/${jboss.server.name.grid}/conf directory   
+        -->
         <grid-appserver-configure
-	  appserver.home="${jboss.home}"
-	  appserver.server.name="${po-grid.jboss.server.name}"
-          appserver.conf.dir="${jboss.home}/server/${po-grid.jboss.server.name}/conf"
+          appserver.home="${jboss.home}"
+          appserver.server.name="${po-grid.jboss.server.name}"
+          appserver.conf.dir="${pogrid.grid.secure.dir}"
           appserver.webapp.dir="${jboss.home}/server/${po-grid.jboss.server.name}/deploy"
           appserver.server-xml.file="${jboss.home}/server/${po-grid.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
           appserver.server-xml.service.name="jboss.web"
@@ -626,7 +633,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             grid.secure.key.file="${grid.secure.key.file}"
             grid.secure.cert.file="${grid.secure.cert.file}"
             jboss.java.opts="${jboss.java.opts}"
-	    jboss.http-connector.remove="false"
+            jboss.http-connector.remove="false"
             />
   </target>
 
