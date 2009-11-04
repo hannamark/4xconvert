@@ -38,15 +38,15 @@
     <td class="value"><s:select required="true" id ="pathologyGrades" name="pathology.grade"
                       headerKey="" headerValue="--Select--"
                       list="pathology.grades" listKey="code" listValue="code" value="pathology.grade.code"/>
-                       <s:fielderror cssStyle="color:red"><s:param>pathology.grade</s:param></s:fielderror></td></tr>
+                       <s:fielderror cssClass="formErrorMsg"><s:param>pathology.grade</s:param></s:fielderror></td></tr>
     <tr><td scope="row" class="label"><label><fmt:message key="pathology.label.gradeSystems"/><span class="required">*</span></label></td>
     <td class="value"><s:select required="true" id ="pathologyGradeSystems" name="pathology.gradeSystem"
                       headerKey="" headerValue="--Select--"
                       list="pathology.gradeSystems" listKey="code" listValue="code" value="pathology.gradeSystem.code"/>
-                       <s:fielderror cssStyle="color:red"><s:param>pathology.gradeSystem</s:param></s:fielderror></td></tr>
+                       <s:fielderror cssClass="formErrorMsg"><s:param>pathology.gradeSystem</s:param></s:fielderror></td></tr>
     <tr><td scope="row" class="label"><label><fmt:message key="pathology.label.description"/><span class="required">*</span></label></td>
     <td class="value"><s:textarea cols="60" rows="4" name="pathology.description"/>
-                       <s:fielderror cssStyle="color:red"><s:param>pathology.description</s:param></s:fielderror></td></tr>
+                       <s:fielderror cssClass="formErrorMsg"><s:param>pathology.description</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
 
