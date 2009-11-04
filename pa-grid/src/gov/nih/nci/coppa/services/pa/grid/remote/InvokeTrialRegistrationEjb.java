@@ -156,6 +156,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                             studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
                             summary4StudyResourcingDTO, isBatch);
+        } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -183,6 +184,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, nctIdentifierSiteIdentifierDTO,
                             studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                             responsiblePartyContactIi, isBatch);
+        } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
