@@ -83,6 +83,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
@@ -213,10 +214,16 @@ public class PlannedActivityServiceTest {
         dto.setCriterionName(StConverter.convertToSt("WHC"));
         dto.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setOperator(StConverter.convertToSt(">"));
-        Pq pq = new Pq();
-        pq.setValue(new BigDecimal("80"));
-        pq.setUnit(UnitsCode.YEARS.getCode());
-        dto.setValue(pq);
+        Pq pqLow = new Pq();
+        pqLow.setValue(new BigDecimal("80"));
+        pqLow.setUnit(UnitsCode.YEARS.getCode());
+        Pq pqHigh = new Pq();
+        pqHigh.setValue(new BigDecimal("90"));
+        pqHigh.setUnit(UnitsCode.YEARS.getCode());
+        Ivl<Pq> ivlPq = new Ivl<Pq>();
+        ivlPq.setHigh(pqHigh);
+        ivlPq.setLow(pqLow);
+        dto.setValue(ivlPq);
         assertEquals(dto.getStudyProtocolIdentifier()
                 , spIi);
     }

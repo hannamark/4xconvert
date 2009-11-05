@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -116,8 +117,10 @@ public class PlannedEligibilityCriterionConverterTest {
     bo.setInclusionIndicator(Boolean.TRUE);
     bo.setOperator(">");
     bo.setStudyProtocol(sp);
-    bo.setValue(new BigDecimal("14"));
-    bo.setUnit(UnitsCode.MONTHS.getCode());
+    bo.setMinValue(new BigDecimal("12"));
+    bo.setMinUnit("Milligrams");
+    bo.setMaxValue(new BigDecimal("24"));
+    bo.setMaxUnit("Milligrams");
     PlannedEligibilityCriterionDTO dto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
     assertPlannedEligibilityCriterionConverter(bo, dto);
   }
@@ -129,8 +132,8 @@ public class PlannedEligibilityCriterionConverterTest {
     assertEquals(bo.getInclusionIndicator(),  dto.getInclusionIndicator().getValue());
     assertEquals(bo.getOperator(),  dto.getOperator().getValue());
     assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-    assertEquals(bo.getValue(),  dto.getValue().getValue());
-    assertEquals(bo.getUnit(),  dto.getValue().getUnit());
+    assertEquals(bo.getMaxValue(),  dto.getValue().getHigh().getValue());
+    assertEquals(bo.getMaxUnit(),  dto.getValue().getHigh().getUnit());
   }
 
   @Test
@@ -141,10 +144,16 @@ public class PlannedEligibilityCriterionConverterTest {
     dto.setCriterionName(StConverter.convertToSt("WHC"));
     dto.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
     dto.setOperator(StConverter.convertToSt(">"));
-    Pq pq = new Pq();
-    pq.setValue(new BigDecimal("80"));
-    pq.setUnit(UnitsCode.YEARS.getCode());
-    dto.setValue(pq);
+    Pq pqLow = new Pq();
+    pqLow.setValue(new BigDecimal("80"));
+    pqLow.setUnit(UnitsCode.YEARS.getCode());
+    Pq pqHigh = new Pq();
+    pqHigh.setValue(new BigDecimal("90"));
+    pqHigh.setUnit(UnitsCode.YEARS.getCode());
+    Ivl<Pq> ivlPq = new Ivl<Pq>();
+    ivlPq.setHigh(pqHigh);
+    ivlPq.setLow(pqLow);
+    dto.setValue(ivlPq);
     dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
     PlannedEligibilityCriterion bo = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
     assertPlannedEligibilityCriterionConverter(bo, dto);

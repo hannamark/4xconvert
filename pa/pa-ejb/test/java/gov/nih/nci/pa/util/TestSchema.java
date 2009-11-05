@@ -543,10 +543,11 @@ public class TestSchema {
             pec.setInclusionIndicator(Boolean.TRUE);
             pec.setOperator(">");
             pec.setStudyProtocol(sp);
-            pec.setValue(new BigDecimal("14"));
-            pec.setUnit(UnitsCode.MONTHS.getCode());
+            pec.setMinValue(new BigDecimal("12"));
+            pec.setMinUnit(UnitsCode.MONTHS.getCode());
+            pec.setMaxValue(new BigDecimal("24"));
+            pec.setMaxUnit(UnitsCode.MONTHS.getCode());            
             addUpdObject(pec);
-
             Disease dis01 = DiseaseTest.createDiseaseObj("Toe Cancer");
             addUpdObject(dis01);
             diseaseIds.add(dis01.getId());

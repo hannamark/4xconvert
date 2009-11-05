@@ -260,5 +260,9 @@
         <comment>execute PO-1366.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/PO-1366.sql"/>
     </changeSet>
+    <changeSet id="64" author="Anu">
+        <comment>execute pa_dev_24120.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_24120.sql"/>
+    </changeSet>
 
 </databaseChangeLog>

@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
@@ -85,7 +86,9 @@ import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
 *
@@ -109,15 +112,12 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        pecDTO.setInclusionIndicator(BlConverter.convertToBl(pec.getInclusionIndicator()));
        pecDTO.setOperator(StConverter.convertToSt(pec.getOperator()));
        pecDTO.setEligibleGenderCode(CdConverter.convertToCd(pec.getEligibleGenderCode()));
-       Pq pq = new Pq();
-       pq.setValue(pec.getValue());
-       if (pec.getUnit() != null) {
-         pq.setUnit(pec.getUnit());
-       }
-       pecDTO.setValue(pq);
+       IvlConverter.JavaPq minValue  = new IvlConverter.JavaPq(pec.getMinUnit(), pec.getMinValue(), null);
+       IvlConverter.JavaPq maxValue  = new IvlConverter.JavaPq(pec.getMaxUnit(), pec.getMaxValue(), null);
+       Ivl<Pq> ivlValue = IvlConverter.convertPq().convertToIvl(minValue, maxValue);
+       pecDTO.setValue(ivlValue);
        pecDTO.setDisplayOrder(IntConverter.convertToInt(pec.getDisplayOrder()));
-       //pecDTO.setValue(PqvConverter.convertToPqv(pec.getValue()));
-       //pecDTO.setUnit(CdConverter.convertToCd(pec.getUnit()));
+      
        return pecDTO;
    }
 
@@ -134,13 +134,21 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        pec.setOperator(StConverter.convertToString(pecDTO.getOperator()));
        pec.setEligibleGenderCode(EligibleGenderCode.getByCode(
                CdConverter.convertCdToString(pecDTO.getEligibleGenderCode())));
-       //pec.setAgeValue(StConverter.convertToString(pecDTO.getAgeValue()));
-       //pec.setUnit(UnitsCode.getByCode(CdConverter.convertCdToString(pecDTO.getUnit())));
-       if (pecDTO.getValue() != null) {
-         pec.setValue(pecDTO.getValue().getValue());
-         pec.setUnit(pecDTO.getValue().getUnit());
-       }
        pec.setDisplayOrder(IntConverter.convertToInteger(pecDTO.getDisplayOrder()));
+       if (pecDTO.getValue() != null) {
+           if (!PAUtil.isIvlLowNull(pecDTO.getValue())) {
+              pec.setMinValue(pecDTO.getValue().getLow().getValue());
+           }
+           if (!PAUtil.isIvlUnitNull(pecDTO.getValue())) {
+              pec.setMinUnit(pecDTO.getValue().getLow().getUnit());
+           }  
+           if (!PAUtil.isIvlHighNull(pecDTO.getValue())) {
+              pec.setMaxValue(pecDTO.getValue().getHigh().getValue());
+           }  
+           if (!PAUtil.isIvlUnitNull(pecDTO.getValue())) {  
+             pec.setMaxUnit(pecDTO.getValue().getHigh().getUnit());
+           }  
+         }
        return pec;
    }
 }

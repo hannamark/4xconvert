@@ -48,7 +48,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jboss"                  name="mail"                    rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jericho"                name="html"                    rev="2.4"             conf="compile->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
-    <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.0.7"           conf="compile->master"/>
+    <dependency org="ncicb"                  name="nci-commons-struts2"     rev="1.2.3"           conf="compile->default"/>
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
     <dependency org="ncicb"                  name="iso-datatypes"           rev="1.2.4"       	  conf="compile->master"/>
     <dependency org="ncicb"                  name="po-services-client"      rev="3.0-milestone3"  conf="compile->master"/>

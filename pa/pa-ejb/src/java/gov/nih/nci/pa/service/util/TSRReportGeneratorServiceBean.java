@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
@@ -722,7 +723,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       }
       String criterionName = null;
       String descriptionText = null;
-      Pq pq = null;
+      Ivl<Pq> pq = null;
       StringBuffer incCrit = new StringBuffer();
       StringBuffer exCrit = new StringBuffer();
       StringBuffer nullCrit = new StringBuffer();
@@ -745,18 +746,23 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           if (criterionName != null && criterionName.equalsIgnoreCase("GENDER")
                   && paEC.getEligibleGenderCode() != null) {
               html.append(appendData("Gender", getData(paEC.getEligibleGenderCode(), true), true , true));
-          } else if (criterionName != null && criterionName.equalsIgnoreCase("MINIMUM-AGE")) {
-              if (pq.getValue().intValue() == 0) {
+          } else if (criterionName != null && criterionName.equalsIgnoreCase("AGE")) {
+             if (pq.getLow() != null) { 
+               if (pq.getLow().getValue().intValue() == 0) {
                   html.append(appendData("Minimum Age", "N/A" , true , true));
-              } else {
-                  html.append(appendData("Minimum Age", pq.getValue()  + " " + pq.getUnit(), true , true));
-              }
-          } else if (criterionName != null && criterionName.equalsIgnoreCase("MAXIMUM-AGE")) {
-              if (pq.getValue().intValue() == MAX_AGE) {
+               } else {
+                  html.append(appendData("Minimum Age", pq.getLow().getValue()  
+                  + " " + pq.getLow().getUnit(), true , true));
+               }
+             } 
+             if (pq.getHigh() != null) { 
+               if (pq.getHigh().getValue().intValue() == MAX_AGE) {
                   html.append(appendData("Maximum Age", "N/A" , true , true));
-              } else {
-                  html.append(appendData("Maximum Age", pq.getValue()  + " " + pq.getUnit(), true , true));
-              }
+               } else {
+                  html.append(appendData("Maximum Age", pq.getHigh().getValue()  
+                  + " " + pq.getHigh().getUnit(), true , true));
+               }
+             }  
           } else if (descriptionText != null && (!(descriptionText.equals("")))) {
             incCrit.append(UL_B);
             exCrit.append(UL_B);
@@ -785,19 +791,19 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 nullCrit.append(LI_B);
                 nullCrit.append(getData(paEC.getCriterionName(), true) + "   "
                     + getData(paEC.getOperator(), true) + "  "
-                    + pq.getValue() + "  " + pq.getUnit());
+                    + pq.getLow().getValue() + "  " + pq.getLow().getUnit());
                 nullCrit.append(LI_E);
             } else if (incIndicator) {
                 incCrit.append(LI_B);
                 incCrit.append(getData(paEC.getCriterionName(), true) + "   "
                     + getData(paEC.getOperator(), true) + "  "
-                    + pq.getValue() + "  " + pq.getUnit());
+                    + pq.getLow().getValue() + "  " + pq.getLow().getUnit());
                 incCrit.append(LI_E);
               } else {
                 exCrit.append(LI_B);
                 exCrit.append(getData(paEC.getCriterionName(), true) + "   "
                     + getData(paEC.getOperator(), true) + "  "
-                    + pq.getValue() + "  " + pq.getUnit());
+                    + pq.getLow().getValue() + "  " + pq.getLow().getUnit());
                 exCrit.append(LI_E);
               }
               nullCrit.append(UL_E);

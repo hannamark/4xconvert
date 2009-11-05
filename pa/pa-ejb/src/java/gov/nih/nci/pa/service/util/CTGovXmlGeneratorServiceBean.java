@@ -90,6 +90,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
@@ -713,7 +714,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         StringBuffer incCrit = new StringBuffer();
         StringBuffer nullCrit = new StringBuffer();
         StringBuffer exCrit = new StringBuffer();
-        Pq pq = null;
+        Ivl<Pq> pq = null;
         BigDecimal value;
         String unit;
         String operator;
@@ -733,12 +734,15 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             if (criterionName != null && criterionName.equalsIgnoreCase("GENDER")
                     && paEC.getEligibleGenderCode() != null) {
                 genderCode = paEC.getEligibleGenderCode().getCode();
-            } else if (criterionName != null && criterionName.equalsIgnoreCase("MINIMUM-AGE")) {
-                minAge = pq.getValue();
-                minUnit = pq.getUnit();
-            } else if (criterionName != null && criterionName.equalsIgnoreCase("MAXIMUM-AGE")) {
-                maxAge = pq.getValue();
-                maxUnit = pq.getUnit();
+            } else if (criterionName != null && criterionName.equalsIgnoreCase("AGE")) {
+                if (pq.getLow() != null) {
+                  minAge = pq.getLow().getValue();
+                  minUnit = pq.getLow().getUnit();
+                } 
+                if (pq.getHigh() != null) {
+                  maxAge = pq.getHigh().getValue();
+                  maxUnit = pq.getHigh().getUnit();
+                } 
             } else if (descriptionText != null) {
                 if (incIndicator == null) {
                     nullCrit.append(TAB);
@@ -757,8 +761,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
                     exCrit.append('\n');
                 }
             } else {
-                value = pq.getValue();
-                unit = pq.getUnit();
+                value = pq.getLow().getValue();
+                unit = pq.getLow().getUnit();
                 operator = (!PAUtil.isStNull(paEC.getOperator())) ? paEC.getOperator().getValue() : "";
                 if (incIndicator == null) {
                     nullCrit.append(TAB).append(DASH).append(criterionName).append(' ').append(value).append(' ').

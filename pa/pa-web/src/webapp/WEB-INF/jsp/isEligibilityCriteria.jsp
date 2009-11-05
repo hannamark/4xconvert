@@ -118,7 +118,7 @@ BubbleTips.activateTipOn("dfn");
          <label for="typeCode">
                 <fmt:message key="isdesign.eligibilitycriteria.minimumAge"/><span class="required">*</span>
          </label>
-         </td> <td class="value">   
+         </td> <td class="value" colspan="2">    
 				<s:textfield name="minimumValue" maxlength="12" cssStyle="width:85px" />
                	<span class="formErrorMsg"> 
                     <s:fielderror>
@@ -126,62 +126,40 @@ BubbleTips.activateTipOn("dfn");
                    </s:fielderror>                            
                 </span> 
           </td>
-          <td scope="row" class="label">
-         <label for="typeCode">
-                <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">*</span>
-         </label>
-         </td> 
-		<s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
-       <td class="value">   
-            <s:select headerKey="" headerValue="" 
-               		name="minimumUnit" 
-               		list="#unitsValues"  
-               		cssStyle="width:76px" /> 
-            <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>minimumUnit</s:param>
-                   </s:fielderror>                            
-             </span>
-             <s:hidden name="minimumValueId"/>
-          </td>           
-    </tr> 
-    <tr> 
-		<td/>
-		<td class="info" colspan="2">Write 0 if no min age is indicated</td>
-	</tr>                      
-	<tr>
-         <td scope="row" class="label">
+          <td scope="row" class="label" >
          <label for="typeCode">
                 <fmt:message key="isdesign.eligibilitycriteria.maximumAge"/><span class="required">*</span>
          </label>
-         </td> <td class="value">   
-				<s:textfield name="maximumValue" maxlength="12" cssStyle="width:85px" />
-               	<span class="formErrorMsg"> 
+         </td> <td class="value" colspan="2">   
+                <s:textfield name="maximumValue" maxlength="12" cssStyle="width:85px" />
+                <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>maximumValue</s:param>
                    </s:fielderror>                            
                 </span> 
           </td>
-          <td scope="row" class="label">
+         <td scope="row" class="label" >
          <label for="typeCode">
                 <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">*</span>
          </label>
-        </td>
+         </td> 
 		<s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
-         <td class="value">   
+       <td class="value" colspan="2">   
             <s:select headerKey="" headerValue="" 
-               		name="maximumUnit" 
+               		name="valueUnit" 
                		list="#unitsValues"  
                		cssStyle="width:76px" /> 
             <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>maximumUnit</s:param>
+                    <s:param>valueUnit</s:param>
                    </s:fielderror>                            
              </span>
-             <s:hidden name="maximumValueId"/>
-          </td>            
+             <s:hidden name="valueId"/>
+          </td>           
     </tr> 
     <tr> 
+		<td/>
+		<td class="info" colspan="2">Write 0 if no min age is indicated</td>
 		<td/>
 		<td class="info" colspan="2">Write 999 if no max age is indicated and select 'Years' as Unit</td>
 	</tr> 		                                     

@@ -100,11 +100,17 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     private Boolean inclusionIndicator;
     private String criterionName;
     private String operator;
-    private BigDecimal value;
-    //private UnitsCode unit;
     private String unit;
     private EligibleGenderCode eligibleGenderCode;
     private Integer displayOrder;
+    private Boolean structuredIndicator;
+    private String textValue;
+    
+    private BigDecimal minValue;    
+    private String minUnit;
+    private BigDecimal maxValue;    
+    private String maxUnit;
+    
     /**
      * @return inclusionIndicator
      */
@@ -160,31 +166,56 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     }
 
     /**
-     * @return unit
-     *//*
-    @Column(name = "UNIT")
-    @Enumerated(EnumType.STRING)
-    public UnitsCode getUnit() {
-        return unit;
-    }
-    *//**
-     * @param unit unit
-     *//*
-    public void setUnit(UnitsCode unit) {
-        this.unit = unit;
-    }*/
-    /**
-     * @return value
+     * @return the minValue
      */
-    @Column(name = "VALUE")
-    public BigDecimal getValue() {
-      return value;
+    @Column(name = "MIN_VALUE")
+    public BigDecimal getMinValue() {
+      return minValue;
     }
     /**
-     * @param value value
+     * @param minValue the minValue to set
      */
-    public void setValue(BigDecimal value) {
-      this.value = value;
+     public void setMinValue(BigDecimal minValue) {
+       this.minValue = minValue;
+     }
+    /**
+     * @return the minUnit
+     */
+     @Column(name = "MIN_UNIT")
+     public String getMinUnit() {
+        return minUnit;
+     }
+     /**
+      * @param minUnit the minUnit to set 
+      */
+     public void setMinUnit(String minUnit) {
+       this.minUnit = minUnit;
+     }
+    /**
+     * @return the maxValue
+     */
+    @Column(name = "MAX_VALUE")
+    public BigDecimal getMaxValue() {
+      return maxValue;
+    }
+    /**
+     * @param maxValue the maxValue to set
+     */
+    public void setMaxValue(BigDecimal maxValue) {
+       this.maxValue = maxValue;
+    }
+   /**
+    * @return the maxUnit
+    */
+    @Column(name = "MAX_UNIT")
+    public String getMaxUnit() {
+       return maxUnit;
+    }
+    /**
+     * @param maxUnit the maxUnit to set
+     */
+    public void setMaxUnit(String maxUnit) {
+      this.maxUnit = maxUnit;
     }
     /**
      * @return unit
@@ -211,6 +242,32 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
      */
     public void setDisplayOrder(Integer displayOrder) {
       this.displayOrder = displayOrder;
+    }
+    /**
+     * @return the structuredIndicator
+     */
+    @Column(name = "STRUCTURED_INDICATOR")
+    public Boolean getStructuredIndicator() {
+      return structuredIndicator;
+    }
+    /**
+     * @param structuredIndicator the structuredIndicator to set
+     */
+    public void setStructuredIndicator(Boolean structuredIndicator) {
+      this.structuredIndicator = structuredIndicator;
+    }
+    /**
+     * @return the textValue
+     */
+    @Column(name = "TEXT_VALUE")
+    public String getTextValue() {
+      return textValue;
+    }
+    /**
+     * @param textValue the textValue to set
+     */
+    public void setTextValue(String textValue) {
+       this.textValue = textValue;
     }
 
 }

@@ -898,7 +898,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
       }
       IvlConverter.JavaPq low  = new IvlConverter.JavaPq(uom ,
          PAUtil.convertStringToDecimal(minValue), null);
-      IvlConverter.JavaPq high  = new IvlConverter.JavaPq(getDoseUOM(), 
+      IvlConverter.JavaPq high  = new IvlConverter.JavaPq(uom , 
          PAUtil.convertStringToDecimal(maxValue), null);
       Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);  
       return ivl;

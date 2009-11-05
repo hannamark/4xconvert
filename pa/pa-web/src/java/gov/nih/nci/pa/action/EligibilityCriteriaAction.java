@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -92,13 +93,13 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,12 +129,10 @@ private static final String ELIGIBILITY = "eligibility";
   private String acceptHealthyVolunteersIndicator;
   private String eligibleGenderCode;
   private String maximumValue;
-  private String maximumUnit;
+  private String valueUnit;
   private String minimumValue;
-  private String minimumUnit;
   private String eligibleGenderCodeId = null;
-  private String maximumValueId = null;
-  private String minimumValueId = null;
+  private String valueId = null;
   private List<ISDesignDetailsWebDTO> eligibilityList = null;
   private List<ISDesignDetailsWebDTO> list = null;
   private static final int RECORDSVALUE = 3;
@@ -161,8 +160,7 @@ private static final String ELIGIBILITY = "eligibility";
           for (ISDesignDetailsWebDTO weblist : list) {
             if (weblist.getCriterionName() == null
                 || (!(weblist.getCriterionName().equalsIgnoreCase("GENDER")))
-                && (!(weblist.getCriterionName().equalsIgnoreCase("MAXIMUM-AGE")))
-                && (!(weblist.getCriterionName().equalsIgnoreCase("MINIMUM-AGE")))) {
+                && (!(weblist.getCriterionName().equalsIgnoreCase("AGE")))) {
               eligibilityList.add(weblist);
             }
           }
@@ -223,53 +221,34 @@ private static final String ELIGIBILITY = "eligibility";
           .valueOf(acceptHealthyVolunteersIndicator)));
       spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
 
-      PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
-      PlannedEligibilityCriterionDTO pecDTO2 = new PlannedEligibilityCriterionDTO();
-      PlannedEligibilityCriterionDTO pecDTO3 = new PlannedEligibilityCriterionDTO();
+      PlannedEligibilityCriterionDTO pecDTOGender = new PlannedEligibilityCriterionDTO();
+      PlannedEligibilityCriterionDTO pecDTOAge = new PlannedEligibilityCriterionDTO();
+      
       if (eligibleGenderCode != null) {
-        pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        pecDTO.setCriterionName(StConverter.convertToSt("GENDER"));
-        pecDTO.setEligibleGenderCode(CdConverter.convertToCd(EligibleGenderCode
+       pecDTOGender.setStudyProtocolIdentifier(studyProtocolIi);
+       pecDTOGender.setCriterionName(StConverter.convertToSt("GENDER"));
+       pecDTOGender.setEligibleGenderCode(CdConverter.convertToCd(EligibleGenderCode
             .getByCode(eligibleGenderCode)));
-        pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
-        pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
+       pecDTOGender.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
+       pecDTOGender.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
         if (PAUtil.isNotEmpty(eligibleGenderCodeId)) {
-          pecDTO.setIdentifier(IiConverter.convertToIi(eligibleGenderCodeId));
-          PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
+          pecDTOGender.setIdentifier(IiConverter.convertToIi(eligibleGenderCodeId));
+          PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTOGender);
         } else {
-          PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO);
+          PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTOGender);
         }
       }
-      if (maximumValue != null) {
-        pecDTO2.setStudyProtocolIdentifier(studyProtocolIi);
-        pecDTO2.setCriterionName(StConverter.convertToSt("MAXIMUM-AGE"));
-        Pq pq = new Pq();
-        pq.setValue(new BigDecimal(maximumValue));
-        pq.setUnit(maximumUnit);
-        pecDTO2.setValue(pq);
-        pecDTO2.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
-        pecDTO2.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (PAUtil.isNotEmpty(maximumValueId)) {
-          pecDTO2.setIdentifier(IiConverter.convertToIi(maximumValueId));
-          PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO2);
+      if (minimumValue != null || maximumValue != null) {
+        pecDTOAge.setStudyProtocolIdentifier(studyProtocolIi);
+        pecDTOAge.setCriterionName(StConverter.convertToSt("AGE"));
+        pecDTOAge.setValue(convertToIvlPq(valueUnit, minimumValue, maximumValue));
+        pecDTOAge.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
+        pecDTOAge.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        if (PAUtil.isNotEmpty(valueId)) {
+          pecDTOAge.setIdentifier(IiConverter.convertToIi(valueId));
+          PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTOAge);
         } else {
-          PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO2);
-        }
-      }
-      if (minimumValue != null) {
-        pecDTO3.setStudyProtocolIdentifier(studyProtocolIi);
-        pecDTO3.setCriterionName(StConverter.convertToSt("MINIMUM-AGE"));
-        Pq pq = new Pq();
-        pq.setValue(new BigDecimal(minimumValue));
-        pq.setUnit(minimumUnit);
-        pecDTO3.setValue(pq);
-        pecDTO3.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
-        pecDTO3.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        if (PAUtil.isNotEmpty(minimumValueId)) {
-          pecDTO3.setIdentifier(IiConverter.convertToIi(minimumValueId));
-          PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO3);
-        } else {
-          PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO3);
+          PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTOAge);
         }
       }
       if (PAUtil.isNotEmpty(eligibleGenderCodeId)) {
@@ -283,6 +262,20 @@ private static final String ELIGIBILITY = "eligibility";
     }
     return ELIGIBILITY;
   }
+  
+  @SuppressWarnings({"PMD" })   
+  private Ivl<Pq> convertToIvlPq(String uom, String minValue, String maxValue) {
+   if (uom == null && minValue == null && maxValue == null) {
+     return null; 
+   }
+   IvlConverter.JavaPq low  = new IvlConverter.JavaPq(uom ,
+      PAUtil.convertStringToDecimal(minValue), null);
+   IvlConverter.JavaPq high  = new IvlConverter.JavaPq(uom , 
+      PAUtil.convertStringToDecimal(maxValue), null);
+   Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);  
+   return ivl;
+  }
+  
 
   /**
    * @return result
@@ -308,14 +301,7 @@ public String input() {
       PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
       pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
       pecDTO.setCriterionName(StConverter.convertToSt(webDTO.getCriterionName()));
-      Pq pq = new Pq();
-      if (webDTO.getValue() != null) {
-        pq.setValue(new BigDecimal(webDTO.getValue()));
-      }
-      if (webDTO.getUnit() != null) {
-        pq.setUnit(webDTO.getUnit());
-      }
-      pecDTO.setValue(pq);
+      pecDTO.setValue(convertToIvlPq(webDTO.getUnit(), webDTO.getValue(), null));
       if (webDTO.getInclusionIndicator() == null) {
           pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
       } else  if (webDTO.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
@@ -366,14 +352,7 @@ public String input() {
       pecDTO.setIdentifier(IiConverter.convertToIi(id));
       pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
       pecDTO.setCriterionName(StConverter.convertToSt(webDTO.getCriterionName()));
-      Pq pq = new Pq();
-      if (webDTO.getValue() != null) {
-        pq.setValue(new BigDecimal(webDTO.getValue()));
-      }
-      if (webDTO.getUnit() != null) {
-        pq.setUnit(webDTO.getUnit());
-      }
-      pecDTO.setValue(pq);
+      pecDTO.setValue(convertToIvlPq(webDTO.getUnit(), webDTO.getValue(), null));
       if (webDTO.getInclusionIndicator() == null) {
           pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
       } else  if (webDTO.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
@@ -417,16 +396,11 @@ public String input() {
         eligibleGenderCodeId = dto.getIdentifier().getExtension();
       }
       if (dto.getCriterionName().getValue() != null
-          && dto.getCriterionName().getValue().equals("MAXIMUM-AGE")) {
-        maximumValue = dto.getValue().getValue().toString();
-        maximumUnit = dto.getValue().getUnit();
-        maximumValueId = dto.getIdentifier().getExtension();
-      }
-      if (dto.getCriterionName().getValue() != null
-          && dto.getCriterionName().getValue().equals("MINIMUM-AGE")) {
-        minimumValue = dto.getValue().getValue().toString();
-        minimumUnit = dto.getValue().getUnit();
-        minimumValueId = dto.getIdentifier().getExtension();
+          && dto.getCriterionName().getValue().equals("AGE")) {
+        maximumValue = dto.getValue().getHigh().getValue().toString();
+        valueUnit = dto.getValue().getLow().getUnit();
+        minimumValue = dto.getValue().getLow().getValue().toString();
+        valueId = dto.getIdentifier().getExtension();
       }
       if (dto.getCriterionName().getValue() != null) {
         webdto.setCriterionName(dto.getCriterionName().getValue());
@@ -447,11 +421,11 @@ public String input() {
       if (dto.getTextDescription() != null) {
         webdto.setTextDescription(dto.getTextDescription().getValue());
       }
-      if (dto.getValue().getValue() != null) {
-        webdto.setValue(dto.getValue().getValue().toString());
+      if (dto.getValue().getLow().getValue() != null) {
+        webdto.setValue(dto.getValue().getLow().getValue().toString());
       }
-      if (dto.getValue().getUnit() != null) {
-        webdto.setUnit(dto.getValue().getUnit());
+      if (dto.getValue().getLow().getUnit() != null) {
+        webdto.setUnit(dto.getValue().getLow().getUnit());
       }
       if (dto.getDisplayOrder() != null) {
           webdto.setDisplayOrder(IntConverter.convertToString(dto.getDisplayOrder()));
@@ -484,9 +458,6 @@ public String input() {
     if (PAUtil.isEmpty(eligibleGenderCode)) {
       addFieldError("eligibleGenderCode", getText("error.eligibleGenderCode"));
     }
-    if (PAUtil.isEmpty(this.maximumUnit)) {
-      addFieldError("maximumUnit", getText("error.maximumUnit"));
-    }
     if (PAUtil.isEmpty(this.maximumValue)) {
       addFieldError("maximumValue", getText("error.maximumValue"));
     }
@@ -497,8 +468,8 @@ public String input() {
         addFieldError("maximumValue", getText("error.numeric"));
       }
     }
-    if (PAUtil.isEmpty(this.minimumUnit)) {
-      addFieldError("minimumUnit", getText("error.minimumUnit"));
+    if (PAUtil.isEmpty(this.valueUnit)) {
+      addFieldError("valueUnit", getText("error.valueUnit"));
     }
     if (PAUtil.isEmpty(this.minimumValue)) {
       addFieldError("minimumValue", getText("error.minimumValue"));
@@ -564,7 +535,9 @@ public String input() {
        for (PlannedEligibilityCriterionDTO dto : pecList) {
         if (dto.getCategoryCode() != null 
              && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
-          if (!IntConverter.convertToString(dto.getDisplayOrder()).equals(displayOrder)) {
+          if (!IntConverter.convertToString(dto.getDisplayOrder()).equals(displayOrder)
+               || (id != null && dto.getIdentifier().getExtension().equals(id.toString()))
+                   && IntConverter.convertToString(dto.getDisplayOrder()).equals(displayOrder)) {
                order.append(IntConverter.convertToString(dto.getDisplayOrder())).append(" ,");
           } else {
              order.append(IntConverter.convertToString(dto.getDisplayOrder())).append(" ,");
@@ -656,21 +629,6 @@ public String input() {
   }
 
   /**
-   * @return maximumUnit
-   */
-  public String getMaximumUnit() {
-    return maximumUnit;
-  }
-
-  /**
-   * @param maximumUnit
-   *            maximumUnit
-   */
-  public void setMaximumUnit(String maximumUnit) {
-    this.maximumUnit = maximumUnit;
-  }
-
-  /**
    * @return minimumValue
    */
   public String getMinimumValue() {
@@ -686,21 +644,6 @@ public String input() {
   }
 
   /**
-   * @return minimumUnit
-   */
-  public String getMinimumUnit() {
-    return minimumUnit;
-  }
-
-  /**
-   * @param minimumUnit
-   *            minimumUnit
-   */
-  public void setMinimumUnit(String minimumUnit) {
-    this.minimumUnit = minimumUnit;
-  }
-
-  /**
    * @return eligibleGenderCodeId
    */
   public String getEligibleGenderCodeId() {
@@ -713,36 +656,6 @@ public String input() {
    */
   public void setEligibleGenderCodeId(String eligibleGenderCodeId) {
     this.eligibleGenderCodeId = eligibleGenderCodeId;
-  }
-
-  /**
-   * @return maximumValueId
-   */
-  public String getMaximumValueId() {
-    return maximumValueId;
-  }
-
-  /**
-   * @param maximumValueId
-   *            maximumValueId
-   */
-  public void setMaximumValueId(String maximumValueId) {
-    this.maximumValueId = maximumValueId;
-  }
-
-  /**
-   * @return minimumValueId
-   */
-  public String getMinimumValueId() {
-    return minimumValueId;
-  }
-
-  /**
-   * @param minimumValueId
-   *            minimumValueId
-   */
-  public void setMinimumValueId(String minimumValueId) {
-    this.minimumValueId = minimumValueId;
   }
 
   /**
@@ -818,6 +731,34 @@ public String input() {
    */
   public void setList(List<ISDesignDetailsWebDTO> list) {
     this.list = list;
+  }
+
+  /**
+   * @return the valueUnit
+   */
+   public String getValueUnit() {
+    return valueUnit;
+   }
+
+  /**
+   * @param valueUnit the valueUnit to set
+   */
+  public void setValueUnit(String valueUnit) {
+   this.valueUnit = valueUnit;
+  }
+
+  /**
+   * @return the valueId
+   */
+  public String getValueId() {
+   return valueId;
+  }
+
+  /**
+   * @param valueId the valueId to set
+   */
+  public void setValueId(String valueId) {
+    this.valueId = valueId;
   }
 
 
