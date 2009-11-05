@@ -4,7 +4,10 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<c:url value="/outcomes/lookupDiagnosis.action" var="lookupUrl" />
 <head>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript">
     function handleEditAction() {
         document.forms[0].action = "saveDiagnosis.action";
@@ -17,11 +20,13 @@
     }
 
     function handleNextAction() {
-        var obj = document.getElementsByName("nextTarget");
-        obj[0].value = "Staging";
+        document.getElementsByName("nextTarget")[0].value = "Staging";
         document.forms[0].action = "nextDiagnosis.action";
         document.forms[0].submit();
     }
+	function lookup(){
+        showPopWin('${lookupUrl}', 900, 400, '', 'Diagnosis');
+	}
 </script>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
@@ -48,6 +53,7 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <s:hidden name="nextTarget"/>
+<s:hidden name="selectedDiagnosis"/>
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="diagnosis.label.name"/><span class="required">*</span></label></td>
 <td><s:textfield readonly="true" size="50" name="diagnosis.name"

@@ -141,7 +141,11 @@
         <action name="cancel*" class="gov.nih.nci.accrual.web.action.{1}Action" method="cancel">
             <result>/WEB-INF/jsp/{1}.jsp</result>
         </action>
-    	
+
+        <action name="lookup*" class="gov.nih.nci.accrual.web.action.{1}Action" method="lookup">
+            <result>/WEB-INF/jsp/nodecorate/lookup{1}.jsp</result>
+            <result name="input">/WEB-INF/jsp/nodecorate/lookup{1}.jsp</result>
+        </action>
     	
     </package>
 </struts>

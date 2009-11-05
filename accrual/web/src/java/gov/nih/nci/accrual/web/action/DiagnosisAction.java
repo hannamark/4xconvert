@@ -78,11 +78,19 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
+import gov.nih.nci.accrual.web.dto.util.DiagnosisItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * The Class DiagnosisAction.
@@ -95,6 +103,8 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     private static final long serialVersionUID = 1L;
     
     private DiagnosisWebDto diagnosis = new DiagnosisWebDto();
+    private List<DiagnosisItemWebDto> disWebList = new ArrayList<DiagnosisItemWebDto>();
+    private St searchDiagnosis = null;
 
     /**
      * {@inheritDoc}
@@ -132,6 +142,45 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     }
     
     /**
+     * Lookup a diagnosis.
+     * @return result for next action
+     */
+    @SkipValidation
+    public String lookup() {
+        if (searchDiagnosis == null) {
+            searchDiagnosis = new St();
+            return SUCCESS;
+        }
+
+        String sTxt = searchDiagnosis.getValue();
+        if (sTxt == null || sTxt.length() == 0) {
+            this.addActionError("Please provide some search values.");
+            return INPUT;
+        }
+
+        St name;
+        DiagnosisItemWebDto item;
+        Ii id;
+        
+        disWebList = new ArrayList<DiagnosisItemWebDto>();
+        
+        name = StConverter.convertToSt("Diagnosis 1");
+        id = IiConverter.convertToIi("1");
+        item = new DiagnosisItemWebDto();
+        item.setName(name);
+        item.setIdentifier(id);
+        disWebList.add(item);
+
+        name = StConverter.convertToSt("Diagnosis 2");
+        id = IiConverter.convertToIi("2");
+        item = new DiagnosisItemWebDto();
+        item.setName(name);
+        item.setIdentifier(id);
+        disWebList.add(item);
+        return super.execute();
+    }
+    
+    /**
      * @param diagnosis the diagnosis to set
      */
     public void setDiagnosis(DiagnosisWebDto diagnosis) {
@@ -144,5 +193,33 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     @VisitorFieldValidator(message = "> ")
     public DiagnosisWebDto getDiagnosis() {
         return diagnosis;
+    }
+
+    /**
+     * @param disWebList the disWebList to set
+     */
+    public void setDisWebList(List<DiagnosisItemWebDto> disWebList) {
+        this.disWebList = disWebList;
+    }
+
+    /**
+     * @return the disWebList
+     */
+    public List<DiagnosisItemWebDto> getDisWebList() {
+        return disWebList;
+    }
+
+    /**
+     * @param searchDiagnosis the searchDiagnosis to set
+     */
+    public void setSearchDiagnosis(St searchDiagnosis) {
+        this.searchDiagnosis = searchDiagnosis;
+    }
+
+    /**
+     * @return the searchDiagnosis
+     */
+    public St getSearchDiagnosis() {
+        return searchDiagnosis;
     }
 }
