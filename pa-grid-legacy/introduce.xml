@@ -1,0 +1,1980 @@
+<ns1:ServiceDescription introduceVersion="1.3" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
+ <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns2:Namespace generateStubs="false" location="./CoppaPA.xsd" namespace="http://pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="Arm" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Arm" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="BL" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="BL" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Document" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Document" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="DocumentWorkflowStatus" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="DocumentWorkflowStatus" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="FunctionalRole" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="FunctionalRole" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="InterventionalStudyProtocol" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="InterventionalStudyProtocol" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="OrganizationFunctionalRole" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="OrganizationFunctionalRole" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PersonFunctionalRole" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PersonFunctionalRole" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PlannedActivity" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PlannedActivity" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PlannedEligibilityCriterion" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PlannedEligibilityCriterion" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="ST" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ST" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StratumGroup" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StratumGroup" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Study" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Study" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyContact" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyContact" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyDisease" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyDisease" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyIndlde" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyIndlde" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyMilestone" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyMilestone" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyOnhold" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyOnhold" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyOutcomeMeasure" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyOutcomeMeasure" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyOverallStatus" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyOverallStatus" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyProtocol" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyProtocol" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyRecruitmentStatus" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyRecruitmentStatus" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyRegulatoryAuthority" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyRegulatoryAuthority" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyRelationship" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyRelationship" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudyResourcing" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudyResourcing" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudySite" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudySite" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudySiteAccrualStatus" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudySiteAccrualStatus" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudySiteContact" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudySiteContact" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudySiteOverallStatus" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudySiteOverallStatus" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="" deserializer="" serializer="" type="br" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="caption" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="col" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="colgroup" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="content" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="footnote" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="footnoteRef" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="item" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="linkHtml" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="list" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="paragraph" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="renderMultiMedia" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="sub" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="sup" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="table" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tbody" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="td" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="text" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tfoot" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="th" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="thead" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tr" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace generateStubs="false" location="./CoppaCommons.xsd" namespace="http://common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="LimitOffset" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="LimitOffset" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace generateStubs="false" location="./CoppaPO.xsd" namespace="http://po.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.po" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="Cd" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Cd" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="ClinicalResearchStaff" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ClinicalResearchStaff" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="HealthCareFacility" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareFacility" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="HealthCareProvider" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="HealthCareProvider" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="IdentifiedOrganization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="IdentifiedOrganization" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="IdentifiedPerson" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="IdentifiedPerson" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Organization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Organization" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="OrganizationalContact" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="OrganizationalContact" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="OversightCommittee" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="OversightCommittee" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Patient" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Patient" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Person" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Person" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="ResearchOrganization" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ResearchOrganization" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StringMap" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StringMap" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./CoppaPAFaults.xsd" namespace="http://faults.pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa.faults" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="PAFault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../wsrf/faults/WS-BaseFaults.xsd" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" packageName="org.oasis.wsrf.faults" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="BaseFault" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/addressing/WS-Addressing.xsd" namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" packageName="org.globus.addressing" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="Action" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="EndpointReference" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="FaultTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="From" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="MessageID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="RelatesTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyAfter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ReplyTo" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="To" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./../ws/xml.xsd" namespace="http://www.w3.org/XML/1998/namespace" packageName="namespace" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./CoppaCommonsFaults.xsd" namespace="http://faults.common.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.common.faults" xsi:type="ns2:NamespaceType"/>
+  <ns2:Namespace location="./ArmServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" packageName="gov.nih.nci.coppa.services.pa.armservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="ArmServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace generateStubs="false" namespace="http://www.w3.org/2001/XMLSchema" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="anySimpleType" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="anyType" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="anyURI" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="base64Binary" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="boolean" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="byte" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="date" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="dateTime" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="decimal" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="double" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="duration" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ENTITIES" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ENTITY" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="float" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="gDay" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="gMonth" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="gMonthDay" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="gYear" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="gYearMonth" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="hexBinary" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ID" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="IDREF" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="IDREFS" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="int" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="integer" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="language" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="long" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Name" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NCName" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="negativeInteger" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NMTOKEN" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NMTOKENS" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="nonNegativeInteger" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="nonPositiveInteger" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="normalizedString" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="NOTATION" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="positiveInteger" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="QName" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="short" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="string" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="time" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="token" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="unsignedByte" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="unsignedInt" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="unsignedLong" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="unsignedShort" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./PAServicesTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/types" packageName="gov.nih.nci.coppa.services.pa.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="PAServicesReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace generateStubs="false" location="./xsd/cagrid/types/security/security.xsd" namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" packageName="gov.nih.nci.cagrid.metadata.security" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="CommunicationMechanism" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="CommunicationStyle" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="GSISecureConversation" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="GSISecureMessage" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="GSITransport" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="None" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Operation" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ServiceSecurityMetadata" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace generateStubs="false" location="./xsd/cagrid/types/caGridMetadata.xsd" namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" packageName="gov.nih.nci.cagrid.metadata" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="ServiceMetadata" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace generateStubs="false" location="./xsd/cagrid/types/service/servicemodel.xsd" namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" packageName="gov.nih.nci.cagrid.metadata.service" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="CaDSRRegistration" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ContextProperty" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Fault" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="InputParameter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Operation" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Output" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Service" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ServiceContext" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace generateStubs="false" location="./xsd/cagrid/types/common/common.xsd" namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" packageName="gov.nih.nci.cagrid.metadata.common" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="Address" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="Enumeration" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="PointOfContact" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ResearchCenter" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ResearchCenterDescription" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="SemanticMetadata" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UMLAttribute" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="UMLClass" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="ValueDomain" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyProtocolServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" packageName="gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyProtocolServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudySiteAccrualStatusServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" packageName="gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudySiteAccrualStatusServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyResourcingServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" packageName="gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyResourcingServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyRegulatoryAuthorityServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" packageName="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyRegulatoryAuthorityServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyRecruitmentStatusServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" packageName="gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyRecruitmentStatusServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyParticipationServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" packageName="gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyParticipationServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyParticipationContactServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" packageName="gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyParticipationContactServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyOverallStatusServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" packageName="gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyOverallStatusServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyOutcomeMeasureServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" packageName="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyOutcomeMeasureServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyOnholdServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" packageName="gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyOnholdServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyIndIdeServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" packageName="gov.nih.nci.coppa.services.pa.studyindideservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyIndIdeServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyDiseaseServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" packageName="gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyDiseaseServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyContactServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" packageName="gov.nih.nci.coppa.services.pa.studycontactservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyContactServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./PlannedActivityServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" packageName="gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="PlannedActivityServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./DocumentWorkflowStatusServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" packageName="gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DocumentWorkflowStatusServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./DocumentServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" packageName="gov.nih.nci.coppa.services.pa.documentservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="DocumentServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudyRelationshipServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" packageName="gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudyRelationshipServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudySiteServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" packageName="gov.nih.nci.coppa.services.pa.studysiteservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudySiteServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudySiteParticipationServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" packageName="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudySiteParticipationServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./StudySiteContactServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" packageName="gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="StudySiteContactServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./TrialRegistrationServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" packageName="gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="TrialRegistrationServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+ </ns2:Namespaces>
+ <ns3:Services xsi:type="ns3:ServicesType" xmlns:ns3="gme://gov.nih.nci.cagrid.introduce/1/Services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns3:Service name="PAServices" namespace="http://enterpriseservices.nci.nih.gov/PAServices" packageName="gov.nih.nci.coppa.services.pa" xsi:type="ns3:ServiceType">
+   <ns4:Methods xsi:type="ns4:MethodsType" xmlns:ns4="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns4:Method isImported="true" isProvided="true" name="GetMultipleResourceProperties" xsi:type="ns4:MethodType">
+     <ns4:Output qName="void" isArray="false"/>
+     <ns5:MethodSecurity xsi:type="ns5:MethodSecurity" xmlns:ns5="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns5:SecuritySetting xsi:type="ns5:SecuritySetting">None</ns5:SecuritySetting>
+     </ns5:MethodSecurity>
+     <ns4:ImportInformation fromIntroduce="false" inputMessage="ns6:GetMultipleResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns6:GetMultipleResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetMultipleResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns6="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns4:ProviderInformation providerClass="GetMRPProvider"/>
+    </ns4:Method>
+    <ns4:Method isImported="true" isProvided="true" name="GetResourceProperty" xsi:type="ns4:MethodType">
+     <ns4:Output qName="void" isArray="false"/>
+     <ns7:MethodSecurity xsi:type="ns7:MethodSecurity" xmlns:ns7="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns7:SecuritySetting xsi:type="ns7:SecuritySetting">None</ns7:SecuritySetting>
+     </ns7:MethodSecurity>
+     <ns4:ImportInformation fromIntroduce="false" inputMessage="ns8:GetResourcePropertyRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns8:GetResourcePropertyResponse" packageName="org.oasis.wsrf.properties" portTypeName="GetResourceProperty" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns8="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns4:ProviderInformation providerClass="GetRPProvider"/>
+    </ns4:Method>
+    <ns4:Method isImported="true" isProvided="true" name="QueryResourceProperties" xsi:type="ns4:MethodType">
+     <ns4:Output qName="void" isArray="false"/>
+     <ns9:MethodSecurity xsi:type="ns9:MethodSecurity" xmlns:ns9="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns9:SecuritySetting xsi:type="ns9:SecuritySetting">None</ns9:SecuritySetting>
+     </ns9:MethodSecurity>
+     <ns4:ImportInformation fromIntroduce="false" inputMessage="ns10:QueryResourcePropertiesRequest" namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" outputMessage="ns10:QueryResourcePropertiesResponse" packageName="org.oasis.wsrf.properties" portTypeName="QueryResourceProperties" wsdlFile="../wsrf/properties/WS-ResourceProperties.wsdl" xmlns:ns10="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+     <ns4:ProviderInformation providerClass="QueryRPProvider"/>
+    </ns4:Method>
+    <ns4:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns4:MethodType">
+     <ns4:Output qName="ns11:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns11="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns12:MethodSecurity xsi:type="ns12:MethodSecurity" xmlns:ns12="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns12:SecuritySetting xsi:type="ns12:SecuritySetting">None</ns12:SecuritySetting>
+      <ns12:MethodAuthorization xsi:type="ns12:MethodAuthorization">
+       <ns12:NoAuthorization xsi:type="ns12:NoAuthorization"/>
+      </ns12:MethodAuthorization>
+     </ns12:MethodSecurity>
+     <ns4:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns4:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns4:Method>
+   </ns4:Methods>
+   <ns13:ResourcePropertiesList xsi:type="ns13:ResourcePropertiesListType" xmlns:ns13="gme://gov.nih.nci.cagrid.introduce/1/Resources">
+    <ns13:ResourceProperty qName="ns14:ServiceMetadata" fileLocation="serviceMetadata.xml" populateFromFile="true" register="true" xsi:type="ns13:ResourcePropertyType" xmlns:ns14="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"/>
+   </ns13:ResourcePropertiesList>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Main xsi:type="ns3:Main"/>
+    <ns3:Singleton xsi:type="ns3:Singleton"/>
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+    <ns3:ResourcePropertyManagement xsi:type="ns3:ResourcePropertyManagement"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="ArmService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService" packageName="gov.nih.nci.coppa.services.pa.armservice" xsi:type="ns3:ServiceType">
+   <ns15:Methods xsi:type="ns15:MethodsType" xmlns:ns15="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns15:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns15:MethodType">
+     <ns15:Output qName="ns16:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns16="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns17:MethodSecurity xsi:type="ns17:MethodSecurity" xmlns:ns17="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns17:SecuritySetting xsi:type="ns17:SecuritySetting">None</ns17:SecuritySetting>
+      <ns17:MethodAuthorization xsi:type="ns17:MethodAuthorization">
+       <ns17:NoAuthorization xsi:type="ns17:NoAuthorization"/>
+      </ns17:MethodAuthorization>
+     </ns17:MethodSecurity>
+     <ns15:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns15:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns15:Method>
+    <ns15:Method description="Get an Arm from its identifier" isImported="false" isProvided="false" name="get" xsi:type="ns15:MethodType">
+     <ns15:Inputs>
+      <ns15:Input qName="ns18:Id" description="" isArray="false" name="id" xmlns:ns18="http://pa.services.coppa.nci.nih.gov"/>
+     </ns15:Inputs>
+     <ns15:Output qName="ns19:Arm" description="" isArray="false" xmlns:ns19="http://pa.services.coppa.nci.nih.gov"/>
+     <ns15:Exceptions>
+      <ns15:Exception description="" name="PAFault" qname="ns20:PAFault" xmlns:ns20="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns15:Exceptions>
+    </ns15:Method>
+    <ns15:Method description="Get the Arms associated with a planned activity" isImported="false" isProvided="false" name="getByPlannedActivity" xsi:type="ns15:MethodType">
+     <ns15:Inputs>
+      <ns15:Input qName="ns21:Id" description="" isArray="false" name="id" xmlns:ns21="http://pa.services.coppa.nci.nih.gov"/>
+     </ns15:Inputs>
+     <ns15:Output qName="ns22:Arm" description="" isArray="true" xmlns:ns22="http://pa.services.coppa.nci.nih.gov"/>
+     <ns15:Exceptions>
+      <ns15:Exception description="" name="PAFault" qname="ns23:PAFault" xmlns:ns23="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns15:Exceptions>
+    </ns15:Method>
+    <ns15:Method description="Get the Arms associated with a study protocol." isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns15:MethodType">
+     <ns15:Inputs>
+      <ns15:Input qName="ns24:Id" description="" isArray="false" name="id" xmlns:ns24="http://pa.services.coppa.nci.nih.gov"/>
+     </ns15:Inputs>
+     <ns15:Output qName="ns25:Arm" description="" isArray="true" xmlns:ns25="http://pa.services.coppa.nci.nih.gov"/>
+     <ns15:Exceptions>
+      <ns15:Exception description="" name="PAFault" qname="ns26:PAFault" xmlns:ns26="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns15:Exceptions>
+    </ns15:Method>
+    <ns15:Method description="Copies the Arms associated with a studyprotocol and associates the copies with the new studyprotocol" isImported="false" isProvided="false" name="copy" xsi:type="ns15:MethodType">
+     <ns15:Inputs>
+      <ns15:Input qName="ns27:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns27="http://pa.services.coppa.nci.nih.gov"/>
+      <ns15:Input qName="ns28:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns28="http://pa.services.coppa.nci.nih.gov"/>
+     </ns15:Inputs>
+     <ns15:Output qName="void" description="" isArray="false"/>
+     <ns15:Exceptions>
+      <ns15:Exception description="" name="PAFault" qname="ns29:PAFault" xmlns:ns29="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns15:Exceptions>
+    </ns15:Method>
+    <ns15:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns15:MethodType">
+     <ns15:Inputs>
+      <ns15:Input qName="ns30:Arm" description="" isArray="false" name="arm" xmlns:ns30="http://pa.services.coppa.nci.nih.gov"/>
+     </ns15:Inputs>
+     <ns15:Output qName="ns31:Arm" description="" isArray="false" xmlns:ns31="http://pa.services.coppa.nci.nih.gov"/>
+     <ns15:Exceptions>
+      <ns15:Exception description="" name="PAFault" qname="ns32:PAFault" xmlns:ns32="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns15:Exceptions>
+    </ns15:Method>
+    <ns15:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns15:MethodType">
+     <ns15:Inputs>
+      <ns15:Input qName="ns33:Arm" description="" isArray="false" name="arm" xmlns:ns33="http://pa.services.coppa.nci.nih.gov"/>
+     </ns15:Inputs>
+     <ns15:Output qName="ns34:Arm" description="" isArray="false" xmlns:ns34="http://pa.services.coppa.nci.nih.gov"/>
+     <ns15:Exceptions>
+      <ns15:Exception description="" name="PAFault" qname="ns35:PAFault" xmlns:ns35="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns15:Exceptions>
+    </ns15:Method>
+    <ns15:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns15:MethodType">
+     <ns15:Inputs>
+      <ns15:Input qName="ns36:Id" description="" isArray="false" name="id" xmlns:ns36="http://pa.services.coppa.nci.nih.gov"/>
+     </ns15:Inputs>
+     <ns15:Output qName="void" description="" isArray="false"/>
+     <ns15:Exceptions>
+      <ns15:Exception description="" name="PAFault" qname="ns37:PAFault" xmlns:ns37="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns15:Exceptions>
+    </ns15:Method>
+   </ns15:Methods>
+   <ns38:ResourcePropertiesList xsi:type="ns38:ResourcePropertiesListType" xmlns:ns38="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyProtocolService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService" packageName="gov.nih.nci.coppa.services.pa.studyprotocolservice" xsi:type="ns3:ServiceType">
+   <ns39:Methods xsi:type="ns39:MethodsType" xmlns:ns39="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns39:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns39:MethodType">
+     <ns39:Output qName="ns40:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns40="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns41:MethodSecurity xsi:type="ns41:MethodSecurity" xmlns:ns41="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns41:SecuritySetting xsi:type="ns41:SecuritySetting">None</ns41:SecuritySetting>
+      <ns41:MethodAuthorization xsi:type="ns41:MethodAuthorization">
+       <ns41:NoAuthorization xsi:type="ns41:NoAuthorization"/>
+      </ns41:MethodAuthorization>
+     </ns41:MethodSecurity>
+     <ns39:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns39:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns39:Method>
+    <ns39:Method description="" isImported="false" isProvided="false" name="getStudyProtocol" xsi:type="ns39:MethodType">
+     <ns39:Inputs>
+      <ns39:Input qName="ns42:Id" description="" isArray="false" name="id" xmlns:ns42="http://pa.services.coppa.nci.nih.gov"/>
+     </ns39:Inputs>
+     <ns39:Output qName="ns43:StudyProtocol" description="" isArray="false" xmlns:ns43="http://pa.services.coppa.nci.nih.gov"/>
+     <ns39:Exceptions>
+      <ns39:Exception description="" name="PAFault" qname="ns44:PAFault" xmlns:ns44="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns39:Exceptions>
+    </ns39:Method>
+    <ns39:Method description="" isImported="false" isProvided="false" name="updateStudyProtocol" xsi:type="ns39:MethodType">
+     <ns39:Inputs>
+      <ns39:Input qName="ns45:StudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns45="http://pa.services.coppa.nci.nih.gov"/>
+     </ns39:Inputs>
+     <ns39:Output qName="ns46:StudyProtocol" description="" isArray="false" xmlns:ns46="http://pa.services.coppa.nci.nih.gov"/>
+     <ns39:Exceptions>
+      <ns39:Exception description="" name="PAFault" qname="ns47:PAFault" xmlns:ns47="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns39:Exceptions>
+    </ns39:Method>
+    <ns39:Method description="" isImported="false" isProvided="false" name="getInterventionalStudyProtocol" xsi:type="ns39:MethodType">
+     <ns39:Inputs>
+      <ns39:Input qName="ns48:Id" description="" isArray="false" name="id" xmlns:ns48="http://pa.services.coppa.nci.nih.gov"/>
+     </ns39:Inputs>
+     <ns39:Output qName="ns49:InterventionalStudyProtocol" description="" isArray="false" xmlns:ns49="http://pa.services.coppa.nci.nih.gov"/>
+     <ns39:Exceptions>
+      <ns39:Exception description="" name="PAFault" qname="ns50:PAFault" xmlns:ns50="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns39:Exceptions>
+    </ns39:Method>
+    <ns39:Method description="" isImported="false" isProvided="false" name="updateInterventionalStudyProtocol" xsi:type="ns39:MethodType">
+     <ns39:Inputs>
+      <ns39:Input qName="ns51:InterventionalStudyProtocol" description="" isArray="false" name="interventionalStudyProtocol" xmlns:ns51="http://pa.services.coppa.nci.nih.gov"/>
+     </ns39:Inputs>
+     <ns39:Output qName="ns52:InterventionalStudyProtocol" description="" isArray="false" xmlns:ns52="http://pa.services.coppa.nci.nih.gov"/>
+     <ns39:Exceptions>
+      <ns39:Exception description="" name="PAFault" qname="ns53:PAFault" xmlns:ns53="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns39:Exceptions>
+    </ns39:Method>
+    <ns39:Method description="" isImported="false" isProvided="false" name="createInterventionalStudyProtocol" xsi:type="ns39:MethodType">
+     <ns39:Inputs>
+      <ns39:Input qName="ns54:InterventionalStudyProtocol" description="" isArray="false" name="interventionalStudyProtocol" xmlns:ns54="http://pa.services.coppa.nci.nih.gov"/>
+     </ns39:Inputs>
+     <ns39:Output qName="ns55:Id" description="" isArray="false" xmlns:ns55="http://pa.services.coppa.nci.nih.gov"/>
+     <ns39:Exceptions>
+      <ns39:Exception description="" name="PAFault" qname="ns56:PAFault" xmlns:ns56="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns39:Exceptions>
+    </ns39:Method>
+    <ns39:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns39:MethodType">
+     <ns39:Inputs>
+      <ns39:Input qName="ns57:StudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns57="http://pa.services.coppa.nci.nih.gov"/>
+      <ns39:Input qName="ns58:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns58="http://common.coppa.nci.nih.gov"/>
+     </ns39:Inputs>
+     <ns39:Output qName="ns59:StudyProtocol" description="" isArray="true" xmlns:ns59="http://pa.services.coppa.nci.nih.gov"/>
+     <ns39:Exceptions>
+      <ns39:Exception description="" name="PAFault" qname="ns60:PAFault" xmlns:ns60="http://faults.pa.services.coppa.nci.nih.gov"/>
+      <ns39:Exception description="" name="TooManyResultsFault" qname="ns61:TooManyResultsFault" xmlns:ns61="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns39:Exceptions>
+    </ns39:Method>
+   </ns39:Methods>
+   <ns62:ResourcePropertiesList xsi:type="ns62:ResourcePropertiesListType" xmlns:ns62="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudySiteAccrualStatusService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService" packageName="gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice" xsi:type="ns3:ServiceType">
+   <ns63:Methods xsi:type="ns63:MethodsType" xmlns:ns63="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns63:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns63:MethodType">
+     <ns63:Output qName="ns64:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns64="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns65:MethodSecurity xsi:type="ns65:MethodSecurity" xmlns:ns65="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns65:SecuritySetting xsi:type="ns65:SecuritySetting">None</ns65:SecuritySetting>
+      <ns65:MethodAuthorization xsi:type="ns65:MethodAuthorization">
+       <ns65:NoAuthorization xsi:type="ns65:NoAuthorization"/>
+      </ns65:MethodAuthorization>
+     </ns65:MethodSecurity>
+     <ns63:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns63:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns63:Method>
+    <ns63:Method description="" isImported="false" isProvided="false" name="getStudySiteAccrualStatus" xsi:type="ns63:MethodType">
+     <ns63:Inputs>
+      <ns63:Input qName="ns66:Id" description="" isArray="false" name="id" xmlns:ns66="http://pa.services.coppa.nci.nih.gov"/>
+     </ns63:Inputs>
+     <ns63:Output qName="ns67:StudySiteAccrualStatus" description="" isArray="false" xmlns:ns67="http://pa.services.coppa.nci.nih.gov"/>
+     <ns63:Exceptions>
+      <ns63:Exception description="" name="PAFault" qname="ns68:PAFault" xmlns:ns68="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns63:Exceptions>
+    </ns63:Method>
+    <ns63:Method description="" isImported="false" isProvided="false" name="createStudySiteAccrualStatus" xsi:type="ns63:MethodType">
+     <ns63:Inputs>
+      <ns63:Input qName="ns69:StudySiteAccrualStatus" description="" isArray="false" name="studySiteAccrualStatus" xmlns:ns69="http://pa.services.coppa.nci.nih.gov"/>
+     </ns63:Inputs>
+     <ns63:Output qName="ns70:StudySiteAccrualStatus" description="" isArray="false" xmlns:ns70="http://pa.services.coppa.nci.nih.gov"/>
+     <ns63:Exceptions>
+      <ns63:Exception description="" name="PAFault" qname="ns71:PAFault" xmlns:ns71="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns63:Exceptions>
+    </ns63:Method>
+    <ns63:Method description="" isImported="false" isProvided="false" name="updateStudySiteAccrualStatus" xsi:type="ns63:MethodType">
+     <ns63:Inputs>
+      <ns63:Input qName="ns72:StudySiteAccrualStatus" description="" isArray="false" name="studySiteAccrualStatus" xmlns:ns72="http://pa.services.coppa.nci.nih.gov"/>
+     </ns63:Inputs>
+     <ns63:Output qName="ns73:StudySiteAccrualStatus" description="" isArray="false" xmlns:ns73="http://pa.services.coppa.nci.nih.gov"/>
+     <ns63:Exceptions>
+      <ns63:Exception description="" name="PAFault" qname="ns74:PAFault" xmlns:ns74="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns63:Exceptions>
+    </ns63:Method>
+    <ns63:Method description="" isImported="false" isProvided="false" name="getStudySiteAccrualStatusByStudySite" xsi:type="ns63:MethodType">
+     <ns63:Inputs>
+      <ns63:Input qName="ns75:Id" description="" isArray="false" name="studySiteId" xmlns:ns75="http://pa.services.coppa.nci.nih.gov"/>
+     </ns63:Inputs>
+     <ns63:Output qName="ns76:StudySiteAccrualStatus" description="" isArray="true" xmlns:ns76="http://pa.services.coppa.nci.nih.gov"/>
+     <ns63:Exceptions>
+      <ns63:Exception description="" name="PAFault" qname="ns77:PAFault" xmlns:ns77="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns63:Exceptions>
+    </ns63:Method>
+    <ns63:Method description="" isImported="false" isProvided="false" name="getCurrentStudySiteAccrualStatusByStudySite" xsi:type="ns63:MethodType">
+     <ns63:Inputs>
+      <ns63:Input qName="ns78:Id" description="" isArray="false" name="studySiteId" xmlns:ns78="http://pa.services.coppa.nci.nih.gov"/>
+     </ns63:Inputs>
+     <ns63:Output qName="ns79:StudySiteAccrualStatus" description="" isArray="false" xmlns:ns79="http://pa.services.coppa.nci.nih.gov"/>
+     <ns63:Exceptions>
+      <ns63:Exception description="" name="PAFault" qname="ns80:PAFault" xmlns:ns80="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns63:Exceptions>
+    </ns63:Method>
+   </ns63:Methods>
+   <ns81:ResourcePropertiesList xsi:type="ns81:ResourcePropertiesListType" xmlns:ns81="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyResourcingService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService" packageName="gov.nih.nci.coppa.services.pa.studyresourcingservice" xsi:type="ns3:ServiceType">
+   <ns82:Methods xsi:type="ns82:MethodsType" xmlns:ns82="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns82:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns82:MethodType">
+     <ns82:Output qName="ns83:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns83="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns84:MethodSecurity xsi:type="ns84:MethodSecurity" xmlns:ns84="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns84:SecuritySetting xsi:type="ns84:SecuritySetting">None</ns84:SecuritySetting>
+      <ns84:MethodAuthorization xsi:type="ns84:MethodAuthorization">
+       <ns84:NoAuthorization xsi:type="ns84:NoAuthorization"/>
+      </ns84:MethodAuthorization>
+     </ns84:MethodSecurity>
+     <ns82:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns82:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns82:Method>
+    <ns82:Method description="" isImported="false" isProvided="false" name="getSummaryForReportedResource" xsi:type="ns82:MethodType">
+     <ns82:Inputs>
+      <ns82:Input qName="ns85:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns85="http://pa.services.coppa.nci.nih.gov"/>
+     </ns82:Inputs>
+     <ns82:Output qName="ns86:StudyResourcing" description="" isArray="false" xmlns:ns86="http://pa.services.coppa.nci.nih.gov"/>
+     <ns82:Exceptions>
+      <ns82:Exception description="" name="PAFault" qname="ns87:PAFault" xmlns:ns87="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns82:Exceptions>
+    </ns82:Method>
+    <ns82:Method description="" isImported="false" isProvided="false" name="updateStudyResourcing" xsi:type="ns82:MethodType">
+     <ns82:Inputs>
+      <ns82:Input qName="ns88:StudyResourcing" description="" isArray="false" name="studyResourcing" xmlns:ns88="http://pa.services.coppa.nci.nih.gov"/>
+     </ns82:Inputs>
+     <ns82:Output qName="ns89:StudyResourcing" description="" isArray="false" xmlns:ns89="http://pa.services.coppa.nci.nih.gov"/>
+     <ns82:Exceptions>
+      <ns82:Exception description="" name="PAFault" qname="ns90:PAFault" xmlns:ns90="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns82:Exceptions>
+    </ns82:Method>
+    <ns82:Method description="" isImported="false" isProvided="false" name="createStudyResourcing" xsi:type="ns82:MethodType">
+     <ns82:Inputs>
+      <ns82:Input qName="ns91:StudyResourcing" description="" isArray="false" name="studyResourcing" xmlns:ns91="http://pa.services.coppa.nci.nih.gov"/>
+     </ns82:Inputs>
+     <ns82:Output qName="ns92:StudyResourcing" description="" isArray="false" xmlns:ns92="http://pa.services.coppa.nci.nih.gov"/>
+     <ns82:Exceptions>
+      <ns82:Exception description="" name="PAFault" qname="ns93:PAFault" xmlns:ns93="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns82:Exceptions>
+    </ns82:Method>
+    <ns82:Method description="" isImported="false" isProvided="false" name="getStudyResourceByStudyProtocol" xsi:type="ns82:MethodType">
+     <ns82:Inputs>
+      <ns82:Input qName="ns94:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns94="http://pa.services.coppa.nci.nih.gov"/>
+     </ns82:Inputs>
+     <ns82:Output qName="ns95:StudyResourcing" description="" isArray="true" xmlns:ns95="http://pa.services.coppa.nci.nih.gov"/>
+     <ns82:Exceptions>
+      <ns82:Exception description="" name="PAFault" qname="ns96:PAFault" xmlns:ns96="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns82:Exceptions>
+    </ns82:Method>
+    <ns82:Method description="" isImported="false" isProvided="false" name="getStudyResourceByID" xsi:type="ns82:MethodType">
+     <ns82:Inputs>
+      <ns82:Input qName="ns97:Id" description="" isArray="false" name="studyResourceId" xmlns:ns97="http://pa.services.coppa.nci.nih.gov"/>
+     </ns82:Inputs>
+     <ns82:Output qName="ns98:StudyResourcing" description="" isArray="false" xmlns:ns98="http://pa.services.coppa.nci.nih.gov"/>
+     <ns82:Exceptions>
+      <ns82:Exception description="" name="PAFault" qname="ns99:PAFault" xmlns:ns99="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns82:Exceptions>
+    </ns82:Method>
+    <ns82:Method description="" isImported="false" isProvided="false" name="deleteStudyResourceByID" xsi:type="ns82:MethodType">
+     <ns82:Inputs>
+      <ns82:Input qName="ns100:StudyResourcing" description="" isArray="false" name="studyResourcing" xmlns:ns100="http://pa.services.coppa.nci.nih.gov"/>
+     </ns82:Inputs>
+     <ns82:Output qName="void" description="" isArray="false"/>
+     <ns82:Exceptions>
+      <ns82:Exception description="" name="PAFault" qname="ns101:PAFault" xmlns:ns101="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns82:Exceptions>
+    </ns82:Method>
+   </ns82:Methods>
+   <ns102:ResourcePropertiesList xsi:type="ns102:ResourcePropertiesListType" xmlns:ns102="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyRegulatoryAuthorityService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService" packageName="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice" xsi:type="ns3:ServiceType">
+   <ns103:Methods xsi:type="ns103:MethodsType" xmlns:ns103="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns103:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns103:MethodType">
+     <ns103:Output qName="ns104:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns104="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns105:MethodSecurity xsi:type="ns105:MethodSecurity" xmlns:ns105="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns105:SecuritySetting xsi:type="ns105:SecuritySetting">None</ns105:SecuritySetting>
+      <ns105:MethodAuthorization xsi:type="ns105:MethodAuthorization">
+       <ns105:NoAuthorization xsi:type="ns105:NoAuthorization"/>
+      </ns105:MethodAuthorization>
+     </ns105:MethodSecurity>
+     <ns103:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns103:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns103:Method>
+    <ns103:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns103:MethodType">
+     <ns103:Inputs>
+      <ns103:Input qName="ns106:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns106="http://pa.services.coppa.nci.nih.gov"/>
+     </ns103:Inputs>
+     <ns103:Output qName="ns107:StudyRegulatoryAuthority" description="" isArray="true" xmlns:ns107="http://pa.services.coppa.nci.nih.gov"/>
+     <ns103:Exceptions>
+      <ns103:Exception description="" name="PAFault" qname="ns108:PAFault" xmlns:ns108="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns103:Exceptions>
+    </ns103:Method>
+    <ns103:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns103:MethodType">
+     <ns103:Inputs>
+      <ns103:Input qName="ns109:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns109="http://pa.services.coppa.nci.nih.gov"/>
+     </ns103:Inputs>
+     <ns103:Output qName="ns110:StudyRegulatoryAuthority" description="" isArray="false" xmlns:ns110="http://pa.services.coppa.nci.nih.gov"/>
+     <ns103:Exceptions>
+      <ns103:Exception description="" name="PAFault" qname="ns111:PAFault" xmlns:ns111="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns103:Exceptions>
+    </ns103:Method>
+    <ns103:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns103:MethodType">
+     <ns103:Inputs>
+      <ns103:Input qName="ns112:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns112="http://pa.services.coppa.nci.nih.gov"/>
+     </ns103:Inputs>
+     <ns103:Output qName="ns113:StudyRegulatoryAuthority" description="" isArray="false" xmlns:ns113="http://pa.services.coppa.nci.nih.gov"/>
+     <ns103:Exceptions>
+      <ns103:Exception description="" name="PAFault" qname="ns114:PAFault" xmlns:ns114="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns103:Exceptions>
+    </ns103:Method>
+    <ns103:Method description="Creates a new record of StudyRegulatoryAuthority by changing to new StudyProtocol identifier." isImported="false" isProvided="false" name="copy" xsi:type="ns103:MethodType">
+     <ns103:Inputs>
+      <ns103:Input qName="ns115:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns115="http://pa.services.coppa.nci.nih.gov"/>
+      <ns103:Input qName="ns116:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns116="http://pa.services.coppa.nci.nih.gov"/>
+     </ns103:Inputs>
+     <ns103:Output qName="void" description="" isArray="false"/>
+     <ns103:Exceptions>
+      <ns103:Exception description="" name="PAFault" qname="ns117:PAFault" xmlns:ns117="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns103:Exceptions>
+    </ns103:Method>
+    <ns103:Method description="" isImported="false" isProvided="false" name="getCurrentByStudyProtocol" xsi:type="ns103:MethodType">
+     <ns103:Inputs>
+      <ns103:Input qName="ns118:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns118="http://pa.services.coppa.nci.nih.gov"/>
+     </ns103:Inputs>
+     <ns103:Output qName="ns119:StudyRegulatoryAuthority" description="" isArray="false" xmlns:ns119="http://pa.services.coppa.nci.nih.gov"/>
+     <ns103:Exceptions>
+      <ns103:Exception description="" name="PAFault" qname="ns120:PAFault" xmlns:ns120="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns103:Exceptions>
+    </ns103:Method>
+    <ns103:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns103:MethodType">
+     <ns103:Inputs>
+      <ns103:Input qName="ns121:Id" description="" isArray="false" name="id" xmlns:ns121="http://pa.services.coppa.nci.nih.gov"/>
+     </ns103:Inputs>
+     <ns103:Output qName="ns122:StudyRegulatoryAuthority" description="" isArray="false" xmlns:ns122="http://pa.services.coppa.nci.nih.gov"/>
+     <ns103:Exceptions>
+      <ns103:Exception description="" name="PAFault" qname="ns123:PAFault" xmlns:ns123="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns103:Exceptions>
+    </ns103:Method>
+    <ns103:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns103:MethodType">
+     <ns103:Inputs>
+      <ns103:Input qName="ns124:Id" description="" isArray="false" name="id" xmlns:ns124="http://pa.services.coppa.nci.nih.gov"/>
+     </ns103:Inputs>
+     <ns103:Output qName="void" description="" isArray="false"/>
+     <ns103:Exceptions>
+      <ns103:Exception description="" name="PAFault" qname="ns125:PAFault" xmlns:ns125="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns103:Exceptions>
+    </ns103:Method>
+   </ns103:Methods>
+   <ns126:ResourcePropertiesList xsi:type="ns126:ResourcePropertiesListType" xmlns:ns126="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyRecruitmentStatusService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService" packageName="gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice" xsi:type="ns3:ServiceType">
+   <ns127:Methods xsi:type="ns127:MethodsType" xmlns:ns127="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns127:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns127:MethodType">
+     <ns127:Output qName="ns128:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns128="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns129:MethodSecurity xsi:type="ns129:MethodSecurity" xmlns:ns129="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns129:SecuritySetting xsi:type="ns129:SecuritySetting">None</ns129:SecuritySetting>
+      <ns129:MethodAuthorization xsi:type="ns129:MethodAuthorization">
+       <ns129:NoAuthorization xsi:type="ns129:NoAuthorization"/>
+      </ns129:MethodAuthorization>
+     </ns129:MethodSecurity>
+     <ns127:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns127:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns127:Method>
+    <ns127:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns127:MethodType">
+     <ns127:Inputs>
+      <ns127:Input qName="ns130:Id" description="" isArray="false" name="id" xmlns:ns130="http://pa.services.coppa.nci.nih.gov"/>
+     </ns127:Inputs>
+     <ns127:Output qName="ns131:StudyRecruitmentStatus" description="" isArray="true" xmlns:ns131="http://pa.services.coppa.nci.nih.gov"/>
+     <ns127:Exceptions>
+      <ns127:Exception description="" name="PAFault" qname="ns132:PAFault" xmlns:ns132="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns127:Exceptions>
+    </ns127:Method>
+    <ns127:Method description="Creates copies of the StudyRecruitmentStatuses that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns127:MethodType">
+     <ns127:Inputs>
+      <ns127:Input qName="ns133:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns133="http://pa.services.coppa.nci.nih.gov"/>
+      <ns127:Input qName="ns134:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns134="http://pa.services.coppa.nci.nih.gov"/>
+     </ns127:Inputs>
+     <ns127:Output qName="void" description="" isArray="false"/>
+     <ns127:Exceptions>
+      <ns127:Exception description="" name="PAFault" qname="ns135:PAFault" xmlns:ns135="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns127:Exceptions>
+    </ns127:Method>
+    <ns127:Method description="" isImported="false" isProvided="false" name="getCurrentByStudyProtocol" xsi:type="ns127:MethodType">
+     <ns127:Inputs>
+      <ns127:Input qName="ns136:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns136="http://pa.services.coppa.nci.nih.gov"/>
+     </ns127:Inputs>
+     <ns127:Output qName="ns137:StudyRecruitmentStatus" description="" isArray="false" xmlns:ns137="http://pa.services.coppa.nci.nih.gov"/>
+     <ns127:Exceptions>
+      <ns127:Exception description="" name="PAFault" qname="ns138:PAFault" xmlns:ns138="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns127:Exceptions>
+    </ns127:Method>
+    <ns127:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns127:MethodType">
+     <ns127:Inputs>
+      <ns127:Input qName="ns139:Id" description="" isArray="false" name="id" xmlns:ns139="http://pa.services.coppa.nci.nih.gov"/>
+     </ns127:Inputs>
+     <ns127:Output qName="ns140:StudyRecruitmentStatus" description="" isArray="false" xmlns:ns140="http://pa.services.coppa.nci.nih.gov"/>
+     <ns127:Exceptions>
+      <ns127:Exception description="" name="PAFault" qname="ns141:PAFault" xmlns:ns141="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns127:Exceptions>
+    </ns127:Method>
+    <ns127:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns127:MethodType">
+     <ns127:Inputs>
+      <ns127:Input qName="ns142:StudyRecruitmentStatus" description="" isArray="false" name="studyRecruitmentStatus" xmlns:ns142="http://pa.services.coppa.nci.nih.gov"/>
+     </ns127:Inputs>
+     <ns127:Output qName="ns143:StudyRecruitmentStatus" description="" isArray="false" xmlns:ns143="http://pa.services.coppa.nci.nih.gov"/>
+     <ns127:Exceptions>
+      <ns127:Exception description="" name="PAFault" qname="ns144:PAFault" xmlns:ns144="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns127:Exceptions>
+    </ns127:Method>
+    <ns127:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns127:MethodType">
+     <ns127:Inputs>
+      <ns127:Input qName="ns145:StudyRecruitmentStatus" description="" isArray="false" name="studyRecruitmentStatus" xmlns:ns145="http://pa.services.coppa.nci.nih.gov"/>
+     </ns127:Inputs>
+     <ns127:Output qName="ns146:StudyRecruitmentStatus" description="" isArray="false" xmlns:ns146="http://pa.services.coppa.nci.nih.gov"/>
+     <ns127:Exceptions>
+      <ns127:Exception description="" name="PAFault" qname="ns147:PAFault" xmlns:ns147="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns127:Exceptions>
+    </ns127:Method>
+    <ns127:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns127:MethodType">
+     <ns127:Inputs>
+      <ns127:Input qName="ns148:Id" description="" isArray="false" name="id" xmlns:ns148="http://pa.services.coppa.nci.nih.gov"/>
+     </ns127:Inputs>
+     <ns127:Output qName="void" description="" isArray="false"/>
+     <ns127:Exceptions>
+      <ns127:Exception description="" name="PAFault" qname="ns149:PAFault" xmlns:ns149="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns127:Exceptions>
+    </ns127:Method>
+   </ns127:Methods>
+   <ns150:ResourcePropertiesList xsi:type="ns150:ResourcePropertiesListType" xmlns:ns150="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyParticipationService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService" packageName="gov.nih.nci.coppa.services.pa.studyparticipationservice" xsi:type="ns3:ServiceType">
+   <ns151:Methods xsi:type="ns151:MethodsType" xmlns:ns151="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns151:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns151:MethodType">
+     <ns151:Output qName="ns152:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns152="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns153:MethodSecurity xsi:type="ns153:MethodSecurity" xmlns:ns153="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns153:SecuritySetting xsi:type="ns153:SecuritySetting">None</ns153:SecuritySetting>
+      <ns153:MethodAuthorization xsi:type="ns153:MethodAuthorization">
+       <ns153:NoAuthorization xsi:type="ns153:NoAuthorization"/>
+      </ns153:MethodAuthorization>
+     </ns153:MethodSecurity>
+     <ns151:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns151:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns151:Method>
+   </ns151:Methods>
+   <ns154:ResourcePropertiesList xsi:type="ns154:ResourcePropertiesListType" xmlns:ns154="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyParticipationContactService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService" packageName="gov.nih.nci.coppa.services.pa.studyparticipationcontactservice" xsi:type="ns3:ServiceType">
+   <ns155:Methods xsi:type="ns155:MethodsType" xmlns:ns155="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns155:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns155:MethodType">
+     <ns155:Output qName="ns156:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns156="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns157:MethodSecurity xsi:type="ns157:MethodSecurity" xmlns:ns157="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns157:SecuritySetting xsi:type="ns157:SecuritySetting">None</ns157:SecuritySetting>
+      <ns157:MethodAuthorization xsi:type="ns157:MethodAuthorization">
+       <ns157:NoAuthorization xsi:type="ns157:NoAuthorization"/>
+      </ns157:MethodAuthorization>
+     </ns157:MethodSecurity>
+     <ns155:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns155:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns155:Method>
+   </ns155:Methods>
+   <ns158:ResourcePropertiesList xsi:type="ns158:ResourcePropertiesListType" xmlns:ns158="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyOverallStatusService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService" packageName="gov.nih.nci.coppa.services.pa.studyoverallstatusservice" xsi:type="ns3:ServiceType">
+   <ns159:Methods xsi:type="ns159:MethodsType" xmlns:ns159="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns159:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns159:MethodType">
+     <ns159:Output qName="ns160:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns160="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns161:MethodSecurity xsi:type="ns161:MethodSecurity" xmlns:ns161="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns161:SecuritySetting xsi:type="ns161:SecuritySetting">None</ns161:SecuritySetting>
+      <ns161:MethodAuthorization xsi:type="ns161:MethodAuthorization">
+       <ns161:NoAuthorization xsi:type="ns161:NoAuthorization"/>
+      </ns161:MethodAuthorization>
+     </ns161:MethodSecurity>
+     <ns159:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns159:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns159:Method>
+    <ns159:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns159:MethodType">
+     <ns159:Inputs>
+      <ns159:Input qName="ns162:Id" description="" isArray="false" name="id" xmlns:ns162="http://pa.services.coppa.nci.nih.gov"/>
+     </ns159:Inputs>
+     <ns159:Output qName="ns163:StudyOverallStatus" description="" isArray="true" xmlns:ns163="http://pa.services.coppa.nci.nih.gov"/>
+     <ns159:Exceptions>
+      <ns159:Exception description="" name="PAFault" qname="ns164:PAFault" xmlns:ns164="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns159:Exceptions>
+    </ns159:Method>
+    <ns159:Method description="Creates copies of the StudyOverallStatuses that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns159:MethodType">
+     <ns159:Inputs>
+      <ns159:Input qName="ns165:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns165="http://pa.services.coppa.nci.nih.gov"/>
+      <ns159:Input qName="ns166:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns166="http://pa.services.coppa.nci.nih.gov"/>
+     </ns159:Inputs>
+     <ns159:Output qName="void" description="" isArray="false"/>
+     <ns159:Exceptions>
+      <ns159:Exception description="" name="PAFault" qname="ns167:PAFault" xmlns:ns167="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns159:Exceptions>
+    </ns159:Method>
+    <ns159:Method description="" isImported="false" isProvided="false" name="getCurrentByStudyProtocol" xsi:type="ns159:MethodType">
+     <ns159:Inputs>
+      <ns159:Input qName="ns168:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns168="http://pa.services.coppa.nci.nih.gov"/>
+     </ns159:Inputs>
+     <ns159:Output qName="ns169:StudyOverallStatus" description="" isArray="false" xmlns:ns169="http://pa.services.coppa.nci.nih.gov"/>
+     <ns159:Exceptions>
+      <ns159:Exception description="" name="PAFault" qname="ns170:PAFault" xmlns:ns170="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns159:Exceptions>
+    </ns159:Method>
+    <ns159:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns159:MethodType">
+     <ns159:Inputs>
+      <ns159:Input qName="ns171:Id" description="" isArray="false" name="id" xmlns:ns171="http://pa.services.coppa.nci.nih.gov"/>
+     </ns159:Inputs>
+     <ns159:Output qName="ns172:StudyOverallStatus" description="" isArray="false" xmlns:ns172="http://pa.services.coppa.nci.nih.gov"/>
+     <ns159:Exceptions>
+      <ns159:Exception description="" name="PAFault" qname="ns173:PAFault" xmlns:ns173="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns159:Exceptions>
+    </ns159:Method>
+    <ns159:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns159:MethodType">
+     <ns159:Inputs>
+      <ns159:Input qName="ns174:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns174="http://pa.services.coppa.nci.nih.gov"/>
+     </ns159:Inputs>
+     <ns159:Output qName="ns175:StudyOverallStatus" description="" isArray="false" xmlns:ns175="http://pa.services.coppa.nci.nih.gov"/>
+     <ns159:Exceptions>
+      <ns159:Exception description="" name="PAFault" qname="ns176:PAFault" xmlns:ns176="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns159:Exceptions>
+    </ns159:Method>
+    <ns159:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns159:MethodType">
+     <ns159:Inputs>
+      <ns159:Input qName="ns177:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns177="http://pa.services.coppa.nci.nih.gov"/>
+     </ns159:Inputs>
+     <ns159:Output qName="ns178:StudyOverallStatus" description="" isArray="false" xmlns:ns178="http://pa.services.coppa.nci.nih.gov"/>
+     <ns159:Exceptions>
+      <ns159:Exception description="" name="PAFault" qname="ns179:PAFault" xmlns:ns179="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns159:Exceptions>
+    </ns159:Method>
+    <ns159:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns159:MethodType">
+     <ns159:Inputs>
+      <ns159:Input qName="ns180:Id" description="" isArray="false" name="id" xmlns:ns180="http://pa.services.coppa.nci.nih.gov"/>
+     </ns159:Inputs>
+     <ns159:Output qName="void" description="" isArray="false"/>
+     <ns159:Exceptions>
+      <ns159:Exception description="" name="PAFault" qname="ns181:PAFault" xmlns:ns181="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns159:Exceptions>
+    </ns159:Method>
+   </ns159:Methods>
+   <ns182:ResourcePropertiesList xsi:type="ns182:ResourcePropertiesListType" xmlns:ns182="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyOutcomeMeasureService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService" packageName="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice" xsi:type="ns3:ServiceType">
+   <ns183:Methods xsi:type="ns183:MethodsType" xmlns:ns183="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns183:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns183:MethodType">
+     <ns183:Output qName="ns184:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns184="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns185:MethodSecurity xsi:type="ns185:MethodSecurity" xmlns:ns185="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns185:SecuritySetting xsi:type="ns185:SecuritySetting">None</ns185:SecuritySetting>
+      <ns185:MethodAuthorization xsi:type="ns185:MethodAuthorization">
+       <ns185:NoAuthorization xsi:type="ns185:NoAuthorization"/>
+      </ns185:MethodAuthorization>
+     </ns185:MethodSecurity>
+     <ns183:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns183:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns186:Id" description="" isArray="false" name="id" xmlns:ns186="http://pa.services.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns187:StudyOutcomeMeasure" description="" isArray="true" xmlns:ns187="http://pa.services.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="PAFault" qname="ns188:PAFault" xmlns:ns188="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="Creates copies of the StudyOutcomeMeasureServices that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns189:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns189="http://pa.services.coppa.nci.nih.gov"/>
+      <ns183:Input qName="ns190:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns190="http://pa.services.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="void" description="" isArray="false"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="PAFault" qname="ns191:PAFault" xmlns:ns191="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns192:Id" description="" isArray="false" name="id" xmlns:ns192="http://pa.services.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns193:StudyOutcomeMeasure" description="" isArray="false" xmlns:ns193="http://pa.services.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="PAFault" qname="ns194:PAFault" xmlns:ns194="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns195:StudyOutcomeMeasure" description="" isArray="false" name="studyOutcomeMeasure" xmlns:ns195="http://pa.services.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns196:StudyOutcomeMeasure" description="" isArray="false" xmlns:ns196="http://pa.services.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="PAFault" qname="ns197:PAFault" xmlns:ns197="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns198:StudyOutcomeMeasure" description="" isArray="false" name="studyOutcomeMeasure" xmlns:ns198="http://pa.services.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="ns199:StudyOutcomeMeasure" description="" isArray="false" xmlns:ns199="http://pa.services.coppa.nci.nih.gov"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="PAFault" qname="ns200:PAFault" xmlns:ns200="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+    <ns183:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns183:MethodType">
+     <ns183:Inputs>
+      <ns183:Input qName="ns201:Id" description="" isArray="false" name="id" xmlns:ns201="http://pa.services.coppa.nci.nih.gov"/>
+     </ns183:Inputs>
+     <ns183:Output qName="void" description="" isArray="false"/>
+     <ns183:Exceptions>
+      <ns183:Exception description="" name="PAFault" qname="ns202:PAFault" xmlns:ns202="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns183:Exceptions>
+    </ns183:Method>
+   </ns183:Methods>
+   <ns203:ResourcePropertiesList xsi:type="ns203:ResourcePropertiesListType" xmlns:ns203="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyOnholdService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService" packageName="gov.nih.nci.coppa.services.pa.studyonholdservice" xsi:type="ns3:ServiceType">
+   <ns204:Methods xsi:type="ns204:MethodsType" xmlns:ns204="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns204:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns204:MethodType">
+     <ns204:Output qName="ns205:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns205="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns206:MethodSecurity xsi:type="ns206:MethodSecurity" xmlns:ns206="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns206:SecuritySetting xsi:type="ns206:SecuritySetting">None</ns206:SecuritySetting>
+      <ns206:MethodAuthorization xsi:type="ns206:MethodAuthorization">
+       <ns206:NoAuthorization xsi:type="ns206:NoAuthorization"/>
+      </ns206:MethodAuthorization>
+     </ns206:MethodSecurity>
+     <ns204:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns204:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns204:Method>
+    <ns204:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns204:MethodType">
+     <ns204:Inputs>
+      <ns204:Input qName="ns207:Id" description="" isArray="false" name="id" xmlns:ns207="http://pa.services.coppa.nci.nih.gov"/>
+     </ns204:Inputs>
+     <ns204:Output qName="ns208:StudyOnhold" description="" isArray="true" xmlns:ns208="http://pa.services.coppa.nci.nih.gov"/>
+     <ns204:Exceptions>
+      <ns204:Exception description="" name="PAFault" qname="ns209:PAFault" xmlns:ns209="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns204:Exceptions>
+    </ns204:Method>
+    <ns204:Method description="Creates copies of the StudyOnholds that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns204:MethodType">
+     <ns204:Inputs>
+      <ns204:Input qName="ns210:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns210="http://pa.services.coppa.nci.nih.gov"/>
+      <ns204:Input qName="ns211:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns211="http://pa.services.coppa.nci.nih.gov"/>
+     </ns204:Inputs>
+     <ns204:Output qName="void" description="" isArray="false"/>
+     <ns204:Exceptions>
+      <ns204:Exception description="" name="PAFault" qname="ns212:PAFault" xmlns:ns212="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns204:Exceptions>
+    </ns204:Method>
+    <ns204:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns204:MethodType">
+     <ns204:Inputs>
+      <ns204:Input qName="ns213:Id" description="" isArray="false" name="id" xmlns:ns213="http://pa.services.coppa.nci.nih.gov"/>
+     </ns204:Inputs>
+     <ns204:Output qName="ns214:StudyOnhold" description="" isArray="false" xmlns:ns214="http://pa.services.coppa.nci.nih.gov"/>
+     <ns204:Exceptions>
+      <ns204:Exception description="" name="PAFault" qname="ns215:PAFault" xmlns:ns215="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns204:Exceptions>
+    </ns204:Method>
+    <ns204:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns204:MethodType">
+     <ns204:Inputs>
+      <ns204:Input qName="ns216:StudyOnhold" description="" isArray="false" name="studyOnhold" xmlns:ns216="http://pa.services.coppa.nci.nih.gov"/>
+     </ns204:Inputs>
+     <ns204:Output qName="ns217:StudyOnhold" description="" isArray="false" xmlns:ns217="http://pa.services.coppa.nci.nih.gov"/>
+     <ns204:Exceptions>
+      <ns204:Exception description="" name="PAFault" qname="ns218:PAFault" xmlns:ns218="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns204:Exceptions>
+    </ns204:Method>
+    <ns204:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns204:MethodType">
+     <ns204:Inputs>
+      <ns204:Input qName="ns219:StudyOnhold" description="" isArray="false" name="studyOnhold" xmlns:ns219="http://pa.services.coppa.nci.nih.gov"/>
+     </ns204:Inputs>
+     <ns204:Output qName="ns220:StudyOnhold" description="" isArray="false" xmlns:ns220="http://pa.services.coppa.nci.nih.gov"/>
+     <ns204:Exceptions>
+      <ns204:Exception description="" name="PAFault" qname="ns221:PAFault" xmlns:ns221="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns204:Exceptions>
+    </ns204:Method>
+    <ns204:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns204:MethodType">
+     <ns204:Inputs>
+      <ns204:Input qName="ns222:Id" description="" isArray="false" name="id" xmlns:ns222="http://pa.services.coppa.nci.nih.gov"/>
+     </ns204:Inputs>
+     <ns204:Output qName="void" description="" isArray="false"/>
+     <ns204:Exceptions>
+      <ns204:Exception description="" name="PAFault" qname="ns223:PAFault" xmlns:ns223="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns204:Exceptions>
+    </ns204:Method>
+    <ns204:Method description="" isImported="false" isProvided="false" name="isOnhold" xsi:type="ns204:MethodType">
+     <ns204:Inputs>
+      <ns204:Input qName="ns224:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns224="http://pa.services.coppa.nci.nih.gov"/>
+     </ns204:Inputs>
+     <ns204:Output qName="ns225:BL" description="" isArray="false" xmlns:ns225="http://pa.services.coppa.nci.nih.gov"/>
+     <ns204:Exceptions>
+      <ns204:Exception description="" name="PAFault" qname="ns226:PAFault" xmlns:ns226="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns204:Exceptions>
+    </ns204:Method>
+   </ns204:Methods>
+   <ns227:ResourcePropertiesList xsi:type="ns227:ResourcePropertiesListType" xmlns:ns227="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyIndIdeService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService" packageName="gov.nih.nci.coppa.services.pa.studyindideservice" xsi:type="ns3:ServiceType">
+   <ns228:Methods xsi:type="ns228:MethodsType" xmlns:ns228="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns228:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns228:MethodType">
+     <ns228:Output qName="ns229:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns229="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns230:MethodSecurity xsi:type="ns230:MethodSecurity" xmlns:ns230="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns230:SecuritySetting xsi:type="ns230:SecuritySetting">None</ns230:SecuritySetting>
+      <ns230:MethodAuthorization xsi:type="ns230:MethodAuthorization">
+       <ns230:NoAuthorization xsi:type="ns230:NoAuthorization"/>
+      </ns230:MethodAuthorization>
+     </ns230:MethodSecurity>
+     <ns228:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns228:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns228:Method>
+    <ns228:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns228:MethodType">
+     <ns228:Inputs>
+      <ns228:Input qName="ns231:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns231="http://pa.services.coppa.nci.nih.gov"/>
+     </ns228:Inputs>
+     <ns228:Output qName="ns232:StudyIndlde" description="" isArray="true" xmlns:ns232="http://pa.services.coppa.nci.nih.gov"/>
+     <ns228:Exceptions>
+      <ns228:Exception description="" name="PAFault" qname="ns233:PAFault" xmlns:ns233="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns228:Exceptions>
+    </ns228:Method>
+    <ns228:Method description="Creates copies of the StudyIndldes that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns228:MethodType">
+     <ns228:Inputs>
+      <ns228:Input qName="ns234:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns234="http://pa.services.coppa.nci.nih.gov"/>
+      <ns228:Input qName="ns235:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns235="http://pa.services.coppa.nci.nih.gov"/>
+     </ns228:Inputs>
+     <ns228:Output qName="void" description="" isArray="false"/>
+     <ns228:Exceptions>
+      <ns228:Exception description="" name="PAFault" qname="ns236:PAFault" xmlns:ns236="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns228:Exceptions>
+    </ns228:Method>
+    <ns228:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns228:MethodType">
+     <ns228:Inputs>
+      <ns228:Input qName="ns237:Id" description="" isArray="false" name="id" xmlns:ns237="http://pa.services.coppa.nci.nih.gov"/>
+     </ns228:Inputs>
+     <ns228:Output qName="ns238:StudyIndlde" description="" isArray="false" xmlns:ns238="http://pa.services.coppa.nci.nih.gov"/>
+     <ns228:Exceptions>
+      <ns228:Exception description="" name="PAFault" qname="ns239:PAFault" xmlns:ns239="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns228:Exceptions>
+    </ns228:Method>
+    <ns228:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns228:MethodType">
+     <ns228:Inputs>
+      <ns228:Input qName="ns240:StudyIndlde" description="" isArray="false" name="studyIndlde" xmlns:ns240="http://pa.services.coppa.nci.nih.gov"/>
+     </ns228:Inputs>
+     <ns228:Output qName="ns241:StudyIndlde" description="" isArray="false" xmlns:ns241="http://pa.services.coppa.nci.nih.gov"/>
+     <ns228:Exceptions>
+      <ns228:Exception description="" name="PAFault" qname="ns242:PAFault" xmlns:ns242="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns228:Exceptions>
+    </ns228:Method>
+    <ns228:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns228:MethodType">
+     <ns228:Inputs>
+      <ns228:Input qName="ns243:StudyIndlde" description="" isArray="false" name="studyIndlde" xmlns:ns243="http://pa.services.coppa.nci.nih.gov"/>
+     </ns228:Inputs>
+     <ns228:Output qName="ns244:StudyIndlde" description="" isArray="false" xmlns:ns244="http://pa.services.coppa.nci.nih.gov"/>
+     <ns228:Exceptions>
+      <ns228:Exception description="" name="PAFault" qname="ns245:PAFault" xmlns:ns245="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns228:Exceptions>
+    </ns228:Method>
+    <ns228:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns228:MethodType">
+     <ns228:Inputs>
+      <ns228:Input qName="ns246:Id" description="" isArray="false" name="id" xmlns:ns246="http://pa.services.coppa.nci.nih.gov"/>
+     </ns228:Inputs>
+     <ns228:Output qName="void" description="" isArray="false"/>
+     <ns228:Exceptions>
+      <ns228:Exception description="" name="PAFault" qname="ns247:PAFault" xmlns:ns247="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns228:Exceptions>
+    </ns228:Method>
+   </ns228:Methods>
+   <ns248:ResourcePropertiesList xsi:type="ns248:ResourcePropertiesListType" xmlns:ns248="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyDiseaseService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService" packageName="gov.nih.nci.coppa.services.pa.studydiseaseservice" xsi:type="ns3:ServiceType">
+   <ns249:Methods xsi:type="ns249:MethodsType" xmlns:ns249="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns249:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns249:MethodType">
+     <ns249:Output qName="ns250:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns250="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns251:MethodSecurity xsi:type="ns251:MethodSecurity" xmlns:ns251="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns251:SecuritySetting xsi:type="ns251:SecuritySetting">None</ns251:SecuritySetting>
+      <ns251:MethodAuthorization xsi:type="ns251:MethodAuthorization">
+       <ns251:NoAuthorization xsi:type="ns251:NoAuthorization"/>
+      </ns251:MethodAuthorization>
+     </ns251:MethodSecurity>
+     <ns249:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns249:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns249:Method>
+    <ns249:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns249:MethodType">
+     <ns249:Inputs>
+      <ns249:Input qName="ns252:Id" description="" isArray="false" name="id" xmlns:ns252="http://pa.services.coppa.nci.nih.gov"/>
+     </ns249:Inputs>
+     <ns249:Output qName="ns253:StudyDisease" description="" isArray="true" xmlns:ns253="http://pa.services.coppa.nci.nih.gov"/>
+     <ns249:Exceptions>
+      <ns249:Exception description="" name="PAFault" qname="ns254:PAFault" xmlns:ns254="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns249:Exceptions>
+    </ns249:Method>
+    <ns249:Method description="Creates copies of the StudyDiseases that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns249:MethodType">
+     <ns249:Inputs>
+      <ns249:Input qName="ns255:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns255="http://pa.services.coppa.nci.nih.gov"/>
+      <ns249:Input qName="ns256:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns256="http://pa.services.coppa.nci.nih.gov"/>
+     </ns249:Inputs>
+     <ns249:Output qName="void" description="" isArray="false"/>
+     <ns249:Exceptions>
+      <ns249:Exception description="" name="PAFault" qname="ns257:PAFault" xmlns:ns257="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns249:Exceptions>
+    </ns249:Method>
+    <ns249:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns249:MethodType">
+     <ns249:Inputs>
+      <ns249:Input qName="ns258:Id" description="" isArray="false" name="id" xmlns:ns258="http://pa.services.coppa.nci.nih.gov"/>
+     </ns249:Inputs>
+     <ns249:Output qName="ns259:StudyDisease" description="" isArray="false" xmlns:ns259="http://pa.services.coppa.nci.nih.gov"/>
+     <ns249:Exceptions>
+      <ns249:Exception description="" name="PAFault" qname="ns260:PAFault" xmlns:ns260="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns249:Exceptions>
+    </ns249:Method>
+    <ns249:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns249:MethodType">
+     <ns249:Inputs>
+      <ns249:Input qName="ns261:StudyDisease" description="" isArray="false" name="studyDisease" xmlns:ns261="http://pa.services.coppa.nci.nih.gov"/>
+     </ns249:Inputs>
+     <ns249:Output qName="ns262:StudyDisease" description="" isArray="false" xmlns:ns262="http://pa.services.coppa.nci.nih.gov"/>
+     <ns249:Exceptions>
+      <ns249:Exception description="" name="PAFault" qname="ns263:PAFault" xmlns:ns263="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns249:Exceptions>
+    </ns249:Method>
+    <ns249:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns249:MethodType">
+     <ns249:Inputs>
+      <ns249:Input qName="ns264:StudyDisease" description="" isArray="false" name="studyDisease" xmlns:ns264="http://pa.services.coppa.nci.nih.gov"/>
+     </ns249:Inputs>
+     <ns249:Output qName="ns265:StudyDisease" description="" isArray="false" xmlns:ns265="http://pa.services.coppa.nci.nih.gov"/>
+     <ns249:Exceptions>
+      <ns249:Exception description="" name="PAFault" qname="ns266:PAFault" xmlns:ns266="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns249:Exceptions>
+    </ns249:Method>
+    <ns249:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns249:MethodType">
+     <ns249:Inputs>
+      <ns249:Input qName="ns267:Id" description="" isArray="false" name="id" xmlns:ns267="http://pa.services.coppa.nci.nih.gov"/>
+     </ns249:Inputs>
+     <ns249:Output qName="void" description="" isArray="false"/>
+     <ns249:Exceptions>
+      <ns249:Exception description="" name="PAFault" qname="ns268:PAFault" xmlns:ns268="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns249:Exceptions>
+    </ns249:Method>
+   </ns249:Methods>
+   <ns269:ResourcePropertiesList xsi:type="ns269:ResourcePropertiesListType" xmlns:ns269="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyContactService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService" packageName="gov.nih.nci.coppa.services.pa.studycontactservice" xsi:type="ns3:ServiceType">
+   <ns270:Methods xsi:type="ns270:MethodsType" xmlns:ns270="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns270:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns270:MethodType">
+     <ns270:Output qName="ns271:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns271="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns272:MethodSecurity xsi:type="ns272:MethodSecurity" xmlns:ns272="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns272:SecuritySetting xsi:type="ns272:SecuritySetting">None</ns272:SecuritySetting>
+      <ns272:MethodAuthorization xsi:type="ns272:MethodAuthorization">
+       <ns272:NoAuthorization xsi:type="ns272:NoAuthorization"/>
+      </ns272:MethodAuthorization>
+     </ns272:MethodSecurity>
+     <ns270:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns270:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns270:Method>
+    <ns270:Method description="Gets the StudyContacts for a given functional role code and study protocol." isImported="false" isProvided="false" name="getByStudyProtocolAndRole" xsi:type="ns270:MethodType">
+     <ns270:Inputs>
+      <ns270:Input qName="ns273:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns273="http://pa.services.coppa.nci.nih.gov"/>
+      <ns270:Input qName="ns274:StudyContact" description="StudyContact with the functional code criteria" isArray="false" name="studyContact" xmlns:ns274="http://pa.services.coppa.nci.nih.gov"/>
+     </ns270:Inputs>
+     <ns270:Output qName="ns275:StudyContact" description="" isArray="true" xmlns:ns275="http://pa.services.coppa.nci.nih.gov"/>
+     <ns270:Exceptions>
+      <ns270:Exception description="" name="PAFault" qname="ns276:PAFault" xmlns:ns276="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns270:Exceptions>
+    </ns270:Method>
+    <ns270:Method description="Gets the StudyContacts for the given functional role codes and study protocol." isImported="false" isProvided="false" name="getByStudyProtocolAndRoles" xsi:type="ns270:MethodType">
+     <ns270:Inputs>
+      <ns270:Input qName="ns277:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns277="http://pa.services.coppa.nci.nih.gov"/>
+      <ns270:Input qName="ns278:StudyContact" description="StudyContacts with the functional code criteria" isArray="true" name="studyContact" xmlns:ns278="http://pa.services.coppa.nci.nih.gov"/>
+     </ns270:Inputs>
+     <ns270:Output qName="ns279:StudyContact" description="" isArray="true" xmlns:ns279="http://pa.services.coppa.nci.nih.gov"/>
+     <ns270:Exceptions>
+      <ns270:Exception description="" name="PAFault" qname="ns280:PAFault" xmlns:ns280="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns270:Exceptions>
+    </ns270:Method>
+    <ns270:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns270:MethodType">
+     <ns270:Inputs>
+      <ns270:Input qName="ns281:Id" description="" isArray="false" name="id" xmlns:ns281="http://pa.services.coppa.nci.nih.gov"/>
+     </ns270:Inputs>
+     <ns270:Output qName="ns282:StudyContact" description="" isArray="true" xmlns:ns282="http://pa.services.coppa.nci.nih.gov"/>
+     <ns270:Exceptions>
+      <ns270:Exception description="" name="PAFault" qname="ns283:PAFault" xmlns:ns283="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns270:Exceptions>
+    </ns270:Method>
+    <ns270:Method description="Creates copies of the StudyContacts that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns270:MethodType">
+     <ns270:Inputs>
+      <ns270:Input qName="ns284:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns284="http://pa.services.coppa.nci.nih.gov"/>
+      <ns270:Input qName="ns285:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns285="http://pa.services.coppa.nci.nih.gov"/>
+     </ns270:Inputs>
+     <ns270:Output qName="void" description="" isArray="false"/>
+     <ns270:Exceptions>
+      <ns270:Exception description="" name="PAFault" qname="ns286:PAFault" xmlns:ns286="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns270:Exceptions>
+    </ns270:Method>
+    <ns270:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns270:MethodType">
+     <ns270:Inputs>
+      <ns270:Input qName="ns287:Id" description="" isArray="false" name="id" xmlns:ns287="http://pa.services.coppa.nci.nih.gov"/>
+     </ns270:Inputs>
+     <ns270:Output qName="ns288:StudyContact" description="" isArray="false" xmlns:ns288="http://pa.services.coppa.nci.nih.gov"/>
+     <ns270:Exceptions>
+      <ns270:Exception description="" name="PAFault" qname="ns289:PAFault" xmlns:ns289="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns270:Exceptions>
+    </ns270:Method>
+    <ns270:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns270:MethodType">
+     <ns270:Inputs>
+      <ns270:Input qName="ns290:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns290="http://pa.services.coppa.nci.nih.gov"/>
+     </ns270:Inputs>
+     <ns270:Output qName="ns291:StudyContact" description="" isArray="false" xmlns:ns291="http://pa.services.coppa.nci.nih.gov"/>
+     <ns270:Exceptions>
+      <ns270:Exception description="" name="PAFault" qname="ns292:PAFault" xmlns:ns292="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns270:Exceptions>
+    </ns270:Method>
+    <ns270:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns270:MethodType">
+     <ns270:Inputs>
+      <ns270:Input qName="ns293:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns293="http://pa.services.coppa.nci.nih.gov"/>
+     </ns270:Inputs>
+     <ns270:Output qName="ns294:StudyContact" description="" isArray="false" xmlns:ns294="http://pa.services.coppa.nci.nih.gov"/>
+     <ns270:Exceptions>
+      <ns270:Exception description="" name="PAFault" qname="ns295:PAFault" xmlns:ns295="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns270:Exceptions>
+    </ns270:Method>
+    <ns270:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns270:MethodType">
+     <ns270:Inputs>
+      <ns270:Input qName="ns296:Id" description="" isArray="false" name="id" xmlns:ns296="http://pa.services.coppa.nci.nih.gov"/>
+     </ns270:Inputs>
+     <ns270:Output qName="void" description="" isArray="false"/>
+     <ns270:Exceptions>
+      <ns270:Exception description="" name="PAFault" qname="ns297:PAFault" xmlns:ns297="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns270:Exceptions>
+    </ns270:Method>
+   </ns270:Methods>
+   <ns298:ResourcePropertiesList xsi:type="ns298:ResourcePropertiesListType" xmlns:ns298="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="PlannedActivityService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService" packageName="gov.nih.nci.coppa.services.pa.plannedactivityservice" xsi:type="ns3:ServiceType">
+   <ns299:Methods xsi:type="ns299:MethodsType" xmlns:ns299="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns299:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns299:MethodType">
+     <ns299:Output qName="ns300:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns300="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns301:MethodSecurity xsi:type="ns301:MethodSecurity" xmlns:ns301="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns301:SecuritySetting xsi:type="ns301:SecuritySetting">None</ns301:SecuritySetting>
+      <ns301:MethodAuthorization xsi:type="ns301:MethodAuthorization">
+       <ns301:NoAuthorization xsi:type="ns301:NoAuthorization"/>
+      </ns301:MethodAuthorization>
+     </ns301:MethodSecurity>
+     <ns299:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns299:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="getByArm" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns302:Id" description="" isArray="false" name="armId" xmlns:ns302="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns303:PlannedActivity" description="" isArray="true" xmlns:ns303="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns304:PAFault" xmlns:ns304="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="getPlannedEligibilityCriterionByStudyProtocol" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns305:Id" description="" isArray="false" name="id" xmlns:ns305="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns306:PlannedEligibilityCriterion" description="" isArray="true" xmlns:ns306="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns307:PAFault" xmlns:ns307="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="getPlannedEligibilityCriterion" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns308:Id" description="" isArray="false" name="id" xmlns:ns308="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns309:PlannedEligibilityCriterion" description="" isArray="false" xmlns:ns309="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns310:PAFault" xmlns:ns310="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="createPlannedEligibilityCriterion" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns311:PlannedEligibilityCriterion" description="" isArray="false" name="plannedEligibilityCriterion" xmlns:ns311="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns312:PlannedEligibilityCriterion" description="" isArray="false" xmlns:ns312="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns313:PAFault" xmlns:ns313="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="updatePlannedEligibilityCriterion" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns314:PlannedEligibilityCriterion" description="" isArray="false" name="plannedEligibilityCriterion" xmlns:ns314="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns315:PlannedEligibilityCriterion" description="" isArray="false" xmlns:ns315="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns316:PAFault" xmlns:ns316="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="deletePlannedEligibilityCriterion" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns317:Id" description="" isArray="false" name="id" xmlns:ns317="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="void" description="" isArray="false"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns318:PAFault" xmlns:ns318="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="Creates copies of the PlannedEligibilityCriteria that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copyPlannedEligibilityStudyCriterions" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns319:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns319="http://pa.services.coppa.nci.nih.gov"/>
+      <ns299:Input qName="ns320:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns320="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="void" description="" isArray="false"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns321:PAFault" xmlns:ns321="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns322:Id" description="" isArray="false" name="id" xmlns:ns322="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns323:PlannedActivity" description="" isArray="true" xmlns:ns323="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns324:PAFault" xmlns:ns324="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="Creates copies of the PlannedActivities that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns325:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns325="http://pa.services.coppa.nci.nih.gov"/>
+      <ns299:Input qName="ns326:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns326="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="void" description="" isArray="false"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns327:PAFault" xmlns:ns327="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns328:Id" description="" isArray="false" name="id" xmlns:ns328="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns329:PlannedActivity" description="" isArray="false" xmlns:ns329="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns330:PAFault" xmlns:ns330="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns331:PlannedActivity" description="" isArray="false" name="plannedActivity" xmlns:ns331="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns332:PlannedActivity" description="" isArray="false" xmlns:ns332="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns333:PAFault" xmlns:ns333="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns334:PlannedActivity" description="" isArray="false" name="plannedActivity" xmlns:ns334="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="ns335:PlannedActivity" description="" isArray="false" xmlns:ns335="http://pa.services.coppa.nci.nih.gov"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns336:PAFault" xmlns:ns336="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+    <ns299:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns299:MethodType">
+     <ns299:Inputs>
+      <ns299:Input qName="ns337:Id" description="" isArray="false" name="id" xmlns:ns337="http://pa.services.coppa.nci.nih.gov"/>
+     </ns299:Inputs>
+     <ns299:Output qName="void" description="" isArray="false"/>
+     <ns299:Exceptions>
+      <ns299:Exception description="" name="PAFault" qname="ns338:PAFault" xmlns:ns338="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns299:Exceptions>
+    </ns299:Method>
+   </ns299:Methods>
+   <ns339:ResourcePropertiesList xsi:type="ns339:ResourcePropertiesListType" xmlns:ns339="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="DocumentWorkflowStatusService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService" packageName="gov.nih.nci.coppa.services.pa.documentworkflowstatusservice" xsi:type="ns3:ServiceType">
+   <ns340:Methods xsi:type="ns340:MethodsType" xmlns:ns340="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns340:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns340:MethodType">
+     <ns340:Output qName="ns341:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns341="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns342:MethodSecurity xsi:type="ns342:MethodSecurity" xmlns:ns342="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns342:SecuritySetting xsi:type="ns342:SecuritySetting">None</ns342:SecuritySetting>
+      <ns342:MethodAuthorization xsi:type="ns342:MethodAuthorization">
+       <ns342:NoAuthorization xsi:type="ns342:NoAuthorization"/>
+      </ns342:MethodAuthorization>
+     </ns342:MethodSecurity>
+     <ns340:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns340:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns340:Method>
+    <ns340:Method description="" isImported="false" isProvided="false" name="getCurrentByStudyProtocol" xsi:type="ns340:MethodType">
+     <ns340:Inputs>
+      <ns340:Input qName="ns343:Id" description="" isArray="false" name="id" xmlns:ns343="http://pa.services.coppa.nci.nih.gov"/>
+     </ns340:Inputs>
+     <ns340:Output qName="ns344:DocumentWorkflowStatus" description="" isArray="false" xmlns:ns344="http://pa.services.coppa.nci.nih.gov"/>
+     <ns340:Exceptions>
+      <ns340:Exception description="" name="PAFault" qname="ns345:PAFault" xmlns:ns345="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns340:Exceptions>
+    </ns340:Method>
+    <ns340:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns340:MethodType">
+     <ns340:Inputs>
+      <ns340:Input qName="ns346:Id" description="" isArray="false" name="id" xmlns:ns346="http://pa.services.coppa.nci.nih.gov"/>
+     </ns340:Inputs>
+     <ns340:Output qName="ns347:DocumentWorkflowStatus" description="" isArray="true" xmlns:ns347="http://pa.services.coppa.nci.nih.gov"/>
+     <ns340:Exceptions>
+      <ns340:Exception description="" name="PAFault" qname="ns348:PAFault" xmlns:ns348="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns340:Exceptions>
+    </ns340:Method>
+    <ns340:Method description="Creates copies of the DocumentWorkflowStatuses that are associated with fromStudyProtocolId and associates them with toStudyProtocolId instead." isImported="false" isProvided="false" name="copy" xsi:type="ns340:MethodType">
+     <ns340:Inputs>
+      <ns340:Input qName="ns349:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns349="http://pa.services.coppa.nci.nih.gov"/>
+      <ns340:Input qName="ns350:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns350="http://pa.services.coppa.nci.nih.gov"/>
+     </ns340:Inputs>
+     <ns340:Output qName="void" description="" isArray="false"/>
+     <ns340:Exceptions>
+      <ns340:Exception description="" name="PAFault" qname="ns351:PAFault" xmlns:ns351="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns340:Exceptions>
+    </ns340:Method>
+    <ns340:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns340:MethodType">
+     <ns340:Inputs>
+      <ns340:Input qName="ns352:Id" description="" isArray="false" name="id" xmlns:ns352="http://pa.services.coppa.nci.nih.gov"/>
+     </ns340:Inputs>
+     <ns340:Output qName="ns353:DocumentWorkflowStatus" description="" isArray="false" xmlns:ns353="http://pa.services.coppa.nci.nih.gov"/>
+     <ns340:Exceptions>
+      <ns340:Exception description="" name="PAFault" qname="ns354:PAFault" xmlns:ns354="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns340:Exceptions>
+    </ns340:Method>
+    <ns340:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns340:MethodType">
+     <ns340:Inputs>
+      <ns340:Input qName="ns355:DocumentWorkflowStatus" description="" isArray="false" name="documentWorkflowStatus" xmlns:ns355="http://pa.services.coppa.nci.nih.gov"/>
+     </ns340:Inputs>
+     <ns340:Output qName="ns356:DocumentWorkflowStatus" description="" isArray="false" xmlns:ns356="http://pa.services.coppa.nci.nih.gov"/>
+     <ns340:Exceptions>
+      <ns340:Exception description="" name="PAFault" qname="ns357:PAFault" xmlns:ns357="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns340:Exceptions>
+    </ns340:Method>
+    <ns340:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns340:MethodType">
+     <ns340:Inputs>
+      <ns340:Input qName="ns358:DocumentWorkflowStatus" description="" isArray="false" name="documentWorkflowStatus" xmlns:ns358="http://pa.services.coppa.nci.nih.gov"/>
+     </ns340:Inputs>
+     <ns340:Output qName="ns359:DocumentWorkflowStatus" description="" isArray="false" xmlns:ns359="http://pa.services.coppa.nci.nih.gov"/>
+     <ns340:Exceptions>
+      <ns340:Exception description="" name="PAFault" qname="ns360:PAFault" xmlns:ns360="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns340:Exceptions>
+    </ns340:Method>
+    <ns340:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns340:MethodType">
+     <ns340:Inputs>
+      <ns340:Input qName="ns361:Id" description="" isArray="false" name="id" xmlns:ns361="http://pa.services.coppa.nci.nih.gov"/>
+     </ns340:Inputs>
+     <ns340:Output qName="void" description="" isArray="false"/>
+     <ns340:Exceptions>
+      <ns340:Exception description="" name="PAFault" qname="ns362:PAFault" xmlns:ns362="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns340:Exceptions>
+    </ns340:Method>
+   </ns340:Methods>
+   <ns363:ResourcePropertiesList xsi:type="ns363:ResourcePropertiesListType" xmlns:ns363="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="DocumentService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService" packageName="gov.nih.nci.coppa.services.pa.documentservice" xsi:type="ns3:ServiceType">
+   <ns364:Methods xsi:type="ns364:MethodsType" xmlns:ns364="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns364:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns364:MethodType">
+     <ns364:Output qName="ns365:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns365="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns366:MethodSecurity xsi:type="ns366:MethodSecurity" xmlns:ns366="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns366:SecuritySetting xsi:type="ns366:SecuritySetting">None</ns366:SecuritySetting>
+      <ns366:MethodAuthorization xsi:type="ns366:MethodAuthorization">
+       <ns366:NoAuthorization xsi:type="ns366:NoAuthorization"/>
+      </ns366:MethodAuthorization>
+     </ns366:MethodSecurity>
+     <ns364:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns364:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns364:Method>
+    <ns364:Method description="" isImported="false" isProvided="false" name="getDocumentsByStudyProtocol" xsi:type="ns364:MethodType">
+     <ns364:Inputs>
+      <ns364:Input qName="ns367:Id" description="" isArray="false" name="id" xmlns:ns367="http://pa.services.coppa.nci.nih.gov"/>
+     </ns364:Inputs>
+     <ns364:Output qName="ns368:Document" description="" isArray="true" xmlns:ns368="http://pa.services.coppa.nci.nih.gov"/>
+     <ns364:Exceptions>
+      <ns364:Exception description="" name="PAFault" qname="ns369:PAFault" xmlns:ns369="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns364:Exceptions>
+    </ns364:Method>
+    <ns364:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns364:MethodType">
+     <ns364:Inputs>
+      <ns364:Input qName="ns370:Id" description="" isArray="false" name="id" xmlns:ns370="http://pa.services.coppa.nci.nih.gov"/>
+     </ns364:Inputs>
+     <ns364:Output qName="ns371:Document" description="" isArray="false" xmlns:ns371="http://pa.services.coppa.nci.nih.gov"/>
+     <ns364:Exceptions>
+      <ns364:Exception description="" name="PAFault" qname="ns372:PAFault" xmlns:ns372="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns364:Exceptions>
+    </ns364:Method>
+    <ns364:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns364:MethodType">
+     <ns364:Inputs>
+      <ns364:Input qName="ns373:Document" description="" isArray="false" name="document" xmlns:ns373="http://pa.services.coppa.nci.nih.gov"/>
+     </ns364:Inputs>
+     <ns364:Output qName="ns374:Document" description="" isArray="false" xmlns:ns374="http://pa.services.coppa.nci.nih.gov"/>
+     <ns364:Exceptions>
+      <ns364:Exception description="" name="PAFault" qname="ns375:PAFault" xmlns:ns375="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns364:Exceptions>
+    </ns364:Method>
+    <ns364:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns364:MethodType">
+     <ns364:Inputs>
+      <ns364:Input qName="ns376:Document" description="" isArray="false" name="document" xmlns:ns376="http://pa.services.coppa.nci.nih.gov"/>
+     </ns364:Inputs>
+     <ns364:Output qName="ns377:Document" description="" isArray="false" xmlns:ns377="http://pa.services.coppa.nci.nih.gov"/>
+     <ns364:Exceptions>
+      <ns364:Exception description="" name="PAFault" qname="ns378:PAFault" xmlns:ns378="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns364:Exceptions>
+    </ns364:Method>
+    <ns364:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns364:MethodType">
+     <ns364:Inputs>
+      <ns364:Input qName="ns379:Document" description="" isArray="false" name="document" xmlns:ns379="http://pa.services.coppa.nci.nih.gov"/>
+     </ns364:Inputs>
+     <ns364:Output qName="void" description="" isArray="false"/>
+     <ns364:Exceptions>
+      <ns364:Exception description="" name="PAFault" qname="ns380:PAFault" xmlns:ns380="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns364:Exceptions>
+    </ns364:Method>
+   </ns364:Methods>
+   <ns381:ResourcePropertiesList xsi:type="ns381:ResourcePropertiesListType" xmlns:ns381="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudyRelationshipService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService" packageName="gov.nih.nci.coppa.services.pa.studyrelationshipservice" xsi:type="ns3:ServiceType">
+   <ns382:Methods xsi:type="ns382:MethodsType" xmlns:ns382="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns382:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns382:MethodType">
+     <ns382:Inputs>
+      <ns382:Input qName="ns383:Id" description="" isArray="false" name="id" xmlns:ns383="http://pa.services.coppa.nci.nih.gov"/>
+     </ns382:Inputs>
+     <ns382:Output qName="ns384:StudyRelationship" description="" isArray="false" xmlns:ns384="http://pa.services.coppa.nci.nih.gov"/>
+     <ns382:Exceptions>
+      <ns382:Exception description="" name="PAFault" qname="ns385:PAFault" xmlns:ns385="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns382:Exceptions>
+    </ns382:Method>
+    <ns382:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns382:MethodType">
+     <ns382:Inputs>
+      <ns382:Input qName="ns386:StudyRelationship" description="" isArray="false" name="studyRelationship" xmlns:ns386="http://pa.services.coppa.nci.nih.gov"/>
+      <ns382:Input qName="ns387:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns387="http://common.coppa.nci.nih.gov"/>
+     </ns382:Inputs>
+     <ns382:Output qName="ns388:StudyRelationship" description="" isArray="true" xmlns:ns388="http://pa.services.coppa.nci.nih.gov"/>
+     <ns382:Exceptions>
+      <ns382:Exception description="" name="PAFault" qname="ns389:PAFault" xmlns:ns389="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns382:Exceptions>
+    </ns382:Method>
+    <ns382:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns382:MethodType">
+     <ns382:Inputs>
+      <ns382:Input qName="ns390:StudyRelationship" description="" isArray="false" name="studyRelationship" xmlns:ns390="http://pa.services.coppa.nci.nih.gov"/>
+     </ns382:Inputs>
+     <ns382:Output qName="ns391:StudyRelationship" description="" isArray="false" xmlns:ns391="http://pa.services.coppa.nci.nih.gov"/>
+     <ns382:Exceptions>
+      <ns382:Exception description="" name="PAFault" qname="ns392:PAFault" xmlns:ns392="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns382:Exceptions>
+    </ns382:Method>
+    <ns382:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns382:MethodType">
+     <ns382:Inputs>
+      <ns382:Input qName="ns393:StudyRelationship" description="" isArray="false" name="studyRelationship" xmlns:ns393="http://pa.services.coppa.nci.nih.gov"/>
+     </ns382:Inputs>
+     <ns382:Output qName="ns394:StudyRelationship" description="" isArray="false" xmlns:ns394="http://pa.services.coppa.nci.nih.gov"/>
+     <ns382:Exceptions>
+      <ns382:Exception description="" name="PAFault" qname="ns395:PAFault" xmlns:ns395="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns382:Exceptions>
+    </ns382:Method>
+    <ns382:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns382:MethodType">
+     <ns382:Inputs>
+      <ns382:Input qName="ns396:Id" description="" isArray="false" name="id" xmlns:ns396="http://pa.services.coppa.nci.nih.gov"/>
+     </ns382:Inputs>
+     <ns382:Output qName="void" description="" isArray="false"/>
+     <ns382:Exceptions>
+      <ns382:Exception description="" name="PAFault" qname="ns397:PAFault" xmlns:ns397="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns382:Exceptions>
+    </ns382:Method>
+    <ns382:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns382:MethodType">
+     <ns382:Output qName="ns398:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns398="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns399:MethodSecurity xsi:type="ns399:MethodSecurity" xmlns:ns399="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns399:SecuritySetting xsi:type="ns399:SecuritySetting">None</ns399:SecuritySetting>
+      <ns399:MethodAuthorization xsi:type="ns399:MethodAuthorization">
+       <ns399:NoAuthorization xsi:type="ns399:NoAuthorization"/>
+      </ns399:MethodAuthorization>
+     </ns399:MethodSecurity>
+     <ns382:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns382:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns382:Method>
+   </ns382:Methods>
+   <ns400:ResourcePropertiesList xsi:type="ns400:ResourcePropertiesListType" xmlns:ns400="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudySiteService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService" packageName="gov.nih.nci.coppa.services.pa.studysiteservice" xsi:type="ns3:ServiceType">
+   <ns401:Methods xsi:type="ns401:MethodsType" xmlns:ns401="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns401:Method description="" isImported="false" isProvided="false" name="copy" xsi:type="ns401:MethodType">
+     <ns401:Inputs>
+      <ns401:Input qName="ns402:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns402="http://pa.services.coppa.nci.nih.gov"/>
+      <ns401:Input qName="ns403:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns403="http://pa.services.coppa.nci.nih.gov"/>
+     </ns401:Inputs>
+     <ns401:Output qName="void" description="" isArray="false"/>
+     <ns401:Exceptions>
+      <ns401:Exception description="" name="PAFault" qname="ns404:PAFault" xmlns:ns404="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns401:Exceptions>
+    </ns401:Method>
+    <ns401:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns401:MethodType">
+     <ns401:Inputs>
+      <ns401:Input qName="ns405:StudySite" description="" isArray="false" name="studySite" xmlns:ns405="http://pa.services.coppa.nci.nih.gov"/>
+     </ns401:Inputs>
+     <ns401:Output qName="ns406:StudySite" description="" isArray="false" xmlns:ns406="http://pa.services.coppa.nci.nih.gov"/>
+     <ns401:Exceptions>
+      <ns401:Exception description="" name="PAFault" qname="ns407:PAFault" xmlns:ns407="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns401:Exceptions>
+    </ns401:Method>
+    <ns401:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns401:MethodType">
+     <ns401:Inputs>
+      <ns401:Input qName="ns408:Id" description="" isArray="false" name="id" xmlns:ns408="http://pa.services.coppa.nci.nih.gov"/>
+     </ns401:Inputs>
+     <ns401:Output qName="void" description="" isArray="false"/>
+     <ns401:Exceptions>
+      <ns401:Exception description="" name="PAFault" qname="ns409:PAFault" xmlns:ns409="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns401:Exceptions>
+    </ns401:Method>
+    <ns401:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns401:MethodType">
+     <ns401:Inputs>
+      <ns401:Input qName="ns410:Id" description="" isArray="false" name="id" xmlns:ns410="http://pa.services.coppa.nci.nih.gov"/>
+     </ns401:Inputs>
+     <ns401:Output qName="ns411:StudySite" description="" isArray="false" xmlns:ns411="http://pa.services.coppa.nci.nih.gov"/>
+     <ns401:Exceptions>
+      <ns401:Exception description="" name="PAFault" qname="ns412:PAFault" xmlns:ns412="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns401:Exceptions>
+    </ns401:Method>
+    <ns401:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns401:MethodType">
+     <ns401:Inputs>
+      <ns401:Input qName="ns413:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns413="http://pa.services.coppa.nci.nih.gov"/>
+     </ns401:Inputs>
+     <ns401:Output qName="ns414:StudySite" description="" isArray="true" xmlns:ns414="http://pa.services.coppa.nci.nih.gov"/>
+     <ns401:Exceptions>
+      <ns401:Exception description="" name="PAFault" qname="ns415:PAFault" xmlns:ns415="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns401:Exceptions>
+    </ns401:Method>
+    <ns401:Method description="" isImported="false" isProvided="false" name="getByStudyProtocolAndRole" xsi:type="ns401:MethodType">
+     <ns401:Inputs>
+      <ns401:Input qName="ns416:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns416="http://pa.services.coppa.nci.nih.gov"/>
+      <ns401:Input qName="ns417:StudySite" description="" isArray="false" name="studySite" xmlns:ns417="http://pa.services.coppa.nci.nih.gov"/>
+     </ns401:Inputs>
+     <ns401:Output qName="ns418:StudySite" description="" isArray="true" xmlns:ns418="http://pa.services.coppa.nci.nih.gov"/>
+     <ns401:Exceptions>
+      <ns401:Exception description="" name="PAFault" qname="ns419:PAFault" xmlns:ns419="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns401:Exceptions>
+    </ns401:Method>
+    <ns401:Method description="" isImported="false" isProvided="false" name="getByStudyProtocolAndRoles" xsi:type="ns401:MethodType">
+     <ns401:Inputs>
+      <ns401:Input qName="ns420:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns420="http://pa.services.coppa.nci.nih.gov"/>
+      <ns401:Input qName="ns421:StudySite" description="" isArray="true" name="studySite" xmlns:ns421="http://pa.services.coppa.nci.nih.gov"/>
+     </ns401:Inputs>
+     <ns401:Output qName="ns422:StudySite" description="" isArray="true" xmlns:ns422="http://pa.services.coppa.nci.nih.gov"/>
+     <ns401:Exceptions>
+      <ns401:Exception description="" name="PAFault" qname="ns423:PAFault" xmlns:ns423="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns401:Exceptions>
+    </ns401:Method>
+    <ns401:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns401:MethodType">
+     <ns401:Inputs>
+      <ns401:Input qName="ns424:StudySite" description="" isArray="false" name="studySite" xmlns:ns424="http://pa.services.coppa.nci.nih.gov"/>
+     </ns401:Inputs>
+     <ns401:Output qName="ns425:StudySite" description="" isArray="false" xmlns:ns425="http://pa.services.coppa.nci.nih.gov"/>
+     <ns401:Exceptions>
+      <ns401:Exception description="" name="PAFault" qname="ns426:PAFault" xmlns:ns426="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns401:Exceptions>
+    </ns401:Method>
+    <ns401:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns401:MethodType">
+     <ns401:Output qName="ns427:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns427="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns428:MethodSecurity xsi:type="ns428:MethodSecurity" xmlns:ns428="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns428:SecuritySetting xsi:type="ns428:SecuritySetting">None</ns428:SecuritySetting>
+      <ns428:MethodAuthorization xsi:type="ns428:MethodAuthorization">
+       <ns428:NoAuthorization xsi:type="ns428:NoAuthorization"/>
+      </ns428:MethodAuthorization>
+     </ns428:MethodSecurity>
+     <ns401:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns401:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns401:Method>
+   </ns401:Methods>
+   <ns429:ResourcePropertiesList xsi:type="ns429:ResourcePropertiesListType" xmlns:ns429="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudySiteParticipationService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService" packageName="gov.nih.nci.coppa.services.pa.studysiteparticipationservice" xsi:type="ns3:ServiceType">
+   <ns430:Methods xsi:type="ns430:MethodsType" xmlns:ns430="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns430:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns430:MethodType">
+     <ns430:Output qName="ns431:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns431="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns432:MethodSecurity xsi:type="ns432:MethodSecurity" xmlns:ns432="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns432:SecuritySetting xsi:type="ns432:SecuritySetting">None</ns432:SecuritySetting>
+      <ns432:MethodAuthorization xsi:type="ns432:MethodAuthorization">
+       <ns432:NoAuthorization xsi:type="ns432:NoAuthorization"/>
+      </ns432:MethodAuthorization>
+     </ns432:MethodSecurity>
+     <ns430:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns430:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns430:Method>
+   </ns430:Methods>
+   <ns433:ResourcePropertiesList xsi:type="ns433:ResourcePropertiesListType" xmlns:ns433="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="StudySiteContactService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService" packageName="gov.nih.nci.coppa.services.pa.studysitecontactservice" xsi:type="ns3:ServiceType">
+   <ns434:Methods xsi:type="ns434:MethodsType" xmlns:ns434="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns434:Method description="" isImported="false" isProvided="false" name="copy" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns435:Id" description="" isArray="false" name="fromStudyProtocolId" xmlns:ns435="http://pa.services.coppa.nci.nih.gov"/>
+      <ns434:Input qName="ns436:Id" description="" isArray="false" name="toStudyProtocolId" xmlns:ns436="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="void" description="" isArray="false"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns437:PAFault" xmlns:ns437="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns438:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns438="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="ns439:StudySiteContact" description="" isArray="false" xmlns:ns439="http://pa.services.coppa.nci.nih.gov"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns440:PAFault" xmlns:ns440="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns441:Id" description="" isArray="false" name="id" xmlns:ns441="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="void" description="" isArray="false"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns442:PAFault" xmlns:ns442="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns443:Id" description="" isArray="false" name="id" xmlns:ns443="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="ns444:StudySiteContact" description="" isArray="false" xmlns:ns444="http://pa.services.coppa.nci.nih.gov"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns445:PAFault" xmlns:ns445="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method description="" isImported="false" isProvided="false" name="getByStudySite" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns446:Id" description="" isArray="false" name="studySiteId" xmlns:ns446="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="ns447:StudySiteContact" description="" isArray="true" xmlns:ns447="http://pa.services.coppa.nci.nih.gov"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns448:PAFault" xmlns:ns448="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns449:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns449="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="ns450:StudySiteContact" description="" isArray="true" xmlns:ns450="http://pa.services.coppa.nci.nih.gov"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns451:PAFault" xmlns:ns451="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method description="" isImported="false" isProvided="false" name="getByStudyProtocolAndRole" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns452:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns452="http://pa.services.coppa.nci.nih.gov"/>
+      <ns434:Input qName="ns453:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns453="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="ns454:StudySiteContact" description="" isArray="true" xmlns:ns454="http://pa.services.coppa.nci.nih.gov"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns455:PAFault" xmlns:ns455="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method description="" isImported="false" isProvided="false" name="getByStudyProtocolAndRoles" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns456:Id" description="" isArray="false" name="studyProtocolId" xmlns:ns456="http://pa.services.coppa.nci.nih.gov"/>
+      <ns434:Input qName="ns457:StudySiteContact" description="" isArray="true" name="studySiteContact" xmlns:ns457="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="ns458:StudySiteContact" description="" isArray="true" xmlns:ns458="http://pa.services.coppa.nci.nih.gov"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns459:PAFault" xmlns:ns459="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns434:MethodType">
+     <ns434:Inputs>
+      <ns434:Input qName="ns460:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns460="http://pa.services.coppa.nci.nih.gov"/>
+     </ns434:Inputs>
+     <ns434:Output qName="ns461:StudySiteContact" description="" isArray="false" xmlns:ns461="http://pa.services.coppa.nci.nih.gov"/>
+     <ns434:Exceptions>
+      <ns434:Exception description="" name="PAFault" qname="ns462:PAFault" xmlns:ns462="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns434:Exceptions>
+    </ns434:Method>
+    <ns434:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns434:MethodType">
+     <ns434:Output qName="ns463:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns463="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns464:MethodSecurity xsi:type="ns464:MethodSecurity" xmlns:ns464="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns464:SecuritySetting xsi:type="ns464:SecuritySetting">None</ns464:SecuritySetting>
+      <ns464:MethodAuthorization xsi:type="ns464:MethodAuthorization">
+       <ns464:NoAuthorization xsi:type="ns464:NoAuthorization"/>
+      </ns464:MethodAuthorization>
+     </ns464:MethodSecurity>
+     <ns434:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns434:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns434:Method>
+   </ns434:Methods>
+   <ns465:ResourcePropertiesList xsi:type="ns465:ResourcePropertiesListType" xmlns:ns465="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+  <ns3:Service name="TrialRegistrationService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService" packageName="gov.nih.nci.coppa.services.pa.trialregistrationservice" xsi:type="ns3:ServiceType">
+   <ns466:Methods xsi:type="ns466:MethodsType" xmlns:ns466="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns466:Method description="Create an interventional study protocol, an action plan and execution of a pre-clinical or clinical study including all activities to test a particular hypothesis that is the basis of the study regarding the effectiveness of a particular treatment, drug, device, procedure, or care plan. This includes prevention, observational, therapeutic, and other types of studies that involve subjects." isImported="false" isProvided="false" name="createInterventionalStudyProtocol" xsi:type="ns466:MethodType">
+     <ns466:Inputs>
+      <ns466:Input qName="ns467:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns467="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns468:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns468="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns469:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns469="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns470:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns470="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns471:Document" description="" isArray="true" name="document" xmlns:ns471="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns472:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns472="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns473:Person" description="" isArray="false" name="principalInvestigator" xmlns:ns473="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns474:Organization" description="" isArray="false" name="sponsorOrganization" xmlns:ns474="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns475:StudySite" description="" isArray="false" name="leadOrganizationSiteIdentifier" xmlns:ns475="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns476:StudySite" description="" isArray="false" name="nctIdentifierSiteIdentifier" xmlns:ns476="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns477:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns477="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns478:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns478="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns479:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns479="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns480:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns480="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns481:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns481="http://pa.services.coppa.nci.nih.gov"/>
+     </ns466:Inputs>
+     <ns466:Output qName="ns482:Id" description="" isArray="false" xmlns:ns482="http://pa.services.coppa.nci.nih.gov"/>
+     <ns466:Exceptions>
+      <ns466:Exception description="" name="PAFault" qname="ns483:PAFault" xmlns:ns483="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns466:Exceptions>
+    </ns466:Method>
+    <ns466:Method description="Amends an existing protocol." isImported="false" isProvided="false" name="amendInterventionalStudyProtocol" xsi:type="ns466:MethodType">
+     <ns466:Inputs>
+      <ns466:Input qName="ns484:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns484="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns485:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns485="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns486:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns486="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns487:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns487="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns488:Document" description="" isArray="true" name="document" xmlns:ns488="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns489:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns489="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns490:Person" description="" isArray="false" name="principalInvestigator" xmlns:ns490="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns491:Organization" description="" isArray="false" name="sponsorOrganization" xmlns:ns491="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns492:StudySite" description="" isArray="false" name="leadOrganizationSiteIdentifier" xmlns:ns492="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns493:StudySite" description="" isArray="false" name="nctIdentifierSiteIdentifier" xmlns:ns493="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns494:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns494="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns495:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns495="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns496:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns496="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns497:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns497="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns498:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns498="http://pa.services.coppa.nci.nih.gov"/>
+     </ns466:Inputs>
+     <ns466:Output qName="ns499:Id" description="" isArray="false" xmlns:ns499="http://pa.services.coppa.nci.nih.gov"/>
+     <ns466:Exceptions>
+      <ns466:Exception description="" name="PAFault" qname="ns500:PAFault" xmlns:ns500="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns466:Exceptions>
+    </ns466:Method>
+    <ns466:Method description="Update an existing study protocol." isImported="false" isProvided="false" name="updateInterventionalStudyProtocol" xsi:type="ns466:MethodType">
+     <ns466:Inputs>
+      <ns466:Input qName="ns501:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns501="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns502:StudyOverallStatus" description="" isArray="false" name="studyOverallStatus" xmlns:ns502="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns503:StudySite" description="" isArray="false" name="studySite" xmlns:ns503="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns504:StudyIndlde" description="" isArray="true" name="studyIndlde" xmlns:ns504="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns505:StudyResourcing" description="" isArray="true" name="studyResourcing" xmlns:ns505="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns506:Document" description="" isArray="true" name="document" xmlns:ns506="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns507:StudyContact" description="" isArray="false" name="studyContact" xmlns:ns507="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns508:StudySiteContact" description="" isArray="false" name="studySiteContact" xmlns:ns508="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns509:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns509="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns510:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns510="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns511:Id" description="" isArray="false" name="responsiblePartyContact" xmlns:ns511="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns512:StudyRegulatoryAuthority" description="" isArray="false" name="studyRegulatoryAuthority" xmlns:ns512="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns513:StudySite" description="" isArray="true" name="collaborators" xmlns:ns513="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns514:StudySiteAccrualStatus" description="" isArray="true" name="studySiteAccrualStatuses" xmlns:ns514="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns515:StudySite" description="" isArray="true" name="studySites" xmlns:ns515="http://pa.services.coppa.nci.nih.gov"/>
+     </ns466:Inputs>
+     <ns466:Output qName="void" description="" isArray="false"/>
+     <ns466:Exceptions>
+      <ns466:Exception description="" name="PAFault" qname="ns516:PAFault" xmlns:ns516="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns466:Exceptions>
+    </ns466:Method>
+    <ns466:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns466:MethodType">
+     <ns466:Output qName="ns517:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns517="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns518:MethodSecurity xsi:type="ns518:MethodSecurity" xmlns:ns518="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns518:SecuritySetting xsi:type="ns518:SecuritySetting">None</ns518:SecuritySetting>
+      <ns518:MethodAuthorization xsi:type="ns518:MethodAuthorization">
+       <ns518:NoAuthorization xsi:type="ns518:NoAuthorization"/>
+      </ns518:MethodAuthorization>
+     </ns518:MethodSecurity>
+     <ns466:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns466:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns466:Method>
+    <ns466:Method description="" isImported="false" isProvided="false" name="createProprietaryInterventionalStudyProtocol" xsi:type="ns466:MethodType">
+     <ns466:Inputs>
+      <ns466:Input qName="ns519:InterventionalStudyProtocol" description="" isArray="false" name="studyProtocol" xmlns:ns519="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns520:StudySiteOverallStatus" description="" isArray="false" name="studySiteOverallStatus" xmlns:ns520="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns521:Document" description="" isArray="true" name="documents" xmlns:ns521="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns522:Organization" description="" isArray="false" name="leadOrganization" xmlns:ns522="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns523:Person" description="" isArray="false" name="studySiteInvestigator" xmlns:ns523="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns524:StudySite" description="" isArray="false" name="leadOrganizationStudySite" xmlns:ns524="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns525:Organization" description="" isArray="false" name="studySiteOrganization" xmlns:ns525="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns526:StudySite" description="" isArray="false" name="studySite" xmlns:ns526="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns527:StudySite" description="" isArray="false" name="nctIdentifier" xmlns:ns527="http://pa.services.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns528:Organization" description="" isArray="false" name="summaryForOrganization" xmlns:ns528="http://po.coppa.nci.nih.gov"/>
+      <ns466:Input qName="ns529:StudyResourcing" description="" isArray="false" name="summaryForStudyResourcing" xmlns:ns529="http://pa.services.coppa.nci.nih.gov"/>
+     </ns466:Inputs>
+     <ns466:Output qName="ns530:Id" description="" isArray="false" xmlns:ns530="http://pa.services.coppa.nci.nih.gov"/>
+     <ns466:Exceptions>
+      <ns466:Exception description="" name="PAFault" qname="ns531:PAFault" xmlns:ns531="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns466:Exceptions>
+    </ns466:Method>
+   </ns466:Methods>
+   <ns532:ResourcePropertiesList xsi:type="ns532:ResourcePropertiesListType" xmlns:ns532="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Singleton xsi:type="ns3:Singleton"/>
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
+ </ns3:Services>
+ <ns533:Extensions xsi:type="ns533:ExtensionsType" xmlns:ns533="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns533:Extension name="cagrid_metadata" version="1.3" xsi:type="ns533:ExtensionType"/>
+ </ns533:Extensions>
+</ns1:ServiceDescription>

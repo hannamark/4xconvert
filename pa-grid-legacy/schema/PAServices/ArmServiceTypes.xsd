@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="../ws/addressing/WS-Addressing.xsd"></import>
+
+  <element name="ArmServiceReference">
+    <complexType>
+      <sequence >
+        <element ref="wsa:EndpointReference"></element>
+      </sequence>
+    </complexType>
+  </element>
+
+</schema>
