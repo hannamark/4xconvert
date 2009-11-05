@@ -94,6 +94,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -117,6 +118,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
     private boolean checkoutStatus = false;
+    private static final String TSR = "TSR_";
+    private static final String WORD = ".doc";
     /**
      * @return res
      * @throws PAException exception
@@ -284,6 +287,41 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
               return NONE;
           }
           return NONE;
+    }
+    
+    /**
+     * @return res
+     */
+    public String viewTSRWord() {
+      try {
+        String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
+        
+        PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                Long.valueOf(pId));
+            
+        String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(IiConverter.convertToIi(pId));
+
+        final int i = 1000;
+        Random randomGenerator = new Random();
+        int randomInt = randomGenerator.nextInt(i);
+
+        String fileName = TSR + randomInt + pId + WORD;
+        
+        servletResponse.setContentType("application/vnd.msword");
+        servletResponse.setHeader("Content-Disposition", "attachment;" + " filename=\""  + fileName + "\"");
+        servletResponse.setContentLength(htmlData.length());
+        servletResponse.setHeader("Pragma", "public");
+        servletResponse.setHeader("Cache-Control", "max-age=0");
+
+        ServletOutputStream servletout = servletResponse.getOutputStream();
+        servletout.write(htmlData.getBytes());
+
+        servletout.flush();
+        servletout.close();
+      } catch (Exception e) {
+        return SUCCESS;
+      }
+      return NONE;
     }
     
 

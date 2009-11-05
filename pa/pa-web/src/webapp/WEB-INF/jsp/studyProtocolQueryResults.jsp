@@ -41,7 +41,7 @@
 </s:form>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 function generateTSR(Id) {
-    var url = "/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId="+Id;
+    var url = "/pa/protected/ajaxStudyProtocolviewTSRWord.action?studyProtocolId="+Id;
     document.sForm.target = "TSR";
     document.sForm.action = url;
     document.sForm.submit();
