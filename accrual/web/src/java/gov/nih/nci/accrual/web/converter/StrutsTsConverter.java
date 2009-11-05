@@ -105,7 +105,7 @@ public class StrutsTsConverter extends StrutsTypeConverter {
                     "Error in custom struts2 converter StrutsTsConverter.convertFromString().  "
                     + "Expecting 1 string; " + strings.length + "were passed in.");
         }
-        return TsConverter.convertToTs(PAUtil.dateStringToTimestamp(strings[0]));
+        return TsConverter.convertToTs(PAUtil.dateStringToTimestamp(strings[0].trim()));
     }
 
     /**

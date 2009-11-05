@@ -106,7 +106,7 @@ public class StrutsIiConverter extends StrutsTypeConverter {
                     "Error in custom struts2 converter StrutsBlConverter.convertFromString().  "
                     + "Expecting 1 string; " + strings.length + "were passed in.");
         }
-        return IiConverter.convertToIi(strings[0]);
+        return IiConverter.convertToIi(strings[0].trim());
     }
 
     /**

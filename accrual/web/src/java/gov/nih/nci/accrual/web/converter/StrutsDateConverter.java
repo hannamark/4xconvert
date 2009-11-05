@@ -106,7 +106,7 @@ public class StrutsDateConverter extends StrutsTypeConverter {
         }
         Date result;
         try {
-            result = new Date(PAUtil.dateStringToTimestamp(strings[0]).getTime());
+            result = new Date(PAUtil.dateStringToTimestamp(strings[0].trim()).getTime());
         } catch (Exception e) {
             result = null;
         }

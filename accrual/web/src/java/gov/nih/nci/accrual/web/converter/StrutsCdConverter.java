@@ -106,7 +106,7 @@ public class StrutsCdConverter extends StrutsTypeConverter {
                     "Error in custom struts2 converter StrutsCdConverter.convertFromString().  "
                     + "Expecting 1 string; " + strings.length + "were passed in.");
         }
-        return CdConverter.convertStringToCd(strings[0]);
+        return CdConverter.convertStringToCd(strings[0].trim());
     }
 
     /**
