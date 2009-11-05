@@ -193,7 +193,12 @@ function toggledisplay2 (it) {
     <c:set var="topic" scope="request" value="submit_trial"/> 
     <div class="box" id="filters">
     <reg-web:failureMessage/>
-    <s:form name="submitProprietaryTrial" method="POST" enctype="multipart/form-data"><s:actionerror/>
+    <s:form name="submitProprietaryTrial" method="POST" enctype="multipart/form-data">
+    <s:if test="hasActionErrors()">
+    <div class="error_msg">
+    <s:actionerror/>
+    </div>
+    </s:if>
         <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
         <s:hidden name="trialDTO.sitePiIdentifier" id="trialDTO.sitePiIdentifier"/> 
         <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
@@ -403,11 +408,12 @@ function toggledisplay2 (it) {
           </tr>
           <tr>
                 <td scope="row" class="label">
-                    <label for="submitTrial_overallStatusWebDTO_statusCode"> <fmt:message key="submit.trial.currentTrialStatus"/><span class="required">*</span></label>
+                    <label for="submitTrial_overallStatusWebDTO_statusCode"> <fmt:message key="submit.trial.siteRecruitmentStatus"/><span class="required">*</span></label>
                 </td>
-                    <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudySiteStatusCode@getDisplayNames()" />
+                    <s:set name="recruitmentStatusValues" 
+                           value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
                 <td>                                             
-                    <s:select headerKey="" headerValue="--Select--" name="trialDTO.siteStatusCode" list="#statusCodeValues"  value="trialDTO.siteStatusCode" cssStyle="width:206px" />
+                    <s:select headerKey="" headerValue="--Select--" name="trialDTO.siteStatusCode" list="#recruitmentStatusValues"  value="trialDTO.siteStatusCode" cssStyle="width:206px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialDTO.siteStatusCode</s:param>
@@ -417,7 +423,7 @@ function toggledisplay2 (it) {
           </tr>
         <tr>
             <td scope="row" class="label"><label for="submitTrial_overallStatusWebDTO_statusDate"><fmt:message
-                key="submit.trial.currentTrialStatusDate" /><span class="required">*</span></label></td>
+                key="submit.trial.siteRecruitmentStatusDate" /><span class="required">*</span></label></td>
             <td class="value"><s:textfield name="trialDTO.siteStatusDate"
                 maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">

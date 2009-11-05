@@ -103,7 +103,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceRem
 
     public Ii createProprietaryInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO,
-            StudySiteOverallStatusDTO studySiteOverallStatusDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO,
             List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO,
             PersonDTO studySiteInvestigatorDTO,

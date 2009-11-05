@@ -7,13 +7,13 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -21,6 +21,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
@@ -29,14 +30,12 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
-import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -183,44 +182,14 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
                     , "");
             addErrors(errMap);
         }
-        String err = "error.submit.invalidDate";      // validate date and its format
-        if (!RegistryUtil.isValidDate(trialDTO.getSiteStatusDate())) {
-            addFieldError("trialDTO.siteStatusDate", getText(err));
-        } else if (PAUtil.isDateCurrentOrPast(trialDTO.getSiteStatusDate())) {
-                addFieldError("trialDTO.siteStatusDate", getText("error.submit.invalidStatusDate"));
+        PAServiceUtils paServiceUtils = new PAServiceUtils();
+        StudySiteAccrualStatusDTO studySiteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);
+        StudySiteDTO studySiteDTO = getStudySiteDTO();
+        String errMsg = paServiceUtils.validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO);
+        if (PAUtil.isNotEmpty(errMsg)) {
+            addActionError(errMsg);    
         }
-        if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual())) {
-                if (!RegistryUtil.isValidDate(trialDTO.getDateOpenedforAccrual())) {
-                    addFieldError("trialDTO.dateOpenedforAccrual", getText(err));
-                } else if (PAUtil.isDateCurrentOrPast(trialDTO.getDateOpenedforAccrual())) {
-                    addFieldError("trialDTO.dateOpenedforAccrual", 
-                       getText("error.proprietary.submit.dateOpenedAccrual"));
-                }
-        }
-        if (PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())) {
-                if (!RegistryUtil.isValidDate(trialDTO.getDateClosedforAccrual())) {
-                    addFieldError("trialDTO.dateClosedforAccrual", getText(err));
-                } else if (PAUtil.isDateCurrentOrPast(trialDTO.getDateClosedforAccrual())) {
-                    addFieldError("trialDTO.dateClosedforAccrual", 
-                       getText("error.proprietary.submit.dateClosedAccrual"));
-                }
-        }
-        if (PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())  
-            && PAUtil.isEmpty(trialDTO.getDateOpenedforAccrual())) {
-                addFieldError("trialDTO.dateOpenedforAccrual", 
-                        getText("error.proprietary.submit.dateOpenReq"));
-        }
-        if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual())
-                && PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())
-                && RegistryUtil.isValidDate(trialDTO.getDateOpenedforAccrual())
-                && RegistryUtil.isValidDate(trialDTO.getDateClosedforAccrual())) {
-            Timestamp dateOpenedDateStamp = PAUtil.dateStringToTimestamp(trialDTO.getDateOpenedforAccrual());
-            Timestamp dateClosedDateStamp = PAUtil.dateStringToTimestamp(trialDTO.getDateClosedforAccrual());
-            if (dateClosedDateStamp.before(dateOpenedDateStamp)) {
-                addFieldError("trialDTO.dateClosedforAccrual", 
-                        getText("error.proprietary.submit.dateClosedAccrualBigger"));                
-            }
-        }
+        
     }
 
     /**
@@ -339,7 +308,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             StudyProtocolDTO studyProtocolDTO = convertToInterventionalStudyProtocolDTO(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.
                     getRequest().getRemoteUser()));
-            StudySiteOverallStatusDTO siteOverallStatusDTO = convertToStudySiteOverallStatusDTO(trialDTO);
+            StudySiteAccrualStatusDTO siteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);
             
             OrganizationDTO leadOrganizationDTO = new OrganizationDTO();
             leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi(
@@ -357,19 +326,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
             nctIdentifierDTO.setLocalStudyProtocolIdentifier(
                     StConverter.convertToSt(trialDTO.getNctIdentifier()));
-            StudySiteDTO siteDTO = new StudySiteDTO();
-            siteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getLocalSiteIdentifier()));
-            siteDTO.setProgramCodeText(StConverter.convertToSt(trialDTO.getSiteProgramCodeText()));
-            if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual()) 
-                    && PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())) {
-                siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(trialDTO.getDateOpenedforAccrual(),
-                        trialDTO.getDateClosedforAccrual()));
-            }
-            if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual()) 
-                    && PAUtil.isEmpty(trialDTO.getDateClosedforAccrual())) {
-                siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(trialDTO.getDateOpenedforAccrual(),
-                        null));
-            }
+            StudySiteDTO siteDTO = getStudySiteDTO();
             StudyResourcingDTO studyResourcingDTO = new StudyResourcingDTO();
             studyResourcingDTO.setTypeCode(
                     CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode()));
@@ -382,7 +339,7 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             
             Ii studyProtocolIi = RegistryServiceLocator.getTrialRegistrationService().
-            createProprietaryInterventionalStudyProtocol(studyProtocolDTO, siteOverallStatusDTO,  
+            createProprietaryInterventionalStudyProtocol(studyProtocolDTO, siteAccrualStatusDTO,  
                     documentDTOs, leadOrganizationDTO, siteInvestigatorDTO,
                     leadOrganizationTrialIdentifierDTO, studySiteOrgDTO, siteDTO, 
                     nctIdentifierDTO, summary4organizationDTO, studyResourcingDTO, 
@@ -401,6 +358,26 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             return ERROR;
         }
         return "review";
+    }
+
+    /**
+     * @return
+     */
+    private StudySiteDTO getStudySiteDTO() {
+        StudySiteDTO siteDTO = new StudySiteDTO();
+        siteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getLocalSiteIdentifier()));
+        siteDTO.setProgramCodeText(StConverter.convertToSt(trialDTO.getSiteProgramCodeText()));
+        if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual()) 
+                && PAUtil.isNotEmpty(trialDTO.getDateClosedforAccrual())) {
+            siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(trialDTO.getDateOpenedforAccrual(),
+                    trialDTO.getDateClosedforAccrual()));
+        }
+        if (PAUtil.isNotEmpty(trialDTO.getDateOpenedforAccrual()) 
+                && PAUtil.isEmpty(trialDTO.getDateClosedforAccrual())) {
+            siteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(trialDTO.getDateOpenedforAccrual(),
+                    null));
+        }
+        return siteDTO;
     }
     /**
      * 
@@ -447,9 +424,9 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
         return isoDto;
     }
     
-    private StudySiteOverallStatusDTO convertToStudySiteOverallStatusDTO(ProprietaryTrialDTO trialDto) {
-        StudySiteOverallStatusDTO isoDto = new StudySiteOverallStatusDTO();
-        isoDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(trialDto
+    private StudySiteAccrualStatusDTO convertToStudySiteAccrualStatusDTO(ProprietaryTrialDTO trialDto) {
+        StudySiteAccrualStatusDTO isoDto = new StudySiteAccrualStatusDTO();
+        isoDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(trialDto
                 .getSiteStatusCode())));
         isoDto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto
                 .getSiteStatusDate())));
