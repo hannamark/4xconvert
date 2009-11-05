@@ -105,6 +105,30 @@ import java.util.List;
  */
 public class CorrelationNodeDTOConverter {
     
+    
+    /**
+     * Converts an array of Correlation object to array of CorrelationNodeDTO object. 
+     * @param correlations The correlations to be converted
+     * @param convertPlayers true if players should also be converted
+     * @param convertScopers true if scopers should also be converted
+     * @return array of CorrelationNodeDTO
+     */
+    public static CorrelationNodeDTO[] convertToCorrelationNodeDTOArray(
+        List<Correlation> correlations, boolean convertPlayers, boolean convertScopers) {
+        
+        if (correlations == null) {
+           return null;
+        }
+           
+        CorrelationNodeDTO[] result = new CorrelationNodeDTO[correlations.size()];
+        
+        for (int i = 0; i < result.length; i++) {
+            result[i] = convertToCorrelationNodeDTO(correlations.get(i), convertPlayers, convertScopers);
+        }
+        
+        return result;
+    }
+    
     /**
      * Convert correlation object to CorrelationNodeDTO.
      * @param correlation correlation to be converted.

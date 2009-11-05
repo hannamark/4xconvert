@@ -86,22 +86,44 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.convert.AdConverter;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.RoleList;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -109,6 +131,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * @author mshestopalov
@@ -116,10 +139,23 @@ import java.util.HashSet;
  */
 public class BusinessServiceTestHelper {
     
+    public static final String STREET_LINE = "123 Business Service Test Ave.";
+    public static final String COUNTRY = "USA";
+    public static final String ORG_NAME = "The Org Name";
+    public static final String PERSON_LAST_NAME = "The Person Last Name";
+    private static final Bl trueBl = new Bl();
+    private static final Bl falseBl = new Bl();
+    
+    static {
+        trueBl.setValue(true);
+        falseBl.setValue(false);
+    }
+    
     public static void helpTestOrgRoleCorrelationsGetById(
             ResearchOrganizationCorrelationServiceRemote researchOrgService,
             BusinessServiceRemote busService,
             OrganizationEntityServiceRemote orgService) throws Exception {
+
         Ii newOrgId = createOrganization(orgService);
         
         ResearchOrganizationDTO roDto = new ResearchOrganizationDTO();
@@ -128,25 +164,25 @@ public class BusinessServiceTestHelper {
        
         Ii roDtoId = researchOrgService.createCorrelation(roDto);
         assertNotNull(roDtoId);
-       
-        CorrelationNodeDTO corrNodeDto = busService.getCorrelationByIdWithEntities(roDtoId, true, false);
+        
+        CorrelationNodeDTO corrNodeDto = busService.getCorrelationByIdWithEntities(roDtoId, trueBl, falseBl);
         assertTrue(corrNodeDto.getCorrelation() instanceof ResearchOrganizationDTO);
         assertEquals("Research Org 1", ((ResearchOrganizationDTO) 
                 corrNodeDto.getCorrelation()).getName().getPart().get(0).getValue());
         assertTrue(corrNodeDto.getPlayer() instanceof OrganizationDTO);
-        assertEquals("Oct. 19th Org", ((OrganizationDTO) 
+        assertEquals(ORG_NAME, ((OrganizationDTO) 
                 corrNodeDto.getPlayer()).getName().getPart().get(0).getValue());
         assertNull(corrNodeDto.getScoper());
         
-        corrNodeDto = busService.getCorrelationByIdWithEntities(roDtoId, true, true);
+        corrNodeDto = busService.getCorrelationByIdWithEntities(roDtoId, trueBl, trueBl);
         assertNotNull(corrNodeDto.getPlayer());
         assertNull(corrNodeDto.getScoper());
         
-        corrNodeDto = busService.getCorrelationByIdWithEntities(roDtoId, false, true);
+        corrNodeDto = busService.getCorrelationByIdWithEntities(roDtoId, falseBl, trueBl);
         assertNull(corrNodeDto.getPlayer());
         assertNull(corrNodeDto.getScoper());
         
-        corrNodeDto = busService.getCorrelationByIdWithEntities(roDtoId, false, false);
+        corrNodeDto = busService.getCorrelationByIdWithEntities(roDtoId, falseBl, falseBl);
         assertNull(corrNodeDto.getPlayer());
         assertNull(corrNodeDto.getScoper());
         
@@ -158,7 +194,7 @@ public class BusinessServiceTestHelper {
         assertNotNull(roDtoId2);
         
         CorrelationNodeDTO[] corrNodeDtos = busService.getCorrelationsByIdsWithEntities(
-                new Ii[]{roDtoId, roDtoId2}, true, false);
+                new Ii[]{roDtoId, roDtoId2}, trueBl, falseBl);
         assertEquals(2, corrNodeDtos.length);
         
         for (CorrelationNodeDTO corr : corrNodeDtos) {
@@ -171,7 +207,7 @@ public class BusinessServiceTestHelper {
         Cd cd = new Cd();
         cd.setCode(RoleList.RESEARCH_ORGANIZATION.toString());
         
-        corrNodeDtos = busService.getCorrelationsByPlayerIdsWithEntities(cd, new Ii[]{newOrgId}, true, false);        
+        corrNodeDtos = busService.getCorrelationsByPlayerIdsWithEntities(cd, new Ii[]{newOrgId}, trueBl, falseBl);        
         assertEquals(2, corrNodeDtos.length);
         for (CorrelationNodeDTO corr : corrNodeDtos) {
             assertTrue(corr.getCorrelation() instanceof ResearchOrganizationDTO);
@@ -187,6 +223,7 @@ public class BusinessServiceTestHelper {
             BusinessServiceRemote busService,
             OrganizationEntityServiceRemote orgService,
             PersonEntityServiceRemote personService) throws Exception {
+  
         Ii newOrgId = createOrganization(orgService);
         
         Ii newPersonId = createPerson(personService);
@@ -203,27 +240,27 @@ public class BusinessServiceTestHelper {
         
         Ii crsDtoId = crsService.createCorrelation(crsdto);
         
-        CorrelationNodeDTO corrNodeDto = busService.getCorrelationByIdWithEntities(crsDtoId, true, true);
+        CorrelationNodeDTO corrNodeDto = busService.getCorrelationByIdWithEntities(crsDtoId, trueBl, trueBl);
         assertTrue(corrNodeDto.getCorrelation() instanceof ClinicalResearchStaffDTO);
         assertEquals(crsDtoId.getExtension(), 
                 ((ClinicalResearchStaffDTO) corrNodeDto.getCorrelation())
                 .getIdentifier().getItem().iterator().next().getExtension());
         assertTrue(corrNodeDto.getPlayer() instanceof PersonDTO);
         
-        assertEquals("LastName", ((PersonDTO) corrNodeDto.getPlayer()).getName().getPart().get(0).getValue());
+        assertEquals(PERSON_LAST_NAME, ((PersonDTO) corrNodeDto.getPlayer()).getName().getPart().get(0).getValue());
         assertTrue(corrNodeDto.getScoper() instanceof OrganizationDTO);
-        assertEquals("Oct. 19th Org", ((OrganizationDTO) corrNodeDto.getScoper())
+        assertEquals(ORG_NAME, ((OrganizationDTO) corrNodeDto.getScoper())
                 .getName().getPart().get(0).getValue());
         
-        corrNodeDto = busService.getCorrelationByIdWithEntities(crsDtoId, false, false);
+        corrNodeDto = busService.getCorrelationByIdWithEntities(crsDtoId, falseBl, falseBl);
         assertNull(corrNodeDto.getPlayer());
         assertNull(corrNodeDto.getScoper());
         
-        corrNodeDto = busService.getCorrelationByIdWithEntities(crsDtoId, true, false);
+        corrNodeDto = busService.getCorrelationByIdWithEntities(crsDtoId, trueBl, falseBl);
         assertNotNull(corrNodeDto.getPlayer());
         assertNull(corrNodeDto.getScoper());
         
-        corrNodeDto = busService.getCorrelationByIdWithEntities(crsDtoId, false, true);
+        corrNodeDto = busService.getCorrelationByIdWithEntities(crsDtoId, falseBl, trueBl);
         assertNull(corrNodeDto.getPlayer());
         assertNotNull(corrNodeDto.getScoper());
         
@@ -241,58 +278,70 @@ public class BusinessServiceTestHelper {
         Ii crsDtoId2 = crsService.createCorrelation(crsdto2);
         
         CorrelationNodeDTO[] corrNodeDtos = busService.getCorrelationsByIdsWithEntities(
-                new Ii[]{crsDtoId, crsDtoId2}, true, true);
+                new Ii[]{crsDtoId, crsDtoId2}, trueBl, trueBl);
         assertEquals(2, corrNodeDtos.length);
         
         for (CorrelationNodeDTO corr : corrNodeDtos) {
             assertEquals(new URI(TelPhone.SCHEME_TEL + ":123-123-654"), 
                     ((ClinicalResearchStaffDTO) corr.getCorrelation())
                     .getTelecomAddress().getItem().iterator().next().getValue());
-            assertEquals("LastName", ((PersonDTO) corr.getPlayer()).getName().getPart().get(0).getValue());
+            assertEquals(PERSON_LAST_NAME, ((PersonDTO) corr.getPlayer()).getName().getPart().get(0).getValue());
             assertEquals(newOrgId.getExtension(), corr.getScoper().getIdentifier().getExtension());
         }
         
         Cd cd = new Cd();
         cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.toString());
         
-        corrNodeDtos = busService.getCorrelationsByPlayerIdsWithEntities(cd, new Ii[]{newPersonId, newPersonId2}, true, true);        
+        corrNodeDtos = busService.getCorrelationsByPlayerIdsWithEntities(cd, new Ii[]{newPersonId, newPersonId2}, trueBl, trueBl);        
         assertEquals(2, corrNodeDtos.length);
         for (CorrelationNodeDTO corr : corrNodeDtos) {
             assertTrue(corr.getCorrelation() instanceof ClinicalResearchStaffDTO);
             assertEquals(new URI(TelPhone.SCHEME_TEL + ":123-123-654"), 
                     ((ClinicalResearchStaffDTO) corr.getCorrelation())
                     .getTelecomAddress().getItem().iterator().next().getValue());
-            assertEquals("LastName", ((PersonDTO) corr.getPlayer()).getName().getPart().get(0).getValue());
+            assertEquals(PERSON_LAST_NAME, ((PersonDTO) corr.getPlayer()).getName().getPart().get(0).getValue());
             assertEquals(newOrgId.getExtension(), corr.getScoper().getIdentifier().getExtension());
         } 
+    }    
+
+    public static Ii createOrganization(OrganizationEntityServiceRemote orgService) 
+    throws URISyntaxException, EntityValidationException, CurationException {
+        return createOrganization(orgService, STREET_LINE, ORG_NAME);
     }
-    
-     public static Ii createOrganization(OrganizationEntityServiceRemote orgService) 
-         throws URISyntaxException, EntityValidationException, CurationException {
-         OrganizationDTO orgDto = new OrganizationDTO();
-         orgDto.setName(TestConvertHelper.convertToEnOn("Oct. 19th Org"));
+  
+    public static Ii createOrganization(OrganizationEntityServiceRemote orgService,
+            String streetLine, String orgName) 
+    throws URISyntaxException, EntityValidationException, CurationException {
+        OrganizationDTO orgDto = new OrganizationDTO();
+        orgDto.setName(TestConvertHelper.convertToEnOn(orgName));
 
-         orgDto.setPostalAddress(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
-         DSet<Tel> telco = new DSet<Tel>();
-         telco.setItem(new HashSet<Tel>());
-         orgDto.setTelecomAddress(telco);
+        orgDto.setPostalAddress(TestConvertHelper.createAd(streetLine, null, "mycity", "WY", "12345", COUNTRY));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        orgDto.setTelecomAddress(telco);
 
-         TelEmail email = new TelEmail();
-         email.setValue(new URI("mailto:default@example.com"));
-         orgDto.getTelecomAddress().getItem().add(email);
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:default@example.com"));
+        orgDto.getTelecomAddress().getItem().add(email);
 
-         TelUrl url = new TelUrl();
-         url.setValue(new URI("http://default.example.com"));
-         orgDto.getTelecomAddress().getItem().add(url);
-         
-         return orgService.createOrganization(orgDto);
-     }
-     
-     public static Ii createPerson(PersonEntityServiceRemote personService) 
-         throws URISyntaxException, EntityValidationException, CurationException {
-         PersonDTO p = new PersonDTO();
-         p.setName(TestConvertHelper.convertToEnPn("FirstName", "M", "LastName", null, null));
-         p.setPostalAddress(TestConvertHelper.createAd("strees", "delivery", "city", "MD", "20850", "USA"));
+        TelUrl url = new TelUrl();
+        url.setValue(new URI("http://default.example.com"));
+        orgDto.getTelecomAddress().getItem().add(url);
+
+        return orgService.createOrganization(orgDto);
+    }
+
+    public static Ii createPerson(PersonEntityServiceRemote personService) 
+    throws URISyntaxException, EntityValidationException, CurationException {
+        return createPerson(personService, PERSON_LAST_NAME);
+    }
+        
+
+    public static Ii createPerson(PersonEntityServiceRemote personService, String lastName) 
+    throws URISyntaxException, EntityValidationException, CurationException {
+        PersonDTO p = new PersonDTO();
+         p.setName(TestConvertHelper.convertToEnPn("FirstName", "M", lastName, null, null));
+         p.setPostalAddress(TestConvertHelper.createAd(STREET_LINE, "delivery", "city", "MD", "20850", COUNTRY));
       
          DSet<Tel> telco = new DSet<Tel>();
          telco.setItem(new HashSet<Tel>());
@@ -309,4 +358,319 @@ public class BusinessServiceTestHelper {
          return personService.createPerson(p);
      }
 
+     public static void testSearchWithEntities(
+             PersonEntityServiceRemote personService,
+             OrganizationEntityServiceRemote orgService,
+             BusinessServiceRemote busService,
+             ClinicalResearchStaffCorrelationServiceRemote crsService,
+             HealthCareProviderCorrelationServiceRemote hcpService,
+             IdentifiedPersonCorrelationServiceRemote idpService,
+             IdentifiedOrganizationCorrelationServiceRemote idoService,
+             HealthCareFacilityCorrelationServiceRemote hcfService,
+             ResearchOrganizationCorrelationServiceRemote researchOrgService,
+             OrganizationalContactCorrelationServiceRemote ocService,
+             OversightCommitteeCorrelationServiceRemote oversightComService        
+     ) throws Exception {
+         
+         Ii newPersonId = createPerson(personService);
+         Ii newOrgId = createOrganization(orgService);        
+
+         TelPhone ph1 = new TelPhone();
+         ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-688-654"));
+         DSet<Tel> telco = new DSet<Tel>();
+         telco.setItem(new HashSet<Tel>());
+         telco.getItem().add(ph1);
+
+         
+         Bl bl_true = new Bl();
+         bl_true.setValue(true);
+         
+         Bl bl_false = new Bl();
+         bl_false.setValue(false);
+         
+         // Test various null cases
+         try {
+             busService.searchCorrelationsWithEntities(null, null, null, null);
+             fail();
+         } catch (IllegalArgumentException e) {
+         }
+         try {
+             CorrelationNodeDTO cnDto = new CorrelationNodeDTO();
+             busService.searchCorrelationsWithEntities(cnDto, null, null, null);
+             fail();
+         } catch (IllegalArgumentException e) {
+         }
+         
+         // ClinicalResearchStaff
+         testSearchCRS(busService, crsService, orgService, newPersonId, newOrgId, telco, bl_true);
+         
+         // Health Care Provider
+         testSearchHealthCareProvider(busService, hcpService, newPersonId, newOrgId, telco, bl_true);
+            
+         // Identified Person
+         testSearchIdentifiedPerson(busService, idpService, newPersonId, newOrgId, bl_true);
+         
+         // Organizational Contact 
+         testSearchOrgContact(busService, ocService, newPersonId, newOrgId, telco, bl_true);
+       
+         // Identified Organization
+         testSearchIdentifiedOrganization(busService, idoService, newOrgId, bl_true);
+    
+         // Health Care Facility
+         testSearchHealthCareFacility(busService, hcfService, newOrgId, telco, bl_true);
+         
+         // Oversight Committee
+         testSearchOversightCommittee(busService, oversightComService, orgService, newOrgId, bl_true);
+         
+         // Research Org.
+         testSearchResearchOrg(researchOrgService, busService, newOrgId, telco, bl_true);
+    }
+
+    private static void testSearchHealthCareProvider(BusinessServiceRemote busService,
+            HealthCareProviderCorrelationServiceRemote hcpService, Ii newPersonId, Ii newOrgId, DSet<Tel> telco,
+            Bl bl_true) throws EntityValidationException, CurationException, TooManyResultsException {
+ 
+        HealthCareProviderDTO hcpDto = new HealthCareProviderDTO();
+
+        hcpDto.setTelecomAddress(telco);
+
+        hcpDto.setPlayerIdentifier(newPersonId);
+        hcpDto.setScoperIdentifier(newOrgId);
+
+        hcpService.createCorrelation(hcpDto);
+
+        HealthCareProviderDTO query_hcpDto = new HealthCareProviderDTO();
+        query_hcpDto.setTelecomAddress(telco);
+
+        CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
+        query_cnDto.setCorrelation(query_hcpDto);
+        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl_true, bl_true, null);
+        assertEquals(1, results.length);
+    }
+
+    private static void testSearchOrgContact(BusinessServiceRemote busService,
+            OrganizationalContactCorrelationServiceRemote ocService, Ii newPersonId, Ii newOrgId, DSet<Tel> telco,
+            Bl bl) throws EntityValidationException, CurationException, TooManyResultsException {
+
+        OrganizationalContactDTO ocDto = new OrganizationalContactDTO();
+        ocDto.setTelecomAddress(telco);
+
+        ocDto.setPlayerIdentifier(newPersonId);
+        ocDto.setScoperIdentifier(newOrgId);
+
+        ocService.createCorrelation(ocDto);
+
+        OrganizationalContactDTO query_ocDto = new OrganizationalContactDTO();
+        query_ocDto.setTelecomAddress(telco);
+
+        CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
+        query_cnDto.setCorrelation(query_ocDto);
+        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        assertEquals(1, results.length);
+    }
+
+    private static void testSearchHealthCareFacility(BusinessServiceRemote busService,
+            HealthCareFacilityCorrelationServiceRemote hcfService, Ii newOrgId, DSet<Tel> telco, Bl bl_true)
+            throws EntityValidationException, CurationException, TooManyResultsException {
+         
+        HealthCareFacilityDTO hcfDto = new HealthCareFacilityDTO();         
+        hcfDto.setTelecomAddress(telco);
+        hcfDto.setPlayerIdentifier(newOrgId);
+        hcfService.createCorrelation(hcfDto);
+
+        HealthCareFacilityDTO query_hcfDto = new HealthCareFacilityDTO();
+        query_hcfDto.setTelecomAddress(telco);
+
+        CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
+        query_cnDto.setCorrelation(query_hcfDto);
+
+        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl_true, bl_true, null);    
+        assertEquals(1, results.length);
+    }
+
+    private static void testSearchCRS(BusinessServiceRemote busService,
+            ClinicalResearchStaffCorrelationServiceRemote crsService,
+            OrganizationEntityServiceRemote orgService,
+            Ii newPersonId, Ii newOrgId, DSet<Tel> telco,
+            Bl bl) throws EntityValidationException, CurationException, TooManyResultsException, URISyntaxException {
+        
+        
+
+        ClinicalResearchStaffDTO crsDto = new ClinicalResearchStaffDTO();
+        crsDto.setTelecomAddress(telco);
+        crsDto.setPlayerIdentifier(newPersonId);
+        crsDto.setScoperIdentifier(newOrgId);
+        crsService.createCorrelation(crsDto);
+
+        // create extra crs that should not be returned
+        crsDto = new ClinicalResearchStaffDTO();
+        crsDto.setTelecomAddress(telco);
+        crsDto.setPlayerIdentifier(newPersonId);
+        Ii org2Id = createOrganization(orgService, "street", "wrong name");
+        crsDto.setScoperIdentifier(org2Id);
+        crsService.createCorrelation(crsDto);
+
+           
+        ClinicalResearchStaffDTO query_crsDto = new ClinicalResearchStaffDTO();
+        query_crsDto.setTelecomAddress(telco);
+        PersonDTO query_personDto = new PersonDTO();
+        query_personDto.setIdentifier(newPersonId);
+        
+        OrganizationDTO query_orgDto = new OrganizationDTO();
+        query_orgDto.setIdentifier(newOrgId);
+        
+        CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
+        query_cnDto.setCorrelation(query_crsDto);
+        query_cnDto.setPlayer(query_personDto);
+        query_cnDto.setScoper(query_orgDto);
+        
+        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        assertEquals(1, results.length);
+        
+        CorrelationNodeDTO result = results[0];
+        assertTrue(result.getCorrelation() instanceof ClinicalResearchStaffDTO);
+        assertTrue(result.getPlayer() instanceof PersonDTO);
+        if (bl.getValue()) {
+            PersonDTO p = (PersonDTO) result.getPlayer();
+            assertEquals(PERSON_LAST_NAME, p.getName().getPart().get(0).getValue());
+            assertTrue(result.getScoper() instanceof OrganizationDTO);
+            OrganizationDTO org = (OrganizationDTO) result.getScoper();
+            assertEquals(ORG_NAME, org.getName().getPart().get(0).getValue());
+        }        
+    }
+
+    private static void testSearchIdentifiedPerson(BusinessServiceRemote busService,
+            IdentifiedPersonCorrelationServiceRemote idpService, Ii newPersonId, Ii newOrgId, Bl bl)
+            throws EntityValidationException, CurationException, TooManyResultsException {
+
+        IdentifiedPersonDTO idpDto = new IdentifiedPersonDTO();
+        populateIdentifiedPerson(newPersonId, newOrgId, idpDto);
+        idpDto.setAssignedId(newPersonId);
+        idpService.createCorrelation(idpDto);
+
+        CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
+        IdentifiedPersonDTO query_idpDto = new IdentifiedPersonDTO();      
+        query_idpDto.setAssignedId(newPersonId);
+        query_cnDto.setCorrelation(query_idpDto);
+        
+        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        assertEquals(1, results.length);
+    }
+
+    private static void testSearchIdentifiedOrganization(BusinessServiceRemote busService,
+            IdentifiedOrganizationCorrelationServiceRemote idoService, Ii newOrgId, Bl bl)
+            throws EntityValidationException, CurationException, TooManyResultsException {
+
+        CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
+        IdentifiedOrganizationDTO idoDto = new IdentifiedOrganizationDTO();
+
+        Ii idoIi = populateIdentifiedOrganization(newOrgId, idoDto);
+        idoService.createCorrelation(idoDto);
+
+        IdentifiedOrganizationDTO query_idoDto = new IdentifiedOrganizationDTO();        
+        query_idoDto.setAssignedId(idoIi);
+        
+        OrganizationDTO query_orgDto = new OrganizationDTO();
+        query_orgDto.setName(TestConvertHelper.convertToEnOn(ORG_NAME));
+        query_cnDto.setPlayer(query_orgDto);
+        
+        query_cnDto.setCorrelation(query_idoDto);
+        query_cnDto.setPlayer(query_orgDto);
+        
+        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        assertEquals(1, results.length);
+    }
+
+    private static void testSearchOversightCommittee(BusinessServiceRemote busService,
+            OversightCommitteeCorrelationServiceRemote oversightComService, 
+            OrganizationEntityServiceRemote orgService, Ii newOrgId, Bl bl)
+            throws EntityValidationException, CurationException, TooManyResultsException, URISyntaxException {
+        
+        OversightCommitteeDTO ovcDto = new OversightCommitteeDTO(); 
+        ovcDto.setPlayerIdentifier(newOrgId);
+        Cd typeCode = new Cd();
+        typeCode.setCode("Ethics Committee");
+        ovcDto.setTypeCode(typeCode);
+        oversightComService.createCorrelation(ovcDto);
+
+        // create one that won't return
+        ovcDto = new OversightCommitteeDTO(); 
+        ovcDto.setPlayerIdentifier(createOrganization(orgService, "street", "not the right name"));
+        ovcDto.setTypeCode(typeCode);
+        oversightComService.createCorrelation(ovcDto);
+        
+        OversightCommitteeDTO query_ovcDto = new OversightCommitteeDTO();
+        CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
+        query_cnDto.setCorrelation(query_ovcDto);
+        OrganizationDTO query_orgDto = new OrganizationDTO();
+        query_orgDto.setIdentifier(newOrgId);
+        query_cnDto.setPlayer(query_orgDto);
+
+        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+ 
+        assertEquals(1, results.length);
+    }
+
+     private static void testSearchResearchOrg(ResearchOrganizationCorrelationServiceRemote researchOrgService,
+             BusinessServiceRemote busService, Ii newOrgId, DSet<Tel> telco, Bl bl) throws EntityValidationException,
+             CurationException, TooManyResultsException {
+         
+         // Research Organization
+         ResearchOrganizationDTO roDto = new ResearchOrganizationDTO();
+         roDto.setPlayerIdentifier(newOrgId);        
+         roDto.setName(TestConvertHelper.convertToEnOn("RO_NAME"));
+         researchOrgService.createCorrelation(roDto);
+
+         // create one that won't return
+         roDto = new ResearchOrganizationDTO();
+         roDto.setPlayerIdentifier(newOrgId);        
+         roDto.setName(TestConvertHelper.convertToEnOn("Not the right NAME"));
+         researchOrgService.createCorrelation(roDto);
+
+         // query by Player Address
+         ResearchOrganizationDTO query_roDto = new ResearchOrganizationDTO();
+         query_roDto.setName(TestConvertHelper.convertToEnOn("RO_NAME"));
+         CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
+         query_cnDto.setCorrelation(query_roDto);
+       
+         CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+         assertEquals(1, results.length);
+     }
+
+     private static Ii populateIdentifiedPerson(Ii newPersonId, Ii newOrgId, IdentifiedPersonDTO idpDto) {
+         idpDto.setPlayerIdentifier(newPersonId);
+         idpDto.setScoperIdentifier(newOrgId);
+         Cd status = new Cd();
+         status.setCode("active");
+         idpDto.setStatus(status);
+
+         Ii idpIi = new Ii();
+         idpIi.setExtension("" + UUID.randomUUID().getMostSignificantBits());
+         idpIi.setDisplayable(true);
+         idpIi.setScope(IdentifierScope.OBJ);
+         idpIi.setReliability(IdentifierReliability.ISS);
+         idpIi.setIdentifierName(IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
+         idpIi.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
+         idpDto.setAssignedId(idpIi);
+         return idpIi;
+     }
+     
+     private static Ii populateIdentifiedOrganization(Ii newOrgId, IdentifiedOrganizationDTO idoDto) {
+         idoDto.setPlayerIdentifier(newOrgId);
+         idoDto.setScoperIdentifier(newOrgId);
+         Cd status = new Cd();
+         status.setCode("active");
+         idoDto.setStatus(status);
+         
+         Ii idoIi = new Ii();
+         idoIi.setExtension("" + UUID.randomUUID().getMostSignificantBits());
+         idoIi.setDisplayable(true);
+         idoIi.setScope(IdentifierScope.OBJ);
+         idoIi.setReliability(IdentifierReliability.ISS);
+         idoIi.setIdentifierName(IdConverter.RESEARCH_ORG_IDENTIFIER_NAME);
+         idoIi.setRoot(IdConverter.RESEARCH_ORG_ROOT);
+         idoDto.setAssignedId(idoIi);
+         return idoIi;
+     }
+     
 }

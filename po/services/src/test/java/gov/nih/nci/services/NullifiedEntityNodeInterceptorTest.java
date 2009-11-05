@@ -1,8 +1,11 @@
 package gov.nih.nci.services;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
@@ -163,22 +166,32 @@ public class NullifiedEntityNodeInterceptorTest {
     
     public static class BSvcBean implements BusinessServiceRemote {        
         
-        public CorrelationNodeDTO getCorrelationByIdWithEntities(Ii id, boolean player, boolean scoper)
+        public CorrelationNodeDTO getCorrelationByIdWithEntities(Ii id, Bl player, Bl scoper)
                 throws NullifiedRoleException {
             return null;
         }
 
-        public CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, boolean player, boolean scoper)
+        public CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, Bl player, Bl scoper)
                 throws NullifiedRoleException {
             return null;
         }
 
         public CorrelationNodeDTO[] getCorrelationsByPlayerIdsWithEntities(Cd correlationType, Ii[] playerIds,
-                boolean player, boolean scoper) throws NullifiedRoleException {
+                Bl player, Bl scoper) throws NullifiedRoleException {
             return null;
         }
         public EntityNodeDto getEntityByIdWithCorrelations(Ii id, Cd[] players, Cd[] scopers)
                 throws NullifiedEntityException {
+            return null;
+        }
+
+        public CorrelationNodeDTO[] searchCorrelationsWithEntities(CorrelationNodeDTO searchNode, Bl player, Bl scoper,
+                LimitOffset limitOffset) throws TooManyResultsException {
+            return null;
+        }
+
+        public EntityNodeDto[] searchEntitiesWithCorrelations(EntityNodeDto searchNode, Cd[] players, Cd[] scopers,
+                LimitOffset limitOffset) throws TooManyResultsException {
             return null;
         }
     }

@@ -3,7 +3,11 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.services.BusinessServiceBean;
 import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -24,7 +28,11 @@ public class BusinessServiceBeanTest extends AbstractBeanTest {
     protected OversightCommitteeCorrelationServiceRemote oversightComService;
     protected ClinicalResearchStaffCorrelationServiceRemote crsService;
     protected HealthCareProviderCorrelationServiceRemote hcpService;
-        
+    protected IdentifiedPersonCorrelationServiceRemote idpService;
+    protected IdentifiedOrganizationCorrelationServiceRemote idoService;   
+    protected HealthCareFacilityCorrelationServiceRemote hcfService;
+    protected OrganizationalContactCorrelationServiceRemote ocService;
+    
     @Test
     public void testOrgRoleCorrelationsGetById() throws Exception {
         BusinessServiceTestHelper.helpTestOrgRoleCorrelationsGetById(
@@ -37,6 +45,14 @@ public class BusinessServiceBeanTest extends AbstractBeanTest {
         BusinessServiceTestHelper.helpTestPersonRoleCorrelationsGetById(
                 crsService, busService, orgService, personService);
     } 
+    
+    @Test
+    public void testSearchWithEntities() throws Exception {
+        BusinessServiceTestHelper.testSearchWithEntities(personService, orgService, busService,
+                crsService, hcpService, idpService, idoService, 
+                hcfService, researchOrgService, ocService, oversightComService);
+    }
+    
     
     /**
      * Init the test.
@@ -66,6 +82,18 @@ public class BusinessServiceBeanTest extends AbstractBeanTest {
         if (hcpService == null) {
             hcpService = EjbTestHelper.getHealthCareProviderCorrelationServiceRemote();
         }
+        if (idpService == null) {
+            idpService = EjbTestHelper.getIdentifiedPersonServiceBeanAsRemote();
+        }
+        if (idoService == null) {
+            idoService = EjbTestHelper.getIdentifiedOrganizationServiceBeanAsRemote();
+        }
+        if (hcfService == null) {
+            hcfService = EjbTestHelper.getHealthCareFacilityCorrelationServiceRemote();
+        }
+        if (ocService == null) {
+            ocService = EjbTestHelper.getOrganizationalContactCorrelationServiceRemote();
+        }
         
     }
     
@@ -82,6 +110,10 @@ public class BusinessServiceBeanTest extends AbstractBeanTest {
         researchOrgService = null;
         personService = null;
         crsService = null;
+        idpService = null;
+        idoService = null;
+        hcfService = null;
+        ocService = null;
     }
     
 }

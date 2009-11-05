@@ -1,7 +1,10 @@
 package gov.nih.nci.services;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -37,7 +40,7 @@ public interface BusinessServiceRemote {
      * @return correlation node dto.
      * @throws NullifiedRoleException if the requested id has a NULLIFIED role status
      */
-    CorrelationNodeDTO getCorrelationByIdWithEntities(Ii id, boolean player, boolean scoper) 
+    CorrelationNodeDTO getCorrelationByIdWithEntities(Ii id, Bl player, Bl scoper) 
         throws NullifiedRoleException;
     
     /**
@@ -48,7 +51,7 @@ public interface BusinessServiceRemote {
      * @return list of correlation node dto.
      * @throws NullifiedRoleException if the requested id has a NULLIFIED role status
      */
-    CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, boolean player, boolean scoper) 
+    CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, Bl player, Bl scoper) 
         throws NullifiedRoleException;
    
     /**
@@ -61,6 +64,32 @@ public interface BusinessServiceRemote {
      * @throws NullifiedRoleException if the requested id has a NULLIFIED role status
      */
     CorrelationNodeDTO[] getCorrelationsByPlayerIdsWithEntities(Cd correlationType, 
-            Ii[] playerIds, boolean player, boolean scoper) throws NullifiedRoleException;
+            Ii[] playerIds, Bl player, Bl scoper) throws NullifiedRoleException;
+    
+    /**
+     * Return an array of Correlations, and optionally populated player, scoper, or both.
+     * 
+     * @param searchNode Element to do search by example on.
+     * @param player true if player should be pre-populated
+     * @param scoper true if scoper should be pre-populated 
+     * @param limitOffset allows for pagination of records. Set to null for no pagination
+     * @return The array of CorrelationNodeDTO
+     * @throws TooManyResultsException if the number of result is greater than acceptable by the system
+     */
+    CorrelationNodeDTO[] searchCorrelationsWithEntities(CorrelationNodeDTO searchNode, 
+            Bl player, Bl scoper, LimitOffset limitOffset) throws TooManyResultsException;
+    
+    /**
+     * 
+     * @param searchNode Element to do search by example.
+     * @param players Array of player correlations to pull.
+     * @param scopers Array of scoper correlations to pull.
+     * @param limitOffset allows for pagination of records. Set to null for no pagination
+     * @return The array of EntityNodeDto
+     * @throws TooManyResultsException if the number of result is greater than acceptable by the system.
+     */
+    EntityNodeDto[] searchEntitiesWithCorrelations(EntityNodeDto searchNode, 
+            Cd[] players, Cd[] scopers, LimitOffset limitOffset) throws TooManyResultsException;
+        
     
 }

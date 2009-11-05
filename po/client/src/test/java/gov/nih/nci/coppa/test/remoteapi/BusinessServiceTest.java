@@ -2,23 +2,46 @@ package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.convert.AdConverter;
+import gov.nih.nci.po.data.convert.CorrelationNodeDTOConverter;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.BusinessServiceTestHelper;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.EntityNodeDto;
 import gov.nih.nci.services.RoleList;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
@@ -26,15 +49,22 @@ import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.person.AbstractPersonDTO;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.collections.set.ListOrderedSet;
+import org.iso._21090.AD;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,9 +77,11 @@ public class BusinessServiceTest {
     private ResearchOrganizationCorrelationServiceRemote researchOrgService;
     private OversightCommitteeCorrelationServiceRemote oversightComService;
     private ClinicalResearchStaffCorrelationServiceRemote crsService;
-    private HealthCareProviderCorrelationServiceRemote hcpService;
-        
-    
+    private HealthCareProviderCorrelationServiceRemote hcpService;        
+    private HealthCareFacilityCorrelationServiceRemote hcfService;        
+    private IdentifiedPersonCorrelationServiceRemote idpService;
+    private IdentifiedOrganizationCorrelationServiceRemote idoService;
+    private OrganizationalContactCorrelationServiceRemote ocService;
     
     @Test(expected = NullifiedEntityException.class)
     public void testInterceptorNotGetNullifiedByIdWithCorrelation() throws Exception {
@@ -85,22 +117,8 @@ public class BusinessServiceTest {
     
     @Test
     public void testGetByIdWithCorrelation() throws Exception {
-        OrganizationDTO orgDto = new OrganizationDTO();
-        orgDto.setName(TestConvertHelper.convertToEnOn("Oct. 19th Org"));
-        orgDto.setPostalAddress(TestConvertHelper.createAd("123 abc ave.", null, "mycity", "WY", "12345", "USA"));
-        DSet<Tel> telco = new DSet<Tel>();
-        telco.setItem(new HashSet<Tel>());
-        orgDto.setTelecomAddress(telco);
-
-        TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:default@example.com"));
-        orgDto.getTelecomAddress().getItem().add(email);
-
-        TelUrl url = new TelUrl();
-        url.setValue(new URI("http://default.example.com"));
-        orgDto.getTelecomAddress().getItem().add(url);
         
-        Ii newOrgId = orgService.createOrganization(orgDto);
+        Ii newOrgId = BusinessServiceTestHelper.createOrganization(orgService);
         
         ResearchOrganizationDTO roDto = new ResearchOrganizationDTO();
         roDto.setName(TestConvertHelper.convertToEnOn("Research Org 1"));
@@ -127,8 +145,7 @@ public class BusinessServiceTest {
         
         CorrelationDto[] playersDto = entityNodeDto.getPlayers();
         assertNotNull(entityNodeDto.getEntityDto());
-        assertEquals(1, playersDto.length);
-        
+        assertEquals(1, playersDto.length);   
         
         entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, null, null);        
         assertEquals(0, entityNodeDto.getPlayers().length);
@@ -138,33 +155,22 @@ public class BusinessServiceTest {
         assertEquals(0, entityNodeDto.getPlayers().length);
         assertEquals(0, entityNodeDto.getScopers().length);        
         
-        PersonDTO p = new PersonDTO();
-        p.setName(TestConvertHelper.convertToEnPn("FirstName", "M", "LastName", null, null));
-        p.setPostalAddress(TestConvertHelper.createAd("strees", "delivery", "city", "MD", "20850", "USA"));
-     
-        telco = new DSet<Tel>();
-        telco.setItem(new HashSet<Tel>());
-        p.setTelecomAddress(telco);
-
-        email = new TelEmail();
-        email.setValue(new URI("mailto:default@example.com"));
-        p.getTelecomAddress().getItem().add(email);
-
-        url = new TelUrl();
-        url.setValue(new URI("http://default.example.com"));
-        p.getTelecomAddress().getItem().add(url);
-
-        Ii newPersonId = personService.createPerson(p);
+        Ii newPersonId = BusinessServiceTestHelper.createPerson(personService);
         
         ClinicalResearchStaffDTO crsdto = new ClinicalResearchStaffDTO();
+        TelPhone ph1 = new TelPhone();
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-688-654"));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        telco.getItem().add(ph1);
+        crsdto.setTelecomAddress(telco);
+        
         crsdto.setScoperIdentifier(newOrgId);
         crsdto.setPlayerIdentifier(newPersonId);
-        crsdto.setTelecomAddress(new DSet<Tel>());
-        crsdto.getTelecomAddress().setItem(new HashSet<Tel>());
         
-        TelPhone ph1 = new TelPhone();
-        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
-        crsdto.getTelecomAddress().getItem().add(ph1);
+        TelPhone ph2 = new TelPhone();
+        ph2.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+        crsdto.getTelecomAddress().getItem().add(ph2);
         
         crsService.createCorrelation(crsdto);
             
@@ -185,6 +191,11 @@ public class BusinessServiceTest {
         entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, new Cd[0], new Cd[0]);        
         assertEquals(0, entityNodeDto.getPlayers().length);
         assertEquals(0, entityNodeDto.getScopers().length);   
+        
+    }
+    
+    @Test
+    public void testSearchWithEntities() throws Exception {
         
     }
     
@@ -228,7 +239,20 @@ public class BusinessServiceTest {
         if (hcpService == null) {
             hcpService = RemoteServiceHelper.getHealthCareProviderCorrelationService();
         }
-    }
+        if (hcfService == null) {
+            hcfService = RemoteServiceHelper.getHealthCareFacilityCorrelationService();
+        }
+        if (idpService == null) {
+            idpService = RemoteServiceHelper.getIdentifiedPersonCorrelationServiceRemote();
+        }
+        if (idoService == null) {
+            idoService = RemoteServiceHelper.getIdentifiedOrganizationCorrelationServiceRemote();
+        }
+        if (ocService == null) {
+            ocService = RemoteServiceHelper.getOrganizationalContactCorrelationService();
+        }
+
+}
     
     /**
      * cleanup after test is complete.
@@ -244,6 +268,10 @@ public class BusinessServiceTest {
         personService = null;
         crsService = null;
         hcpService = null;
+        hcfService = null;
+        idpService = null;
+        idoService = null;
+        ocService = null;
         RemoteServiceHelper.close();
     }
     

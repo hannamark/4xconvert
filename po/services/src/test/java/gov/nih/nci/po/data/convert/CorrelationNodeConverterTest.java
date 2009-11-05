@@ -91,6 +91,7 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
@@ -103,6 +104,7 @@ import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -166,6 +168,25 @@ public class CorrelationNodeConverterTest  {
         assertEquals(new Long(11).toString(), cNode.getScoper().getIdentifier().getExtension());
         assertEquals(IdConverter.ORG_IDENTIFIER_NAME, cNode.getScoper().getIdentifier().getIdentifierName());
         assertEquals(IdConverter.ORG_ROOT, cNode.getScoper().getIdentifier().getRoot());
+    }
+    
+    
+    @Test
+    public void testConvertCorrelationNodeDTOArray() {
+        List<Correlation> corrs = new ArrayList<Correlation>();
+        corrs.add(this.createHcpForTest());
+        corrs.add(this.createHcpForTest());
+        
+        CorrelationNodeDTO[] cNodes = CorrelationNodeDTOConverter.convertToCorrelationNodeDTOArray(corrs, true, true);
+
+        for (CorrelationNodeDTO cNode : cNodes) {
+            verifyPerson(cNode);
+            verifyOrg(cNode);
+            verifyHcp(cNode);
+        } 
+        
+        assertNull(CorrelationNodeDTOConverter.convertToCorrelationNodeDTOArray(null, true, true));
+            
     }
     
     /**
