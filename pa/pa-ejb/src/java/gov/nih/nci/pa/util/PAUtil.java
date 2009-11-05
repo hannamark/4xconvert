@@ -757,10 +757,17 @@ public class PAUtil {
      * @return boolean
      */
     public static boolean isDateCurrentOrPast(String date) {
-        boolean retValue = false;
         Timestamp siteStatusDate = PAUtil.dateStringToTimestamp(date);
+        return isDateCurrentOrPast(siteStatusDate);
+    }
+    /**
+     * @param date date
+     * @return boolean
+     */
+    public static boolean isDateCurrentOrPast(Timestamp date) {
+        boolean retValue = false;
         Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-        if (currentTimeStamp.before(siteStatusDate)) {
+        if (currentTimeStamp.before(date)) {
             retValue = true;                
         }
         return retValue;

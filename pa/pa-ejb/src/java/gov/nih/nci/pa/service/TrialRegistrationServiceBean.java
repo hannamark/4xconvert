@@ -116,7 +116,6 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -140,6 +139,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -543,7 +543,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     /**
      * 
      * @param studyProtocolDTO studyProtocolDTO
-     * @param studySiteOverallStatusDTO studySiteOverallStatusDTO
+     * @param studySiteAccrualStatusDTO studySiteAccrualStatusDTO
      * @param documentDTOs documentDTOs
      * @param leadOrganizationDTO leadOrganizationDTO
      * @param studySiteInvestigatorDTO studySiteInvestigatorDTO
@@ -561,7 +561,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     @SuppressWarnings({"PMD.PreserveStackTrace" })
     public Ii createProprietaryInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO,
-            StudySiteOverallStatusDTO studySiteOverallStatusDTO ,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO ,
             List<DocumentDTO> documentDTOs ,
             OrganizationDTO leadOrganizationDTO ,
             PersonDTO studySiteInvestigatorDTO ,
@@ -578,7 +578,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         //validate method needs to be here
         StringBuffer errorMsg = new StringBuffer();
         errorMsg.append(enforceBusinessRulesForProprietary(studyProtocolDTO,
-                studySiteOverallStatusDTO ,
+                studySiteAccrualStatusDTO ,
                 documentDTOs ,
                 leadOrganizationDTO ,
                 studySiteInvestigatorDTO ,
@@ -598,7 +598,6 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
         listOfDTOToCreateInPO.add(studySiteInvestigatorDTO);
         listOfDTOToCreateInPO.add(summary4OrganizationDTO);
         paServiceUtils.createPoObject(listOfDTOToCreateInPO);
-        
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
         studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
         try {
@@ -622,8 +621,8 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     
             //create StudySite
             Ii studySiteIi = createStudySite(studyProtocolIi, studySiteOrganizationDTO, studySiteDTO);
-            studySiteOverallStatusDTO.setStudySiteIdentifier(studySiteIi);
-            studySiteOverallStatusService.create(studySiteOverallStatusDTO);
+            studySiteAccrualStatusDTO.setStudySiteIi(studySiteIi);
+            studySiteAccrualStatusService.createStudySiteAccrualStatus(studySiteAccrualStatusDTO);
             //set PI
             createStudySiteContact(studySiteIi, studyProtocolIi, studySiteOrganizationDTO,
                     studySiteInvestigatorDTO, studyTypeCode);
@@ -1591,7 +1590,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
        } 
     }   
   private String enforceBusinessRulesForProprietary(StudyProtocolDTO studyProtocolDTO,
-          StudySiteOverallStatusDTO studySiteOverallStatusDTO ,
+          StudySiteAccrualStatusDTO studySiteAccrualStatusDTO ,
           List<DocumentDTO> documentDTOs ,
           OrganizationDTO leadOrganizationDTO ,
           PersonDTO studySiteInvestigatorDTO ,
@@ -1603,7 +1602,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           StudyResourcingDTO summary4StudyResourcingDTO) throws PAException {
       StringBuffer errorMsg = new StringBuffer();
       errorMsg.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
-      errorMsg.append(studySiteOverallStatusDTO == null ? "Study Site OverallStatus DTO cannot be null , " : "");
+      errorMsg.append(studySiteAccrualStatusDTO == null ? "Study Site Accrual Status DTO cannot be null , " : "");
 
       errorMsg.append(leadOrganizationDTO == null ? "Lead Organization DTO cannot be null , " : "");
       errorMsg.append(studySiteInvestigatorDTO == null ? "Principal Investigator DTO cannot be null , " : "");
@@ -1623,6 +1622,20 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       } else {
           errorMsg.append("Submitter is required.");
       }
+      try {
+          //duplicate check only for NCT
+          if (!PAUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
+              nctIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+              String poOrgId = PaRegistry.getOrganizationCorrelationService().getCtGovPOIdentifier();
+              long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(
+                      poOrgId);
+              nctIdentifierDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
+              studySiteService.validate(nctIdentifierDTO);
+          }
+      } catch (PAException e) {
+          errorMsg.append(e.getMessage());
+      }
+
       // validates for attributes
       errorMsg.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null , " : "");
       if (nctIdentifierDTO != null) { 
@@ -1647,13 +1660,9 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
           errorMsg.append(PAUtil.isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier())
                   ? "Lead Organization Trial Identifier cannot be null, " : "");
       } 
-      if (studySiteOverallStatusDTO != null) {
-          errorMsg.append(PAUtil.isCdNull(studySiteOverallStatusDTO.getStatusCode())
-                  ? "Current Trial Status Code cannot be null , " : "");
-          errorMsg.append(PAUtil.isTsNull(studySiteOverallStatusDTO.getStatusDate())
-                  ? "Current Trial Status Date cannot be null , " : "");
-      }
-      if (summary4StudyResourcingDTO != null && null == SummaryFourFundingCategoryCode.getByCode(
+      errorMsg.append(paServiceUtils.validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO));
+      if (summary4StudyResourcingDTO != null && !PAUtil.isCdNull(summary4StudyResourcingDTO.getTypeCode()) 
+              && null == SummaryFourFundingCategoryCode.getByCode(
                   CdConverter.convertCdToString(summary4StudyResourcingDTO.getTypeCode()))) {
            errorMsg.append(CdConverter.convertCdToString(summary4StudyResourcingDTO.getTypeCode()))
            .append(" is not valid Summary Four Funding Category Code");   
@@ -1665,4 +1674,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
       
       return errorMsg.toString();
   }
+
+
+
 }

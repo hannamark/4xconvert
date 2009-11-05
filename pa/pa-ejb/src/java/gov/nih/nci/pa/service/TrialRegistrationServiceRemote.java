@@ -92,7 +92,6 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -259,7 +258,7 @@ public interface TrialRegistrationServiceRemote {
    /**
     * 
     * @param studyProtocolDTO studyProtocolDTO
-    * @param studySiteOverallStatusDTO studySiteOverallStatusDTO
+    * @param studySiteAccrualStatusDTO studySiteAccrualStatusDTO
     * @param documentDTOs documentDTOs
     * @param leadOrganizationDTO leadOrganizationDTO
     * @param studySiteInvestigatorDTO studySiteInvestigatorDTO
@@ -276,7 +275,7 @@ public interface TrialRegistrationServiceRemote {
    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
    Ii createProprietaryInterventionalStudyProtocol(
            StudyProtocolDTO studyProtocolDTO ,
-           StudySiteOverallStatusDTO studySiteOverallStatusDTO ,
+           StudySiteAccrualStatusDTO studySiteAccrualStatusDTO ,
            List<DocumentDTO> documentDTOs ,
            OrganizationDTO leadOrganizationDTO ,
            PersonDTO studySiteInvestigatorDTO ,

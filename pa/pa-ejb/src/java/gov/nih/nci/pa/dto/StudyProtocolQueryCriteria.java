@@ -129,7 +129,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     //for Inbox Processing
     private Boolean inBoxProcessing;
     private String studyLockedBy;
-    
+    private String trialCategory;
     /**
      * @return the inBoxProcessing
      */
@@ -419,4 +419,17 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setStudyLockedBy(String studyLockedBy) {
         this.studyLockedBy = studyLockedBy;
     }
+    /**
+     * @return the trialCategory
+     */
+    public String getTrialCategory() {
+        return trialCategory;
+    }
+    /**
+     * @param trialCategory the trialCategory to set
+     */
+    public void setTrialCategory(String trialCategory) {
+        this.trialCategory = trialCategory;
+    }
+    
 }

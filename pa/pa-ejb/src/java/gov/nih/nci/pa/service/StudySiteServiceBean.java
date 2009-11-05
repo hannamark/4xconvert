@@ -331,7 +331,7 @@ public class StudySiteServiceBean
             + " join sp.documentWorkflowStatuses as dws  "
             + " where spart.localStudyProtocolIdentifier = :localStudyProtocolIdentifier "
             + " and spart.functionalCode = '"
-            +   StudySiteFunctionalCode.LEAD_ORGANIZATION  + "'"
+            +   StudySiteFunctionalCode.getByCode(dto.getFunctionalCode().getCode()) + "'"
             + " and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'"
             + " and sp.statusCode ='" + ActStatusCode.ACTIVE + "'"
             + " and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
@@ -348,15 +348,23 @@ public class StudySiteServiceBean
 
         // step 3: query the result
         queryList = query.list();
-        for (StudySite sp : queryList) {
-            //When create DTO get Id will be null and if queryList is having value then its duplicate
-            //When update check if the record is same if not then throw ex
-            if ((dto.getIdentifier() == null) 
-                    || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
-                throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
-                        + "Lead Organization Trial Identifier for the selected Lead Organization");
+        if (StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode().equalsIgnoreCase(dto.getFunctionalCode().getCode())) {
+            for (StudySite sp : queryList) {
+                //When create DTO get Id will be null and if queryList is having value then its duplicate
+                //When update check if the record is same if not then throw ex
+                if ((dto.getIdentifier() == null) 
+                        || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
+                    throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
+                            + "Lead Organization Trial Identifier for the selected Lead Organization");
+                }
             }
         }
+        if (StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equalsIgnoreCase(dto.getFunctionalCode().getCode())
+                && PAUtil.isListNotEmpty(queryList)) {
+                throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
+                        + "NCT Trial Identifier.");
+        }
+
         getLogger().info("Leaving enforceNoDuplicateTrial..");
 
     }
@@ -477,6 +485,12 @@ public class StudySiteServiceBean
         }
         return studySiteDTOList;
     }
-
-
+    /**
+     * @param dto dto
+     * @throws PAException e
+     */
+    public void validate(StudySiteDTO dto) throws PAException {
+        enforceNoDuplicateTrial(dto);    
+    }
+    
 }

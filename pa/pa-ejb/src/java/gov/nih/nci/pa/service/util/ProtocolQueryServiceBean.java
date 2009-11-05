@@ -528,8 +528,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         try {
             where.append("where 1 = 1 ");
             if (studyProtocolQueryCriteria.getStudyProtocolId() != null) {
-                where.append(" and sp.id = ").append(
-                        studyProtocolQueryCriteria.getStudyProtocolId());
+                where.append(" and sp.id = ").append(studyProtocolQueryCriteria.getStudyProtocolId());
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getOfficialTitle())) {
                 where.append(" and upper(sp.officialTitle)  like '%"
@@ -539,8 +538,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
             }
             if (StringUtils.isNotBlank(studyProtocolQueryCriteria.getPhaseCode())) {
                 where.append(" and sp.phaseCode  = '"
-                        + PhaseCode.getByCode(studyProtocolQueryCriteria
-                                .getPhaseCode()) + "'");
+                        + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode()) + "'");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
                 where.append(" and upper(sp.identifier)  like '%"
@@ -576,7 +574,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 // added for Registry Trial Search
                 if (studyProtocolQueryCriteria.getMyTrialsOnly() != null
                         && PAUtil.isNotEmpty(studyProtocolQueryCriteria.getUserLastCreated())) {
-
                     if (studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
                             where.append(" and sp.userLastCreated = '").append(
                                     studyProtocolQueryCriteria.getUserLastCreated() + "'");
@@ -586,7 +583,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                             + "                where dws.studyProtocol = dws1.studyProtocol )"
                                             + " or dws.id is null ) ");
                     } else if (!studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
-
                             where.append(" and ((sp.userLastCreated = '").append(
                                     studyProtocolQueryCriteria.getUserLastCreated() + "'");
                             where.append(" and dws.statusCode <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
@@ -594,7 +590,6 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                                             + "                where dws.studyProtocol = dws1.studyProtocol )"
                                             + " or dws.id is null )) ");
-
                             where.append(" or (sp.userLastCreated <> '").append(
                                     studyProtocolQueryCriteria.getUserLastCreated() + "'");
                             where.append(" and dws.statusCode not in('" + DocumentWorkflowStatusCode.REJECTED + "',"
@@ -658,8 +653,14 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                    + StudySiteFunctionalCode.LEAD_ORGANIZATION + "'");
            where.append(" and (sc.roleCode ='"
                    + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' or sc.studyProtocol is null) ");
-
            where.append(" and sp.statusCode ='" + ActStatusCode.ACTIVE + "'");
+           if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getTrialCategory())) {
+               if (studyProtocolQueryCriteria.getTrialCategory().equalsIgnoreCase("p")) {
+                   where.append(" and sp.proprietaryTrialIndicator is true");
+               } else if (studyProtocolQueryCriteria.getTrialCategory().equalsIgnoreCase("n")) {
+                   where.append(" and (sp.proprietaryTrialIndicator is false or sp.proprietaryTrialIndicator is null)");
+               }
+           }
            addSubQueries(studyProtocolQueryCriteria, where);
         } catch (Exception e) {
             LOG.error("General error in while create where cluase", e);

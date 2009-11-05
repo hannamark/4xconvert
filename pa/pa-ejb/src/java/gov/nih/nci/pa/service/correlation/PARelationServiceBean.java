@@ -91,12 +91,12 @@ import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.util.ArrayList;
@@ -129,18 +129,13 @@ public class PARelationServiceBean {
         if (studyProtocolId == null) {
             throw new PAException("Study Protocol Identifer is null");
         }
-        StudyProtocolDTO spDTO = PoPaServiceBeanLookup.getStudyProtocolService().getStudyProtocol(
-                IiConverter.convertToStudyProtocolIi(studyProtocolId));
-        if (spDTO == null) {
-            throw new PAException("No Study Protocol found for = " + studyProtocolId);
-        }
         ClinicalResearchStaffCorrelationServiceBean crs = new ClinicalResearchStaffCorrelationServiceBean();
         Long crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifer);
         StudyContactDTO scDTO = new StudyContactDTO();
         scDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(crsId));
         scDTO.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         scDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
-        scDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+        scDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
         // set DSET
         // set the DSET
         ArrayList<String> emailList = new ArrayList<String>();
@@ -151,7 +146,7 @@ public class PARelationServiceBean {
         list = DSetConverter.convertListToDSet(emailList, "EMAIL", list);
         list = DSetConverter.convertListToDSet(telList, "PHONE", list);
         scDTO.setTelecomAddresses(list);
-        PoPaServiceBeanLookup.getStudyContactService().create(scDTO);
+        PaRegistry.getStudyContactService().create(scDTO);
     }
 
     /**

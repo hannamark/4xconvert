@@ -118,6 +118,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceRemote;
@@ -1082,4 +1083,66 @@ public class PAServiceUtils {
          }
       }
     }
+    /**
+     * @param studySiteAccrualStatusDTO accrualdto
+     * @param studySiteDTO site dto
+     * @return errorMsg
+     */
+      public String validateRecuritmentStatusDateRule(StudySiteAccrualStatusDTO studySiteAccrualStatusDTO,
+            StudySiteDTO studySiteDTO) {
+        StringBuffer errorMsg = new StringBuffer();
+        if (studySiteAccrualStatusDTO != null) {
+            errorMsg.append(PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
+                    ? "Site recruitment Status Code cannot be null , " : "");
+            errorMsg.append(PAUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())
+                    ? "Site recruitment Status Date cannot be null , " : "");
+            if (!PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
+                    && null == RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode())) {
+                errorMsg.append("Please enter valid RecruitmentStatusCode.");
+            }
+            if (!PAUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())) {
+            errorMsg.append(PAUtil.isDateCurrentOrPast(TsConverter.convertToTimestamp(
+                    studySiteAccrualStatusDTO.getStatusDate()))
+                    ? " Site recruitment Status Date cannot be in the future, " : "");
+            }
+        }
+        if (studySiteAccrualStatusDTO != null && studySiteDTO != null) {
+              Timestamp dateOpenedForAccrual = IvlConverter.convertTs().convertLow(studySiteDTO.getAccrualDateRange());
+              Timestamp dateClosedForAccrual = IvlConverter.convertTs().convertHigh(studySiteDTO.getAccrualDateRange());
+              if (dateOpenedForAccrual != null) {
+                  errorMsg.append(PAUtil.isDateCurrentOrPast(dateOpenedForAccrual) 
+                  ? "Date Opened for Accrual cannot be in the future , " : "");
+              }
+              if (dateClosedForAccrual != null) {
+                  errorMsg.append(PAUtil.isDateCurrentOrPast(dateClosedForAccrual)
+                          ? " Date Closed For Accrual cannot be in the future, " : "");
+              }
+              if (dateClosedForAccrual != null && dateOpenedForAccrual == null) {
+                  errorMsg.append("Opened for Accrual Date is  mandatory if Closed for Accrual Date is provided.");
+              }
+              if (dateClosedForAccrual != null  && dateOpenedForAccrual != null 
+                      && dateClosedForAccrual.before(dateOpenedForAccrual)) {
+                 errorMsg.append("Date Closed for Accrual must be same or bigger "
+                         + " than Date Opened for Accrual.");                
+              }
+              if (!PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())) {
+                  String recStatus = CdConverter.convertCdToString(studySiteAccrualStatusDTO.getStatusCode());
+                  if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus) 
+                          || RecruitmentStatusCode.NOT_YET_RECRUITING.getCode().equalsIgnoreCase(recStatus)) {
+                      if (dateOpenedForAccrual != null) {
+                          errorMsg.append("Date Opened for Acrual must be null for ").append(recStatus);
+                      }
+                  }  else if (dateOpenedForAccrual == null) {
+                      errorMsg.append("Date Opened for Acrual must be not null for ").append(recStatus);
+                  }
+                  if ((RecruitmentStatusCode.TERMINATED_RECRUITING.getCode().equalsIgnoreCase(recStatus)
+                          || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus)) 
+                          && dateClosedForAccrual == null) {
+                         errorMsg.append("Date Closed for Acrual must not be null for ").append(recStatus);
+                  }
+              }
+
+          }
+        return errorMsg.toString();
+      }
  }

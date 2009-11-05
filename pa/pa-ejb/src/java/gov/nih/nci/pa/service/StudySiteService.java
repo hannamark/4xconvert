@@ -78,11 +78,11 @@
 */
 package gov.nih.nci.pa.service;
 
-import java.util.List;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+
+import java.util.List;
 
 /**
  * @author Bala Nair
@@ -103,5 +103,10 @@ public interface StudySiteService extends RolePaService<StudySiteDTO> {
      */
     List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams) throws PAException,
     TooManyResultsException; 
-   
+    /**
+     * 
+     * @param dto dto
+     * @throws PAException e
+     */
+    void validate(StudySiteDTO dto) throws PAException;
 }

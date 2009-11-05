@@ -189,7 +189,12 @@ function resetValues(){
                 <td>
                    <s:select headerKey="" headerValue="Both" id="submissionType" name="criteria.submissionType" list="#submissionTypeValues"  value="criteria.submissionType" cssStyle="width:206px" />
                 </td>                  
-                        
+                <td scope="row" class="label">
+                    <label for="trialCategory"> <fmt:message key="studyProtocol.trialCategorySearch"/></label>                        
+                </td>
+                <td>
+                   <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Proprietary','n':'Non Proprietary'}"  value="criteria.trialCategory" cssStyle="width:206px" />
+                </td>        
             </tr>
         </table>
         <div class="actionsrow">

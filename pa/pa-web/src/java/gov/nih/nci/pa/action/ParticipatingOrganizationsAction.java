@@ -97,13 +97,11 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -117,7 +115,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
-import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -172,7 +169,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     OrganizationCorrelationServiceRemote oCService;
     CorrelationUtilsRemote cUtils;
     private StudyProtocolServiceRemote studyProtocolService;
-    private StudySiteOverallStatusServiceLocal studySiteOverallStatusService;
     private Ii spIi;
     List<PaOrganizationDTO> organizationList = null;
     private OrganizationDTO selectedOrgDTO = null;
@@ -222,7 +218,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
         studyProtocolService =  PaRegistry.getStudyProtocolService();
-        studySiteOverallStatusService = PaRegistry.getStudySiteOverallStatusService();
     }
 
     /**
@@ -349,8 +344,24 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 return;
             }
         }
+        createStudySiteAccrualStatus(sp.getIdentifier());
+        tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
+        if (PAUtil.isNotEmpty(tab.getFacilityOrganization().getName())) {
+            setOrganizationName("for " + tab.getFacilityOrganization().getName());
+        }
+        setStatusCode(sp.getStatusCode().getCode());
+        setCurrentAction("edit");
+    }
+
+    /**
+     * @param sp
+     * @throws PAException
+     */
+    private void createStudySiteAccrualStatus(Ii studySiteIi)
+            throws PAException {
         StudySiteAccrualStatusDTO currentStatus = ssasService
-                .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
+                .getCurrentStudySiteAccrualStatusByStudySite(studySiteIi);
         if (currentStatus == null || currentStatus.getStatusCode() == null 
                 || currentStatus.getStatusDate() == null 
                 || !currentStatus.getStatusCode().getCode().equals(recStatus) 
@@ -360,16 +371,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                  ssas.setIdentifier(IiConverter.convertToIi((Long) null));
                  ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(recStatus)));
                  ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
-                 ssas.setStudySiteIi(sp.getIdentifier());
+                 ssas.setStudySiteIi(studySiteIi);
                  ssas = ssasService.createStudySiteAccrualStatus(ssas);
         }
-        tab.setStudyParticipationId(IiConverter.convertToLong(sp.getIdentifier()));
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
-        if (PAUtil.isNotEmpty(tab.getFacilityOrganization().getName())) {
-            setOrganizationName("for " + tab.getFacilityOrganization().getName());
-        }
-        setStatusCode(sp.getStatusCode().getCode());
-        setCurrentAction("edit");
     }
 
     /**
@@ -1294,11 +1298,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             personContactWebDTO.setSelectedPersId(Long.valueOf(per.getIdentifier()));
             personContactWebDTO.setFullName(per.getFullName());
             
-            //get siteOverallStatus;
-            StudySiteOverallStatusDTO siteStatusDTO = studySiteOverallStatusService.getCurrentByStudySite(
-                    IiConverter.convertToStudySiteOverallStatusIi(studySiteIdentifier));
-            statusCode =  siteStatusDTO.getStatusCode().getCode();
-            recStatusDate = TsConverter.convertToString(siteStatusDTO.getStatusDate());
+            StudySiteAccrualStatusDTO status = ssasService
+            .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteAccuralStatusIi(
+                    studySiteIdentifier));
+            if (status != null) {
+                this.setRecStatus(status.getStatusCode().getCode());
+                this.setRecStatusDate(TsConverter.convertToTimestamp(status.getStatusDate()).toString());
+            }
         } catch (PAException e) {
             LOG.equals(e);
         }
@@ -1478,13 +1484,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         } else {
             sPartService.update(siteDTO);
         }
-        //save studySiteOverallStatus always create new
-        StudySiteOverallStatusDTO siteOverallStatusDTO = new StudySiteOverallStatusDTO();
-        siteOverallStatusDTO.setStatusCode(CdConverter.convertStringToCd(statusCode));
-        siteOverallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
-        siteOverallStatusDTO.setStudySiteIdentifier(IiConverter.
-                convertToStudySiteIi(studySiteIdentifier));
-        studySiteOverallStatusService.create(siteOverallStatusDTO);
+        createStudySiteAccrualStatus(IiConverter.convertToStudySiteIi(studySiteIdentifier));
         
         //save the PI check if PI is there
         List<StudySiteContactDTO> contactDTOList = sPartContactService.getByStudySite(
@@ -1539,8 +1539,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         if (personContactWebDTO.getSelectedPersId() == null) {
             addFieldError("personContactWebDTO.selectedPersId", getText("error.selectedPersId.required"));
         }
-        if (PAUtil.isEmpty(statusCode)) {
-            addFieldError("statusCode", getText("error.statusCode.required"));
+        if (PAUtil.isEmpty(recStatus)) {
+            addFieldError("recStatus", getText("error.participatingOrganizations.recruitmentStatus"));
         } 
         String err = "error.submit.invalidDate";      // validate date and its format
         if (!PAUtil.isValidDate(recStatusDate)) {
@@ -1548,23 +1548,25 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         } else if (PAUtil.isDateCurrentOrPast(recStatusDate)) {
                 addFieldError(REC_STATUS_DATE, getText("error.submit.invalidStatusDate"));
         }
+        String strDateOpenedForAccrual = "dateOpenedForAccrual";
         if (PAUtil.isNotEmpty(dateOpenedForAccrual)) {
                 if (!PAUtil.isValidDate(dateOpenedForAccrual)) {
-                    addFieldError("dateOpenedForAccrual", getText(err));
+                    addFieldError(strDateOpenedForAccrual, getText(err));
                 } else if (PAUtil.isDateCurrentOrPast(dateOpenedForAccrual)) {
-                    addFieldError("dateOpenedForAccrual", getText("error.submit.invalidStatusDate"));
+                    addFieldError(strDateOpenedForAccrual, getText("error.submit.invalidStatusDate"));
                 }
         }
+        String strDateClosedForAccrual = "dateClosedForAccrual";
         if (PAUtil.isNotEmpty(dateClosedForAccrual)) {
                 if (!PAUtil.isValidDate(dateClosedForAccrual)) {
-                    addFieldError("dateClosedForAccrual", getText(err));
+                    addFieldError(strDateClosedForAccrual, getText(err));
                 } else if (PAUtil.isDateCurrentOrPast(dateClosedForAccrual)) {
-                    addFieldError("dateClosedForAccrual", getText("error.submit.invalidStatusDate"));
+                    addFieldError(strDateClosedForAccrual, getText("error.submit.invalidStatusDate"));
                 }
         }
         if (PAUtil.isNotEmpty(dateClosedForAccrual)  
             && PAUtil.isEmpty(dateOpenedForAccrual)) {
-                addFieldError("dateOpenedForAccrual", 
+                addFieldError(strDateOpenedForAccrual, 
                         getText("error.proprietary.dateOpenReq"));
         }
         if (PAUtil.isNotEmpty(dateOpenedForAccrual)
@@ -1572,21 +1574,23 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             Timestamp dateOpenedDateStamp = PAUtil.dateStringToTimestamp(dateOpenedForAccrual);
             Timestamp dateClosedDateStamp = PAUtil.dateStringToTimestamp(dateClosedForAccrual);
             if (dateClosedDateStamp.before(dateOpenedDateStamp)) {
-                addFieldError("dateClosedForAccrual", 
+                addFieldError(strDateClosedForAccrual, 
                         getText("error.proprietary.dateClosedAccrualBigger"));                
             }
         }
-        if (studySiteIdentifier != null && PAUtil.isNotEmpty(statusCode) 
-                && PAUtil.isNotEmpty(recStatusDate)) {
-            StudySiteOverallStatusDTO siteOverallStatusDTO = new StudySiteOverallStatusDTO();
-            siteOverallStatusDTO.setStatusCode(CdConverter.convertStringToCd(statusCode));
-            siteOverallStatusDTO.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
-            siteOverallStatusDTO.setStudySiteIdentifier(IiConverter.
-                    convertToStudySiteIi(studySiteIdentifier));
-            try {
-                studySiteOverallStatusService.validate(siteOverallStatusDTO);
-            } catch (PAException e) {
-                addActionError(e.getMessage());
+        if (PAUtil.isNotEmpty(recStatus)) {
+            if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus) 
+                    || RecruitmentStatusCode.NOT_YET_RECRUITING.getCode().equalsIgnoreCase(recStatus)) {
+                if (PAUtil.isNotEmpty(dateOpenedForAccrual)) {
+                    addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be null for " + recStatus);
+                }
+            }  else if (PAUtil.isEmpty(dateOpenedForAccrual)) {
+                addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be not null for " + recStatus);
+            }
+            if ((RecruitmentStatusCode.TERMINATED_RECRUITING.getCode().equalsIgnoreCase(recStatus)
+                    || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus)) 
+                    && PAUtil.isEmpty(dateClosedForAccrual)) {
+                addFieldError(strDateClosedForAccrual, "Date Closed for Acrual must not be null for " + recStatus);
             }
         }
 
@@ -1597,14 +1601,14 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     public String historyPopup()  {
         String studySiteId = ServletActionContext.getRequest().getParameter("studySiteId");
         overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
-        List<StudySiteOverallStatusDTO> isoList;
+        List<StudySiteAccrualStatusDTO> isoList;
         try {
-            isoList = studySiteOverallStatusService.getByStudySite(
+            isoList = ssasService.getStudySiteAccrualStatusByStudySite(
                     IiConverter.convertToStudySiteIi(Long.valueOf(studySiteId)));
             StudyOverallStatusWebDTO studySiteStatus = null;
-            for (StudySiteOverallStatusDTO iso : isoList) {
+            for (StudySiteAccrualStatusDTO iso : isoList) {
                 studySiteStatus = new StudyOverallStatusWebDTO();
-                studySiteStatus.setStatusCode(StudyStatusCode.getByCode(iso
+                studySiteStatus.setStatusCode(RecruitmentStatusCode.getByCode(iso
                     .getStatusCode().getCode()).getDisplayName());
                 studySiteStatus.setStatusDate(PAUtil.normalizeDateString(
                 TsConverter.convertToTimestamp(iso.getStatusDate()).toString()));

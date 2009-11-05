@@ -158,43 +158,43 @@
        </td>
     </tr>    
     <tr>
-        <td scope="row" class="label">
-            <label for="statusCode"> <fmt:message key="site.currentTrialStatus"/><span class="required">*</span></label>
-        </td>
-        <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudySiteStatusCode@getDisplayNames()" />
-        <td>         
-          <table>   
-            <tr> 
-            <td>                                 
-                <s:select headerKey="" headerValue="--Select--" name="statusCode" list="#statusCodeValues"  value="statusCode" cssStyle="width:206px" />
-                <span class="formErrorMsg"> 
-                <s:fielderror>
-                <s:param>statusCode</s:param>
-             </s:fielderror>                            
-             </span>
-            </td>
-            <td>
-            <ul class="btnrow">         
+        <td scope="row" class="label"><s:label for="srs">Site Recruitment Status:</s:label><span class="required">*</span></td>
+            <s:set name="recruitmentStatusValues" 
+                           value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
+        <td>
+        <table>
+            <tr>
+                <td class="value" colspan="2"><s:select headerKey="" headerValue="--Select--"
+                    name="recStatus" list="#recruitmentStatusValues" cssStyle="text-align:left;"/>
+                    <span class="formErrorMsg"> 
+                              <s:fielderror>
+                              <s:param>recStatus</s:param>
+                              </s:fielderror>                            
+                    </span>
+                </td>
+                <td>
+                <ul class="btnrow">         
                     <li style="padding-left:0"><a href="#" class="btn" onclick="lookupStatusHistory()"><span class="btn_img"><span class="history">History</span></span></a></li>
                 </ul>
                 </td>
-             </tr>
-             </table>
+            </tr>
+         </table>
         </td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="statusDate">
-            <fmt:message key="site.currentTrialStatusDate" /><span class="required">*</span></label></td>
-        <td class="value"><s:textfield name="recStatusDate" id="recStatusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                <a href="javascript:showCal('Cal1')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy) 
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                            <s:param>recStatusDate</s:param>
-                        </s:fielderror>                            
-                    </span>
-                </td>
-        </tr>
+        <td scope="row" class="label"><s:label for="srsd">Site Recruitment Status Date:</s:label><span class="required">*</span></td>
+        <td class="value" colspan="2">
+            <s:textfield name="recStatusDate" maxlength="10" size="10" readonly="true"  cssStyle="text-align:left;width:70px;float:left"/>
+            <a href="javascript:showCal('Cal1')">
+            <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
+            <span class="formErrorMsg"> 
+            <s:fielderror>
+            <s:param>recStatusDate</s:param>
+            </s:fielderror>                            
+            </span>                            
+         </td>           
+    </tr>
+
         <tr>
             <td scope="row" class="label"><label for="startDate"><fmt:message
                 key="proprietary.trial.dateOpenedforAccrual" /></label></td>
