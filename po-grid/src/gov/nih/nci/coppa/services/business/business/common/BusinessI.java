@@ -13,6 +13,30 @@ import java.rmi.RemoteException;
 public interface BusinessI {
 
   /**
+   * searchCorrelationsWithEntities
+   *
+   * @param correlationNode
+   * @param players
+   * @param scopers
+   * @param limitOffset
+   * @throws TooManyResultsFault
+   *	
+   */
+  public gov.nih.nci.coppa.po.CorrelationNode[] searchCorrelationsWithEntities(gov.nih.nci.coppa.po.CorrelationNode correlationNode,gov.nih.nci.coppa.po.Bl players,gov.nih.nci.coppa.po.Bl scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
+
+  /**
+   * searchEntitiesWithCorrelations
+   *
+   * @param entityNode
+   * @param players
+   * @param scopers
+   * @param limitOffset
+   * @throws TooManyResultsFault
+   *	
+   */
+  public gov.nih.nci.coppa.po.EntityNode[] searchEntitiesWithCorrelations(gov.nih.nci.coppa.po.EntityNode entityNode,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
+
+  /**
    * getEntityByIdWithCorrelations
    *
    * @param id

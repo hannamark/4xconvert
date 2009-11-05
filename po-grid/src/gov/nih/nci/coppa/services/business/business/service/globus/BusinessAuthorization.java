@@ -74,6 +74,14 @@ public class BusinessAuthorization implements PDP {
 	public void authorizeGetCorrelationsByPlayerIdsWithEntities(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
+	   				
+	public void authorizeSearchCorrelationsWithEntities(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
+	   				
+	public void authorizeSearchEntitiesWithCorrelations(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -96,6 +104,12 @@ public class BusinessAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("getCorrelationsByPlayerIdsWithEntities")){
 			authorizeGetCorrelationsByPlayerIdsWithEntities(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("searchCorrelationsWithEntities")){
+			authorizeSearchCorrelationsWithEntities(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("searchEntitiesWithCorrelations")){
+			authorizeSearchEntitiesWithCorrelations(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

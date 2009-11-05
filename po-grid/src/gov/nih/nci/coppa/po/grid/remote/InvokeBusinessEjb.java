@@ -1,7 +1,10 @@
 package gov.nih.nci.coppa.po.grid.remote;
 
+import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.EntityNodeDto;
@@ -17,7 +20,7 @@ public class InvokeBusinessEjb implements BusinessServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public CorrelationNodeDTO getCorrelationByIdWithEntities(Ii id, boolean players, boolean scopers)
+    public CorrelationNodeDTO getCorrelationByIdWithEntities(Ii id, Bl players, Bl scopers)
             throws NullifiedRoleException {
         try {
             return GridSecurityJNDIServiceLocator
@@ -32,7 +35,7 @@ public class InvokeBusinessEjb implements BusinessServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, boolean players, boolean scopers)
+    public CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, Bl players, Bl scopers)
             throws NullifiedRoleException {
         try {
             return GridSecurityJNDIServiceLocator
@@ -48,7 +51,7 @@ public class InvokeBusinessEjb implements BusinessServiceRemote {
      * {@inheritDoc}
      */
     public CorrelationNodeDTO[] getCorrelationsByPlayerIdsWithEntities(Cd type,
-            Ii[] ids, boolean players, boolean scopers)
+            Ii[] ids, Bl players, Bl scopers)
             throws NullifiedRoleException {
         try {
             return GridSecurityJNDIServiceLocator
@@ -70,6 +73,32 @@ public class InvokeBusinessEjb implements BusinessServiceRemote {
                 .newInstance().getBusinessService().getEntityByIdWithCorrelations(id, players, scopers);
         } catch (NullifiedEntityException e) {
             throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public EntityNodeDto[] searchEntitiesWithCorrelations(EntityNodeDto searchNode,
+            Cd[] players, Cd[] scopers, LimitOffset page) throws TooManyResultsException {
+        try {
+            return GridSecurityJNDIServiceLocator
+                .newInstance().getBusinessService().searchEntitiesWithCorrelations(searchNode, players, scopers, page);
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public CorrelationNodeDTO[] searchCorrelationsWithEntities(CorrelationNodeDTO searchNode,
+            Bl players, Bl scopers, LimitOffset page) throws TooManyResultsException {
+        try {
+            return GridSecurityJNDIServiceLocator
+                .newInstance().getBusinessService().searchCorrelationsWithEntities(searchNode, players, scopers, page);
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

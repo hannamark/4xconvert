@@ -8,6 +8,9 @@ import gov.nih.nci.coppa.po.grid.dto.transform.po.CorrelationNodeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.EntityNodeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokeBusinessEjb;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
@@ -36,16 +39,9 @@ public class BusinessImpl extends BusinessImplBase {
   public gov.nih.nci.coppa.po.EntityNode getEntityByIdWithCorrelations(gov.nih.nci.coppa.po.Id id,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
       try {
             Ii ii = IITransformer.INSTANCE.toDto(id);
-            Cd[] playerArray = null;
-            Cd[] scoperArray = null; 
-            List<Cd> myPlayers = CDTransformer.INSTANCE.convert(players);
-            if (myPlayers != null) {
-                playerArray = myPlayers.toArray(new Cd[myPlayers.size()]);
-            }
-            List<Cd> myScopers = CDTransformer.INSTANCE.convert(scopers);
-            if (myScopers != null) {
-                scoperArray = myScopers.toArray(new Cd[myScopers.size()]);
-            }
+            Cd[] playerArray = transformFromPoCd(players);
+            Cd[] scoperArray = transformFromPoCd(scopers);
+           
             EntityNodeDto entNodeDto = businessService.getEntityByIdWithCorrelations(ii, 
                     playerArray, scoperArray);
             return EntityNodeTransformer.INSTANCE.toXml(entNodeDto);
@@ -62,7 +58,7 @@ public class BusinessImpl extends BusinessImplBase {
           Bl myScoper = BLTransformer.INSTANCE.toDto(scoper);
          
           CorrelationNodeDTO corrNodeDto = businessService
-              .getCorrelationByIdWithEntities(ii, myPlayer.getValue(), myScoper.getValue());
+              .getCorrelationByIdWithEntities(ii, myPlayer, myScoper);
           return CorrelationNodeTransformer.INSTANCE.toXml(corrNodeDto);
       } catch (Exception e) {
           logger.error("Error in getting correlation node dto.", e);
@@ -81,7 +77,7 @@ public class BusinessImpl extends BusinessImplBase {
           Bl myScoper = BLTransformer.INSTANCE.toDto(scoper);
          
           CorrelationNodeDTO[] corrNodeDtos = businessService
-              .getCorrelationsByIdsWithEntities(idsArray, myPlayer.getValue(), myScoper.getValue());
+              .getCorrelationsByIdsWithEntities(idsArray, myPlayer, myScoper);
           
           CorrelationNode[] corrNodes = new CorrelationNode[corrNodeDtos.length];
           int j = 0;
@@ -108,7 +104,7 @@ public class BusinessImpl extends BusinessImplBase {
           Bl myScoper = BLTransformer.INSTANCE.toDto(scoper);
          
           CorrelationNodeDTO[] corrNodeDtos = businessService
-              .getCorrelationsByPlayerIdsWithEntities(myType, idsArray, myPlayer.getValue(), myScoper.getValue());
+              .getCorrelationsByPlayerIdsWithEntities(myType, idsArray, myPlayer, myScoper);
           
           CorrelationNode[] corrNodes = new CorrelationNode[corrNodeDtos.length];
           int j = 0;
@@ -119,6 +115,66 @@ public class BusinessImpl extends BusinessImplBase {
       
       } catch (Exception e) {
           logger.error("Error in getting correlation node dto.", e);
+          throw FaultUtil.reThrowRemote(e);
+      }
+  }
+
+  public gov.nih.nci.coppa.po.CorrelationNode[] searchCorrelationsWithEntities(gov.nih.nci.coppa.po.CorrelationNode correlationNode,gov.nih.nci.coppa.po.Bl players,gov.nih.nci.coppa.po.Bl scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+      try {
+          LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
+          Bl myPlayer = BLTransformer.INSTANCE.toDto(players);
+          Bl myScoper = BLTransformer.INSTANCE.toDto(scopers);
+          CorrelationNodeDTO corrNodeIso = CorrelationNodeTransformer.INSTANCE.toDto(correlationNode);
+          CorrelationNodeDTO[] results = businessService
+              .searchCorrelationsWithEntities(corrNodeIso, myPlayer, myScoper, limitOffsetDTO);
+          if (results == null) {
+              return null;
+          }
+          logger.debug("CorrelationNode(s) found from COPPA:" + results.length);
+          CorrelationNode[] returnResults = new CorrelationNode[results.length];
+          int i = 0;
+          for (CorrelationNodeDTO corrRes : results) {
+              gov.nih.nci.coppa.po.CorrelationNode corrResTr = CorrelationNodeTransformer.INSTANCE.toXml(corrRes);
+              returnResults[i++] = corrResTr;
+          }
+          return returnResults;
+      } catch (Exception e) {
+          logger.error("Error in searching CorrelationNode(s).", e);
+          throw FaultUtil.reThrowRemote(e);
+      }
+  }
+  
+  private Cd[] transformFromPoCd(gov.nih.nci.coppa.po.Cd[] items) throws DtoTransformException {
+      Cd[] returnArray = null; 
+      List<Cd> myItems = CDTransformer.INSTANCE.convert(items);
+      if (myItems != null) {
+          returnArray = myItems.toArray(new Cd[myItems.size()]);
+      }
+      
+      return returnArray;
+  }
+
+  public gov.nih.nci.coppa.po.EntityNode[] searchEntitiesWithCorrelations(gov.nih.nci.coppa.po.EntityNode entityNode,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+      try {
+          LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
+          Cd[] playerArray = transformFromPoCd(players);
+          Cd[] scoperArray = transformFromPoCd(scopers);
+          EntityNodeDto entityNodeIso = EntityNodeTransformer.INSTANCE.toDto(entityNode);
+          EntityNodeDto[] results = businessService
+              .searchEntitiesWithCorrelations(entityNodeIso, playerArray, scoperArray, limitOffsetDTO);
+          if (results == null) {
+              return null;
+          }
+          logger.debug("EntityNode(s) found from COPPA:" + results.length);
+          gov.nih.nci.coppa.po.EntityNode[] returnResults = new gov.nih.nci.coppa.po.EntityNode[results.length];
+          int i = 0;
+          for (EntityNodeDto entRes : results) {
+              gov.nih.nci.coppa.po.EntityNode entResTr = EntityNodeTransformer.INSTANCE.toXml(entRes);
+              returnResults[i++] = entResTr;
+          }
+          return returnResults;
+      } catch (Exception e) {
+          logger.error("Error in searching EntityNode(s).", e);
           throw FaultUtil.reThrowRemote(e);
       }
   }

@@ -26,6 +26,18 @@ public class BusinessProviderImpl{
 	}
 	
 
+    public gov.nih.nci.coppa.services.business.business.stubs.SearchCorrelationsWithEntitiesResponse searchCorrelationsWithEntities(gov.nih.nci.coppa.services.business.business.stubs.SearchCorrelationsWithEntitiesRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.business.business.stubs.SearchCorrelationsWithEntitiesResponse boxedResult = new gov.nih.nci.coppa.services.business.business.stubs.SearchCorrelationsWithEntitiesResponse();
+    boxedResult.setCorrelationNode(impl.searchCorrelationsWithEntities(params.getCorrelationNode().getCorrelationNode(),params.getPlayers().getBl(),params.getScopers().getBl(),params.getLimitOffset().getLimitOffset()));
+    return boxedResult;
+  }
+
+    public gov.nih.nci.coppa.services.business.business.stubs.SearchEntitiesWithCorrelationsResponse searchEntitiesWithCorrelations(gov.nih.nci.coppa.services.business.business.stubs.SearchEntitiesWithCorrelationsRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.business.business.stubs.SearchEntitiesWithCorrelationsResponse boxedResult = new gov.nih.nci.coppa.services.business.business.stubs.SearchEntitiesWithCorrelationsResponse();
+    boxedResult.setEntityNode(impl.searchEntitiesWithCorrelations(params.getEntityNode().getEntityNode(),params.getPlayers().getCd(),params.getScopers().getCd(),params.getLimitOffset().getLimitOffset()));
+    return boxedResult;
+  }
+
     public gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsResponse getEntityByIdWithCorrelations(gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
     gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsResponse boxedResult = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsResponse();
     boxedResult.setEntityNode(impl.getEntityByIdWithCorrelations(params.getId().getId(),params.getPlayers().getCd(),params.getScopers().getCd()));

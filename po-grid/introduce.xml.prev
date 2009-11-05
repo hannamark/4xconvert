@@ -1562,31 +1562,57 @@
      </ns348:Exceptions>
      <ns375:Extensions xsi:type="ns375:ExtensionsType" xmlns:ns375="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
     </ns348:Method>
+    <ns348:Method description="searchCorrelationsWithEntities" isImported="false" isProvided="false" name="searchCorrelationsWithEntities" xsi:type="ns348:MethodType">
+     <ns348:Inputs>
+      <ns348:Input qName="ns376:CorrelationNode" description="" isArray="false" name="correlationNode" xmlns:ns376="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns377:Bl" description="" isArray="false" name="players" xmlns:ns377="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns378:Bl" description="" isArray="false" name="scopers" xmlns:ns378="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns379:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns379="http://common.coppa.nci.nih.gov"/>
+     </ns348:Inputs>
+     <ns348:Output qName="ns380:CorrelationNode" description="" isArray="true" xmlns:ns380="http://po.coppa.nci.nih.gov"/>
+     <ns348:Exceptions>
+      <ns348:Exception description="" name="TooManyResultsFault" qname="ns381:TooManyResultsFault" xmlns:ns381="http://enterpriseservices.nci.nih.gov/business/Business/types"/>
+     </ns348:Exceptions>
+     <ns382:Extensions xsi:type="ns382:ExtensionsType" xmlns:ns382="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns348:Method>
+    <ns348:Method description="searchEntitiesWithCorrelations" isImported="false" isProvided="false" name="searchEntitiesWithCorrelations" xsi:type="ns348:MethodType">
+     <ns348:Inputs>
+      <ns348:Input qName="ns383:EntityNode" description="" isArray="false" name="entityNode" xmlns:ns383="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns384:Cd" description="" isArray="true" name="players" xmlns:ns384="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns385:Cd" description="" isArray="true" name="scopers" xmlns:ns385="http://po.coppa.nci.nih.gov"/>
+      <ns348:Input qName="ns386:LimitOffset" description="" isArray="false" name="limitOffset" xmlns:ns386="http://common.coppa.nci.nih.gov"/>
+     </ns348:Inputs>
+     <ns348:Output qName="ns387:EntityNode" description="" isArray="true" xmlns:ns387="http://po.coppa.nci.nih.gov"/>
+     <ns348:Exceptions>
+      <ns348:Exception description="" name="TooManyResultsFault" qname="ns388:TooManyResultsFault" xmlns:ns388="http://enterpriseservices.nci.nih.gov/business/Business/types"/>
+     </ns348:Exceptions>
+     <ns389:Extensions xsi:type="ns389:ExtensionsType" xmlns:ns389="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+    </ns348:Method>
    </ns348:Methods>
-   <ns376:ResourcePropertiesList xsi:type="ns376:ResourcePropertiesListType" xmlns:ns376="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
-   <ns377:ServiceSecurity xsi:type="ns377:ServiceSecurity" xmlns:ns377="gme://gov.nih.nci.cagrid.introduce/1/Security">
-    <ns377:SecuritySetting xsi:type="ns377:SecuritySetting">Custom</ns377:SecuritySetting>
-    <ns377:TransportLevelSecurity xsi:type="ns377:TransportLevelSecurity">
-     <ns377:CommunicationMethod xsi:type="ns377:CommunicationMethod">Privacy</ns377:CommunicationMethod>
-    </ns377:TransportLevelSecurity>
-    <ns377:RunAsMode xsi:type="ns377:RunAsMode">System</ns377:RunAsMode>
-    <ns377:AnonymousClients xsi:type="ns377:AnonymousCommunication">No</ns377:AnonymousClients>
-    <ns377:ServiceAuthorization xsi:type="ns377:ServiceAuthorization">
-     <ns377:NoAuthorization xsi:type="ns377:NoAuthorization"/>
-    </ns377:ServiceAuthorization>
-   </ns377:ServiceSecurity>
+   <ns390:ResourcePropertiesList xsi:type="ns390:ResourcePropertiesListType" xmlns:ns390="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns391:ServiceSecurity xsi:type="ns391:ServiceSecurity" xmlns:ns391="gme://gov.nih.nci.cagrid.introduce/1/Security">
+    <ns391:SecuritySetting xsi:type="ns391:SecuritySetting">Custom</ns391:SecuritySetting>
+    <ns391:TransportLevelSecurity xsi:type="ns391:TransportLevelSecurity">
+     <ns391:CommunicationMethod xsi:type="ns391:CommunicationMethod">Privacy</ns391:CommunicationMethod>
+    </ns391:TransportLevelSecurity>
+    <ns391:RunAsMode xsi:type="ns391:RunAsMode">System</ns391:RunAsMode>
+    <ns391:AnonymousClients xsi:type="ns391:AnonymousCommunication">No</ns391:AnonymousClients>
+    <ns391:ServiceAuthorization xsi:type="ns391:ServiceAuthorization">
+     <ns391:NoAuthorization xsi:type="ns391:NoAuthorization"/>
+    </ns391:ServiceAuthorization>
+   </ns391:ServiceSecurity>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
     <ns3:Secure xsi:type="ns3:Secure"/>
    </ns3:ResourceFrameworkOptions>
-   <ns378:Extensions xsi:type="ns378:ExtensionsType" xmlns:ns378="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
+   <ns392:Extensions xsi:type="ns392:ExtensionsType" xmlns:ns392="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
   </ns3:Service>
  </ns3:Services>
- <ns379:Extensions xsi:type="ns379:ExtensionsType" xmlns:ns379="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns379:Extension name="cagrid_metadata" version="1.3" xsi:type="ns379:ExtensionType"/>
- </ns379:Extensions>
- <ns380:ServiceProperties xmlns:ns380="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns380:Property description="The separator used to encord the gridServicePrincipal and grid user's identity when Using the com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" isFromETC="false" key="gridServicePrincipalSeparator" value="||"/>
- </ns380:ServiceProperties>
+ <ns393:Extensions xsi:type="ns393:ExtensionsType" xmlns:ns393="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns393:Extension name="cagrid_metadata" version="1.3" xsi:type="ns393:ExtensionType"/>
+ </ns393:Extensions>
+ <ns394:ServiceProperties xmlns:ns394="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns394:Property description="The separator used to encord the gridServicePrincipal and grid user's identity when Using the com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" isFromETC="false" key="gridServicePrincipalSeparator" value="||"/>
+ </ns394:ServiceProperties>
 </ns1:ServiceDescription>

@@ -178,6 +178,88 @@
           </sequence>
         </complexType>
       </element>
+      <element name="SearchCorrelationsWithEntitiesRequest">
+        <complexType>
+          <sequence>
+            <element name="correlationNode">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:CorrelationNode" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="players">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="scopers">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Bl" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="limitOffset">
+              <complexType>
+                <sequence>
+                  <element ref="ns18:LimitOffset" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="SearchCorrelationsWithEntitiesResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns5:CorrelationNode" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="SearchEntitiesWithCorrelationsRequest">
+        <complexType>
+          <sequence>
+            <element name="entityNode">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:EntityNode" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="players">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Cd" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="scopers">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Cd" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="limitOffset">
+              <complexType>
+                <sequence>
+                  <element ref="ns18:LimitOffset" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="SearchEntitiesWithCorrelationsResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns5:EntityNode" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="BusinessResourceProperties">
         <complexType>
           <sequence />
@@ -210,11 +292,26 @@
   <message name="GetCorrelationsByPlayerIdsWithEntitiesResponse">
     <part name="parameters" element="tns:GetCorrelationsByPlayerIdsWithEntitiesResponse" />
   </message>
+  <message name="SearchCorrelationsWithEntitiesRequest">
+    <part name="parameters" element="tns:SearchCorrelationsWithEntitiesRequest" />
+  </message>
+  <message name="SearchCorrelationsWithEntitiesResponse">
+    <part name="parameters" element="tns:SearchCorrelationsWithEntitiesResponse" />
+  </message>
+  <message name="SearchEntitiesWithCorrelationsRequest">
+    <part name="parameters" element="tns:SearchEntitiesWithCorrelationsRequest" />
+  </message>
+  <message name="SearchEntitiesWithCorrelationsResponse">
+    <part name="parameters" element="tns:SearchEntitiesWithCorrelationsResponse" />
+  </message>
   <message name="NullifiedEntityFaultFaultMessage">
     <part name="fault" element="ns0:NullifiedEntityFault" />
   </message>
   <message name="NullifiedRoleFaultFaultMessage">
     <part name="fault" element="ns0:NullifiedRoleFault" />
+  </message>
+  <message name="TooManyResultsFaultFaultMessage">
+    <part name="fault" element="ns0:TooManyResultsFault" />
   </message>
   <!--============================================================
 
@@ -241,6 +338,16 @@
       <input message="tns:GetCorrelationsByPlayerIdsWithEntitiesRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetCorrelationsByPlayerIdsWithEntitiesRequest" />
       <output message="tns:GetCorrelationsByPlayerIdsWithEntitiesResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/GetCorrelationsByPlayerIdsWithEntitiesResponse" />
       <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/NullifiedRoleFaultFaultMessage" />
+    </operation>
+    <operation name="searchCorrelationsWithEntities">
+      <input message="tns:SearchCorrelationsWithEntitiesRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/SearchCorrelationsWithEntitiesRequest" />
+      <output message="tns:SearchCorrelationsWithEntitiesResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/SearchCorrelationsWithEntitiesResponse" />
+      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/TooManyResultsFaultFaultMessage" />
+    </operation>
+    <operation name="searchEntitiesWithCorrelations">
+      <input message="tns:SearchEntitiesWithCorrelationsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/SearchEntitiesWithCorrelationsRequest" />
+      <output message="tns:SearchEntitiesWithCorrelationsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/SearchEntitiesWithCorrelationsResponse" />
+      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/business/Business/TooManyResultsFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

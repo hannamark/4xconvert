@@ -256,6 +256,10 @@ public class NodeTransformHelper {
      * @throws DtoTransformException if there is an error during transform.
      */
     public static EntityDto toDtoEntity(EntityType content) throws DtoTransformException {
+        if (content == null || content.getContent() == null || content.getContent().isEmpty()) {
+            return null;
+        }
+        
         Entity entity = (Entity) content.getContent().get(0);
         if (entity instanceof Person) {
             return PersonTransformer.INSTANCE.toDto((Person) entity);
