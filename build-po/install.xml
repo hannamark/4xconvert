@@ -1033,6 +1033,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <!-- PO-GRID: reuses the jboss.server.jndi.port -->
             <filter token="pogrid.jndi.principal" value="${pogrid.jndi.principal}"/>
             <filter token="pogrid.jndi.credentials" value="${pogrid.jndi.credentials}"/>
+            <filter token="pogrid.jndi.credentials.encrypted" value="${pogrid.jndi.credentials.encrypted}"/>
           </filterset>
         </copy>
         <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>

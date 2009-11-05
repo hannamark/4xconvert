@@ -52,6 +52,9 @@
                 <ctep.jms.subscription.name>%%ctep.jms.subscription.name%%</ctep.jms.subscription.name>
                 <ctep.jms.topic.connection.factory.name>%%ctep.jms.topic.connection.factory.name%%</ctep.jms.topic.connection.factory.name>
                 <ctep.jms.topic.name>%%ctep.jms.topic.name%%</ctep.jms.topic.name>
+                
+                <gridServicePrincipal>%%pogrid.jndi.principal%%</gridServicePrincipal>
+                <gridServiceCredential>%%pogrid.jndi.credentials.encrypted%%</gridServiceCredential>
             </properties>
         </profile>
         <profile>
