@@ -46,7 +46,7 @@
 			alert("Please enter an IND/IDE number")
 			return false;
 		} else {
-	        var numericExpression = /^[A-Za-z0-9]+$/;
+	        var numericExpression = /^[A-Za-z0-9,._]+$/;
 	         if(!numericExpression.test(number)){
 	         alert("IND/IDE  Number must be alphanumeric");
 	         return false;
