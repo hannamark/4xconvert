@@ -3,20 +3,20 @@
  */
 package gov.nih.nci.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
+import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali
  *
  */
-public class MockStudyObjectiveService extends MockAbstractBaseIsoService <StudyObjectiveDTO> implements StudyObjectiveServiceRemote {
+public class MockStudyObjectiveService extends MockAbstractBaseIsoService <StudyObjectiveDTO> implements StudyObjectiveServiceLocal {
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)

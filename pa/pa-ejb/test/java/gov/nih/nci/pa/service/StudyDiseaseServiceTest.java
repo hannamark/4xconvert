@@ -90,6 +90,7 @@ import gov.nih.nci.pa.domain.StudyDiseaseTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.internal.StudyDiseaseBeanLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -103,8 +104,8 @@ import org.junit.Test;
  *
  */
 public class StudyDiseaseServiceTest {
-    private StudyDiseaseServiceBean bean = new StudyDiseaseServiceBean();
-    private StudyDiseaseServiceRemote remote = bean;
+    private StudyDiseaseBeanLocal bean = new StudyDiseaseBeanLocal();
+    private StudyDiseaseServiceLocal remote = bean;
     private Ii spIi;
     private Ii dIi;
     

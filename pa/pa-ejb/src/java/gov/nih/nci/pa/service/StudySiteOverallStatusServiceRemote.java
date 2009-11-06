@@ -1,9 +1,9 @@
 package gov.nih.nci.pa.service;
 
-import java.util.List;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
+
+import java.util.List;
 
 import javax.ejb.Remote;
 /**

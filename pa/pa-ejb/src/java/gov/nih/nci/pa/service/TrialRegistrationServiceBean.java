@@ -225,7 +225,7 @@ public class TrialRegistrationServiceBean implements TrialRegistrationServiceRem
     @EJB
     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
     @EJB
-    StudyObjectiveServiceRemote studyObjectiveService = null;
+    StudyObjectiveServiceLocal studyObjectiveService = null;
     @EJB
     StudySiteOverallStatusServiceLocal studySiteOverallStatusService = null;
     @EJB

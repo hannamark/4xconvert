@@ -10,10 +10,10 @@ import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.StudyContactServiceBean;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
-import gov.nih.nci.pa.service.StudySiteContactServiceBean;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.internal.StudyContactBeanLocal;
+import gov.nih.nci.pa.service.internal.StudySiteContactBeanLocal;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -26,8 +26,8 @@ public class PersonSynchronizationServiceBeanTest {
 
     private PersonSynchronizationServiceBean bean = new PersonSynchronizationServiceBean();
     private PersonSynchronizationServiceRemote remoteEjb = bean;
-    StudySiteContactServiceLocal spcService = new StudySiteContactServiceBean();
-    StudyContactServiceLocal scService = new StudyContactServiceBean();
+    StudySiteContactServiceLocal spcService = new StudySiteContactBeanLocal();
+    StudyContactServiceLocal scService = new StudyContactBeanLocal();
 
     Ii pid;
     //Session session = null;

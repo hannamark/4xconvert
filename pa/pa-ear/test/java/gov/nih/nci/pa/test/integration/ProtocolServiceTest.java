@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.SessionManagerRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.JNDIUtil;
 
 import java.util.Hashtable;
@@ -93,7 +93,7 @@ import org.junit.Before;
 
 public class ProtocolServiceTest {
     
-    private StudyProtocolServiceRemote bean;
+    private StudyProtocolServiceLocal bean;
     private SessionManagerRemote sessionManager;
     private InitialContext ctx;
     

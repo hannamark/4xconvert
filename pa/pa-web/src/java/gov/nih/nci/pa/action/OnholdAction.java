@@ -82,8 +82,8 @@ import gov.nih.nci.pa.dto.OnholdWebDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyOnholdServiceBean;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.internal.StudyOnholdBeanLocal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,13 +185,13 @@ public class OnholdAction extends AbstractListEditAction {
 
     private void addFieldError(PAFieldException e) {
         switch(e.getFieldNumber()) {
-            case StudyOnholdServiceBean.FN_REASON_CODE:
+            case StudyOnholdBeanLocal.FN_REASON_CODE:
                 addFieldError("onhold.reasonCode", e.getMessage());
                 break;
-            case StudyOnholdServiceBean.FN_DATE_LOW:
+            case StudyOnholdBeanLocal.FN_DATE_LOW:
                 addFieldError("onhold.dateLow", e.getMessage());
                 break;
-            case StudyOnholdServiceBean.FN_DATE_HIGH:
+            case StudyOnholdBeanLocal.FN_DATE_HIGH:
                 addFieldError("onhold.dateHigh", e.getMessage());
                 break;
             default:

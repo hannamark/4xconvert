@@ -78,52 +78,57 @@
 */
 package gov.nih.nci.pa.test.util;
 
-import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceBean;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.DocumentServiceBean;
-import gov.nih.nci.pa.service.DocumentServiceRemote;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceBean;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceBean;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
-import gov.nih.nci.pa.service.StratumGroupServiceBean;
+import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyCheckoutServiceBean;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
-import gov.nih.nci.pa.service.StudyContactServiceRemote;
-import gov.nih.nci.pa.service.StudyDiseaseServiceBean;
-import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
+import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyInboxServiceBean;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
-import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
-import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
-import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
-import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
+import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceBean;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.internal.DocumentBeanLocal;
+import gov.nih.nci.pa.service.internal.StratumGroupBeanLocal;
+import gov.nih.nci.pa.service.internal.StudyDiseaseBeanLocal;
+import gov.nih.nci.pa.service.internal.StudyResourcingBeanLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -167,27 +172,27 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
  */
 public class MockServiceLocator implements ServiceLocator {
 
-    private final StudyProtocolServiceRemote studyProtocolService = new MockStudyProtocolService();
-    private final StudyOverallStatusServiceRemote studyOverallStatusService = new MockStudyOverallStatusService();
-    private final StudySiteServiceRemote studySiteService = new MockStudySiteService();
-    private final StudySiteAccrualStatusServiceRemote studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
+    private final StudyProtocolServiceLocal studyProtocolService = new MockStudyProtocolService();
+    private final StudyOverallStatusServiceLocal studyOverallStatusService = new MockStudyOverallStatusService();
+    private final StudySiteServiceLocal studySiteService = new MockStudySiteService();
+    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
     private final InterventionServiceRemote interventionService = new MockInterventionService();
     private final InterventionAlternateNameServiceRemote interventionAlternateNameService = new MockInterventionAlternateNameService();
-    private final PlannedActivityServiceRemote plannedActivityService = new MockPlannedActivityService();
-    private final StudyOnholdServiceRemote studyOnholdService = new MockStudyOnholdService();
+    private final PlannedActivityServiceLocal plannedActivityService = new MockPlannedActivityService();
+    private final StudyOnholdServiceLocal studyOnholdService = new MockStudyOnholdService();
     private final PAHealthCareProviderRemote healthCareProviderRemote = new MockPAHealthCareProviderService();
     private final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
-    private final StudyDiseaseServiceRemote studyDiseaseService = new StudyDiseaseServiceBean();
+    private final StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();
     private final DiseaseServiceRemote diseaseService = new DiseaseServiceBean();
-    private final DocumentServiceRemote documentService = new DocumentServiceBean();
-    private final StudyMilestoneServiceRemote studyMilestoneService = new MockStudyMilestoneService();
-    private final StudyResourcingServiceRemote studyResourcingService = new StudyResourcingServiceBean();
+    private final DocumentServiceLocal documentService = new DocumentBeanLocal();
+    private final StudyMilestoneServicelocal studyMilestoneService = new MockStudyMilestoneService();
+    private final StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
     private final RegulatoryInformationServiceRemote regulatoryInformationService = new MockRegulatoryInformationService();
     private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
-    private final StudyOutcomeMeasureServiceRemote studyOutcomeMService = new MockStudyOutcomeMeasureService();
-    private final StudyObjectiveServiceRemote studyObjectiveService = new MockStudyObjectiveService();
+    private final StudyOutcomeMeasureServiceLocal studyOutcomeMService = new MockStudyOutcomeMeasureService();
+    private final StudyObjectiveServiceLocal studyObjectiveService = new MockStudyObjectiveService();
     private final RegulatoryAuthorityServiceRemote regulatoryAuthorityService = new RegulatoryAuthorityServiceBean();
-    private final StratumGroupServiceRemote stratumGroupService = new StratumGroupServiceBean();
+    private final StratumGroupServiceLocal stratumGroupService = new StratumGroupBeanLocal();
     private final StudyMilestoneTasksServiceLocal studyMilestoneTasksService = new StudyMilestoneTasksServiceBean();
     private final StudySiteAccrualAccessServiceLocal studySiteAccrualAccessService = new MockStudySiteAccrualAccessService();
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
@@ -198,28 +203,28 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * @return mock service
      */
-    public StudyProtocolServiceRemote getStudyProtocolService() {
+    public StudyProtocolServiceLocal getStudyProtocolService() {
         return studyProtocolService;
     }
 
     /**
      * @return StudyOverallStatusServiceRemote
      */
-    public StudyOverallStatusServiceRemote getStudyOverallStatusService() {
+    public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
         return studyOverallStatusService;
     }
 
     /**
      * @return StudySiteServiceRemote
      */
-    public StudySiteServiceRemote getStudySiteService() {
+    public StudySiteServiceLocal getStudySiteService() {
         return studySiteService;
     }
 
     /**
      * @return StudySiteAccrualStatusServiceRemote
      */
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
+    public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
         return studySiteAccrualStatusService;
     }
 
@@ -233,7 +238,7 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * @return PlannedActivityServiceRemote
      */
-    public PlannedActivityServiceRemote getPlannedActivityService() {
+    public PlannedActivityServiceLocal getPlannedActivityService() {
         return plannedActivityService;
     }
 
@@ -248,7 +253,7 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * @return StudyOnholdServiceRemote
      */
-    public StudyOnholdServiceRemote getStudyOnholdService() {
+    public StudyOnholdServiceLocal getStudyOnholdService() {
       return studyOnholdService;
     }
 
@@ -277,14 +282,14 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * return StudyResourcingServiceRemote
      */
-    public StudyResourcingServiceRemote getStudyResoucringService() {
+    public StudyResourcingServiceLocal getStudyResoucringService() {
         return studyResourcingService;
     }
 
     /**
      * return StudyRegulatoryAuthorityServiceRemote
      */
-    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
+    public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -315,7 +320,7 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * return DocumentServiceRemote
      */
-    public DocumentServiceRemote getDocumentService() {
+    public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
 
@@ -328,7 +333,7 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
 
-    public StudySiteContactServiceRemote getStudySiteContactService() {
+    public StudySiteContactServiceLocal getStudySiteContactService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -355,7 +360,7 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
 
-    public StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
+    public StudyOutcomeMeasureServiceLocal getOutcomeMeasurService() {
         return studyOutcomeMService;
     }
     public ClinicalResearchStaffCorrelationServiceRemote getPoClinicalResearchStaffCorrelationService() {
@@ -365,12 +370,12 @@ public class MockServiceLocator implements ServiceLocator {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.util.ServiceLocator#getArmService()
      */
-    public ArmServiceRemote getArmService() {
+    public ArmServiceLocal getArmService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public StudyIndldeServiceRemote getStudyIndldeService() {
+    public StudyIndldeServiceLocal getStudyIndldeService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -389,7 +394,7 @@ public class MockServiceLocator implements ServiceLocator {
       return null;
     }
 
-    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() {
+    public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -420,14 +425,14 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * @return
      */
-    public StudyDiseaseServiceRemote getStudyDiseaseService() {
+    public StudyDiseaseServiceLocal getStudyDiseaseService() {
          return studyDiseaseService;
     }
 
     /**
      * @return StudyContact
      */
-    public StudyContactServiceRemote getStudyContactService() {
+    public StudyContactServiceLocal getStudyContactService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -440,7 +445,7 @@ public class MockServiceLocator implements ServiceLocator {
  /**
      * @return
      */
-    public StudyMilestoneServiceRemote getStudyMilestoneService() {
+    public StudyMilestoneServicelocal getStudyMilestoneService() {
 
         return studyMilestoneService;
     }
@@ -454,7 +459,7 @@ public class MockServiceLocator implements ServiceLocator {
         return registryUserService;
     }
 
-    public MailManagerServiceRemote getMailManagerService() {
+    public MailManagerServiceLocal getMailManagerService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -466,7 +471,7 @@ public class MockServiceLocator implements ServiceLocator {
         return healthCareProviderRemote;
     }
 
-    public StudyObjectiveServiceRemote getStudyObjectiveService() {
+    public StudyObjectiveServiceLocal getStudyObjectiveService() {
         return studyObjectiveService;
     }
 
@@ -480,7 +485,7 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * @return the stratumGroupService
      */
-    public StratumGroupServiceRemote getStratumGroupService() {
+    public StratumGroupServiceLocal getStratumGroupService() {
         return stratumGroupService;
     }
 
@@ -502,7 +507,7 @@ public class MockServiceLocator implements ServiceLocator {
         return organizationCorrelationService;
     }
 
-    public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() {
+    public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -530,4 +535,13 @@ public class MockServiceLocator implements ServiceLocator {
     public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
         return plannedSAService;
     }
+
+	
+	@Override
+	public StudyRelationshipServiceLocal getStudyRelationshipService() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 }

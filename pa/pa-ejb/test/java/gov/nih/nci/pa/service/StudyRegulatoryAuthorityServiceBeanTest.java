@@ -80,9 +80,6 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.CountryTest;
@@ -90,14 +87,17 @@ import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.RegulatoryAuthorityTest;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.internal.StudyRegulatoryAuthorityBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class StudyRegulatoryAuthorityServiceBeanTest {
 
-  private StudyRegulatoryAuthorityServiceRemote remoteEjb = new StudyRegulatoryAuthorityServiceBean();;
+  private StudyRegulatoryAuthorityServiceLocal remoteEjb = new StudyRegulatoryAuthorityBeanLocal();;
   Ii pid;
   RegulatoryAuthority ra;
 

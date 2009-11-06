@@ -1,6 +1,3 @@
-/**
- * 
- */
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;

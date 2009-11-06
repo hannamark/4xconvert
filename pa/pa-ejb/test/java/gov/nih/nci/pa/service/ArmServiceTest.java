@@ -90,6 +90,8 @@ import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.internal.ArmBeanLocal;
+import gov.nih.nci.pa.service.internal.PlannedActivityBeanLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -106,16 +108,16 @@ import org.junit.Test;
  *
  */
 public class ArmServiceTest {
-    private ArmServiceRemote remoteEjb = new ArmServiceBean();
-    private PlannedActivityServiceRemote paRemoteEjb = new PlannedActivityServiceBean();
+    private ArmServiceLocal remoteEjb = new ArmBeanLocal();
+    private PlannedActivityServiceLocal paRemoteEjb = new PlannedActivityBeanLocal();
     private Ii ii;
     private Ii spIi;
     private Ii intIi;
     
     @Before
     public void setUp() throws Exception {
-        remoteEjb = new ArmServiceBean();
-        paRemoteEjb = new PlannedActivityServiceBean();
+        remoteEjb = new ArmBeanLocal();
+        paRemoteEjb = new PlannedActivityBeanLocal();
         TestSchema.reset1();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.armIds.get(0));

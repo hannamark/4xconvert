@@ -87,7 +87,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 
@@ -126,7 +126,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     
     @EJB
-    StudyMilestoneServiceRemote smRemote;
+    StudyMilestoneServicelocal smRemote;
     
     /**
      * Perform task.

@@ -1,12 +1,13 @@
 package gov.nih.nci.pa.service;
 
 
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.internal.StudyRelationshipBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
-import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import org.junit.Test;
 
 public class StudyRelationshipServiceBeanTest {
 
-    private StudyRelationshipServiceRemote remoteEjb = new StudyRelationshipServiceBean();;
+    private StudyRelationshipServiceLocal localEjb = new StudyRelationshipBeanLocal();;
     private StudyRelationshipDTO srDto = new StudyRelationshipDTO();
 
     @Before
@@ -29,7 +30,7 @@ public class StudyRelationshipServiceBeanTest {
     @Test    
     public void testSearchStudyRelationshipDTOLimitOffset() throws PAException,TooManyResultsException{
         LimitOffset limitOffset = new LimitOffset(1, 1);
-        List<StudyRelationshipDTO> listDTO = remoteEjb.search(srDto, limitOffset);
+        List<StudyRelationshipDTO> listDTO = localEjb.search(srDto, limitOffset);
         assertEquals(0,listDTO.size());
     }
 

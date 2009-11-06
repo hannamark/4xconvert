@@ -97,6 +97,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.internal.StudySiteBeanLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -111,7 +112,7 @@ import org.junit.Test;
  *
  */
 public class StudySiteServiceTest {
-    private StudySiteServiceRemote remoteEjb = new StudySiteServiceBean();
+    private StudySiteServiceLocal remoteEjb = new StudySiteBeanLocal();
     private StudySiteConverter studySiteConverter = new StudySiteConverter();
     Long studyId;
     Ii studyIi;

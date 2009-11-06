@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.StudyResourcingTest;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.internal.StudyResourcingBeanLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -99,7 +100,7 @@ import org.junit.Test;
 
 public class StudyResourcingServiceBeanTest {
     
-    private StudyResourcingServiceRemote remoteEjb = new StudyResourcingServiceBean();
+    private StudyResourcingServiceLocal remoteEjb = new StudyResourcingBeanLocal();
     Ii pid;
     
     @Before

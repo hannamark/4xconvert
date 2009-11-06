@@ -78,25 +78,26 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
-import gov.nih.nci.pa.iso.convert.StudyOutcomeMeasureConverter;
-import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.service.internal.StudyOutcomeMeasureBeanLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.jboss.annotation.security.SecurityDomain;
+
 /**
  * The Class StudyOutcomeMeasureServiceBean.
  */
 @Stateless
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
+@Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(HibernateSessionInterceptor.class)
-public class StudyOutcomeMeasureServiceBean extends
-AbstractStudyIsoService<StudyOutcomeMeasureDTO, StudyOutcomeMeasure, StudyOutcomeMeasureConverter>
-implements StudyOutcomeMeasureServiceRemote , StudyOutcomeMeasureServiceLocal {
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" })
+public class StudyOutcomeMeasureServiceBean extends StudyOutcomeMeasureBeanLocal 
+implements StudyOutcomeMeasureServiceRemote {
 
 }

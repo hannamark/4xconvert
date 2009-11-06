@@ -1,19 +1,10 @@
 package gov.nih.nci.pa.service.correlation;
 
-import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.HealthCareFacilityTest;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
-import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteTest;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.StudySiteServiceBean;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.internal.StudySiteBeanLocal;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
@@ -26,7 +17,7 @@ public class OrganizationSynchronizationServiceBeanTest {
 
     private OrganizationSynchronizationServiceBean bean = new OrganizationSynchronizationServiceBean();
     private OrganizationSynchronizationServiceRemote remoteEjb = bean;
-    StudySiteServiceLocal spsService = new StudySiteServiceBean();
+    StudySiteServiceLocal spsService = new StudySiteBeanLocal();
     Long createdHcfId = null;
     Long createdSpsId = null;
 

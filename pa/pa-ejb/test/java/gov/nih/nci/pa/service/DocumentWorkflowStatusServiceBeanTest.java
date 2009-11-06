@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.internal.DocumentWorkflowStatusBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -95,8 +96,8 @@ import org.junit.Test;
 
 public class DocumentWorkflowStatusServiceBeanTest {
 
-  private DocumentWorkflowStatusServiceBean bean = new DocumentWorkflowStatusServiceBean();
-  private DocumentWorkflowStatusServiceRemote remoteEjb = bean;
+  private DocumentWorkflowStatusBeanLocal bean = new DocumentWorkflowStatusBeanLocal();
+  private DocumentWorkflowStatusServiceLocal remoteEjb = bean;
   
   Ii pid;
   

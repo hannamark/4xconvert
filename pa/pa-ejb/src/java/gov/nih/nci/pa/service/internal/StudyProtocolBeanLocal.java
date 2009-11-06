@@ -79,6 +79,37 @@
 
 package gov.nih.nci.pa.service.internal;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.BlindingSchemaCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.JNDIUtil;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -86,7 +117,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -103,43 +133,6 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.BlindingSchemaCode;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
-import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
-import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
-import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.DocumentServiceLocal;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
-import gov.nih.nci.pa.service.StudyProtocolServiceBean;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.JNDIUtil;
-import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
-
 /**
  * @author Naveen Amiruddin
  * @since 11/03/2009
@@ -152,14 +145,14 @@ import gov.nih.nci.pa.util.PAUtil;
 
 public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
 
-    private static final Logger LOG  = Logger.getLogger(StudyProtocolServiceBean.class);
+    private static final Logger LOG  = Logger.getLogger(StudyProtocolBeanLocal.class);
     private static final int FIVE_5 = 5;
     private static final String CREATE = "Create";
     private static final String UPDATE = "Update";
-    @EJB
+   /* @EJB
     StudyRelationshipServiceLocal studyRelationshipService = null;
     @EJB
-    DocumentServiceLocal docService = null;
+    DocumentServiceLocal docService = null;*/
 
     private SessionContext ejbContext;
 
@@ -430,7 +423,9 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
      * @throws PAException on any error
      */
     public void deleteStudyProtocol(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+    
+     throw new PAException(" Method Not Yey Implemented ");
+      /*  if (PAUtil.isIiNull(ii)) {
             LOG.error(" Ii should not be null ");
             throw new PAException(" Ii should not be null ");
         }
@@ -470,7 +465,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         } catch (Exception e) {
             ejbContext.setRollbackOnly();
             throw new PAException(e);
-        }
+        }*/
     }
     
     /**
@@ -545,7 +540,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                 && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null)
                 && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()))) {
             StudyIndldeServiceLocal local = (StudyIndldeServiceLocal)
-                                JNDIUtil.lookup("pa/StudyIndldeServiceBean/local");
+                                JNDIUtil.lookup("pa/StudyIndldeBeanLocal/local");
             List<StudyIndldeDTO> list = local.getByStudyProtocol(studyProtocolDTO.getIdentifier());
             if (!list.isEmpty()) {
                 throw new PAException("Unable to set FDARegulatedIndicator to 'No', "

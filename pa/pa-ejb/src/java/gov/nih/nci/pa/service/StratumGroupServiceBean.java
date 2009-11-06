@@ -78,15 +78,16 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.domain.StratumGroup;
-import gov.nih.nci.pa.iso.convert.StratumGroupConverter;
-import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
+import gov.nih.nci.pa.service.internal.StratumGroupBeanLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Kalpana Guthikonda
@@ -96,10 +97,10 @@ import javax.interceptor.Interceptors;
  * copyright holder, NCI.
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StratumGroupServiceBean extends 
-    AbstractStudyIsoService<StratumGroupDTO, StratumGroup, StratumGroupConverter>
-    implements StratumGroupServiceRemote , StratumGroupServiceLocal {
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" })
+public class StratumGroupServiceBean extends StratumGroupBeanLocal implements StratumGroupServiceRemote {
 
 }

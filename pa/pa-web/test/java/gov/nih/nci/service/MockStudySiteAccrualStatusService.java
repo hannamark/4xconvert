@@ -81,7 +81,7 @@ package gov.nih.nci.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 
 import java.util.List;
 
@@ -90,7 +90,7 @@ import java.util.List;
  *
  */
 public class MockStudySiteAccrualStatusService implements
-        StudySiteAccrualStatusServiceRemote {
+        StudySiteAccrualStatusServiceLocal {
 
     /**
      * @param dto

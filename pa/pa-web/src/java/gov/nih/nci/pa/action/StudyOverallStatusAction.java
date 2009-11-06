@@ -91,8 +91,8 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -128,8 +128,8 @@ public class StudyOverallStatusAction extends ActionSupport implements
     private static String anticipatedString = "Anticipated";
 
     private Map<String, String>  dateTypeList;
-    private StudyProtocolServiceRemote spService;
-    private StudyOverallStatusServiceRemote sosService;
+    private StudyProtocolServiceLocal spService;
+    private StudyOverallStatusServiceLocal sosService;
     private ProtocolQueryServiceLocal spqService;
     private Ii spIdIi;
     private String currentTrialStatus;

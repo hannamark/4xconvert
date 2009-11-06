@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.internal.StudyObjectiveBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
@@ -96,7 +97,7 @@ import org.junit.Test;
  *
  */
 public class StudyObjectiveServiceTest {
-    private StudyObjectiveServiceRemote remote = new StudyObjectiveServiceBean();
+    private StudyObjectiveServiceLocal remote = new StudyObjectiveBeanLocal();
     private Long spId;
     private Ii spIi;
   

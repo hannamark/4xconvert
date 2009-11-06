@@ -78,42 +78,43 @@
 */
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.DocumentServiceRemote;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
-import gov.nih.nci.pa.service.StratumGroupServiceRemote;
+import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
-import gov.nih.nci.pa.service.StudyContactServiceRemote;
-import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
+import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
-import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
-import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
-import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
-import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
+import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -135,8 +136,8 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return protocol service
      */
-    public StudyProtocolServiceRemote getStudyProtocolService() {
-        return (StudyProtocolServiceRemote) JNDIUtil.lookup("pa/StudyProtocolServiceBean/remote");
+    public StudyProtocolServiceLocal getStudyProtocolService() {
+        return (StudyProtocolServiceLocal) JNDIUtil.lookup("pa/StudyProtocolBeanLocal/local");
     }
 
     /**
@@ -161,40 +162,40 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return StudyIndldeServiceRemote
+     * @return StudyIndldeServiceLocal
      *
      */
-    public StudyIndldeServiceRemote getStudyIndldeService() {
-        return (StudyIndldeServiceRemote) JNDIUtil.lookup("pa/StudyIndldeServiceBean/remote");
+    public StudyIndldeServiceLocal getStudyIndldeService() {
+        return (StudyIndldeServiceLocal) JNDIUtil.lookup("pa/StudyIndldeBeanLocal/local");
     }
    
     /**
-     * @return DocumentWorkflowStatusServiceRemote
+     * @return DocumentWorkflowStatusServiceLocal
      *
      */
-    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() {
-        return (DocumentWorkflowStatusServiceRemote) JNDIUtil.lookup("pa/DocumentWorkflowStatusServiceBean/remote");
+    public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
+        return (DocumentWorkflowStatusServiceLocal) JNDIUtil.lookup("pa/DocumentWorkflowStatusBeanLocal/local");
     }
     
     /**
-     * @return StudyOverallStatusServiceRemote
+     * @return StudyOverallStatusServiceLocal
      */
-    public StudyOverallStatusServiceRemote getStudyOverallStatusService() {
-        return (StudyOverallStatusServiceRemote) JNDIUtil.lookup("pa/StudyOverallStatusServiceBean/remote");
+    public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
+        return (StudyOverallStatusServiceLocal) JNDIUtil.lookup("pa/StudyOverallStatusBeanLocal/local");
     }
 
     /**
-     * @return StudyResourcingServiceRemote
+     * @return StudyResourcingServiceLocal
      */
-    public StudyResourcingServiceRemote getStudyResoucringService() {
-        return (StudyResourcingServiceRemote) JNDIUtil.lookup("pa/StudyResourcingServiceBean/remote");
+    public StudyResourcingServiceLocal getStudyResoucringService() {
+        return (StudyResourcingServiceLocal) JNDIUtil.lookup("pa/StudyResourcingBeanLocal/local");
     }
 
     /**
-     * @return StudyResourcingServiceRemote
+     * @return StudyResourcingServiceLocal
      */
-    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
-        return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
+    public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
+        return (StudyRegulatoryAuthorityServiceLocal) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityBeanLocal/local");
     }
 
 
@@ -214,31 +215,31 @@ public class JndiServiceLocator implements ServiceLocator {
 
 
     /**
-     * @return StudySiteService
+     * @return StudySiteServiceLocal
      */
-    public StudySiteServiceRemote getStudySiteService() {
-        return (StudySiteServiceRemote) JNDIUtil.lookup("pa/StudySiteServiceBean/remote");
+    public StudySiteServiceLocal getStudySiteService() {
+        return (StudySiteServiceLocal) JNDIUtil.lookup("pa/StudySiteBeanLocal/local");
     }
 
     /**
-     * @return StudySiteAccrualStatusService
+     * @return StudySiteAccrualStatusServiceLocal
      */
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
-        return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup("pa/StudySiteAccrualStatusServiceBean/remote");
+    public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
+        return (StudySiteAccrualStatusServiceLocal) JNDIUtil.lookup("pa/StudySiteAccrualStatusBeanLocal/local");
     }
     /**
-     * @return DocumentService
+     * @return DocumentServiceLocal
      */
-    public DocumentServiceRemote getDocumentService() {
-        return (DocumentServiceRemote) JNDIUtil.lookup("pa/DocumentServiceBean/remote");
+    public DocumentServiceLocal getDocumentService() {
+        return (DocumentServiceLocal) JNDIUtil.lookup("pa/DocumentBeanLocal/local");
     }
 
     
     /**
-     * @return StratumGroupService
+     * @return StratumGroupServiceLocal
      */
-    public StratumGroupServiceRemote getStratumGroupService() {
-        return (StratumGroupServiceRemote) JNDIUtil.lookup("pa/StratumGroupServiceBean/remote");
+    public StratumGroupServiceLocal getStratumGroupService() {
+        return (StratumGroupServiceLocal) JNDIUtil.lookup("pa/StratumGroupBeanLocal/local");
     }
     
     
@@ -254,9 +255,9 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudySiteService
      */
-    public StudySiteContactServiceRemote getStudySiteContactService() {
-        return (StudySiteContactServiceRemote) JNDIUtil.lookup(
-                                            "pa/StudySiteContactServiceBean/remote");
+    public StudySiteContactServiceLocal getStudySiteContactService() {
+        return (StudySiteContactServiceLocal) JNDIUtil.lookup(
+                                            "pa/StudySiteContactBeanLocal/local");
     }
 
     /**
@@ -275,22 +276,22 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return PlannedActivityServiceRemote
+     * @return PlannedActivityServiceLocal
      */
-    public PlannedActivityServiceRemote getPlannedActivityService() {
-        return (PlannedActivityServiceRemote) JNDIUtil.lookup("pa/PlannedActivityServiceBean/remote");
+    public PlannedActivityServiceLocal getPlannedActivityService() {
+        return (PlannedActivityServiceLocal) JNDIUtil.lookup("pa/PlannedActivityBeanLocal/local");
     }
     /**
-     * @return OutcomeMeasureServiceRemote
+     * @return OutcomeMeasureServiceLocal
      */
-    public StudyOutcomeMeasureServiceRemote getOutcomeMeasurService() {
-        return (StudyOutcomeMeasureServiceRemote) JNDIUtil.lookup("pa/StudyOutcomeMeasureServiceBean/remote");
+    public StudyOutcomeMeasureServiceLocal getOutcomeMeasurService() {
+        return (StudyOutcomeMeasureServiceLocal) JNDIUtil.lookup("pa/StudyOutcomeMeasureBeanLocal/local");
     }
     /**
-     * @return ArmServcieRemote
+     * @return ArmServcieLocal
      */
-    public ArmServiceRemote getArmService() {
-        return (ArmServiceRemote) JNDIUtil.lookup("pa/ArmServiceBean/remote");
+    public ArmServiceLocal getArmService() {
+        return (ArmServiceLocal) JNDIUtil.lookup("pa/ArmBeanLocal/local");
     }
     /**
      * @return CTGovXmlGeneratorServiceRemote
@@ -331,29 +332,29 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return StudyDiseaseService
+     * @return StudyDiseaseServiceLocal
      */
-    public StudyDiseaseServiceRemote getStudyDiseaseService() {
-        return (StudyDiseaseServiceRemote) JNDIUtil.lookup("/pa/StudyDiseaseServiceBean/remote");
+    public StudyDiseaseServiceLocal getStudyDiseaseService() {
+        return (StudyDiseaseServiceLocal) JNDIUtil.lookup("/pa/StudyDiseaseBeanLocal/local");
     } 
 
     /**
-     * @return StudyContactService
+     * @return StudyContactServiceLocal
      */
-    public StudyContactServiceRemote getStudyContactService() {
-        return (StudyContactServiceRemote) JNDIUtil.lookup("/pa/StudyContactServiceBean/remote");
+    public StudyContactServiceLocal getStudyContactService() {
+        return (StudyContactServiceLocal) JNDIUtil.lookup("/pa/StudyContactBeanLocal/local");
     } 
 
         
     /**
-     * @return StudyMilestoneService
+     * @return StudyMilestoneServiceLocal
      */
-    public StudyMilestoneServiceRemote getStudyMilestoneService() {
-        return (StudyMilestoneServiceRemote) JNDIUtil.lookup("/pa/StudyMilestoneServiceBean/remote");
+    public StudyMilestoneServicelocal getStudyMilestoneService() {
+        return (StudyMilestoneServicelocal) JNDIUtil.lookup("/pa/StudyMilestoneBeanLocal/local");
     }
 
     /**
-     * @return StudyMilestoneService
+     * @return RegistryUserServiceRemote
      */
     public RegistryUserServiceRemote getRegisterUserService() {
         return (RegistryUserServiceRemote) JNDIUtil.lookup("/pa/RegistryUserServiceBean/remote");
@@ -368,29 +369,29 @@ public class JndiServiceLocator implements ServiceLocator {
       return (TSRReportGeneratorServiceRemote) JNDIUtil.lookup("/pa/TSRReportGeneratorServiceBean/remote");
     }
     /**
-     * @return StudyOnholdService
+     * @return StudyOnholdServiceLocal
      */
-    public StudyOnholdServiceRemote getStudyOnholdService() {
-        return (StudyOnholdServiceRemote) JNDIUtil.lookup("/pa/StudyOnholdServiceBean/remote");
+    public StudyOnholdServiceLocal getStudyOnholdService() {
+        return (StudyOnholdServiceLocal) JNDIUtil.lookup("/pa/StudyOnholdBeanLocal/local");
     }
     
     /**
-     * @return MailManagerService
+     * @return MailManagerServiceLocal
      */
-    public MailManagerServiceRemote getMailManagerService() {
-        return (MailManagerServiceRemote) JNDIUtil.lookup("/pa/MailManagerServiceBean/remote");
+    public MailManagerServiceLocal getMailManagerService() {
+        return (MailManagerServiceLocal) JNDIUtil.lookup("/pa/MailManagerBeanLocal/local");
     }
     /**
-     * @return StudyObjectiveService
+     * @return StudyObjectiveServiceLocal
      */
-    public StudyObjectiveServiceRemote getStudyObjectiveService() {
-        return (StudyObjectiveServiceRemote) JNDIUtil.lookup("/pa/StudyObjectiveServiceBean/remote");
+    public StudyObjectiveServiceLocal getStudyObjectiveService() {
+        return (StudyObjectiveServiceLocal) JNDIUtil.lookup("/pa/StudyObjectiveBeanLocal/local");
     }
     /**
      * @return StudyRecruitmentStatusService
      */
-    public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() {
-        return (StudyRecruitmentStatusServiceRemote) JNDIUtil.lookup("/pa/StudyRecruitmentStatusServiceBean/remote");
+    public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
+        return (StudyRecruitmentStatusServiceLocal) JNDIUtil.lookup("/pa/StudyRecruitmentStatusServiceBean/local");
     }
     /**
      * @return StudyMilestoneService
@@ -443,5 +444,11 @@ public class JndiServiceLocator implements ServiceLocator {
     public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
         return (PlannedSubstanceAdministrationServiceRemote) 
                         JNDIUtil.lookup("pa/PlannedSubstanceAdministrationServiceBean/remote");
+    }
+    /**
+     * @return protocol service
+     */
+    public StudyRelationshipServiceLocal getStudyRelationshipService() {
+        return (StudyRelationshipServiceLocal) JNDIUtil.lookup("pa/StudyRelationshipBeanLocal/local");
     }
 }

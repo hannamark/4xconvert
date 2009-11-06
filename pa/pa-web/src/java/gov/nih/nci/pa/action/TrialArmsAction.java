@@ -91,10 +91,10 @@ import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
@@ -130,8 +130,8 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     private static final String ACT_EDIT_NEW_GROUP = "editNewGroup";
     private static final String ACT_EDIT_GROUP = "editGroup";
     
-    private ArmServiceRemote armService;
-    private PlannedActivityServiceRemote plaService;
+    private ArmServiceLocal armService;
+    private PlannedActivityServiceLocal plaService;
     private InterventionServiceRemote intService;
 
     private Ii spIdIi;

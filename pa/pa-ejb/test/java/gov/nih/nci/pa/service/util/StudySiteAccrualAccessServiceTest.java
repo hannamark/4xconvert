@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
+import gov.nih.nci.pa.service.internal.StudySiteAccrualStatusBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -115,7 +116,7 @@ public class StudySiteAccrualAccessServiceTest {
     private Long ssId;
 
     StudySiteAccrualAccessServiceLocal bean;
-    StudySiteAccrualStatusServiceBean statusBean;
+    StudySiteAccrualStatusBeanLocal statusBean;
 
     @Before
     public void setUp() throws Exception {

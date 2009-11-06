@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.internal.StudyOnholdBeanLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -106,7 +107,7 @@ import org.junit.Test;
  *
  */
 public class StudyOnholdServiceTest {
-    private StudyOnholdServiceRemote remote = new StudyOnholdServiceBean();
+    private StudyOnholdServiceLocal remote = new StudyOnholdBeanLocal();
     private Long spId;
     private Ii spIi;
     

@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.internal.StudyOutcomeMeasureBeanLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -97,7 +98,7 @@ import org.junit.Test;
 
 public class StudyOutcomeMeasureServiceBeanTest {
 
-    private StudyOutcomeMeasureServiceRemote remoteEjb = new StudyOutcomeMeasureServiceBean();;
+    private StudyOutcomeMeasureServiceLocal remoteEjb = new StudyOutcomeMeasureBeanLocal();;
      Ii pid;
      Ii outComesid;
     @Before

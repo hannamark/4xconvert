@@ -142,7 +142,7 @@ import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
@@ -220,7 +220,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     InterventionAlternateNameServiceRemote interventionAlternateNameService = null;
     @EJB
-    StudyResourcingServiceRemote  studyResourcingService = null;
+    StudyResourcingServiceLocal  studyResourcingService = null;
     @EJB
     PAOrganizationServiceRemote  paOrganizationService = null;
     @EJB

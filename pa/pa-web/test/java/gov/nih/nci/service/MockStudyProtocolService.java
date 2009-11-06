@@ -94,7 +94,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -104,7 +104,7 @@ import java.util.List;
  * @author hreinhart
  *
  */
-public class MockStudyProtocolService    implements StudyProtocolServiceRemote {
+public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
 
     public static List<StudyProtocol> list;
     public static List<InterventionalStudyProtocol> isplist;

@@ -89,7 +89,6 @@ import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
-import gov.nih.nci.pa.enums.NihInstHolderCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -97,6 +96,8 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.internal.StudyIndIdeBeanLocal;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -106,7 +107,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class StudyIndldeServiceBeanTest {
-    private StudyIndldeServiceRemote remoteEjb = new StudyIndldeServiceBean();;
+    private StudyIndldeServiceLocal remoteEjb = new StudyIndIdeBeanLocal();;
     Ii pid;
 
     @Before

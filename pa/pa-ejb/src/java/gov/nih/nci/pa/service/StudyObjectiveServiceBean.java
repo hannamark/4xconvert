@@ -78,26 +78,28 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.domain.StudyObjective;
-import gov.nih.nci.pa.iso.convert.StudyObjectiveConverter;
-import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
+import gov.nih.nci.pa.service.internal.StudyObjectiveBeanLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Anupama Sharma
  * @since 02/11/2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" })
 public class StudyObjectiveServiceBean
-extends AbstractStudyIsoService<StudyObjectiveDTO, StudyObjective, StudyObjectiveConverter>
-implements StudyObjectiveServiceRemote {
+extends StudyObjectiveBeanLocal implements StudyObjectiveServiceRemote {
   
     
 

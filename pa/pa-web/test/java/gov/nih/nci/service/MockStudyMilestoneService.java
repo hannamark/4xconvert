@@ -12,7 +12,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Vrushali
  *
  */
-public class MockStudyMilestoneService extends MockAbstractBaseIsoService <StudyMilestoneDTO> implements StudyMilestoneServiceRemote {
+public class MockStudyMilestoneService extends MockAbstractBaseIsoService <StudyMilestoneDTO> implements StudyMilestoneServicelocal {
     static List<StudyMilestoneDTO> mileList;
     static {
         mileList = new ArrayList<StudyMilestoneDTO>();

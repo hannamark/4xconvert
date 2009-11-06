@@ -84,6 +84,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.internal.StratumGroupBeanLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -94,7 +95,7 @@ import org.junit.Test;
 
 public class StratumGroupServiceBeanTest {
 
-    private StratumGroupServiceRemote remoteEjb = new StratumGroupServiceBean();;
+    private StratumGroupServiceLocal remoteEjb = new StratumGroupBeanLocal();;
     Ii pid;
 
     @Before

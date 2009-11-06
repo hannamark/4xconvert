@@ -78,20 +78,16 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
-import gov.nih.nci.pa.iso.convert.StudyRecruitmentStatusConverter;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.pa.service.internal.StudyRecruitmentStatusBeanLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Hugh Reinhart
@@ -102,61 +98,14 @@ import org.apache.log4j.Logger;
  * copyright holder, NCI.
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" })
 public class StudyRecruitmentStatusServiceBean
-extends AbstractCurrentStudyIsoService<StudyRecruitmentStatusDTO, 
-    StudyRecruitmentStatus, StudyRecruitmentStatusConverter>
-        implements StudyRecruitmentStatusServiceRemote {
+extends StudyRecruitmentStatusBeanLocal implements StudyRecruitmentStatusServiceRemote {
 
-    private static final Logger LOG  = Logger.getLogger(StudyRecruitmentStatusServiceBean.class);
-    /** Standard error message for empty methods to be overridden. */
-    protected static String errMsgMethodNotImplemented = "Method not yet implemented.";
-
-    /**
-     * @return log4j Logger
-     */
-    @Override
-    protected Logger getLogger() {
-        return LOG;
-    }
-
-    /**
-     * Protected static create method for auto-generating a recruitment status domain object to be
-     * used in other services.
-     * @param bo the StudyOverallStatus domain object.
-     * @return the recruitment status domain object.
-     */
-    protected static StudyRecruitmentStatus create(StudyOverallStatus bo) {
-        // automatically update StudyRecruitmentStatus for applicable overall status code's
-        if ((bo != null) && (StudyRecruitmentStatusCode.getByStudyStatusCode(bo.getStatusCode()) != null)) {
-            StudyRecruitmentStatus srsBo = new StudyRecruitmentStatus();
-            srsBo.setStatusCode(StudyRecruitmentStatusCode.getByStudyStatusCode(bo.getStatusCode()));
-            srsBo.setStatusDate(bo.getStatusDate());
-            srsBo.setStudyProtocol(bo.getStudyProtocol());
-            return srsBo;
-        }
-        return null;
-    }
-
-    /**
-     * @param dto dto
-     * @return null
-     * @throws PAException exception
-     */
-    @Override
-    public StudyRecruitmentStatusDTO update(StudyRecruitmentStatusDTO dto) throws PAException {
-    throw new PAException(errMsgMethodNotImplemented);
-    }
-
-    /**
-     * @param ii index of object
-     * @throws PAException exception
-     */
-    @Override
-    public void delete(Ii ii) throws PAException {
-    throw new PAException(errMsgMethodNotImplemented);
-    }
+  
 
 
 }

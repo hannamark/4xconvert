@@ -89,7 +89,6 @@ import javax.ejb.Remote;
  * copyright holder, NCI.
  */
 @Remote
-public interface PlannedActivityServiceRemote 
-        extends PlannedActivityService {
+public interface PlannedActivityServiceRemote extends PlannedActivityService {
     
 }

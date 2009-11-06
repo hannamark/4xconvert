@@ -83,16 +83,16 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.StudyDiseaseServiceRemote;
-import gov.nih.nci.pa.service.StudyMilestoneServiceRemote;
-import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.Constants;
@@ -133,31 +133,31 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     protected Ii spIi;
 
     /** StudyDiseaseService. */
-    protected StudyDiseaseServiceRemote studyDisesaeSvc;
+    protected StudyDiseaseServiceLocal studyDisesaeSvc;
     /** DiseaseService. */
     protected DiseaseServiceRemote diseaseSvc;
     /** DiseaseParentService. */
     protected DiseaseParentServiceRemote diseaseParentSvc;
     /** StudyMilestoneService. */
-    protected StudyMilestoneServiceRemote studyMilestoneSvc;
+    protected StudyMilestoneServicelocal studyMilestoneSvc;
     /** ProtocolQueryService. */
     protected ProtocolQueryServiceLocal protocolQuerySvc;
     /** PlannedActivityService. */
-    protected PlannedActivityServiceRemote plannedActivitySvc;
+    protected PlannedActivityServiceLocal plannedActivitySvc;
     /** InterventionService. */
     protected InterventionServiceRemote interventionSvc;
     /** InterventionAlternateNameService. */
     protected InterventionAlternateNameServiceRemote interventionAlternateNameSvc;
     /** StudyOnholdService. */
-    protected StudyOnholdServiceRemote studyOnholdSvc;
+    protected StudyOnholdServiceLocal studyOnholdSvc;
     /** StudyOnholdService. */
-    protected StudyProtocolServiceRemote studyProtocolSvc;
+    protected StudyProtocolServiceLocal studyProtocolSvc;
     /** DocumentService. */
-    protected DocumentServiceRemote documentSvc;
+    protected DocumentServiceLocal documentSvc;
     /** StudySiteAccrualAccessService. */
     protected StudySiteAccrualAccessServiceLocal accrualAccessSvc;
     /** StudySiteAccrualStatusService. */
-    protected StudySiteAccrualStatusServiceRemote accrualStatusSvc;
+    protected StudySiteAccrualStatusServiceLocal accrualStatusSvc;
 
     /**
      * @throws PAException exception

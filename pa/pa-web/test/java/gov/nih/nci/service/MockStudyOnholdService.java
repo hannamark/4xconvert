@@ -88,7 +88,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOnholdServiceBean;
-import gov.nih.nci.pa.service.StudyOnholdServiceRemote;
+import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -100,7 +100,7 @@ import java.util.Map;
  * @author Hugh Reinhart
  *
  */
-public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOnholdDTO> implements StudyOnholdServiceRemote {
+public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOnholdDTO> implements StudyOnholdServiceLocal {
 
     public static List<StudyOnhold> list;
     static StudyOnholdConverter converter = new StudyOnholdConverter();

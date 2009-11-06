@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.service.internal.StudySiteContactBeanLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -104,7 +105,7 @@ import org.junit.Test;
  * @author hreinhart
  */
 public class StudySiteContactServiceTest {
-    private StudySiteContactServiceRemote remoteEjb = new StudySiteContactServiceBean();
+    private StudySiteContactServiceLocal remoteEjb = new StudySiteContactBeanLocal();
     Long protocolId;
     Ii protocolIi;
     Long siteId;

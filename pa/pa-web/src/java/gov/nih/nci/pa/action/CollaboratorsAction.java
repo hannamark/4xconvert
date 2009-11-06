@@ -92,7 +92,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
@@ -132,7 +132,7 @@ public class CollaboratorsAction extends ActionSupport
     private static final String ACT_DELETE = "delete";
     private static final String ACT_CREATE = "create";
 
-    private StudySiteServiceRemote sPartService;
+    private StudySiteServiceLocal sPartService;
     private OrganizationCorrelationServiceBean ocService;
     CorrelationUtilsRemote cUtils;
     private List<CountryRegAuthorityDTO> countryRegDTO;

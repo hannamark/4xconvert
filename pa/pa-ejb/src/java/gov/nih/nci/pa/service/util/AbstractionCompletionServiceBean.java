@@ -129,7 +129,7 @@ import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
@@ -197,7 +197,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     @EJB
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusServicLocal = null;
     @EJB
-    StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
+    StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal = null;
     @EJB
     DocumentServiceLocal documentServiceLocal = null;
     @EJB
@@ -782,7 +782,7 @@ private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletio
      
     //check recruitment status
       StudyRecruitmentStatusDTO recruitmentStatusDto = 
-              studyRecruitmentStatusServiceRemote.getCurrentByStudyProtocol(studyProtocolIi);
+            studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(studyProtocolIi);
      
       if (StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().
               equalsIgnoreCase(recruitmentStatusDto.getStatusCode().getCode())) {

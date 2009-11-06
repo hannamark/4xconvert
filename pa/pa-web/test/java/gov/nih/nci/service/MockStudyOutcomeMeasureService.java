@@ -3,25 +3,24 @@
  */
 package gov.nih.nci.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vrushali
  *
  */
 public class MockStudyOutcomeMeasureService  extends MockAbstractBaseIsoService <StudyOutcomeMeasureDTO> implements
-        StudyOutcomeMeasureServiceRemote {
+        StudyOutcomeMeasureServiceLocal {
         static List<StudyOutcomeMeasureDTO> list ;
         static {
             list = new ArrayList<StudyOutcomeMeasureDTO>();

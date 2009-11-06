@@ -92,7 +92,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +105,7 @@ import java.util.Map;
  * @author hreinhart
  */
 public class MockPlannedActivityService extends MockAbstractBaseIsoService <PlannedActivityDTO> 
-    implements PlannedActivityServiceRemote {
+    implements PlannedActivityServiceLocal {
 
     /** The list. */
     public static List<PlannedActivity> list;
