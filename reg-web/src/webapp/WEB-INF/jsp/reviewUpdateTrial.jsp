@@ -113,7 +113,10 @@ var winprint=window.open("","",sOption);
        <tr>
             <td colspan="2" class="space">&nbsp;</td>
        </tr> 
-       <c:if test="${trialDTO.sponsorName != null}">          
+       <c:if test="${trialDTO.sponsorIdentifier != null}">
+            <tr>
+                <th colspan="2"><fmt:message key="view.trial.sponsorResParty"/></th>
+              </tr>          
            <tr>     
                 <td scope="row" class="label">
                 <label for="Responsible Party">
@@ -197,7 +200,7 @@ var winprint=window.open("","",sOption);
                 </td>
            </tr> 
       </c:if>
-        <c:if test="${trialDTO.programCodeText != ''}">   
+        <c:if test="${fn:trim(trialDTO.programCodeText) != ''}">   
              <c:if test="${fn:trim(trialDTO.summaryFourOrgName) == ''}">             
                 <tr>
                     <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
