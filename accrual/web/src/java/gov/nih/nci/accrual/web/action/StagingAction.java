@@ -91,15 +91,15 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * The Class StagingAction.
- * 
+ *
  * @author Lisa Kelley
  * @since 10/30/2009
  */
-public class StagingAction extends AbstractEditAccrualAction<StagingWebDto> {
+public class StagingAction extends AbstractListEditAccrualAction<StagingWebDto> {
 
     private static final long serialVersionUID = 1L;
     private StagingWebDto stagingWebDto = new StagingWebDto();
-    
+
     /**
      * {@inheritDoc}
      */
@@ -109,7 +109,7 @@ public class StagingAction extends AbstractEditAccrualAction<StagingWebDto> {
     public String execute() {
         return super.execute();
     }
-    
+
     /**
      * Save user entries.
      * @return result for next action
@@ -117,7 +117,7 @@ public class StagingAction extends AbstractEditAccrualAction<StagingWebDto> {
     public String save() {
         return super.execute();
     }
-    
+
     /**
      * Cancel and ignore input.
      * @return result for next action
@@ -125,47 +125,56 @@ public class StagingAction extends AbstractEditAccrualAction<StagingWebDto> {
     @SkipValidation
     public String cancel() {
         return super.execute();
-    }        
-    
+    }
+
     /**
      * @return the list of staging methods
      */
     public List<StagingMethods> getStagingMethods() {
         return Arrays.asList(StagingMethods.values());
     }
-    
+
     /**
      * @return the list of staging systems
      */
     public List<StagingSystems> getStagingSystems() {
         return Arrays.asList(StagingSystems.values());
     }
-    
+
     /**
      * @return the list of tumor markers
      */
     public List<StagingTumorMarkers> getTumorMarkers() {
         return Arrays.asList(StagingTumorMarkers.values());
     }
-    
+
     /**
      * @return the list of tumor marker value UOMs
      */
     public List<StagingTumorMarkerValueUoms> getTumorMarkerValueUoms() {
         return Arrays.asList(StagingTumorMarkerValueUoms.values());
     }
-    
+
     /**
      * @return the current staging data
      */
     public StagingWebDto getStagingWebDto() {
         return stagingWebDto;
     }
-    
+
     /**
      * @param stagingWebDto the current staging data
      */
     public void setStagingWebDto(StagingWebDto stagingWebDto) {
         this.stagingWebDto = stagingWebDto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void loadDisplayList() {
+        // TODO Auto-generated method stub
+
     }
 }

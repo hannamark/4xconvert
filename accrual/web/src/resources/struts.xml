@@ -122,16 +122,45 @@
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
     
-    	<action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action">
+        <action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action">
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
         </action>
     
+        <!-- ******************************************************* -->
+        <!--  the following apply to ListEdit pattern -->
+        <!-- ******************************************************* -->
+        <action name="create*" class="gov.nih.nci.accrual.web.action.{1}Action" method="create"> 
+            <result name="detail">/WEB-INF/jsp/{1}Detail.jsp</result>
+        </action>
+        <action name="retrieve*" class="gov.nih.nci.accrual.web.action.{1}Action" method="retrieve"> 
+            <result name="detail">/WEB-INF/jsp/{1}Detail.jsp</result>
+        </action>
+        <action name="update*" class="gov.nih.nci.accrual.web.action.{1}Action" method="update"> 
+            <result name="detail">/WEB-INF/jsp/{1}Detail.jsp</result>
+        </action>
+        <action name="delete*" class="gov.nih.nci.accrual.web.action.{1}Action" method="delete"> 
+            <result>/WEB-INF/jsp/{1}.jsp</result>
+        </action>
+        <action name="add*" class="gov.nih.nci.accrual.web.action.{1}Action" method="add"> 
+            <result>/WEB-INF/jsp/{1}.jsp</result>
+            <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
+        </action>
+        <action name="edit*" class="gov.nih.nci.accrual.web.action.{1}Action" method="edit"> 
+            <result>/WEB-INF/jsp/{1}.jsp</result>
+            <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
+        </action>
+        <!-- ******************************************************* -->
+
+        <!-- ******************************************************* -->
+        <!--  this applies to the Edit pattern -->
+        <!-- ******************************************************* -->
         <action name="save*" class="gov.nih.nci.accrual.web.action.{1}Action" method="save">
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="input">/WEB-INF/jsp/{1}.jsp</result>
         </action>
-    
+        <!-- ******************************************************* -->
+
         <action name="next*" class="gov.nih.nci.accrual.web.action.{1}Action" method="next">
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="input">/WEB-INF/jsp/{1}.jsp</result>

@@ -78,12 +78,14 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
 /**
  * The Class AbstractEditAccrualAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/28/2009
- * @param <DTO> class for dto's 
+ * @param <DTO> class for dto's
  */
 public abstract class AbstractEditAccrualAction<DTO> extends AbstractAccrualAction {
 
@@ -92,25 +94,26 @@ public abstract class AbstractEditAccrualAction<DTO> extends AbstractAccrualActi
 
     /** Action result returned to display the detail page. */
     private static final String AR_DETAIL = "detail";
-    
+
     /** Bean to store current action. */
     private String currentAction;
-    
+
     /** Name of the next target when needed. */
     private String nextTarget = null;
-    
+
     /** The action result to perform a redirect using "next". */
     public static final String NEXT = "next";
-    
+
     /**
      * Default execute method for action classes.
      * @return action result
      */
     @Override
+    @SkipValidation
     public String execute() {
         setCurrentAction(AR_DETAIL);
         return super.execute();
-    }  
+    }
 
     /**
      * @return the currentAction

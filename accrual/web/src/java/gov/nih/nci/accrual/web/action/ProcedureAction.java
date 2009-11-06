@@ -82,11 +82,20 @@ import gov.nih.nci.accrual.web.dto.util.ProcedureWebDto;
 
 /**
  * The Class ProcedureAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
-public class ProcedureAction extends AbstractEditAccrualAction<ProcedureWebDto> {
+public class ProcedureAction extends AbstractListEditAccrualAction<ProcedureWebDto> {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void loadDisplayList() {
+        // TODO Auto-generated method stub
+
+    }
 }

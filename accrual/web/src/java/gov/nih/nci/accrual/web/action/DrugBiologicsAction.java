@@ -82,12 +82,21 @@ import gov.nih.nci.accrual.web.dto.util.DrugBiologicsWebDto;
 
 /**
  * The Class DrugBiologicsAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
-public class DrugBiologicsAction extends AbstractEditAccrualAction<DrugBiologicsWebDto> {
+public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiologicsWebDto> {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void loadDisplayList() {
+        // TODO Auto-generated method stub
+
+    }
 
 }

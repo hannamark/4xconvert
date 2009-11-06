@@ -82,11 +82,20 @@ import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
 
 /**
  * The Class TreatmentAction.
- * 
+ *
  *  @author Kalpana Guthikonda
  * @since 10/28/2009
  */
-public class TreatmentAction extends AbstractEditAccrualAction<TreatmentWebDto> {
+public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebDto> {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void loadDisplayList() {
+        // TODO Auto-generated method stub
+
+    }
 }

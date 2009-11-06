@@ -78,24 +78,12 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.web.dto.util.PatientOutcomesWebDto;
-
 /**
- * The Class PatientOutcomesAction.
- *
- * @author Kalpana Guthikonda
- * @since 10/28/2009
+ * @author Hugh Reinhart
+ * @since Nov 5, 2009
  */
-public class PatientOutcomesAction extends AbstractListEditAccrualAction<PatientOutcomesWebDto> {
+public class PerformanceStatus extends AbstractEditAccrualAction<Object> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2561560856212211656L;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void loadDisplayList() {
-        // TODO Auto-generated method stub
-
-    }
 }
