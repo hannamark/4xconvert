@@ -177,7 +177,7 @@ public class CorrelationNodeConverterTest  {
         corrs.add(this.createHcpForTest());
         corrs.add(this.createHcpForTest());
         
-        CorrelationNodeDTO[] cNodes = CorrelationNodeDTOConverter.convertToCorrelationNodeDTOArray(corrs, true, true);
+        List<CorrelationNodeDTO> cNodes = CorrelationNodeDTOConverter.convertToCorrelationNodeDTOList(corrs, true, true);
 
         for (CorrelationNodeDTO cNode : cNodes) {
             verifyPerson(cNode);
@@ -185,7 +185,7 @@ public class CorrelationNodeConverterTest  {
             verifyHcp(cNode);
         } 
         
-        assertNull(CorrelationNodeDTOConverter.convertToCorrelationNodeDTOArray(null, true, true));
+        assertNull(CorrelationNodeDTOConverter.convertToCorrelationNodeDTOList(null, true, true));
             
     }
     

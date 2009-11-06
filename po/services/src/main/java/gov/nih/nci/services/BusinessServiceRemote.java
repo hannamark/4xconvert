@@ -9,6 +9,8 @@ import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
+import java.util.List;
+
 import javax.ejb.Remote;
 
 /**
@@ -51,7 +53,7 @@ public interface BusinessServiceRemote {
      * @return list of correlation node dto.
      * @throws NullifiedRoleException if the requested id has a NULLIFIED role status
      */
-    CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, Bl player, Bl scoper) 
+    List<CorrelationNodeDTO> getCorrelationsByIdsWithEntities(Ii[] ids, Bl player, Bl scoper) 
         throws NullifiedRoleException;
    
     /**
@@ -63,7 +65,7 @@ public interface BusinessServiceRemote {
      * @return list of correlation node dto.
      * @throws NullifiedRoleException if the requested id has a NULLIFIED role status
      */
-    CorrelationNodeDTO[] getCorrelationsByPlayerIdsWithEntities(Cd correlationType, 
+    List<CorrelationNodeDTO> getCorrelationsByPlayerIdsWithEntities(Cd correlationType, 
             Ii[] playerIds, Bl player, Bl scoper) throws NullifiedRoleException;
     
     /**
@@ -76,7 +78,7 @@ public interface BusinessServiceRemote {
      * @return The array of CorrelationNodeDTO
      * @throws TooManyResultsException if the number of result is greater than acceptable by the system
      */
-    CorrelationNodeDTO[] searchCorrelationsWithEntities(CorrelationNodeDTO searchNode, 
+     List<CorrelationNodeDTO> searchCorrelationsWithEntities(CorrelationNodeDTO searchNode, 
             Bl player, Bl scoper, LimitOffset limitOffset) throws TooManyResultsException;
     
     /**
@@ -88,7 +90,7 @@ public interface BusinessServiceRemote {
      * @return The array of EntityNodeDto
      * @throws TooManyResultsException if the number of result is greater than acceptable by the system.
      */
-    EntityNodeDto[] searchEntitiesWithCorrelations(EntityNodeDto searchNode, 
+    List<EntityNodeDto> searchEntitiesWithCorrelations(EntityNodeDto searchNode, 
             Cd[] players, Cd[] scopers, LimitOffset limitOffset) throws TooManyResultsException;
         
     

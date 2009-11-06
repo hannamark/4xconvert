@@ -22,6 +22,8 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -171,12 +173,12 @@ public class NullifiedEntityNodeInterceptorTest {
             return null;
         }
 
-        public CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, Bl player, Bl scoper)
+        public List<CorrelationNodeDTO> getCorrelationsByIdsWithEntities(Ii[] ids, Bl player, Bl scoper)
                 throws NullifiedRoleException {
             return null;
         }
 
-        public CorrelationNodeDTO[] getCorrelationsByPlayerIdsWithEntities(Cd correlationType, Ii[] playerIds,
+        public List<CorrelationNodeDTO> getCorrelationsByPlayerIdsWithEntities(Cd correlationType, Ii[] playerIds,
                 Bl player, Bl scoper) throws NullifiedRoleException {
             return null;
         }
@@ -185,12 +187,12 @@ public class NullifiedEntityNodeInterceptorTest {
             return null;
         }
 
-        public CorrelationNodeDTO[] searchCorrelationsWithEntities(CorrelationNodeDTO searchNode, Bl player, Bl scoper,
+        public List<CorrelationNodeDTO> searchCorrelationsWithEntities(CorrelationNodeDTO searchNode, Bl player, Bl scoper,
                 LimitOffset limitOffset) throws TooManyResultsException {
             return null;
         }
 
-        public EntityNodeDto[] searchEntitiesWithCorrelations(EntityNodeDto searchNode, Cd[] players, Cd[] scopers,
+        public List<EntityNodeDto> searchEntitiesWithCorrelations(EntityNodeDto searchNode, Cd[] players, Cd[] scopers,
                 LimitOffset limitOffset) throws TooManyResultsException {
             return null;
         }

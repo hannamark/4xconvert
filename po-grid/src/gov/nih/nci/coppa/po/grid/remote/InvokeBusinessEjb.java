@@ -12,6 +12,8 @@ import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
+import java.util.List;
+
 /**
  * Wrapper to call remote Business EJB.
  */
@@ -35,7 +37,7 @@ public class InvokeBusinessEjb implements BusinessServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, Bl players, Bl scopers)
+    public List<CorrelationNodeDTO> getCorrelationsByIdsWithEntities(Ii[] ids, Bl players, Bl scopers)
             throws NullifiedRoleException {
         try {
             return GridSecurityJNDIServiceLocator
@@ -50,7 +52,7 @@ public class InvokeBusinessEjb implements BusinessServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public CorrelationNodeDTO[] getCorrelationsByPlayerIdsWithEntities(Cd type,
+    public List<CorrelationNodeDTO> getCorrelationsByPlayerIdsWithEntities(Cd type,
             Ii[] ids, Bl players, Bl scopers)
             throws NullifiedRoleException {
         try {
@@ -81,7 +83,7 @@ public class InvokeBusinessEjb implements BusinessServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public EntityNodeDto[] searchEntitiesWithCorrelations(EntityNodeDto searchNode,
+    public List<EntityNodeDto> searchEntitiesWithCorrelations(EntityNodeDto searchNode,
             Cd[] players, Cd[] scopers, LimitOffset page) throws TooManyResultsException {
         try {
             return GridSecurityJNDIServiceLocator
@@ -94,7 +96,7 @@ public class InvokeBusinessEjb implements BusinessServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public CorrelationNodeDTO[] searchCorrelationsWithEntities(CorrelationNodeDTO searchNode,
+    public List<CorrelationNodeDTO> searchCorrelationsWithEntities(CorrelationNodeDTO searchNode,
             Bl players, Bl scopers, LimitOffset page) throws TooManyResultsException {
         try {
             return GridSecurityJNDIServiceLocator

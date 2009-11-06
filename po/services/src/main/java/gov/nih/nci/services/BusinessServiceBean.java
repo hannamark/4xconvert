@@ -252,26 +252,24 @@ public class BusinessServiceBean implements BusinessServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
-    public CorrelationNodeDTO[] getCorrelationsByIdsWithEntities(Ii[] ids, Bl player,
+    public List<CorrelationNodeDTO> getCorrelationsByIdsWithEntities(Ii[] ids, Bl player,
             Bl scoper) 
         throws NullifiedRoleException {
         List<CorrelationNodeDTO> nodeList = new ArrayList<CorrelationNodeDTO>();
-        if (ids.length < 1) {
-            return new CorrelationNodeDTO[0];
-        }
-        
-        Set<Long> longIds = IiConverter.convertToLongs(ids);
-        
-        List<? extends Correlation> correlations = getCorrelationService(ids[0])
-            .getByIds(longIds.toArray(new Long[longIds.size()]));
-        for (Correlation corr : correlations) {       
-            CorrelationNodeDTO node = CorrelationNodeDTOConverter.convertToCorrelationNodeDTO(corr, player.getValue(),
-                    scoper.getValue());
-            if (node != null) {
-                nodeList.add(node);
+        if (ids.length > 0) {
+            Set<Long> longIds = IiConverter.convertToLongs(ids);
+            
+            List<? extends Correlation> correlations = getCorrelationService(ids[0])
+                .getByIds(longIds.toArray(new Long[longIds.size()]));
+            for (Correlation corr : correlations) {       
+                CorrelationNodeDTO node = CorrelationNodeDTOConverter.convertToCorrelationNodeDTO(corr, 
+                        player.getValue(), scoper.getValue());
+                if (node != null) {
+                    nodeList.add(node);
+                }
             }
         }
-        return CorrelationNodeDTOConverter.listToArray(nodeList);
+        return nodeList;
     }
    
     /**
@@ -279,7 +277,7 @@ public class BusinessServiceBean implements BusinessServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
-    public CorrelationNodeDTO[] getCorrelationsByPlayerIdsWithEntities(Cd correlationType, 
+    public List<CorrelationNodeDTO> getCorrelationsByPlayerIdsWithEntities(Cd correlationType, 
             Ii[] playerIds, Bl player, Bl scoper) throws NullifiedRoleException {
         List<CorrelationNodeDTO> nodeList = new ArrayList<CorrelationNodeDTO>();
         Set<Long> longIds = IiConverter.convertToLongs(playerIds);
@@ -293,7 +291,7 @@ public class BusinessServiceBean implements BusinessServiceRemote {
                 nodeList.add(node);
             }
         }
-        return CorrelationNodeDTOConverter.listToArray(nodeList);
+        return nodeList;
     }
     
     
@@ -316,7 +314,7 @@ public class BusinessServiceBean implements BusinessServiceRemote {
     */
    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
-   public CorrelationNodeDTO[] searchCorrelationsWithEntities(CorrelationNodeDTO searchNode, Bl player, Bl scoper,
+   public List<CorrelationNodeDTO> searchCorrelationsWithEntities(CorrelationNodeDTO searchNode, Bl player, Bl scoper,
            LimitOffset limitOffset) throws TooManyResultsException {
        
        if (searchNode == null) {
@@ -342,7 +340,7 @@ public class BusinessServiceBean implements BusinessServiceRemote {
            correlations = (List<Correlation>) getCorrelationService(corrType)
            .search(sc);
        }
-       return  CorrelationNodeDTOConverter.convertToCorrelationNodeDTOArray(
+       return  CorrelationNodeDTOConverter.convertToCorrelationNodeDTOList(
                correlations, player.getValue(), scoper.getValue());
    }
    
@@ -351,10 +349,10 @@ public class BusinessServiceBean implements BusinessServiceRemote {
     */
    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
-   public EntityNodeDto[] searchEntitiesWithCorrelations(EntityNodeDto searchNode, Cd[] players, Cd[] scopers,
+   public List<EntityNodeDto> searchEntitiesWithCorrelations(EntityNodeDto searchNode, Cd[] players, Cd[] scopers,
            LimitOffset limitOffset) throws TooManyResultsException {
-       // TODO Auto-generated method stub
-       return new EntityNodeDto[0];
+       // TODO Implement me.
+       return new ArrayList<EntityNodeDto>();
    }
 
     

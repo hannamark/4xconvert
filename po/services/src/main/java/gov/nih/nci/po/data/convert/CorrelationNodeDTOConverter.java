@@ -95,6 +95,7 @@ import gov.nih.nci.services.correlation.AbstractOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -113,17 +114,17 @@ public class CorrelationNodeDTOConverter {
      * @param convertScopers true if scopers should also be converted
      * @return array of CorrelationNodeDTO
      */
-    public static CorrelationNodeDTO[] convertToCorrelationNodeDTOArray(
+    public static List<CorrelationNodeDTO> convertToCorrelationNodeDTOList(
         List<Correlation> correlations, boolean convertPlayers, boolean convertScopers) {
         
         if (correlations == null) {
            return null;
         }
            
-        CorrelationNodeDTO[] result = new CorrelationNodeDTO[correlations.size()];
+        List<CorrelationNodeDTO> result = new ArrayList<CorrelationNodeDTO>();
         
-        for (int i = 0; i < result.length; i++) {
-            result[i] = convertToCorrelationNodeDTO(correlations.get(i), convertPlayers, convertScopers);
+        for (Correlation corr : correlations) {
+            result.add(convertToCorrelationNodeDTO(corr, convertPlayers, convertScopers));
         }
         
         return result;

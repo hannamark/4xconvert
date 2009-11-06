@@ -87,7 +87,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
@@ -100,8 +99,6 @@ import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.convert.AdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.services.BusinessServiceRemote;
 import gov.nih.nci.services.RoleList;
@@ -123,7 +120,6 @@ import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -131,6 +127,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -193,9 +190,9 @@ public class BusinessServiceTestHelper {
         Ii roDtoId2 = researchOrgService.createCorrelation(roDto2);
         assertNotNull(roDtoId2);
         
-        CorrelationNodeDTO[] corrNodeDtos = busService.getCorrelationsByIdsWithEntities(
+        List<CorrelationNodeDTO> corrNodeDtos = busService.getCorrelationsByIdsWithEntities(
                 new Ii[]{roDtoId, roDtoId2}, trueBl, falseBl);
-        assertEquals(2, corrNodeDtos.length);
+        assertEquals(2, corrNodeDtos.size());
         
         for (CorrelationNodeDTO corr : corrNodeDtos) {
                 assertTrue(((ResearchOrganizationDTO) corr.getCorrelation())
@@ -208,7 +205,7 @@ public class BusinessServiceTestHelper {
         cd.setCode(RoleList.RESEARCH_ORGANIZATION.toString());
         
         corrNodeDtos = busService.getCorrelationsByPlayerIdsWithEntities(cd, new Ii[]{newOrgId}, trueBl, falseBl);        
-        assertEquals(2, corrNodeDtos.length);
+        assertEquals(2, corrNodeDtos.size());
         for (CorrelationNodeDTO corr : corrNodeDtos) {
             assertTrue(corr.getCorrelation() instanceof ResearchOrganizationDTO);
             assertTrue(((ResearchOrganizationDTO) corr.getCorrelation())
@@ -277,9 +274,9 @@ public class BusinessServiceTestHelper {
         
         Ii crsDtoId2 = crsService.createCorrelation(crsdto2);
         
-        CorrelationNodeDTO[] corrNodeDtos = busService.getCorrelationsByIdsWithEntities(
+        List<CorrelationNodeDTO> corrNodeDtos = busService.getCorrelationsByIdsWithEntities(
                 new Ii[]{crsDtoId, crsDtoId2}, trueBl, trueBl);
-        assertEquals(2, corrNodeDtos.length);
+        assertEquals(2, corrNodeDtos.size());
         
         for (CorrelationNodeDTO corr : corrNodeDtos) {
             assertEquals(new URI(TelPhone.SCHEME_TEL + ":123-123-654"), 
@@ -293,7 +290,7 @@ public class BusinessServiceTestHelper {
         cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.toString());
         
         corrNodeDtos = busService.getCorrelationsByPlayerIdsWithEntities(cd, new Ii[]{newPersonId, newPersonId2}, trueBl, trueBl);        
-        assertEquals(2, corrNodeDtos.length);
+        assertEquals(2, corrNodeDtos.size());
         for (CorrelationNodeDTO corr : corrNodeDtos) {
             assertTrue(corr.getCorrelation() instanceof ClinicalResearchStaffDTO);
             assertEquals(new URI(TelPhone.SCHEME_TEL + ":123-123-654"), 
@@ -444,8 +441,8 @@ public class BusinessServiceTestHelper {
 
         CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
         query_cnDto.setCorrelation(query_hcpDto);
-        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl_true, bl_true, null);
-        assertEquals(1, results.length);
+        List<CorrelationNodeDTO> results = busService.searchCorrelationsWithEntities(query_cnDto, bl_true, bl_true, null);
+        assertEquals(1, results.size());
     }
 
     private static void testSearchOrgContact(BusinessServiceRemote busService,
@@ -465,8 +462,8 @@ public class BusinessServiceTestHelper {
 
         CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
         query_cnDto.setCorrelation(query_ocDto);
-        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
-        assertEquals(1, results.length);
+        List<CorrelationNodeDTO> results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        assertEquals(1, results.size());
     }
 
     private static void testSearchHealthCareFacility(BusinessServiceRemote busService,
@@ -484,8 +481,8 @@ public class BusinessServiceTestHelper {
         CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
         query_cnDto.setCorrelation(query_hcfDto);
 
-        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl_true, bl_true, null);    
-        assertEquals(1, results.length);
+        List<CorrelationNodeDTO> results = busService.searchCorrelationsWithEntities(query_cnDto, bl_true, bl_true, null);    
+        assertEquals(1, results.size());
     }
 
     private static void testSearchCRS(BusinessServiceRemote busService,
@@ -524,10 +521,10 @@ public class BusinessServiceTestHelper {
         query_cnDto.setPlayer(query_personDto);
         query_cnDto.setScoper(query_orgDto);
         
-        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
-        assertEquals(1, results.length);
+        List<CorrelationNodeDTO> results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        assertEquals(1, results.size());
         
-        CorrelationNodeDTO result = results[0];
+        CorrelationNodeDTO result = results.get(0);
         assertTrue(result.getCorrelation() instanceof ClinicalResearchStaffDTO);
         assertTrue(result.getPlayer() instanceof PersonDTO);
         if (bl.getValue()) {
@@ -553,8 +550,8 @@ public class BusinessServiceTestHelper {
         query_idpDto.setAssignedId(newPersonId);
         query_cnDto.setCorrelation(query_idpDto);
         
-        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
-        assertEquals(1, results.length);
+        List<CorrelationNodeDTO> results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        assertEquals(1, results.size());
     }
 
     private static void testSearchIdentifiedOrganization(BusinessServiceRemote busService,
@@ -577,8 +574,8 @@ public class BusinessServiceTestHelper {
         query_cnDto.setCorrelation(query_idoDto);
         query_cnDto.setPlayer(query_orgDto);
         
-        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
-        assertEquals(1, results.length);
+        List<CorrelationNodeDTO> results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        assertEquals(1, results.size());
     }
 
     private static void testSearchOversightCommittee(BusinessServiceRemote busService,
@@ -606,9 +603,9 @@ public class BusinessServiceTestHelper {
         query_orgDto.setIdentifier(newOrgId);
         query_cnDto.setPlayer(query_orgDto);
 
-        CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+        List<CorrelationNodeDTO> results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
  
-        assertEquals(1, results.length);
+        assertEquals(1, results.size());
     }
 
      private static void testSearchResearchOrg(ResearchOrganizationCorrelationServiceRemote researchOrgService,
@@ -633,8 +630,8 @@ public class BusinessServiceTestHelper {
          CorrelationNodeDTO query_cnDto = new CorrelationNodeDTO();
          query_cnDto.setCorrelation(query_roDto);
        
-         CorrelationNodeDTO[] results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
-         assertEquals(1, results.length);
+         List<CorrelationNodeDTO> results = busService.searchCorrelationsWithEntities(query_cnDto, bl, bl, null);
+         assertEquals(1, results.size());
      }
 
      private static Ii populateIdentifiedPerson(Ii newPersonId, Ii newOrgId, IdentifiedPersonDTO idpDto) {
