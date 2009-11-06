@@ -91,15 +91,21 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="jboss.ssl.enable" value="false"/>
     <property name="tomcat.ssl.enable" value="false"/>
 
-    <property name="pa-grid.dir.dist" value="${basedir}/${pa-grid.dist.relative.dir}" />
-    <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
-    <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
     <property name="grid.resource.dir" value="${working.dir}/${grid.dist.relative.dir}" />
     <property name="grid.application.dir" value="${working.dir}/grid-application" />
     <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
+    <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
+    <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
+    
+    <property name="pa-grid.dir.dist" value="${basedir}/${pa-grid.dist.relative.dir}" />
     <property name="pa-grid.dir.src" value="${basedir}/${pa-grid.dist.relative.dir}" />
     <property name="pa-grid.dir.target" value="wsrf.war" />
     <property name="pa-grid.introduce.skeleton.service.name" value="PAServices"/>
+
+    <property name="pa-grid-legacy.dir.dist" value="${basedir}/${pa-grid-legacy.dist.relative.dir}" />
+    <property name="pa-grid-legacy.dir.src" value="${basedir}/${pa-grid-legacy.dist.relative.dir}" />
+    <property name="pa-grid-legacy.dir.target" value="wsrf.war" />
+    <property name="pa-grid-legacy.introduce.skeleton.service.name" value="PAServices"/>
 
     <!-- Paths -->
     <path id="bda-utils.classpath">
@@ -133,6 +139,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
     <!-- Conditionals -->
     <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
+    <available file="${jboss.home}/server/${jboss.server.name.grid}/conf/jboss-service.xml" property="jboss.exists"/>
+    <available file="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
     <!-- pa-ear can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
     <switch value="${database.type}">
         <case value="postgresql">
@@ -350,6 +358,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <target name="install:jboss:binaries" description="Unzip JBoss binary" unless="exclude.jboss">
         <antcall target="install:jboss:binaries:pa-ear"/>
         <antcall target="install:jboss:binaries:pa-grid"/>
+        <antcall target="install:jboss:binaries:pa-grid-legacy"/>
     </target>
 
     <macrodef name="jboss-install-binaries2" description="Added params to support different types of installations, should be pulled up into BDA-utils">
@@ -419,6 +428,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 			jems.install.option="default"
             jboss.server.name="${jboss.server.name.grid}"
             />
+    </target>
+    <target name="install:jboss:binaries:pa-grid-legacy" unless="exclude.pa-grid-legacy">
+      <jboss-install-binaries2
+          jems.install.option="default"
+        jboss.server.name="${pa-grid-legacy.jboss.server.name}"
+              />
     </target>
 
     <target name="install:jboss:pa-ear" description="Deploy pa-ear pa-ear.ear, pa-ear-api.war and common libraries" unless="exclude.pa-ear">
@@ -541,7 +556,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
         <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}" src="${pa-grid.dir.src}/${pa-grid.artifact.file}" />
     </target>
+    <!-- Installs the pa-grid-legacy application to JBOSS -->
+    <target name="install:pa-grid-legacy:application" description="Deploy Coppa PA Grid Legacy application to JBOSS" unless="exclude.pa-grid-legacy">
+      <echo message="Entirely removing existing wsrf.war deployment"/>
+      <delete dir="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/${pa-grid-legacy.dir.target}"/>
+        <mkdir dir="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/${pa-grid-legacy.dir.target}"/>
 
+        <unzip dest="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/lib" src="${grid.resource.dir.src}/${resource.file.jboss-globus-lib}" />
+        <unzip dest="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/${pa-grid-legacy.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
+
+        <unzip dest="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/${pa-grid-legacy.dir.target}" src="${pa-grid-legacy.dir.src}/${pa-grid-legacy.artifact.file}" />
+    </target>
+    
     <!-- Configures installed pa-grid application -->
     <target name="install:pa-grid:configure" description="Configure pa-grid service based on properties" unless="exclude.pa-grid">
         <!--
@@ -576,6 +602,24 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         />
     </target>
 
+    <!-- Configures installed pa-grid application -->
+    <target name="install:pa-grid-legacy:configure" description="Configure pa-grid-legacy service based on properties" unless="exclude.pa-grid-legacy">
+        <grid-appserver-configure
+          appserver.conf.dir="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf"
+          appserver.webapp.dir="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy"
+          appserver.server-xml.file="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+          appserver.server-xml.service.name="jboss.web"
+          appserver.port.http="${pa-grid-legacy.jboss.server.port}"
+          appserver.port.ssl=""
+          appserver.hostname="${jboss.server.hostname}"
+          search.host="localhost"
+          search.port="8080"
+          grid.application.name="${pa-grid-legacy.introduce.skeleton.service.name}"
+          grid.application.relative.dir="${pa-grid-legacy.dir.target}"
+          grid.secure.enable="false"
+          appserver.external.http.host="${pa-grid-legacy.jboss.external.http.host}"
+        />
+    </target>
 
     <target name="install:jboss:configure:log4j" description="Configure custom entries in system wide log4j" unless="exclude.pa-ear" >
         <echo message="Configuring Log4J"/>
@@ -630,8 +674,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <target name="install:jboss:configure" description="Configure pa-ear" unless="exclude.jboss" >
         <runtarget target="install:jboss:configure:pa-ear"/>
         <runtarget target="install:jboss:configure:pa-grid"/>
+        <runtarget target="install:jboss:configure:pa-grid-legacy"/>
     </target>
-    <target name="install:jboss:configure:pa-ear">
+    <target name="install:jboss:configure:pa-ear" unless="exclude.pa-ear">
         <runtarget target="install:jboss:configure:log4j"/>
         <!-- Calls the following macros
         jboss-bindings - configures ports for jboss
@@ -726,8 +771,82 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                     />
     </target>
 
+
+    <target name="install:jboss:configure:pa-grid-legacy" unless="exclude.pa-grid-legacy">
+          <!-- create a new template bindings file from template (using ports for pa-grid -->
+                <copy file="${bda-utils.resource.dir}/template-binding.xml"
+                    tofile="${bda-utils.resource.dir}/template-binding3.xml"
+                    filtering="true"
+                    overwrite="true">
+                    <filterset begintoken="@" endtoken="@">
+                        <filter token="jboss.server.port" value="@pa-grid-legacy.jboss.server.port@"/>
+                        <filter token="jboss.ejbinvoker.port" value="@pa-grid-legacy.jboss.ejbinvoker.port@"/>
+                        <filter token="jboss.server.rmi.port" value="@pa-grid-legacy.jboss.server.rmi.port@"/>
+                        <filter token="jboss.server.jndi.port" value="@pa-grid-legacy.jboss.server.jndi.port@"/>
+                        <filter token="jboss.cobraorb.port" value="@pa-grid-legacy.jboss.cobraorb.port@"/>
+                        <filter token="jboss.ejbinvoker.port" value="@pa-grid-legacy.jboss.ejbinvoker.port@"/>
+                        <filter token="jboss.hajndi.port" value="@pa-grid-legacy.jboss.hajndi.port@"/>
+                        <filter token="jboss.hajrmi.port" value="@pa-grid-legacy.jboss.hajrmi.port@"/>
+                        <filter token="jboss.jms.port" value="@pa-grid-legacy.jboss.jms.port@"/>
+                        <filter token="jboss.jmx-rmi.port" value="@pa-grid-legacy.jboss.jmx-rmi.port@"/>
+                        <filter token="jboss.messaging.port" value="@pa-grid-legacy.jboss.messaging.port@"/>
+                        <filter token="jboss.pooledha.port" value="@pa-grid-legacy.jboss.pooledha.port@"/>
+                        <filter token="jboss.remoting.port" value="@pa-grid-legacy.jboss.remoting.port@"/>
+                        <filter token="jboss.server.bind.port" value="@pa-grid-legacy.jboss.server.bind.port@"/>
+                        <filter token="jboss.server.rmi.port" value="@pa-grid-legacy.jboss.server.rmi.port@"/>
+                        <filter token="jboss.service.rmiobject.port" value="@pa-grid-legacy.jboss.service.rmiobject.port@"/>
+                        <filter token="jboss.snmp.port" value="@pa-grid-legacy.jboss.snmp.port@"/>
+                        <filter token="jboss.snmp-trapd.port" value="@pa-grid-legacy.jboss.snmp-trapd.port@"/>
+                        <filter token="jboss.web.service.port" value="@pa-grid-legacy.jboss.web.service.port@"/>
+                    </filterset>
+                </copy>
+
+               <!-- configure the pa-grid instance -->
+                <jboss-configure
+                    jboss.home="${jboss.home}"
+                    jboss.server.name="${pa-grid-legacy.jboss.server.name}"
+                    jboss.server.ports.name="bda-ports"
+                    jboss.server.bindingfile.location="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf/bindings.xml"
+                    jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding3.xml"
+                    jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
+                    authentication.type="${authentication.type}"
+                    login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
+                    login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
+                    jboss.web.user="${jboss.web.user}"
+                    jboss.web.password="${jboss.web.password}"
+                    jboss.server.jndi.port="${pa-grid-legacy.jboss.server.jndi.port}"
+                    jboss.conf.dir="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf"
+                    jboss.server-xml.file="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+                    jboss.server-xml.service.name="jboss.web"
+                    jboss.ssl.enable="${jboss.ssl.enable}"
+                    jboss.ssl.port="8443"
+                    jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
+                    jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
+                    jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
+                    jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
+                    jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
+                    jboss.external.ssl.host="${jboss.external.ssl.host}"
+                    jboss.external.ssl.port="${jboss.external.ssl.port}"
+                    proxy.update.connector.port.ssl="8443"
+                    jboss.external.http.host="${pa-grid-legacy.jboss.external.http.host}"
+                    jboss.external.http.port="${pa-grid-legacy.jboss.external.http.port}"
+                    proxy.update.connector.port.http="8080"
+                    grid.external.secure.host="${grid.external.secure.host}"
+                    grid.external.secure.port="${grid.external.secure.port}"
+                    jboss.server.hostname="${jboss.server.hostname}"
+                    jboss.grid.configure="false"
+                    grid.secure.dir="${grid.secure.dir}"
+                    grid.secure.enable="${grid.secure.enable}"
+                    grid.secure.port="${grid.secure.port}"
+                    grid.secure.key.file="${grid.secure.key.file}"
+                    grid.secure.cert.file="${grid.secure.cert.file}"
+                    jboss.java.opts="${jboss.java.opts}"
+                    jboss.http-connector.remove="false"
+                    />
+    </target>
     <!-- Calls to bda macros for basic functionality -->
     <target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
+        <antcall target="install:jboss:stop:pa-grid-legacy"/>
         <antcall target="install:jboss:stop:pa-grid"/>
         <antcall target="install:jboss:stop:pa-ear"/>
     </target>
@@ -738,9 +857,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <target name="install:jboss:stop:pa-grid" unless="exclude.pa-grid">
         <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.grid.jndi.port}" jboss.server.name="${jboss.server.name.grid}"/>
     </target>
+    <target name="install:jboss:stop:pa-grid-legacy" unless="exclude.pa-grid-legacy">
+      <jboss-stop-jboss jboss.server.jndi.port="${pa-grid-legacy.jboss.server.jndi.port}" jboss.server.name="${pa-grid-legacy.jboss.server.name}"/>
+    </target>
 
-
-    <target name="install:jboss:start"  unless="exclude.jboss">
+    <target name="install:jboss:start" if="jboss.exists" unless="exclude.jboss">
         <if>
             <not>
                 <isset property="exclude.start.servers"/>
@@ -748,6 +869,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <then>
                 <antcall target="install:jboss:start:pa-ear"/>
                 <antcall target="install:jboss:start:pa-grid"/>
+                <antcall target="install:jboss:start:pa-grid-legacy"/>
                 <sleep seconds="15"/>
             </then>
         </if>
@@ -796,6 +918,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <target name="install:jboss:start:pa-grid" unless="exclude.pa-grid">
         <jboss-start-jboss2 jboss.server.name="${jboss.server.name.grid}"/>
     </target>
+    <target name="install:jboss:start:pa-grid-legacy" unless="exclude.pa-grid-legacy">
+    <jboss-start-jboss2 jboss.server.name="${pa-grid-legacy.jboss.server.name}"/>
+    </target>
 
     <target name="install:validation:pre-install">
         <validate-pre-install
@@ -808,6 +933,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <target name="install:validation:pre-install:ports" >
           <runtarget target="install:validation:pre-install:ports:paear"/>
           <runtarget target="install:validation:pre-install:ports:pagrid"/>
+          <runtarget target="install:validation:pre-install:ports:pagrid-legacy"/>
       </target>
       <target name="install:validation:pre-install:ports:paear" unless="exclude.pa-ear">
         <validate-ports-preinstall />
@@ -815,9 +941,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <target name="install:validation:pre-install:ports:pagrid" unless="exclude.pa-grid">
         <validate-ports-preinstall validation.pre.port.list="${validation.pre.port.pagrid.list}" />
       </target>
+    <target name="install:validation:pre-install:ports:pagrid-legacy" unless="exclude.pa-grid-legacy">
+      <validate-ports-preinstall validation.pre.port.list="${pa-grid-legacy.validation.pre.port.list}" />
+    </target>
       <target name="install:validation:post-install">
          <runtarget target="install:validation:post-install:paear"/>
          <runtarget target="install:validation:post-install:pagrid"/>
+         <runtarget target="install:validation:post-install:pagrid-legacy"/>
       </target>
       <target name="install:validation:post-install:paear" unless="exclude.pa-ear">
         <if>
@@ -845,7 +975,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </then>
         </if>
       </target>
-
+    <target name="install:validation:post-install:pagrid-legacy" unless="exclude.pa-grid-legacy">
+      <if>
+        <not>
+          <isset property="exclude.start.servers"/>
+        </not>
+        <then>
+          <validate-post-install
+              validation.post.socket.list="${pa-grid-legacy.validation.post.socket.list}"
+              validation.post.http.list="${pa-grid-legacy.validation.post.http.list}"
+              propertyfile.backup.location="${user.home}"
+              jboss.server.name="${pa-grid-legacy.jboss.server.name}"
+              application.url="${pa-grid-legacy.application.url}"
+              />
+        </then>
+      </if>
+    </target>
     <!-- Wrapper target to deploy JBOSS container -->
     <target name="install:jboss" unless="exclude.jboss"
         depends="
@@ -863,6 +1008,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:jboss:pa-grid:pre-configure,
         install:pa-grid:application,
         install:pa-grid:configure,
+        install:jboss:pa-grid-legacy:pre-configure,
+        install:pa-grid-legacy:application,
+        install:pa-grid-legacy:configure,
         install:jboss:configure,
         install:post,
         install:jboss:start
@@ -945,7 +1093,47 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             appxml="${temp.dir}/accrual-ear/META-INF/application.xml"
             />
     </target>
+    <target name="install:jboss:pa-grid-legacy:pre-configure" unless="exclude.pa-grid-legacy">
+        <mkdir dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+        <delete dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+        <mkdir dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+        <unzip src="${pa-grid-legacy.dir.dist}/${pa-grid-legacy.artifact.file}" dest="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
+        <unzip src="${temp.dir}/${pa-grid-legacy.dist.relative.dir}/WEB-INF/lib/${pa-grid-legacy.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${pa-grid-legacy.introduce.skeleton.service.name}-common"/>
+        <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+        <var name="file.list" value="${pa-grid-legacy.introduce.skeleton.service.name}-common/jndi.properties"/>
 
+        <for list="${file.list}" param="file.relative.name">
+            <sequential>
+                <propertyregex property="file.name"
+                    input="@{file.relative.name}"
+                    regexp="^.*\/(.*)"
+                    select="\1"
+                    override="true"
+                    />
+                <propertyregex property="relative.dir"
+                    input="@{file.relative.name}"
+                    regexp="^(.*)\/.*"
+                    select="\1"
+                    override="true"
+                    />
+                <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+                <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+                <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+                    <filterset>
+                        <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+                        <filter token="pa-grid-legacy.jndi.principal" value="${pa-grid-legacy.jndi.principal}"/>
+                        <filter token="pa-grid-legacy.jndi.credentials" value="${pa-grid-legacy.jndi.credentials}"/>
+                    </filterset>
+                </copy>
+                <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+            </sequential>
+        </for>
+        <move file="${pa-grid-legacy.dir.dist}/${pa-grid-legacy.artifact.file}" tofile="${pa-grid-legacy.dir.dist}/${pa-grid-legacy.artifact.file}.orig"/>
+        <jar destfile="${temp.dir}/${pa-grid-legacy.dist.relative.dir}/WEB-INF/lib/${pa-grid-legacy.introduce.skeleton.service.name}-common.jar"
+                    basedir="${temp.dir}/${pa-grid-legacy.introduce.skeleton.service.name}-common" compress="false"/>
+
+        <zip basedir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}" compress="true" file="${pa-grid-legacy.dir.dist}/${pa-grid-legacy.artifact.file}" update="false"/>
+    </target>
     <!-- Wrapper target to upgrade jboss container. Does not install or configure binaries -->
     <target name="upgrade:jboss" unless="exclude.jboss"
         description="Wrapper target to call all targets required to upgrade jboss container."
@@ -959,6 +1147,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:jboss:pa-grid:pre-configure,
         install:pa-grid:application,
         install:pa-grid:configure,
+        install:jboss:pa-grid-legacy:pre-configure,
+        install:pa-grid-legacy:application,
+        install:pa-grid-legacy:configure,
         install:jboss:start
         " />
 
