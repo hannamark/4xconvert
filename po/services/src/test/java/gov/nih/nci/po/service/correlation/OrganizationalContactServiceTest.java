@@ -101,10 +101,8 @@ import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jms.JMSException;
 
@@ -119,19 +117,15 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
  */
 public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceTest<OrganizationalContact> {
 
-    private final Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+    private final OrganizationalContactType type = new OrganizationalContactType("For drug shipment");
 
-    private Set<OrganizationalContactType> getTypes() {
-        return types;
+    private OrganizationalContactType getType() {
+        return type;
     }
 
     @Before
     public void initDbData() {
-        types.add(new OrganizationalContactType("For drug shipment"));
-        types.add(new OrganizationalContactType("For safety issues"));
-        for (OrganizationalContactType obj : getTypes()) {
-            PoHibernateUtil.getCurrentSession().save(obj);
-        }
+        PoHibernateUtil.getCurrentSession().save(getType());
         PoHibernateUtil.getCurrentSession().flush();
     }
 
@@ -140,7 +134,7 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         OrganizationalContact oc = new OrganizationalContact();
         createAndGetOrganization();
         fillinPersonRoleFields(oc);
-        oc.getTypes().addAll(getTypes());
+        oc.setType(getType());
         return oc;
     }
 
@@ -148,11 +142,9 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
     void verifyStructuralRole(OrganizationalContact expected, OrganizationalContact actual) {
         verifyPersonRole(expected, actual);
 
-        List<String> expectedValues = OrganizationalContactDTOTest.getCodeValues(expected.getTypes());
-        List<String> actualValues = OrganizationalContactDTOTest.getCodeValues(actual.getTypes());
-        assertEquals(expectedValues.size(), actualValues.size());
-        assertTrue(expectedValues.containsAll(actualValues));
-        assertTrue(actualValues.containsAll(expectedValues));
+        String expectedValue = OrganizationalContactDTOTest.getCodeValue(expected.getType());
+        String actualValue = OrganizationalContactDTOTest.getCodeValue(actual.getType());
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test

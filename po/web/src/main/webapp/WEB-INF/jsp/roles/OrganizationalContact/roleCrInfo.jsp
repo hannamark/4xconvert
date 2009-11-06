@@ -37,25 +37,25 @@
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield label="%{getText('organizationalContact.status')}" name="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
-            <script type="text/javascript">
-                var crRoleTypesArray = new Array();
-                <c:forEach var="crRoleType" items="${cr.types}" varStatus="crRoleTypeStatus">
-                    crRoleTypesArray[${crRoleTypeStatus.index}] = '${crRoleType.id}';
-                </c:forEach>
-            </script>
+
+            <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
+            <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.OrganizationalContactType@class"/>
+            <s:set name="orgContactTypes" value="#genericCodeValueService.list(#codeValueClass)" />
+
             <po:copyButton
-             id="copy_curateCrForm_role_types"
-             onclick="selectValuesInMultiSelectField(crRoleTypesArray, 'curateRoleForm.role.types');"
+             id="copy_curateCrForm_role_type"
+             onclick="selectValueInSelectField('${pofn:escapeJavaScript(cr.type.id)}', 'curateRoleForm.role.type');"
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:select
-                   id="curateRoleForm.role.types"
-                   label="%{getText('organizationalContact.types')}"
-                   name="cr.types"
-                   list="cr.types"
+                   id="curateRoleForm.role.type"
+                   label="%{getText('organizationalContact.type')}"
+                   name="cr.type"
+                   list="orgContactTypes"
                    listKey="id"
                    listValue="code"
-                   value="%{cr.types.{id}}"
-                   multiple="true"
+                   value="cr.type.id"
+                   headerKey="" headerValue="--Select a Contact Type--"
+                   required="true" cssClass="required"
                    />
             </po:copyButton>
             <div class="clear"></div>

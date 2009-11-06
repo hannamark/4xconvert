@@ -80,98 +80,30 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.convert;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.OrganizationalContactType;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
+import gov.nih.nci.po.service.AbstractHibernateTestCase;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
+import org.junit.Test;
 
 /**
- * Converter to translate between ISO & PO race codes.
- * @author smatyas
+ * @author Steve Lustbader
  */
-public class OrganizationalContactTypeConverter extends AbstractXSnapshotConverter<Set<OrganizationalContactType>> {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <TO> TO convert(Class<TO> returnClass, Set<OrganizationalContactType> value) {
-        if (returnClass == DSet.class) {
-            return (TO) convertToDsetOfCd(value);
-        }
-        throw new UnsupportedOperationException(returnClass.getName());
-    }
+public class UniqueOrganizationalContactTitleScoperTypeValidatorTest extends AbstractHibernateTestCase {
 
-    /**
-     * convert {@link Cd} to other types.
-     */
-    public static class DSetCdConverter extends AbstractXSnapshotConverter<DSet<Cd>> {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        public <TO> TO convert(Class<TO> returnClass, DSet<Cd> value) {
-            if (returnClass == Set.class) {
-                return (TO) convertToOrgContactTypeSet(value);
-            }
-            throw new UnsupportedOperationException(returnClass.getName());
-        }
-    }
+    @Test
+    public void isValidType() {
+        UniqueOrganizationalContactTitleScoperTypeValidator validator =
+                new UniqueOrganizationalContactTitleScoperTypeValidator();
+        assertFalse(validator.isValid(new HealthCareFacility()));
+        OrganizationalContact oc = new OrganizationalContact();
+        assertTrue(validator.isValid(oc));
 
-    /**
-     * @param cds a status code
-     * @return best guess of <code>iso</code>'s ISO equivalent.
-     */
-    public static Set<OrganizationalContactType> convertToOrgContactTypeSet(DSet<Cd> cds) {
-        if (cds == null || CollectionUtils.isEmpty(cds.getItem())) {
-            return null;
-        }
-        CdConverter cdConverter = new CdConverter();
-        Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
-        for (Cd cd : cds.getItem()) {
-            OrganizationalContactType type = cdConverter.convert(OrganizationalContactType.class, cd);
-            if (type != null) {
-                types.add(type);
-            }
-        }
-        return types;
-
-    }
-
-    /**
-     * @param types PO entity status.
-     * @return best guess of <code>DSet&lt;Cd&gt;</code>'s ISO equivalent.
-     */
-    public static DSet<Cd> convertToDsetOfCd(Set<OrganizationalContactType> types) {
-        DSet<Cd> cds = new DSet<Cd>();
-        cds.setItem(new HashSet<Cd>());
-
-        if (CollectionUtils.isEmpty(types)) {
-            return cds;
-        }
-
-        for (OrganizationalContactType type : types) {
-            Cd iso = convertToCd(type);
-            cds.getItem().add(iso);
-        }
-        return cds;
-    }
-
-    private static Cd convertToCd(OrganizationalContactType type) {
-        Cd iso = new Cd();
-        if (type == null) {
-            iso.setNullFlavor(NullFlavor.NI);
-        } else {
-            iso.setCode(type.getCode());
-        }
-        return iso;
+        oc.setTitle("test title");
+        assertTrue(validator.isValid(oc));
     }
 }

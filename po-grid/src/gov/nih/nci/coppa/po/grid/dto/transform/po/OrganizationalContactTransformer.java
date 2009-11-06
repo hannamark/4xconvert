@@ -6,7 +6,6 @@ import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
@@ -38,7 +37,7 @@ public final class OrganizationalContactTransformer
         dto.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
         dto.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         dto.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
-        dto.setTypeCode(DSETCDTransformer.INSTANCE.toDto(input.getTypeCode()));
+        dto.setTypeCode(CDTransformer.INSTANCE.toDto(input.getTypeCode()));
         dto.setTitle(STTransformer.INSTANCE.toDto(input.getTitle()));
 
         return dto;
@@ -58,7 +57,7 @@ public final class OrganizationalContactTransformer
         xml.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
         xml.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         xml.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
-        xml.setTypeCode(DSETCDTransformer.INSTANCE.toXml(input.getTypeCode()));
+        xml.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));
         xml.setTitle(STTransformer.INSTANCE.toXml(input.getTitle()));
         return xml;
     }
@@ -69,5 +68,4 @@ public final class OrganizationalContactTransformer
     public OrganizationalContact[] createXmlArray(int size) throws DtoTransformException {
         return new OrganizationalContact[size];
     }
-
 }

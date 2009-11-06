@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.FundingMechanism;
+import gov.nih.nci.po.data.bo.OrganizationalContactType;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
@@ -11,9 +12,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.util.Date;
 import java.util.Random;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
@@ -23,7 +22,6 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     private OversightCommitteeType oversightCommitee;
     private ResearchOrganizationType researchOrgType;
     private FundingMechanism fundingMechanism;
-
 
     private User user;
 
@@ -76,6 +74,7 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
     public void loadData() {
         defaultCountry = CountryTestUtil.save(new Country("United States", "840", "US", "USA"));
 
+        PoHibernateUtil.getCurrentSession().save(new OrganizationalContactType("IRB"));
         researchOrgType = new ResearchOrganizationType("DCY", "Cancer Center");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(researchOrgType);
         researchOrgType = new ResearchOrganizationType("CLC", "Cancer Center");

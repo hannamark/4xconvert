@@ -83,14 +83,12 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
-import gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter;
+import gov.nih.nci.po.data.convert.GenericTypeCodeConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -98,10 +96,8 @@ import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -112,19 +108,15 @@ import org.junit.Test;
  */
 public class OrganizationalContactRemoteServiceTest extends
         AbstractPersonRoleDTORemoteServiceTest<OrganizationalContactDTO, OrganizationalContactCR> {
-    private final Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+    private final OrganizationalContactType type = new OrganizationalContactType("For drug shipment");
 
-    private Set<OrganizationalContactType> getTypes() {
-        return types;
+    private OrganizationalContactType getType() {
+        return type;
     }
 
     @Before
     public void initDbData() {
-        types.add(new OrganizationalContactType("For drug shipment"));
-        types.add(new OrganizationalContactType("For safety issues"));
-        for (OrganizationalContactType obj : getTypes()) {
-            PoHibernateUtil.getCurrentSession().save(obj);
-        }
+        PoHibernateUtil.getCurrentSession().save(getType());
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
     }
@@ -145,8 +137,7 @@ public class OrganizationalContactRemoteServiceTest extends
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
         createAndSetOrganization();
         fillInPersonRoleDate(dto);
-        
-        dto.setTypeCode(OrganizationalContactTypeConverter.convertToDsetOfCd(getTypes()));
+        dto.setTypeCode(GenericTypeCodeConverter.convertToCd(getType()));
         return dto;
     }
 
@@ -156,13 +147,9 @@ public class OrganizationalContactRemoteServiceTest extends
     @SuppressWarnings("unchecked")
     @Override
     void verifyDto(OrganizationalContactDTO e, OrganizationalContactDTO a) {
-
-        List<String> expectedValues = OrganizationalContactDTOTest.getCodeValues(e.getTypeCode());
-        List<String> actualValues = OrganizationalContactDTOTest.getCodeValues(a.getTypeCode());
-        assertEquals(expectedValues.size(), actualValues.size());
-        assertTrue(expectedValues.containsAll(actualValues));
-        assertTrue(actualValues.containsAll(expectedValues));
-
+        String expectedValue = OrganizationalContactDTOTest.getCodeValue(e.getTypeCode());
+        String actualValue = OrganizationalContactDTOTest.getCodeValue(a.getTypeCode());
+        assertEquals(expectedValue, actualValue);
         verifyPersonRoleDto(e, a);
     }
 
@@ -176,7 +163,7 @@ public class OrganizationalContactRemoteServiceTest extends
     public void testValidate() throws Exception {
         OrganizationalContactDTO pr = new OrganizationalContactDTO();
         Map<String, String[]> errors = getCorrelationService().validate(pr);
-        assertEquals(3, errors.keySet().size());
+        assertEquals(4, errors.keySet().size());
     }
 
     @Override
@@ -201,7 +188,9 @@ public class OrganizationalContactRemoteServiceTest extends
      */
     @Override
     protected void modifySubClassSpecificFieldsForCorrelation2(OrganizationalContactDTO correlation2) {
-        correlation2.getTypeCode().getItem().clear();
+        Cd typeCode = new Cd();
+        typeCode.setCode("For drug shipment");
+        correlation2.setTypeCode(typeCode);
     }
 
     /**
@@ -212,18 +201,11 @@ public class OrganizationalContactRemoteServiceTest extends
     protected void testSearchOnSubClassSpecificFields(OrganizationalContactDTO correlation1, Ii id2,
             OrganizationalContactDTO searchCriteria) throws NullifiedRoleException {
         // search by typeCode
-        searchCriteria.setTypeCode(new DSet<Cd>());
-        searchCriteria.getTypeCode().setItem(new HashSet());
         Cd typeCode = new Cd();
-        searchCriteria.getTypeCode().getItem().add(typeCode);
-
         typeCode.setCode("For drug shipment");
+        searchCriteria.setTypeCode(typeCode);
         List<OrganizationalContactDTO> results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-
-        typeCode.setCode("For safety issues");
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
 
         try {
             // attempt to search on an unknown code and it returns null therefore no criterion is ever set

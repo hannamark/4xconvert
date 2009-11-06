@@ -89,8 +89,8 @@ import gov.nih.nci.po.util.PhoneNotEmptyValidator;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RequiredOrganizationalContactTitleOrPerson;
 import gov.nih.nci.po.util.RoleStatusChange;
-import gov.nih.nci.po.util.UniqueOrganizationalContactTitleScoper;
-import gov.nih.nci.po.util.UniquePlayerScoperPlayerOptional;
+import gov.nih.nci.po.util.UniqueOrganizationalContactPlayerScoperType;
+import gov.nih.nci.po.util.UniqueOrganizationalContactTitleScoperType;
 import gov.nih.nci.po.util.ValidIi;
 
 import java.util.HashSet;
@@ -99,12 +99,12 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -117,6 +117,7 @@ import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
@@ -133,8 +134,8 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @RoleStatusChange
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 @RequiredOrganizationalContactTitleOrPerson
-@UniqueOrganizationalContactTitleScoper
-@UniquePlayerScoperPlayerOptional(article = "An", friendlyName = "Organizational Contact")
+@UniqueOrganizationalContactTitleScoperType
+@UniqueOrganizationalContactPlayerScoperType
 @PhoneNotEmptyValidator.PhoneNotEmpty
 public class OrganizationalContact extends AbstractOrganizationalContact implements Correlation, PersonRole {
 
@@ -193,19 +194,16 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     /**
      * {@inheritDoc}
      */
-    @ManyToMany
-    @JoinTable(
-            name = "orgcontact_types",
-            joinColumns = { @JoinColumn(name = "orgcontact_id") },
-            inverseJoinColumns = @JoinColumn(name = "orgcontacttype_id")
-    )
-    @ForeignKey(name = "ORGCNCT_TYPE_ORGCNCT_FK", inverseName = "ORGCNCT_TYPE_TYPE_FK")
-    @Searchable(fields = { "code" })
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "orgcontacttype_id", nullable = false)
+    @Index(name = "oc_orgcontacttypeid_idx")
+    @ForeignKey(name = "ORGCNCT_TYPE_ORGCNCT_FK")
+    @Searchable
     @Override
-    public Set<OrganizationalContactType> getTypes() {
-        return super.getTypes();
+    @NotNull
+    public OrganizationalContactType getType() {
+        return super.getType();
     }
-
 
     /**
      * {@inheritDoc}

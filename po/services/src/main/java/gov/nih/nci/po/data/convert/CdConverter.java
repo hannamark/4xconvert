@@ -92,7 +92,7 @@ import org.apache.commons.collections.BidiMap;
 
 /**
  * @author Scott Miller
- * 
+ *
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class CdConverter extends AbstractXSnapshotConverter<Cd> {
@@ -108,26 +108,26 @@ public class CdConverter extends AbstractXSnapshotConverter<Cd> {
         }
         if (returnClass.equals(RoleStatus.class)) {
             return (TO) convertToRoleStatus(value);
-        } else if (CodeValue.class.isAssignableFrom(returnClass)) {        
+        } else if (CodeValue.class.isAssignableFrom(returnClass)) {
             return (TO) convertToCodeValue((Class<? extends CodeValue>) returnClass, value);
         }
         throw new UnsupportedOperationException(returnClass.getName());
     }
-    
+
     private static <CV extends CodeValue> CV convertToCodeValue(Class<CV> type, Cd value) {
         return PoRegistry.getGenericCodeValueService().getByCode(type, value.getCode());
     }
 
     /**
      * Convert a Role status code into an emun.
-     * 
+     *
      * @param value the code.
      * @return the enum.
      */
     public static RoleStatus convertToRoleStatus(Cd value) {
         return RoleStatus.valueOf(value.getCode().toUpperCase());
     }
-    
+
     /**
      * @param cs PO entity.
      * @param map map of enum values.

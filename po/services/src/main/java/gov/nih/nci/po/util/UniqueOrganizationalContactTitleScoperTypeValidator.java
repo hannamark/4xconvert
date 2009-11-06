@@ -20,15 +20,15 @@ import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
  *
  * @author slustbader
  */
-public class UniqueOrganizationalContactTitleScoperValidator implements
-        Validator<UniqueOrganizationalContactTitleScoper>, Serializable {
+public class UniqueOrganizationalContactTitleScoperTypeValidator implements
+        Validator<UniqueOrganizationalContactTitleScoperType>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}
      */
-    public void initialize(UniqueOrganizationalContactTitleScoper parameters) {
+    public void initialize(UniqueOrganizationalContactTitleScoperType parameters) {
         // nothing to do here
     }
 
@@ -40,7 +40,6 @@ public class UniqueOrganizationalContactTitleScoperValidator implements
             return false;
         }
         AbstractOrganizationalContact aoc = (AbstractOrganizationalContact) value;
-
         // UniquePlayerScoperValidator will validate if there's no title
         if (StringUtils.isBlank(aoc.getTitle())) {
             return true;
@@ -51,8 +50,9 @@ public class UniqueOrganizationalContactTitleScoperValidator implements
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
             Criteria c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(aoc.getClass()));
-            c.add(Restrictions.eq("scoper", aoc.getScoper()));
             c.add(Restrictions.eq("title", aoc.getTitle()));
+            c.add(Restrictions.eq("scoper", aoc.getScoper()));
+            c.add(Restrictions.eq("type", aoc.getType()));
             c.add(Restrictions.ne("status", RoleStatus.NULLIFIED));
             AbstractPersonRole other = (AbstractPersonRole) c.uniqueResult();
             return (other == null || other.getId().equals(aoc.getId()));
@@ -61,5 +61,6 @@ public class UniqueOrganizationalContactTitleScoperValidator implements
                 s.close();
             }
         }
+
     }
 }

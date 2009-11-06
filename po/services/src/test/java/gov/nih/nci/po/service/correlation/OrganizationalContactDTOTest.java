@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
@@ -12,20 +11,15 @@ import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
+import gov.nih.nci.po.data.convert.GenericTypeCodeConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IiDsetConverter;
-import gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Before;
@@ -34,28 +28,24 @@ import org.junit.Test;
 
 public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     private static final String TEST_TITLE = "test title";
-    private final Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+    private final OrganizationalContactType type = new OrganizationalContactType("For drug shipment");
 
     @Before
     public void initDbData() {
-        types.add(new OrganizationalContactType("For drug shipment"));
-        types.add(new OrganizationalContactType("For safety issues"));
-        for (OrganizationalContactType obj : getTypes()) {
-            PoHibernateUtil.getCurrentSession().save(obj);
-        }
+        PoHibernateUtil.getCurrentSession().save(getType());
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
     }
 
-    private Set<OrganizationalContactType> getTypes() {
-        return types;
+    private OrganizationalContactType getType() {
+        return type;
     }
 
     @Override
     protected AbstractPersonRole getExampleTestClass() {
         OrganizationalContact oc = new OrganizationalContact();
         fillInExamplePersonRoleFields(oc);
-        oc.setTypes(getTypes());
+        oc.setType(getType());
         oc.setTitle(TEST_TITLE);
 
         return oc;
@@ -75,7 +65,7 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         ii.setIdentifierName(IdConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
         dto.setIdentifier(IiConverter.convertToDsetIi(ii));
 
-        dto.setTypeCode(OrganizationalContactTypeConverter.convertToDsetOfCd(getTypes()));
+        dto.setTypeCode(GenericTypeCodeConverter.convertToCd(getType()));
 
         St title = new St();
         title.setValue(TEST_TITLE);
@@ -88,33 +78,18 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
     protected void verifyTestClassDTOFields(AbstractPersonRole pr) {
         OrganizationalContact organizationalContact = (OrganizationalContact) pr;
 
-        assertEquals(getTypes().size(), organizationalContact.getTypes().size());
-        List<String> expectedValues = getCodeValues(getTypes());
-        List<String> actualValues = getCodeValues(organizationalContact.getTypes());
-        assertEquals(expectedValues.size(), actualValues.size());
-        assertTrue(expectedValues.containsAll(actualValues));
-        assertTrue(actualValues.containsAll(expectedValues));
-
+        String expectedValue = getCodeValue(getType());
+        String actualValue = getCodeValue(organizationalContact.getType());
+        assertEquals(expectedValue, actualValue);
         assertEquals(TEST_TITLE, organizationalContact.getTitle());
-
     }
 
-    public static List<String> getCodeValues(Collection<OrganizationalContactType> list) {
-        List<String> codeValues = new ArrayList<String>();
-        for (OrganizationalContactType organizationalContactType : list) {
-            OrganizationalContactType type = organizationalContactType;
-            codeValues.add(type.getCode());
-        }
-        return codeValues;
+    public static String getCodeValue(OrganizationalContactType ocType) {
+        return ocType.getCode();
     }
 
-    public static List<String> getCodeValues(DSet<Cd> list) {
-        List<String> codeValues = new ArrayList<String>();
-        for (Cd cd : list.getItem()) {
-            Cd type = cd;
-            codeValues.add(type.getCode());
-        }
-        return codeValues;
+    public static String getCodeValue(Cd cd) {
+        return cd.getCode();
     }
 
     @SuppressWarnings("unchecked")
@@ -133,25 +108,19 @@ public class OrganizationalContactDTOTest extends AbstractPersonRoleDTOTest {
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
 
         //verify OrganizationalContact
-        List<String> expectedValues = getCodeValues(getTypes());
-        List<String> actualValues = getCodeValues(organizationalContactDTO.getTypeCode());
-        assertEquals(expectedValues.size(), actualValues.size());
-        assertTrue(expectedValues.containsAll(actualValues));
-        assertTrue(actualValues.containsAll(expectedValues));
+        String expectedValue = getCodeValue(getType());
+        String actualValue = getCodeValue(organizationalContactDTO.getTypeCode());
+        assertEquals(expectedValue, actualValue);
         assertEquals(TEST_TITLE, organizationalContactDTO.getTitle().getValue());
-
     }
 
     @Test
     public void contactTypeEdgeCases() throws Exception {
-        DSet<Cd> result = OrganizationalContactTypeConverter.convertToDsetOfCd(null);
+        Cd result = GenericTypeCodeConverter.convertToCd(null);
         assertNotNull(result);
-        assertNotNull(result.getItem());
-        assertTrue(result.getItem().isEmpty());
 
-        result = OrganizationalContactTypeConverter.convertToDsetOfCd(new HashSet<OrganizationalContactType>());
+        result = GenericTypeCodeConverter.convertToCd(new OrganizationalContactType("For drug shipment2"));
         assertNotNull(result);
-        assertNotNull(result.getItem());
-        assertTrue(result.getItem().isEmpty());
+        assertEquals(result.getCode(), "For drug shipment2");
     }
 }

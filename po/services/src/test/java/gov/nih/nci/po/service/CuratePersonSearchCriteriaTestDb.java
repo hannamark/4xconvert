@@ -96,6 +96,7 @@ public class CuratePersonSearchCriteriaTestDb extends AbstractHibernateTestCase 
         OrganizationalContactServiceTest test = new OrganizationalContactServiceTest();
         test.setDefaultCountry(pst.getDefaultCountry());
         test.setUpData();
+        test.initDbData();
         test.testSimpleCreateAndGet();
         OrganizationalContact ro = (OrganizationalContact) PoHibernateUtil.getCurrentSession().createCriteria(OrganizationalContact.class).uniqueResult();
         assertEquals(RoleStatus.PENDING, ro.getStatus());

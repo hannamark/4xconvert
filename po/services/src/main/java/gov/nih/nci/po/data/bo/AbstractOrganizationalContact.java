@@ -82,9 +82,6 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -97,41 +94,41 @@ import javax.persistence.Transient;
  * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
  *                           class="gov.nih.nci.services.correlation.AbstractOrganizationalContactDTO"
  *                           model-extends="gov.nih.nci.po.data.bo.AbstractPersonRole"
- *                           serial-version-uid="2L"
+ *                           serial-version-uid="3L"
  */
 @MappedSuperclass
 public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     /**
      * Default long string column length.
      */
     protected static final int LONG_COL_LENGTH = 255;
 
-    private Set<OrganizationalContactType> types = new HashSet<OrganizationalContactType>();
+    private OrganizationalContactType type;
     private String title;
 
 
     /**
-     * Get org contact type codes.
+     * Get org contact type.
      *
-     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.DSet"
-     *   snapshot-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter"
-     *   model-transformer="gov.nih.nci.po.data.convert.OrganizationalContactTypeConverter$DSetCdConverter"
+     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     *   snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
+     *   model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      *
-     * @return a person's set of race code(s)
+     * @return an organizational contact type.
      */
     @Transient
-    public Set<OrganizationalContactType> getTypes() {
-        return types;
+    public OrganizationalContactType getType() {
+        return type;
     }
 
     /**
-     * @param types org type codes
+     * @param type the organizational contact type.
      */
-    public void setTypes(Set<OrganizationalContactType> types) {
-        this.types = types;
+    public void setType(OrganizationalContactType type) {
+        this.type = type;
     }
 
     /**

@@ -86,25 +86,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 
 import org.junit.Test;
 
 /**
- * @author Steve Lustbader
+ * @author kkanchinadam
  */
-public class UniqueOrganizationalContactTitleScoperValidatorTest extends AbstractHibernateTestCase {
+public class UniqueOrganizationalContactPlayerScoperTypeValidatorTest extends AbstractHibernateTestCase {
 
     @Test
     public void isValidType() {
-        UniqueOrganizationalContactTitleScoperValidator validator =
-                new UniqueOrganizationalContactTitleScoperValidator();
-        assertFalse(validator.isValid(new HealthCareFacility()));
+        UniqueOrganizationalContactPlayerScoperTypeValidator validator =
+                new UniqueOrganizationalContactPlayerScoperTypeValidator();
         OrganizationalContact oc = new OrganizationalContact();
         assertTrue(validator.isValid(oc));
-
-        oc.setTitle("test title");
-        assertTrue(validator.isValid(oc));
     }
-
 }

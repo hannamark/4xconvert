@@ -53,7 +53,7 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-    
+
     <xs:element name="Bl">
         <xs:complexType>
             <xs:complexContent>
@@ -197,7 +197,7 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-    
+
     <xs:element name="Patient">
         <xs:complexType>
             <xs:complexContent>
@@ -286,7 +286,7 @@
                         <xs:element name="telecomAddress"
                             type="ISO:DSET_TEL" />
                         <xs:element name="status" type="ISO:CD" />
-                        <xs:element name="typeCode" type="ISO:DSET_CD" />
+                        <xs:element name="typeCode" type="ISO:CD" />
                         <xs:element name="title" type="ISO:ST" />
                     </xs:sequence>
                 </xs:extension>
@@ -340,8 +340,8 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-    
-    
+
+
      <xs:complexType name="EntityNodeType">
             <xs:annotation>
                 <xs:documentation>
@@ -354,17 +354,17 @@
                <xs:element name="players" type="COPPA-PO:CorrelationType"/>
                <xs:element name="scopers" type="COPPA-PO:CorrelationType"/>
                <xs:element name="entity" type="COPPA-PO:EntityType"/>
-                
+
             </xs:sequence>
      </xs:complexType>
-     
+
      <xs:complexType name="EntityType" mixed="true" >
         <xs:choice>
             <xs:element ref="COPPA-PO:Person"/>
             <xs:element ref="COPPA-PO:Organization"/>
         </xs:choice>
      </xs:complexType>
-     
+
      <xs:complexType name="CorrelationType" mixed="true">
         <xs:choice>
             <xs:element ref="COPPA-PO:ClinicalResearchStaff"/>
@@ -377,7 +377,7 @@
             <xs:element ref="COPPA-PO:ResearchOrganization"/>
         </xs:choice>
      </xs:complexType>
-     
+
      <xs:complexType name="CorrelationNodeType">
             <xs:annotation>
                 <xs:documentation>
@@ -390,7 +390,7 @@
                 <xs:element name="correlation" type="COPPA-PO:CorrelationType"/>
             </xs:sequence>
      </xs:complexType>
-     
+
     <xs:element name="EntityNode">
         <xs:complexType>
             <xs:complexContent>
@@ -398,7 +398,7 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-    
+
      <xs:element name="CorrelationNode">
         <xs:complexType>
             <xs:complexContent>

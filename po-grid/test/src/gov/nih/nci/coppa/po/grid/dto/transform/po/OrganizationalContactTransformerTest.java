@@ -6,7 +6,6 @@ import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
@@ -66,7 +65,7 @@ public class OrganizationalContactTransformerTest extends
         dto.setPostalAddress(new DSETADTransformerTest().makeDtoSimple());
         dto.setTelecomAddress(new DSETTelTransformerTest().makeDtoSimple());
         dto.setStatus(new CDTransformerTest().makeDtoSimple());
-        dto.setTypeCode(new DSETCDTransformerTest().makeDtoSimple());
+        dto.setTypeCode(new CDTransformerTest().makeDtoSimple());
 
         return dto;
     }
@@ -95,7 +94,7 @@ public class OrganizationalContactTransformerTest extends
         xml.setPostalAddress(new DSETADTransformerTest().makeXmlSimple());
         xml.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
         xml.setStatus(new CDTransformerTest().makeXmlSimple());
-        xml.setTypeCode(new DSETCDTransformerTest().makeXmlSimple());
+        xml.setTypeCode(new CDTransformerTest().makeXmlSimple());
         return xml;
     }
 
@@ -109,7 +108,7 @@ public class OrganizationalContactTransformerTest extends
         new CDTransformerTest().verifyDtoSimple(x.getStatus());
         new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
         new DSETADTransformerTest().verifyDtoSimple(x.getPostalAddress());
-        new DSETCDTransformerTest().verifyDtoSimple(x.getTypeCode());
+        new CDTransformerTest().verifyDtoSimple(x.getTypeCode());
     }
 
     @Override
@@ -122,7 +121,6 @@ public class OrganizationalContactTransformerTest extends
         new CDTransformerTest().verifyXmlSimple(x.getStatus());
         new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
         new DSETADTransformerTest().verifyXmlSimple(x.getPostalAddress());
-        new DSETCDTransformerTest().verifyXmlSimple(x.getTypeCode());
+        new CDTransformerTest().verifyXmlSimple(x.getTypeCode());
     }
-
 }

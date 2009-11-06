@@ -71,6 +71,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
               searchOrgContact(client);
               queryOrgContact(client);
               getOrganizationalContactsByPlayerIds(client);
+              searchOrgContactsByTypeCode(client);
             } else {
                 usage();
                 System.exit(1);
@@ -100,6 +101,33 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         ClientUtils.handleSearchResults(results);
     }
 
+    private static void searchOrgContactsByTypeCode(OrganizationalContactClient client) throws RemoteException {
+        System.out.println("Querying for typeCode = Responsible Party");
+        OrganizationalContact criteria = createTypeCodeCriteria("Responsible Party");
+        OrganizationalContact[] results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+
+        System.out.println("Querying for typeCode = IRB");
+        criteria = createTypeCodeCriteria("IRB");
+        results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+
+        System.out.println("Querying for typeCode = Site");
+        criteria = createTypeCodeCriteria("Site");
+        results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+
+        System.out.println("Querying for status=Pending, typeCode = Site");
+        criteria = createTypeCodeCriteria("pending", "Site");
+        results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+
+        System.out.println("Querying for status=Pending, typeCode = IRB");
+        criteria = createTypeCodeCriteria("pending", "IRB");
+        results = client.search(criteria);
+        ClientUtils.handleSearchResults(results);
+    }
+
     private static void queryOrgContact(OrganizationalContactClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);
@@ -116,18 +144,38 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         criteria.setStatus(statusCode);
         return criteria;
     }
-    
+
+    private static OrganizationalContact createTypeCodeCriteria(String statusCodeValue, String typeCodeValue) {
+        OrganizationalContact criteria = new OrganizationalContact();
+        CD statusCode = new CD();
+        statusCode.setCode(statusCodeValue);
+        criteria.setStatus(statusCode);
+
+        CD typeCode = new CD();
+        typeCode.setCode(typeCodeValue);
+        criteria.setTypeCode(typeCode);
+        return criteria;
+    }
+
+    private static OrganizationalContact createTypeCodeCriteria(String typeCodeValue) {
+        OrganizationalContact criteria = new OrganizationalContact();
+        CD typeCode = new CD();
+        typeCode.setCode(typeCodeValue);
+        criteria.setTypeCode(typeCode);
+        return criteria;
+    }
+
     private static void getOrganizationalContactsByPlayerIds(OrganizationalContactClient client) {
         Id id1 = new Id();
         id1.setRoot(PersonClient.PERSON_ROOT);
         id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
         id1.setExtension("501");
-        
+
         Id id2 = new Id();
         id2.setRoot(PersonClient.PERSON_ROOT);
         id2.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
         id2.setExtension("2153");
-        
+
         try {
             OrganizationalContact[] results = client.getByPlayerIds(new Id[] {id1, id2});
             ClientUtils.handleSearchResults(results);

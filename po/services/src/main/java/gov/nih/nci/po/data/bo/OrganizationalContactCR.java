@@ -93,7 +93,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -103,6 +102,8 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.Valid;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * @author smatyas
@@ -158,15 +159,14 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
     /**
      * {@inheritDoc}
      */
-    @ManyToMany
-    @JoinTable(
-            name = "orgcontactcr_types",
-            joinColumns = { @JoinColumn(name = "orgcontactcr_id") }
-    )
-    @ForeignKey(name = "ORGCNCTCR_TYPE_ORGCNCTCR_FK", inverseName = "ORGCNCTCR_TYPE_TYPE_FK")
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "orgcontacttype_id", nullable = false)
+    @Index(name = "oc_orgcontacttypeid_idx")
+    @ForeignKey(name = "ORGCNCTCR_TYPE_ORGCNCTCR_FK")
+    @Searchable
     @Override
-    public Set<OrganizationalContactType> getTypes() {
-        return super.getTypes();
+    public OrganizationalContactType getType() {
+        return super.getType();
     }
 
     /**

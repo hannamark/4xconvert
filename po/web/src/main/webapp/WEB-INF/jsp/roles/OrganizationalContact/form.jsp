@@ -105,14 +105,15 @@
                     <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.OrganizationalContactType@class"/>
                     <s:set name="orgContactTypes" value="#genericCodeValueService.list(#codeValueClass)" />
                     <s:select
-                       id="curateRoleForm.role.types"
-                       label="%{getText('organizationalContact.types')}"
-                       name="role.types"
+                       id="curateRoleForm.role.type"
+                       label="%{getText('organizationalContact.type')}"
+                       name="role.type"
                        list="orgContactTypes"
                        listKey="id"
                        listValue="code"
-                       value="%{role.types.{id}}"
-                       multiple="true"
+                       value="role.type.id"
+                       headerKey="" headerValue="--Select a Contact Type--"
+                       required="true" cssClass="required"
                        />
 
                     <input id="enableEnterSubmit" type="submit"/>

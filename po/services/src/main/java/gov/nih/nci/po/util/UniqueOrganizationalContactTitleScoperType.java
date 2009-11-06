@@ -9,18 +9,18 @@ import java.lang.annotation.Target;
 import org.hibernate.validator.ValidatorClass;
 
 /**
- * Used to validate that the title of an organizational contact is unique for the scoper, ignoring NULLIFIED records.
+ * Validates that the title of an org contact is unique for the scoper and contact type, ignoring NULLIFIED records.
  *
- * @author slustbader
+ * @author slustbader, kkanchinadam
  */
 @Documented
-@ValidatorClass(UniqueOrganizationalContactTitleScoperValidator.class)
+@ValidatorClass(UniqueOrganizationalContactTitleScoperTypeValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UniqueOrganizationalContactTitleScoper {
+public @interface UniqueOrganizationalContactTitleScoperType {
 
     /**
      * get the message.
      */
-    String message() default "{validator.uniqueOrganizationalContactTitleScoper}";
+    String message() default "{validator.uniqueOrganizationalContactTitleScoperType}";
 }

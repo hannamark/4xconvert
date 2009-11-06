@@ -75,4 +75,20 @@
        <comment>Upgrade for PO-1214 - Setting name for HealthCareFacility and ResearchOrganizaiton based on Organization name</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1214-data.sql"/>
     </changeSet>
+    <changeSet id="PO-1334" author="kkanchinadam">
+       <comment>Upgrade for PO-1334 - add type_id columns to the organizationalcontact and organizationalcontactcr tables.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1334.sql"/>
+    </changeSet>
+    <changeSet id="PO-1335-oc" author="kkanchinadam">
+       <comment>Upgrade for PO-1335 - Procedures for migrating existing type_ids to the organizationalcontact table.. Delete orgcontact_types table.</comment>
+       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.1/PO-1335-oc.sql"/>
+    </changeSet>
+    <changeSet id="PO-1335-ocr" author="kkanchinadam">
+       <comment>Upgrade for PO-1335 - Procedures for migrating existing type_ids to the organizationalcontactcr table. Delete orgcontactcr_types table.</comment>
+       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.1/PO-1335-ocr.sql"/>
+    </changeSet>
+    <changeSet id="PO-1371" author="kkanchinadam">
+       <comment>Upgrade for PO-1371 - For the tables - organizationalcontact and organizationalcontactcr - set orgcontacttype_id to code="Site" (if null), alter the orgcontacttype_id column to NOT NULL</comment>
+       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.1/PO-1371.sql"/>
+    </changeSet>
 </databaseChangeLog>

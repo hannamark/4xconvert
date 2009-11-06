@@ -1,5 +1,8 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
@@ -12,6 +15,8 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+
+import java.util.HashSet;
 
 /**
  * Transforms OrganizationalContact instances.
@@ -38,7 +43,7 @@ public final class OrganizationalContactTransformer
         dto.setStatus(CDTransformer.INSTANCE.toDto(input.getStatus()));
         dto.setPostalAddress(DSETADTransformer.INSTANCE.toDto(input.getPostalAddress()));
         dto.setTelecomAddress(DSETTELTransformer.INSTANCE.toDto(input.getTelecomAddress()));
-        dto.setTypeCode(DSETCDTransformer.INSTANCE.toDto(input.getTypeCode()));
+        dto.setTypeCode(getCdFromDSet(DSETCDTransformer.INSTANCE.toDto(input.getTypeCode())));
         dto.setTitle(STTransformer.INSTANCE.toDto(input.getTitle()));
 
         return dto;
@@ -58,7 +63,7 @@ public final class OrganizationalContactTransformer
         xml.setStatus(CDTransformer.INSTANCE.toXml(input.getStatus()));
         xml.setPostalAddress(DSETADTransformer.INSTANCE.toXml(input.getPostalAddress()));
         xml.setTelecomAddress(DSETTELTransformer.INSTANCE.toXml(input.getTelecomAddress()));
-        xml.setTypeCode(DSETCDTransformer.INSTANCE.toXml(input.getTypeCode()));
+        xml.setTypeCode(DSETCDTransformer.INSTANCE.toXml(convertToDSetOfCd(input.getTypeCode())));
         xml.setTitle(STTransformer.INSTANCE.toXml(input.getTitle()));
         return xml;
     }
@@ -70,4 +75,20 @@ public final class OrganizationalContactTransformer
         return new OrganizationalContact[size];
     }
 
+    private DSet<Cd> convertToDSetOfCd(Cd cd) {
+        DSet<Cd> cds = new DSet<Cd>();
+        cds.setItem(new HashSet<Cd>());
+        cds.getItem().add(cd);
+        return cds;
+    }
+
+    private Cd getCdFromDSet(DSet<Cd> cds) {
+        Cd cd = new Cd();
+        if (cds != null && cds.getItem() != null && !cds.getItem().isEmpty()) {
+            cd = cds.getItem().iterator().next();
+        } else {
+            cd.setNullFlavor(NullFlavor.NI);
+        }
+        return cd;
+    }
 }
