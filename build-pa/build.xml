@@ -884,7 +884,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <deploy-files2
                 dist.file="${pa-ear.install.zip.file}"
                 />
-        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
+        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-grid=true -Dexclude.pa-grid-legacy=true ${install.target}" />
     </target>
     <target name="remote:install:pa-grid" unless="exclude.pa-grid">
         <!-- install pa-grid only-->
@@ -901,7 +901,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             remoteSshHost="${pagrid.ssh.server.hostname}"
             remoteSshPort="${pagrid.ssh.port}"
             remoteSshKeyfile="${pagrid.ssh.key.file}"
-            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.database=true ${install.target}" />
+            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.database=true -Dexclude.pa-grid-legacy=true ${install.target}" />
     </target>
     <target name="remote:install:pa-grid-legacy" unless="exclude.pa-grid-legacy">
       <!-- install pa-grid-legacy only-->
@@ -918,7 +918,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         remoteSshHost="${pa-grid-legacy.ssh.server.hostname}"
         remoteSshPort="${pa-grid-legacy.ssh.port}"
         remoteSshKeyfile="${pa-grid-legacy.ssh.key.file}"
-        remotesshcommand=". .bash_profile;cd ${pa-grid-legacy.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.database=true ${install.target}" />
+        remotesshcommand=". .bash_profile;cd ${pa-grid-legacy.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.database=true -Dexclude.pa-grid=true ${install.target}" />
     </target>
     
     <!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
@@ -976,7 +976,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <deploy-files2
              dist.file="${pa-ear.upgrade.zip.file}"
              />
-        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-grid=true ${upgrade.target}" />
+        <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-grid=true -Dexclude.pa-grid-legacy=true ${upgrade.target}" />
     </target>
 
     <target name="remote:upgrade:pa-grid" unless="exclude.pa-grid">
@@ -994,7 +994,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             remoteSshHost="${pagrid.ssh.server.hostname}"
             remoteSshPort="${pagrid.ssh.port}"
             remoteSshKeyfile="${pagrid.ssh.key.file}"
-            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.database=true ${upgrade.target}" />
+            remotesshcommand=". .bash_profile;cd ${pagrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.database=true -Dexclude.pa-grid-legacy=true ${upgrade.target}" />
     </target>
     <target name="remote:upgrade:pa-grid-legacy" unless="exclude.pa-grid-legacy">
       <!-- install pa-grid only-->
@@ -1011,7 +1011,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remoteSshHost="${pa-grid-legacy.ssh.server.hostname}"
               remoteSshPort="${pa-grid-legacy.ssh.port}"
              remoteSshKeyfile="${pa-grid-legacy.ssh.key.file}"
-             remotesshcommand=". .bash_profile;cd ${pa-grid-legacy.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.pa-grid=true -Dexclude.database=true ${upgrade.target}" />
+             remotesshcommand=". .bash_profile;cd ${pa-grid-legacy.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.pa-grid=true -Dexclude.database=true ${upgrade.target}" />
     </target>
     <target name="usage" description="Explains how to use this build script">
         <echo message="To run a remote upgrade type: ant deploy:remote:upgrade -Dproperties.file=[path to environment proeprty file]" />
