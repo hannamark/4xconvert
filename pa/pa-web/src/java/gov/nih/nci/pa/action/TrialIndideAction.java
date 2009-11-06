@@ -92,6 +92,8 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -299,11 +301,11 @@ public class TrialIndideAction extends ActionSupport {
         addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.trialIndide.indldeNumber"));
       }
       if (PAUtil.isNotEmpty(studyIndldeWebDTO.getIndldeNumber())) {
-        try {
-          Long.parseLong(studyIndldeWebDTO.getIndldeNumber());
-        } catch (NumberFormatException e) {
-          addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.numeric"));
-        }
+          Pattern indIdePattern = Pattern.compile("^[A-Za-z0-9,._]+$");
+          Matcher indIdematch = indIdePattern.matcher(studyIndldeWebDTO.getIndldeNumber());
+          if (!indIdematch.matches()) {
+              addFieldError("studyIndldeWebDTO.indldeNumber", getText("error.numeric"));
+          }
       }
       if (PAUtil.isEmpty(studyIndldeWebDTO.getIndldeType())) {
         addFieldError("studyIndldeWebDTO.indldeType",
