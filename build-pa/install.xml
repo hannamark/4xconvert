@@ -139,7 +139,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
     <!-- Conditionals -->
     <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
-    <available file="${jboss.home}/server/${jboss.server.name.grid}/conf/jboss-service.xml" property="jboss.exists"/>
+    <available file="${jboss.home}/server/${pagrid.jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
     <available file="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
     <!-- pa-ear can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
     <switch value="${database.type}">
@@ -266,8 +266,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <!-- So these directories won't be included in the backup, they are not needed to use jboss -->
                 <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
                 <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
-                <delete dir="${jboss.home}/server/${jboss.server.name.grid}/work"/>
-                <delete dir="${jboss.home}/server/${jboss.server.name.grid}/tmp"/>
+                <delete dir="${jboss.home}/server/${pagrid.jboss.server.name}/work"/>
+                <delete dir="${jboss.home}/server/${pagrid.jboss.server.name}/tmp"/>
 
                 <backup-dir
                     src.dir="${jboss.home}"
@@ -426,7 +426,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <target name="install:jboss:binaries:pa-grid" unless="exclude.pa-grid">
         <jboss-install-binaries2
 			jems.install.option="default"
-            jboss.server.name="${jboss.server.name.grid}"
+            jboss.server.name="${pagrid.jboss.server.name}"
             />
     </target>
     <target name="install:jboss:binaries:pa-grid-legacy" unless="exclude.pa-grid-legacy">
@@ -548,13 +548,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Installs the pa-grid application to JBOSS -->
     <target name="install:pa-grid:application" description="Deploy Coppa PO Grid application to JBOSS" unless="exclude.pa-grid">
         <echo message="Entirely removing existing wsrf.war deployment"/>
-        <delete dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}"/>
-        <mkdir dir="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}"/>
+        <delete dir="${jboss.home}/server/${pagrid.jboss.server.name}/deploy/${pa-grid.dir.target}"/>
+        <mkdir dir="${jboss.home}/server/${pagrid.jboss.server.name}/deploy/${pa-grid.dir.target}"/>
 
-        <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/lib" src="${grid.resource.dir.src}/${resource.file.jboss-globus-lib}" />
-        <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
+        <unzip dest="${jboss.home}/server/${pagrid.jboss.server.name}/lib" src="${grid.resource.dir.src}/${resource.file.jboss-globus-lib}" />
+        <unzip dest="${jboss.home}/server/${pagrid.jboss.server.name}/deploy/${pa-grid.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
 
-        <unzip dest="${jboss.home}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}" src="${pa-grid.dir.src}/${pa-grid.artifact.file}" />
+        <unzip dest="${jboss.home}/server/${pagrid.jboss.server.name}/deploy/${pa-grid.dir.target}" src="${pa-grid.dir.src}/${pa-grid.artifact.file}" />
     </target>
     <!-- Installs the pa-grid-legacy application to JBOSS -->
     <target name="install:pa-grid-legacy:application" description="Deploy Coppa PA Grid Legacy application to JBOSS" unless="exclude.pa-grid-legacy">
@@ -572,19 +572,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <target name="install:pa-grid:configure" description="Configure pa-grid service based on properties" unless="exclude.pa-grid">
         <!--
         NOTE: During an upgrade, the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) copies over 
-        the -cert.pem and -key.pem host cert file to the ${jboss.home}/server/${jboss.server.name.grid}/conf directory.  
+        the -cert.pem and -key.pem host cert file to the ${jboss.home}/server/${pagrid.jboss.server.name}/conf directory.  
         Therefore, we're changing the appserver.conf.dir property to point to pagrid.grid.secure.dir instead.
         
-        This is required whenever the host certs are not installed within the ${jboss.home}/server/${jboss.server.name.grid}/conf directory   
+        This is required whenever the host certs are not installed within the ${jboss.home}/server/${pagrid.jboss.server.name}/conf directory   
         -->
         <grid-appserver-configure
             appserver.home="${jboss.home}"
-            appserver.server.name="${jboss.server.name.grid}"
+            appserver.server.name="${pagrid.jboss.server.name}"
             appserver.conf.dir="${pagrid.grid.secure.dir}"
-            appserver.webapp.dir="${jboss.home}/server/${jboss.server.name.grid}/deploy"
-            appserver.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
+            appserver.webapp.dir="${jboss.home}/server/${pagrid.jboss.server.name}/deploy"
+            appserver.server-xml.file="${jboss.home}/server/${pagrid.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
             appserver.server-xml.service.name="jboss.web"
-            appserver.port.http="${jboss.server.grid.port}"
+            appserver.port.http="${pagrid.jboss.server.port}"
             appserver.port.ssl=""
             appserver.hostname="${jboss.server.hostname}"
             search.host="localhost"
@@ -598,7 +598,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             grid.secure.cert.file="${pagrid.grid.secure.cert.file}"
             grid.external.secure.host="${pagrid.grid.external.secure.host}"
             grid.external.secure.port="${pagrid.grid.external.secure.port}"
-        	appserver.external.http.host="${jboss.external.grid.http.host}"
+        	appserver.external.http.host="${pagrid.jboss.external.http.host}"
         />
     </target>
 
@@ -706,22 +706,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                     overwrite="true">
                     <filterset begintoken="@" endtoken="@">
                         <filter token="jboss.server.port" value="@pagrid.grid.secure.port@"/>
-                        <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
+                        <filter token="jboss.ejbinvoker.port" value="@pagrid.jboss.ejbinvoker.port@"/>
                         <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
-                        <filter token="jboss.server.jndi.port" value="@jboss.server.grid.jndi.port@"/>
-                        <filter token="jboss.cobraorb.port" value="@jboss.grid.cobraorb.port@"/>
-                        <filter token="jboss.ejbinvoker.port" value="@jboss.grid.ejbinvoker.port@"/>
-                        <filter token="jboss.hajndi.port" value="@jboss.grid.hajndi.port@"/>
-                        <filter token="jboss.hajrmi.port" value="@jboss.grid.hajrmi.port@"/>
-                        <filter token="jboss.jms.port" value="@jboss.grid.jms.port@"/>
-                        <filter token="jboss.jmx-rmi.port" value="@jboss.grid.jmx-rmi.port@"/>
-                        <filter token="jboss.messaging.port" value="@jboss.grid.messaging.port@"/>
-                        <filter token="jboss.pooledha.port" value="@jboss.grid.pooledha.port@"/>
+                        <filter token="jboss.server.jndi.port" value="@pagrid.jboss.server.jndi.port@"/>
+                        <filter token="jboss.cobraorb.port" value="@pagrid.jboss.cobraorb.port@"/>
+                        <filter token="jboss.ejbinvoker.port" value="@pagrid.jboss.ejbinvoker.port@"/>
+                        <filter token="jboss.hajndi.port" value="@pagrid.jboss.hajndi.port@"/>
+                        <filter token="jboss.hajrmi.port" value="@pagrid.jboss.hajrmi.port@"/>
+                        <filter token="jboss.jms.port" value="@pagrid.jboss.jms.port@"/>
+                        <filter token="jboss.jmx-rmi.port" value="@pagrid.jboss.jmx-rmi.port@"/>
+                        <filter token="jboss.messaging.port" value="@pagrid.jboss.messaging.port@"/>
+                        <filter token="jboss.pooledha.port" value="@pagrid.jboss.pooledha.port@"/>
                         <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
-                        <filter token="jboss.server.bind.port" value="@jboss.grid.server.bind.port@"/>
+                        <filter token="jboss.server.bind.port" value="@pagrid.jboss.server.bind.port@"/>
                         <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
-                        <filter token="jboss.service.rmiobject.port" value="@jboss.grid.service.rmiobject.port@"/>
-                        <filter token="jboss.snmp.port" value="@jboss.grid.snmp.port@"/>
+                        <filter token="jboss.service.rmiobject.port" value="@pagrid.jboss.service.rmiobject.port@"/>
+                        <filter token="jboss.snmp.port" value="@pagrid.jboss.snmp.port@"/>
                         <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
                         <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
                     </filterset>
@@ -730,9 +730,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                <!-- configure the pa-grid instance -->
                 <jboss-configure
                     jboss.home="${jboss.home}"
-                    jboss.server.name="${jboss.server.name.grid}"
+                    jboss.server.name="${pagrid.jboss.server.name}"
                     jboss.server.ports.name="bda-ports"
-                    jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name.grid}/conf/bindings.xml"
+                    jboss.server.bindingfile.location="${jboss.home}/server/${pagrid.jboss.server.name}/conf/bindings.xml"
                     jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding2.xml"
                     jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
                     authentication.type="${authentication.type}"
@@ -740,9 +740,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                     login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
                     jboss.web.user="${jboss.web.user}"
                     jboss.web.password="${jboss.web.password}"
-                    jboss.server.jndi.port="${jboss.server.grid.jndi.port}"
-                    jboss.conf.dir="${jboss.home}/server/${jboss.server.name.grid}/conf"
-                    jboss.server-xml.file="${jboss.home}/server/${jboss.server.name.grid}/deploy/jbossweb-tomcat55.sar/server.xml"
+                    jboss.server.jndi.port="${pagrid.jboss.server.jndi.port}"
+                    jboss.conf.dir="${jboss.home}/server/${pagrid.jboss.server.name}/conf"
+                    jboss.server-xml.file="${jboss.home}/server/${pagrid.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
                     jboss.server-xml.service.name="jboss.web"
                     jboss.ssl.enable="false"
                     jboss.ssl.port="8443"
@@ -754,8 +754,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                     jboss.external.ssl.host="${jboss.external.ssl.host}"
                     jboss.external.ssl.port="${jboss.external.ssl.port}"
                     proxy.update.connector.port.ssl="8443"
-                    jboss.external.http.host="${jboss.external.grid.http.host}"
-                    jboss.external.http.port="${jboss.external.grid.http.port}"
+                    jboss.external.http.host="${pagrid.jboss.external.http.host}"
+                    jboss.external.http.port="${pagrid.jboss.external.http.port}"
                     proxy.update.connector.port.http="8080"
                     grid.external.secure.host="${pagrid.grid.external.secure.host}"
                     grid.external.secure.port="${pagrid.grid.external.secure.port}"
@@ -855,7 +855,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
     </target>
     <target name="install:jboss:stop:pa-grid" unless="exclude.pa-grid">
-        <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.grid.jndi.port}" jboss.server.name="${jboss.server.name.grid}"/>
+        <jboss-stop-jboss jboss.server.jndi.port="${pagrid.jboss.server.jndi.port}" jboss.server.name="${pagrid.jboss.server.name}"/>
     </target>
     <target name="install:jboss:stop:pa-grid-legacy" unless="exclude.pa-grid-legacy">
       <jboss-stop-jboss jboss.server.jndi.port="${pa-grid-legacy.jboss.server.jndi.port}" jboss.server.name="${pa-grid-legacy.jboss.server.name}"/>
@@ -916,7 +916,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <jboss-start-jboss2 jboss.server.name="${jboss.server.name}"/>
     </target>
     <target name="install:jboss:start:pa-grid" unless="exclude.pa-grid">
-        <jboss-start-jboss2 jboss.server.name="${jboss.server.name.grid}"/>
+        <jboss-start-jboss2 jboss.server.name="${pagrid.jboss.server.name}"/>
     </target>
     <target name="install:jboss:start:pa-grid-legacy" unless="exclude.pa-grid-legacy">
     <jboss-start-jboss2 jboss.server.name="${pa-grid-legacy.jboss.server.name}"/>
@@ -969,7 +969,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 validation.post.socket.list="${validation.post.socket.pagrid.list}"
                 validation.post.http.list="${validation.post.http.pagrid.list}"
                 propertyfile.backup.location="${user.home}"
-                jboss.server.name="${jboss.server.name.grid}"
+                jboss.server.name="${pagrid.jboss.server.name}"
                 application.url="${application.pagrid.url}"
                 />
           </then>

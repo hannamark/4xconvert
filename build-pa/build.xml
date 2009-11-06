@@ -599,7 +599,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${pa-grid.base.dir}" >
             <property name="project.name" value="${project.name}"/>
             <property name="jboss.dir" value="target"/>
-            <property name="jboss.serverinstance.name" value="${jboss.server.name.grid}"/>
+            <property name="jboss.serverinstance.name" value="${pagrid.jboss.server.name}"/>
             <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
             <property name="java.naming.provider.url.host" value="localhost"/>
             <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
@@ -609,7 +609,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
 
         <zip update="false" destfile="${pa-grid.dist.dir}/${pa-grid.artifact.file}">
-            <zipfileset dir="${pa-grid.artifact.dir}/server/${jboss.server.name.grid}/deploy/${pa-grid.dir.target}/" />
+            <zipfileset dir="${pa-grid.artifact.dir}/server/${pagrid.jboss.server.name}/deploy/${pa-grid.dir.target}/" />
         </zip>
         <delete dir="${pa-grid.artifact.dir}/server" />
     </target>
