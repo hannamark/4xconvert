@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelPhone;
@@ -107,7 +108,10 @@ public class OrganizationalContactCorrelationServiceTest
         dto.setPlayerIdentifier(getPersonId());
         dto.setTelecomAddress(new DSet<Tel>());
         dto.getTelecomAddress().setItem(new HashSet<Tel>());
-        
+        Cd typeCode = new Cd();
+        typeCode.setCode("IRB");
+        dto.setTypeCode(typeCode);
+
         TelPhone ph1 = new TelPhone();
         ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
         dto.getTelecomAddress().getItem().add(ph1);
