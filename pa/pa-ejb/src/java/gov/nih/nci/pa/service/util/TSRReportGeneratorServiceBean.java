@@ -124,6 +124,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
@@ -365,8 +366,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       try {
           appendSecondaryIdentifiers(htmldata , spDTO);
           appendTitles(htmldata , spDTO);
-          if (!PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())
-                  && BlConverter.covertToBoolean(spDTO.getProprietaryTrialIndicator())) {
+          if (isProprietaryTrial(spDTO)) {
               generateTSRForProprietary(htmldata, spDTO);
               return htmldata.toString();
           }
@@ -464,15 +464,43 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
          html.append(appendData("Facility Name" , orgBo.getName() , true , true));
          html.append(appendData("Location" , getLocation(orgBo), true , true));
-         if (ssas != null) {
-           html.append(appendData("Site Recruitment Status" , getData(ssas.getStatusCode() , true)
-               + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                   ssas.getStatusDate()).toString()) , true , true));
+         if (isProprietaryTrial(spDTO)) {
+             StudySiteContactDTO criteriaDto = new StudySiteContactDTO();
+             criteriaDto.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR));
+             List<StudySiteContactDTO> spcDTOs =  studySiteContactService.getByStudyProtocol(
+                     spDTO.getIdentifier(), criteriaDto);
+             Person p = correlationUtils.getPAPersonByIi(((StudySiteContactDTO) PAUtil.getFirstObj(
+                     spcDTOs)).getClinicalResearchStaffIi());
+             html.append(appendData("Principal Investigator" , p.getFirstName() + ", " + p.getLastName()  ,
+                     true , true));
+             html.append(appendData("Local Trial Identifier" , sp.getLocalStudyProtocolIdentifier().getValue() ,
+                     true , true));
+             html.append(appendData("Program Code" , sp.getProgramCodeText().getValue() ,
+                     true , true));
+             if (ssas != null) {
+                 html.append(appendData("Current Site Recruitment Status" , getData(ssas.getStatusCode() , true)
+                     + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                         ssas.getStatusDate()).toString()) , true , true));
+               }
+             html.append(appendData("Open for Accrual Date" , IvlConverter.convertTs().convertLowToString(
+                     sp.getAccrualDateRange()), true , true));
+             html.append(appendData("Closed for Accrual Date" , IvlConverter.convertTs().convertHighToString(
+                     sp.getAccrualDateRange()) ,
+                     true , true));
          }
-         html.append(appendData("Target Accrual" , getData(sp.getTargetAccrualNumber(), true) , true , true));
-         List<StudySiteContactDTO> spcDTOs =  studySiteContactService.getByStudySite(sp.getIdentifier());
-         createInvestigators(html, spcDTOs);
-         createContact(html, spcDTOs);
+         if (PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())
+                 || !BlConverter.covertToBoolean(spDTO.getProprietaryTrialIndicator())) {
+             if (ssas != null) {
+                 html.append(appendData("Site Recruitment Status" , getData(ssas.getStatusCode() , true)
+                     + " as of " + PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                         ssas.getStatusDate()).toString()) , true , true));
+               }
+
+             html.append(appendData("Target Accrual" , getData(sp.getTargetAccrualNumber(), true) , true , true));
+             List<StudySiteContactDTO> spcDTOs =  studySiteContactService.getByStudySite(sp.getIdentifier());
+             createInvestigators(html, spcDTOs);
+             createContact(html, spcDTOs);
+         }
          html.append(BR);
      }
      if (spDTO.getRecordVerificationDate() != null && spDTO.getRecordVerificationDate().getValue() != null) {
@@ -640,35 +668,39 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
       html.append(appendData("Label", getInfo(armDTO.getName(), true), true , true));
       html.append(appendData("Type", getData(armDTO.getTypeCode(), true), true , true));
       html.append(appendData("Description", getInfo(armDTO.getDescriptionText(), true), true , true));
-      html.append(appendLabel("Intervention(s)", "" , true, true));
       List<PlannedActivityDTO> paList = plannedActivityService.getByArm(armDTO.getIdentifier());
-      if (!paList.isEmpty()) {
-      html.append(TBL_B);
-      html.append(TR_B);
-      appendTDAndData(html, appendTRBold("Type"));
-      appendTDAndData(html, appendTRBold("Lead"));
-      appendTDAndData(html, appendTRBold("Name"));
-      appendTDAndData(html, appendTRBold("Alternate Name"));
-      appendTDAndData(html, appendTRBold("Description"));
-      html.append(TR_E);
-      for (PlannedActivityDTO pa : paList) {
-
-          InterventionDTO inter = interventionService.get(pa.getInterventionIdentifier());
-          String interventionAltName = getInterventionAltNames(inter);
-          html.append(TR_B);
-          appendTDAndData(html, getTableData(pa.getSubcategoryCode(), true));
-          appendTDAndData(html, BlConverter.covertToBool(pa.getLeadProductIndicator()) ? "Yes" : "No");
-          appendTDAndData(html, getData(inter.getName(), true));
-          appendTDAndData(html, interventionAltName);
-          appendTDAndData(html, getData(pa.getTextDescription(), true));
-          html.append(TR_E);
-      }
-      html.append(TBL_E);
-     }
+      appendInterventions(html, paList);
     }   
   }
   
-  private String getInterventionAltNames(InterventionDTO i) throws PAException {
+  private void appendInterventions(StringBuffer html, List<PlannedActivityDTO> paList) throws PAException {
+      html.append(appendLabel("Intervention(s)", "" , true, true));
+      if (!paList.isEmpty()) {
+          html.append(TBL_B);
+          html.append(TR_B);
+          appendTDAndData(html, appendTRBold("Type"));
+          appendTDAndData(html, appendTRBold("Lead"));
+          appendTDAndData(html, appendTRBold("Name"));
+          appendTDAndData(html, appendTRBold("Alternate Name"));
+          appendTDAndData(html, appendTRBold("Description"));
+          html.append(TR_E);
+          for (PlannedActivityDTO pa : paList) {
+    
+              InterventionDTO inter = interventionService.get(pa.getInterventionIdentifier());
+              String interventionAltName = getInterventionAltNames(inter);
+              html.append(TR_B);
+              appendTDAndData(html, getTableData(pa.getSubcategoryCode(), true));
+              appendTDAndData(html, BlConverter.covertToBool(pa.getLeadProductIndicator()) ? "Yes" : "No");
+              appendTDAndData(html, getData(inter.getName(), true));
+              appendTDAndData(html, interventionAltName);
+              appendTDAndData(html, getData(pa.getTextDescription(), true));
+              html.append(TR_E);
+          }
+          html.append(TBL_E);
+       }
+  }
+
+private String getInterventionAltNames(InterventionDTO i) throws PAException {
       List<InterventionAlternateNameDTO> ianList = 
           interventionAlternateNameService.getByIntervention(i.getIdentifier()); 
       int cnt = 1; 
@@ -1223,15 +1255,32 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
           break;
        }
       } 
-      if (studyProtocolDto.getAmendmentNumber() != null) {
-          html.append(appendData("Amendment Number" , studyProtocolDto.getAmendmentNumber().getValue() , true, true));
-      }
-      if (studyProtocolDto.getAmendmentDate() != null && studyProtocolDto.getAmendmentDate().getValue() != null) {
-          html.append(appendData("Amendment Date" , PAUtil.normalizeDateString(
-                   TsConverter.convertToTimestamp(studyProtocolDto.getAmendmentDate()).toString()) , true, true));
+      if (isProprietaryTrial(studyProtocolDto)) {
+          Organization lead = ocsr.getOrganizationByFunctionRole(
+                  studyProtocolDto.getIdentifier(), CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+          html.append(appendData("Lead Organization" , lead.getName(), true , true));
+
+      } else {
+          if (studyProtocolDto.getAmendmentNumber() != null) {
+                html.append(appendData("Amendment Number" , studyProtocolDto.getAmendmentNumber().getValue() 
+                        , true, true));
+            }
+            if (studyProtocolDto.getAmendmentDate() != null && studyProtocolDto.getAmendmentDate().getValue() != null) {
+                html.append(appendData("Amendment Date" , PAUtil.normalizeDateString(
+                         TsConverter.convertToTimestamp(studyProtocolDto.getAmendmentDate()).toString()) , true, true));
+            }
       }
       html.append(TBL_E);
     }
+
+/**
+ * @param studyProtocolDto
+ * @return
+ */
+private boolean isProprietaryTrial(StudyProtocolDTO studyProtocolDto) {
+    return !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
+              && BlConverter.covertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
+}
 
   /**
    * Append titles.
@@ -1242,18 +1291,24 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private void appendTitles(StringBuffer html , StudyProtocolDTO studyProtocolDto) throws PAException {
     appendTitle(html, appendBoldData("General Trial Details"));
     html.append(BR)
-        .append(appendData("Official Title", getInfo(studyProtocolDto.getOfficialTitle(), true), true, true));
-    html.append(BR).append(appendData("Brief Title", getInfo(studyProtocolDto.getPublicTitle(), true), true, true));
-    html.append(BR).append(appendData("Acronym", getInfo(studyProtocolDto.getAcronym(), true), true, true));
-    html.append(BR).append(appendBoldData("Brief Summary: ")).append(BR);
-    html.append(getDescription(studyProtocolDto.getPublicDescription(), true));
-    html.append(BR).append(appendBoldData("Detailed Description: ")).append(BR); 
-    html.append(getDescription(studyProtocolDto.getScientificDescription(), false)); 
-    html.append(BR).append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
-    if (studyProtocolDto.getAccrualReportingMethodCode() != null 
-            && studyProtocolDto.getAccrualReportingMethodCode().getDisplayName() != null) {
-        html.append(BR).append(appendData("Reporting Dataset Method", 
-                getInfo(studyProtocolDto.getAccrualReportingMethodCode().getDisplayName(), true), true, true));
+    .append(appendData("Official Title", getInfo(studyProtocolDto.getOfficialTitle(), true), true, true));
+    if (isProprietaryTrial(studyProtocolDto)) {
+        html.append(appendData("Primary Purpose", getData(studyProtocolDto.getPrimaryPurposeCode(), 
+                true), true , true));
+        html.append(appendData("Phase", getData(studyProtocolDto.getPhaseCode(), true), true , true));
+    } else {
+        html.append(BR).append(appendData("Brief Title", getInfo(studyProtocolDto.getPublicTitle(), true), true, true));
+        html.append(BR).append(appendData("Acronym", getInfo(studyProtocolDto.getAcronym(), true), true, true));
+        html.append(BR).append(appendBoldData("Brief Summary: ")).append(BR);
+        html.append(getDescription(studyProtocolDto.getPublicDescription(), true));
+        html.append(BR).append(appendBoldData("Detailed Description: ")).append(BR); 
+        html.append(getDescription(studyProtocolDto.getScientificDescription(), false)); 
+        html.append(BR).append(appendData("Keywords", getInfo(studyProtocolDto.getKeywordText(), true), true, true));
+        if (studyProtocolDto.getAccrualReportingMethodCode() != null 
+                && studyProtocolDto.getAccrualReportingMethodCode().getDisplayName() != null) {
+            html.append(BR).append(appendData("Reporting Dataset Method", 
+                    getInfo(studyProtocolDto.getAccrualReportingMethodCode().getDisplayName(), true), true, true));
+        }
     }
     html.append(BR);
 
@@ -1668,15 +1723,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   private void generateTSRForProprietary(StringBuffer htmldata,
           StudyProtocolDTO spDTO) throws PAException, NullifiedRoleException {
       Ii studyProtocolIi = spDTO.getIdentifier();
-      Organization lead = ocsr.getOrganizationByFunctionRole(
-              studyProtocolIi, CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-      htmldata.append(appendData("Lead Organization" , lead.getName(), true , true));
       htmldata.append(BR).append(BR);
       appendIdeIde(htmldata , spDTO);
       appendNihGrants(htmldata , spDTO);
       appendSummary4(spDTO, htmldata);
       appendDisease(studyProtocolIi, htmldata);
-      appendTrialDesign(htmldata, spDTO);
+      List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(spDTO.getIdentifier());
+      appendInterventions(htmldata, paList);
       appendParticipatingSites(htmldata, spDTO);
   }
 }

@@ -93,6 +93,7 @@ public class StudyDiseaseDTO extends StudyDTO {
 
     Ii diseaseIdentifier;
     Bl leadDiseaseIndicator;
+    Bl ctGovXmlIndicator;
     /**
      * @return the diseaseIdentifier
      */
@@ -117,4 +118,17 @@ public class StudyDiseaseDTO extends StudyDTO {
     public void setLeadDiseaseIndicator(Bl leadDiseaseIndicator) {
         this.leadDiseaseIndicator = leadDiseaseIndicator;
     }
+    /**
+     * @return the ctGovXmlIndicator
+     */
+    public Bl getCtGovXmlIndicator() {
+        return ctGovXmlIndicator;
+    }
+    /**
+     * @param ctGovXmlIndicator the ctGovXmlIndicator to set
+     */
+    public void setCtGovXmlIndicator(Bl ctGovXmlIndicator) {
+        this.ctGovXmlIndicator = ctGovXmlIndicator;
+    }
+    
 }

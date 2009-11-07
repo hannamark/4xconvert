@@ -81,6 +81,7 @@ function handleCreate(){
                     titleKey="disease.parentPreferredName" headerClass="sortable" />
                 <display:column property="lead" sortable="true"
                     titleKey="disease.lead" headerClass="sortable" />
+                <display:column property="ctGovXmlIndicator" sortable="true" titleKey="disease.ctGovXmlIndicator" headerClass="sortable"/>    
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 						|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="disease.edit" headerClass="centered" class="action">
@@ -106,7 +107,8 @@ function handleCreate(){
         						|| (sessionScope.role == 'SuAbstractor')}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
                 class="btn_img"><span class="add">Add </span></span></a></li>
-        </c:if>        
+        </c:if>
+        <!--        
         <li>
             <a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img">
                 <span class="back">Back</span></span></a>
@@ -114,7 +116,7 @@ function handleCreate(){
         <li>
             <a href="trialInterventions.action" class="btn" onclick="this.blur();">
                 <span class="btn_img"><span class="next">Next</span></span></a>
-        </li>
+        </li> --> 
     </ul>
     </del></div>
 </s:form></div>

@@ -97,6 +97,7 @@ public class StudyDisease extends AbstractStudyEntity {
 
     private Disease disease;
     private Boolean leadDiseaseIndicator;
+    private Boolean ctGovXmlIndicator;
     /**
      * @return the disease
      */
@@ -125,4 +126,18 @@ public class StudyDisease extends AbstractStudyEntity {
     public void setLeadDiseaseIndicator(Boolean leadDiseaseIndicator) {
         this.leadDiseaseIndicator = leadDiseaseIndicator;
     }
+    /**
+     * @return the ctGovXmlIndicator
+     */
+    @Column(name = "CTGOVXML_INDICATOR")
+    public Boolean getCtGovXmlIndicator() {
+        return ctGovXmlIndicator;
+    }
+    /**
+     * @param ctGovXmlIndicator the ctGovXmlIndicator to set
+     */
+    public void setCtGovXmlIndicator(Boolean ctGovXmlIndicator) {
+        this.ctGovXmlIndicator = ctGovXmlIndicator;
+    }
+    
 }

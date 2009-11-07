@@ -65,8 +65,9 @@ function callOnloadFunctions(){
 										|| (sessionScope.role == 'SuAbstractor')}">
 					<li><s:a href="trialDocumentinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
 					</c:if>
+				<!-- 
 				<c:choose>
-                  <c:when test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
+				<c:when test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
 						<li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 						<li><a href="studyOverallStatus.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 				  </c:when>
@@ -75,6 +76,7 @@ function callOnloadFunctions(){
 					<li><a href="trialDescriptionquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
 			 </c:otherwise>
 			</c:choose>
+			 -->
 				</ul>	
 			</del>
 		</div>

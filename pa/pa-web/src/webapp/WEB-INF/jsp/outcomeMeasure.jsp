@@ -63,7 +63,8 @@
 					<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
 										|| (sessionScope.role == 'SuAbstractor')}">
 					<li><s:a href="interventionalStudyDesignoutcomeinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-					</c:if>
+					</c:if> 
+					<!-- 
 					<c:choose>
                     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
            				<li><a href="interventionalStudyDesigndetailsQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
@@ -73,6 +74,7 @@
         			</c:otherwise>
         			</c:choose>				
 					<li><a href="eligibilityCriteriaquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+					 -->
 				</ul>	
 			</del>
 		</div>

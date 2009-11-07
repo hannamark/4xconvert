@@ -96,6 +96,7 @@ public class DiseaseWebDTO {
     private String parentPreferredName;
     private String alternames;
     private String lead;
+    private String ctGovXmlIndicator;
     /**
      * @return the studyDiseaseIdentifier
      */
@@ -204,4 +205,17 @@ public class DiseaseWebDTO {
     public void setLead(String lead) {
         this.lead = lead;
     }
+    /**
+     * @return the ctGovXmlIndicator
+     */
+    public String getCtGovXmlIndicator() {
+        return ctGovXmlIndicator;
+    }
+    /**
+     * @param ctGovXmlIndicator the ctGovXmlIndicator to set
+     */
+    public void setCtGovXmlIndicator(String ctGovXmlIndicator) {
+        this.ctGovXmlIndicator = ctGovXmlIndicator;
+    }
+    
 }

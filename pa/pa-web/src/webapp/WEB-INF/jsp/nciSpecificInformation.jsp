@@ -132,8 +132,10 @@ function setorgid(orgid){
 										|| (sessionScope.role == 'SuAbstractor')}">
 					<li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
 					</c:if>
+					<!-- 
 					<li><a href="generalTrialDesignquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
 					<li><a href="regulatoryInfoquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+					 -->
 				</ul>	
 			</del>
 		</div>

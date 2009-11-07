@@ -271,7 +271,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 1) {
-                throw new PAException(" Only one masking role must be specified for ‘Single Blind’ masking. ");
+                throw new PAException(" Only one masking role must be specified for 'Single Blind' masking. ");
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                            && totBlindCodes < 1) {

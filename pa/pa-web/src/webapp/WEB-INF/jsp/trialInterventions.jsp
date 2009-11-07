@@ -93,7 +93,8 @@ function handleCreate(){
         					|| (sessionScope.role == 'SuAbstractor')}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
             class="btn_img"><span class="add">Add </span></span></a></li>
-        </c:if>    
+        </c:if>
+        <!--     
         <li><a href="disease.action" class="btn"
             onclick="this.blur();"><span class="btn_img"><span
             class="back">Back</span></span></a></li>
@@ -104,7 +105,8 @@ function handleCreate(){
        <c:otherwise>
           <li><a href="trialArmsobservational.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
         </c:otherwise>
-        </c:choose>         
+        </c:choose> 
+         -->        
     </ul>
     </del></div>
 </s:form></div>

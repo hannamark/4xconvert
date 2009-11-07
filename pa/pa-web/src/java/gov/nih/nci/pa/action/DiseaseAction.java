@@ -123,6 +123,8 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
         disease.setStudyDiseaseIdentifier(getSelectedRowIdentifier());
         disease.setLead(PAUtil.isBlNull(sd.getLeadDiseaseIndicator()) ? null 
                 : BlConverter.covertToBoolean(sd.getLeadDiseaseIndicator()).toString());
+        disease.setCtGovXmlIndicator(PAUtil.isBlNull(sd.getCtGovXmlIndicator()) ? null 
+                : BlConverter.covertToBoolean(sd.getCtGovXmlIndicator()).toString());
         return super.edit();
     }
     
@@ -153,6 +155,12 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
                 blLead = BlConverter.convertToBl(bLead);
             }  
             sdDto.setLeadDiseaseIndicator(blLead);
+            Bl blctGovXmlIndicator = null;
+            if (getDisease().getCtGovXmlIndicator() != null) {
+                Boolean bctGovXmlIndicator =  Boolean.valueOf(getDisease().getCtGovXmlIndicator());
+                blctGovXmlIndicator = BlConverter.convertToBl(bctGovXmlIndicator);
+            }
+            sdDto.setCtGovXmlIndicator(blctGovXmlIndicator);
             sdDto.setStudyProtocolIdentifier(spIi);
             try {
                 studyDisesaeSvc.create(sdDto);
@@ -181,6 +189,12 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
                 blLead = BlConverter.convertToBl(bLead);
             }
             pa.setLeadDiseaseIndicator(blLead);
+            Bl blctGovXmlIndicator = null;
+            if (getDisease().getCtGovXmlIndicator() != null) {
+                Boolean bctGovXmlIndicator =  Boolean.valueOf(getDisease().getCtGovXmlIndicator());
+                blctGovXmlIndicator = BlConverter.convertToBl(bctGovXmlIndicator);
+            }
+            pa.setCtGovXmlIndicator(blctGovXmlIndicator);
             try {
                 studyDisesaeSvc.update(pa);
             } catch (PAException e) {
@@ -247,6 +261,10 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             if (!PAUtil.isBlNull(sd.getLeadDiseaseIndicator()) 
                     && BlConverter.covertToBoolean(sd.getLeadDiseaseIndicator())) {
                 n.setLead("Yes");
+            }
+            if (!PAUtil.isBlNull(sd.getCtGovXmlIndicator()) 
+                    && BlConverter.covertToBoolean(sd.getCtGovXmlIndicator())) {
+                n.setCtGovXmlIndicator("Yes");
             }
             n.setMenuDisplayName(StConverter.convertToString(d.getMenuDisplayName()));
             n.setParentPreferredName(buildParentPreferredName(IiConverter.convertToString(d.getIdentifier())));

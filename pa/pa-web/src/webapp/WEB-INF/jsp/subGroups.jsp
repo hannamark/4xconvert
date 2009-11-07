@@ -50,6 +50,7 @@ function callOnloadFunctions(){
 										|| (sessionScope.role == 'SuAbstractor')}">
 					<li><s:a href="subGroupsinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
 					</c:if>
+					<!-- 
 					<c:choose>
                          <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                        <li><a href="trialArms.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
@@ -59,6 +60,7 @@ function callOnloadFunctions(){
                     </c:otherwise>
                     </c:choose>
 					<li><a href="abstractionCompletionquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+					 -->
 				</ul>	
 			</del>
 		</div>

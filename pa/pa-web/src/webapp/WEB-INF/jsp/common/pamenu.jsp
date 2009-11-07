@@ -37,11 +37,10 @@
                     </c:when>
                     <c:otherwise>
                         <li><a href="studyOverallStatus.action" >Trial Status</a></li>
+                        <li><a href="trialFundingquery.action" >Trial Funding</a></li>
+                        <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                     </c:otherwise>
                     </c:choose>
-                 
-                    <li><a href="trialFundingquery.action" >Trial Funding</a></li>
-                    <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                     <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>
                   </ul>
 			</c:if>
@@ -50,6 +49,7 @@
     				<ul>
     				    <li><a href="generalTrialDesignquery.action" >General Trial Details</a></li>
     					<li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
+                        <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
                         <li class="hassubmenu">Regulatory Information
                            <ul id="part_sites">
                                 <li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>      
@@ -57,18 +57,21 @@
                                 <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
                            </ul>
                         </li>
-                         <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
+                         
                             <li><a href="studyOverallStatus.action" >Trial Status</a></li>
+                            <li><a href="trialFundingquery.action" >Trial Funding</a></li>
                         </c:if>    
     					
-    					<li><a href="trialFundingquery.action" >Trial Funding</a></li>
                         <li><a href="participatingOrganizations.action">Participating Sites</a></li>
+                        <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
                         <li><a href="collaborators.action">Collaborators</a></li>
+                        </c:if>
     					<li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
                       </ul>
     			</li>
     			<li><div>Scientific Data</div>
     				<ul>
+    				<c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
     				    <li><a href="trialDescriptionquery.action" >Trial Description</a></li>
     				    <c:choose>
                         <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
@@ -90,8 +93,10 @@
     					</li>
                         </c:otherwise>
                         </c:choose>
+                        </c:if>
                         <li><a href="disease.action" >Disease/Condition</a></li>
                         <li><a href="trialInterventions.action" >Interventions</a></li>
+                        <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
                         <c:choose>
                         <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                             <li><a href="trialArms.action" >Arms</a></li>
@@ -101,6 +106,7 @@
                         </c:otherwise>
                         </c:choose>
                         <li><a href="subGroupsquery.action" >Sub-groups</a></li>
+                        </c:if>
     				</ul>
     			</li>
 			<li><div>Completion</div>

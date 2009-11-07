@@ -83,11 +83,13 @@ function handleDelete(studyResourcingId){
             					|| (sessionScope.role == 'SuAbstractor')}">
             <li><a href="participatingOrganizationscreate.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add </span></span></a></li>
-            </c:if>        
+            </c:if>
+            <!--         
             <li><a href="trialFundingquery.action"                
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
             <li><a href="collaborators.action" 
                     class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+            -->
         </ul>   
     </del>
 </div>

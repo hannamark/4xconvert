@@ -198,8 +198,10 @@ BubbleTips.activateTipOn("dfn");
                 <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">AddOtherCriterion</span></span></s:a></li>
                 </s:if>
                 </c:if>
+                <!-- 
 				<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-				<li><a href="disease.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>                
+				<li><a href="disease.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+				 -->                
             </ul>   
         </del>
     </div> 

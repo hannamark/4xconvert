@@ -135,6 +135,7 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -441,7 +442,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         
         if (sdDtos != null) {
             for (StudyDiseaseDTO sdDto : sdDtos) {
-                if (sdDto.getLeadDiseaseIndicator() != null 
+                if (BlConverter.covertToBool(sdDto.getCtGovXmlIndicator()) 
+                        && sdDto.getLeadDiseaseIndicator() != null 
                         && sdDto.getLeadDiseaseIndicator().getValue()) {
                     DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                     appendElement(root, createElement(
@@ -451,7 +453,8 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
             } 
             List<DiseaseDTO> diseases = new ArrayList<DiseaseDTO>();
             for (StudyDiseaseDTO sdDto : sdDtos) {
-             if (sdDto.getLeadDiseaseIndicator() != null 
+             if (BlConverter.covertToBool(sdDto.getCtGovXmlIndicator()) 
+                     && sdDto.getLeadDiseaseIndicator() != null 
                         && !sdDto.getLeadDiseaseIndicator().getValue()) {
                     DiseaseDTO d = diseaseService.get(sdDto.getDiseaseIdentifier());
                     diseases.add(d);
