@@ -106,7 +106,6 @@ import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
@@ -114,11 +113,9 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.internal.DocumentBeanLocal;
@@ -198,8 +195,8 @@ public class MockServiceLocator implements ServiceLocator {
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
     private final StudyInboxServiceLocal studyInboxService = new StudyInboxServiceBean();
     private final StudyCheckoutServiceLocal studyCheckoutService = new StudyCheckoutServiceBean();
-    private final PlannedSubstanceAdministrationServiceRemote plannedSAService = new PlannedSubstanceAdministrationServiceBean(); 
-    
+    private final PlannedSubstanceAdministrationServiceRemote plannedSAService = new PlannedSubstanceAdministrationServiceBean();
+
     /**
      * @return mock service
      */
@@ -502,7 +499,7 @@ public class MockServiceLocator implements ServiceLocator {
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
         return studySiteAccrualAccessService;
     }
-    
+
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
         return organizationCorrelationService;
     }
@@ -536,12 +533,11 @@ public class MockServiceLocator implements ServiceLocator {
         return plannedSAService;
     }
 
-	
-	@Override
+
 	public StudyRelationshipServiceLocal getStudyRelationshipService() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	
+
 }
