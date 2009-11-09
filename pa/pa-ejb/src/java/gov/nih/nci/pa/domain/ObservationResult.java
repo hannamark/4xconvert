@@ -1,4 +1,4 @@
-/***
+/**
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,148 +78,200 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.ActivityNameCode;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 
 /**
- * @author Hugh Reinhart
- * @since 08/12/2009
+ * The Class ObservationResult.
+ * 
+ * @author Kalpana Guthikonda
+ * @since 11/4/2009
  */
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "performed_activity_type", discriminatorType = DiscriminatorType.STRING)
-@Table(name = "performed_activity")
-public class PerformedActivity extends Activity {
+@MappedSuperclass
+public class ObservationResult extends AbstractStudyEntity {
 
-    private static final long serialVersionUID = 8294885421919695669L;
+    private static final long serialVersionUID = 1L;
+    private String resultCode;
+    private String resultCodeModifiedText;
+    private Boolean resultIndicator;
+    private BigDecimal resultQuantityValue;
+    private String resultQuantityUnit;
+    private String resultText;
+    private String typeCode;
+    private String unitOfMeasureCode;
+    private Timestamp resultDateRangeLow;
+    private Timestamp resultDateRangeHigh;
+    
+    /**
+     * Gets the result code.
+     * @return the result code
+     */
+    @Column(name = "RESULT_CODE")
+    public String getResultCode() {
+        return resultCode;
+    }
+    
+    /**
+     * Sets the result code.
+     * @param resultCode the new result code
+     */
+    public void setResultCode(String resultCode) {
+        this.resultCode = resultCode;
+    }
+    
+    /**
+     * Gets the result code modified text.
+     * @return the result code modified text
+     */
+    @Column(name = "RESULT_CODE_MODIFIED_TEXT")
+    public String getResultCodeModifiedText() {
+        return resultCodeModifiedText;
+    }
+    
+    /**
+     * Sets the result code modified text.
+     * @param resultCodeModifiedText the new result code modified text
+     */
+    public void setResultCodeModifiedText(String resultCodeModifiedText) {
+        this.resultCodeModifiedText = resultCodeModifiedText;
+    }
+    
+    /**
+     * Gets the result indicator.
+     * @return the result indicator
+     */
+    @Column(name = "RESULT_INDICATOR")
+    public Boolean getResultIndicator() {
+        return resultIndicator;
+    }
+    
+    /**
+     * Sets the result indicator.
+     * @param resultIndicator the new result indicator
+     */
+    public void setResultIndicator(Boolean resultIndicator) {
+        this.resultIndicator = resultIndicator;
+    }
 
-    private Timestamp actualDateRangeLow;
-    private Timestamp actualDateRangeHigh;
-    private StudySubject studySubject;
-    private BigDecimal actualDurationValue;
-    private String actualDurationUnit;
-    private String name;
-    private ActivityNameCode nameCode;
     /**
-     * @return the actualDateRangeLow
+     * Gets the result quantity value.
+     * @return the result quantity value
      */
-    @Column(name = "actual_date_range_low")
-    public Timestamp getActualDateRangeLow() {
-        return actualDateRangeLow;
+    @Column(name = "RESULT_QUANTITY_VALUE")
+    public BigDecimal getResultQuantityValue() {
+        return resultQuantityValue;
     }
+
     /**
-     * @param actualDateRangeLow the actualDateRangeLow to set
+     * Sets the result quantity value.
+     * @param resultQuantityValue the new result quantity value
      */
-    public void setActualDateRangeLow(Timestamp actualDateRangeLow) {
-        this.actualDateRangeLow = actualDateRangeLow;
+    public void setResultQuantityValue(BigDecimal resultQuantityValue) {
+        this.resultQuantityValue = resultQuantityValue;
     }
+
     /**
-     * @return the actualDateRangeHigh
+     * Gets the result quantity unit.
+     * @return the result quantity unit
      */
-    @Column(name = "actual_date_range_high")
-    public Timestamp getActualDateRangeHigh() {
-        return actualDateRangeHigh;
+    @Column(name = "RESULT_QUANTITY_UNIT")
+    public String getResultQuantityUnit() {
+        return resultQuantityUnit;
     }
+
     /**
-     * @param actualDateRangeHigh the actualDateRangeHigh to set
+     * Sets the result quantity unit.
+     * @param resultQuantityUnit the new result quantity unit
      */
-    public void setActualDateRangeHigh(Timestamp actualDateRangeHigh) {
-        this.actualDateRangeHigh = actualDateRangeHigh;
-    }
-    /**
-     * @return the studySubject
-     */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_SUBJECT_IDENTIFIER", updatable = false)
-    public StudySubject getStudySubject() {
-        return studySubject;
-    }
-    /**
-     * @param studySubject the studySubject to set
-     */
-    public void setStudySubject(StudySubject studySubject) {
-        this.studySubject = studySubject;
+    public void setResultQuantityUnit(String resultQuantityUnit) {
+        this.resultQuantityUnit = resultQuantityUnit;
     }
     
     /**
-     * Gets the actual duration value.
-     * @return the actual duration value
+     * Gets the result text.
+     * @return the result text
      */
-    @Column(name = "ACTUAL_DURATION_VALUE")
-    public BigDecimal getActualDurationValue() {
-        return actualDurationValue;
+    @Column(name = "RESULT_TEXT")
+    public String getResultText() {
+        return resultText;
     }
     
     /**
-     * Sets the actual duration value.
-     * @param actualDurationValue the new actual duration value
+     * Sets the result text.
+     * @param resultText the new result text
      */
-    public void setActualDurationValue(BigDecimal actualDurationValue) {
-        this.actualDurationValue = actualDurationValue;
+    public void setResultText(String resultText) {
+        this.resultText = resultText;
     }
     
     /**
-     * Gets the actual duration unit.
-     * @return the actual duration unit
+     * Gets the type code.
+     * @return the type code
      */
-    @Column(name = "ACTUAL_DURATION_UNIT")
-    public String getActualDurationUnit() {
-        return actualDurationUnit;
+    @Column(name = "TYPE_CODE")
+    public String getTypeCode() {
+        return typeCode;
     }
     
     /**
-     * Sets the actual duration unit.
-     * @param actualDurationUnit the new actual duration unit
+     * Sets the type code.
+     * @param typeCode the new type code
      */
-    public void setActualDurationUnit(String actualDurationUnit) {
-        this.actualDurationUnit = actualDurationUnit;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
     
     /**
-     * Gets the name.
-     * @return the name
+     * Gets the unit of measure code.
+     * @return the unit of measure code
      */
-    @Column(name = "NAME")
-    public String getName() {
-        return name;
+    @Column(name = "UNIT_OF_MEASURE_CODE")
+    public String getUnitOfMeasureCode() {
+        return unitOfMeasureCode;
     }
     
     /**
-     * Sets the name.
-     * @param name the new name
+     * Sets the unit of measure code.
+     * @param unitOfMeasureCode the new unit of measure code
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setUnitOfMeasureCode(String unitOfMeasureCode) {
+        this.unitOfMeasureCode = unitOfMeasureCode;
     }
+
     /**
-     * Gets the name code.
-     * @return the name code
+     * Gets the result date range low.
+     * @return the result date range low
      */
-    @Column(name = "NAME_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivityNameCode getNameCode() {
-        return nameCode;
+    @Column(name = "RESULT_DATE_RANGE_LOW")
+    public Timestamp getResultDateRangeLow() {
+        return resultDateRangeLow;
     }
-    
+
     /**
-     * Sets the name code.
-     * @param nameCode the new name code
+     * Sets the result date range low.
+     * @param resultDateRangeLow the new result date range low
      */
-    public void setNameCode(ActivityNameCode nameCode) {
-        this.nameCode = nameCode;
+    public void setResultDateRangeLow(Timestamp resultDateRangeLow) {
+        this.resultDateRangeLow = resultDateRangeLow;
+    }
+
+    /**
+     * Gets the result date range high.
+     * @return the result date range high
+     */
+    @Column(name = "RESULT_DATE_RANGE_HIGH")
+    public Timestamp getResultDateRangeHigh() {
+        return resultDateRangeHigh;
+    }
+
+    /**
+     * Sets the result date range high.
+     * @param resultDateRangeHigh the new result date range high
+     */
+    public void setResultDateRangeHigh(Timestamp resultDateRangeHigh) {
+        this.resultDateRangeHigh = resultDateRangeHigh;
     }
 }

@@ -1,4 +1,4 @@
-/***
+/**
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,148 +78,77 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.ActivityNameCode;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * @author Hugh Reinhart
- * @since 08/12/2009
+ * The Class ActivityRelationship.
+ * 
+ * @author Kalpana Guthikonda
+ * @since 11/6/2009
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "performed_activity_type", discriminatorType = DiscriminatorType.STRING)
-@Table(name = "performed_activity")
-public class PerformedActivity extends Activity {
+@Table(name = "ACTIVITY_RELATIONSHIP")
+public class ActivityRelationship extends AbstractEntity {
+    private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 8294885421919695669L;
+    private String typeCode;
+    private PlannedActivity plannedActivity = new PlannedActivity();
+    private PerformedActivity performedActivity = new PerformedActivity();
+       
+    /**
+     * Gets the type code.
+     * @return the type code
+     */
+    @Column(name = "TYPE_CODE")    
+    public String getTypeCode() {
+        return typeCode;
+    }
 
-    private Timestamp actualDateRangeLow;
-    private Timestamp actualDateRangeHigh;
-    private StudySubject studySubject;
-    private BigDecimal actualDurationValue;
-    private String actualDurationUnit;
-    private String name;
-    private ActivityNameCode nameCode;
     /**
-     * @return the actualDateRangeLow
+     * Sets the type code.
+     * @param typeCode the new type code
      */
-    @Column(name = "actual_date_range_low")
-    public Timestamp getActualDateRangeLow() {
-        return actualDateRangeLow;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
+
     /**
-     * @param actualDateRangeLow the actualDateRangeLow to set
-     */
-    public void setActualDateRangeLow(Timestamp actualDateRangeLow) {
-        this.actualDateRangeLow = actualDateRangeLow;
-    }
-    /**
-     * @return the actualDateRangeHigh
-     */
-    @Column(name = "actual_date_range_high")
-    public Timestamp getActualDateRangeHigh() {
-        return actualDateRangeHigh;
-    }
-    /**
-     * @param actualDateRangeHigh the actualDateRangeHigh to set
-     */
-    public void setActualDateRangeHigh(Timestamp actualDateRangeHigh) {
-        this.actualDateRangeHigh = actualDateRangeHigh;
-    }
-    /**
-     * @return the studySubject
+     * Gets the planned activity.
+     * @return the planned activity
      */
     @ManyToOne
-    @JoinColumn(name = "STUDY_SUBJECT_IDENTIFIER", updatable = false)
-    public StudySubject getStudySubject() {
-        return studySubject;
+    @JoinColumn(name = "PLANNED_ACTIVITY_IDENTIFIER")    
+    public PlannedActivity getPlannedActivity() {
+        return plannedActivity;
     }
+
     /**
-     * @param studySubject the studySubject to set
+     * Sets the planned activity.
+     * @param plannedActivity the new planned activity
      */
-    public void setStudySubject(StudySubject studySubject) {
-        this.studySubject = studySubject;
+    public void setPlannedActivity(PlannedActivity plannedActivity) {
+        this.plannedActivity = plannedActivity;
     }
-    
+
     /**
-     * Gets the actual duration value.
-     * @return the actual duration value
+     * Gets the performed activity.
+     * @return the performed activity
      */
-    @Column(name = "ACTUAL_DURATION_VALUE")
-    public BigDecimal getActualDurationValue() {
-        return actualDurationValue;
+    @ManyToOne
+    @JoinColumn(name = "PERFORMED_ACTIVITY_IDENTIFIER")    
+    public PerformedActivity getPerformedActivity() {
+        return performedActivity;
     }
-    
+
     /**
-     * Sets the actual duration value.
-     * @param actualDurationValue the new actual duration value
+     * Sets the performed activity.
+     * @param performedActivity the new performed activity
      */
-    public void setActualDurationValue(BigDecimal actualDurationValue) {
-        this.actualDurationValue = actualDurationValue;
-    }
-    
-    /**
-     * Gets the actual duration unit.
-     * @return the actual duration unit
-     */
-    @Column(name = "ACTUAL_DURATION_UNIT")
-    public String getActualDurationUnit() {
-        return actualDurationUnit;
-    }
-    
-    /**
-     * Sets the actual duration unit.
-     * @param actualDurationUnit the new actual duration unit
-     */
-    public void setActualDurationUnit(String actualDurationUnit) {
-        this.actualDurationUnit = actualDurationUnit;
-    }
-    
-    /**
-     * Gets the name.
-     * @return the name
-     */
-    @Column(name = "NAME")
-    public String getName() {
-        return name;
-    }
-    
-    /**
-     * Sets the name.
-     * @param name the new name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-    /**
-     * Gets the name code.
-     * @return the name code
-     */
-    @Column(name = "NAME_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivityNameCode getNameCode() {
-        return nameCode;
-    }
-    
-    /**
-     * Sets the name code.
-     * @param nameCode the new name code
-     */
-    public void setNameCode(ActivityNameCode nameCode) {
-        this.nameCode = nameCode;
+    public void setPerformedActivity(PerformedActivity performedActivity) {
+        this.performedActivity = performedActivity;
     }
 }

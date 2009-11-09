@@ -1,4 +1,4 @@
-/***
+/*
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,150 +76,82 @@
 *
 *
 */
-package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.ActivityNameCode;
+package gov.nih.nci.pa.enums;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * @author Hugh Reinhart
- * @since 08/12/2009
+ * The Class PatientWeightUOM.
+ * 
+ * @author Kalpana Guthikonda
+ * @since 11/5/2009
  */
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "performed_activity_type", discriminatorType = DiscriminatorType.STRING)
-@Table(name = "performed_activity")
-public class PerformedActivity extends Activity {
+public enum PatientWeightUOM implements CodedEnum<String> {
 
-    private static final long serialVersionUID = 8294885421919695669L;
+    /** Lbs. */
+    LBS("Lbs"),
+    /** Kg. */
+    KG("Kg");
 
-    private Timestamp actualDateRangeLow;
-    private Timestamp actualDateRangeHigh;
-    private StudySubject studySubject;
-    private BigDecimal actualDurationValue;
-    private String actualDurationUnit;
-    private String name;
-    private ActivityNameCode nameCode;
+    private String code;
     /**
-     * @return the actualDateRangeLow
+     *
+     * @param code
      */
-    @Column(name = "actual_date_range_low")
-    public Timestamp getActualDateRangeLow() {
-        return actualDateRangeLow;
+    private PatientWeightUOM(String code) {
+        this.code = code;
+        register(this);
     }
     /**
-     * @param actualDateRangeLow the actualDateRangeLow to set
+     * @return code code
      */
-    public void setActualDateRangeLow(Timestamp actualDateRangeLow) {
-        this.actualDateRangeLow = actualDateRangeLow;
+    public String getCode() {
+        return code;
     }
+
     /**
-     * @return the actualDateRangeHigh
+     *@return String DisplayName
      */
-    @Column(name = "actual_date_range_high")
-    public Timestamp getActualDateRangeHigh() {
-        return actualDateRangeHigh;
+    public String getDisplayName() {
+        return sentenceCasedName(this);
     }
+
     /**
-     * @param actualDateRangeHigh the actualDateRangeHigh to set
+     *
+     * @return String name
      */
-    public void setActualDateRangeHigh(Timestamp actualDateRangeHigh) {
-        this.actualDateRangeHigh = actualDateRangeHigh;
-    }
-    /**
-     * @return the studySubject
-     */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_SUBJECT_IDENTIFIER", updatable = false)
-    public StudySubject getStudySubject() {
-        return studySubject;
-    }
-    /**
-     * @param studySubject the studySubject to set
-     */
-    public void setStudySubject(StudySubject studySubject) {
-        this.studySubject = studySubject;
-    }
-    
-    /**
-     * Gets the actual duration value.
-     * @return the actual duration value
-     */
-    @Column(name = "ACTUAL_DURATION_VALUE")
-    public BigDecimal getActualDurationValue() {
-        return actualDurationValue;
-    }
-    
-    /**
-     * Sets the actual duration value.
-     * @param actualDurationValue the new actual duration value
-     */
-    public void setActualDurationValue(BigDecimal actualDurationValue) {
-        this.actualDurationValue = actualDurationValue;
-    }
-    
-    /**
-     * Gets the actual duration unit.
-     * @return the actual duration unit
-     */
-    @Column(name = "ACTUAL_DURATION_UNIT")
-    public String getActualDurationUnit() {
-        return actualDurationUnit;
-    }
-    
-    /**
-     * Sets the actual duration unit.
-     * @param actualDurationUnit the new actual duration unit
-     */
-    public void setActualDurationUnit(String actualDurationUnit) {
-        this.actualDurationUnit = actualDurationUnit;
-    }
-    
-    /**
-     * Gets the name.
-     * @return the name
-     */
-    @Column(name = "NAME")
     public String getName() {
-        return name;
+        return name();
+    }
+
+    /**
+     *
+     * @param code code
+     * @return PatientGenderCode
+     */
+    public static PatientWeightUOM getByCode(String code) {
+        return getByClassAndCode(PatientWeightUOM.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[]  getDisplayNames() {
+        PatientWeightUOM[] l = PatientWeightUOM.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
     }
     
     /**
-     * Sets the name.
-     * @param name the new name
+     * {@inheritDoc}
      */
-    public void setName(String name) {
-        this.name = name;
-    }
-    /**
-     * Gets the name code.
-     * @return the name code
-     */
-    @Column(name = "NAME_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivityNameCode getNameCode() {
-        return nameCode;
-    }
-    
-    /**
-     * Sets the name code.
-     * @param nameCode the new name code
-     */
-    public void setNameCode(ActivityNameCode nameCode) {
-        this.nameCode = nameCode;
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }

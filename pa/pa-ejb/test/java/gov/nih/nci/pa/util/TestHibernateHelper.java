@@ -76,7 +76,10 @@
 */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.domain.ActivityRelationship;
+import gov.nih.nci.pa.domain.AnatomicSites;
 import gov.nih.nci.pa.domain.Arm;
+import gov.nih.nci.pa.domain.AssessmentType;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
@@ -92,7 +95,9 @@ import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.LesionLocationAnatomicSite;
 import gov.nih.nci.pa.domain.MappingIdentifier;
+import gov.nih.nci.pa.domain.MethodCode;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
@@ -100,13 +105,27 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.PerfomedProcedure;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedAdministrativeActivity;
+import gov.nih.nci.pa.domain.PerformedClinicalResult;
+import gov.nih.nci.pa.domain.PerformedDiagnosis;
+import gov.nih.nci.pa.domain.PerformedHistopathology;
+import gov.nih.nci.pa.domain.PerformedImage;
+import gov.nih.nci.pa.domain.PerformedImaging;
+import gov.nih.nci.pa.domain.PerformedLesionDescription;
+import gov.nih.nci.pa.domain.PerformedMedicalHistoryResult;
+import gov.nih.nci.pa.domain.PerformedObservation;
+import gov.nih.nci.pa.domain.PerformedObservationResult;
+import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
+import gov.nih.nci.pa.domain.PlannedProcedure;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
+import gov.nih.nci.pa.domain.ProcedureName;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -136,6 +155,8 @@ import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySiteOverallStatus;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.domain.Submission;
+import gov.nih.nci.pa.domain.TargetSite;
+import gov.nih.nci.pa.domain.TumorMarker;
 import gov.nih.nci.pa.domain.UnitOfMeasurement;
 
 import org.hibernate.Session;
@@ -224,6 +245,27 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(DoseFrequency.class).
         addAnnotatedClass(RouteOfAdministration.class).
         addAnnotatedClass(UnitOfMeasurement.class).
+        addAnnotatedClass(TargetSite.class).
+        addAnnotatedClass(MethodCode.class).
+        addAnnotatedClass(PlannedProcedure.class).
+        addAnnotatedClass(ActivityRelationship.class).
+        addAnnotatedClass(PerformedObservation.class).
+        addAnnotatedClass(PerformedImaging.class).
+        addAnnotatedClass(PerfomedProcedure.class).
+        addAnnotatedClass(PerformedRadiationAdministration.class).
+        addAnnotatedClass(PerformedSubstanceAdministration.class).
+        addAnnotatedClass(PerformedObservationResult.class).
+        addAnnotatedClass(PerformedClinicalResult.class).
+        addAnnotatedClass(PerformedDiagnosis.class).
+        addAnnotatedClass(PerformedHistopathology.class).
+        addAnnotatedClass(PerformedImage.class).
+        addAnnotatedClass(PerformedLesionDescription.class).
+        addAnnotatedClass(PerformedMedicalHistoryResult.class).
+        addAnnotatedClass(AnatomicSites.class).
+        addAnnotatedClass(AssessmentType.class).
+        addAnnotatedClass(LesionLocationAnatomicSite.class).
+        addAnnotatedClass(ProcedureName.class).
+        addAnnotatedClass(TumorMarker.class).
 
         // hibernate properties
         setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").

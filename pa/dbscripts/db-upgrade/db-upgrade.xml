@@ -268,5 +268,20 @@
         <comment>execute pa_dev_23512.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_dev_23512.sql"/>
     </changeSet>
-
+    <changeSet id="66" author="Kalpana">
+        <comment>execute accrual_dev_23941_1.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_1.sql"/>
+    </changeSet>
+    <changeSet id="67" author="Kalpana">
+        <comment>execute accrual_dev_23941_2.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_2.sql"/>
+    </changeSet>
+    <changeSet id="68" author="Kalpana">
+        <comment>execute accrual_dev_23941_3.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_3.sql"/>
+    </changeSet>
+    <changeSet id="69" author="Kalpana">
+        <comment>execute accrual_dev_23941_4.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_4.sql"/>
+    </changeSet>
 </databaseChangeLog>

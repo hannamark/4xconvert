@@ -1,4 +1,4 @@
-/***
+/**
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,148 +78,92 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.ActivityNameCode;
-
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
- * @author Hugh Reinhart
- * @since 08/12/2009
+ * The Class PerformedLesionDescription.
+ * 
+ * @author Kalpana Guthikonda
+ * @since 11/6/2009
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "performed_activity_type", discriminatorType = DiscriminatorType.STRING)
-@Table(name = "performed_activity")
-public class PerformedActivity extends Activity {
-
-    private static final long serialVersionUID = 8294885421919695669L;
-
-    private Timestamp actualDateRangeLow;
-    private Timestamp actualDateRangeHigh;
-    private StudySubject studySubject;
-    private BigDecimal actualDurationValue;
-    private String actualDurationUnit;
-    private String name;
-    private ActivityNameCode nameCode;
+public class PerformedLesionDescription extends PerformedObservationResult {
+    
+    private static final long serialVersionUID = 1L;
+    
+    private Integer lesionNumber;
+    private BigDecimal longestDiameterValue;
+    private String longestDiameterUnit;
+    private Boolean measurableIndicator;
+    
     /**
-     * @return the actualDateRangeLow
+     * Gets the lesion number.
+     * @return the lesion number
      */
-    @Column(name = "actual_date_range_low")
-    public Timestamp getActualDateRangeLow() {
-        return actualDateRangeLow;
-    }
-    /**
-     * @param actualDateRangeLow the actualDateRangeLow to set
-     */
-    public void setActualDateRangeLow(Timestamp actualDateRangeLow) {
-        this.actualDateRangeLow = actualDateRangeLow;
-    }
-    /**
-     * @return the actualDateRangeHigh
-     */
-    @Column(name = "actual_date_range_high")
-    public Timestamp getActualDateRangeHigh() {
-        return actualDateRangeHigh;
-    }
-    /**
-     * @param actualDateRangeHigh the actualDateRangeHigh to set
-     */
-    public void setActualDateRangeHigh(Timestamp actualDateRangeHigh) {
-        this.actualDateRangeHigh = actualDateRangeHigh;
-    }
-    /**
-     * @return the studySubject
-     */
-    @ManyToOne
-    @JoinColumn(name = "STUDY_SUBJECT_IDENTIFIER", updatable = false)
-    public StudySubject getStudySubject() {
-        return studySubject;
-    }
-    /**
-     * @param studySubject the studySubject to set
-     */
-    public void setStudySubject(StudySubject studySubject) {
-        this.studySubject = studySubject;
+    @Column(name = "LESION_NUMBER")
+    public Integer getLesionNumber() {
+        return lesionNumber;
     }
     
     /**
-     * Gets the actual duration value.
-     * @return the actual duration value
+     * Sets the lesion number.
+     * @param lesionNumber the new lesion number
      */
-    @Column(name = "ACTUAL_DURATION_VALUE")
-    public BigDecimal getActualDurationValue() {
-        return actualDurationValue;
+    public void setLesionNumber(Integer lesionNumber) {
+        this.lesionNumber = lesionNumber;
     }
     
     /**
-     * Sets the actual duration value.
-     * @param actualDurationValue the new actual duration value
+     * Gets the longest diameter value.
+     * @return the longest diameter value
      */
-    public void setActualDurationValue(BigDecimal actualDurationValue) {
-        this.actualDurationValue = actualDurationValue;
+    @Column(name = "LONGEST_DIAMETER_VALUE")
+    public BigDecimal getLongestDiameterValue() {
+        return longestDiameterValue;
     }
     
     /**
-     * Gets the actual duration unit.
-     * @return the actual duration unit
+     * Sets the longest diameter value.
+     * @param longestDiameterValue the new longest diameter value
      */
-    @Column(name = "ACTUAL_DURATION_UNIT")
-    public String getActualDurationUnit() {
-        return actualDurationUnit;
+    public void setLongestDiameterValue(BigDecimal longestDiameterValue) {
+        this.longestDiameterValue = longestDiameterValue;
     }
     
     /**
-     * Sets the actual duration unit.
-     * @param actualDurationUnit the new actual duration unit
+     * Gets the longest diameter unit.
+     * @return the longest diameter unit
      */
-    public void setActualDurationUnit(String actualDurationUnit) {
-        this.actualDurationUnit = actualDurationUnit;
+    @Column(name = "LONGEST_DIAMETER_UNIT")
+    public String getLongestDiameterUnit() {
+        return longestDiameterUnit;
     }
     
     /**
-     * Gets the name.
-     * @return the name
+     * Sets the longest diameter unit. 
+     * @param longestDiameterUnit the new longest diameter unit
      */
-    @Column(name = "NAME")
-    public String getName() {
-        return name;
+    public void setLongestDiameterUnit(String longestDiameterUnit) {
+        this.longestDiameterUnit = longestDiameterUnit;
     }
     
     /**
-     * Sets the name.
-     * @param name the new name
+     * Gets the measurable indicator.
+     * @return the measurable indicator
      */
-    public void setName(String name) {
-        this.name = name;
-    }
-    /**
-     * Gets the name code.
-     * @return the name code
-     */
-    @Column(name = "NAME_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivityNameCode getNameCode() {
-        return nameCode;
+    @Column(name = "MEASURABLE_INDICATOR")
+    public Boolean getMeasurableIndicator() {
+        return measurableIndicator;
     }
     
     /**
-     * Sets the name code.
-     * @param nameCode the new name code
+     * Sets the measurable indicator.
+     * @param measurableIndicator the new measurable indicator
      */
-    public void setNameCode(ActivityNameCode nameCode) {
-        this.nameCode = nameCode;
-    }
+    public void setMeasurableIndicator(Boolean measurableIndicator) {
+        this.measurableIndicator = measurableIndicator;
+    }     
 }
