@@ -84,7 +84,7 @@ public final class OrganizationalContactTransformer
 
     private Cd getCdFromDSet(DSet<Cd> cds) {
         Cd cd = new Cd();
-        if (cds != null && cds.getItem() != null && !cds.getItem().isEmpty()) {
+        if (cds != null && cds.getItem() != null) {
             cd = cds.getItem().iterator().next();
         } else {
             cd.setNullFlavor(NullFlavor.NI);

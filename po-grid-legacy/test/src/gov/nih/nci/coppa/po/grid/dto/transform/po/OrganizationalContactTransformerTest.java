@@ -1,9 +1,7 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.HashSet;
-
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
@@ -15,6 +13,8 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+
+import java.util.HashSet;
 
 import org.iso._21090.II;
 
@@ -133,6 +133,33 @@ public class OrganizationalContactTransformerTest extends
         return xml;
     }
 
+    public OrganizationalContact makeXmlNullTypeCode() {
+        II id = new II();
+        id.setRoot(ORGANIZATIONAL_CONTACT_ROOT);
+        id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+        id.setExtension("123");
+
+        II player = new II();
+        player.setRoot(PLAYER_ROOT);
+        player.setIdentifierName(PLAYER_NAME);
+        player.setExtension("346");
+
+        II scoper = new II();
+        scoper.setRoot(SCOPER_ROOT);
+        scoper.setIdentifierName(SCOPER_NAME);
+        scoper.setExtension("567");
+
+        OrganizationalContact xml = new OrganizationalContact();
+        xml.setIdentifier(IdTransformerTest.convertIIToDSETII(id));
+        xml.setPlayerIdentifier(player);
+        xml.setScoperIdentifier(scoper);
+        xml.setPostalAddress(new DSETADTransformerTest().makeXmlSimple());
+        xml.setTelecomAddress(new DSETTelTransformerTest().makeXmlSimple());
+        xml.setStatus(new CDTransformerTest().makeXmlSimple());
+        xml.setTypeCode(null);
+        return xml;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void verifyDtoSimple(OrganizationalContactDTO x) {
@@ -146,6 +173,17 @@ public class OrganizationalContactTransformerTest extends
         new DSETCDTransformerTest().verifyDtoSimple(convertToDSetOfCd(x.getTypeCode()));
     }
 
+    public void verifyDtoNullTypeCode(OrganizationalContactDTO x) {
+        Ii ii = x.getIdentifier().getItem().iterator().next();
+        assertEquals(ii.getExtension(), "123");
+        assertEquals(ii.getIdentifierName(),ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
+        assertEquals(x.getPlayerIdentifier().getIdentifierName(),PLAYER_NAME);
+        new CDTransformerTest().verifyDtoSimple(x.getStatus());
+        new DSETTelTransformerTest().verifyDtoSimple(x.getTelecomAddress());
+        new DSETADTransformerTest().verifyDtoSimple(x.getPostalAddress());
+        verifyDtoNull(convertToDSetOfCd(x.getTypeCode()));
+    }
+
     public void verifyXmlNullTypeCode(OrganizationalContact x) {
         II ii = x.getIdentifier().getItem().get(0);
         assertEquals(ii.getExtension(), "123");
@@ -156,6 +194,14 @@ public class OrganizationalContactTransformerTest extends
         new DSETTelTransformerTest().verifyXmlSimple(x.getTelecomAddress());
         new DSETADTransformerTest().verifyXmlSimple(x.getPostalAddress());
         new DSETCDTransformerTest().verifyXmlNull(x.getTypeCode());
+    }
+
+    public void verifyDtoNull(DSet<Cd> x) {
+        assertNotNull(x);
+        assertEquals(1, x.getItem().size());
+        for (Cd cd : x.getItem()) {
+            assertEquals(NullFlavor.NI, cd.getNullFlavor());
+        }
     }
 
     @Override
@@ -180,7 +226,7 @@ public class OrganizationalContactTransformerTest extends
 
     private Cd getCdFromDSet(DSet<Cd> cds) {
         Cd cd = new Cd();
-        if (cds != null && cds.getItem() != null && !cds.getItem().isEmpty()) {
+        if (cds != null) {
             cd = cds.getItem().iterator().next();
         } else {
             cd.setNullFlavor(NullFlavor.NI);
