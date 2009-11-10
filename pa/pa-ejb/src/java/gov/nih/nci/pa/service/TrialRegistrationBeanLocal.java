@@ -132,7 +132,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     @EJB
      OrganizationCorrelationServiceRemote ocsr = null;
     @EJB 
-     StudyContactServiceRemote studyContactService = null;
+     StudyContactServiceLocal studyContactService = null;
     @EJB
      TSRReportGeneratorServiceRemote tsrReportService = null;
     @EJB

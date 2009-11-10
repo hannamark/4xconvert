@@ -121,7 +121,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.ArmServiceRemote;
+import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyPaService;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
@@ -209,7 +209,7 @@ public class PAServiceUtils {
                             , fromStudyProtocolIi, toIi);
         StudyPaService<ArmDTO> sp = getRemoteService(IiConverter.convertToArmIi(null));
         Map<Ii , Ii> map = sp.copy(fromStudyProtocolIi, toIi);
-        ArmServiceRemote as = getRemoteService(IiConverter.convertToArmIi(null));
+        ArmServiceLocal as = getRemoteService(IiConverter.convertToArmIi(null));
         as.copy(fromStudyProtocolIi, toIi , map);
         executeCopy(getRemoteService(IiConverter.convertToStudyContactIi(null)) , fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToStudySiteIi(null)) , fromStudyProtocolIi, toIi);
@@ -918,8 +918,8 @@ public class PAServiceUtils {
                 //doing this just to load the country since its lazy loaded. 
                 Country country = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId);
                 String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
-                if (!country.getAlpha3().equals("USA")  
-                    && !regAuthName.equalsIgnoreCase("Food and Drug Administration")) {
+                if (!(country.getAlpha3().equals("USA")  
+                    && regAuthName.equalsIgnoreCase("Food and Drug Administration"))) {
                     errMsg.append("For IND protocols, Oversight Authorities "
                           + " must include United States: Food and Drug Administration.\n");
                 }

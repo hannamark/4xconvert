@@ -676,8 +676,8 @@ private void enforceStudyContactNullification(
                   + " from Administrative Data menu.", "For IND protocols, Oversight Authorities " 
                   + " must include United States: Food and Drug Administration."));
       }*/
-      if (!regAuth.getCountry().getAlpha3().equals("USA") 
-              && !regAuth.getAuthorityName().equalsIgnoreCase("Food and Drug Administration")) {
+      if (!(regAuth.getCountry().getAlpha3().equals("USA") 
+              && regAuth.getAuthorityName().equalsIgnoreCase("Food and Drug Administration"))) {
           abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
                   + " from Administrative Data menu.", "For IND protocols, Oversight Authorities " 
                   + " must include United States: Food and Drug Administration."));
