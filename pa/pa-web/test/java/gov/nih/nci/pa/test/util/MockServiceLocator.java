@@ -195,8 +195,8 @@ public class MockServiceLocator implements ServiceLocator {
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
     private final StudyInboxServiceLocal studyInboxService = new StudyInboxServiceBean();
     private final StudyCheckoutServiceLocal studyCheckoutService = new StudyCheckoutServiceBean();
-    private final PlannedSubstanceAdministrationServiceRemote plannedSAService = new PlannedSubstanceAdministrationServiceBean(); 
-    
+    private final PlannedSubstanceAdministrationServiceRemote plannedSAService = new PlannedSubstanceAdministrationServiceBean();
+
     /**
      * @return mock service
      */
@@ -499,7 +499,7 @@ public class MockServiceLocator implements ServiceLocator {
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
         return studySiteAccrualAccessService;
     }
-    
+
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
         return organizationCorrelationService;
     }
@@ -533,12 +533,10 @@ public class MockServiceLocator implements ServiceLocator {
         return plannedSAService;
     }
 
-	
-	@Override
-	public StudyRelationshipServiceLocal getStudyRelationshipService() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public StudyRelationshipServiceLocal getStudyRelationshipService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	
+
 }
