@@ -89,7 +89,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -313,8 +313,8 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return TrialRegistrationServiceRemote
      * @throws PAException e
      */
-    public TrialRegistrationServiceRemote getTrialRegistrationService() throws PAException {
-        return (TrialRegistrationServiceRemote) JNDIUtil.lookup("pa/TrialRegistrationBeanLocal/local");
+    public TrialRegistrationServiceLocal getTrialRegistrationService() throws PAException {
+        return (TrialRegistrationServiceLocal) JNDIUtil.lookup("pa/TrialRegistrationBeanLocal/local");
     }
     /**
      * 

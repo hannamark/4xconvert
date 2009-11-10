@@ -24,6 +24,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -68,7 +69,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final DocumentServiceLocal documentService = new MockDocumentService(); 
     private final StudyOverallStatusServiceLocal studyOverallStatusService = new MockStudyOverallStatusService();
     private final LookUpTableServiceRemote lookUpTableService = new MockLookUpTableService();
-    private final TrialRegistrationServiceRemote  trialRegistrationService = new MockTrialRegistrationService();
+    private final TrialRegistrationServiceLocal  trialRegistrationService = new MockTrialRegistrationService();
     private final MailManagerServiceLocal mailManagerService = new MockMailManagerService();
     private final StudyIndldeServiceLocal  studyIndldeService = new MockStudyIndldeService();
     private final StudySiteServiceLocal studySiteService = new MockStudySiteService();
@@ -187,7 +188,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public TrialRegistrationServiceRemote getTrialRegistrationService()
+    public TrialRegistrationServiceLocal getTrialRegistrationService()
             throws PAException {
         return trialRegistrationService;
     }
