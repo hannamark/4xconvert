@@ -140,7 +140,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     @EJB
      RegulatoryInformationServiceRemote regulatoryInfoBean = null;
     @EJB
-     StudyRecruitmentStatusServiceRemote studyRecruitmentStatusServiceRemote = null;
+     StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal = null;
     @EJB
      StudyObjectiveServiceLocal studyObjectiveService = null;
     @EJB
@@ -1343,7 +1343,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     List<StudySiteAccrualStatusDTO> participatingSites) throws PAException {
     if (participatingSites != null && !participatingSites.isEmpty()) { 
           StudyRecruitmentStatusDTO recruitmentStatusDto = 
-              studyRecruitmentStatusServiceRemote.getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
+          studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
           paServiceUtils.enforceRecruitmentStatus(studyProtocolDTO, participatingSites, recruitmentStatusDto);
     } 
  }
