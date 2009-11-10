@@ -29,6 +29,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <!-- Properties file related properties and tasks -->
   <property environment="env" />
+  <property file="local.properties" />
   <property file="project.properties"/>
   <property name="properties.file" value="${basedir}/install.properties"/>
   <echo message="Using properties file of ${properties.file}."/>
@@ -154,6 +155,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <!-- Conditionals -->
   <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
+  <available file="${jboss.home}/server/${po-grid.jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
+  <available file="${jboss.home}/server/${po-grid-legacy.jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>
   <!-- po-ear can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
   <switch value="${database.type}">
     <case value="postgresql">
@@ -841,7 +844,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         </sequential>
     </macrodef>
 
-  <target name="install:jboss:start"  unless="exclude.jboss">
+  <target name="install:jboss:start" if="jboss.exists" unless="exclude.jboss">
     <if>
       <not>
         <isset property="exclude.start.servers"/>

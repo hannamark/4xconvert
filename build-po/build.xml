@@ -344,9 +344,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       maven.dir="${po.base.dir}"
       />
     <copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear"/>
-
-    <antcall target="build:po-grid"/>
   </target>
+
   <!-- Build po-grid sub-project produces project level artifact -->
   <target name="build:po-grid" depends="init" unless="exclude.po-grid">
     <fail unless="jboss.server.hostname"/>
@@ -690,7 +689,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <deploy-files2
               dist.file="${po-ear.install.zip.file}"
               />
-    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true ${install.target}" />
+    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.po-grid=true -Dexclude.po-grid-legacy=true ${install.target}" />
   </target>
   <target name="remote:install:po-grid" unless="exclude.po-grid">
     <!-- install po-grid only-->
