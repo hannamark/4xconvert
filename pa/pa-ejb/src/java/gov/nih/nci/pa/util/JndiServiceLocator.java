@@ -391,7 +391,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return StudyRecruitmentStatusService
      */
     public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
-        return (StudyRecruitmentStatusServiceLocal) JNDIUtil.lookup("/pa/StudyRecruitmentStatusServiceBean/local");
+        return (StudyRecruitmentStatusServiceLocal) JNDIUtil.lookup("/pa/StudyRecruitmentStatusBeanLocal/local");
     }
     /**
      * @return StudyMilestoneService
