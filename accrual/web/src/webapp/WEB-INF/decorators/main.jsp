@@ -5,7 +5,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title><decorator:title default="NCI CTRP Accrual Site"/></title>    
+    <title><decorator:title default="NCI Outcomes Site"/></title>
     <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
     <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
     <decorator:head/>
@@ -17,7 +17,7 @@
 <a href="#content" id="navskip">Skip to Page Content</a> 
 <div id="wrapper">
     <jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
-    <jsp:include page="/WEB-INF/jsp/common/accrualheader.jsp"/>
+    <jsp:include page="/WEB-INF/jsp/common/outcomesheader.jsp"/>
     <div id="main">    
        <div id="contentwrapper">
            <div id="content">
@@ -27,7 +27,7 @@
        </div>
        <div id="leftnav">
            <ul class="menu">
-               <jsp:include page="/WEB-INF/jsp/common/accrualmenu.jsp"/> 
+               <jsp:include page="/WEB-INF/jsp/common/outcomesmenu.jsp"/> 
                <jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
            </ul>
        </div> 

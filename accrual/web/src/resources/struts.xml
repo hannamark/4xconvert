@@ -57,10 +57,6 @@
 
     <package name="common" namespace="/common" extends="default">
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
-            <result name="protectedNamespace" type="redirectAction">
-                <param name="namespace">../protected</param>
-                <param name="actionName">disClaimerAction</param>
-            </result>
             <result name="outcomesNamespace" type="redirectAction">
                 <param name="namespace">../outcomes</param>
                 <param name="actionName">disClaimerAction</param>
@@ -68,45 +64,10 @@
         </action>
     </package>
 
-    <package name="protected" namespace="/protected" extends="default">
-        <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
-            <result>viewTrials.action</result>
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
-        </action>
-
-        <action name="viewTrials*" class="gov.nih.nci.accrual.web.action.ViewTrialsAction">
-            <result>/WEB-INF/jsp/searchTrials.jsp</result>
-        </action>
-
-        <action name="accrualSubmissions*" class="gov.nih.nci.accrual.web.action.AccrualSubmissionsAction" method="{1}">
-            <result>/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
-            <result name="showNewSubmission">/WEB-INF/jsp/newAccrualSubmission.jsp</result>
-            <result name="viewSubmissionDetails">/WEB-INF/jsp/viewAccrualSubmissionDetails.jsp</result>
-        </action>
-
-        <action name="patients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">
-            <result>/WEB-INF/jsp/searchPatients.jsp</result>
-            <result name="detail">/WEB-INF/jsp/searchPatientsDetail.jsp</result>
-        </action>
-        
-        <action name="ajaxpatients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">
-            <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
-        </action>
-        
-        <action name="popup*" class="gov.nih.nci.accrual.web.action.PopUpAction" method="{1}">
-            <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
-        </action>
-        
-    </package>
-
     <package name="outcomes" namespace="/outcomes" extends="default">
         <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
-            <result>viewTrials.action</result>
+            <result>home.action</result>
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
-        </action>
-        
-        <action name="viewTrials*" class="gov.nih.nci.accrual.web.action.ViewTrialsAction">
-            <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
 
         <action name="patients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">

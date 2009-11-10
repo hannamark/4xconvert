@@ -17,10 +17,15 @@
     <property name="ear.clean.target" value="pre-clean"/>
     <property name="ear.build.target" value="ear"/>
     <property name="web.dir" value="${basedir}/web"/>
-    <property name="web.war" value="${web.dir}/target/accrual.war"/>
+    <property name="web.war" value="${web.dir}/target/outcomes.war"/>
     <property name="web.build.file" value="build.xml"/>
     <property name="web.clean.target" value="pre-clean"/>
     <property name="web.build.target" value="war"/>
+    <property name="accrual-web.dir" value="${basedir}/accrual-web"/>
+    <property name="accrual-web.war" value="${accrual-web.dir}/target/accrual.war"/>
+    <property name="accrual-web.build.file" value="build.xml"/>
+    <property name="accrual-web.clean.target" value="pre-clean"/>
+    <property name="accrual-web.build.target" value="war"/>
     <property name="services.dir" value="${basedir}/services"/>
     <property name="services.jar" value="${services.dir}/target/accrual-services.jar"/>
     <property name="services.build.file" value="build.xml"/>

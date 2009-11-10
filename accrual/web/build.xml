@@ -20,7 +20,7 @@
     <property name="web.build.webappDir" value="${web.build.dir}/webapp"/>
     <property name="web.build.srcDir" value="${basedir}/src/java"/>
     <property name="web.build.resourceDir" value="${basedir}/src/resources"/>
-    <property name="web.war" value="accrual.war"/>
+    <property name="web.war" value="outcomes.war"/>
     <property name="web.build.testSrcDir" value="${basedir}/test/java"/>
     <property name="web.build.testOutputDir" value="${web.build.dir}/test-classes"/>
     <property name="web.build.coberturaOutputDir" value="${web.build.dir}/generated-classes"/>
@@ -399,7 +399,7 @@
     <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
         <for param="toDir">
             <path>
-                <dirset dir="${jboss.deploy.dir}/../tmp/deploy" includes="tmp*accrual.ear-contents/accrual-exp.war"/>
+                <dirset dir="${jboss.deploy.dir}/../tmp/deploy" includes="tmp*accrual.ear-contents/outcomes-exp.war"/>
             </path>
             <sequential>
                 <copy todir="@{toDir}">

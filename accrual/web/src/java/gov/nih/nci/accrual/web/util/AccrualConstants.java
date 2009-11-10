@@ -89,8 +89,6 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_AUTHORIZED_USER = "authorizedUser";
     /** Attribute used to store the role in session. */
     public static final String SESSION_ATTR_ROLE = "accrualRole";
-    /** Role-name for the public role. */
-    public static final String ROLE_PUBLIC = "Submitter";
     /** Role-name for the outcomes role. */
     public static final String ROLE_OUTCOMES = "Outcomes";
     /** Attribute used to store the role in session. */
@@ -108,12 +106,6 @@ public final class AccrualConstants {
     public static final String AR_LOGOUT = "logout";
     /** Action result for the show disclaimer. */
     public static final String AR_DISCLAIMER = "show_Disclaimer_Page";
-    /** Action result for the new submission. */
-    public static final String AR_NEW_SUBMISSION = "showNewSubmission";
-    /** Action result for the view submission details. */
-    public static final String AR_VIEW_SUBMISSION_DETAILS = "viewSubmissionDetails";
-    /** Action result returned to display the detail page. */
-    public static final String AR_DETAIL = "detail";
 
     /** Success Message . */
     public static final String SUCCESS_MESSAGE = "successMessage";

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="web/src/java"/>
-	<classpathentry kind="src" path="web/test/java"/>
 	<classpathentry kind="src" path="services/src/java"/>
+	<classpathentry kind="src" path="web/src/java"/>
+	<classpathentry kind="src" path="accrual-web/src/java"/>
 	<classpathentry kind="src" path="services/test/java"/>
+	<classpathentry kind="src" path="web/test/java"/>
+	<classpathentry kind="src" path="accrual-web/test/java"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/compile/struts2-core-2.1.6.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/compile/javax.servlet-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/compile/xwork-2.1.2.jar"/>

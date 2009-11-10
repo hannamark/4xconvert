@@ -9,8 +9,8 @@
     </module>
     <module>
         <web>
-            <web-uri>accrual.war</web-uri>
-            <context-root>/accrual</context-root>
+            <web-uri>outcomes.war</web-uri>
+            <context-root>/outcomes</context-root>
         </web>
     </module>
     <module>

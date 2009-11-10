@@ -84,7 +84,6 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
-import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -134,7 +133,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void createTest() {
-       assertEquals(AccrualConstants.AR_DETAIL, action.create());
+       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
     }
 
     @Override
@@ -160,7 +159,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void addTest() throws Exception {
-        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.add());
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
         patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
@@ -180,7 +179,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void editTest() throws Exception {
-        assertEquals(AccrualConstants.AR_DETAIL, action.edit());
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.edit());
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
         patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());

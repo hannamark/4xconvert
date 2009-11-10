@@ -13,7 +13,7 @@
     <property name="ear.build.dir" value="${software.dir}/accrual/ear/target"/>
     <property name="ear.build.finalName" value="accrual"/>
     <property name="services.package" value="${software.dir}/accrual/services/target/accrual-services.jar"/>
-    <property name="web.package" value="${software.dir}/accrual/web/target/accrual.war"/>
+    <property name="web.package" value="${software.dir}/accrual/web/target/outcomes.war"/>
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />

@@ -150,7 +150,7 @@ public class AbstractAccrualActionTest {
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
 
-        setRole(AccrualConstants.ROLE_PUBLIC);
+        setRole(AccrualConstants.ROLE_OUTCOMES);
         setDisclaimer(true);
     }
 
@@ -168,24 +168,24 @@ public class AbstractAccrualActionTest {
 
     @Test
     public void executeTest() throws Exception {
-      ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_PUBLIC, true);
-      assertEquals(AccrualConstants.ROLE_PUBLIC, ServletActionContext.getRequest().getSession(). getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
+      ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_OUTCOMES, true);
+      assertEquals(AccrualConstants.ROLE_OUTCOMES, ServletActionContext.getRequest().getSession(). getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
     }
 
 
     @Test
      public void createTest() throws Exception {
-        assertEquals(AccrualConstants.AR_DETAIL, action.create());
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
      }
 
     @Test
     public void retrieveTest() {
-       assertEquals(AccrualConstants.AR_DETAIL, action.retrieve());
+       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
     }
 
     @Test
     public void updateTest() {
-       assertEquals(AccrualConstants.AR_DETAIL, action.update());
+       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
     }
 
     @Test

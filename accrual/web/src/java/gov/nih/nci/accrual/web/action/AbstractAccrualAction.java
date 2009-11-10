@@ -163,8 +163,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     public String execute() {
         // make sure user authorized
         if (getUserRole() == null
-                || !getUserRole().equals(AccrualConstants.ROLE_PUBLIC)
-                    && !getUserRole().equals(AccrualConstants.ROLE_OUTCOMES)) {
+                || !getUserRole().equals(AccrualConstants.ROLE_OUTCOMES)) {
             return AccrualConstants.AR_LOGOUT;
         }
         //check if users accepted the disclaimer if not show one

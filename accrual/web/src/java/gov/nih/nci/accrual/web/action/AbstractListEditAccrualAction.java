@@ -95,13 +95,13 @@ public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrual
     private static final long serialVersionUID = -8797184349026635679L;
 
     /** String value for currentAction property when doing a create. */
-    private static final String CA_CREATE = "create";
+    public static final String CA_CREATE = "create";
     /** String value for currentAction property when doing a create. */
-    private static final String CA_RETRIEVE = "retrieve";
+    public static final String CA_RETRIEVE = "retrieve";
     /** String value for currentAction property when doing a create. */
-    private static final String CA_UPDATE = "update";
+    public static final String CA_UPDATE = "update";
     /** Action result returned to display the detail page. */
-    private static final String AR_DETAIL = "detail";
+    public static final String AR_DETAIL = "detail";
     /** Identifier for request bean to hold displaytag list. */
     private static final String REQUEST_ATTR_DISPLAY_LIST = "displayTagList";
 
