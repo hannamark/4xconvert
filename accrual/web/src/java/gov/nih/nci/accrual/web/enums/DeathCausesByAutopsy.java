@@ -83,6 +83,9 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import gov.nih.nci.pa.enums.CodedEnum;
 
+/**
+ * @author lhebel
+ */
 public enum DeathCausesByAutopsy implements CodedEnum<String> {
     /** cause 1. */
     AUTOPSY1("Autopsy Cause 1"),

@@ -83,6 +83,9 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import gov.nih.nci.pa.enums.CodedEnum;
 
+/**
+ * @author lhebel
+ */
 public enum DeathInfoCauses implements CodedEnum<String> {
     /** grade 1. */
     CAUSE1("Cause 1"),

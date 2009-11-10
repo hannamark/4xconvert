@@ -118,6 +118,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
      * Save user entries.
      * @return result for next action
      */
+    @SuppressWarnings("PMD")
     public String save() {
         return super.save();
     }
