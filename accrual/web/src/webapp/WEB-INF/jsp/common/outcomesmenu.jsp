@@ -20,8 +20,7 @@
             </c:otherwise>
         </c:choose>
     </c:if>
-    <c:if
-        test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
+    <c:if test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
         <li class="hassubmenu">Baseline Data
         <ul id="part_sites">
             <c:choose>
@@ -61,8 +60,7 @@
         </ul>
         </li>
     </c:if>
-    <c:if
-        test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
+    <c:if test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
         <li class="hassubmenu"><c:choose>
             <c:when test="${(requestScope.topic == 'treatment_detail')}">
                 <a href="executeTreatment.action" class="selected">Treatment</a>

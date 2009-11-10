@@ -33,7 +33,7 @@
     <accrual:sucessMessage /> 
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <display:table class="data" summary="This table contains list of Accrual Submissions.
-          Please use column headers to sort results" decorator="gov.nih.nci.accrual.web.decorator.SubmissionDecorator"
+          Please use column headers to sort results" decorator="gov.nih.nci.accrual.accweb.decorator.SubmissionDecorator"
           sort="list" pagesize="10" id="row" name="displayTagList" requestURI="accrualSubmissions.action" export="false"> 
 
          <display:column titleKey="accrual.list.submissions.label" headerClass="centered" sortable="true" class="action">

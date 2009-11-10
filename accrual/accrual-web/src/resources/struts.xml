@@ -45,7 +45,7 @@
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
         </action>
-        <action name="logout" class="gov.nih.nci.accrual.web.action.LogoutAction" method="logout">
+        <action name="logout" class="gov.nih.nci.accrual.accweb.action.LogoutAction" method="logout">
             <result>/index.jsp</result>
         </action>
         <action name="home">
@@ -57,35 +57,35 @@
     </package>
 
     <package name="protected" namespace="/protected" extends="default">
-        <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
+        <action name="welcome" class="gov.nih.nci.accrual.accweb.action.WelcomeAction">
             <result name="show_Disclaimer_Page">disClaimerAction.action</result>
         </action>
 
-        <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
+        <action name="disClaimerAction*" class="gov.nih.nci.accrual.accweb.action.DisclaimerAction" method="{1}">
             <result>viewTrials.action</result>
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
         </action>
 
-        <action name="viewTrials*" class="gov.nih.nci.accrual.web.action.ViewTrialsAction">
+        <action name="viewTrials*" class="gov.nih.nci.accrual.accweb.action.ViewTrialsAction">
             <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
 
-        <action name="accrualSubmissions*" class="gov.nih.nci.accrual.web.action.AccrualSubmissionsAction" method="{1}">
+        <action name="accrualSubmissions*" class="gov.nih.nci.accrual.accweb.action.AccrualSubmissionsAction" method="{1}">
             <result>/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
             <result name="showNewSubmission">/WEB-INF/jsp/newAccrualSubmission.jsp</result>
             <result name="viewSubmissionDetails">/WEB-INF/jsp/viewAccrualSubmissionDetails.jsp</result>
         </action>
 
-        <action name="patients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">
+        <action name="patients*" class="gov.nih.nci.accrual.accweb.action.PatientAction" method="{1}">
             <result>/WEB-INF/jsp/searchPatients.jsp</result>
             <result name="detail">/WEB-INF/jsp/searchPatientsDetail.jsp</result>
         </action>
         
-        <action name="ajaxpatients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">
+        <action name="ajaxpatients*" class="gov.nih.nci.accrual.accweb.action.PatientAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
         </action>
         
-        <action name="popup*" class="gov.nih.nci.accrual.web.action.PopUpAction" method="{1}">
+        <action name="popup*" class="gov.nih.nci.accrual.accweb.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
         

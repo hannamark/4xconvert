@@ -131,13 +131,7 @@
             <fileset dir="${web.build.resourceDir}"/>
         </copy>
         <copy todir="${web.build.webappDir}">
-            <fileset dir="${basedir}/src/webapp" excludes = "**/login.jsp"/>
-        </copy>
-        <copy todir="${web.build.webappDir}">
-            <filterset>
-                <filter token="application.url" value="${application.url}"/>
-            </filterset>
-            <fileset dir="${basedir}/src/webapp" includes = "**/login.jsp"/>
+            <fileset dir="${basedir}/src/webapp"/>
         </copy>
     	<copy todir="${web.build.outputDir}">
     		<fileset dir="${web.build.srcDir}" includes="**/*.properties"/>

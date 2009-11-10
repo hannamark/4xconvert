@@ -19,7 +19,7 @@
 
     <div class="box" id="filters">
           
-            <p class="intro">Thank you for using the NCI&#39;s Clinical Trials Reporting Program. </p>
+            <p class="intro">Thank you for using the NCI&#39;s Outcomes Program. </p>
           
             <p>
                If you are experiencing problems with the application, please contact NCICB Applications Support at 

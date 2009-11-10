@@ -14,6 +14,7 @@
     <property name="ear.build.finalName" value="accrual"/>
     <property name="services.package" value="${software.dir}/accrual/services/target/accrual-services.jar"/>
     <property name="web.package" value="${software.dir}/accrual/web/target/outcomes.war"/>
+    <property name="accweb.package" value="${software.dir}/accrual/accrual-web/target/accrual.war"/>
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
@@ -59,7 +60,9 @@
         <available file="${services.package}" property="services.present"/>
         <fail unless="services.present" message="EJB jar file not found."/>
         <available file="${web.package}" property="web.present"/>
-        <fail unless="web.present" message="War file not found."/>
+        <fail unless="web.present" message="Outcomes war file not found."/>
+        <available file="${accweb.package}" property="web.present"/>
+        <fail unless="web.present" message="Accrual war file not found."/>
         <mkdir dir="${ear.build.dir}/${ear.build.finalName}"/>
     </target>
 
@@ -67,6 +70,8 @@
         <copy file="${services.package}" 
              todir="${ear.build.dir}/${ear.build.finalName}"/>
         <copy file="${web.package}" 
+             todir="${ear.build.dir}/${ear.build.finalName}"/>
+        <copy file="${accweb.package}" 
              todir="${ear.build.dir}/${ear.build.finalName}"/>
         <copy todir="${ear.build.dir}/${ear.build.finalName}">
             <fileset dir="${lib.dir}/ear/runtime"/>

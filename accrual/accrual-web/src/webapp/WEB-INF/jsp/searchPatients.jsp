@@ -43,7 +43,7 @@ function handleDelete(rowId){
 <h1><fmt:message key="patient.search.title"/></h1>
  <% 
            
-    Boolean submissionOpened = (Boolean)session.getAttribute(gov.nih.nci.accrual.web.util.AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED); 
+    Boolean submissionOpened = (Boolean)session.getAttribute(gov.nih.nci.accrual.accweb.util.AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED); 
             
  %>
   <s:form name="listForm">
