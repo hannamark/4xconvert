@@ -10,6 +10,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.Map;
  * @author Vrushali
  *
  */
-public class MockStudyIndldeService extends MockAbstractBaseIsoService<StudyIndldeDTO> implements StudyIndldeServiceRemote {
+public class MockStudyIndldeService extends MockAbstractBaseIsoService<StudyIndldeDTO> implements StudyIndldeServiceLocal {
     static List<StudyIndldeDTO> listLndDtos = new ArrayList<StudyIndldeDTO>();
     static {
         StudyIndldeDTO indDto = new StudyIndldeDTO();

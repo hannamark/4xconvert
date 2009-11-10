@@ -78,21 +78,21 @@
 */
 package gov.nih.nci.registry.util;
 
-import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyContactServiceRemote;
-import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
-import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -137,7 +137,7 @@ public final class RegistryServiceLocator {
      * 
      * @return the service.
      */
-    public static StudyProtocolServiceRemote getStudyProtocolService() {
+    public static StudyProtocolServiceLocal getStudyProtocolService() {
         return getInstance().getServiceLocator().getStudyProtocolService();
     }
 
@@ -183,7 +183,7 @@ public final class RegistryServiceLocator {
      * 
      * @return StudyOverallStatusServiceRemote
      */
-    public static StudyOverallStatusServiceRemote getStudyOverallStatusService() {
+    public static StudyOverallStatusServiceLocal getStudyOverallStatusService() {
         return getInstance().getServiceLocator().getStudyOverallStatusService();
     }
 
@@ -191,7 +191,7 @@ public final class RegistryServiceLocator {
      * 
      * @return StudyResourcingServiceRemote
      */
-    public static StudyResourcingServiceRemote getStudyResourcingService() {
+    public static StudyResourcingServiceLocal getStudyResourcingService() {
         return getInstance().getServiceLocator().getStudyResoucringService();
     }
 
@@ -199,7 +199,7 @@ public final class RegistryServiceLocator {
      * 
      * @return StudyRegulatoryAuthorityServiceRemote
      */
-    public static StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
+    public static StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
         return getInstance().getServiceLocator().getStudyRegulatoryAuthorityService();
     }
 
@@ -223,7 +223,7 @@ public final class RegistryServiceLocator {
      * 
      * @return StudySiteService
      */
-    public static StudySiteServiceRemote getStudySiteService() {
+    public static StudySiteServiceLocal getStudySiteService() {
         return getInstance().getServiceLocator().getStudySiteService();
     }
 
@@ -231,7 +231,7 @@ public final class RegistryServiceLocator {
      * 
      * @return StudySiteAccrualStatusService
      */
-    public static StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
+    public static StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
         return getInstance().getServiceLocator().getStudySiteAccrualStatusService();
     }
 
@@ -239,7 +239,7 @@ public final class RegistryServiceLocator {
      * 
      * @return DocumentServiceRemote
      */
-    public static DocumentServiceRemote getDocumentService() {
+    public static DocumentServiceLocal getDocumentService() {
         return getInstance().getServiceLocator().getDocumentService();
     }
 
@@ -247,7 +247,7 @@ public final class RegistryServiceLocator {
      * 
      * @return DocumentServiceRemote
      */
-    public static StudyContactServiceRemote getStudyContactService() {
+    public static StudyContactServiceLocal getStudyContactService() {
         return getInstance().getServiceLocator().getStudyContactService();
     }
 
@@ -255,7 +255,7 @@ public final class RegistryServiceLocator {
      * @return StudyIndldeServiceRemote
      * 
      */
-    public static StudyIndldeServiceRemote getStudyIndldeService() {
+    public static StudyIndldeServiceLocal getStudyIndldeService() {
         return getInstance().getServiceLocator().getStudyIndldeService();
     }
 
@@ -314,7 +314,7 @@ public final class RegistryServiceLocator {
      * @throws PAException e
      * @return StudyContactServiceRemote
      */    
-    public static StudySiteContactServiceRemote getStudySiteContactService() 
+    public static StudySiteContactServiceLocal getStudySiteContactService() 
         throws PAException {    
         return getInstance().getServiceLocator().getStudySiteContactService();
     }
@@ -340,7 +340,7 @@ public final class RegistryServiceLocator {
      * @return MailManagerServiceRemote
      * @throws PAException ex
      */
-    public static MailManagerServiceRemote getMailManagerService() throws PAException {
+    public static MailManagerServiceLocal getMailManagerService() throws PAException {
         return getInstance().getServiceLocator().getMailManagerService();
     }
 }

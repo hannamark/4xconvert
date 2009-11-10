@@ -11,6 +11,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 
 /**
@@ -18,7 +19,7 @@ import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
  *
  */
 public class MockStudySiteContactService extends MockAbstractRoleIsoService<StudySiteContactDTO> implements
-        StudySiteContactServiceRemote {
+        StudySiteContactServiceLocal {
 
     public List<StudySiteContactDTO> getByStudySite(Ii studySiteIi)
             throws PAException {

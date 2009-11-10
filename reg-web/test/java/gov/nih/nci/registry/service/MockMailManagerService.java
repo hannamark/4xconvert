@@ -5,13 +5,14 @@ package gov.nih.nci.registry.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 
 /**
  * @author Vrushali
  *
  */
-public class MockMailManagerService implements MailManagerServiceRemote {
+public class MockMailManagerService implements MailManagerServiceLocal {
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.MailManagerService#sendAmendAcceptEmail(gov.nih.nci.coppa.iso.Ii)

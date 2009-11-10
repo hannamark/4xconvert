@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 
@@ -19,7 +20,7 @@ import gov.nih.nci.pa.service.PAException;
  * @author Vrushali
  *
  */
-public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO> implements DocumentServiceRemote {
+public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO> implements DocumentServiceLocal {
 
     static List<DocumentDTO> docList; 
     static {

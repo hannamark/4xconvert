@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.List;
  *
  */
 public class MockStudySiteService extends MockAbstractRoleIsoService<StudySiteDTO> implements
-        StudySiteServiceRemote {
+        StudySiteServiceLocal {
      static List<StudySiteDTO> list;
      static{
          list = new ArrayList<StudySiteDTO>();

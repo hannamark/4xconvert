@@ -3,12 +3,22 @@ package gov.nih.nci.registry.test.util;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
@@ -17,6 +27,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -52,16 +63,16 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 public class RegistrationMockServiceLocator implements ServiceLocator {
     
-    private final StudyProtocolServiceRemote studyProtocolService = new MockStudyProtocolService();
+    private final StudyProtocolServiceLocal studyProtocolService = new MockStudyProtocolService();
     private final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
-    private final DocumentServiceRemote documentService = new MockDocumentService(); 
-    private final StudyOverallStatusServiceRemote studyOverallStatusService = new MockStudyOverallStatusService();
+    private final DocumentServiceLocal documentService = new MockDocumentService(); 
+    private final StudyOverallStatusServiceLocal studyOverallStatusService = new MockStudyOverallStatusService();
     private final LookUpTableServiceRemote lookUpTableService = new MockLookUpTableService();
     private final TrialRegistrationServiceRemote  trialRegistrationService = new MockTrialRegistrationService();
-    private final MailManagerServiceRemote mailManagerService = new MockMailManagerService();
-    private final StudyIndldeServiceRemote  studyIndldeService = new MockStudyIndldeService();
-    private final StudySiteServiceRemote studySiteService = new MockStudySiteService();
-    private final StudyResourcingServiceRemote studyResourcingService = new MockStudyResourcingService();
+    private final MailManagerServiceLocal mailManagerService = new MockMailManagerService();
+    private final StudyIndldeServiceLocal  studyIndldeService = new MockStudyIndldeService();
+    private final StudySiteServiceLocal studySiteService = new MockStudySiteService();
+    private final StudyResourcingServiceLocal studyResourcingService = new MockStudyResourcingService();
     private final PAOrganizationServiceRemote paOrganizationService = new MockPAOrganizationService();
     private final OrganizationEntityServiceRemote organizationEntityService = new MockOrganizationEntityService();
     private final IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationService = new MockIdentifiedOrganizationCorrelationService();
@@ -69,10 +80,10 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final IdentifiedPersonCorrelationServiceRemote identifiedPersonCorrelationService = new MockIdentifiedPersonCorrelationService();
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
     private final OrganizationalContactCorrelationServiceRemote orgContactCorrelationService = new MockOrganizationalContactCorrelationService();
-    private final StudyContactServiceRemote studyContactService = new MockStudyContactService();
-    private final StudySiteContactServiceRemote studySiteContactService = new MockStudySiteContactService();
+    private final StudyContactServiceLocal studyContactService = new MockStudyContactService();
+    private final StudySiteContactServiceLocal studySiteContactService = new MockStudySiteContactService();
     private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
-    public DocumentServiceRemote getDocumentService() {
+    public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
 
@@ -90,7 +101,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return lookUpTableService;
     }
 
-    public MailManagerServiceRemote getMailManagerService() throws PAException {
+    public MailManagerServiceLocal getMailManagerService() throws PAException {
         return mailManagerService;
     }
 
@@ -137,41 +148,41 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public StudyContactServiceRemote getStudyContactService() {
+    public StudyContactServiceLocal getStudyContactService() {
         return studyContactService;
     }
 
-    public StudyIndldeServiceRemote getStudyIndldeService() {
+    public StudyIndldeServiceLocal getStudyIndldeService() {
         return studyIndldeService;
     }
 
-    public StudyOverallStatusServiceRemote getStudyOverallStatusService() {
+    public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
         return studyOverallStatusService;
     }
 
-    public StudySiteContactServiceRemote getStudySiteContactService()
+    public StudySiteContactServiceLocal getStudySiteContactService()
             throws PAException {
         return studySiteContactService;
     }
 
-    public StudySiteServiceRemote getStudySiteService() {
+    public StudySiteServiceLocal getStudySiteService() {
         return studySiteService;
     }
 
-    public StudyProtocolServiceRemote getStudyProtocolService() {
+    public StudyProtocolServiceLocal getStudyProtocolService() {
         return studyProtocolService;
     }
 
-    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
+    public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public StudyResourcingServiceRemote getStudyResoucringService() {
+    public StudyResourcingServiceLocal getStudyResoucringService() {
         return studyResourcingService;
     }
 
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
+    public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
         // TODO Auto-generated method stub
         return null;
     }

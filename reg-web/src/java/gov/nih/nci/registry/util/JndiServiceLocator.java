@@ -78,21 +78,21 @@
 */
 package gov.nih.nci.registry.util;
 
-import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyContactServiceRemote;
-import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
-import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
-import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -122,8 +122,8 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return protocol service
      */
-    public StudyProtocolServiceRemote getStudyProtocolService() {
-        return (StudyProtocolServiceRemote) JNDIUtil.lookup("pa/StudyProtocolServiceBean/remote");
+    public StudyProtocolServiceLocal getStudyProtocolService() {
+        return (StudyProtocolServiceLocal) JNDIUtil.lookup("pa/StudyProtocolBeanLocal/local");
     }
 
     /**
@@ -150,22 +150,22 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyOverallStatusServiceRemote
      */
-    public StudyOverallStatusServiceRemote getStudyOverallStatusService() {
-        return (StudyOverallStatusServiceRemote) JNDIUtil.lookup("pa/StudyOverallStatusServiceBean/remote");
+    public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
+        return (StudyOverallStatusServiceLocal) JNDIUtil.lookup("pa/StudyOverallStatusBeanLocal/local");
     }
 
     /**
      * @return StudyResourcingServiceRemote
      */
-    public StudyResourcingServiceRemote getStudyResoucringService() {
-        return (StudyResourcingServiceRemote) JNDIUtil.lookup("pa/StudyResourcingServiceBean/remote");
+    public StudyResourcingServiceLocal getStudyResoucringService() {
+        return (StudyResourcingServiceLocal) JNDIUtil.lookup("pa/StudyResourcingBeanLocal/local");
     }
 
     /**
      * @return StudyResourcingServiceRemote
      */
-    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() {
-        return (StudyRegulatoryAuthorityServiceRemote) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
+    public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
+        return (StudyRegulatoryAuthorityServiceLocal) JNDIUtil.lookup("pa/StudyRegulatoryAuthorityBeanLocal/local");
     }
 
     /**
@@ -186,39 +186,39 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudySiteService
      */
-    public StudySiteServiceRemote getStudySiteService() {
-        return (StudySiteServiceRemote) JNDIUtil.lookup("pa/StudySiteServiceBean/remote");
+    public StudySiteServiceLocal getStudySiteService() {
+        return (StudySiteServiceLocal) JNDIUtil.lookup("pa/StudySiteBeanLocal/local");
     }
 
     /**
      * @return StudySiteAccrualStatusService
      */
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
-        return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookup("pa/StudySiteAccrualStatusServiceBean/remote");
+    public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
+        return (StudySiteAccrualStatusServiceLocal) JNDIUtil.lookup("pa/StudySiteAccrualStatusBeanLocal/local");
     }
 
     /**
      * 
      * @return DocumentService
      */
-    public DocumentServiceRemote getDocumentService() {
-        return (DocumentServiceRemote) JNDIUtil.lookup("pa/DocumentServiceBean/remote");
+    public DocumentServiceLocal getDocumentService() {
+        return (DocumentServiceLocal) JNDIUtil.lookup("pa/DocumentBeanLocal/local");
     }
 
     /**
      * 
      * @return StudyContactService
      */
-    public StudyIndldeServiceRemote getStudyIndldeService() {
-        return (StudyIndldeServiceRemote) JNDIUtil.lookup("pa/StudyIndldeServiceBean/remote");
+    public StudyIndldeServiceLocal getStudyIndldeService() {
+        return (StudyIndldeServiceLocal) JNDIUtil.lookup("pa/StudyIndldeBeanLocal/local");
     }
 
     /**
      * 
      * @return StudyContactService
      */
-    public StudyContactServiceRemote getStudyContactService() {
-        return (StudyContactServiceRemote) JNDIUtil.lookup("pa/StudyContactServiceBean/remote");
+    public StudyContactServiceLocal getStudyContactService() {
+        return (StudyContactServiceLocal) JNDIUtil.lookup("pa/StudyContactBeanLocal/local");
     }
 
     /**
@@ -295,9 +295,9 @@ public class JndiServiceLocator implements ServiceLocator {
      * @throws PAException e
      * @return StudySiteContactServiceRemote
      */    
-    public StudySiteContactServiceRemote getStudySiteContactService() throws PAException {
-        return (StudySiteContactServiceRemote) JNDIUtil.lookup(
-                    "pa/StudySiteContactServiceBean/remote");      
+    public StudySiteContactServiceLocal getStudySiteContactService() throws PAException {
+        return (StudySiteContactServiceLocal) JNDIUtil.lookup(
+                    "pa/StudySiteContactBeanLocal/local");      
     }
     
     /**
@@ -314,14 +314,14 @@ public class JndiServiceLocator implements ServiceLocator {
      * @throws PAException e
      */
     public TrialRegistrationServiceRemote getTrialRegistrationService() throws PAException {
-        return (TrialRegistrationServiceRemote) JNDIUtil.lookup("pa/TrialRegistrationServiceBean/remote");
+        return (TrialRegistrationServiceRemote) JNDIUtil.lookup("pa/TrialRegistrationBeanLocal/local");
     }
     /**
      * 
      * @return MailManagerServiceRemote
      * @throws PAException ex
      */
-    public MailManagerServiceRemote getMailManagerService() throws PAException {
-        return (MailManagerServiceRemote) JNDIUtil.lookup("pa/MailManagerServiceBean/remote");
+    public MailManagerServiceLocal getMailManagerService() throws PAException {
+        return (MailManagerServiceLocal) JNDIUtil.lookup("pa/MailManagerBeanLocal/local");
     }
 }

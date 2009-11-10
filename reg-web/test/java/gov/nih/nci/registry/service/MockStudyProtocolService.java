@@ -13,13 +13,14 @@ import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockStudyProtocolService implements StudyProtocolServiceRemote {
+public class MockStudyProtocolService implements StudyProtocolServiceLocal {
 
     static List<StudyProtocol> list;
     static List<InterventionalStudyProtocol> isplist;

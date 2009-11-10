@@ -14,13 +14,14 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 
 /**
  * @author Vrushali
  *
  */
-public class MockStudyResourcingService implements StudyResourcingServiceRemote {
+public class MockStudyResourcingService implements StudyResourcingServiceLocal {
     static List<StudyResourcingDTO> list;
     static {
         list = new ArrayList<StudyResourcingDTO>();
