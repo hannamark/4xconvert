@@ -832,7 +832,7 @@ function toggledisplay2 (it) {
          <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>          
-        <tr><td>  
+        <tr><td>
        <s:if test="participatingSites.size > 0" >
        <table class="data2">
          <tr>
@@ -852,7 +852,7 @@ function toggledisplay2 (it) {
                     <s:iterator id="participatingSites" value="participatingSites" status="psstats">
                     <tr>
                         <td>
-                            <s:textfield  name="participatingSites[%{#psstats.index}].name" value="%{name}" readonly="true" cssStyle="width:300px;border: 1px solid #FFFFFF"/>
+                            <s:textarea  name="participatingSites[%{#psstats.index}].name" value="%{name}" readonly="true" cssStyle="width:400px;border: 1px solid #FFFFFF" rows="2"/>
                         </td>
                             
                          <s:set name="recruitmentStatusValues" 
@@ -891,8 +891,8 @@ function toggledisplay2 (it) {
             <tr>
               <td colspan="2" class="space">&nbsp;</td>
            </tr>
-        <tr><td>    
-         <s:if test="collaborators.size > 0" > 
+        <tr><td>  
+        <s:if test="collaborators.size > 0" > 
         <table class="data2">
          <tr>
              <th colspan="2" >Collaborators</th>
@@ -910,7 +910,7 @@ function toggledisplay2 (it) {
                     <tr>
                         <td class="tdBoxed">
                           <s:hidden  name="collaborators[%{#stat.index}].id" value="%{id}" />
-                          <s:textfield  name="collaborators[%{#stat.index}].name" value="%{name}" readonly="true" cssStyle="width:300px;border: 1px solid #FFFFFF"/>
+                          <s:textarea  name="collaborators[%{#stat.index}].name" value="%{name}" readonly="true" cssStyle="width:400px;border: 1px solid #FFFFFF" rows="2"/>
                          </td>
                             <s:set name="functionalCodeValues"
                                 value="@gov.nih.nci.pa.enums.StudySiteFunctionalCode@getCollaboratorDisplayNames()"/>
