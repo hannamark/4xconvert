@@ -24,7 +24,10 @@ function callOnloadFunctions(){
 }
 
 function generateReport(pid) {
-    showPopWin('/pa/protected/ajaxCTGovgenerateXML.action?studyProtocolId='+pid, 900, 400, '', 'CLinical Trial XML Generation');
+    //showPopWin('/pa/protected/ajaxCTGovgenerateXML.action?studyProtocolId='+pid, 900, 400, '', 'CLinical Trial XML Generation');
+   document.aForm.target = "CLinical Trial XML Generation";
+   document.aForm.action = "/pa/protected/ajaxCTGovgenerateXML.action?studyProtocolId="+pid;
+   document.aForm.submit();
 }
 function generateTSR() {
    document.aForm.target = "TSR";
