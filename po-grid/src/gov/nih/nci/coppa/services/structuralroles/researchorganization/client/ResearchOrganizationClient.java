@@ -96,8 +96,10 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
         id.setExtension("6812");
         ResearchOrganization result = client.getById(id);
         ClientUtils.handleResult(result);
-        for (II ii : result.getIdentifier().getItem()) {
-            System.out.println(ToStringBuilder.reflectionToString(ii, ToStringStyle.MULTI_LINE_STYLE));
+        if (result != null && result.getIdentifier() != null && result.getIdentifier().getItem() != null) {
+            for (II ii : result.getIdentifier().getItem()) {
+                System.out.println(ToStringBuilder.reflectionToString(ii, ToStringStyle.MULTI_LINE_STYLE));
+            }
         }
     }
     
