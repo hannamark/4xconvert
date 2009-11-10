@@ -76,100 +76,54 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.action;
 
-import org.apache.struts2.interceptor.validation.SkipValidation;
+package gov.nih.nci.accrual.web.enums;
 
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
-
-import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
 
 /**
- * The Class OffTreatmentAction.
- * 
- * @author Kalpana Guthikonda
- * @since 10/28/2009
+ * @author lhebel
  */
-public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWebDto> {
-
-    private static final long serialVersionUID = 1L;
-
-    private PerformedSubjectMilestoneDto subMile = new PerformedSubjectMilestoneDto();
+public enum OffTreatmentReasons implements CodedEnum<String> {
+    /** grade 1. */
+    REASON1("Reason 1"),
+    /** grade 2. */
+    REASON2("Reason 2");
     
-    private OffTreatmentWebDto offTreat = new OffTreatmentWebDto();
+    private String code;
+    
+    private OffTreatmentReasons(String code) {
+        this.code = code;
+    }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD")
-    @SkipValidation
-    @Override
-    public String execute() {
-        subMile = new PerformedSubjectMilestoneDto();
-        Ii id = subMile.getIdentifier();
-        if (id != null) {
-            offTreat.setId(id);
-        }
-        Ts lastDate = subMile.getActualDateRange().getLow();
-        if (lastDate != null) {
-            offTreat.setLastTreatmentDate(lastDate);
-        }
-        Cd reason = subMile.getSubcategoryCode();
-        if (reason != null) {
-            offTreat.setOffTreatmentReason(reason);
-        }
-        return super.execute();
+    public String getCode() {
+        return code;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
     }
 
     /**
-     * Cancel and ignore input.
-     * @return result for next action
+     * @param code code
+     * @return StatusCode 
      */
-    public String cancel() {
-        return super.execute();
+    public static OffTreatmentReasons getByCode(String code) {
+        return getByClassAndCode(OffTreatmentReasons.class, code);
     }
-
+    
     /**
-     * Save user entries.
-     * @return result for next action
+     * {@inheritDoc}
      */
-    public String save() {
-        Cd offTreatCode = CdConverter.convertStringToCd("Off Treatment");
-        subMile.setCategoryCode(offTreatCode);
-        Ivl<Ts> actualDateRange = new Ivl<Ts>();
-        actualDateRange.setLow(offTreat.getLastTreatmentDate());
-        subMile.setActualDateRange(actualDateRange);
-        subMile.setSubcategoryCode(offTreat.getOffTreatmentReason());
-        return super.execute();
-    }
-
-    /**
-     * Save user entries.
-     * @return result for next action
-     */
-    public String next() {
-        String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : rc;
-    }
-
-    /**
-     * @param offTreat the offTreat to set
-     */
-    public void setOffTreat(OffTreatmentWebDto offTreat) {
-        this.offTreat = offTreat;
-    }
-
-    /**
-     * @return the offTreat
-     */
-    @VisitorFieldValidator(message = "> ")
-    public OffTreatmentWebDto getOffTreat() {
-        return offTreat;
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }

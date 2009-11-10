@@ -79,8 +79,16 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.web.enums.OffTreatmentReasons;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ts;
+
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Arrays;
+import java.util.List;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * The Class OffTreatmentWebDto.
@@ -92,11 +100,9 @@ public class OffTreatmentWebDto implements Serializable {
 
     private static final long serialVersionUID = -6399459516758031413L;
     
-    private String id;
-    private Date lastTreatmentDate;
-    private String offTreatmentReason;
-    private Date offStudyDate;
-    private String offStudyReason;
+    private Ii id;
+    private Ts lastTreatmentDate;
+    private Cd offTreatmentReason;
 
     /**
      * Instantiates a new off treatment study web dto.
@@ -108,70 +114,53 @@ public class OffTreatmentWebDto implements Serializable {
     /**
      * @return the id
      */
-    public String getId() {
+    public Ii getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Ii id) {
         this.id = id;
     }
 
     /**
      * @return the lastTreatmentDate
      */
-    public Date getLastTreatmentDate() {
+    @FieldExpressionValidator(expression = "lastTreatmentDate.value != null",
+            message = "Please provide a Last Treatment Date")
+    public Ts getLastTreatmentDate() {
         return lastTreatmentDate;
     }
 
     /**
      * @param lastTreatmentDate the lastTreatmentDate to set
      */
-    public void setLastTreatmentDate(Date lastTreatmentDate) {
+    public void setLastTreatmentDate(Ts lastTreatmentDate) {
         this.lastTreatmentDate = lastTreatmentDate;
     }
 
     /**
      * @return the offTreatmentReason
      */
-    public String getOffTreatmentReason() {
+    @FieldExpressionValidator(expression = "offTreatmentReason.code != null && offTreatmentReason.code.length() > 0",
+            message = "Please provide an Off Treatment Reason")
+    public Cd getOffTreatmentReason() {
         return offTreatmentReason;
     }
 
     /**
      * @param offTreatmentReason the offTreatmentReason to set
      */
-    public void setOffTreatmentReason(String offTreatmentReason) {
+    public void setOffTreatmentReason(Cd offTreatmentReason) {
         this.offTreatmentReason = offTreatmentReason;
     }
-
+    
     /**
-     * @return the offStudyDate
+     * @return the OffTreatmentReasons list for user selection
      */
-    public Date getOffStudyDate() {
-        return offStudyDate;
-    }
-
-    /**
-     * @param offStudyDate the offStudyDate to set
-     */
-    public void setOffStudyDate(Date offStudyDate) {
-        this.offStudyDate = offStudyDate;
-    }
-
-    /**
-     * @return the offStudyReason
-     */
-    public String getOffStudyReason() {
-        return offStudyReason;
-    }
-
-    /**
-     * @param offStudyReason the offStudyReason to set
-     */
-    public void setOffStudyReason(String offStudyReason) {
-        this.offStudyReason = offStudyReason;
+    public List<OffTreatmentReasons> getOffTreatmentReasons() {
+        return Arrays.asList(OffTreatmentReasons.values());
     }
 }

@@ -6,6 +6,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <script type="text/javascript">
+    function handleEditAction() {
+        document.forms[0].action = "saveOffTreatment.action";
+        document.forms[0].submit();
+    }
+
+    function handleCancelAction() {
+        document.forms[0].action = "cancelOffTreatment.action";
+        document.forms[0].submit();
+    }
+
+    function handleNextAction() {
+        document.getElementsByName("nextTarget")[0].value = "PatientOutcomes";
+        document.forms[0].action = "nextOffTreatment.action";
+        document.forms[0].submit();
+    }
+</script>
+<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<script type="text/javascript">
+        addCalendar("Cal1", "Select Date", "offTreatLastDate", "detailForm");
+        setWidth(90, 1, 15, 1);
+        setFormat("mm/dd/yyyy");
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
@@ -24,8 +45,17 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
+<s:hidden name="nextTarget"/>
 <table class="form">
-
+<tr><td scope="row" class="label"><label><fmt:message key="offtreat.label.date"/><span class="required">*</span></label></td>
+<td><s:textfield id="offTreatLastDate" name="offTreat.lastTreatmentDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal1')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
+                    <s:fielderror cssClass="formErrorMsg"><s:param>offTreat.lastTreatmentDate</s:param></s:fielderror></td></tr>
+<tr><td scope="row" class="label"><label><fmt:message key="offtreat.label.reason"/><span class="required">*</span></label></td>
+<td><s:select name="offTreat.offTreatmentReason" headerKey="" headerValue="--Select--"
+              list="offTreat.offTreatmentReasons" listKey="code" listValue="code" value="offTreat.offTreatmentReason.code"/>
+               <s:fielderror cssClass="formErrorMsg"><s:param>offTreat.offTreatmentReason</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
 
@@ -35,6 +65,7 @@
        <li>        
             <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="save">Next</span></span></s:a>
         </li>
       </ul>
    </del>
