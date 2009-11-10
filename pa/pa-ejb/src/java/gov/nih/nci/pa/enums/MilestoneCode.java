@@ -83,6 +83,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,53 +95,54 @@ import java.util.Set;
  * @author Hugh Reinhart
  * @since 01/14/2009
  */
+@SuppressWarnings({"PMD.ExcessiveParameterList" })
 public enum MilestoneCode implements CodedEnum<String> {
 
     /** 1. */
-    SUBMISSION_RECEIVED("Submission Received Date", true, false, null, true), 
+    SUBMISSION_RECEIVED("Submission Received Date", true, false, null, true, true), 
     /** 2. */
-    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, null, true), 
+    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, null, true, true), 
     /** 3. */
-    READY_FOR_PDQ_ABSTRACTION("Ready for PDQ Abstraction Date", true, false, null, true), 
+    READY_FOR_PDQ_ABSTRACTION("Ready for PDQ Abstraction Date", true, false, null, true, true), 
     /** 4. */
-    SUBMISSION_REJECTED("Submission Rejection Date", true, false, null, true), 
+    SUBMISSION_REJECTED("Submission Rejection Date", true, false, null, true, true), 
     /** 5. */
-    ADMINISTRATIVE_PROCESSING_START_DATE("Administrative processing start date", false, false, null, false),
+    ADMINISTRATIVE_PROCESSING_START_DATE("Administrative processing start date", false, false, null, false, true),
     /** 6. */
     ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative processing completed date", false, false,
-            MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, false),
+            MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, false, true),
     /** 7. */
-    SCIENTIFIC_PROCESSING_START_DATE("Scientific processing start date", false, false, null, false),
+    SCIENTIFIC_PROCESSING_START_DATE("Scientific processing start date", false, false, null, false, true),
     /** 8. */
     SCIENTIFIC_PROCESSING_COMPLETED_DATE("Scientific processing completed date", false, false,
-            MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, false),
+            MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, false, true),
     /** 9. */ 
-    READY_FOR_QC("Ready for QC Date", false, true, null, true), 
+    READY_FOR_QC("Ready for QC Date", false, true, null, true, true), 
     /** 10. */
-    QC_START("QC Start Date", false, false, MilestoneCode.READY_FOR_QC, true), 
+    QC_START("QC Start Date", false, false, MilestoneCode.READY_FOR_QC, true, true), 
     /** 11. */
-    QC_COMPLETE("QC Completed Date", false, true, MilestoneCode.QC_START, false), 
+    QC_COMPLETE("QC Completed Date", false, true, MilestoneCode.QC_START, false, false), 
     /** 12. */
-    PDQ_ABSTRACTION_COMPLETE("PDQ Abstraction Completed Date", false, false, null, true), 
+    PDQ_ABSTRACTION_COMPLETE("PDQ Abstraction Completed Date", false, false, null, true, false), 
     /** 13. */
-    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, true, null, false), 
+    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, true, null, false, false), 
     /** 14. */
     TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false,
-             MilestoneCode.TRIAL_SUMMARY_SENT, false), 
+             MilestoneCode.TRIAL_SUMMARY_SENT, false, false), 
     /** 15. */
-    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null, false), 
+    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null, false, false), 
     /** 16. */
     INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE("Initial Submission To Clinicaltrials.gov Date", true, 
-            false, null, false),  
+            false, null, false, false),  
     /** 17. */
-    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false);
+    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false, false);
 
     private String code;
     private boolean unique;
     private boolean validationTrigger;
     private MilestoneCode prerequisite;
     private boolean allowedIfOnhold;
-
+    private boolean allowedInInBox;
     private static final Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> ALLOWED_DWF_STATUSES;
     static {
         Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> tmp 
@@ -261,12 +263,13 @@ public enum MilestoneCode implements CodedEnum<String> {
      * @param prerequisite prior milestone which must have been reached before this one
      */
     private MilestoneCode(String code, boolean unique, boolean validationTrigger, MilestoneCode prerequisite,
-            boolean allowedIfOnhold) {
+            boolean allowedIfOnhold, boolean allowedIfInBox) {
         this.code = code;
         this.unique = unique;
         this.validationTrigger = validationTrigger;
         this.prerequisite = prerequisite;
         this.allowedIfOnhold = allowedIfOnhold;
+        this.allowedInInBox =  allowedIfInBox;
         register(this);
     }
     
@@ -319,7 +322,13 @@ public enum MilestoneCode implements CodedEnum<String> {
     public boolean isAllowedIfOnhold() {
         return allowedIfOnhold;
     }
-
+    /**
+     * 
+     * @return the allowedIfInBox
+     */
+    public boolean isAllowedIfInBox() {
+        return allowedInInBox;
+    }
     /**
      * @param documentWorkflowStatusCode dwf status code to check
      * @return if milestone is valid for given dwf status code
@@ -360,5 +369,19 @@ public enum MilestoneCode implements CodedEnum<String> {
      */
     public String getNameByCode(String str) {
         return getByCode(str).name();
+    }
+    /**
+     * @return String[] display names of enums
+     */
+    @SuppressWarnings({"PMD.UseStringBufferForStringAppends" })
+    public static String[]  getDisplayNamesForAddMilestone() {
+        String[] codedNames = getDisplayNames();
+        List<String> list = new ArrayList<String>(Arrays.asList(codedNames)); 
+        list.remove(MilestoneCode.SUBMISSION_REJECTED.getCode());
+        codedNames = new String[list.size()];
+        codedNames = list.toArray(codedNames);
+        return codedNames;
+        
+        
     }
 }

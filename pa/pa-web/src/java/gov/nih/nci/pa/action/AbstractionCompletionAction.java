@@ -81,7 +81,6 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -135,7 +134,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
             
-            PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+            PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
             IiConverter.convertToLong(studyProtocolIi));
             
             abstractionList = new ArrayList<AbstractionCompletionDTO>();
@@ -159,7 +158,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
                 return DISPLAY_XML;
             }
             
-            PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+            PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                 Long.valueOf(pId));
             
             String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(IiConverter
@@ -184,7 +183,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
         getAttribute(Constants.STUDY_PROTOCOL_II);
 
-        PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+        PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
             IiConverter.convertToLong(studyProtocolIi));
           String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(studyProtocolIi);
 
@@ -219,7 +218,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
         getAttribute(Constants.STUDY_PROTOCOL_II);
 
-        PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+        PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
             IiConverter.convertToLong(studyProtocolIi));
           String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(studyProtocolIi);
 

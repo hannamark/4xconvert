@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
-<s:form name="qForm"><s:actionerror/>   
+<s:form name="qForm">
 <li class="stdnav"><div>Protocol Abstraction</div> 
 	<ul>
 		<li><a href="studyProtocolexecute.action" >Trial Search</a></li>

@@ -102,10 +102,10 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -115,7 +115,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
-import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -205,7 +204,7 @@ public class TrialUtil {
     public void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException, NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos =  PoPaServiceBeanLookup.getStudyContactService()
+        List<StudyContactDTO> scDtos =  PaRegistry.getStudyContactService()
             .getByStudyProtocol(studyProtocolIi, scDto);
         DSet<Tel> dset = null;
         if (scDtos != null && !scDtos.isEmpty()) {
@@ -216,7 +215,7 @@ public class TrialUtil {
             StudySiteContactDTO spart = new StudySiteContactDTO();
             spart.setRoleCode(CdConverter.convertToCd(
                     StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudySiteContactDTO> spDtos = PoPaServiceBeanLookup.getStudySiteContactService()
+            List<StudySiteContactDTO> spDtos = PaRegistry.getStudySiteContactService()
                 .getByStudyProtocol(studyProtocolIi, spart);
             trialDTO.setResponsiblePartyType(SPONSOR);
             if (spDtos != null && !spDtos.isEmpty()) {
@@ -266,7 +265,7 @@ public class TrialUtil {
     public void copySponsor(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         StudySiteDTO spart = new StudySiteDTO();
         spart.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-        List<StudySiteDTO> spDtos = PoPaServiceBeanLookup.getStudySiteService()
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
             .getByStudyProtocol(studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
@@ -306,7 +305,7 @@ public class TrialUtil {
         Cd cd = CdConverter.convertToCd(spCode);
         spDto.setFunctionalCode(cd);
 
-        List<StudySiteDTO> spDtos = PoPaServiceBeanLookup.getStudySiteService()
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
         .getByStudyProtocol(studyProtocolIi, spDto);
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos.get(0);
@@ -382,10 +381,10 @@ public class TrialUtil {
         StudyProtocolDTO isoDto = null;
 
         if (trialDTO.getTrialType().equalsIgnoreCase("Observational")) {
-            isoDto = PoPaServiceBeanLookup.getStudyProtocolService().getObservationalStudyProtocol(
+            isoDto = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(
                         IiConverter.convertToIi(trialDTO.getIdentifier()));
         } else {
-            isoDto  = PoPaServiceBeanLookup.getStudyProtocolService().getInterventionalStudyProtocol(
+            isoDto  = PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(
                     IiConverter.convertToIi(trialDTO.getIdentifier()));
         }
         isoDto.setAssignedIdentifier(IiConverter.convertToIi(trialDTO.getAssignedIdentifier()));

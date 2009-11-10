@@ -176,7 +176,7 @@ public class PARelationServiceBean {
         studyPartDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
         studyPartDTO.setStudyProtocolIdentifier(contactDto.getStudyProtocolIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
-        studyPartDTO = PoPaServiceBeanLookup.getStudySiteService().create(studyPartDTO);
+        studyPartDTO = PaRegistry.getStudySiteService().create(studyPartDTO);
         
         // now create study SITE contact as responsible party
         PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , OrganizationalContact ,
@@ -207,7 +207,7 @@ public class PARelationServiceBean {
         spcDTO.setStudySiteIi(studyPartDTO.getIdentifier());
         spcDTO.setStudyProtocolIdentifier(contactDto.getStudyProtocolIdentifier());
         spcDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
-        PoPaServiceBeanLookup.getStudySiteContactService().create(spcDTO);
+        PaRegistry.getStudySiteContactService().create(spcDTO);
     }
 
     

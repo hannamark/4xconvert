@@ -80,14 +80,18 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -123,6 +127,7 @@ public final class MilestoneAction extends AbstractListEditAction {
         milestoneList = new ArrayList<MilestoneWebDTO>();
         for (StudyMilestoneDTO sm : smList) {
             milestoneList.add(new MilestoneWebDTO(sm));
+            
         }
     }
 
@@ -144,14 +149,26 @@ public final class MilestoneAction extends AbstractListEditAction {
         dto.setStudyProtocolIdentifier(spIi);
         try {
             studyMilestoneSvc.create(dto);
+            // update the trial summary session bean
+            StudyProtocolQueryDTO  studyProtocolQueryDTO = protocolQuerySvc.
+                    getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi));
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+            if (milestone.getMilestone().equalsIgnoreCase(
+                    MilestoneCode.SUBMISSION_ACCEPTED.getCode())) {
+                StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
+                Integer submissionNumber = IntConverter.convertToInteger(spDTO.getSubmissionNumber()); 
+                if (submissionNumber > 1) {
+                    //send mail
+                    PaRegistry.getMailManagerService().sendAmendAcceptEmail(spIi);
+                } else {
+                    PaRegistry.getMailManagerService().sendAcceptEmail(spIi);
+                }
+            }
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
         }
-        // update the trial summary session bean
-        StudyProtocolQueryDTO  studyProtocolQueryDTO = protocolQuerySvc.
-                getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi));
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+
         return super.add();
     }
 

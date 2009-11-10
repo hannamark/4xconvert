@@ -100,6 +100,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -431,7 +432,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
 
         StudySiteDTO spart = new StudySiteDTO();
         spart.setFunctionalCode(cd);
-        List<StudySiteDTO> spDtos = PoPaServiceBeanLookup.getStudySiteService()
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                         .getByStudyProtocol(studyProtocolIi, spart);
         Organization o = null;
         if (spDtos != null && !spDtos.isEmpty()) {

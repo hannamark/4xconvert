@@ -85,7 +85,6 @@ import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
@@ -269,7 +268,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         }
         try {
             String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
-            PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+            PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                     Long.valueOf(pId));
                 
             String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(
@@ -296,7 +295,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
       try {
         String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
         
-        PoPaServiceBeanLookup.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+        PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                 Long.valueOf(pId));
             
         String htmlData = PaRegistry.getTSRReportGeneratorService().generateTSRHtml(IiConverter.convertToIi(pId));

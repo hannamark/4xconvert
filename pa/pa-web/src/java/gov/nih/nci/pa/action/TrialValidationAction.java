@@ -91,7 +91,6 @@ import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.PoPaServiceBeanLookup;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -185,10 +184,10 @@ public class TrialValidationAction extends ActionSupport {
             //send mail only if the trial is Amended
             if (isTrialForAmendment(gtdDTO.getSubmissionNumber())) {
                 //send mail
-                PoPaServiceBeanLookup.getMailManagerService()
+                PaRegistry.getMailManagerService()
                 .sendAmendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
             } else {
-                PoPaServiceBeanLookup.getMailManagerService()
+                PaRegistry.getMailManagerService()
                 .sendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
             }
         } catch (Exception e) {
@@ -235,7 +234,7 @@ public class TrialValidationAction extends ActionSupport {
             //if trial is amend then hard delete 
             if (isTrialForAmendment(intSubNo)) {
                 //send mail
-                PoPaServiceBeanLookup.getMailManagerService()
+                PaRegistry.getMailManagerService()
                   .sendAmendRejectEmail(studyProtocolIi, gtdDTO.getCommentText());
                 //PaRegistry.getStudyProtocolService().deleteStudyProtocol(studyProtocolIi);
                 PaRegistry.getTrialRegistrationService().reject(studyProtocolIi, 
