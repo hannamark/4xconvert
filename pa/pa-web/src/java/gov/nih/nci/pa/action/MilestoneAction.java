@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -153,8 +154,11 @@ public final class MilestoneAction extends AbstractListEditAction {
             StudyProtocolQueryDTO  studyProtocolQueryDTO = protocolQuerySvc.
                     getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi));
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            if (milestone.getMilestone().equalsIgnoreCase(
-                    MilestoneCode.SUBMISSION_ACCEPTED.getCode())) {
+            if (MilestoneCode.SUBMISSION_ACCEPTED.getCode().equalsIgnoreCase(
+                    milestone.getMilestone())) {
+                PAServiceUtils paServiceUtil = new PAServiceUtils();
+                paServiceUtil.createMilestone(spIi, MilestoneCode.READY_FOR_PDQ_ABSTRACTION, null);
+
                 StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
                 Integer submissionNumber = IntConverter.convertToInteger(spDTO.getSubmissionNumber()); 
                 if (submissionNumber > 1) {
