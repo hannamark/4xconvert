@@ -119,6 +119,8 @@ public class TrialHistoryWebDTO {
     /** The identifier. */
     private String identifier;
     
+    /** The submission number. */
+    private double submissionNumberToSort;
     /**
      * Instantiates a new trial history web dto.
      */
@@ -328,6 +330,21 @@ return documents;
  */
 public void setDocuments(String documents) {
 this.documents = documents;
+}
+
+/**
+ * @return the submissionNumberToSort
+ */
+public double getSubmissionNumberToSort() {
+   submissionNumberToSort = Double.parseDouble(submissionNumber);
+   return submissionNumberToSort;
+}
+
+/**
+ * @param submissionNumberToSort the submissionNumberToSort to set
+ */
+public void setSubmissionNumberToSort(double submissionNumberToSort) { 
+   this.submissionNumberToSort = submissionNumberToSort;
 }
   
 }
