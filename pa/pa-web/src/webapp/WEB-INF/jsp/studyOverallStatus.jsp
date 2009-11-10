@@ -78,7 +78,7 @@
             <s:set name="currentTrialStatusValues"
                 value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
             <td class="value"><s:select onchange="statusChange()" onfocus="statusChange()"
-                id="currentTrialStatus"
+                id="currentTrialStatus" name="currentTrialStatus"
                 list="#currentTrialStatusValues" /></td>
             <td>
             	<ul class="btnrow">			
