@@ -115,4 +115,6 @@ public final class AccrualConstants {
     public static final String UPDATE_MESSAGE = "Record Updated";
     /** Create Message . */
     public static final String CREATE_MESSAGE = "Record Created";
+    /** Save Message . */
+    public static final String SAVE_MESSAGE = "Record Saved";
 }

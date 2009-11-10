@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.web.util.AccrualConstants;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -113,6 +116,27 @@ public abstract class AbstractEditAccrualAction<DTO> extends AbstractAccrualActi
     public String execute() {
         setCurrentAction(AR_DETAIL);
         return super.execute();
+    }
+
+    /**
+     * Cancel and ignore input.
+     * @return result for next action
+     */
+    public String cancel() {
+        return execute();
+    }
+
+    /**
+     * Set the success message when no errors exist.
+     * @return action result
+     */
+    public String save() {
+        if (!hasErrors()) {
+            ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                    AccrualConstants.SAVE_MESSAGE);
+            return SUCCESS;
+        }
+        return INPUT;
     }
 
     /**

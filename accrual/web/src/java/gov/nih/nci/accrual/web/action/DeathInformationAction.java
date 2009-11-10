@@ -76,7 +76,12 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.web.action;
+
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 import gov.nih.nci.accrual.web.dto.util.DeathInfoWebDto;
 
@@ -90,4 +95,45 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
 
     private static final long serialVersionUID = 1L;
 
+    private DeathInfoWebDto deathInfo = new DeathInfoWebDto();
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD")
+    @SkipValidation
+    @Override
+    public String execute() {
+        return super.execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String cancel() {
+        return execute();
+    }
+
+    /**
+     * Save user entries.
+     * @return result for next action
+     */
+    public String save() {
+        return super.save();
+    }
+
+    /**
+     * @param deathInfo the deathInfo to set
+     */
+    public void setDeathInfo(DeathInfoWebDto deathInfo) {
+        this.deathInfo = deathInfo;
+    }
+
+    /**
+     * @return the deathInfo
+     */
+    @VisitorFieldValidator(message = "> ")
+    public DeathInfoWebDto getDeathInfo() {
+        return deathInfo;
+    }
 }

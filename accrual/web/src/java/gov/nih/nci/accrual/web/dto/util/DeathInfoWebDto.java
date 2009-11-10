@@ -79,8 +79,18 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
+import gov.nih.nci.accrual.web.enums.DeathCausesByAutopsy;
+import gov.nih.nci.accrual.web.enums.DeathInfoCauses;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ts;
+
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Arrays;
+import java.util.List;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * DeathInfoWebDto.
@@ -92,11 +102,11 @@ public class DeathInfoWebDto implements Serializable {
 
     private static final long serialVersionUID = 7839457372215390511L;
     
-    private String id;
-    private String cause;
-    private Date eventDate;
-    private String autopsyInd;
-    private String causeByAutopsy;
+    private Ii id;
+    private Cd cause;
+    private Ts eventDate;
+    private Cd autopsyInd;
+    private Cd causeByAutopsy;
     private String autopsySite;
 
     /**
@@ -109,70 +119,78 @@ public class DeathInfoWebDto implements Serializable {
     /**
      * @return the id
      */
-    public String getId() {
+    public Ii getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Ii id) {
         this.id = id;
     }
 
     /**
      * @return the cause
      */
-    public String getCause() {
+    @FieldExpressionValidator(expression = "cause.code != null && cause.code.length() > 0",
+            message = "Please provide a Death Cause")
+    public Cd getCause() {
         return cause;
     }
 
     /**
      * @param cause the cause to set
      */
-    public void setCause(String cause) {
+    public void setCause(Cd cause) {
         this.cause = cause;
     }
 
     /**
      * @return the eventDate
      */
-    public Date getEventDate() {
+    @FieldExpressionValidator(expression = "eventDate.value != null",
+            message = "Please provide a Death Date")
+    public Ts getEventDate() {
         return eventDate;
     }
 
     /**
      * @param eventDate the eventDate to set
      */
-    public void setEventDate(Date eventDate) {
+    public void setEventDate(Ts eventDate) {
         this.eventDate = eventDate;
     }
 
     /**
      * @return the autopsyInd
      */
-    public String getAutopsyInd() {
+    @FieldExpressionValidator(expression = "autopsyInd.code != null && autopsyInd.code.length() > 0",
+            message = "Please provide an Autopsy Performed Indicator")
+    public Cd getAutopsyInd() {
         return autopsyInd;
     }
 
     /**
      * @param autopsyInd the autopsyInd to set
      */
-    public void setAutopsyInd(String autopsyInd) {
+    public void setAutopsyInd(Cd autopsyInd) {
         this.autopsyInd = autopsyInd;
     }
 
     /**
      * @return the causeByAutopsy
      */
-    public String getCauseByAutopsy() {
+    @FieldExpressionValidator(expression = "causeByAutopsy.code != null && causeByAutopsy.code.length() > 0",
+            message = "Please provide a Death Cause As Determined By Autopsy")
+    public Cd getCauseByAutopsy() {
         return causeByAutopsy;
     }
 
     /**
      * @param causeByAutopsy the causeByAutopsy to set
      */
-    public void setCauseByAutopsy(String causeByAutopsy) {
+    public void setCauseByAutopsy(Cd causeByAutopsy) {
         this.causeByAutopsy = causeByAutopsy;
     }
 
@@ -188,5 +206,26 @@ public class DeathInfoWebDto implements Serializable {
      */
     public void setAutopsySite(String autopsySite) {
         this.autopsySite = autopsySite;
+    }
+    
+    /**
+     * @return the permissible value list for the death causes
+     */
+    public List<DeathInfoCauses> getCauses() {
+        return Arrays.asList(DeathInfoCauses.values());
+    }
+    
+    /**
+     * @return the permissible value list for the autopsy indicators
+     */
+    public List<AutopsyPerformed> getAutopsyInds() {
+        return Arrays.asList(AutopsyPerformed.values());
+    }
+    
+    /**
+     * @return the permissible value list for the death causes by autopsy
+     */
+    public List<DeathCausesByAutopsy> getCausesByAutopsy() {
+        return Arrays.asList(DeathCausesByAutopsy.values());
     }
 }

@@ -76,102 +76,51 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.action;
 
-import org.apache.struts2.interceptor.validation.SkipValidation;
+package gov.nih.nci.accrual.web.enums;
 
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
 
-import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.iso.util.CdConverter;
-
-/**
- * The Class OffTreatmentAction.
- * 
- * @author Kalpana Guthikonda
- * @since 10/28/2009
- */
-public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWebDto> {
-
-    private static final long serialVersionUID = 1L;
-
-    private PerformedSubjectMilestoneDto subMile = new PerformedSubjectMilestoneDto();
+public enum DeathInfoCauses implements CodedEnum<String> {
+    /** grade 1. */
+    CAUSE1("Cause 1"),
+    /** grade 2. */
+    CAUSE2("Cause 2");
     
-    private OffTreatmentWebDto offTreat = new OffTreatmentWebDto();
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("PMD")
-    @SkipValidation
-    @Override
-    public String execute() {
-        subMile = new PerformedSubjectMilestoneDto();
-        Ii id = subMile.getIdentifier();
-        if (id != null) {
-            offTreat.setId(id);
-        }
-        Ivl<Ts> range = subMile.getActualDateRange();
-        if (range != null) {
-            Ts lastDate = range.getLow();
-            if (lastDate != null) {
-                offTreat.setLastTreatmentDate(lastDate);
-            }
-        }
-        Cd reason = subMile.getSubcategoryCode();
-        if (reason != null) {
-            offTreat.setOffTreatmentReason(reason);
-        }
-        return super.execute();
+    private String code;
+    
+    private DeathInfoCauses(String code) {
+        this.code = code;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String cancel() {
-        return execute();
+    public String getCode() {
+        return code;
     }
     
     /**
-     * Save user entries.
-     * @return result for next action
+     * {@inheritDoc}
      */
-    public String save() {
-        Cd offTreatCode = CdConverter.convertStringToCd("Off Treatment");
-        subMile.setCategoryCode(offTreatCode);
-        Ivl<Ts> actualDateRange = new Ivl<Ts>();
-        actualDateRange.setLow(offTreat.getLastTreatmentDate());
-        subMile.setActualDateRange(actualDateRange);
-        subMile.setSubcategoryCode(offTreat.getOffTreatmentReason());
-        return super.execute();
+    public String getDisplayName() {
+        return sentenceCasedName(this);
     }
 
     /**
-     * Save user entries.
-     * @return result for next action
+     * @param code code
+     * @return StatusCode 
      */
-    public String next() {
-        String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : rc;
+    public static DeathInfoCauses getByCode(String code) {
+        return getByClassAndCode(DeathInfoCauses.class, code);
     }
-
+    
     /**
-     * @param offTreat the offTreat to set
+     * {@inheritDoc}
      */
-    public void setOffTreat(OffTreatmentWebDto offTreat) {
-        this.offTreat = offTreat;
-    }
-
-    /**
-     * @return the offTreat
-     */
-    @VisitorFieldValidator(message = "> ")
-    public OffTreatmentWebDto getOffTreat() {
-        return offTreat;
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }

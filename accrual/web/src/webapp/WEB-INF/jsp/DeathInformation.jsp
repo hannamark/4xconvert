@@ -6,6 +6,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <script type="text/javascript">
+    function handleEditAction() {
+        document.forms[0].action = "saveDeathInformation.action";
+        document.forms[0].submit();
+    }
+
+    function handleCancelAction() {
+        document.forms[0].action = "cancelDeathInformation.action";
+        document.forms[0].submit();
+    }
+</script>
+<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<script type="text/javascript">
+        addCalendar("Cal1", "Select Date", "deathEventDate", "detailForm");
+        setWidth(90, 1, 15, 1);
+        setFormat("mm/dd/yyyy");
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
@@ -25,7 +40,23 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <table class="form">
-
+<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.cause"/><span class="required">*</span></label></td>
+<td><s:select name="deathInfo.cause" headerKey="" headerValue="--Select--"
+              list="deathInfo.causes" listKey="code" listValue="code" value="deathInfo.cause.code"/>
+               <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.cause</s:param></s:fielderror></td></tr>
+<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.date"/><span class="required">*</span></label></td>
+<td><s:textfield id="deathEventDate" name="deathInfo.eventDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal1')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
+                    <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.eventDate</s:param></s:fielderror></td></tr>
+<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.autopsyInd"/><span class="required">*</span></label></td>
+<td><s:select name="deathInfo.autopsyInd" headerKey="" headerValue="--Select--"
+              list="deathInfo.autopsyInds" listKey="code" listValue="code" value="deathInfo.autopsyInd.code"/>
+               <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.autopsyInd</s:param></s:fielderror></td></tr>
+<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.causeByAutopsy"/><span class="required">*</span></label></td>
+<td><s:select name="deathInfo.causeByAutopsy" headerKey="" headerValue="--Select--"
+              list="deathInfo.causesByAutopsy" listKey="code" listValue="code" value="deathInfo.causeByAutopsy.code"/>
+               <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.causeByAutopsy</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
 

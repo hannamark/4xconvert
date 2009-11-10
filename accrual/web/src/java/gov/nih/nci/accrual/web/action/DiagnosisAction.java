@@ -117,11 +117,10 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     }
 
     /**
-     * Cancel and ignore input.
-     * @return result for next action
+     * {@inheritDoc}
      */
     public String cancel() {
-        return super.execute();
+        return execute();
     }
 
     /**
