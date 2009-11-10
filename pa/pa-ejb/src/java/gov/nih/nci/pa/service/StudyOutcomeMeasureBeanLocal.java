@@ -1,13 +1,11 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.iso.convert.StudyOutcomeMeasureConverter;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
-import gov.nih.nci.pa.service.AbstractStudyIsoService;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.ejb.Stateless;

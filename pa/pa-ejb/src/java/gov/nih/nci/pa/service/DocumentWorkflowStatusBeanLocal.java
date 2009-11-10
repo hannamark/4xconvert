@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -14,9 +14,6 @@ import gov.nih.nci.pa.iso.convert.DocumentWorkflowStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.service.AbstractCurrentStudyIsoService;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;

@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.PlannedActivity;
@@ -19,10 +19,6 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.AbstractStudyIsoService;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -55,7 +51,7 @@ public class PlannedActivityBeanLocal
   private static final String II_NOTFOUND = "Check the Ii value; found null.  ";
  
   @EJB
-  InterventionServiceRemote interventionSrv;
+  InterventionServiceLocal interventionSrv;
  
 
   /**

@@ -79,13 +79,13 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
+import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
@@ -109,7 +109,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
@@ -303,9 +303,9 @@ public final class PaRegistry {
     }
     
     /**
-     * @return InterventionServiceRemote
+     * @return InterventionServiceLocal
      */
-    public static InterventionServiceRemote getInterventionService() {
+    public static InterventionServiceLocal getInterventionService() {
         return getInstance().getServiceLocator().getInterventionService();
     }
     
@@ -361,14 +361,14 @@ public final class PaRegistry {
     /**
      * @return DiseaseService
      */
-    public static DiseaseServiceRemote getDiseaseService() {
+    public static DiseaseServiceLocal getDiseaseService() {
         return getInstance().getServiceLocator().getDiseaseService();
     }
     
     /**
      * @return DiseaseAlternameService
      */
-    public static DiseaseAlternameServiceRemote getDiseaseAlternameService() {
+    public static DiseaseAlternameServiceLocal getDiseaseAlternameService() {
         return getInstance().getServiceLocator().getDiseaseAlternameService();
     }
     
@@ -475,7 +475,7 @@ public final class PaRegistry {
     /**
      * {@inheritDoc}
      */
-    public static TrialRegistrationServiceRemote getTrialRegistrationService() {
+    public static TrialRegistrationServiceLocal getTrialRegistrationService() {
         return getInstance().getServiceLocator().getTrialRegistrationService();
     }
     /**

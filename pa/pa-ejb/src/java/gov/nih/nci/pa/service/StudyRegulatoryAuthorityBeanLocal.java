@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
@@ -9,9 +9,6 @@ import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyRegulatoryAuthorityConverter;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.AbstractCurrentStudyIsoService;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 

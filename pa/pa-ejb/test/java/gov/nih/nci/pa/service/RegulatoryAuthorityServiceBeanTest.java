@@ -95,7 +95,7 @@ import org.junit.Test;
 
 public class RegulatoryAuthorityServiceBeanTest {
 
-  private RegulatoryAuthorityServiceRemote remoteEjb = new RegulatoryAuthorityServiceBean();
+  private RegulatoryAuthorityServiceLocal remoteEjb = new RegulatoryAuthorityBeanLocal();
   RegulatoryAuthority reg;
   RegulatoryAuthorityDTO dto;
   Country c ;

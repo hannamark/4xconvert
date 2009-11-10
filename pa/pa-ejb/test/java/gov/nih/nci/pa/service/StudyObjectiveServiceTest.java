@@ -86,7 +86,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
-import gov.nih.nci.pa.service.internal.StudyObjectiveBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;

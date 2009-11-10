@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.pa.service.internal.MailManagerBeanLocal;
+import gov.nih.nci.pa.service.MailManagerBeanLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.annotation.security.RolesAllowed;
@@ -101,7 +101,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" })
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
 public class MailManagerServiceBean extends  MailManagerBeanLocal implements MailManagerServiceRemote {
 
     

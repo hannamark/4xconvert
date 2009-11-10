@@ -1,13 +1,11 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.iso.convert.StratumGroupConverter;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
-import gov.nih.nci.pa.service.AbstractStudyIsoService;
-import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.ejb.Stateless;

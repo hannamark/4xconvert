@@ -86,7 +86,6 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.internal.StudyRecruitmentStatusBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;

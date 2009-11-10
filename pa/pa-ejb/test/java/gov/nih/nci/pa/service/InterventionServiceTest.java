@@ -105,7 +105,7 @@ import org.junit.Test;
  *
  */
 public class InterventionServiceTest {
-    private InterventionServiceRemote remoteEjb = new InterventionServiceBean();
+    private InterventionServiceLocal remoteEjb = new InterventionBeanLocal();
     private InterventionAlternateNameServiceRemote ianService = new InterventionAlternateNameServiceBean();
     private Ii ii;
     

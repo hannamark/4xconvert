@@ -78,18 +78,15 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.RegulatoryAuthority;
-import gov.nih.nci.pa.iso.convert.RegulatoryAuthorityConverter;
-import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
 * @author Anupama Sharma
@@ -99,48 +96,13 @@ import org.apache.log4j.Logger;
 * copyright holder, NCI.
 */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class RegulatoryAuthorityServiceBean
-        extends AbstractBaseIsoService<RegulatoryAuthorityDTO, RegulatoryAuthority, RegulatoryAuthorityConverter>
-        implements RegulatoryAuthorityServiceRemote {
-    
-    private static final Logger LOG  = Logger.getLogger(RegulatoryAuthorityServiceBean.class);
-    private static String errMsgMethodNotImplemented = "Method not yet implemented.";
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+public class RegulatoryAuthorityServiceBean 
+ extends RegulatoryAuthorityBeanLocal implements RegulatoryAuthorityServiceRemote {
     
     
-    
-    /**
-     * @param dto RegulatoryAuthorityDTO
-     * @return RegulatoryAuthorityDTO
-     * @throws PAException PAException
-     */
-    @Override 
-     public RegulatoryAuthorityDTO update(RegulatoryAuthorityDTO dto) throws PAException {
-       LOG.error(errMsgMethodNotImplemented);
-       throw new PAException(errMsgMethodNotImplemented);
-   }
-   
-
-   /**
-    * @param dto RegulatoryAuthorityDTO
-    * @return RegulatoryAuthorityDTO
-    * @throws PAException PAException
-    */
-    @Override 
-    public RegulatoryAuthorityDTO create(RegulatoryAuthorityDTO dto) throws PAException {
-      LOG.error(errMsgMethodNotImplemented);
-      throw new PAException(errMsgMethodNotImplemented);
-  }
-    
-    /**
-     * @param ii Ii
-     * @throws PAException PAException
-     */
-    @Override 
-    public void delete(Ii ii) throws PAException {
-     LOG.error(errMsgMethodNotImplemented);
-     throw new PAException(errMsgMethodNotImplemented);
- }
    
 }

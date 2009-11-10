@@ -82,10 +82,10 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
@@ -135,7 +135,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /** StudyDiseaseService. */
     protected StudyDiseaseServiceLocal studyDisesaeSvc;
     /** DiseaseService. */
-    protected DiseaseServiceRemote diseaseSvc;
+    protected DiseaseServiceLocal diseaseSvc;
     /** DiseaseParentService. */
     protected DiseaseParentServiceRemote diseaseParentSvc;
     /** StudyMilestoneService. */
@@ -145,7 +145,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /** PlannedActivityService. */
     protected PlannedActivityServiceLocal plannedActivitySvc;
     /** InterventionService. */
-    protected InterventionServiceRemote interventionSvc;
+    protected InterventionServiceLocal interventionSvc;
     /** InterventionAlternateNameService. */
     protected InterventionAlternateNameServiceRemote interventionAlternateNameSvc;
     /** StudyOnholdService. */

@@ -79,13 +79,13 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
+import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
@@ -109,7 +109,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
@@ -232,9 +232,9 @@ public interface ServiceLocator {
     PlannedActivityServiceLocal getPlannedActivityService();
     
     /**
-     * @return InterventionServiceRemote
+     * @return InterventionServiceLocal
      */
-    InterventionServiceRemote getInterventionService();
+    InterventionServiceLocal getInterventionService();
     
     /**
      * @return InterventionAlternateNameServiceRemote
@@ -277,12 +277,12 @@ public interface ServiceLocator {
     /**
      * @return DiseaseService
      */
-    DiseaseServiceRemote getDiseaseService();
+    DiseaseServiceLocal getDiseaseService();
     
     /**
      * @return DiseaseAlternameService
      */
-    DiseaseAlternameServiceRemote getDiseaseAlternameService();
+    DiseaseAlternameServiceLocal getDiseaseAlternameService();
     
     /**
      * @return DiseaseParentService
@@ -350,9 +350,9 @@ public interface ServiceLocator {
     StudyInboxServiceLocal getStudyInboxService();
 
     /**
-     * @return TrialRegistrationServiceRemote
+     * @return TrialRegistrationServiceLocal
      */
-    TrialRegistrationServiceRemote getTrialRegistrationService();
+    TrialRegistrationServiceLocal getTrialRegistrationService();
     
     /**
      * 

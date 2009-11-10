@@ -96,7 +96,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
-import gov.nih.nci.pa.service.internal.StudyIndIdeBeanLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -107,7 +106,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class StudyIndldeServiceBeanTest {
-    private StudyIndldeServiceLocal remoteEjb = new StudyIndIdeBeanLocal();;
+    private StudyIndldeServiceLocal remoteEjb = new StudyIndldeBeanLocal();;
     Ii pid;
 
     @Before

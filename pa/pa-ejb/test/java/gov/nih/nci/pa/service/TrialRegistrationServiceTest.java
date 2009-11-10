@@ -89,20 +89,6 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.internal.ArmBeanLocal;
-import gov.nih.nci.pa.service.internal.DocumentBeanLocal;
-import gov.nih.nci.pa.service.internal.PlannedActivityBeanLocal;
-import gov.nih.nci.pa.service.internal.StratumGroupBeanLocal;
-import gov.nih.nci.pa.service.internal.StudyDiseaseBeanLocal;
-import gov.nih.nci.pa.service.internal.StudyIndIdeBeanLocal;
-import gov.nih.nci.pa.service.internal.StudyOutcomeMeasureBeanLocal;
-import gov.nih.nci.pa.service.internal.StudyOverallStatusBeanLocal;
-import gov.nih.nci.pa.service.internal.StudyProtocolBeanLocal;
-import gov.nih.nci.pa.service.internal.StudyRegulatoryAuthorityBeanLocal;
-import gov.nih.nci.pa.service.internal.StudyResourcingBeanLocal;
-import gov.nih.nci.pa.service.internal.StudySiteAccrualStatusBeanLocal;
-import gov.nih.nci.pa.service.internal.StudySiteBeanLocal;
-import gov.nih.nci.pa.service.internal.StudySiteContactBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -114,10 +100,10 @@ import org.junit.Test;
 
 public class TrialRegistrationServiceTest {
 
-    private TrialRegistrationServiceBean bean = new TrialRegistrationServiceBean();
+    private TrialRegistrationBeanLocal bean = new TrialRegistrationBeanLocal();
     StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
     StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();    
-    StudyIndldeServiceLocal studyIndldeService  = new StudyIndIdeBeanLocal();
+    StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
     StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
     DocumentServiceLocal documentService = new DocumentBeanLocal();
     StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();

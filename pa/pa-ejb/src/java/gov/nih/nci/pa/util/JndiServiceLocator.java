@@ -79,13 +79,13 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseAlternameServiceRemote;
+import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
@@ -109,7 +109,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
@@ -269,10 +269,10 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
     /**
-     * @return InterventionServiceRemote
+     * @return InterventionServiceLocal
      */
-    public InterventionServiceRemote getInterventionService() {
-        return (InterventionServiceRemote) JNDIUtil.lookup("pa/InterventionServiceBean/remote");
+    public InterventionServiceLocal getInterventionService() {
+        return (InterventionServiceLocal) JNDIUtil.lookup("pa/InterventionBeanLocal/local");
     }
 
     /**
@@ -313,8 +313,8 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return DiseaseAlternameService
      */
-    public DiseaseAlternameServiceRemote getDiseaseAlternameService() {
-        return (DiseaseAlternameServiceRemote) JNDIUtil.lookup("/pa/DiseaseAlternameServiceBean/remote");
+    public DiseaseAlternameServiceLocal getDiseaseAlternameService() {
+        return (DiseaseAlternameServiceLocal) JNDIUtil.lookup("/pa/DiseaseAlternameBeanLocal/local");
     }
 
     /**
@@ -327,8 +327,8 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return DiseaseService
      */
-    public DiseaseServiceRemote getDiseaseService() {
-        return (DiseaseServiceRemote) JNDIUtil.lookup("/pa/DiseaseServiceBean/remote");
+    public DiseaseServiceLocal getDiseaseService() {
+        return (DiseaseServiceLocal) JNDIUtil.lookup("/pa/DiseaseBeanLocal/local");
     }
 
     /**
@@ -417,8 +417,8 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public TrialRegistrationServiceRemote getTrialRegistrationService() {
-        return (TrialRegistrationServiceRemote) JNDIUtil.lookup("/pa/TrialRegistrationServiceBean/remote");
+    public TrialRegistrationServiceLocal getTrialRegistrationService() {
+        return (TrialRegistrationServiceLocal) JNDIUtil.lookup("/pa/TrialRegistrationBeanLocal/local");
     }    
     /**
      * {@inheritDoc}

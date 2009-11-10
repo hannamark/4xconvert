@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -9,8 +9,6 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -80,6 +78,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   private static final int VAL = 65;
   private static final String TSR = "TSR_";
   private static final String HTML = ".html";
+  private static final String WORD = ".doc";
   private final String currentDate = "${CurrentDate}";
   private final String nciTrialIdentifier = "${nciTrialIdentifier}";
   private final String  submitterName = "${SubmitterName}";
@@ -146,7 +145,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       }          
       StringBuffer sb2  = new StringBuffer(folderPath);
       String tsrFile = new String(sb2.append(File.separator).append(TSR).append(
-          spDTO.getNciIdentifier().toString() + HTML));
+          spDTO.getNciIdentifier().toString() + WORD));
 
       //File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
       String htmlData = tsrReportGeneratorService.generateTSRHtml(studyProtocolIi);

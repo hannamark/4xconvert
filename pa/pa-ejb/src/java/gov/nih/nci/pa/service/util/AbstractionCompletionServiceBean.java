@@ -120,7 +120,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
@@ -203,7 +203,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     @EJB
     RegulatoryInformationServiceRemote regulatoryInfoBean = null;
     @EJB
-    InterventionServiceRemote interventionSvc = null;
+    InterventionServiceLocal interventionSvc = null;
+    
     private static final String YES = "Yes";
     private static final String NO = "No";
 

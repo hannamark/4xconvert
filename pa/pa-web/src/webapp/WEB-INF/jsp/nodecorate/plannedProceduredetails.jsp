@@ -8,22 +8,23 @@
 <table class="form">	
                		
 		<tr>
+        
         <tr>    
-         <td scope="row" class="label"><s:label>Procedure Name:</s:label></td>
-         <td>
-         <div id="loadMethodCodeDetails">
-             <%@ include file="/WEB-INF/jsp/nodecorate/displayMethodCode.jsp"%>
-          </div>    
-    </td>
-    </tr> 
-    <tr>    
          <td scope="row" class="label"><s:label>Target Site:</s:label></td>
          <td>
          <div id="loadTargetSiteDetails">
              <%@ include file="/WEB-INF/jsp/nodecorate/displayTargetSite.jsp"%>
           </div>    
+         </td>
+        </tr>
+        <tr>    
+         <td scope="row" class="label"><s:label>Method:</s:label></td>
+         <td>
+         <div id="loadMethodCodeDetails">
+             <%@ include file="/WEB-INF/jsp/nodecorate/displayMethodCode.jsp"%>
+          </div>    
     </td>
-    </tr> 
+    </tr>  
     <tr>
        <td>
        </td>    

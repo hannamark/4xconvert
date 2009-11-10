@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,6 @@ import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.iso.convert.StudyRelationshipConverter;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.AbstractBaseIsoService;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;

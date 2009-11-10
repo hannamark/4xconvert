@@ -6,7 +6,6 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.internal.StudyRelationshipBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;

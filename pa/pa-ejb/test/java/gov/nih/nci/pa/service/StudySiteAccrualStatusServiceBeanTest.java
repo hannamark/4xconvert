@@ -86,7 +86,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.internal.StudySiteAccrualStatusBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;

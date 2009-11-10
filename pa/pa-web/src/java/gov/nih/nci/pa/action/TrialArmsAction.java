@@ -92,7 +92,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.util.Constants;
@@ -132,7 +132,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
     
     private ArmServiceLocal armService;
     private PlannedActivityServiceLocal plaService;
-    private InterventionServiceRemote intService;
+    private InterventionServiceLocal intService;
 
     private Ii spIdIi;
 

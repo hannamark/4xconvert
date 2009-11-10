@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.pa.service.internal.StudyObjectiveBeanLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.annotation.security.RolesAllowed;
@@ -97,7 +96,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" })
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
 public class StudyObjectiveServiceBean
 extends StudyObjectiveBeanLocal implements StudyObjectiveServiceRemote {
   

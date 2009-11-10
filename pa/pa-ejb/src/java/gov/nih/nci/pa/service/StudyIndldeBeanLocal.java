@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
@@ -13,9 +13,6 @@ import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.iso.convert.StudyIndldeConverter;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.service.AbstractStudyIsoService;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
@@ -36,7 +33,7 @@ import javax.interceptor.Interceptors;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.NPathComplexity" })
 
- public class StudyIndIdeBeanLocal extends
+ public class StudyIndldeBeanLocal extends
   AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter> implements StudyIndldeServiceLocal {
    private static final int IND_FIELD_COUNT = 5;
    private static final String VALIDATION_EXCEPTION = "Validation Exception ";

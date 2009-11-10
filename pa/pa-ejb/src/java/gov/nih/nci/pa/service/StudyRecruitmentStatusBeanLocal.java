@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gov.nih.nci.pa.service.internal;
+package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -9,9 +9,6 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyRecruitmentStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
-import gov.nih.nci.pa.service.AbstractCurrentStudyIsoService;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.ejb.Stateless;

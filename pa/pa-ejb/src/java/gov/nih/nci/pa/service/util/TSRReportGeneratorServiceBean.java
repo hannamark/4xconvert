@@ -128,17 +128,17 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
-import gov.nih.nci.pa.service.StudyObjectiveServiceRemote;
+import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -215,9 +215,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     RegulatoryInformationServiceRemote regulatoryInformationService = null;
     @EJB
-    DiseaseServiceRemote diseaseService = null;
+    DiseaseServiceLocal diseaseService = null;
     @EJB
-    InterventionServiceRemote interventionService = null;
+    InterventionServiceLocal interventionService = null;
     @EJB
     InterventionAlternateNameServiceRemote interventionAlternateNameService = null;
     @EJB
@@ -225,7 +225,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     PAOrganizationServiceRemote  paOrganizationService = null;
     @EJB
-    StudyObjectiveServiceRemote studyObjectiveService = null;
+    StudyObjectiveServiceLocal studyObjectiveService = null;
     @EJB
     StratumGroupServiceLocal stratumGroupService = null;
     

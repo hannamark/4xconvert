@@ -88,7 +88,6 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.internal.StudyContactBeanLocal;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;

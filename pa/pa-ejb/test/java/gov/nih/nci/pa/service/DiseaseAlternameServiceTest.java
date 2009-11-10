@@ -102,8 +102,8 @@ import org.junit.Test;
  *
  */
 public class DiseaseAlternameServiceTest {
-    private DiseaseAlternameServiceBean bean = new DiseaseAlternameServiceBean();
-    private DiseaseAlternameServiceRemote remote = bean;
+    private DiseaseAlternameBeanLocal bean = new DiseaseAlternameBeanLocal();
+    private DiseaseAlternameServiceLocal remote = bean;
     private Ii dIi;
     
     @Before
