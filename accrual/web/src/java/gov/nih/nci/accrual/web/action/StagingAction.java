@@ -79,37 +79,46 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.web.dto.util.StagingWebDto;
-import gov.nih.nci.accrual.web.enums.StagingMethods;
-import gov.nih.nci.accrual.web.enums.StagingSystems;
-import gov.nih.nci.accrual.web.enums.StagingTumorMarkerValueUoms;
-import gov.nih.nci.accrual.web.enums.StagingTumorMarkers;
+import gov.nih.nci.accrual.web.dto.util.TumorMarkerWebDto;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.PqConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 /**
  * The Class StagingAction.
- *
+ * 
  * @author Lisa Kelley
  * @since 10/30/2009
  */
-public class StagingAction extends AbstractListEditAccrualAction<StagingWebDto> {
+public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebDto> {
 
     private static final long serialVersionUID = 1L;
-    private StagingWebDto stagingWebDto = new StagingWebDto();
+    private StagingWebDto staging = new StagingWebDto();
+    
+    /** Name of the next target when needed. */
+    private String nextTarget = null;
 
+    /** The action result to perform a redirect using "next". */
+    public static final String NEXT = "next";
+    
     /**
      * {@inheritDoc}
-     */
-    @SuppressWarnings("PMD")
+     */    
     @Override
     @SkipValidation
+    @SuppressWarnings("PMD")
     public String execute() {
         return super.execute();
     }
-
+    
     /**
      * Save user entries.
      * @return result for next action
@@ -117,64 +126,68 @@ public class StagingAction extends AbstractListEditAccrualAction<StagingWebDto> 
     public String save() {
         return super.execute();
     }
-
+    
     /**
-     * Cancel and ignore input.
+     * Save user entries.
      * @return result for next action
      */
-    @SkipValidation
-    public String cancel() {
-        return super.execute();
+    public String next() {
+        String rc = save();
+        return (SUCCESS.equals(rc)) ? NEXT : rc;
     }
-
-    /**
-     * @return the list of staging methods
-     */
-    public List<StagingMethods> getStagingMethods() {
-        return Arrays.asList(StagingMethods.values());
-    }
-
-    /**
-     * @return the list of staging systems
-     */
-    public List<StagingSystems> getStagingSystems() {
-        return Arrays.asList(StagingSystems.values());
-    }
-
-    /**
-     * @return the list of tumor markers
-     */
-    public List<StagingTumorMarkers> getTumorMarkers() {
-        return Arrays.asList(StagingTumorMarkers.values());
-    }
-
-    /**
-     * @return the list of tumor marker value UOMs
-     */
-    public List<StagingTumorMarkerValueUoms> getTumorMarkerValueUoms() {
-        return Arrays.asList(StagingTumorMarkerValueUoms.values());
-    }
-
-    /**
-     * @return the current staging data
-     */
-    public StagingWebDto getStagingWebDto() {
-        return stagingWebDto;
-    }
-
-    /**
-     * @param stagingWebDto the current staging data
-     */
-    public void setStagingWebDto(StagingWebDto stagingWebDto) {
-        this.stagingWebDto = stagingWebDto;
-    }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void loadDisplayList() {
-        // TODO Auto-generated method stub
+        List<TumorMarkerWebDto> tumorMarkerList = new ArrayList<TumorMarkerWebDto>();
+        
+        TumorMarkerWebDto item = new TumorMarkerWebDto();
+        item.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker 1"));
+        item.setTumorMarkerValue(StConverter.convertToSt("Tumor Marker Value 1"));
+        item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 1"));
+        tumorMarkerList.add(item);
+        
+        item = new TumorMarkerWebDto();
+        item.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker 2"));
+        item.setTumorMarkerValue(StConverter.convertToSt("Tumor Marker Value 2"));
+        item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 2"));
+        tumorMarkerList.add(item);
+        
+        try {
+            setDisplayTagList(tumorMarkerList);
+        } catch (Exception e) {
+            addActionError(e.getLocalizedMessage());
+        }
+    }
+    
+    /**
+     * @return the staging form data
+     */
+    @VisitorFieldValidator(message = "> ")
+    public StagingWebDto getStaging() {
+        return staging;
+    }
+    
+    /**
+     * @param staging the staging form data
+     */
+    public void setStaging(StagingWebDto staging) {
+        this.staging = staging;
+    }
+    
+    /**
+     * @param nextTarget the nextTarget to set
+     */
+    public void setNextTarget(String nextTarget) {
+        this.nextTarget = nextTarget;
+    }
 
+    /**
+     * @return the nextTarget
+     */
+    public String getNextTarget() {
+        return nextTarget;
     }
 }

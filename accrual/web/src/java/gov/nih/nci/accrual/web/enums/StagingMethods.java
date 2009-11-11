@@ -78,36 +78,53 @@
 */
 package gov.nih.nci.accrual.web.enums;
 
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
+
 /**
 * The permissible values for Staging Method. 
 * @author Lisa Kelley
 */
-public enum StagingMethods {
+public enum StagingMethods implements CodedEnum<String> {
 
     /** Staging Method 1. */
-    STAGING_METHOD_1(1, "Staging Method 1"),
+    STAGING_METHOD_1("Staging Method 1"),
     /** Staging Method 2. */
-    STAGING_METHOD_2(2, "Staging Method 2");
+    STAGING_METHOD_2("Staging Method 2");
     
-    private int    id;
-    private String name;
+    private String code;
     
-    private StagingMethods(int id, String name) {
-        this.id   = id;
-        this.name = name;
+    private StagingMethods(String code) {
+        this.code = code;
     }
     
     /**
-     * @return the Staging Method ID
+     * {@inheritDoc}
      */
-    public int getId() {
-        return id;
+    public String getCode() {
+        return code;
     }
     
     /**
-     * @return the Staging Method Name
+     * {@inheritDoc}
      */
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     * @param code code
+     * @return StatusCode 
+     */
+    public static StagingMethods getByCode(String code) {
+        return getByClassAndCode(StagingMethods.class, code);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }

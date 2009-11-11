@@ -79,28 +79,35 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.web.enums.StagingMethods;
+import gov.nih.nci.accrual.web.enums.StagingSystems;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * The Class StagingWebDto.
  * 
- * @author lhebel
+ * @author Lisa Kelley
  * @since 10/28/2009
  */
 public class StagingWebDto implements Serializable {
 
     private static final long serialVersionUID = 1820061539697238678L;
 
-    private String id;    
-    private String method;    
-    private String tt;    
-    private String nn;    
-    private String mm;   
-    private String stage;    
-    private String system;    
-    private String tumorMarker;    
-    private String tumorMarkerValue;    
-    private String tmvUom;
+    private Ii id;    
+    private Cd method;    
+    private St tt;    
+    private St nn;    
+    private St mm;   
+    private St stage;    
+    private Cd system;
 
     /**
      * Instantiates a new staging web dto.
@@ -112,140 +119,124 @@ public class StagingWebDto implements Serializable {
     /**
      * @return the method
      */
-    public String getMethod() {
+    @FieldExpressionValidator(expression = "method.code != null && method.code.length() > 0", 
+                              message = "Please select a Staging Method")
+    public Cd getMethod() {
         return method;
     }
 
     /**
      * @param method the method to set
      */
-    public void setMethod(String method) {
+    public void setMethod(Cd method) {
         this.method = method;
     }
 
     /**
      * @return the tt
      */
-    public String getTt() {
+    @FieldExpressionValidator(expression = "tt.value != null && tt.value.length() > 0", 
+                              message = "Please enter a value for T")
+    public St getTt() {
         return tt;
     }
 
     /**
      * @param tt the tt to set
      */
-    public void setTt(String tt) {
+    public void setTt(St tt) {
         this.tt = tt;
     }
 
     /**
      * @return the nn
      */
-    public String getNn() {
+    @FieldExpressionValidator(expression = "nn.value != null && nn.value.length() > 0", 
+                              message = "Please enter a value for N")
+    public St getNn() {
         return nn;
     }
 
     /**
      * @param nn the nn to set
      */
-    public void setNn(String nn) {
+    public void setNn(St nn) {
         this.nn = nn;
     }
 
     /**
      * @return the mm
      */
-    public String getMm() {
+    @FieldExpressionValidator(expression = "mm.value != null && mm.value.length() > 0", 
+                              message = "Please enter a value for M")
+    public St getMm() {
         return mm;
     }
 
     /**
      * @param mm the mm to set
      */
-    public void setMm(String mm) {
+    public void setMm(St mm) {
         this.mm = mm;
     }
 
     /**
      * @return the stage
      */
-    public String getStage() {
+    @FieldExpressionValidator(expression = "stage.value != null && stage.value.length() > 0", 
+                              message = "Please enter a value for Stage")
+    public St getStage() {
         return stage;
     }
 
     /**
      * @param stage the stage to set
      */
-    public void setStage(String stage) {
+    public void setStage(St stage) {
         this.stage = stage;
     }
 
     /**
      * @return the system
      */
-    public String getSystem() {
+    @FieldExpressionValidator(expression = "system.code != null && system.code.length() > 0", 
+                              message = "Please select a Staging system")
+    public Cd getSystem() {
         return system;
     }
 
     /**
      * @param system the system to set
      */
-    public void setSystem(String system) {
+    public void setSystem(Cd system) {
         this.system = system;
-    }
-
-    /**
-     * @return the tumorMarker
-     */
-    public String getTumorMarker() {
-        return tumorMarker;
-    }
-
-    /**
-     * @param tumorMarker the tumorMarker to set
-     */
-    public void setTumorMarker(String tumorMarker) {
-        this.tumorMarker = tumorMarker;
-    }
-
-    /**
-     * @return the tumorMarkerValue
-     */
-    public String getTumorMarkerValue() {
-        return tumorMarkerValue;
-    }
-
-    /**
-     * @param tumorMarkerValue the tumorMarkerValue to set
-     */
-    public void setTumorMarkerValue(String tumorMarkerValue) {
-        this.tumorMarkerValue = tumorMarkerValue;
-    }
-
-    /**
-     * @return the tmvUom
-     */
-    public String getTmvUom() {
-        return tmvUom;
-    }
-
-    /**
-     * @param tmvUom the tmvUom to set
-     */
-    public void setTmvUom(String tmvUom) {
-        this.tmvUom = tmvUom;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
     }
 
     /**
      * @return the id
      */
-    public String getId() {
+    public Ii getId() {
         return id;
+    }
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Ii id) {
+        this.id = id;
+    }
+    
+    /**
+     * @return the list of staging methods
+     */
+    public List<StagingMethods> getMethods() {
+        return Arrays.asList(StagingMethods.values());
+    }
+    
+    /**
+     * @return the list of staging systems
+     */
+    public List<StagingSystems> getSystems() {
+        return Arrays.asList(StagingSystems.values());
     }
 }
