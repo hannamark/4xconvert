@@ -6,12 +6,8 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
-import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Entity;
-import gov.nih.nci.po.data.bo.IdentifiedOrganization;
-import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.CorrelationNodeDTOConverter;
@@ -33,7 +29,6 @@ import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.PersonSortCriterion;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -392,27 +387,8 @@ public class BusinessServiceBean implements BusinessServiceRemote {
    }
 
    private SearchCriteria createSearchCriteria(CorrelationNodeDTO cnDto) {
-       Correlation cor = (Correlation)  
-       PoXsnapshotHelper.createModel(cnDto.getCorrelation());
-
-       injectPlayerAndScoper(cor, cnDto.getPlayer(), cnDto.getScoper());
-
+       Correlation cor = CorrelationNodeDTOConverter.convertFromCorrelationNodeDTO(cnDto);
        return new AnnotatedBeanSearchCriteria(cor);
-   }
-
-   private void injectPlayerAndScoper(Correlation cor, EntityDto player, EntityDto scoper) {
-       if (cor instanceof AbstractPersonRole) {
-           ((AbstractPersonRole) cor).setPlayer((Person) PoXsnapshotHelper.createModel(player));
-           ((AbstractPersonRole) cor).setScoper((Organization) PoXsnapshotHelper.createModel(scoper));
-       } else if (cor instanceof IdentifiedPerson) {
-           ((IdentifiedPerson) cor).setPlayer((Person) PoXsnapshotHelper.createModel(player));
-           ((IdentifiedPerson) cor).setScoper((Organization) PoXsnapshotHelper.createModel(scoper));  
-       } else if (cor instanceof IdentifiedOrganization) {
-           ((IdentifiedOrganization) cor).setPlayer((Organization) PoXsnapshotHelper.createModel(player));
-           ((IdentifiedOrganization) cor).setScoper((Organization) PoXsnapshotHelper.createModel(scoper));
-       } else if (cor instanceof AbstractOrganizationRole) {
-           ((AbstractOrganizationRole) cor).setPlayer((Organization) PoXsnapshotHelper.createModel(player));
-       }
    }
 
 }
