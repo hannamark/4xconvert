@@ -10,9 +10,14 @@ import org.apache.struts2.util.StrutsTypeConverter;
 
 import com.opensymphony.xwork2.conversion.TypeConversionException;
 
+/**
+ * 
+ * @author Lisa Kelley
+ *
+ */
 public class StrutsPqConverter extends StrutsTypeConverter {
 
-	/**
+    /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")

@@ -105,9 +105,6 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
     
     /** Name of the next target when needed. */
     private String nextTarget = null;
-
-    /** The action result to perform a redirect using "next". */
-    public static final String NEXT = "next";
     
     /**
      * {@inheritDoc}
@@ -133,7 +130,7 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
      */
     public String next() {
         String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : rc;
+        return (SUCCESS.equals(rc)) ? "next" : rc;
     }
     
     /**
