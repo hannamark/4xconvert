@@ -8,7 +8,7 @@
 
  <dependencies>
 <!-- runtime -->
-<dependency org="ncicb" name="pa-ejb-client" rev="3.1-alpha1" force="true" conf="runtime->default"/>
+<dependency org="ncicb" name="pa-ejb-client" rev="3.1-milestone1" force="true" conf="runtime->default"/>
 
 <!-- container -->
 <dependency org="postgresql" name="postgresql-jdbc3" rev="8.3-603" force="true" conf="container->master"/>

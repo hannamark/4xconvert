@@ -49,7 +49,7 @@
     <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.3"           conf="runtime->default"/>
 
     <!-- compile -->
-    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.1-alpha1"             conf="compile->master"/>
+    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.1-milestone1"  conf="compile->master"/>
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="compile->master"/>
     <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="compile->master"/>
