@@ -614,6 +614,7 @@ public class PlannedActivityBeanLocal
          bo.setUnit(delta.getUnit());
          bo.setTextDescription(delta.getTextDescription());
          bo.setUserLastUpdated(delta.getUserLastCreated());
+         bo.setDisplayOrder(delta.getDisplayOrder());
      }
      bo.setDateLastUpdated(new Date());
      session.saveOrUpdate(bo);

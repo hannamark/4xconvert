@@ -133,9 +133,9 @@ private static final String ELIGIBILITY = "eligibility";
   private String minimumValue;
   private String eligibleGenderCodeId = null;
   private String valueId = null;
-  private List<ISDesignDetailsWebDTO> eligibilityList = null;
-  private List<ISDesignDetailsWebDTO> list = null;
-  private static final int RECORDSVALUE = 3;
+  private List<ISDesignDetailsWebDTO> eligibilityList;
+   private List<ISDesignDetailsWebDTO> list = null;
+  private static final int RECORDSVALUE = 2;
   private String studyPopulationDescription;
   private String samplingMethodCode;
  
@@ -156,16 +156,17 @@ private static final String ELIGIBILITY = "eligibility";
           list.add(setEligibilityDetailsDTO(dto));
         }
         if (list.size() > RECORDSVALUE) {
-          eligibilityList = new ArrayList<ISDesignDetailsWebDTO>();
+         eligibilityList = new ArrayList<ISDesignDetailsWebDTO>();
           for (ISDesignDetailsWebDTO weblist : list) {
             if (weblist.getCriterionName() == null
                 || (!(weblist.getCriterionName().equalsIgnoreCase("GENDER")))
                 && (!(weblist.getCriterionName().equalsIgnoreCase("AGE")))) {
-              eligibilityList.add(weblist);
+              eligibilityList.add(weblist);             
             }
           }
         }
       }
+     
       StudyProtocolDTO spDTO = new StudyProtocolDTO();
       spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
       if (spDTO.getAcceptHealthyVolunteersIndicator().getValue() != null) {
@@ -281,10 +282,38 @@ private static final String ELIGIBILITY = "eligibility";
    * @return result
    */
   @Override
-public String input() {
+  public String input() {
     return ELIGIBILITYADD;
   }
 
+  /**
+   * Re order.
+   * 
+   * @return the string
+   */
+  public String reOrder() {
+  StringBuffer ruleError = new StringBuffer();
+  try {
+    for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
+      ruleError.append(rulesForDisplayOrder(dto.getDisplayOrder()));
+      ruleError.append(checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId())));
+    }
+    if (ruleError.length() > 0) {
+      addFieldError("reOrder", ruleError.toString());
+    } else {
+        for (ISDesignDetailsWebDTO dto : eligibilityList) {
+        PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(dto, Long.parseLong(dto.getId()));
+        PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
+        }
+         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+         query();
+    }
+  } catch (PAException e) {
+      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+  }
+  return ELIGIBILITY;
+  }
+  
   /**
    * @return result
    */
@@ -295,24 +324,7 @@ public String input() {
       if (hasFieldErrors()) {
        return ELIGIBILITYADD;
       }
-    
-      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
-      .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-      PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
-      pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
-      pecDTO.setCriterionName(StConverter.convertToSt(webDTO.getCriterionName()));
-      pecDTO.setValue(convertToIvlPq(webDTO.getUnit(), webDTO.getValue(), null));
-      if (webDTO.getInclusionIndicator() == null) {
-          pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
-      } else  if (webDTO.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
-          pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-      } else {
-           pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.FALSE));
-      }
-      pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
-      pecDTO.setTextDescription(StConverter.convertToSt(webDTO.getTextDescription()));
-      pecDTO.setOperator(StConverter.convertToSt(webDTO.getOperator()));
-      pecDTO.setDisplayOrder(IntConverter.convertToInt(webDTO.getDisplayOrder()));
+      PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(webDTO, null);
       PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO);
       query();
       ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
@@ -346,23 +358,7 @@ public String input() {
     if (hasFieldErrors()) {
       return ELIGIBILITYADD;
     }
-     Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-      .getAttribute(Constants.STUDY_PROTOCOL_II);
-      PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
-      pecDTO.setIdentifier(IiConverter.convertToIi(id));
-      pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
-      pecDTO.setCriterionName(StConverter.convertToSt(webDTO.getCriterionName()));
-      pecDTO.setValue(convertToIvlPq(webDTO.getUnit(), webDTO.getValue(), null));
-      if (webDTO.getInclusionIndicator() == null) {
-          pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
-      } else  if (webDTO.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
-          pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
-      } else {
-           pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.FALSE));
-      }
-      pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
-      pecDTO.setTextDescription(StConverter.convertToSt(webDTO.getTextDescription()));
-      pecDTO.setOperator(StConverter.convertToSt(webDTO.getOperator()));
+      PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(webDTO, id);
       PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
       ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
       query();
@@ -387,6 +383,30 @@ public String input() {
     }
     return ELIGIBILITY;
   }
+  
+  private PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(ISDesignDetailsWebDTO dtoWeb,
+                                                                           Long identifier) {
+     Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+       .getAttribute(Constants.STUDY_PROTOCOL_II);
+      PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
+      pecDTO.setIdentifier(IiConverter.convertToIi(identifier));
+      pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
+      pecDTO.setCriterionName(StConverter.convertToSt(dtoWeb.getCriterionName()));
+      pecDTO.setValue(convertToIvlPq(dtoWeb.getUnit(), dtoWeb.getValue(), null));
+      if (dtoWeb.getInclusionIndicator() == null) {
+          pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
+      } else  if (dtoWeb.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
+          pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
+      } else {
+           pecDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.FALSE));
+      }
+      pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
+      pecDTO.setTextDescription(StConverter.convertToSt(dtoWeb.getTextDescription()));
+      pecDTO.setOperator(StConverter.convertToSt(dtoWeb.getOperator()));
+      pecDTO.setDisplayOrder(IntConverter.convertToInt(dtoWeb.getDisplayOrder()));
+      
+      return pecDTO;
+  }
 
   private ISDesignDetailsWebDTO setEligibilityDetailsDTO(PlannedEligibilityCriterionDTO dto) {
     ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
@@ -397,9 +417,13 @@ public String input() {
       }
       if (dto.getCriterionName().getValue() != null
           && dto.getCriterionName().getValue().equals("AGE")) {
-        maximumValue = dto.getValue().getHigh().getValue().toString();
+        if (dto.getValue().getHigh().getValue() != null) {  
+          maximumValue = dto.getValue().getHigh().getValue().toString();
+        }
         valueUnit = dto.getValue().getLow().getUnit();
-        minimumValue = dto.getValue().getLow().getValue().toString();
+        if (dto.getValue().getLow().getValue() != null) { 
+          minimumValue = dto.getValue().getLow().getValue().toString();
+        }
         valueId = dto.getIdentifier().getExtension();
       }
       if (dto.getCriterionName().getValue() != null) {
@@ -485,16 +509,10 @@ public String input() {
   
   private void enforceEligibilityBusinessRules() throws PAException {
    
-    if (PAUtil.isEmpty(webDTO.getDisplayOrder())) {
-      addFieldError("webDTO.displayOrder", getText("error.displayOrder"));
+   String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());  
+   if (ruleError.length() > 0) {
+      addFieldError("webDTO.displayOrder", ruleError);  
     }
-    if (PAUtil.isNotEmpty(webDTO.getDisplayOrder())) {
-      try {
-        Integer.parseInt(webDTO.getDisplayOrder());
-      } catch (NumberFormatException e) {
-         addFieldError("webDTO.displayOrder", getText("error.numeric"));
-      }
-       }
     if (PAUtil.isNotEmpty(webDTO.getTextDescription())
         && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
       addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));        
@@ -516,14 +534,28 @@ public String input() {
 
       }
     }
-    String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder());
+    String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id);
     if (dispOrder != null && !dispOrder.equals("")) {
       addFieldError("webDTO.displayOrder", dispOrder);
     }
   }
   
+  private String rulesForDisplayOrder(String displayOrder) throws PAException {
+    StringBuffer err = new StringBuffer();
+    if (PAUtil.isEmpty(displayOrder)) {
+      err.append("Please enter display order\n");
+    }
+    if (PAUtil.isNotEmpty(displayOrder)) {
+      try {
+         Integer.parseInt(displayOrder);
+      } catch (NumberFormatException e) {
+       err.append("Please enter a numeric value for display order\n");
+       }
+    }
+      return err.toString();
+  }
   
-  private String checkDisplayOrderExists(String displayOrder) throws PAException {
+  private String checkDisplayOrderExists(String displayOrder, Long dtoId) throws PAException {
      StringBuffer order = new StringBuffer();
      boolean exists = false;
      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
@@ -536,7 +568,7 @@ public String input() {
         if (dto.getCategoryCode() != null 
              && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
           if (!IntConverter.convertToString(dto.getDisplayOrder()).equals(displayOrder)
-               || (id != null && dto.getIdentifier().getExtension().equals(id.toString()))
+               || (dtoId != null && dto.getIdentifier().getExtension().equals(dtoId.toString()))
                    && IntConverter.convertToString(dto.getDisplayOrder()).equals(displayOrder)) {
                order.append(IntConverter.convertToString(dto.getDisplayOrder())).append(" ,");
           } else {
@@ -761,6 +793,4 @@ public String input() {
     this.valueId = valueId;
   }
 
-
-
-}
+ }

@@ -20,6 +20,7 @@
                 <interceptor-ref name="servletConfig"/>
                 <interceptor-ref name="prepare"/>
                 <interceptor-ref name="checkbox"/>
+                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="conversionError"/>
                 <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="params">
@@ -36,10 +37,10 @@
                     <param name="trimFromFront">true</param>
                 </interceptor-ref>
                  <interceptor-ref name="validation">
-                    <param name="excludeMethods">input,back,cancel</param>
+                    <param name="excludeMethods">input,back,cancel,reOrder</param>
                 </interceptor-ref>
                 <interceptor-ref name="workflow">
-                    <param name="excludeMethods">input,back,cancel</param>
+                    <param name="excludeMethods">input,back,cancel,reOrder</param>
                 </interceptor-ref>
 		    </interceptor-stack>
 		</interceptors>	

@@ -28,6 +28,10 @@ function handleAction(){
  	document.forms[0].action="eligibilityCriteriasave.action";
  	document.forms[0].submit(); 
 } 
+function handleReOrderAction(){
+    document.forms[0].action="eligibilityCriteriareOrder.action";
+    document.forms[0].submit(); 
+} 
 function tooltip() {
 BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
@@ -165,38 +169,81 @@ BubbleTips.activateTipOn("dfn");
 	</tr> 		                                     
     </table>
     <h2><fmt:message key="eligibilitycriteria.other" /></h2>
-    <s:if test="eligibilityList != null">    
-    	<s:hidden name="page" />
-    	<s:hidden name="id" /> 
-    	<s:set name="eligibilityList" value="eligibilityList" scope="request"/>
-    	<display:table name="eligibilityList" id="row" class="data" 
-    	       sort="list"  pagesize="200" requestURI="eligibilityCriteriaquery.action" export="false">
-            <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriatype" property="inclusionIndicator" sortable="true" headerClass="sortable" />
-            <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriadescription" property="textDescription" sortable="true" headerClass="sortable" maxLength= "5000"/>
-            <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriterianame" property="criterionName"  sortable="true" headerClass="sortable" />
-            <display:column titleKey="isdesign.eligibilitycriteria.operator" property="operator" sortable="true" headerClass="sortable" />
-            <display:column titleKey="isdesign.eligibilitycriteria.value" property="value"  sortable="true" headerClass="sortable" />
-            <display:column titleKey="isdesign.eligibilitycriteria.unit" property="unit" sortable="true" headerClass="sortable" />
-            <display:column titleKey="isdesign.eligibilitycriteria.eligibilitycriteriaDisplayOrder" property="displayOrder" sortable="true" headerClass="sortable" />
-            <display:column title="Edit" class="action">
-        		<s:url id="url" action="eligibilityCriteriaedit"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
-        		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
-        	</display:column>    	
-        	<display:column title="Delete" class="action">
-        		<s:url id="url" action="eligibilityCriteriadelete"><s:param name="id" value="%{#attr.row.id}" /></s:url>
-        		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
-        	</display:column>
-        </display:table>
-    </s:if> 
-	<div class="actionsrow">
+    <s:if test="eligibilityList != null" >
+      <s:hidden name="page" />
+      <s:hidden name="id" /> 
+       <table class="data">
+                <tr><td>
+                 <table class="form">
+                 <tbody> 
+                 <tr>
+                 <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/></label></th>
+                 <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/></label></th>
+                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/></label></th>
+                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.operator"/></label></th>
+                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.value"/></label></th>
+                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.unit"/></label></th>
+                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriaDisplayOrder"/></label></th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                  </tr>
+      
+                      <s:iterator value="eligibilityList" id="eligibilityList" status="stat" >
+                      <tr>
+                       <td class="tdBoxed">
+                       <s:textfield  name="eligibilityList[%{#stat.index}].inclusionIndicator" value="%{inclusionIndicator}" cssStyle="width:60px;border: 1px solid #FFFFFF" readonly="true"/>
+                       </td>
+                       <td class="tdBoxed">
+                        <s:textfield  name="eligibilityList[%{#stat.index}].textDescription" value="%{textDescription}" cssStyle="width:100px;border: 1px solid #FFFFFF" readonly="true"/>
+                       </td>
+                       <td class="tdBoxed">
+                        <s:textfield  name="eligibilityList[%{#stat.index}].criterionName" value="%{criterionName}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                       </td>
+                       <td class="tdBoxed">
+                        <s:textfield  name="eligibilityList[%{#stat.index}].operator" value="%{operator}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                       </td>
+                       <td class="tdBoxed">
+                        <s:textfield  name="eligibilityList[%{#stat.index}].value" value="%{value}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                       </td>
+                       <td class="tdBoxed">
+                        <s:textfield  name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                       </td>
+                       <td class="tdBoxed">
+                          <s:hidden  name="eligibilityList[%{#stat.index}].id" value="%{id}" />
+                          <s:textfield  name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />
+                         </td>
+                         <td>  
+                         <s:url id="url" action="eligibilityCriteriaedit"><s:param name="id" value="%{id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
+                <s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+                         </td>
+                         <td>   
+                         <s:url id="url" action="eligibilityCriteriadelete"><s:param name="id" value="%{id}" /></s:url>
+                <s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
+                         </td>
+                     </tr>
+                    </s:iterator>
+            </tbody>   
+              
+           </table>
+            <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>reOrder</s:param>
+                       </s:fielderror>                            
+                 </span>
+          
+           </td></tr></table>
+       </s:if>
+   
+   	<div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 					|| (sessionScope.role == 'SuAbstractor')}">
                 <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+                <li><s:a href="#" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span>Re-Order</span></span></s:a></li>
                 <s:if test="list != null">
                 <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">AddOtherCriterion</span></span></s:a></li>
-                </s:if>
+               </s:if>
                 </c:if>
                 <!-- 
 				<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
