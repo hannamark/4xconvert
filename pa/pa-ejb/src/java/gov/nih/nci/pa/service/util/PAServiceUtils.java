@@ -891,24 +891,27 @@ public class PAServiceUtils {
         if (studyRegAuthDTO == null) {
             errMsg.append("Regulatory Information fields must be Entered.\n");
         }
-        if (PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode())) {
-           
-            if (PAConstants.YES.equalsIgnoreCase(
-                  BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator()))
-                  && PAUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
-                errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
-            }
-            
-           //Display error in abstraction validation if section 801 indicator = ‘yes’,  
-            if (PAConstants.YES.equalsIgnoreCase(
-                    BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
-                    && PAConstants.YES.equalsIgnoreCase(
-                            BlConverter.convertBLToString(studyProtocolDTO.getDelayedpostingIndicator()))
-                    && !isDeviceFound(studyProtocolDTO.getIdentifier() , paList)) {
-                errMsg.append("Delay posting indicator can only be set to \'yes\' " 
-                    + " if study includes at least one intervention with type \'device\'.");
-            }
-            if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) { 
+        if (PAUtil.isBlNull(studyProtocolDTO.getFdaRegulatedIndicator())) {
+            errMsg.append("FDA Regulated Intervention Indicator is required field.\n");
+        }
+        if (PAConstants.YES.equalsIgnoreCase(
+                BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator()))
+                && PAUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
+              errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
+          }
+          
+         //Display error in abstraction validation if section 801 indicator = ‘yes’,  
+          if (PAConstants.YES.equalsIgnoreCase(
+                  BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
+                  && PAConstants.YES.equalsIgnoreCase(
+                          BlConverter.convertBLToString(studyProtocolDTO.getDelayedpostingIndicator()))
+                  && !isDeviceFound(studyProtocolDTO.getIdentifier() , paList)) {
+              errMsg.append("Delay posting indicator can only be set to \'yes\' " 
+                  + " if study includes at least one intervention with type \'device\'.");
+          }
+
+        if (PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode()) 
+             && PAUtil.isListNotEmpty(studyIndldeDTOs)) { 
                 /*if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
                         studyProtocolDTO.getFdaRegulatedIndicator()))) {
                     errMsg.append("FDA Regulated Intervention Indicator must be Yes " 
@@ -923,11 +926,10 @@ public class PAServiceUtils {
                     errMsg.append("For IND protocols, Oversight Authorities "
                           + " must include United States: Food and Drug Administration.\n");
                 }
-          }
-          if (errMsg.length() > 1) {
-              throw new PAException(errMsg.toString());
-          }
-      } 
+      }
+      if (errMsg.length() > 1) {
+          throw new PAException(errMsg.toString());
+      }  
   }    
     /**
      * 
