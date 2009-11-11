@@ -34,6 +34,12 @@ public class BusinessServiceBeanTest extends AbstractBeanTest {
     protected OrganizationalContactCorrelationServiceRemote ocService;
     
     @Test
+    public void testGetByIdWithCorrelations() throws Exception {
+        BusinessServiceTestHelper.testGetByIdWithCorrelations(orgService, personService, busService,
+                crsService, researchOrgService, oversightComService, true);
+    }
+    
+    @Test
     public void testOrgRoleCorrelationsGetById() throws Exception {
         BusinessServiceTestHelper.helpTestOrgRoleCorrelationsGetById(
                 researchOrgService, busService, orgService);   
@@ -47,12 +53,19 @@ public class BusinessServiceBeanTest extends AbstractBeanTest {
     } 
     
     @Test
-    public void testSearchWithEntities() throws Exception {
-        BusinessServiceTestHelper.testSearchWithEntities(personService, orgService, busService,
+    public void testSearchCorrelationWithEntities() throws Exception {
+        BusinessServiceTestHelper.testSearchCorrelationsWithEntities(personService, orgService, busService,
                 crsService, hcpService, idpService, idoService, 
                 hcfService, researchOrgService, ocService, oversightComService);
     }
-    
+
+    @Test
+    public void testSearchEntitiesWithCorrelations() throws Exception {
+        BusinessServiceTestHelper.testSearchEntitiesWithCorrelations
+            (personService, orgService, busService,
+                crsService, hcpService, idpService, idoService, 
+                hcfService, researchOrgService, ocService, oversightComService);
+    }
     
     /**
      * Init the test.

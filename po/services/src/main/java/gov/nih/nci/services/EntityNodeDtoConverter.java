@@ -24,6 +24,7 @@ import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.AbstractOrganizationDTOHelper;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,31 @@ import java.util.Set;
 @SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
 
+    
+    /**
+     * Converts an array of Entity object to array of EntityNodeDTO object. 
+     * @param entities The entities to be converted
+     * @param players the players that should also be converted
+     * @param scopers the scopers that should also be converted
+     * @return array of EntityNodeDTO
+     */
+    public static List<EntityNodeDto> convertToEntityNodeDtoList(
+        List<Entity> entities, Cd[] players, Cd[] scopers) {
+        
+        if (entities == null) {
+           return null;
+        }
+           
+        List<EntityNodeDto> results = new ArrayList<EntityNodeDto>();
+        
+        for (Entity entity : entities) {
+            results.add(convertToEntityNodeDto(entity, players, scopers));
+        }
+        
+        return results;
+    }
+    
+    
     /**
      * If _either_ players or scopers individually is greater than 500 (use Utils.MAX_SEARCH_RESULTS), 
      * then just that array is null and overflow is set.
@@ -212,6 +238,12 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
         return entity;
     }
     
+    /**
+     * Attach correlations to an Organization.
+     * 
+     * @param organization to attach to
+     * @param correlations to attach
+     */
     private static void attachCorrelationToOrganization(Organization organization, CorrelationDto[] correlations) {
         for (CorrelationDto correlation : correlations) {
             if (correlation instanceof OrganizationalContactDTO) {
@@ -242,6 +274,12 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
         }
     }
 
+    /**
+     * Attach correlations to a player.
+     * 
+     * @param person to attach to
+     * @param correlations to attach
+     */
     private static void attachCorrelationToPerson(Person person, CorrelationDto[] correlations) {
         for (CorrelationDto correlation : correlations) {
             if (correlation instanceof OrganizationalContactDTO) {

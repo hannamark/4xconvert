@@ -97,10 +97,14 @@ import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.BusinessServiceRemote;
+import gov.nih.nci.services.CorrelationDto;
+import gov.nih.nci.services.EntityNodeDto;
 import gov.nih.nci.services.RoleList;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -119,6 +123,7 @@ import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemo
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
@@ -146,6 +151,116 @@ public class BusinessServiceTestHelper {
     static {
         trueBl.setValue(true);
         falseBl.setValue(false);
+    }
+    
+    public static void testGetByIdWithCorrelations(OrganizationEntityServiceRemote orgService, 
+            PersonEntityServiceRemote personService,
+            BusinessServiceRemote busService,
+            ClinicalResearchStaffCorrelationServiceRemote crsService,
+            ResearchOrganizationCorrelationServiceRemote researchOrgService, 
+            OversightCommitteeCorrelationServiceRemote oversightComService,
+            boolean local) 
+    throws URISyntaxException, EntityValidationException, CurationException, NullifiedEntityException {
+        
+        Ii newOrgId = createOrganization(orgService);
+        
+        ResearchOrganizationDTO roDto = new ResearchOrganizationDTO();
+        roDto.setName(TestConvertHelper.convertToEnOn("Research Org 1"));
+        roDto.setPlayerIdentifier(newOrgId);
+        
+        OversightCommitteeDTO ovsComDto = new OversightCommitteeDTO();
+        ovsComDto.setPlayerIdentifier(newOrgId);
+        Cd typeCode = new Cd();
+        typeCode.setCode("Ethics Committee");
+        ovsComDto.setTypeCode(typeCode);
+        
+        Ii roDtoId = researchOrgService.createCorrelation(roDto);
+        assertNotNull(roDtoId);
+        
+        Ii ovsComDtoId = oversightComService.createCorrelation(ovsComDto);
+        assertNotNull(ovsComDtoId);
+        
+        Cd[] players = new Cd[1];
+        Cd cd = new Cd();
+        cd.setCode(RoleList.RESEARCH_ORGANIZATION.toString());
+        players[0] = cd;
+        
+        if (local) {
+            clearSession();
+        }
+        EntityNodeDto entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, players, null);
+        
+        CorrelationDto[] playersDto = entityNodeDto.getPlayers();
+        assertNotNull(entityNodeDto.getEntityDto());
+        assertEquals(1, playersDto.length);   
+        
+        if (local) {
+            clearSession();
+        }
+        
+        entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, null, null);        
+        assertEquals(0, entityNodeDto.getPlayers().length);
+        assertEquals(0, entityNodeDto.getScopers().length);
+
+        if (local) {
+            clearSession();
+        }
+        entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, new Cd[0], new Cd[0]);        
+        assertEquals(0, entityNodeDto.getPlayers().length);
+        assertEquals(0, entityNodeDto.getScopers().length);        
+        
+        Ii newPersonId = BusinessServiceTestHelper.createPerson(personService);
+        
+        ClinicalResearchStaffDTO crsdto = new ClinicalResearchStaffDTO();
+        TelPhone ph1 = new TelPhone();
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-688-654"));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        telco.getItem().add(ph1);
+        crsdto.setTelecomAddress(telco);
+        
+        crsdto.setScoperIdentifier(newOrgId);
+        crsdto.setPlayerIdentifier(newPersonId);
+        
+        TelPhone ph2 = new TelPhone();
+        ph2.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
+        crsdto.getTelecomAddress().getItem().add(ph2);
+        
+        crsService.createCorrelation(crsdto);
+            
+        players = new Cd[1];
+        cd = new Cd();
+        cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.toString());
+        players[0] = cd;
+        
+        if (local) {
+            clearSession();
+        }
+        entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, players, null);
+        playersDto = entityNodeDto.getPlayers();
+        assertNotNull(entityNodeDto.getEntityDto());
+        assertEquals(1, playersDto.length);
+        
+        if (local) {
+            clearSession();
+        }
+        entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, null, null);        
+        assertEquals(0, entityNodeDto.getPlayers().length);
+        assertEquals(0, entityNodeDto.getScopers().length);
+
+        if (local) {
+            clearSession();
+        }
+        entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, new Cd[0], new Cd[0]);        
+        assertEquals(0, entityNodeDto.getPlayers().length);
+        assertEquals(0, entityNodeDto.getScopers().length);   
+        
+    }
+
+    private static void clearSession() {
+        if (PoHibernateUtil.getCurrentSession() != null) {
+            PoHibernateUtil.getCurrentSession().clear();
+        }
     }
 
     public static void helpTestOrgRoleCorrelationsGetById(
@@ -300,8 +415,8 @@ public class BusinessServiceTestHelper {
             assertEquals(newOrgId.getExtension(), corr.getScoper().getIdentifier().getExtension());
         }
     }
-
-    public static Ii createOrganization(OrganizationEntityServiceRemote orgService)
+    
+    public static Ii createOrganization(OrganizationEntityServiceRemote orgService) 
     throws URISyntaxException, EntityValidationException, CurationException {
         return createOrganization(orgService, STREET_LINE, ORG_NAME);
     }
@@ -355,7 +470,189 @@ public class BusinessServiceTestHelper {
          return personService.createPerson(p);
      }
 
-     public static void testSearchWithEntities(
+    public static void testSearchEntitiesWithCorrelations(
+            PersonEntityServiceRemote personService,
+            OrganizationEntityServiceRemote orgService,
+            BusinessServiceRemote busService,
+            ClinicalResearchStaffCorrelationServiceRemote crsService,
+            HealthCareProviderCorrelationServiceRemote hcpService,
+            IdentifiedPersonCorrelationServiceRemote idpService,
+            IdentifiedOrganizationCorrelationServiceRemote idoService,
+            HealthCareFacilityCorrelationServiceRemote hcfService,
+            ResearchOrganizationCorrelationServiceRemote researchOrgService,
+            OrganizationalContactCorrelationServiceRemote ocService,
+            OversightCommitteeCorrelationServiceRemote oversightComService            
+    ) throws URISyntaxException, EntityValidationException, CurationException, TooManyResultsException {    
+        // try null things
+        try {
+            busService.searchEntitiesWithCorrelations(null, null, null, null);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
+        try {
+            busService.searchEntitiesWithCorrelations(new EntityNodeDto(), null, null, null);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
+        
+        
+        Ii personId = createPerson(personService);
+        Ii orgId = createOrganization(orgService);
+        
+        TelPhone ph1 = new TelPhone();
+        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-688-654"));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        telco.getItem().add(ph1);
+
+        // Organization
+        
+        // add one CRS
+        ClinicalResearchStaffDTO crsDto = new ClinicalResearchStaffDTO();
+        crsDto.setTelecomAddress(telco);
+        crsDto.setPlayerIdentifier(personId);
+        crsDto.setScoperIdentifier(orgId);
+        crsService.createCorrelation(crsDto);
+
+        // create extra crs that should not be returned
+        crsDto = new ClinicalResearchStaffDTO();
+        crsDto.setTelecomAddress(telco);
+        crsDto.setPlayerIdentifier(personId);
+        Ii org2Id = createOrganization(orgService, "street", "wrong name");
+        crsDto.setScoperIdentifier(org2Id);
+        crsService.createCorrelation(crsDto);
+        
+        // one Org Contact
+        OrganizationalContactDTO ocDto = new OrganizationalContactDTO();
+        Cd typeCode = new Cd();
+        typeCode.setCode("IRB");
+        ocDto.setTypeCode(typeCode);
+        ocDto.setTelecomAddress(telco);
+        ocDto.setPlayerIdentifier(personId);
+        ocDto.setScoperIdentifier(orgId);
+        ocService.createCorrelation(ocDto);
+        
+        HealthCareFacilityDTO hcfDto = new HealthCareFacilityDTO();         
+        hcfDto.setTelecomAddress(telco);
+        hcfDto.setPlayerIdentifier(orgId);
+        hcfService.createCorrelation(hcfDto);
+   
+        HealthCareProviderDTO hcpDto = new HealthCareProviderDTO();
+        hcpDto.setTelecomAddress(telco);
+        hcpDto.setPlayerIdentifier(personId);
+        hcpDto.setScoperIdentifier(orgId);
+        hcpService.createCorrelation(hcpDto);
+        
+        IdentifiedPersonDTO idpDto = new IdentifiedPersonDTO();
+        populateIdentifiedPerson(personId, orgId, idpDto);
+        idpDto.setAssignedId(personId);
+        idpService.createCorrelation(idpDto);
+       
+        IdentifiedOrganizationDTO idoDto = new IdentifiedOrganizationDTO();
+        populateIdentifiedOrganization(orgId, idoDto);
+        idoService.createCorrelation(idoDto);
+        
+        EntityNodeDto query_enDto = new EntityNodeDto();
+        OrganizationDTO query_orgDto = new OrganizationDTO();
+        query_orgDto.setIdentifier(orgId);
+        query_enDto.setEntityDto(query_orgDto);
+
+        CorrelationDto[] scopers = new CorrelationDto[6];
+        scopers[0] = ocDto;
+        scopers[1] = crsDto;
+        scopers[2] = hcpDto;
+        scopers[3] = idpDto;
+        scopers[4] = hcfDto;
+        scopers[5] = new OversightCommitteeDTO();
+        query_enDto.setScopers(scopers);
+        
+        CorrelationDto[] players = new CorrelationDto[3];
+        players[0] = hcfDto;
+        players[1] = idoDto;
+        players[2] = new OversightCommitteeDTO();
+        query_enDto.setPlayers(players);
+       
+        // return CRS.
+        Cd[] scopersCd = new Cd[1];
+        Cd cd = new Cd();
+        cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.name());
+        scopersCd[0] = cd;
+        
+        clearSession();
+        List<EntityNodeDto> results = busService.searchEntitiesWithCorrelations(query_enDto, null, scopersCd, null);
+        assertEquals(1, results.size());
+        
+        assertNotNull(results.get(0).getScopers());
+        assertEquals(1, results.get(0).getScopers().length);
+        assertTrue(results.get(0).getScopers()[0] instanceof ClinicalResearchStaffDTO);
+    
+        clearSession();
+        results = busService.searchEntitiesWithCorrelations(query_enDto, null, null, new LimitOffset(1, 0));
+        assertEquals(1, results.size());
+
+
+        Cd[] playersCd = new Cd[1];
+        cd = new Cd();
+        cd.setCode(RoleList.IDENTIFIED_ORGANIZATION.name());        
+        playersCd[0] = cd;
+        scopersCd = new Cd[3];
+        cd = new Cd();
+        cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.name());
+        scopersCd[0] = cd;
+        cd = new Cd();
+        cd.setCode(RoleList.HEALTH_CARE_PROVIDER.name());
+        scopersCd[1] = cd;        
+        cd = new Cd();
+        cd.setCode(RoleList.IDENTIFIED_PERSON.name());
+        scopersCd[2] = cd;
+        
+        players = new CorrelationDto[4];
+        players[0] = ocDto;
+        players[1] = hcpDto;
+        players[2] = idpDto;
+        players[3] = crsDto;
+        query_enDto.setPlayers(players);
+        
+        clearSession();
+        results = busService.searchEntitiesWithCorrelations(query_enDto, playersCd, scopersCd, null);
+        assertEquals(1, results.size());
+        
+        // Person
+
+        // one that won't return
+        Ii personId2 = createPerson(personService, "some name");
+        hcpDto = new HealthCareProviderDTO();
+        hcpDto.setTelecomAddress(telco);
+        hcpDto.setPlayerIdentifier(personId2);
+        hcpDto.setScoperIdentifier(orgId);
+        hcpService.createCorrelation(hcpDto);
+        
+        
+        query_enDto = new EntityNodeDto();
+        PersonDTO query_personDto = new PersonDTO();
+        query_personDto.setIdentifier(personId);
+        query_enDto.setEntityDto(query_personDto);
+     
+        playersCd = new Cd[1];
+        cd = new Cd();
+        cd.setCode(RoleList.HEALTH_CARE_PROVIDER.name());
+        playersCd[0] = cd;   
+        
+        clearSession();
+        results = busService.searchEntitiesWithCorrelations(query_enDto, playersCd, null, null);
+        assertEquals(1, results.size());
+        
+        assertNotNull(results.get(0).getPlayers());
+        assertEquals(1, results.get(0).getPlayers().length);
+        assertTrue(results.get(0).getPlayers()[0] instanceof HealthCareProviderDTO);
+
+        clearSession();
+        results = busService.searchEntitiesWithCorrelations(query_enDto, playersCd, null, new LimitOffset(1, 0));
+        assertEquals(1, results.size());
+                
+    }
+    
+     public static void testSearchCorrelationsWithEntities(
              PersonEntityServiceRemote personService,
              OrganizationEntityServiceRemote orgService,
              BusinessServiceRemote busService,
@@ -452,8 +749,7 @@ public class BusinessServiceTestHelper {
         OrganizationalContactDTO ocDto = new OrganizationalContactDTO();
         ocDto.setTelecomAddress(telco);
         Cd typeCode = new Cd();
-        typeCode.setCode("IRB");
-
+        typeCode.setCode("IRB");        
         ocDto.setPlayerIdentifier(newPersonId);
         ocDto.setScoperIdentifier(newOrgId);
         ocDto.setTypeCode(typeCode);

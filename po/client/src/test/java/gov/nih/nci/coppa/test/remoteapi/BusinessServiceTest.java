@@ -117,81 +117,8 @@ public class BusinessServiceTest {
     
     @Test
     public void testGetByIdWithCorrelation() throws Exception {
-        
-        Ii newOrgId = BusinessServiceTestHelper.createOrganization(orgService);
-        
-        ResearchOrganizationDTO roDto = new ResearchOrganizationDTO();
-        roDto.setName(TestConvertHelper.convertToEnOn("Research Org 1"));
-        roDto.setPlayerIdentifier(newOrgId);
-        
-        OversightCommitteeDTO ovsComDto = new OversightCommitteeDTO();
-        ovsComDto.setPlayerIdentifier(newOrgId);
-        Cd typeCode = new Cd();
-        typeCode.setCode("Ethics Committee");
-        ovsComDto.setTypeCode(typeCode);
-        
-        Ii roDtoId = researchOrgService.createCorrelation(roDto);
-        assertNotNull(roDtoId);
-        
-        Ii ovsComDtoId = oversightComService.createCorrelation(ovsComDto);
-        assertNotNull(ovsComDtoId);
-        
-        Cd[] players = new Cd[1];
-        Cd cd = new Cd();
-        cd.setCode(RoleList.RESEARCH_ORGANIZATION.toString());
-        players[0] = cd;
-
-        EntityNodeDto entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, players, null);
-        
-        CorrelationDto[] playersDto = entityNodeDto.getPlayers();
-        assertNotNull(entityNodeDto.getEntityDto());
-        assertEquals(1, playersDto.length);   
-        
-        entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, null, null);        
-        assertEquals(0, entityNodeDto.getPlayers().length);
-        assertEquals(0, entityNodeDto.getScopers().length);
-
-        entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, new Cd[0], new Cd[0]);        
-        assertEquals(0, entityNodeDto.getPlayers().length);
-        assertEquals(0, entityNodeDto.getScopers().length);        
-        
-        Ii newPersonId = BusinessServiceTestHelper.createPerson(personService);
-        
-        ClinicalResearchStaffDTO crsdto = new ClinicalResearchStaffDTO();
-        TelPhone ph1 = new TelPhone();
-        ph1.setValue(new URI(TelPhone.SCHEME_TEL + ":123-688-654"));
-        DSet<Tel> telco = new DSet<Tel>();
-        telco.setItem(new HashSet<Tel>());
-        telco.getItem().add(ph1);
-        crsdto.setTelecomAddress(telco);
-        
-        crsdto.setScoperIdentifier(newOrgId);
-        crsdto.setPlayerIdentifier(newPersonId);
-        
-        TelPhone ph2 = new TelPhone();
-        ph2.setValue(new URI(TelPhone.SCHEME_TEL + ":123-123-654"));
-        crsdto.getTelecomAddress().getItem().add(ph2);
-        
-        crsService.createCorrelation(crsdto);
-            
-        players = new Cd[1];
-        cd = new Cd();
-        cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.toString());
-        players[0] = cd;
-        
-        entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, players, null);
-        playersDto = entityNodeDto.getPlayers();
-        assertNotNull(entityNodeDto.getEntityDto());
-        assertEquals(1, playersDto.length);
-        
-        entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, null, null);        
-        assertEquals(0, entityNodeDto.getPlayers().length);
-        assertEquals(0, entityNodeDto.getScopers().length);
-
-        entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, new Cd[0], new Cd[0]);        
-        assertEquals(0, entityNodeDto.getPlayers().length);
-        assertEquals(0, entityNodeDto.getScopers().length);   
-        
+        BusinessServiceTestHelper.testGetByIdWithCorrelations(orgService, personService, busService,
+                crsService, researchOrgService, oversightComService, false);
     }
     
     @Test

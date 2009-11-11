@@ -26,9 +26,11 @@ import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OrganizationSortCriterion;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.PersonSortCriterion;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
@@ -351,17 +353,50 @@ public class BusinessServiceBean implements BusinessServiceRemote {
    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
    public List<EntityNodeDto> searchEntitiesWithCorrelations(EntityNodeDto searchNode, Cd[] players, Cd[] scopers,
            LimitOffset limitOffset) throws TooManyResultsException {
-       // TODO Implement me.
-       return new ArrayList<EntityNodeDto>();
+       
+       if (searchNode == null) {
+           throw new IllegalArgumentException("searchNode may not be null");
+       }
+       if (searchNode.getEntityDto() == null) {
+           throw new IllegalArgumentException("searchNode entity may not be null");
+       }
+       
+       Entity entity = EntityNodeDtoConverter.convertToEntity(searchNode);
+       
+       List entities = null;
+       if (limitOffset != null) {
+           int maxLimit = Math.min(limitOffset.getLimit(), Utils.MAX_SEARCH_RESULTS + 1);
+           if (entity instanceof Person) {
+               SearchCriteria<Person> sc = new AnnotatedBeanSearchCriteria<Person>((Person) entity);
+               PageSortParams<Person> params = new PageSortParams<Person>(maxLimit, limitOffset.getOffset(),
+                       PersonSortCriterion.PERSON_ID, false);
+               entities = personService.search(sc, params);
+           } else {
+               SearchCriteria<Organization> sc = new AnnotatedBeanSearchCriteria<Organization>((Organization) entity);
+               PageSortParams<Organization> params = new PageSortParams<Organization>(maxLimit, limitOffset.getOffset(),
+                       OrganizationSortCriterion.ORGANIZATION_ID, false);
+               entities = orgService.search(sc, params);
+           }
+       } else {
+           if (entity instanceof Person) {
+               SearchCriteria<Person> sc = new AnnotatedBeanSearchCriteria<Person>((Person) entity);
+               entities = personService.search(sc);
+           } else {
+               SearchCriteria<Organization> sc = new AnnotatedBeanSearchCriteria<Organization>((Organization) entity);
+               entities = orgService.search(sc);
+           }
+       }
+              
+       return  EntityNodeDtoConverter.convertToEntityNodeDtoList(
+               entities, players, scopers);
    }
 
-    
    private SearchCriteria createSearchCriteria(CorrelationNodeDTO cnDto) {
        Correlation cor = (Correlation)  
-           PoXsnapshotHelper.createModel(cnDto.getCorrelation());
-       
+       PoXsnapshotHelper.createModel(cnDto.getCorrelation());
+
        injectPlayerAndScoper(cor, cnDto.getPlayer(), cnDto.getScoper());
-       
+
        return new AnnotatedBeanSearchCriteria(cor);
    }
 
