@@ -93,6 +93,6 @@
     </changeSet>
     <changeSet id="PO-1353" author="smatyas">
        <comment>Upgrade for PO-1353 - DDL to be CSM/UPT 4.0.1 compliant</comment>
-       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.1/PO-1353.sql"/>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1353.sql"/>
     </changeSet>
 </databaseChangeLog>
