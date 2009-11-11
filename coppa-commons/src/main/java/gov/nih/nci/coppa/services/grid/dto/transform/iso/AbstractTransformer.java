@@ -1,7 +1,5 @@
 package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
-
-
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
@@ -10,6 +8,7 @@ import java.util.List;
 
 /**
  * Abstract class for transforming from XML representations to DTO representations, and vice versa.
+ *
  * @param <XML> XML class to transform to/from.
  * @param <DTO> DTO class to transform to/from.
  */
@@ -34,16 +33,16 @@ public abstract class AbstractTransformer<XML, DTO> implements Transformer<XML, 
     /**
      * {@inheritDoc}
      */
-  public List<DTO> convert(XML[] arrayList) throws DtoTransformException {
-          if (arrayList == null) {
-              return null;
-          }
+    public List<DTO> convert(XML[] arrayList) throws DtoTransformException {
+        if (arrayList == null) {
+            return null;
+        }
 
-          List<DTO> result = null;
+        List<DTO> result = null;
         result = new ArrayList<DTO>();
         for (XML xml : arrayList) {
             result.add(toDto(xml));
         }
         return result;
-  }
+    }
 }

@@ -318,8 +318,8 @@
                     </instrumentation>
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
-                        <totalBranchRate>97</totalBranchRate>
-                        <totalLineRate>92</totalLineRate>
+                        <totalBranchRate>100</totalBranchRate>
+                        <totalLineRate>97</totalLineRate>
                     </check>
                     <formats>
                         <format>html</format>

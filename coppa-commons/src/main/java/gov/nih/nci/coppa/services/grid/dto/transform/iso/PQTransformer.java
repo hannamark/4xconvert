@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import org.iso._21090.PQ;
 
 /**
- * Transforms strings.
+ * Transforms physical quantities.
  * @author mshestopalov
  */
 public final class PQTransformer extends QTYTransformer<PQ, Pq>

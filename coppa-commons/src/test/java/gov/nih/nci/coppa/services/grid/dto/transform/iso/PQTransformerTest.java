@@ -13,6 +13,7 @@ import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.iso._21090.ED;
 import org.iso._21090.EDText;
 import org.iso._21090.NullFlavor;
@@ -25,6 +26,8 @@ import org.junit.Test;
  */public class PQTransformerTest extends AbstractTransformerTestBase<PQTransformer, PQ, Pq>{
 
         public Double VALUE_DOUBLE = new Double(12345);
+        private static final String UNIT = "test unit";
+        private static final Integer PRECISION = NumberUtils.INTEGER_ONE;
 
         @Override
         public PQ makeXmlSimple() {
@@ -40,12 +43,16 @@ import org.junit.Test;
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             x.setOriginalText(edText);
+            x.setPrecision(PRECISION);
             PQ uncert = new PQ();
             uncert.setValue(VALUE_DOUBLE);
             uncert.setUncertainty(null);
             uncert.setUncertaintyType(null);
+            uncert.setUnit(UNIT);
+            uncert.setPrecision(PRECISION);
             x.setUncertainty(uncert);
             x.setUncertaintyType(org.iso._21090.UncertaintyType.B);
+            x.setUnit(UNIT);
             return x;
         }
 
@@ -63,12 +70,16 @@ import org.junit.Test;
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             x.setOriginalText(edText);
+            x.setPrecision(PRECISION);
             Pq uncert = new Pq();
             uncert.setValue(BigDecimal.valueOf(VALUE_DOUBLE));
             uncert.setUncertainty(null);
             uncert.setUncertaintyType(null);
+            uncert.setUnit(UNIT);
+            uncert.setPrecision(PRECISION);
             x.setUncertainty(uncert);
             x.setUncertaintyType(UncertaintyType.B);
+            x.setUnit(UNIT);
             return x;
         }
 
@@ -86,6 +97,8 @@ import org.junit.Test;
             assertEquals(VALUE_DOUBLE, ((PQ) x.getUncertainty()).getValue());
             assertNotNull(x.getUncertainty());
             assertEquals(org.iso._21090.UncertaintyType.B, x.getUncertaintyType());
+            assertEquals(UNIT, x.getUnit());
+            assertEquals(PRECISION.intValue(), x.getPrecision());
         }
 
         @Override
@@ -105,9 +118,12 @@ import org.junit.Test;
             uncert.setValue(BigDecimal.valueOf(VALUE_DOUBLE));
             uncert.setUncertainty(null);
             uncert.setUncertaintyType(null);
-            uncert.setPrecision(0);
+            uncert.setPrecision(PRECISION);
+            uncert.setUnit(UNIT);
             assertEquals(uncert, x.getUncertainty());
             assertEquals(UncertaintyType.B, x.getUncertaintyType());
+            assertEquals(UNIT, x.getUnit());
+            assertEquals(PRECISION, x.getPrecision());
         }
 
         public PQ makeXmlNullFlavored() {
