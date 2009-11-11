@@ -851,7 +851,9 @@ public class TrialUtil {
            } else {
                isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
            }
-           isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getExpandedAccessType()));
+           if (!"-".equalsIgnoreCase(dto.getExpandedAccessType())) {
+               isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getExpandedAccessType()));
+           }
            if (PAUtil.isNotEmpty(dto.getStudyProtocolId())) {
                isoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.valueOf(
                        dto.getStudyProtocolId())));
@@ -897,7 +899,9 @@ public class TrialUtil {
            } else {
                isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
            }
-           isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getExpandedAccessType()));
+           if (!"-".equalsIgnoreCase(dto.getExpandedAccessType())) {
+               isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(dto.getExpandedAccessType()));
+           }
            studyIndldeDTOList.add(isoDTO);
        }
        return studyIndldeDTOList;
