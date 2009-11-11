@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
@@ -144,7 +143,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 /**
@@ -639,13 +637,9 @@ public class BatchCreateProtocols {
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
             contactDTO.setScoperIdentifier(sponsorIdIi);
             contactDTO.setTitle(StConverter.convertToSt(responsibleGenericContactName));
-            DSet<Cd> orgContactType = new DSet<Cd>();
-            Set<Cd> orgContactCd = new HashSet<Cd>();
-            orgContactCd.add(CdConverter.convertStringToCd("Responsible Party"));
-            orgContactType.setItem(orgContactCd);
             DSet<Tel> list = getDSetTelList(sponsorContactEmail, sponsorPhone, "", "", "");
             contactDTO.setTelecomAddress(list);
-            contactDTO.setTypeCode(orgContactType);
+            contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
             isoDtoList = PoRegistry.getOrganizationalContactCorrelationService().search(contactDTO);
             if (isoDtoList.isEmpty()) {

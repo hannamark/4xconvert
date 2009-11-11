@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
@@ -98,7 +97,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -164,12 +162,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
             contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactId));
             contactDTO.setTitle(StConverter.convertToSt(title));    
-            DSet<Cd> orgContactType = new DSet<Cd>();
-            Set<Cd> orgContactCd = new HashSet<Cd>();
-            orgContactCd.add(CdConverter.convertStringToCd("Responsible Party"));
-            orgContactType.setItem(orgContactCd);
-            
-            contactDTO.setTypeCode(orgContactType);
+            contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
             isoDtoList = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
                     .search(contactDTO);
@@ -232,14 +225,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
              list.getItem().add(telemail);
             
             contactDTO.setTelecomAddress(list);
-            
-            DSet<Cd> orgContactType = new DSet<Cd>();
-            Set<Cd> orgContactCd = new HashSet<Cd>();
-            orgContactCd.add(CdConverter.convertStringToCd("Responsible Party"));
-            orgContactType.setItem(orgContactCd);
-            
-            contactDTO.setTypeCode(orgContactType);
-            
+            contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
             RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
                     .createCorrelation(contactDTO);
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
