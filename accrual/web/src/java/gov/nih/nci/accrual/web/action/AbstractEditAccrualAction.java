@@ -99,13 +99,7 @@ public abstract class AbstractEditAccrualAction<DTO> extends AbstractAccrualActi
     private static final String AR_DETAIL = "detail";
 
     /** Bean to store current action. */
-    private String currentAction;
-
-    /** Name of the next target when needed. */
-    private String nextTarget = null;
-
-    /** The action result to perform a redirect using "next". */
-    public static final String NEXT = "next";
+    private String currentAction;    
 
     /**
      * Default execute method for action classes.
@@ -150,19 +144,5 @@ public abstract class AbstractEditAccrualAction<DTO> extends AbstractAccrualActi
      */
     public void setCurrentAction(String currentAction) {
         this.currentAction = currentAction;
-    }
-
-    /**
-     * @param nextTarget the nextTarget to set
-     */
-    public void setNextTarget(String nextTarget) {
-        this.nextTarget = nextTarget;
-    }
-
-    /**
-     * @return the nextTarget
-     */
-    public String getNextTarget() {
-        return nextTarget;
     }
 }

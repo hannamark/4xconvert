@@ -89,7 +89,7 @@ import java.io.Serializable;
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
- * The Class StagingWebDto.
+ * The Class TumorMarkerWebDto.
  * 
  * @author Lisa Kelley
  * @since 10/28/2009

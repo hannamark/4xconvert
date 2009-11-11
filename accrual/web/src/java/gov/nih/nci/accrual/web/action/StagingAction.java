@@ -103,9 +103,6 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
     private static final long serialVersionUID = 1L;
     private StagingWebDto staging = new StagingWebDto();
     
-    /** Name of the next target when needed. */
-    private String nextTarget = null;
-    
     /**
      * {@inheritDoc}
      */    
@@ -130,7 +127,7 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
      */
     public String next() {
         String rc = save();
-        return (SUCCESS.equals(rc)) ? "next" : rc;
+        return (SUCCESS.equals(rc)) ? NEXT : rc;
     }
     
     /**
@@ -172,19 +169,5 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
      */
     public void setStaging(StagingWebDto staging) {
         this.staging = staging;
-    }
-    
-    /**
-     * @param nextTarget the nextTarget to set
-     */
-    public void setNextTarget(String nextTarget) {
-        this.nextTarget = nextTarget;
-    }
-
-    /**
-     * @return the nextTarget
-     */
-    public String getNextTarget() {
-        return nextTarget;
     }
 }

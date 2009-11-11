@@ -137,6 +137,12 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected PatientServiceRemote patientCorrelationSvc;
     /** DiseaseService. */
     protected DiseaseParentServiceRemote diseaseParentSvc;
+    
+    /** Name of the next target when needed. */
+    private String nextTarget = null;
+    
+    /** The action result to perform a redirect using "next". */
+    public static final String NEXT = "next";
 
     /**
      * {@inheritDoc}
@@ -246,5 +252,19 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
                 addActionError(errorMsg);
             }
         }
+    }
+    
+    /**
+     * @param nextTarget the nextTarget to set
+     */
+    public void setNextTarget(String nextTarget) {
+        this.nextTarget = nextTarget;
+    }
+
+    /**
+     * @return the nextTarget
+     */
+    public String getNextTarget() {
+        return nextTarget;
     }
 }

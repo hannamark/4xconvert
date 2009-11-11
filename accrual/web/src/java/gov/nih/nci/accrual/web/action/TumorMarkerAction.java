@@ -127,7 +127,7 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
     }
     
     /**
-     * Lookup a diagnosis.
+     * Lookup tumor marker data.
      * @return result for next action
      */
     @SkipValidation
@@ -142,7 +142,7 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
     }
     
     /**
-     * Lookup a diagnosis.
+     * Lookup a tumor marker.
      * @return result for next action
      */
     public String lookupTumorMarker() {
@@ -172,7 +172,7 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
     }
     
     /**
-     * Lookup a diagnosis.
+     * Lookup a tumor marker value UOM.
      * @return result for next action
      */
     @SkipValidation
