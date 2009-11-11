@@ -377,7 +377,9 @@
              basedir="${pa-ejb.build.outputDir}"
              includes="**/*.class"
              excludes="**/service/*Bean.class
+                       **/service/*BeanLocal.class
                        **/service/Abstract*.class
+                       **/service/BaseLookUpService.class
                        **/domain/*
                        **/iso/convert/*
                        **/iso/util/En*Converter*
