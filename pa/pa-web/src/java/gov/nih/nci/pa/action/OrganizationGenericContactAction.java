@@ -98,7 +98,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -169,12 +168,8 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
             contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactId));
             contactDTO.setTitle(StConverter.convertToSt(title));
-            DSet<Cd> orgContactType = new DSet<Cd>();
-            Set<Cd> orgContactCd = new HashSet<Cd>();
-            orgContactCd.add(CdConverter.convertStringToCd(type));
-            orgContactType.setItem(orgContactCd);
-            
-            contactDTO.setTypeCode(orgContactType);
+            Cd typeCodeCd = CdConverter.convertStringToCd(type);
+            contactDTO.setTypeCode(typeCodeCd);
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
             isoDtoList = PoRegistry.getOrganizationalContactCorrelationService().search(contactDTO);
             convertFromISO(isoDtoList);
@@ -242,12 +237,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             
             contactDTO.setTelecomAddress(list);
             
-            DSet<Cd> orgContactType = new DSet<Cd>();
-            Set<Cd> orgContactCd = new HashSet<Cd>();
-            orgContactCd.add(CdConverter.convertStringToCd(type));
-            orgContactType.setItem(orgContactCd);
-            
-            contactDTO.setTypeCode(orgContactType);
+            contactDTO.setTypeCode(CdConverter.convertStringToCd(type));
             PoRegistry.getOrganizationalContactCorrelationService()
                     .createCorrelation(contactDTO);
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
