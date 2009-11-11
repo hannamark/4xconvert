@@ -79,11 +79,19 @@
 
 package gov.nih.nci.accrual.web.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
+import gov.nih.nci.accrual.web.dto.util.DeathInfoItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.DeathInfoWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * The Class DeathInformationAction.
@@ -96,6 +104,9 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
     private static final long serialVersionUID = 1L;
 
     private DeathInfoWebDto deathInfo = new DeathInfoWebDto();
+    
+    private List<DeathInfoItemWebDto> disWebList;
+    private St searchAutopsySite;
 
     /**
      * {@inheritDoc}
@@ -122,6 +133,45 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
     public String save() {
         return super.save();
     }
+    
+    /**
+     * Lookup a diagnosis.
+     * @return result for next action
+     */
+    @SkipValidation
+    public String lookup() {
+        if (searchAutopsySite == null) {
+            searchAutopsySite = new St();
+            return SUCCESS;
+        }
+
+        String sTxt = searchAutopsySite.getValue();
+        if (sTxt == null || sTxt.length() == 0) {
+            this.addActionError("Please provide some search values.");
+            return INPUT;
+        }
+
+        St name;
+        DeathInfoItemWebDto item;
+        Ii id;
+        
+        setDisWebList(new ArrayList<DeathInfoItemWebDto>());
+        
+        name = StConverter.convertToSt("Autopsy Site 1");
+        id = IiConverter.convertToIi("1");
+        item = new DeathInfoItemWebDto();
+        item.setName(name);
+        item.setIdentifier(id);
+        getDisWebList().add(item);
+
+        name = StConverter.convertToSt("Autopsy Site 2");
+        id = IiConverter.convertToIi("2");
+        item = new DeathInfoItemWebDto();
+        item.setName(name);
+        item.setIdentifier(id);
+        getDisWebList().add(item);
+        return super.execute();
+    }
 
     /**
      * @param deathInfo the deathInfo to set
@@ -136,5 +186,33 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
     @VisitorFieldValidator(message = "> ")
     public DeathInfoWebDto getDeathInfo() {
         return deathInfo;
+    }
+
+    /**
+     * @param searchAutopsySite the searchAutopsySite to set
+     */
+    public void setSearchAutopsySite(St searchAutopsySite) {
+        this.searchAutopsySite = searchAutopsySite;
+    }
+
+    /**
+     * @return the searchAutopsySite
+     */
+    public St getSearchAutopsySite() {
+        return searchAutopsySite;
+    }
+
+    /**
+     * @param disWebList the disWebList to set
+     */
+    public void setDisWebList(List<DeathInfoItemWebDto> disWebList) {
+        this.disWebList = disWebList;
+    }
+
+    /**
+     * @return the disWebList
+     */
+    public List<DeathInfoItemWebDto> getDisWebList() {
+        return disWebList;
     }
 }

@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,162 +73,56 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
 
 package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
-import gov.nih.nci.accrual.web.enums.DeathCausesByAutopsy;
-import gov.nih.nci.accrual.web.enums.DeathInfoCauses;
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
-import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
- * DeathInfoWebDto.
- * 
  * @author lhebel
- * @since 10/28/2009
  */
-public class DeathInfoWebDto implements Serializable {
+public class DeathInfoItemWebDto implements Serializable {
 
-    private static final long serialVersionUID = 7839457372215390511L;
-    
-    private Ii id;
-    private Cd cause;
-    private Ts eventDate;
-    private Cd autopsyInd;
-    private Cd causeByAutopsy;
-    private St autopsySite;
-
-    /**
-     * Instantiates a new death info web dto.
-     */
-    public DeathInfoWebDto() {
-        // default constructor
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the cause
-     */
-    @FieldExpressionValidator(expression = "cause.code != null && cause.code.length() > 0",
-            message = "Please provide a Death Cause")
-    public Cd getCause() {
-        return cause;
-    }
-
-    /**
-     * @param cause the cause to set
-     */
-    public void setCause(Cd cause) {
-        this.cause = cause;
-    }
-
-    /**
-     * @return the eventDate
-     */
-    @FieldExpressionValidator(expression = "eventDate.value != null",
-            message = "Please provide a Death Date")
-    public Ts getEventDate() {
-        return eventDate;
-    }
-
-    /**
-     * @param eventDate the eventDate to set
-     */
-    public void setEventDate(Ts eventDate) {
-        this.eventDate = eventDate;
-    }
-
-    /**
-     * @return the autopsyInd
-     */
-    @FieldExpressionValidator(expression = "autopsyInd.code != null && autopsyInd.code.length() > 0",
-            message = "Please provide an Autopsy Performed Indicator")
-    public Cd getAutopsyInd() {
-        return autopsyInd;
-    }
-
-    /**
-     * @param autopsyInd the autopsyInd to set
-     */
-    public void setAutopsyInd(Cd autopsyInd) {
-        this.autopsyInd = autopsyInd;
-    }
-
-    /**
-     * @return the causeByAutopsy
-     */
-    @FieldExpressionValidator(expression = "causeByAutopsy.code != null && causeByAutopsy.code.length() > 0",
-            message = "Please provide a Death Cause As Determined By Autopsy")
-    public Cd getCauseByAutopsy() {
-        return causeByAutopsy;
-    }
-
-    /**
-     * @param causeByAutopsy the causeByAutopsy to set
-     */
-    public void setCauseByAutopsy(Cd causeByAutopsy) {
-        this.causeByAutopsy = causeByAutopsy;
-    }
-
-    /**
-     * @return the autopsySite
-     */
-    @FieldExpressionValidator(expression = "autopsySite.value != null && autopsySite.value.length() > 0",
-            message = "Please provide a Site of Disease Autopsy")
-    public St getAutopsySite() {
-        return autopsySite;
-    }
-
-    /**
-     * @param autopsySite the autopsySite to set
-     */
-    public void setAutopsySite(St autopsySite) {
-        this.autopsySite = autopsySite;
-    }
+    private static final long serialVersionUID = 6110097957136298487L;
+    private St name;
+    private Ii identifier;
     
     /**
-     * @return the permissible value list for the death causes
+     * Default constructor.
      */
-    public List<DeathInfoCauses> getCauses() {
-        return Arrays.asList(DeathInfoCauses.values());
+    public DeathInfoItemWebDto() {
+        // Default constructor.
     }
-    
+
     /**
-     * @return the permissible value list for the autopsy indicators
+     * @param name the name to set
      */
-    public List<AutopsyPerformed> getAutopsyInds() {
-        return Arrays.asList(AutopsyPerformed.values());
+    public void setName(St name) {
+        this.name = name;
     }
-    
+
     /**
-     * @return the permissible value list for the death causes by autopsy
+     * @return the name
      */
-    public List<DeathCausesByAutopsy> getCausesByAutopsy() {
-        return Arrays.asList(DeathCausesByAutopsy.values());
+    public St getName() {
+        return name;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(Ii identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * @return the identifier
+     */
+    public Ii getIdentifier() {
+        return identifier;
     }
 }

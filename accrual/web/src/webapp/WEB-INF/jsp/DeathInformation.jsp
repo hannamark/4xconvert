@@ -4,7 +4,10 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<c:url value="/outcomes/lookupDeathInformation.action" var="lookupUrl" />
 <head>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript">
     function handleEditAction() {
         document.forms[0].action = "saveDeathInformation.action";
@@ -15,7 +18,12 @@
         document.forms[0].action = "cancelDeathInformation.action";
         document.forms[0].submit();
     }
+
+    function lookup(){
+        showPopWin('${lookupUrl}', 900, 400, '', 'Autopsy Site');
+    }
 </script>
+<script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
         addCalendar("Cal1", "Select Date", "deathEventDate", "detailForm");
@@ -39,6 +47,7 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
+<s:hidden name="selectedSite"/>
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.cause"/><span class="required">*</span></label></td>
 <td><s:select name="deathInfo.cause" headerKey="" headerValue="--Select--"
@@ -57,6 +66,11 @@
 <td><s:select name="deathInfo.causeByAutopsy" headerKey="" headerValue="--Select--"
               list="deathInfo.causesByAutopsy" listKey="code" listValue="code" value="deathInfo.causeByAutopsy.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.causeByAutopsy</s:param></s:fielderror></td></tr>
+<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.autopsySite"/><span class="required">*</span></label></td>
+<td><s:textfield readonly="true" size="50" name="deathInfo.autopsySite"
+               cssStyle="width:280px;float:left" cssClass="readonly"/><s:hidden name="deathInfo.id"/>
+               <a href="#" class="btn" onclick="lookup();" /><span class="btn_img"><span class="search">Look Up</span></span></a>
+               <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.autopsySite</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
 
