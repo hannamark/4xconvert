@@ -112,7 +112,7 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        bean = new SubmissionBean();
+        bean = new SubmissionBeanLocal();
     }
 
     @Test

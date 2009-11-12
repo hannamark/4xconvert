@@ -108,7 +108,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        bean = new StudySubjectBean();
+        bean = new StudySubjectBeanLocal();
     }
 
     @Test

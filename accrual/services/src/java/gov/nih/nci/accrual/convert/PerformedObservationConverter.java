@@ -76,69 +76,64 @@
 *
 *
 */
+package gov.nih.nci.accrual.convert;
 
-package gov.nih.nci.accrual.accweb.util;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.domain.PerformedObservation;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
-import gov.nih.nci.coppa.iso.Ii;
-
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 /**
- * @author Hugh Reinhart
- * @since Sep 26, 2009
+ * @author Kalpana Guthikonda
+ * @since 11/10/2009
  */
-public class MockPerfomedSubjectMilestoneBean implements PerformedSubjectMilestoneService {
+public class PerformedObservationConverter extends PerformedActivityConverter {
 
-    private static List<PerformedSubjectMilestoneDto> psmList = new ArrayList<PerformedSubjectMilestoneDto>();
     /**
-     * {@inheritDoc}
+     * Convert from domain to dto.
+     * @param bo the bo
+     * @return the performed Observation dto
+     * @throws DataFormatException the data format exception
      */
-    public List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException {
-        return psmList;
+    public static PerformedObservationDto convertFromDomainToDto(PerformedObservation bo)
+            throws DataFormatException {
+        PerformedObservationDto dto = (PerformedObservationDto)
+        PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedObservationDto());
+        dto.setTargetSiteCode(CdConverter.convertStringToCd(bo.getTargetSiteCode()));
+        // convert to dset
+        List<Cd> cds = new ArrayList<Cd>();
+        if (bo.getMethodCode() != null) {
+            cds.add(CdConverter.convertStringToCd(bo.getMethodCode()));
+        }
+        dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
+        return dto;
     }
 
     /**
-     * {@inheritDoc}
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed Observation
+     * @throws DataFormatException the data format exception
      */
-    public List<PerformedSubjectMilestoneDto> getByStudyProtocol(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    public static PerformedObservation convertFromDtoToDomain(PerformedObservationDto dto)
+            throws DataFormatException {
+        PerformedObservation bo = (PerformedObservation)
+        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedObservation());   
+        List<Cd> cds =  DSetConverter.convertDsetToCdList(dto.getMethodCode());
+        if (cds != null) {
+            for (Cd cd : cds) {
+                bo.setMethodCode(cd.getCode());
+            }
+        }  
+        if (!PAUtil.isCdNull(dto.getTargetSiteCode())) {
+            bo.setTargetSiteCode(dto.getTargetSiteCode().getCode());
+        }
+        return bo;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneDto create(PerformedSubjectMilestoneDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void delete(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneDto get(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneDto update(PerformedSubjectMilestoneDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

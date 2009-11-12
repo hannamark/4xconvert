@@ -77,7 +77,8 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -125,8 +126,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected StudySubjectService studySubjectSvc;
     /** PatientService. */
     protected PatientService patientSvc;
-    /** PerformedSubjectMilestoneService. */
-    protected PerformedSubjectMilestoneService performedSubjectMilestoneSvc;
+    /** PerformedActivityService. */
+    protected PerformedActivityService performedActivitySvc;
     /** CountryService. */
     protected CountryService countrySvc;
     /** DiseaseService. */
@@ -137,13 +138,14 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected PatientServiceRemote patientCorrelationSvc;
     /** DiseaseService. */
     protected DiseaseParentServiceRemote diseaseParentSvc;
-    
+    /** PerformedObservationResultService. */
+    protected PerformedObservationResultService porServiceSvc;
     /** Name of the next target when needed. */
     private String nextTarget = null;
     
     /** The action result to perform a redirect using "next". */
     public static final String NEXT = "next";
-
+    
     /**
      * {@inheritDoc}
      */
@@ -153,13 +155,13 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
         studySubjectSvc = AccrualServiceLocator.getInstance().getStudySubjectService();
         patientSvc = AccrualServiceLocator.getInstance().getPatientService();
-        performedSubjectMilestoneSvc = AccrualServiceLocator.getInstance().
-                getPerformedSubjectMilestoneService();
+        performedActivitySvc = AccrualServiceLocator.getInstance().getPerformedActivityService();
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         patientCorrelationSvc = AccrualServiceLocator.getInstance().getPOPatientService();
         diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
+        porServiceSvc = AccrualServiceLocator.getInstance().getPerformedObservationResultService();
     }
     /**
      * Default execute method for action classes.

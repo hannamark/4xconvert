@@ -76,69 +76,42 @@
 *
 *
 */
+package gov.nih.nci.accrual.convert;
 
-package gov.nih.nci.accrual.web.util;
+import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
+import gov.nih.nci.pa.domain.PerformedDiagnosis;
 
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
-import gov.nih.nci.coppa.iso.Ii;
-
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.zip.DataFormatException;
 
 /**
- * @author Hugh Reinhart
- * @since Sep 26, 2009
+ * @author Kalpana Guthikonda
+ * @since 11/09/2009
  */
-public class MockPerfomedSubjectMilestoneBean implements PerformedSubjectMilestoneService {
+public class PerformedDiagnosisConverter extends PerformedObservationResultConverter {
 
-    private static List<PerformedSubjectMilestoneDto> psmList = new ArrayList<PerformedSubjectMilestoneDto>();
     /**
-     * {@inheritDoc}
+     * Convert from domain to dto.
+     * @param bo the bo
+     * @return the performed diagnosis dto
+     * @throws DataFormatException the data format exception
      */
-    public List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException {
-        return psmList;
+    public static PerformedDiagnosisDto convertFromDomainToDto(PerformedDiagnosis bo)
+            throws DataFormatException {
+        PerformedDiagnosisDto dto = (PerformedDiagnosisDto)
+        PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedDiagnosisDto());
+        return dto;
     }
 
     /**
-     * {@inheritDoc}
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed diagnosis
+     * @throws DataFormatException the data format exception
      */
-    public List<PerformedSubjectMilestoneDto> getByStudyProtocol(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    public static PerformedDiagnosis convertFromDtoToDomain(PerformedDiagnosisDto dto)
+            throws DataFormatException {
+        PerformedDiagnosis bo = (PerformedDiagnosis)
+        PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedDiagnosis());
+        return bo;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneDto create(PerformedSubjectMilestoneDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void delete(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneDto get(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedSubjectMilestoneDto update(PerformedSubjectMilestoneDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

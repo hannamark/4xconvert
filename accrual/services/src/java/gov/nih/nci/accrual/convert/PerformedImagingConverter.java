@@ -76,82 +76,68 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.convert.PerformedSubjectMilestoneConverter;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
-import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.accrual.dto.PerformedImagingDto;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.domain.PerformedImaging;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-
 /**
- * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @author Kalpana Guthikonda
+ * @since 11/10/2009
  */
-@Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
-public class PerformedSubjectMilestoneBean
-        extends AbstractBaseAccrualStudyBean<PerformedSubjectMilestoneDto,
-                PerformedSubjectMilestone, PerformedSubjectMilestoneConverter>
-        implements PerformedSubjectMilestoneService {
+public class PerformedImagingConverter extends PerformedObservationConverter {
 
     /**
-     * {@inheritDoc}
+     * Convert from domain to dto.
+     * @param bo the bo
+     * @return the performed Imaging dto
+     * @throws DataFormatException the data format exception
      */
-    @SuppressWarnings("unchecked")
-    public List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
-            throw new RemoteException("Called getByStudySubject() with Ii == null.");
+    public static PerformedImagingDto convertFromDomainToDto(PerformedImaging bo)
+            throws DataFormatException {
+        PerformedImagingDto dto = (PerformedImagingDto)
+        PerformedObservationConverter.convertFromDomainToDTO(bo, new PerformedImagingDto());
+        dto.setTargetSiteCode(CdConverter.convertStringToCd(bo.getTargetSiteCode()));
+        // convert to dset
+        List<Cd> cds = new ArrayList<Cd>();
+        if (bo.getMethodCode() != null) {
+            cds.add(CdConverter.convertStringToCd(bo.getMethodCode()));
         }
-        getLogger().info("EnteringgetByStudySubject().");
-
-        Session session = null;
-        List<PerformedSubjectMilestone> queryList = new ArrayList<PerformedSubjectMilestone>();
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            Query query = null;
-
-            // step 1: form the hql
-            String hql = "select psm "
-                       + "from PerformedSubjectMilestone psm "
-                       + "join psm.studySubject ssub "
-                       + "where ssub.id = :studySubjectId "
-                       + "order by psm.id ";
-
-            // step 2: construct query object
-            query = session.createQuery(hql);
-            query.setParameter("studySubjectId", IiConverter.convertToLong(ii));
-
-            // step 3: query the result
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
-        }
-        ArrayList<PerformedSubjectMilestoneDto> resultList = new ArrayList<PerformedSubjectMilestoneDto>();
-        for (PerformedSubjectMilestone bo : queryList) {
-            try {
-                resultList.add(convertFromDomainToDto(bo));
-            } catch (DataFormatException e) {
-                throw new RemoteException("Iso conversion exception in getByStudySubject().", e);
-            }
-        }
-        getLogger().info("Leaving getByStudySubject, returning " + resultList.size() + " object(s).  ");
-        return resultList;
+        dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
+        dto.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(bo.getContrastAgentEnhancementIndicator()));
+        return dto;
     }
 
+    /**
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed Imaging
+     * @throws DataFormatException the data format exception
+     */
+    public static PerformedImaging convertFromDtoToDomain(PerformedImagingDto dto)
+            throws DataFormatException {
+        PerformedImaging bo = (PerformedImaging)
+        PerformedObservationConverter.convertFromDTOToDomain(dto , new PerformedImaging());   
+        List<Cd> cds =  DSetConverter.convertDsetToCdList(dto.getMethodCode());
+        if (cds != null) {
+            for (Cd cd : cds) {
+                bo.setMethodCode(cd.getCode());
+            }
+        }  
+        if (!PAUtil.isCdNull(dto.getTargetSiteCode())) {
+            bo.setTargetSiteCode(dto.getTargetSiteCode().getCode());
+        }
+        bo.setContrastAgentEnhancementIndicator(BlConverter.covertToBoolean(
+                dto.getContrastAgentEnhancementIndicator()));
+        return bo;
+    }
 }

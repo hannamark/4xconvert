@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,58 +76,125 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.domain.PerformedObservation;
+import gov.nih.nci.pa.domain.PerformedObservationResult;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
- * @author Hugh Reinhart
- * @since 4/13/2009
+ * @author Kalpana Guthikonda
+ * @since 11/09/2009
  */
-public interface ServiceLocatorAccInterface {
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+public class PerformedObservationResultConverter extends AbstractConverter
+        <PerformedObservationResultDto, PerformedObservationResult> {
 
     /**
-     * @return search trial service
-     */
-    SearchTrialService getSearchTrialService();
+     * {@inheritDoc}
+     */   
+    @Override
+    public PerformedObservationResultDto convertFromDomainToDto(PerformedObservationResult por) {
+           return convertFromDomainToDTO(por, new PerformedObservationResultDto());
+       }
+       
     /**
-     * @return search study site service
-     */
-    SearchStudySiteService getSearchStudySiteService();
+     * {@inheritDoc}
+     */   
+    @Override
+      public PerformedObservationResult convertFromDtoToDomain(PerformedObservationResultDto porDto) {
+          return convertFromDTOToDomain(porDto , new PerformedObservationResult());
+      }
+       
     /**
-     * @return Patient correlation service
+     * Convert from domain to dto.
+     * 
+     * @param bo the bo
+     * @param dto the dto
+     * 
+     * @return the performed observation result dto
      */
-    PatientService getPatientService();
+    public static PerformedObservationResultDto convertFromDomainToDTO(PerformedObservationResult bo, 
+            PerformedObservationResultDto dto) {
+        dto.setResultCode(CdConverter.convertStringToCd(bo.getResultCode()));
+        dto.setResultCodeModifiedText(StConverter.convertToSt(bo.getResultCodeModifiedText()));
+        dto.setResultDateRange(IvlConverter.convertTs().convertToIvl(bo.getResultDateRangeLow(),
+                bo.getResultDateRangeHigh()));
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+                bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
+        dto.setResultIndicator(BlConverter.convertToBl(bo.getResultIndicator()));
+        dto.setResultText(StConverter.convertToSt(bo.getResultText()));
+        dto.setTypeCode(CdConverter.convertStringToCd(bo.getTypeCode()));
+        dto.setUnitOfMeasureCode(CdConverter.convertStringToCd(bo.getUnitOfMeasureCode()));
+        Pq pq = new Pq();
+        pq.setValue(bo.getResultQuantityValue());
+        if (bo.getResultQuantityUnit() != null) {
+          pq.setUnit(bo.getResultQuantityUnit());
+        }
+        dto.setResultQuantity(pq);
+        if (bo.getPerformedObservation() != null) {
+            dto.setPerformedObservationIdentifier(IiConverter.convertToIi(bo.getPerformedObservation().getId()));
+        }
+        return dto;
+    }
+
+     
     /**
-     * @return Patient correlation service
+     * Convert from dto to domain.
+     * 
+     * @param dto the dto
+     * @param bo the bo
+     * 
+     * @return the performed observation result
      */
-    PatientServiceRemote getPOPatientService();
-    /**
-     * @return Submission domain service
-     */
-    SubmissionService getSubmissionService();
-    /**
-     * @return StudySubject domain service
-     */
-    StudySubjectService getStudySubjectService();
-    /**
-     * @return PerformedActivityService domain service
-     */
-    PerformedActivityService getPerformedActivityService();
-    /**
-     * @return CountryService
-     */
-    CountryService getCountryService();
-    /**
-     * @return PerformedObservationResultService domain service
-     */
-    PerformedObservationResultService getPerformedObservationResultService();
+    public static PerformedObservationResult convertFromDTOToDomain(PerformedObservationResultDto dto,
+            PerformedObservationResult bo) {
+        StudyProtocol spBo = null;
+        if (!PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+            spBo = new StudyProtocol();
+            spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        }
+        if (dto.getResultDateRange() != null) {
+            bo.setResultDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getResultDateRange()));
+            bo.setResultDateRangeLow(IvlConverter.convertTs().convertLow(dto.getResultDateRange()));
+        }
+        if (!PAUtil.isCdNull(dto.getResultCode())) {
+            bo.setResultCode(dto.getResultCode().getCode());
+        }
+        if (!PAUtil.isCdNull(dto.getTypeCode())) {
+            bo.setTypeCode(dto.getTypeCode().getCode());
+        }
+        if (!PAUtil.isCdNull(dto.getUnitOfMeasureCode())) {
+            bo.setUnitOfMeasureCode(dto.getUnitOfMeasureCode().getCode());
+        }
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setStudyProtocol(spBo);
+        bo.setResultCodeModifiedText(StConverter.convertToString(dto.getResultCodeModifiedText()));
+        bo.setResultText(StConverter.convertToString(dto.getResultText()));
+        bo.setResultIndicator(BlConverter.covertToBoolean(dto.getResultIndicator()));
+        if (dto.getResultQuantity() != null) {
+            if (!PAUtil.isPqValueNull(dto.getResultQuantity())) {
+                bo.setResultQuantityValue(dto.getResultQuantity().getValue());
+            }
+            if (!PAUtil.isPqValueNull(dto.getResultQuantity())) {
+                bo.setResultQuantityUnit(dto.getResultQuantity().getUnit());
+            }
+        }
+        PerformedObservation po = null;
+        if (!PAUtil.isIiNull(dto.getPerformedObservationIdentifier())) {
+            po = new PerformedObservation();
+            po.setId(IiConverter.convertToLong(dto.getPerformedObservationIdentifier()));
+        }
+        bo.setPerformedObservation(po);
+        return bo;
+    }
 }

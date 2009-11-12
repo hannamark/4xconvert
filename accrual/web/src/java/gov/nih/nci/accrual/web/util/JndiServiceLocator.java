@@ -78,7 +78,8 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -125,22 +126,22 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
-        return (PerformedSubjectMilestoneService) JNDIUtil.lookup("accrual/PerformedSubjectMilestoneBean/remote");
+    public PerformedActivityService getPerformedActivityService() {
+        return (PerformedActivityService) JNDIUtil.lookup("accrual/PerformedActivityBeanLocal/remote");
     }
 
     /**
      * {@inheritDoc}
      */
     public StudySubjectService getStudySubjectService() {
-        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBean/remote");
+        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBeanLocal/remote");
     }
 
     /**
      * {@inheritDoc}
      */
     public SubmissionService getSubmissionService() {
-        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBean/remote");
+        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBeanLocal/remote");
     }
 
     /**
@@ -148,5 +149,13 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      */
     public CountryService getCountryService() {
         return (CountryService) JNDIUtil.lookup("accrual/CountryBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public PerformedObservationResultService getPerformedObservationResultService() {
+        return (PerformedObservationResultService) JNDIUtil.lookup(
+                "accrual/PerformedObservationResultBeanLocal/remote");
     }
 }

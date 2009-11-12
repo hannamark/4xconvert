@@ -76,27 +76,42 @@
 *
 *
 */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.accrual.dto.PerformedProcedureDto;
+import gov.nih.nci.pa.domain.PerfomedProcedure;
 
-import java.rmi.RemoteException;
-import java.util.List;
-
-import javax.ejb.Remote;
+import java.util.zip.DataFormatException;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @author Kalpana Guthikonda
+ * @since 11/10/2009
  */
-@Remote
-public interface PerformedSubjectMilestoneService
-        extends BaseAccrualStudyService<PerformedSubjectMilestoneDto> {
+public class PerformedProcedureConverter extends PerformedActivityConverter {
+
     /**
-     * @param ii studySubject index
-     * @return list of dto's
-     * @throws RemoteException exception
+     * Convert from domain to dto.
+     * @param bo the bo
+     * @return the performed Procedure dto
+     * @throws DataFormatException the data format exception
      */
-    List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException;
+    public static PerformedProcedureDto convertFromDomainToDto(PerfomedProcedure bo)
+            throws DataFormatException {
+        PerformedProcedureDto dto = (PerformedProcedureDto)
+        PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedProcedureDto());
+        return dto;
+    }
+
+    /**
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed Procedure
+     * @throws DataFormatException the data format exception
+     */
+    public static PerfomedProcedure convertFromDtoToDomain(PerformedProcedureDto dto)
+            throws DataFormatException {
+        PerfomedProcedure bo = (PerfomedProcedure)
+        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerfomedProcedure());   
+        return bo;
+    }
 }

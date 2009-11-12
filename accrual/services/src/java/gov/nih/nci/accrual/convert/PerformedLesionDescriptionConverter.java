@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,58 +76,64 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.domain.PerformedLesionDescription;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.zip.DataFormatException;
 
 /**
- * @author Hugh Reinhart
- * @since 4/13/2009
+ * @author Kalpana Guthikonda
+ * @since 11/09/2009
  */
-public interface ServiceLocatorAccInterface {
+public class PerformedLesionDescriptionConverter extends PerformedObservationResultConverter {
 
     /**
-     * @return search trial service
+     * Convert from domain to dto.
+     * @param bo the bo
+     * @return the performed lesion description dto
+     * @throws DataFormatException the data format exception
      */
-    SearchTrialService getSearchTrialService();
+    public static PerformedLesionDescriptionDto convertFromDomainToDto(PerformedLesionDescription bo)
+    throws DataFormatException {
+        PerformedLesionDescriptionDto dto = (PerformedLesionDescriptionDto)
+        PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedLesionDescriptionDto());
+        dto.setLesionNumber(IntConverter.convertToInt(bo.getLesionNumber()));
+        dto.setMeasurableIndicator(BlConverter.convertToBl(bo.getMeasurableIndicator()));
+        Pq pq = new Pq();
+        pq.setValue(bo.getLongestDiameterValue());
+        if (bo.getLongestDiameterUnit() != null) {
+            pq.setUnit(bo.getLongestDiameterUnit());
+        }
+        dto.setLongestDiameter(pq);
+        return dto;
+    }
+
     /**
-     * @return search study site service
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed lesion description
+     * @throws DataFormatException the data format exception
      */
-    SearchStudySiteService getSearchStudySiteService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientService getPatientService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientServiceRemote getPOPatientService();
-    /**
-     * @return Submission domain service
-     */
-    SubmissionService getSubmissionService();
-    /**
-     * @return StudySubject domain service
-     */
-    StudySubjectService getStudySubjectService();
-    /**
-     * @return PerformedActivityService domain service
-     */
-    PerformedActivityService getPerformedActivityService();
-    /**
-     * @return CountryService
-     */
-    CountryService getCountryService();
-    /**
-     * @return PerformedObservationResultService domain service
-     */
-    PerformedObservationResultService getPerformedObservationResultService();
+    public static PerformedLesionDescription convertFromDtoToDomain(PerformedLesionDescriptionDto dto)
+    throws DataFormatException {
+        PerformedLesionDescription bo = (PerformedLesionDescription)
+        PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedLesionDescription());
+        bo.setLesionNumber(dto.getLesionNumber().getValue());
+        bo.setMeasurableIndicator(BlConverter.covertToBoolean(dto.getMeasurableIndicator()));
+        if (dto.getLongestDiameter() != null) {
+            if (!PAUtil.isPqValueNull(dto.getLongestDiameter())) {
+                bo.setLongestDiameterValue(dto.getLongestDiameter().getValue());
+            }
+            if (!PAUtil.isPqValueNull(dto.getLongestDiameter())) {
+                bo.setLongestDiameterUnit(dto.getLongestDiameter().getUnit());
+            }
+        }
+        return bo;
+    }
 }

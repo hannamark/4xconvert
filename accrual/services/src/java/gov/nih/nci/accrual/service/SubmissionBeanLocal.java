@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,58 +76,74 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
 
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+package gov.nih.nci.accrual.service;
+
+import gov.nih.nci.accrual.convert.SubmissionConverter;
+import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Submission;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Aug 29, 2009
  */
-public interface ServiceLocatorAccInterface {
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class SubmissionBeanLocal
+        extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
+        implements SubmissionService {
 
     /**
-     * @return search trial service
+     * {@inheritDoc}
      */
-    SearchTrialService getSearchTrialService();
+    @Override
+    public List<SubmissionDto> getByStudyProtocol(Ii ii) throws RemoteException {
+        List<SubmissionDto> temp = super.getByStudyProtocol(ii);
+        List<SubmissionDto> result = new ArrayList<SubmissionDto>();
+        for (int x = temp.size() - 1; x >= 0; x--) {
+            result.add(temp.get(x));
+        }
+        return result;
+    }
     /**
-     * @return search study site service
+     * {@inheritDoc}
      */
-    SearchStudySiteService getSearchStudySiteService();
+    @Override
+    public SubmissionDto create(SubmissionDto dto) throws RemoteException {
+        checkSubmissionDtoFields(dto);
+        return super.create(dto);
+    }
     /**
-     * @return Patient correlation service
+     * {@inheritDoc}
      */
-    PatientService getPatientService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientServiceRemote getPOPatientService();
-    /**
-     * @return Submission domain service
-     */
-    SubmissionService getSubmissionService();
-    /**
-     * @return StudySubject domain service
-     */
-    StudySubjectService getStudySubjectService();
-    /**
-     * @return PerformedActivityService domain service
-     */
-    PerformedActivityService getPerformedActivityService();
-    /**
-     * @return CountryService
-     */
-    CountryService getCountryService();
-    /**
-     * @return PerformedObservationResultService domain service
-     */
-    PerformedObservationResultService getPerformedObservationResultService();
+    @Override
+    public SubmissionDto update(SubmissionDto dto) throws RemoteException {
+        checkSubmissionDtoFields(dto);
+        return super.update(dto);
+    }
+
+    private void checkSubmissionDtoFields(SubmissionDto dto) throws RemoteException {
+        if (PAUtil.isStNull(dto.getLabel())) {
+            throw new RemoteException("Submission title is required.");
+        }
+        if (PAUtil.isTsNull(dto.getCutOffDate())) {
+            throw new RemoteException("Cut off date is required.");
+        }
+        if (PAUtil.isStNull(dto.getDescription())) {
+            throw new RemoteException("Description is required.");
+        }
+    }
 }

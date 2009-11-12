@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,58 +76,98 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 /**
- * @author Hugh Reinhart
- * @since 4/13/2009
+ * @author Kalpana Guthikonda
+ * @since 11/09/2009
  */
-public interface ServiceLocatorAccInterface {
+public class PerformedActivityConverter extends AbstractConverter
+        <PerformedActivityDto, PerformedActivity> {
 
     /**
-     * @return search trial service
-     */
-    SearchTrialService getSearchTrialService();
+     * {@inheritDoc}
+     */   
+    @Override
+    public PerformedActivityDto convertFromDomainToDto(PerformedActivity pa) {
+           return convertFromDomainToDTO(pa, new PerformedActivityDto());
+       }
+       
     /**
-     * @return search study site service
-     */
-    SearchStudySiteService getSearchStudySiteService();
+     * {@inheritDoc}
+     */   
+    @Override
+      public PerformedActivity convertFromDtoToDomain(PerformedActivityDto paDto) {
+          return convertFromDTOToDomain(paDto , new PerformedActivity());
+      }
+    
     /**
-     * @return Patient correlation service
+     * Convert from domain to dto.
+     * 
+     * @param bo the bo
+     * @param dto the dto
+     * 
+     * @return the performed activity dto
      */
-    PatientService getPatientService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientServiceRemote getPOPatientService();
-    /**
-     * @return Submission domain service
-     */
-    SubmissionService getSubmissionService();
-    /**
-     * @return StudySubject domain service
-     */
-    StudySubjectService getStudySubjectService();
-    /**
-     * @return PerformedActivityService domain service
-     */
-    PerformedActivityService getPerformedActivityService();
-    /**
-     * @return CountryService
-     */
-    CountryService getCountryService();
-    /**
-     * @return PerformedObservationResultService domain service
-     */
-    PerformedObservationResultService getPerformedObservationResultService();
+    public static PerformedActivityDto convertFromDomainToDTO(PerformedActivity bo, PerformedActivityDto dto) {
+        dto.setActualDateRange(IvlConverter.convertTs().convertToIvl(bo.getActualDateRangeLow(),
+                bo.getActualDateRangeHigh()));
+        dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
+        dto.setIdentifier(IiConverter.convertToActivityIi(bo.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+                bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(
+                bo.getStudySubject() == null ? null : bo.getStudySubject().getId()));
+        dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
+        dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
+        return dto;
+    }
+
+   /**
+    * Convert from dto to domain.
+    * 
+    * @param dto the dto
+    * @param bo the bo
+    * 
+    * @return the performed activity
+    */
+   public static PerformedActivity convertFromDTOToDomain(PerformedActivityDto dto, PerformedActivity bo) {
+        if (dto.getActualDateRange() != null) {
+            bo.setActualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getActualDateRange()));
+            bo.setActualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getActualDateRange()));
+        }
+        if (!PAUtil.isCdNull(dto.getCategoryCode())) {
+            bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
+        }
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        StudyProtocol spBo = null;
+        if (!PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+            spBo = new StudyProtocol();
+            spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        }
+        bo.setStudyProtocol(spBo);
+        StudySubject ssBo = null;
+        if (!PAUtil.isIiNull(dto.getStudySubjectIdentifier())) {
+            ssBo = new StudySubject();
+            ssBo.setId(IiConverter.convertToLong(dto.getStudySubjectIdentifier()));
+        }
+        bo.setStudySubject(ssBo);
+        if (!PAUtil.isCdNull(dto.getSubcategoryCode())) {
+            bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
+        }
+        bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
+        return bo;
+    }
 }

@@ -76,95 +76,28 @@
 *
 *
 */
-
 package gov.nih.nci.accrual.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.List;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Hugh Reinhart
- * @since Aug 29, 2009
+ * @since Aug 13, 2009
  */
-public class PerformedSubjectMilestoneServiceTest
-        extends AbstractServiceTest<PerformedSubjectMilestoneService> {
-
-    @Override
-    @Before
-    public void instantiateServiceBean() throws Exception {
-        bean = new PerformedSubjectMilestoneBean();
-    }
-
-    @Test
-    public void get() throws Exception {
-        PerformedSubjectMilestoneDto dto = bean.get(IiConverter.convertToIi(TestSchema.performedSubjectMilestones.get(0).getId()));
-        assertNotNull(dto);
-        try {
-            dto = bean.get(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-    }
-    @Test
-    public void create() throws Exception {
-        PerformedSubjectMilestoneDto dto = new  PerformedSubjectMilestoneDto();
-        dto.setInformedConsentDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/7/2009")));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-
-        PerformedSubjectMilestoneDto r = bean.create(dto);
-        assertNotNull(r);
-    }
-    @Test
-    public void update() throws Exception {
-        Timestamp newValue = PAUtil.dateStringToTimestamp("2/3/2003");
-        assertFalse(newValue.equals(TestSchema.performedSubjectMilestones.get(0).getInformedConsentDate()));
-        PerformedSubjectMilestoneDto dto = bean.get(IiConverter.convertToIi(TestSchema.performedSubjectMilestones.get(0).getId()));
-        dto.setInformedConsentDate(TsConverter.convertToTs(newValue));
-        PerformedSubjectMilestoneDto r = bean.update(dto);
-        assertTrue(newValue.equals(TsConverter.convertToTimestamp(r.getInformedConsentDate())));
-    }
-    @Test
-    public void getByStudyProtocol() throws Exception {
-        List<PerformedSubjectMilestoneDto> rList = bean.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        assertTrue(0 < rList.size());
-    }
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+public class PerformedActivityBean
+        extends  PerformedActivityBeanLocal implements PerformedActivityService {
     
-    @Test
-    public void subjectMilestoneExceptions() throws Exception {
-        try {
-            bean.getByStudySubject(null);
-            fail();
-        } catch (RemoteException ex) {
-            // expected
-        }
-        
-        Ii ii = IiConverter.convertToIi("test ii");
-        
-        try {
-            bean.getByStudySubject(ii);
-            fail();
-        } catch (Exception ex) {
-            // expected
-        }
-        
-        ii = IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId());
-        
-        List<PerformedSubjectMilestoneDto> dto = bean.getByStudySubject(ii);
-        assertNotNull(dto);
-    }
 }

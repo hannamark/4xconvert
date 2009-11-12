@@ -78,7 +78,8 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -118,11 +119,15 @@ public interface ServiceLocatorAccInterface {
      */
     StudySubjectService getStudySubjectService();
     /**
-     * @return PerformedSubjectMilestoneService domain service
+     * @return PerformedActivityService domain service
      */
-    PerformedSubjectMilestoneService getPerformedSubjectMilestoneService();
+    PerformedActivityService getPerformedActivityService();
     /**
      * @return CountryService
      */
     CountryService getCountryService();
+    /**
+     * @return PerformedObservationResultService domain service
+     */
+    PerformedObservationResultService getPerformedObservationResultService();
 }

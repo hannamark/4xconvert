@@ -82,7 +82,18 @@ import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.PerfomedProcedure;
+import gov.nih.nci.pa.domain.PerformedClinicalResult;
+import gov.nih.nci.pa.domain.PerformedDiagnosis;
+import gov.nih.nci.pa.domain.PerformedHistopathology;
+import gov.nih.nci.pa.domain.PerformedImage;
+import gov.nih.nci.pa.domain.PerformedImaging;
+import gov.nih.nci.pa.domain.PerformedLesionDescription;
+import gov.nih.nci.pa.domain.PerformedMedicalHistoryResult;
+import gov.nih.nci.pa.domain.PerformedObservation;
+import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -108,6 +119,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -135,7 +147,18 @@ public class TestSchema {
     public static List<HealthCareFacility> healthCareFacilities;
     public static List<Organization> organizations;
     public static List<StudySiteAccrualAccess> studySiteAccrualAccess;
-    public static List<Country> countries;
+    public static List<Country> countries;    
+    public static List<PerformedObservation> performedObservations;
+    public static List<PerformedImaging> performedImagings;
+    public static List<PerformedSubstanceAdministration> performedSubstanceAdministrations;
+    public static List<PerformedRadiationAdministration> performedRadiationAdministrations;
+    public static List<PerfomedProcedure> performedProcedures;    
+    public static List<PerformedDiagnosis> performedDiagnosis;
+    public static List<PerformedImage> performedImages;
+    public static List<PerformedHistopathology> performedHistopathologies;
+    public static List<PerformedClinicalResult> performedClinicalResults;
+    public static List<PerformedMedicalHistoryResult> performedMedicalHistoryResults;
+    public static List<PerformedLesionDescription> performedLesionDescriptions;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -154,7 +177,8 @@ public class TestSchema {
         Session session = AccrualHibernateUtil.getHibernateHelper().getCurrentSession();
         Connection connection = session.connection();
         Statement statement = connection.createStatement();
-        statement.executeUpdate("delete from performed_activity");
+        statement.executeUpdate("delete from performed_observation_result");   
+        statement.executeUpdate("delete from performed_activity");     
         statement.executeUpdate("delete from study_disease");
         statement.executeUpdate("delete from study_subject");
         statement.executeUpdate("delete from patient");
@@ -203,7 +227,18 @@ public class TestSchema {
         healthCareFacilities = new ArrayList<HealthCareFacility>();
         organizations = new ArrayList<Organization>();
         studySiteAccrualAccess = new ArrayList<StudySiteAccrualAccess>();
-        countries = new ArrayList<Country>();
+        countries = new ArrayList<Country>();        
+        performedObservations = new ArrayList<PerformedObservation>();
+        performedImagings = new ArrayList<PerformedImaging>();
+        performedSubstanceAdministrations = new ArrayList<PerformedSubstanceAdministration>();
+        performedRadiationAdministrations = new ArrayList<PerformedRadiationAdministration>();
+        performedProcedures = new ArrayList<PerfomedProcedure>();        
+        performedDiagnosis = new ArrayList<PerformedDiagnosis>();
+        performedImages = new ArrayList<PerformedImage>();
+        performedHistopathologies = new ArrayList<PerformedHistopathology>();
+        performedClinicalResults = new  ArrayList<PerformedClinicalResult>();
+        performedMedicalHistoryResults = new ArrayList<PerformedMedicalHistoryResult>();
+        performedLesionDescriptions = new ArrayList<PerformedLesionDescription>();
         
         // Organization
         Organization org = new Organization();
@@ -507,6 +542,110 @@ public class TestSchema {
         c.setAlpha3("USA");
         addUpdObject(c);
         countries.add(c);
+        
+        // PerformedObservation        
+        PerformedObservation performedObservation = new PerformedObservation();
+        performedObservation.setMethodCode("methodCode");
+        performedObservation.setTargetSiteCode("targetSiteCode");
+        performedObservation.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(performedObservation);
+        performedObservations.add(performedObservation);
+        
+        // PerformedImaging   
+        PerformedImaging pimaging = new PerformedImaging();
+        pimaging.setStudyProtocol(studyProtocols.get(0));
+        pimaging.setContrastAgentEnhancementIndicator(true);
+        addUpdObject(pimaging);
+        performedImagings.add(pimaging);
+        
+        // PerformedSubstanceAdministration   
+        PerformedSubstanceAdministration psa = new PerformedSubstanceAdministration();
+        psa.setStudyProtocol(studyProtocols.get(0));
+        psa.setDoseValue(new BigDecimal("2"));
+        psa.setDoseUnit("10Milligrams");
+        psa.setDoseDescription("TestDose");
+        psa.setDoseFormCode("Tablet");
+        psa.setDoseFrequencyCode("BID");
+        psa.setDoseRegimen("doseRegimen");
+        psa.setDoseTotalUnit("doseTotalUom");
+        psa.setDoseTotalValue(new BigDecimal("5"));
+        psa.setRouteOfAdministrationCode("Oral");
+        psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
+        addUpdObject(psa);
+        performedSubstanceAdministrations.add(psa);
+        
+        // PerformedRadiationAdministration   
+        PerformedRadiationAdministration pra = new PerformedRadiationAdministration();
+        pra.setStudyProtocol(studyProtocols.get(0));
+        pra.setMachineTypeCode("machineTypeCode");
+        addUpdObject(pra);
+        performedRadiationAdministrations.add(pra);
+        
+         // PerformedProcedure
+        PerfomedProcedure pp = new PerfomedProcedure();
+        pp.setStudyProtocol(studyProtocols.get(0));
+        pp.setCategoryCode(ActivityCategoryCode.OTHER);
+        pp.setTextDescription("SurgeryDescription");
+        addUpdObject(pp);
+        performedProcedures.add(pp);
+        
+        // PerformedDiagnosis        
+        PerformedDiagnosis pd = new PerformedDiagnosis();
+        pd.setResultCode("PerformedDiagnosis");
+        pd.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
+        pd.setStudyProtocol(studyProtocols.get(0));
+        pd.setPerformedObservation(performedObservation);
+        addUpdObject(pd);
+        performedDiagnosis.add(pd);
+        
+        // PerformedImage        
+        PerformedImage pi = new PerformedImage();
+        pi.setResultCode("PerformedImage");
+        pi.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
+        pi.setStudyProtocol(studyProtocols.get(0));
+        pi.setPerformedObservation(performedObservation);
+        addUpdObject(pi);
+        performedImages.add(pi);
+        
+        // PerformedHistopathology      
+        PerformedHistopathology ph = new PerformedHistopathology();
+        ph.setGradeCode("GradeCode");
+        ph.setDescription("description");
+        ph.setStudyProtocol(studyProtocols.get(0));
+        ph.setPerformedObservation(performedObservation);
+        addUpdObject(ph);
+        performedHistopathologies.add(ph);
+
+        // PerformedClinicalResult        
+        PerformedClinicalResult pcr = new PerformedClinicalResult();
+        pcr.setStageCodingSystem("StageCodingSystem");
+        pcr.setResultQuantityValue(new BigDecimal(1)); 
+        pcr.setResultQuantityUnit("Year");
+        pcr.setStudyProtocol(studyProtocols.get(0));
+        pcr.setPerformedObservation(performedObservation);
+        addUpdObject(pcr);
+        performedClinicalResults.add(pcr);
+        
+        // PerformedMedicalHistoryResult       
+        PerformedMedicalHistoryResult pmhr = new PerformedMedicalHistoryResult();
+        pmhr.setTypeCode("PriorTherapy");
+        pmhr.setDescription("PriorTherapy Description");
+        pmhr.setResultQuantityValue(new BigDecimal(2)); 
+        pmhr.setResultQuantityUnit("Unitary");
+        pmhr.setStudyProtocol(studyProtocols.get(0));
+        pmhr.setPerformedObservation(performedObservation);
+        addUpdObject(pmhr);
+        performedMedicalHistoryResults.add(pmhr);
+        
+        // PerformedLesionDescription        
+        PerformedLesionDescription pld = new PerformedLesionDescription();
+        pld.setResultCode("PerformedLesionDescription");
+        pld.setLesionNumber(new Integer(1));
+        pld.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
+        pld.setStudyProtocol(studyProtocols.get(0));
+        pld.setPerformedObservation(performedObservation);
+        addUpdObject(pld);
+        performedLesionDescriptions.add(pld);
     }
 
 }

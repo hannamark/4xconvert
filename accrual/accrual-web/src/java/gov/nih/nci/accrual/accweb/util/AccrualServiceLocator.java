@@ -78,7 +78,8 @@
 */
 package gov.nih.nci.accrual.accweb.util;
 
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -155,8 +156,8 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
-        return serviceLocator.getPerformedSubjectMilestoneService();
+    public PerformedActivityService getPerformedActivityService() {
+        return serviceLocator.getPerformedActivityService();
     }
 
     /**
@@ -178,5 +179,12 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
      */
     public CountryService getCountryService() {
         return serviceLocator.getCountryService();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public PerformedObservationResultService getPerformedObservationResultService() {
+        return serviceLocator.getPerformedObservationResultService();
     }
 }

@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,58 +76,50 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
+import gov.nih.nci.pa.domain.PerformedClinicalResult;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.zip.DataFormatException;
 
 /**
- * @author Hugh Reinhart
- * @since 4/13/2009
+ * @author Kalpana Guthikonda
+ * @since 11/09/2009
  */
-public interface ServiceLocatorAccInterface {
+public class PerformedClinicalResultConverter extends PerformedObservationResultConverter {
 
+      
     /**
-     * @return search trial service
+     * Convert from domain to dto.
+     * @param bo the bo
+     * @return the performed clinical result dto
+     * @throws DataFormatException the data format exception
      */
-    SearchTrialService getSearchTrialService();
+    public static PerformedClinicalResultDto convertFromDomainToDto(PerformedClinicalResult bo)
+            throws DataFormatException {
+        PerformedClinicalResultDto dto = (PerformedClinicalResultDto)
+        PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedClinicalResultDto());
+        dto.setStageCodingSystem(CdConverter.convertStringToCd(bo.getStageCodingSystem()));
+        return dto;
+    }
+
+      
     /**
-     * @return search study site service
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed clinical result
+     * @throws DataFormatException the data format exception
      */
-    SearchStudySiteService getSearchStudySiteService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientService getPatientService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientServiceRemote getPOPatientService();
-    /**
-     * @return Submission domain service
-     */
-    SubmissionService getSubmissionService();
-    /**
-     * @return StudySubject domain service
-     */
-    StudySubjectService getStudySubjectService();
-    /**
-     * @return PerformedActivityService domain service
-     */
-    PerformedActivityService getPerformedActivityService();
-    /**
-     * @return CountryService
-     */
-    CountryService getCountryService();
-    /**
-     * @return PerformedObservationResultService domain service
-     */
-    PerformedObservationResultService getPerformedObservationResultService();
+    public static PerformedClinicalResult convertFromDtoToDomain(PerformedClinicalResultDto dto)
+            throws DataFormatException {
+        PerformedClinicalResult bo =  (PerformedClinicalResult) 
+        PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedClinicalResult());
+        if (!PAUtil.isCdNull(dto.getStageCodingSystem())) {
+            bo.setStageCodingSystem(dto.getStageCodingSystem().getCode());
+        }
+        return bo;
+    }
 }

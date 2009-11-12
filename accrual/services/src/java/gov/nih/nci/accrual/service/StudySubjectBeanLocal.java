@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,58 +76,79 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
 
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+package gov.nih.nci.accrual.service;
+
+import gov.nih.nci.accrual.convert.StudySubjectConverter;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author Hugh Reinhart
- * @since 4/13/2009
+ * @since Aug 29, 2009
  */
-public interface ServiceLocatorAccInterface {
+@Stateless
+@Interceptors(AccrualHibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class StudySubjectBeanLocal
+        extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
+        implements StudySubjectService {
 
     /**
-     * @return search trial service
+     * {@inheritDoc}
      */
-    SearchTrialService getSearchTrialService();
-    /**
-     * @return search study site service
-     */
-    SearchStudySiteService getSearchStudySiteService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientService getPatientService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientServiceRemote getPOPatientService();
-    /**
-     * @return Submission domain service
-     */
-    SubmissionService getSubmissionService();
-    /**
-     * @return StudySubject domain service
-     */
-    StudySubjectService getStudySubjectService();
-    /**
-     * @return PerformedActivityService domain service
-     */
-    PerformedActivityService getPerformedActivityService();
-    /**
-     * @return CountryService
-     */
-    CountryService getCountryService();
-    /**
-     * @return PerformedObservationResultService domain service
-     */
-    PerformedObservationResultService getPerformedObservationResultService();
+    @SuppressWarnings("unchecked")
+    public List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called getByStudySite() with Ii == null.");
+        }
+        getLogger().info("Entering getByStudySite().  ");
+
+        Session session = null;
+        List<StudySubject> queryList = new ArrayList<StudySubject>();
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select ssub "
+                       + "from StudySubject ssub "
+                       + "join ssub.studySite ssite "
+                       + "where ssite.id = :studySiteId "
+                       + "order by ssub.id ";
+            getLogger().info("query StudySubject = " + hql + ".");
+            query = session.createQuery(hql);
+            query.setParameter("studySiteId", IiConverter.convertToLong(ii));
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
+        }
+        ArrayList<StudySubjectDto> resultList = new ArrayList<StudySubjectDto>();
+        for (StudySubject bo : queryList) {
+            try {
+                resultList.add(convertFromDomainToDto(bo));
+            } catch (DataFormatException e) {
+                throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
+            }
+        }
+        getLogger().info("Leaving getByStudySite(), returning " + resultList.size() + " object(s).");
+        return resultList;
+    }
 }

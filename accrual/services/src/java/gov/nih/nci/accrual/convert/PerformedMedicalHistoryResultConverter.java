@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,58 +76,45 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
+import gov.nih.nci.pa.domain.PerformedMedicalHistoryResult;
+import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.util.zip.DataFormatException;
 
 /**
- * @author Hugh Reinhart
- * @since 4/13/2009
+ * @author Kalpana Guthikonda
+ * @since 11/09/2009
  */
-public interface ServiceLocatorAccInterface {
+public class PerformedMedicalHistoryResultConverter extends PerformedObservationResultConverter {
+
+   /**
+    * Convert from domain to dto.
+    * @param bo the bo
+    * @return the performed medical history result dto
+    * @throws DataFormatException the data format exception
+    */
+   public static PerformedMedicalHistoryResultDto convertFromDomainToDto(PerformedMedicalHistoryResult bo)
+            throws DataFormatException {
+        PerformedMedicalHistoryResultDto dto = (PerformedMedicalHistoryResultDto)
+        PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedMedicalHistoryResultDto());
+        dto.setDescription(StConverter.convertToSt(bo.getDescription()));
+        return dto;
+    }
 
     /**
-     * @return search trial service
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed medical history result
+     * @throws DataFormatException the data format exception
      */
-    SearchTrialService getSearchTrialService();
-    /**
-     * @return search study site service
-     */
-    SearchStudySiteService getSearchStudySiteService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientService getPatientService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientServiceRemote getPOPatientService();
-    /**
-     * @return Submission domain service
-     */
-    SubmissionService getSubmissionService();
-    /**
-     * @return StudySubject domain service
-     */
-    StudySubjectService getStudySubjectService();
-    /**
-     * @return PerformedActivityService domain service
-     */
-    PerformedActivityService getPerformedActivityService();
-    /**
-     * @return CountryService
-     */
-    CountryService getCountryService();
-    /**
-     * @return PerformedObservationResultService domain service
-     */
-    PerformedObservationResultService getPerformedObservationResultService();
+    public static PerformedMedicalHistoryResult convertFromDtoToDomain(PerformedMedicalHistoryResultDto dto)
+            throws DataFormatException {
+        PerformedMedicalHistoryResult bo = (PerformedMedicalHistoryResult)
+        PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedMedicalHistoryResult());
+        bo.setDescription(StConverter.convertToString(dto.getDescription()));
+        return bo;
+    }
 }

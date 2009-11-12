@@ -82,6 +82,8 @@ package gov.nih.nci.accrual.convert;
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
+"PMD.TooManyFields" })
 public class Converters {
 
     private static PerformedSubjectMilestoneConverter
@@ -89,6 +91,24 @@ public class Converters {
     private static StudySubjectConverter studySubjectConverter = new StudySubjectConverter();
     private static PatientConverter patientConverter = new PatientConverter();
     private static SubmissionConverter submissionConverter = new SubmissionConverter();
+    private static PerformedClinicalResultConverter pClinicalResultConverter = new PerformedClinicalResultConverter();
+    private static PerformedDiagnosisConverter pDiagnosisConverter = new PerformedDiagnosisConverter();
+    private static PerformedHistopathologyConverter pHistopathologyConverter = new PerformedHistopathologyConverter();
+    private static PerformedMedicalHistoryResultConverter pMedicalHistoryResultConverter = new 
+    PerformedMedicalHistoryResultConverter();
+    private static PerformedImageConverter pImageConverter = new PerformedImageConverter();
+    private static PerformedLesionDescriptionConverter pLesionDescriptionConverter = new 
+    PerformedLesionDescriptionConverter();
+    private static PerformedObservationResultConverter pObservationResultConverter = new 
+    PerformedObservationResultConverter();
+    private static PerformedActivityConverter performedActivityConverter = new PerformedActivityConverter();
+    private static PerformedObservationConverter pObservationConverter = new PerformedObservationConverter();
+    private static PerformedImagingConverter pImagingConverter = new PerformedImagingConverter();
+    private static PerformedProcedureConverter pProcedureConverter = new PerformedProcedureConverter();
+    private static PerformedSubjectMilestoneConverter pSubjectMilestoneConverter = new 
+    PerformedSubjectMilestoneConverter();
+    private static PerformedRadiationAdministrationConverter pRadiationAdministrationConverter = new
+    PerformedRadiationAdministrationConverter();
 
     /**
      * @param clazz class
@@ -105,6 +125,32 @@ public class Converters {
             return (CONV) patientConverter;
         } else if (clazz.equals(SubmissionConverter.class)) {
             return (CONV) submissionConverter;
+        } else if (clazz.equals(PerformedClinicalResultConverter.class)) {
+            return (CONV) pClinicalResultConverter;
+        } else if (clazz.equals(PerformedDiagnosisConverter.class)) {
+            return (CONV) pDiagnosisConverter;
+        } else if (clazz.equals(PerformedHistopathologyConverter.class)) {
+            return (CONV) pHistopathologyConverter;
+        } else if (clazz.equals(PerformedMedicalHistoryResultConverter.class)) {
+            return (CONV) pMedicalHistoryResultConverter;
+        } else if (clazz.equals(PerformedImageConverter.class)) {
+            return (CONV) pImageConverter;
+        } else if (clazz.equals(PerformedLesionDescriptionConverter.class)) {
+            return (CONV) pLesionDescriptionConverter;
+        } else if (clazz.equals(PerformedObservationConverter.class)) {
+            return (CONV) pObservationResultConverter;
+        } else if (clazz.equals(PerformedActivityConverter.class)) {
+            return (CONV) performedActivityConverter;
+        } else if (clazz.equals(PerformedObservationConverter.class)) {
+            return (CONV) pObservationConverter;
+        } else if (clazz.equals(PerformedImagingConverter.class)) {
+            return (CONV) pImagingConverter;
+        } else if (clazz.equals(PerformedProcedureConverter.class)) {
+            return (CONV) pProcedureConverter;
+        } else if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
+            return (CONV) pSubjectMilestoneConverter;
+        } else if (clazz.equals(PerformedRadiationAdministrationConverter.class)) {
+            return (CONV) pRadiationAdministrationConverter;
         }
         return null;
     }

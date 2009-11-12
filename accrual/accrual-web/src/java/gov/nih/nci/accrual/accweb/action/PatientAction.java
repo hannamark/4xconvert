@@ -244,7 +244,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         ssub.setPatientIdentifier(pat.getIdentifier());
         ssub = studySubjectSvc.create(ssub);
         psm.setStudySubjectIdentifier(ssub.getIdentifier());
-        performedSubjectMilestoneSvc.create(psm);
+        performedActivitySvc.create(psm);
         return super.add();
     }
 
@@ -423,7 +423,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private PerformedSubjectMilestoneDto getRegistrationDate(StudySubjectDto sub) {
         List<PerformedSubjectMilestoneDto> smList;
         try {
-            smList = performedSubjectMilestoneSvc.getByStudySubject(sub.getIdentifier());
+            smList = performedActivitySvc.getByStudySubject(sub.getIdentifier());
         } catch (RemoteException e) {
             LOG.error("Error in PatientAction.getRegistrationDate().", e);
             return null;
@@ -440,13 +440,13 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private void setRegistrationDate(PerformedSubjectMilestoneDto dto) throws RemoteException {
         if (!PAUtil.isTsNull(dto.getRegistrationDate())) {
             if (!PAUtil.isIiNull(dto.getIdentifier())) {
-                performedSubjectMilestoneSvc.update(dto);
+                performedActivitySvc.update(dto);
             } else {
-                performedSubjectMilestoneSvc.create(dto);
+                performedActivitySvc.create(dto);
             }
         } else {
             if (!PAUtil.isIiNull(dto.getIdentifier())) {
-                performedSubjectMilestoneSvc.delete(dto.getIdentifier());
+                performedActivitySvc.delete(dto.getIdentifier());
             }
         }
     }

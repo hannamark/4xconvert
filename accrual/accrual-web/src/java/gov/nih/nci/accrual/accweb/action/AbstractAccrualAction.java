@@ -76,8 +76,12 @@
 */
 package gov.nih.nci.accrual.accweb.action;
 
+import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import gov.nih.nci.accrual.accweb.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.accweb.util.PaServiceLocator;
 import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -85,9 +89,6 @@ import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.PatientServiceRemote;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.accweb.util.AccrualConstants;
-import gov.nih.nci.accrual.accweb.util.AccrualServiceLocator;
-import gov.nih.nci.accrual.accweb.util.PaServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -125,8 +126,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected StudySubjectService studySubjectSvc;
     /** PatientService. */
     protected PatientService patientSvc;
-    /** PerformedSubjectMilestoneService. */
-    protected PerformedSubjectMilestoneService performedSubjectMilestoneSvc;
+    /** PerformedActivityService. */
+    protected PerformedActivityService performedActivitySvc;
     /** CountryService. */
     protected CountryService countrySvc;
     /** DiseaseService. */
@@ -137,6 +138,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected PatientServiceRemote patientCorrelationSvc;
     /** DiseaseService. */
     protected DiseaseParentServiceRemote diseaseParentSvc;
+    /** PerformedObservationResultService. */
+    protected PerformedObservationResultService porServiceSvc;
 
     /**
      * {@inheritDoc}
@@ -147,13 +150,13 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
         studySubjectSvc = AccrualServiceLocator.getInstance().getStudySubjectService();
         patientSvc = AccrualServiceLocator.getInstance().getPatientService();
-        performedSubjectMilestoneSvc = AccrualServiceLocator.getInstance().
-                getPerformedSubjectMilestoneService();
+        performedActivitySvc = AccrualServiceLocator.getInstance().getPerformedActivityService();
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         patientCorrelationSvc = AccrualServiceLocator.getInstance().getPOPatientService();
         diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
+        porServiceSvc = AccrualServiceLocator.getInstance().getPerformedObservationResultService();
     }
     /**
      * Default execute method for action classes.

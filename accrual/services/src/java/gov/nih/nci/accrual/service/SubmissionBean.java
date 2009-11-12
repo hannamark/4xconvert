@@ -79,19 +79,15 @@
 
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.convert.SubmissionConverter;
-import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.Submission;
-import gov.nih.nci.pa.util.PAUtil;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Hugh Reinhart
@@ -99,48 +95,10 @@ import javax.interceptor.Interceptors;
  */
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
 public class SubmissionBean
-        extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
-        implements SubmissionService {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<SubmissionDto> getByStudyProtocol(Ii ii) throws RemoteException {
-        List<SubmissionDto> temp = super.getByStudyProtocol(ii);
-        List<SubmissionDto> result = new ArrayList<SubmissionDto>();
-        for (int x = temp.size() - 1; x >= 0; x--) {
-            result.add(temp.get(x));
-        }
-        return result;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SubmissionDto create(SubmissionDto dto) throws RemoteException {
-        checkSubmissionDtoFields(dto);
-        return super.create(dto);
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SubmissionDto update(SubmissionDto dto) throws RemoteException {
-        checkSubmissionDtoFields(dto);
-        return super.update(dto);
-    }
-
-    private void checkSubmissionDtoFields(SubmissionDto dto) throws RemoteException {
-        if (PAUtil.isStNull(dto.getLabel())) {
-            throw new RemoteException("Submission title is required.");
-        }
-        if (PAUtil.isTsNull(dto.getCutOffDate())) {
-            throw new RemoteException("Cut off date is required.");
-        }
-        if (PAUtil.isStNull(dto.getDescription())) {
-            throw new RemoteException("Description is required.");
-        }
-    }
+        extends SubmissionBeanLocal implements SubmissionService {
+    
 }

@@ -76,7 +76,8 @@
 */
 package gov.nih.nci.accrual.accweb.util;
 
-import gov.nih.nci.accrual.service.PerformedSubjectMilestoneService;
+import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -96,8 +97,10 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final CountryService countryService = new MockCountryBean();
     private final StudySubjectService studySubjectService = new MockStudySubjectBean();
     private final PatientService patientService = new MockPatientBean();
-    private final PerformedSubjectMilestoneService psmService = new MockPerfomedSubjectMilestoneBean();
+    private final PerformedActivityService psmService = new MockPerformedActivityBean();
     private final PatientServiceRemote poPatientService = new MockPaPatientServiceBean();
+    private final PerformedObservationResultService porService = new MockPerformedObservationResultBean();
+    
     /**
      * {@inheritDoc}
      */
@@ -119,7 +122,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     /**
      * {@inheritDoc}
      */
-    public PerformedSubjectMilestoneService getPerformedSubjectMilestoneService() {
+    public PerformedActivityService getPerformedActivityService() {
         return psmService;
     }
     /**
@@ -140,8 +143,16 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     public CountryService getCountryService() {
         return countryService;
     }
+    /**
+     * {@inheritDoc}
+     */
     public PatientServiceRemote getPOPatientService() {
-        // TODO Auto-generated method stub
-        return null;
+        return poPatientService;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public PerformedObservationResultService getPerformedObservationResultService() {
+        return porService;
     }
 }

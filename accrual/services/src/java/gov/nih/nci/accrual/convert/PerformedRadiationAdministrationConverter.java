@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -76,58 +76,119 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.zip.DataFormatException;
 
 /**
- * @author Hugh Reinhart
- * @since 4/13/2009
+ * @author Kalpana Guthikonda
+ * @since 11/10/2009
  */
-public interface ServiceLocatorAccInterface {
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
+public class PerformedRadiationAdministrationConverter extends PerformedSubstanceAdministrationConverter {
 
     /**
-     * @return search trial service
+     * Convert from domain to dto.
+     * @param bo the bo
+     * @return the performed radiation administration dto
+     * @throws DataFormatException the data format exception
      */
-    SearchTrialService getSearchTrialService();
+    public static PerformedRadiationAdministrationDto convertFromDomainToDto(PerformedRadiationAdministration bo)
+            throws DataFormatException {
+        PerformedRadiationAdministrationDto dto = (PerformedRadiationAdministrationDto)
+        PerformedSubstanceAdministrationConverter.convertFromDomainToDTO(bo, new PerformedRadiationAdministrationDto());
+        Pq dose  = new Pq();
+        dose.setValue(bo.getDoseValue());
+        if (bo.getDoseUnit() != null) {
+            dose.setUnit(bo.getDoseUnit());
+        }
+        dto.setDose(dose);
+        dto.setDoseDescription(StConverter.convertToSt(bo.getDoseDescription()));
+        dto.setDoseFormCode(CdConverter.convertStringToCd(bo.getDoseFormCode()));
+        dto.setDoseFrequencyCode(CdConverter.convertStringToCd(bo.getDoseFrequencyCode()));
+        dto.setDoseRegimen(StConverter.convertToSt(bo.getDoseRegimen()));
+        
+        Pq doseTotal  = new Pq();
+        doseTotal.setValue(bo.getDoseTotalValue());
+        if (bo.getDoseTotalUnit() != null) {
+            doseTotal.setUnit(bo.getDoseTotalUnit());
+        }
+        dto.setDoseTotal(doseTotal);
+        dto.setRouteOfAdministrationCode(CdConverter.convertStringToCd(bo.getRouteOfAdministrationCode()));
+        
+        Pq doseDuration = new Pq();
+        doseDuration.setValue(bo.getDoseDurationValue());
+        if (bo.getDoseDurationUnit() != null) {
+            doseDuration.setUnit(bo.getDoseDurationUnit());
+        }
+        dto.setDoseDuration(doseDuration);
+        dto.setDoseModificationType(CdConverter.convertStringToCd(bo.getDoseModificationType()));
+        dto.setMachineTypeCode(CdConverter.convertStringToCd(bo.getMachineTypeCode()));
+        return dto;
+    }
+
     /**
-     * @return search study site service
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed radiation administration
+     * @throws DataFormatException the data format exception
      */
-    SearchStudySiteService getSearchStudySiteService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientService getPatientService();
-    /**
-     * @return Patient correlation service
-     */
-    PatientServiceRemote getPOPatientService();
-    /**
-     * @return Submission domain service
-     */
-    SubmissionService getSubmissionService();
-    /**
-     * @return StudySubject domain service
-     */
-    StudySubjectService getStudySubjectService();
-    /**
-     * @return PerformedActivityService domain service
-     */
-    PerformedActivityService getPerformedActivityService();
-    /**
-     * @return CountryService
-     */
-    CountryService getCountryService();
-    /**
-     * @return PerformedObservationResultService domain service
-     */
-    PerformedObservationResultService getPerformedObservationResultService();
+    public static PerformedRadiationAdministration convertFromDtoToDomain(PerformedRadiationAdministrationDto dto)
+            throws DataFormatException {
+        PerformedRadiationAdministration bo = (PerformedRadiationAdministration)
+        PerformedSubstanceAdministrationConverter.convertFromDTOToDomain(dto , new PerformedRadiationAdministration());
+        if (!PAUtil.isStNull(dto.getDoseDescription())) {
+            bo.setDoseDescription(StConverter.convertToString(dto.getDoseDescription()));
+        }
+        if (!PAUtil.isStNull(dto.getDoseRegimen())) {
+            bo.setDoseRegimen(StConverter.convertToString(dto.getDoseRegimen()));
+        } 
+        if (!PAUtil.isCdNull(dto.getDoseFormCode())) {
+            bo.setDoseFormCode(CdConverter.convertCdToString(dto.getDoseFormCode()));
+        }
+        if (!PAUtil.isCdNull(dto.getDoseFrequencyCode())) {
+            bo.setDoseFrequencyCode(CdConverter.convertCdToString(dto.getDoseFrequencyCode())); 
+        }
+        if (!PAUtil.isCdNull(dto.getRouteOfAdministrationCode())) {
+            bo.setRouteOfAdministrationCode(CdConverter.convertCdToString(dto.getRouteOfAdministrationCode()));
+        } 
+        if (!PAUtil.isCdNull(dto.getDoseModificationType())) {
+            bo.setDoseModificationType(CdConverter.convertCdToString(dto.getDoseModificationType()));
+        }
+        if (dto.getDose() != null) {   
+            if (!PAUtil.isPqValueNull(dto.getDose())) {
+                bo.setDoseValue(dto.getDose().getValue());
+            }
+            if (!PAUtil.isPqValueNull(dto.getDose())) {
+                bo.setDoseUnit(dto.getDose().getUnit());
+            }
+        }
+        if (dto.getDoseTotal() != null) {
+            if (!PAUtil.isPqValueNull(dto.getDoseTotal())) {
+                bo.setDoseTotalValue(dto.getDoseTotal().getValue());
+            }
+            if (!PAUtil.isPqUnitNull(dto.getDoseTotal())) {
+                bo.setDoseTotalUnit(dto.getDoseTotal().getUnit());    
+            }
+        }
+        if (dto.getDoseDuration() != null) {
+            if (!PAUtil.isPqValueNull(dto.getDoseDuration())) {
+                bo.setDoseDurationValue(dto.getDoseDuration().getValue());
+            }
+            if (!PAUtil.isPqUnitNull(dto.getDoseDuration())) {
+                bo.setDoseDurationUnit(dto.getDoseDuration().getUnit());
+            }
+        }
+        if (!PAUtil.isCdNull(dto.getMachineTypeCode())) {
+            bo.setMachineTypeCode(dto.getMachineTypeCode().getCode());
+        }
+        return bo;
+    }
 }

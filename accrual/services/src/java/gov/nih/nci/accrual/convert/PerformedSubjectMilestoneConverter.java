@@ -80,16 +80,7 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -97,55 +88,35 @@ import java.util.zip.DataFormatException;
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
-@SuppressWarnings("PMD")
-public class PerformedSubjectMilestoneConverter extends AbstractConverter
-        <PerformedSubjectMilestoneDto, PerformedSubjectMilestone> {
+public class PerformedSubjectMilestoneConverter extends PerformedActivityConverter {
 
     /**
-     * {@inheritDoc}
+     * Convert from domain to dto.
+     * @param bo the bo
+     * @return the performed subject milestone dto
+     * @throws DataFormatException the data format exception
      */
-    @Override
-    public PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo)
+    public static PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo)
             throws DataFormatException {
-        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
-        dto.setActualDateRange(IvlConverter.convertTs().convertToIvl(bo.getActualDateRangeLow(),
-                bo.getActualDateRangeHigh()));
-        dto.setCategoryCode(CdConverter.convertToCd(bo.getCategoryCode()));
-        dto.setIdentifier(IiConverter.convertToActivityIi(bo.getId()));
+        PerformedSubjectMilestoneDto dto = (PerformedSubjectMilestoneDto)
+        PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedSubjectMilestoneDto());
         dto.setInformedConsentDate(TsConverter.convertToTs(bo.getInformedConsentDate()));
         dto.setRegistrationDate(TsConverter.convertToTs(bo.getRegistrationDate()));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
-                bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
-        dto.setStudySubjectIdentifier(IiConverter.convertToIi(
-                bo.getStudySubject() == null ? null : bo.getStudySubject().getId()));
-        dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
-        dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         return dto;
     }
 
     /**
-     * {@inheritDoc}
+     * Convert from dto to domain.
+     * @param dto the dto
+     * @return the performed subject milestone
+     * @throws DataFormatException the data format exception
      */
-    @Override
-    public PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto)
+    public static PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto)
             throws DataFormatException {
-        PerformedSubjectMilestone bo = new PerformedSubjectMilestone();
-        if (dto.getActualDateRange() != null) {
-            bo.setActualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getActualDateRange()));
-            bo.setActualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getActualDateRange()));
-        }
-        if (!PAUtil.isCdNull(dto.getCategoryCode())) {
-            bo.setCategoryCode(ActivityCategoryCode.getByCode(dto.getCategoryCode().getCode()));
-        }
-        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        PerformedSubjectMilestone bo = (PerformedSubjectMilestone)
+        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedSubjectMilestone());      
         bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));
         bo.setRegistrationDate(TsConverter.convertToTimestamp(dto.getRegistrationDate()));
-        bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
-        bo.setStudySubject(fKeySetter(StudySubject.class, dto.getStudySubjectIdentifier()));
-        if (!PAUtil.isCdNull(dto.getSubcategoryCode())) {
-            bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
-        }
-        bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         return bo;
     }
 }
