@@ -88,7 +88,8 @@ import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.PQTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLPQTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -123,8 +124,11 @@ public final class PlannedEligibilityCriterionTransformer
         result.setStudyProtocolIdentifier((IITransformer.INSTANCE
                 .toDto(input.getStudyProtocolIdentifier())));
 
-        //PQ
-        result.setValue((PQTransformer.INSTANCE.toDto(input.getValue())));
+        // INT
+        result.setDisplayOrder(INTTransformer.INSTANCE.toDto(input.getDisplayOrder()));
+        
+        //IVL-PQ
+        result.setValue((IVLPQTransformer.INSTANCE.toDto(input.getValue())));
 
         //ST
         result.setTextDescription((STTransformer.INSTANCE.toDto(input.getTextDescription())));
@@ -159,8 +163,11 @@ public final class PlannedEligibilityCriterionTransformer
         result.setStudyProtocolIdentifier((IITransformer.INSTANCE
                 .toXml(input.getStudyProtocolIdentifier())));
 
-        //PQ
-        result.setValue((PQTransformer.INSTANCE.toXml(input.getValue())));
+        // INT
+        result.setDisplayOrder((INTTransformer.INSTANCE.toXml(input.getDisplayOrder())));
+        
+        //IVL PQ
+        result.setValue((IVLPQTransformer.INSTANCE.toXml(input.getValue())));
 
         //ST
         result.setTextDescription((STTransformer.INSTANCE.toXml(input.getTextDescription())));

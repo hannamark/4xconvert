@@ -410,10 +410,10 @@
                 </sequence>
               </complexType>
             </element>
-            <element name="studySiteOverallStatus">
+            <element name="studySiteAccrualStatus">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySiteOverallStatus" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>

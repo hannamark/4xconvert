@@ -246,8 +246,9 @@
                         <xs:element name="inclusionIndicator" type="ISO:BL" />
                         <xs:element name="criterionName" type="ISO:ST" />
                         <xs:element name="operator" type="ISO:ST" />
-                        <xs:element name="value" type="ISO:PQ" />
+                        <xs:element name="value" type="ISO:IVL_PQ" />
                         <xs:element name="eligibleGenderCode" type="ISO:CD" />
+                        <xs:element name="displayOrder" type="ISO:INT" />
                     </xs:sequence>
                 </xs:extension>
             </xs:complexContent>

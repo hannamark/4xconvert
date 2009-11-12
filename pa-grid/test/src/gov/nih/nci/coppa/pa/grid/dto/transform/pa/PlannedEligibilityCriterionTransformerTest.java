@@ -86,7 +86,8 @@ import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.PQTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLPQTransformerTest;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.PlannedEligibilityCriterionTransformer;
@@ -103,6 +104,9 @@ public class PlannedEligibilityCriterionTransformerTest
         result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
         result.setInterventionIdentifier(new IITransformerTest().makeDtoSimple());
 
+        // INT 
+        result.setDisplayOrder(new INTTransformerTest().makeDtoSimple());
+        
         //ST
         result.setTextDescription(new STTransformerTest().makeDtoSimple());
         result.setCriterionName(new STTransformerTest().makeDtoSimple());
@@ -117,8 +121,8 @@ public class PlannedEligibilityCriterionTransformerTest
         result.setSubcategoryCode(new CDTransformerTest().makeDtoSimple());
         result.setEligibleGenderCode(new CDTransformerTest().makeDtoSimple());
 
-        //PQ
-        result.setValue(new PQTransformerTest().makeDtoSimple());
+        //IVL PQ
+        result.setValue(new IVLPQTransformerTest().makeDtoSimple());
 
         return result;
     }
@@ -131,6 +135,9 @@ public class PlannedEligibilityCriterionTransformerTest
         result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
         result.setInterventionIdentifier(new IITransformerTest().makeXmlSimple());
 
+        // INT
+        result.setDisplayOrder(new INTTransformerTest().makeXmlSimple());
+        
         //ST
         result.setTextDescription(new STTransformerTest().makeXmlSimple());
         result.setCriterionName(new STTransformerTest().makeXmlSimple());
@@ -145,8 +152,8 @@ public class PlannedEligibilityCriterionTransformerTest
         result.setSubcategoryCode(new CDTransformerTest().makeXmlSimple());
         result.setEligibleGenderCode(new CDTransformerTest().makeXmlSimple());
 
-        //PQ
-        result.setValue(new PQTransformerTest().makeXmlSimple());
+        //IVL PQ
+        result.setValue(new IVLPQTransformerTest().makeXmlSimple());
         return result;
     }
 
@@ -158,12 +165,13 @@ public class PlannedEligibilityCriterionTransformerTest
         new STTransformerTest().verifyDtoSimple(x.getTextDescription());
         new STTransformerTest().verifyDtoSimple(x.getCriterionName());
         new STTransformerTest().verifyDtoSimple(x.getOperator());
+        new INTTransformerTest().verifyDtoSimple(x.getDisplayOrder());
         new BLTransformerTest().verifyDtoSimple(x.getLeadProductIndicator());
         new BLTransformerTest().verifyDtoSimple(x.getInclusionIndicator());
         new CDTransformerTest().verifyDtoSimple(x.getCategoryCode());
         new CDTransformerTest().verifyDtoSimple(x.getSubcategoryCode());
         new CDTransformerTest().verifyDtoSimple(x.getEligibleGenderCode());
-        new PQTransformerTest().verifyDtoSimple(x.getValue());
+        new IVLPQTransformerTest().verifyDtoSimple(x.getValue());
     }
 
     @Override
@@ -174,11 +182,12 @@ public class PlannedEligibilityCriterionTransformerTest
         new STTransformerTest().verifyXmlSimple(x.getTextDescription());
         new STTransformerTest().verifyXmlSimple(x.getCriterionName());
         new STTransformerTest().verifyXmlSimple(x.getOperator());
+        new INTTransformerTest().verifyXmlSimple(x.getDisplayOrder());
         new BLTransformerTest().verifyXmlSimple(x.getLeadProductIndicator());
         new BLTransformerTest().verifyXmlSimple(x.getInclusionIndicator());
         new CDTransformerTest().verifyXmlSimple(x.getCategoryCode());
         new CDTransformerTest().verifyXmlSimple(x.getSubcategoryCode());
         new CDTransformerTest().verifyXmlSimple(x.getEligibleGenderCode());
-        new PQTransformerTest().verifyXmlSimple(x.getValue());
+        new IVLPQTransformerTest().verifyXmlSimple(x.getValue());
     }
 }

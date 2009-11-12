@@ -96,7 +96,6 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteOverallStatusDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -143,7 +142,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      */
     // CHECKSTYLE:OFF
     public Ii createProprietaryInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
-            StudySiteOverallStatusDTO studySiteOverallStatusDTO, List<DocumentDTO> documentDTOs,
+            StudySiteAccrualStatusDTO studySiteOverallStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
@@ -151,13 +150,15 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         // CHECKSTYLE:ON
 
         try {
-            return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
-                    .createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteOverallStatusDTO,
-                            documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
-                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
-                            summary4StudyResourcingDTO, isBatch);
-        } catch (PAException pae) {
-            throw pae;
+            Ii ii = null;
+            return ii;
+//            return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
+//                    .createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteOverallStatusDTO,
+//                            documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
+//                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
+//                            summary4StudyResourcingDTO, isBatch);
+//        } catch (PAException pae) {
+//            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }

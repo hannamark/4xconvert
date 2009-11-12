@@ -4,6 +4,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.PlannedProcedureDTO;
+import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
@@ -126,6 +128,77 @@ public class InvokePlannedActivityEjb extends InvokeStudyPaServiceEjb<PlannedAct
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO arg0)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(
+            PlannedSubstanceAdministrationDTO arg0) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedProcedureDTO getPlannedProcedure(Ii arg0) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii arg0)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(
+            Ii arg0) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(
+            Ii arg0) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO arg0)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(
+            PlannedSubstanceAdministrationDTO arg0) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

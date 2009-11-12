@@ -158,11 +158,12 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteOverallStatus studySiteOverallStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             StudyProtocolDTO studyProtocolDTO = InterventionalStudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
-            StudySiteOverallStatusDTO studySiteOverallStatusDTO =
-                    StudySiteOverallStatusTransformer.INSTANCE.toDto(studySiteOverallStatus);
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO =
+                StudySiteAccrualStatusTransformer.INSTANCE.toDto(studySiteAccrualStatus);
+
             List<DocumentDTO> documentDTOs = DocumentTransformer.INSTANCE.convert(documents);
             OrganizationDTO leadOrganizationDTO = OrganizationTransformer.INSTANCE.toDto(leadOrganization);
             PersonDTO studySiteInvestigatorDTO = PersonTransformer.INSTANCE.toDto(studySiteInvestigator);
@@ -175,7 +176,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
-            Ii ii = service.createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteOverallStatusDTO,
+            Ii ii = service.createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                             studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
                             summary4studyResourcingDTO, isBatch);

@@ -13,7 +13,6 @@ import gov.nih.nci.coppa.services.pa.StudyResourcing;
 import gov.nih.nci.coppa.services.pa.StudySite;
 import gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus;
 import gov.nih.nci.coppa.services.pa.StudySiteContact;
-import gov.nih.nci.coppa.services.pa.StudySiteOverallStatus;
 import gov.nih.nci.coppa.services.pa.grid.ISOUtils;
 import gov.nih.nci.coppa.services.pa.trialregistrationservice.common.TrialRegistrationServiceI;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -49,6 +48,9 @@ import org.iso._21090.TS;
  */
 public class TrialRegistrationServiceClient extends TrialRegistrationServiceClientBase implements TrialRegistrationServiceI {
 
+    private static II organizationIi = new II();
+    private static II personIi = new II();
+    
     public TrialRegistrationServiceClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
@@ -71,6 +73,12 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
+        // change this as per your db
+        organizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
+        organizationIi.setExtension("584");
+        personIi.setRoot("2.16.840.1.113883.3.26.4.1");
+        personIi.setExtension("2829");
+        
         try{
         if(!(args.length < 2)){
             if(args[0].equals("-url")){
@@ -117,7 +125,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("namiruddin@scenpro.com"));
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
@@ -134,22 +142,13 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Document[] document = new Document[] {d};
 
         Organization leadOrganization = new Organization();
-        II leadOrgIi = new II();
-        leadOrgIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        leadOrgIi.setExtension("574");
-        leadOrganization.setIdentifier(leadOrgIi);
+        leadOrganization.setIdentifier(organizationIi);
 
         Person principalInvestigator = new Person();
-        II principalInvestigatorIi = new II();
-        principalInvestigatorIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        principalInvestigatorIi.setExtension("531");
-        principalInvestigator.setIdentifier(principalInvestigatorIi);
+        principalInvestigator.setIdentifier(personIi);
 
         Organization sponsorOrganization = new Organization();
-        II sponsorOrganizationIi = new II();
-        sponsorOrganizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        sponsorOrganizationIi.setExtension("574");
-        sponsorOrganization.setIdentifier(sponsorOrganizationIi);
+        sponsorOrganization.setIdentifier(organizationIi);
 
         StudySite leadOrganizationSiteIdentifier = new StudySite();
         ST localStudyProtocolIdentifier = new ST();
@@ -170,6 +169,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
         StudySiteContact studySiteContact = null;
         Organization summaryForOrganization = new Organization();
+        summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
         Id responsiblePartyContact = new Id();
 
@@ -202,7 +202,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("ejbclient"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("namiruddin@scenpro.com"));
 
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
@@ -234,6 +234,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         StudySiteContact studyParticipationContact = null;
 
         Organization summaryForOrganization = new Organization();
+        summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
         Id responsiblePartyContact = new Id();
 
@@ -271,7 +272,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
-        studyProtocol.setUserLastCreated(ISOUtils.buildST("ejbclient"));
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("namiruddin@scenpro.com"));
 
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
@@ -289,22 +290,13 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Document[] document = new Document[] {d};
 
         Organization leadOrganization = new Organization();
-        II leadOrgIi = new II();
-        leadOrgIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        leadOrgIi.setExtension("574");
-        leadOrganization.setIdentifier(leadOrgIi);
+        leadOrganization.setIdentifier(organizationIi);
 
         Person principalInvestigator = new Person();
-        II principalInvestigatorIi = new II();
-        principalInvestigatorIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        principalInvestigatorIi.setExtension("531");
-        principalInvestigator.setIdentifier(principalInvestigatorIi);
+        principalInvestigator.setIdentifier(personIi);
 
         Organization sponsorOrganization = new Organization();
-        II sponsorOrganizationIi = new II();
-        sponsorOrganizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        sponsorOrganizationIi.setExtension("574");
-        sponsorOrganization.setIdentifier(sponsorOrganizationIi);
+        sponsorOrganization.setIdentifier(organizationIi);
 
         StudySite leadOrganizationSiteIdentifier = new StudySite();
         leadOrganizationSiteIdentifier.setLocalStudyProtocolIdentifier(ISOUtils.buildST("localStudyProtocolIdentifier"));
@@ -322,7 +314,9 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
         StudySiteContact studySiteContact = null;
         Organization summaryForOrganization = new Organization();
+        summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
+        
         Id responsiblePartyContact = new Id();
 
         client.amendInterventionalStudyProtocol(studyProtocol, studyOverallStatus, studyIndlde, studyResourcing,
@@ -349,12 +343,13 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("namiruddin@scenpro.com"));
 
-        StudySiteOverallStatus studySiteOverallStatus = new StudySiteOverallStatus();
-        studySiteOverallStatus.setStatusDate(pastDate);
-        CD studySiteOverallStatusCode = new CD();
-        studySiteOverallStatusCode.setCode(StudyStatusCode.ACTIVE.getCode());
-        studySiteOverallStatus.setStatusCode(studySiteOverallStatusCode);
+        StudySiteAccrualStatus studySiteAccrualStatus = new StudySiteAccrualStatus();
+        studySiteAccrualStatus.setStatusDate(pastDate);
+        CD studySiteAccrualStatusCode = new CD();
+        studySiteAccrualStatusCode.setCode(StudyStatusCode.ACTIVE.getCode());
+        studySiteAccrualStatus.setStatusCode(studySiteAccrualStatusCode);
 
         Document d = new Document();
         d.setFileName(ISOUtils.buildST("empty.doc"));
@@ -363,25 +358,16 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Document[] document = new Document[] {d};
 
         Organization leadOrganization = new Organization();
-        II leadOrgIi = new II();
-        leadOrgIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        leadOrgIi.setExtension("574");
-        leadOrganization.setIdentifier(leadOrgIi);
+        leadOrganization.setIdentifier(organizationIi);
 
         Person studySiteInvestigator = new Person();
-        II studySiteInvestigatorIi = new II();
-        studySiteInvestigatorIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        studySiteInvestigatorIi.setExtension("531");
-        studySiteInvestigator.setIdentifier(studySiteInvestigatorIi);
+        studySiteInvestigator.setIdentifier(personIi);
 
         StudySite leadOrganizationStudySite = new StudySite();
         leadOrganizationStudySite.setLocalStudyProtocolIdentifier(ISOUtils.buildST("createProprietaryInterventionalStudyProtocolLocalStudyProtocolIdentifier"));
 
         Organization studySiteOrganization = new Organization();
-        II studySiteOrganizationIi = new II();
-        studySiteOrganizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        studySiteOrganizationIi.setExtension("574");
-        studySiteOrganization.setIdentifier(studySiteOrganizationIi);
+        studySiteOrganization.setIdentifier(organizationIi);
 
         StudySite studySite = new StudySite();
         studySite.setLocalStudyProtocolIdentifier(ISOUtils.buildST("createProprietaryInterventionalStudyProtocolStudySiteLocalStudyProtocolIdentifier"));
@@ -389,9 +375,10 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         StudySite nctIdentifier = new StudySite();
 
         Organization summaryForOrganization = new Organization();
+        summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
 
-        client.createProprietaryInterventionalStudyProtocol(studyProtocol, studySiteOverallStatus, document,
+        client.createProprietaryInterventionalStudyProtocol(studyProtocol, studySiteAccrualStatus, document,
                 leadOrganization, studySiteInvestigator, leadOrganizationStudySite, studySiteOrganization, studySite,
                 nctIdentifier, summaryForOrganization, summaryForStudyResourcing);
     }
@@ -557,16 +544,16 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteOverallStatus studySiteOverallStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Id createProprietaryInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summaryForOrganization,gov.nih.nci.coppa.services.pa.StudyResourcing summaryForStudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createProprietaryInterventionalStudyProtocol");
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequest();
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudyProtocol studyProtocolContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudyProtocol();
     studyProtocolContainer.setInterventionalStudyProtocol(studyProtocol);
     params.setStudyProtocol(studyProtocolContainer);
-    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudySiteOverallStatus studySiteOverallStatusContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudySiteOverallStatus();
-    studySiteOverallStatusContainer.setStudySiteOverallStatus(studySiteOverallStatus);
-    params.setStudySiteOverallStatus(studySiteOverallStatusContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudySiteAccrualStatus studySiteAccrualStatusContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestStudySiteAccrualStatus();
+    studySiteAccrualStatusContainer.setStudySiteAccrualStatus(studySiteAccrualStatus);
+    params.setStudySiteAccrualStatus(studySiteAccrualStatusContainer);
     gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestDocuments documentsContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.CreateProprietaryInterventionalStudyProtocolRequestDocuments();
     documentsContainer.setDocument(documents);
     params.setDocuments(documentsContainer);
