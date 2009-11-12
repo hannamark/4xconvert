@@ -12,6 +12,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -148,12 +149,18 @@ public class StudyMilestoneBeanLocal
          throw new PAException("The milestone '" + newCode.getCode()
                  + "' cannot be recorded if there is an active on-hold record.");
      }
-     if (!newCode.isAllowedIfInBox()
-             && PAUtil.isListNotEmpty(studyInboxService.getByStudyProtocol(dto.getStudyProtocolIdentifier()))) {
-         throw new PAException("The milestone '" + newCode.getCode()
-                 + "' cannot be recorded if there is an active In box record.");
+     if (!newCode.isAllowedIfInBox()) {
+         List<StudyInboxDTO> listInboxDTO = studyInboxService.getByStudyProtocol(dto.getStudyProtocolIdentifier());
+         if (PAUtil.isListNotEmpty(listInboxDTO)) {
+             for (StudyInboxDTO inboxDto : listInboxDTO) {
+                 String strCloseDate = IvlConverter.convertTs().convertHighToString(inboxDto.getInboxDateRange());
+                 if (PAUtil.isEmpty(strCloseDate)) {
+                     throw new PAException("The milestone '" + newCode.getCode()
+                             + "' cannot be recorded if there is an active In box record.");
+                 }
+             }
+         }
      }
-
      // date rules
      if (newDate.after(new Timestamp(new Date().getTime()))) {
          throw new PAException("Milestone dates may not be in the future.");
