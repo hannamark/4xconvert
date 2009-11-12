@@ -82,6 +82,11 @@
  */
 package gov.nih.nci.coppa.iso;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -93,32 +98,10 @@ public class Ed extends Any implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    private String charset;
     private Compression compression;
     private byte[] data;
-    private St description;
-    private byte[] integrityCheck;
-    private IntegrityCheckAlgorithm integrityCheckAlgorithm;
-    private String mediaType = "text/plain";
-    private TelUrl reference;
-    private Ed thumbnail;
+    private String descriptionString;  // Not description for backwards-serialization compatability
     private String value;
-    private String xml;
-
-
-    /**
-     * @return the charset
-     */
-    public String getCharset() {
-        return charset;
-    }
-
-    /**
-     * @param charset the charset to set
-     */
-    public void setCharset(String charset) {
-        this.charset = charset;
-    }
 
     /**
      * @return the compression
@@ -153,94 +136,15 @@ public class Ed extends Any implements Cloneable {
     /**
      * @return the description
      */
-    public St getDescription() {
-        return description;
+    public String getDescription() {
+        return descriptionString;
     }
 
     /**
      * @param description the description to set
      */
-    public void setDescription(St description) {
-        this.description = description;
-    }
-
-    /**
-     * @return the integrityCheck
-     */
-    @SuppressWarnings("PMD.MethodReturnsInternalArray")
-    public byte[] getIntegrityCheck() {
-        return integrityCheck;
-    }
-
-    /**
-     * @param integrityCheck the integrityCheck to set
-     */
-    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
-    public void setIntegrityCheck(byte[] integrityCheck) {
-        this.integrityCheck = integrityCheck;
-    }
-
-    /**
-     * @return the integrityCheckAlgorithm
-     */
-    public IntegrityCheckAlgorithm getIntegrityCheckAlgorithm() {
-        return integrityCheckAlgorithm;
-    }
-
-    /**
-     * @param integrityCheckAlgorithm the integrityCheckAlgorithm to set
-     */
-    public void setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm integrityCheckAlgorithm) {
-        this.integrityCheckAlgorithm = integrityCheckAlgorithm;
-    }
-
-    /**
-     * @return the mediaType
-     */
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    /**
-     * @param mediaType the mediaType to set
-     */
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
-    }
-
-    /**
-     * @return the reference
-     */
-    public TelUrl getReference() {
-        return reference;
-    }
-
-    /**
-     * @param reference the reference to set
-     */
-    public void setReference(TelUrl reference) {
-        this.reference = reference;
-    }
-
-    /**
-     * @return the thumbnail
-     */
-    public Ed getThumbnail() {
-        return thumbnail;
-    }
-
-    /**
-     * @param thumbnail the thumbnail to set
-     */
-    public void setThumbnail(Ed thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    /**
-     * @return the value
-     */
-    public String getValue() {
-        return value;
+    public void setDescription(String description) {
+        this.descriptionString = description;
     }
 
     /**
@@ -251,17 +155,33 @@ public class Ed extends Any implements Cloneable {
     }
 
     /**
-     * @return the xml
+     * @return the value
      */
-    public String getXml() {
-        return xml;
+    public String getValue() {
+        return value;
     }
 
     /**
-     * @param xml the xml to set
+     * Helper method that examines the data and compression fields together, and returns
+     * clients the uncompressed data as a stream.  The only compressions supported now
+     * are:
+     * <ul>
+     * <li>no compression
+     * <li><code>GZ</code>
+     * </ul>
+     * Null data fields are returned as an InputSteam with nothing to read.
+     * @return uncompressed data
+     * @throws IOException if gzip stream is corrupted
      */
-    public void setXml(String xml) {
-        this.xml = xml;
+    public InputStream getDataUncompressed() throws IOException {
+        byte[] myBytes = getData() == null ? new byte[] {} : getData();
+        if (getCompression() == null) {
+            return new ByteArrayInputStream(myBytes);
+        }
+        if (getCompression() == Compression.GZ) {
+            return new GZIPInputStream(new ByteArrayInputStream(myBytes));
+        }
+        throw new IllegalArgumentException("Unsupported compression: " + getCompression());
     }
 
     /**
@@ -286,16 +206,9 @@ public class Ed extends Any implements Cloneable {
         return new EqualsBuilder()
             .appendSuper(super.equals(obj))
             .append(this.getData(), x.getData())
-            .append(this.getIntegrityCheck(), x.getIntegrityCheck())
-            .append(this.getCharset(), x.getCharset())
             .append(this.getCompression(), x.getCompression())
             .append(this.getDescription(), x.getDescription())
-            .append(this.getIntegrityCheckAlgorithm(), x.getIntegrityCheckAlgorithm())
-            .append(this.getMediaType(), x.getMediaType())
-            .append(this.getReference(), x.getReference())
-            .append(this.getThumbnail(), x.getThumbnail())
             .append(this.getValue(), x.getValue())
-            .append(this.getXml(), x.getXml())
             .isEquals();
     }
 
@@ -307,16 +220,8 @@ public class Ed extends Any implements Cloneable {
 
         return new HashCodeBuilder(HASH_CODE_SEED_1, HASH_CODE_SEED_2)
             .append(this.getData())
-            .append(this.getIntegrityCheck())
-            .append(this.getCharset())
             .append(this.getCompression())
             .append(this.getDescription())
-            .append(this.getIntegrityCheckAlgorithm())
-            .append(this.getMediaType())
-            .append(this.getReference())
-            .append(this.getThumbnail())
-            .append(this.getValue())
-            .append(this.getXml())
             .toHashCode();
     }
 
@@ -328,4 +233,5 @@ public class Ed extends Any implements Cloneable {
     public Ed clone() {
         return (Ed) super.clone();
     }
+
 }

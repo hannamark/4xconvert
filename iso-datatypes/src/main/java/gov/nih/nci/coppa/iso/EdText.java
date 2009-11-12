@@ -85,99 +85,33 @@ package gov.nih.nci.coppa.iso;
 /**
  * Represents the iso ED.TEXT type.
  * ED.TEXT constrains ED so that it may only contain plain text.
- * The mediaType must be text/plain
- * The content cannot be provided as a text or data – it must be text and/or reference
- * integrity check, thumbnail, compression and translations are not allowed
+ * The content cannot be provided as data - it must be text.
+ * Compression is not allowed
+ *
  * @author lpower
  */
 public final class EdText extends Ed implements Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    private static String mediaType = "text/plain";
-
-    /**
-     * @return the compression - null for ED.TEXT
-     */
-    @Override
-    public Compression getCompression() {
-        return null;
-    }
-
     /**
      * @param compression the compression to set - not allowed for ED.TEXT
      */
     @Override
     public void setCompression(Compression compression) {
-        throw new IllegalArgumentException("compression not allowed in ED.TEXT");
-    }
-
-    /**
-     * @return the integrityCheck - null for ED.TEXT
-     */
-    @Override
-    @SuppressWarnings("PMD.ReturnEmptyArrayRatherThanNull")
-    public byte[] getIntegrityCheck() {
-        return null;
-    }
-
-    /**
-     * @param integrityCheck the integrityCheck to set - not allowed for ED.TEXT
-     */
-    @Override
-    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
-    public void setIntegrityCheck(byte[] integrityCheck) {
-        throw new IllegalArgumentException("integrity check not allowed in ED.TEXT");
-    }
-
-    /**
-     * @return the integrityCheckAlgorithm - null for ED.TEXT
-     */
-    @Override
-    public IntegrityCheckAlgorithm getIntegrityCheckAlgorithm() {
-        return null;
-    }
-
-    /**
-     * @param integrityCheckAlgorithm the integrityCheckAlgorithm to set - not allowed for ED.TEXT
-     */
-    @Override
-    public void setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm integrityCheckAlgorithm) {
-        throw new IllegalArgumentException("integrity check algorithm not allowed in ED.TEXT");
-    }
-
-    /**
-     * @return the mediaType
-     */
-    @Override
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    /**
-     * @param mediaType the mediaType to set
-     */
-    @Override
-    public void setMediaType(String mediaType) {
-        if (!(mediaType.equalsIgnoreCase(EdText.mediaType))) {
-            throw new IllegalArgumentException("ED.TEXT media type constrained to 'text/plain");
+        if (compression != null) {
+            throw new IllegalArgumentException("compression not allowed in ED.TEXT");
         }
     }
 
     /**
-     * @return the thumbnail - null for ED.TEXT
+     * @param  data data to set - not allowed for ED.TEXT
      */
     @Override
-    public Ed getThumbnail() {
-        return null;
-    }
-
-    /**
-     * @param thumbnail the thumbnail to set - not allowed for ED.TEXT
-     */
-    @Override
-    public void setThumbnail(Ed thumbnail) {
-        throw new IllegalArgumentException("thumbnail not allowed in ED.TEXT");
+    public void setData(byte[] data) {
+        if (data != null) {
+            throw new IllegalArgumentException("data not allowed in ED.TEXT");
+        }
     }
 
     /**

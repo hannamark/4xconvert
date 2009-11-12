@@ -2,9 +2,16 @@ package gov.nih.nci.coppa.iso;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.zip.GZIPOutputStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,108 +32,93 @@ public class EdTest {
 
     @Test
     public void testEquality() {
-        t.setCharset(phrase);
         t.setCompression(Compression.BZ);
         t.setData(phrase.getBytes());
-        St st = new St();
-        st.setValue(phrase);
-        t.setDescription(st);
-        t.setIntegrityCheck(phrase.getBytes());
-        t.setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm.SHA1);
-        t.setMediaType("text/plain");
+        t.setDescription(phrase);
         t.setNullFlavor(NullFlavor.NA);
         TelUrl a = new TelUrl();
         a.setValue(URI.create("http:"+phrase));
-        t.setReference(a);
-        t.setThumbnail(new Ed());
         t.setValue(phrase);
-        t.setXml(phrase);
         assertTrue(t.equals(t));
         assertFalse(t.equals(null));
 
         Ed t2 = new Ed();
-        t2.setCharset(phrase);
         t2.setCompression(Compression.BZ);
         t2.setData(phrase.getBytes());
-        t2.setDescription(st);
-        t2.setIntegrityCheck(phrase.getBytes());
-        t2.setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm.SHA1);
-        t2.setMediaType("text/plain");
+        t2.setDescription(phrase);
         t2.setNullFlavor(NullFlavor.NA);
-        t2.setReference(a);
-        t2.setThumbnail(new Ed());
         t2.setValue(phrase);
-        t2.setXml(phrase);
 
         assertTrue(t.equals(t2));
 
-        St st2 = new St();
-        st2.setValue(phrase+"something extra");
-        t2.setDescription(st2);
+        t2.setDescription(phrase+"something extra");
 
         assertFalse(t.equals(t2));
     }
 
+    /**
+     * Makes sure an Ed serialized with an older version is correctly re-serialized.  The serialized object
+     * has the following fields set:
+     *
+     * - charset = phrase
+     * - compression = BZ
+     * - data = phrase.getBytes
+     * - description = St w/value=phrase
+     * - integrityCheck = phrase
+     * - integrityCheckAlg = SHA1
+     * - mediattype = text/plain
+     * - nullflavor = NA
+     * - reference  tel w/value = http: + phrase
+     * - thumbrail = new ED (blank)
+     * - value = phrase
+     * - xml = phrase
+     *
+     * @see ISODT-16
+     * @throws Exception on ioerror
+     */
+    @Test
+    public void testSerializationRoundtrip() throws Exception {
+        ObjectInputStream ois = new ObjectInputStream(this.getClass().getClassLoader().getResourceAsStream("EdTest.bytes"));
+        Ed ed = (Ed) ois.readObject();
+        assertEquals(ed.getCompression(), Compression.BZ);
+        assertTrue(Arrays.equals(ed.getData(), phrase.getBytes()));
+        assertNull(ed.getDescription());  // Old St descriptions are not brought forward.  This is purposeful.
+        assertEquals(ed.getNullFlavor(), NullFlavor.NA);
+    }
+
     @Test
     public void testHashCode() {
-        t.setCharset(phrase);
         t.setCompression(Compression.BZ);
         t.setData(phrase.getBytes());
-        St st = new St();
-        st.setValue(phrase);
-        t.setDescription(st);
-        t.setIntegrityCheck(phrase.getBytes());
-        t.setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm.SHA1);
-        t.setMediaType("text/plain");
+        t.setDescription(phrase);
         t.setNullFlavor(NullFlavor.NA);
         TelUrl a = new TelUrl();
         a.setValue(URI.create("http:"+phrase));
-        t.setReference(a);
-        t.setThumbnail(new Ed());
         t.setValue(phrase);
-        t.setXml(phrase);
         assertTrue(t.equals(t));
         assertFalse(t.equals(null));
 
         Ed t2 = new Ed();
-        t2.setCharset(phrase);
         t2.setCompression(Compression.BZ);
         t2.setData(phrase.getBytes());
-        t2.setDescription(st);
-        t2.setIntegrityCheck(phrase.getBytes());
-        t2.setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm.SHA1);
-        t2.setMediaType("text/plain");
+        t2.setDescription(phrase);
         t2.setNullFlavor(NullFlavor.NA);
-        t2.setReference(a);
-        t2.setThumbnail(new Ed());
         t2.setValue(phrase);
-        t2.setXml(phrase);
 
         assertEquals(t.hashCode(), t2.hashCode());
-        St st2 = new St();
-        st2.setValue(phrase+"something extra");
-        t2.setDescription(st2);
+        t2.setDescription(phrase+"something extra");
         assertFalse(t.hashCode() == t2.hashCode());
     }
 
     @Test
     public void testCloneable() {
-        t.setCharset(phrase);
         t.setCompression(Compression.BZ);
         t.setData(phrase.getBytes());
-        St st = new St();
-        st.setValue(phrase);
-        t.setDescription(st);
-        t.setIntegrityCheck(phrase.getBytes());
-        t.setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm.SHA1);
-        t.setMediaType("text/plain");
+        t.setDescription(phrase);
         t.setNullFlavor(NullFlavor.NA);
         TelUrl a = new TelUrl();
         a.setValue(URI.create("http:"+phrase));
-        t.setReference(a);
-        t.setThumbnail(new Ed());
         t.setValue(phrase);
-        t.setXml(phrase);
         assertTrue(t.equals(t));
         assertFalse(t.equals(null));
 
@@ -137,5 +129,81 @@ public class EdTest {
         assertEquals(t.hashCode(), t2.hashCode());
     }
 
+    @Test
+    public void testNullUncompression() throws Exception {
+        t.setData(null);
+        InputStream is = t.getDataUncompressed();
+        assertEquals(0, is.available());
+    }
 
+    @Test(expected = IOException.class)
+    public void testNullUncompressionWithGZ() throws Exception {
+        t.setData(null);
+        t.setCompression(Compression.GZ);
+        t.getDataUncompressed();  // valid GZIP streams have some preamble
+    }
+
+    @Test
+    public void testEmptyUncompression() throws Exception {
+        t.setData(new byte[] {});
+        InputStream is = t.getDataUncompressed();
+        assertEquals(0, is.available());
+    }
+
+    @Test
+    public void testSimpleUncompression() throws Exception {
+        byte[] bytes = new byte[] {1, 2, 3, 4, 5};
+        t.setData(bytes);
+        InputStream is = t.getDataUncompressed();
+        for (int i = 1; i < 6; ++i) {
+            assertEquals(i, is.read());
+        }
+        assertEquals(0, is.available());
+    }
+
+    @Test
+    public void testGZEmptyUncompression() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        GZIPOutputStream gzos = new GZIPOutputStream(baos);
+        gzos.close();
+        t.setData(baos.toByteArray());
+        t.setCompression(Compression.GZ);
+
+        InputStream is = t.getDataUncompressed();
+        baos = new ByteArrayOutputStream();
+        int cur;
+        while ((cur = is.read()) != -1) {
+            baos.write(cur); // blindingly fast
+        }
+        is.close();
+        assertEquals(0, baos.toByteArray().length);
+    }
+
+    @Test
+    public void testGZSimpleUncompression() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        GZIPOutputStream gzos = new GZIPOutputStream(baos);
+        byte[] value = "something to be gziped".getBytes();
+        gzos.write(value);
+        gzos.close();
+        t.setData(baos.toByteArray());
+        t.setCompression(Compression.GZ);
+
+        InputStream is = t.getDataUncompressed();
+        baos = new ByteArrayOutputStream();
+        int cur;
+        while ((cur = is.read()) != -1) {
+            baos.write(cur); // blindingly fast
+        }
+        is.close();
+        byte[] receivedBytes = baos.toByteArray();
+        assertTrue(Arrays.equals(value, receivedBytes));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonGZUncompression() throws Exception {
+        t.setData(new byte[] {1, 2, 3});
+        t.setCompression(Compression.ZL);
+        t.getDataUncompressed();
+    }
 }
