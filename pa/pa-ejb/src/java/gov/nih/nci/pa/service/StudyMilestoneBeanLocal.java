@@ -67,7 +67,8 @@ public class StudyMilestoneBeanLocal
   MailManagerServiceLocal mailManagerService;
   @EJB
   StudyProtocolServiceLocal studyProtocolService = null;
-
+  @EJB
+  StudyInboxServiceLocal studyInboxService = null;
   /** For testing purposes only.  Set to false to bypass abstraction validations. */
   boolean validateAbstractions = true;
 
@@ -146,6 +147,11 @@ public class StudyMilestoneBeanLocal
              && BlConverter.covertToBool(studyOnholdService.isOnhold(dto.getStudyProtocolIdentifier()))) {
          throw new PAException("The milestone '" + newCode.getCode()
                  + "' cannot be recorded if there is an active on-hold record.");
+     }
+     if (!newCode.isAllowedIfInBox()
+             && PAUtil.isListNotEmpty(studyInboxService.getByStudyProtocol(dto.getStudyProtocolIdentifier()))) {
+         throw new PAException("The milestone '" + newCode.getCode()
+                 + "' cannot be recorded if there is an active In box record.");
      }
 
      // date rules
