@@ -99,6 +99,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
+import java.lang.reflect.Type;
 
 /**
  * @author Hugh Reinhart
@@ -127,7 +128,15 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      */
     @SuppressWarnings(UNCHECKED)
     public AbstractBaseIsoService() {
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+//        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+                Class clss = getClass();
+                Type type = clss.getGenericSuperclass();
+                while (!(type instanceof ParameterizedType)) {
+                    clss = clss.getSuperclass();
+                    type = clss.getGenericSuperclass();
+                }
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+
         typeArgument = (Class) parameterizedType.getActualTypeArguments()[1];
         converterArgument = (Class) parameterizedType.getActualTypeArguments()[2];
         logger = Logger.getLogger(typeArgument);
