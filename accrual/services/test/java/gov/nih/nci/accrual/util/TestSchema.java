@@ -147,12 +147,12 @@ public class TestSchema {
     public static List<HealthCareFacility> healthCareFacilities;
     public static List<Organization> organizations;
     public static List<StudySiteAccrualAccess> studySiteAccrualAccess;
-    public static List<Country> countries;    
+    public static List<Country> countries;
     public static List<PerformedObservation> performedObservations;
     public static List<PerformedImaging> performedImagings;
     public static List<PerformedSubstanceAdministration> performedSubstanceAdministrations;
     public static List<PerformedRadiationAdministration> performedRadiationAdministrations;
-    public static List<PerfomedProcedure> performedProcedures;    
+    public static List<PerfomedProcedure> performedProcedures;
     public static List<PerformedDiagnosis> performedDiagnosis;
     public static List<PerformedImage> performedImages;
     public static List<PerformedHistopathology> performedHistopathologies;
@@ -175,10 +175,11 @@ public class TestSchema {
 
         AccrualHibernateUtil.testHelper = testHelper;
         Session session = AccrualHibernateUtil.getHibernateHelper().getCurrentSession();
+        session.flush();
         Connection connection = session.connection();
         Statement statement = connection.createStatement();
-        statement.executeUpdate("delete from performed_observation_result");   
-        statement.executeUpdate("delete from performed_activity");     
+        statement.executeUpdate("delete from performed_observation_result");
+        statement.executeUpdate("delete from performed_activity");
         statement.executeUpdate("delete from study_disease");
         statement.executeUpdate("delete from study_subject");
         statement.executeUpdate("delete from patient");
@@ -227,19 +228,19 @@ public class TestSchema {
         healthCareFacilities = new ArrayList<HealthCareFacility>();
         organizations = new ArrayList<Organization>();
         studySiteAccrualAccess = new ArrayList<StudySiteAccrualAccess>();
-        countries = new ArrayList<Country>();        
+        countries = new ArrayList<Country>();
         performedObservations = new ArrayList<PerformedObservation>();
         performedImagings = new ArrayList<PerformedImaging>();
         performedSubstanceAdministrations = new ArrayList<PerformedSubstanceAdministration>();
         performedRadiationAdministrations = new ArrayList<PerformedRadiationAdministration>();
-        performedProcedures = new ArrayList<PerfomedProcedure>();        
+        performedProcedures = new ArrayList<PerfomedProcedure>();
         performedDiagnosis = new ArrayList<PerformedDiagnosis>();
         performedImages = new ArrayList<PerformedImage>();
         performedHistopathologies = new ArrayList<PerformedHistopathology>();
         performedClinicalResults = new  ArrayList<PerformedClinicalResult>();
         performedMedicalHistoryResults = new ArrayList<PerformedMedicalHistoryResult>();
         performedLesionDescriptions = new ArrayList<PerformedLesionDescription>();
-        
+
         // Organization
         Organization org = new Organization();
         org.setCity("city");
@@ -536,29 +537,29 @@ public class TestSchema {
         m.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(m);
         performedSubjectMilestones.add(m);
-        
+
         Country c =  new Country();
         c.setAlpha2("US");
         c.setAlpha3("USA");
         addUpdObject(c);
         countries.add(c);
-        
-        // PerformedObservation        
+
+        // PerformedObservation
         PerformedObservation performedObservation = new PerformedObservation();
         performedObservation.setMethodCode("methodCode");
         performedObservation.setTargetSiteCode("targetSiteCode");
         performedObservation.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(performedObservation);
         performedObservations.add(performedObservation);
-        
-        // PerformedImaging   
+
+        // PerformedImaging
         PerformedImaging pimaging = new PerformedImaging();
         pimaging.setStudyProtocol(studyProtocols.get(0));
         pimaging.setContrastAgentEnhancementIndicator(true);
         addUpdObject(pimaging);
         performedImagings.add(pimaging);
-        
-        // PerformedSubstanceAdministration   
+
+        // PerformedSubstanceAdministration
         PerformedSubstanceAdministration psa = new PerformedSubstanceAdministration();
         psa.setStudyProtocol(studyProtocols.get(0));
         psa.setDoseValue(new BigDecimal("2"));
@@ -573,14 +574,14 @@ public class TestSchema {
         psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
         addUpdObject(psa);
         performedSubstanceAdministrations.add(psa);
-        
-        // PerformedRadiationAdministration   
+
+        // PerformedRadiationAdministration
         PerformedRadiationAdministration pra = new PerformedRadiationAdministration();
         pra.setStudyProtocol(studyProtocols.get(0));
         pra.setMachineTypeCode("machineTypeCode");
         addUpdObject(pra);
         performedRadiationAdministrations.add(pra);
-        
+
          // PerformedProcedure
         PerfomedProcedure pp = new PerfomedProcedure();
         pp.setStudyProtocol(studyProtocols.get(0));
@@ -588,8 +589,8 @@ public class TestSchema {
         pp.setTextDescription("SurgeryDescription");
         addUpdObject(pp);
         performedProcedures.add(pp);
-        
-        // PerformedDiagnosis        
+
+        // PerformedDiagnosis
         PerformedDiagnosis pd = new PerformedDiagnosis();
         pd.setResultCode("PerformedDiagnosis");
         pd.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
@@ -597,8 +598,8 @@ public class TestSchema {
         pd.setPerformedObservation(performedObservation);
         addUpdObject(pd);
         performedDiagnosis.add(pd);
-        
-        // PerformedImage        
+
+        // PerformedImage
         PerformedImage pi = new PerformedImage();
         pi.setResultCode("PerformedImage");
         pi.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
@@ -606,8 +607,8 @@ public class TestSchema {
         pi.setPerformedObservation(performedObservation);
         addUpdObject(pi);
         performedImages.add(pi);
-        
-        // PerformedHistopathology      
+
+        // PerformedHistopathology
         PerformedHistopathology ph = new PerformedHistopathology();
         ph.setGradeCode("GradeCode");
         ph.setDescription("description");
@@ -616,28 +617,28 @@ public class TestSchema {
         addUpdObject(ph);
         performedHistopathologies.add(ph);
 
-        // PerformedClinicalResult        
+        // PerformedClinicalResult
         PerformedClinicalResult pcr = new PerformedClinicalResult();
         pcr.setStageCodingSystem("StageCodingSystem");
-        pcr.setResultQuantityValue(new BigDecimal(1)); 
+        pcr.setResultQuantityValue(new BigDecimal(1));
         pcr.setResultQuantityUnit("Year");
         pcr.setStudyProtocol(studyProtocols.get(0));
         pcr.setPerformedObservation(performedObservation);
         addUpdObject(pcr);
         performedClinicalResults.add(pcr);
-        
-        // PerformedMedicalHistoryResult       
+
+        // PerformedMedicalHistoryResult
         PerformedMedicalHistoryResult pmhr = new PerformedMedicalHistoryResult();
         pmhr.setTypeCode("PriorTherapy");
         pmhr.setDescription("PriorTherapy Description");
-        pmhr.setResultQuantityValue(new BigDecimal(2)); 
+        pmhr.setResultQuantityValue(new BigDecimal(2));
         pmhr.setResultQuantityUnit("Unitary");
         pmhr.setStudyProtocol(studyProtocols.get(0));
         pmhr.setPerformedObservation(performedObservation);
         addUpdObject(pmhr);
         performedMedicalHistoryResults.add(pmhr);
-        
-        // PerformedLesionDescription        
+
+        // PerformedLesionDescription
         PerformedLesionDescription pld = new PerformedLesionDescription();
         pld.setResultCode("PerformedLesionDescription");
         pld.setLesionNumber(new Integer(1));
