@@ -147,9 +147,21 @@ function loadDetails(id, divName,className){
                         <td scope="row"  class="label"><label>
                             <fmt:message key="isdesign.eligibilitycriteria.structuredOrUnstructured"/>:</label>
                         </td>
-                        <td class="value">                          
-                            <input type="radio" id="group3" name="webDTO.structuredType" value="Structured" />Structured<br/>
+                        <td class="value">   
+                            <s:if test="%{webDTO.structuredType == 'Structured'}">
+                            <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  checked="checked"/>Structured<br/>
                             <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured"/>Un-structured
+                            </s:if>
+                            <s:elseif test="%{webDTO.structuredType == 'Unstructured'}">
+                            <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  />Structured<br/>
+                <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" checked="checked"/>Un-structured
+                                
+                            </s:elseif>
+                             <s:else>
+                     <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  />Structured<br/>
+                 <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" />Un-structured
+                                                                       
+                            </s:else>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.structuredType</s:param>
