@@ -65,7 +65,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="compile->master"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="compile->master"/>
-	<dependency org="ncicb"					 name="po-services-client"		rev="3.1-snapshot1"	  conf="compile->master"/>
+	<dependency org="ncicb"					 name="po-services-client"		rev="3.1rc1"	  conf="compile->master"/>
     <!-- test -->
     <dependency org="org.antlr"              name="antlr"                   rev="2.7.6"           conf="test->master"/>
     <dependency org="codehaus"               name="cargo-ant"               rev="0.8"             conf="test->master"/>
