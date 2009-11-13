@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedProcedureDto;
-import gov.nih.nci.pa.domain.PerfomedProcedure;
+import gov.nih.nci.pa.domain.PerformedProcedure;
 
 import java.util.zip.DataFormatException;
 
@@ -95,7 +95,7 @@ public class PerformedProcedureConverter extends PerformedActivityConverter {
      * @return the performed Procedure dto
      * @throws DataFormatException the data format exception
      */
-    public static PerformedProcedureDto convertFromDomainToDto(PerfomedProcedure bo)
+    public static PerformedProcedureDto convertFromDomainToDto(PerformedProcedure bo)
             throws DataFormatException {
         PerformedProcedureDto dto = (PerformedProcedureDto)
         PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedProcedureDto());
@@ -108,10 +108,10 @@ public class PerformedProcedureConverter extends PerformedActivityConverter {
      * @return the performed Procedure
      * @throws DataFormatException the data format exception
      */
-    public static PerfomedProcedure convertFromDtoToDomain(PerformedProcedureDto dto)
+    public static PerformedProcedure convertFromDtoToDomain(PerformedProcedureDto dto)
             throws DataFormatException {
-        PerfomedProcedure bo = (PerfomedProcedure)
-        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerfomedProcedure());   
+        PerformedProcedure bo = (PerformedProcedure)
+        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedProcedure());   
         return bo;
     }
 }

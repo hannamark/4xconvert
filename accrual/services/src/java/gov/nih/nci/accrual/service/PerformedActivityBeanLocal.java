@@ -95,7 +95,7 @@ import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.PerfomedProcedure;
+import gov.nih.nci.pa.domain.PerformedProcedure;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedImaging;
 import gov.nih.nci.pa.domain.PerformedObservation;
@@ -526,7 +526,7 @@ implements PerformedActivityService {
         PerformedProcedureDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
-        PerfomedProcedure bo = (PerfomedProcedure) session.get(PerfomedProcedure.class
+        PerformedProcedure bo = (PerformedProcedure) session.get(PerformedProcedure.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
             throw new RemoteException("Object not found using getPerformedProcedure() for id = "
@@ -550,13 +550,13 @@ implements PerformedActivityService {
         }
 
         Session session = null;
-        List<PerfomedProcedure> queryList = new ArrayList<PerfomedProcedure>();
+        List<PerformedProcedure> queryList = new ArrayList<PerformedProcedure>();
         session = AccrualHibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
         String hql = "select pa "
-            + "from PerfomedProcedure pa "
+            + "from PerformedProcedure pa "
             + "join pa.studyProtocol sp "
             + "where sp.id = :studyProtocolId "
             + "order by pa.id ";
@@ -568,7 +568,7 @@ implements PerformedActivityService {
         // step 3: query the result
         queryList = query.list();
         ArrayList<PerformedProcedureDto> resultList = new ArrayList<PerformedProcedureDto>();
-        for (PerfomedProcedure bo : queryList) {
+        for (PerformedProcedure bo : queryList) {
             try {
                 resultList.add(PerformedProcedureConverter.convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
@@ -608,23 +608,23 @@ implements PerformedActivityService {
 
     private PerformedProcedureDto createOrUpdatePerformedProcedure(
             PerformedProcedureDto dto) throws RemoteException, DataFormatException {
-        PerfomedProcedure bo = null;
+        PerformedProcedure bo = null;
         PerformedProcedureDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo = PerformedProcedureConverter.convertFromDtoToDomain(dto);
         } else {
-            bo = (PerfomedProcedure) session.load(PerfomedProcedure.class,
+            bo = (PerformedProcedure) session.load(PerformedProcedure.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
-            PerfomedProcedure delta = PerformedProcedureConverter.convertFromDtoToDomain(dto);
+            PerformedProcedure delta = PerformedProcedureConverter.convertFromDtoToDomain(dto);
             bo = delta;
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
 
-        bo = (PerfomedProcedure) session.merge(bo);
+        bo = (PerformedProcedure) session.merge(bo);
         session.flush();
         resultDto = PerformedProcedureConverter.convertFromDomainToDto(bo);
         return resultDto;

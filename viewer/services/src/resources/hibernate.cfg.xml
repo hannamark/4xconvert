@@ -91,7 +91,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
           <!-- mapping classes for Outcomes -->       
         <mapping class="gov.nih.nci.pa.domain.PerformedObservation" />
         <mapping class="gov.nih.nci.pa.domain.PerformedImaging" />
-        <mapping class="gov.nih.nci.pa.domain.PerfomedProcedure" />        
+        <mapping class="gov.nih.nci.pa.domain.PerformedProcedure" />        
         <mapping class="gov.nih.nci.pa.domain.PerformedRadiationAdministration" />
         <mapping class="gov.nih.nci.pa.domain.PerformedSubstanceAdministration" />
         <mapping class="gov.nih.nci.pa.domain.PerformedObservationResult" />

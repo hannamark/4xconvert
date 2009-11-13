@@ -105,7 +105,7 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.domain.PerfomedProcedure;
+import gov.nih.nci.pa.domain.PerformedProcedure;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedAdministrativeActivity;
 import gov.nih.nci.pa.domain.PerformedClinicalResult;
@@ -261,7 +261,7 @@ public class TestHibernateHelper implements CtrpHibernateHelper {
         addAnnotatedClass(ActivityRelationship.class).
         addAnnotatedClass(PerformedObservation.class).
         addAnnotatedClass(PerformedImaging.class).
-        addAnnotatedClass(PerfomedProcedure.class).
+        addAnnotatedClass(PerformedProcedure.class).
         addAnnotatedClass(PerformedRadiationAdministration.class).
         addAnnotatedClass(PerformedSubstanceAdministration.class).
         addAnnotatedClass(PerformedObservationResult.class).

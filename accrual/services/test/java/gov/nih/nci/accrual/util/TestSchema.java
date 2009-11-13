@@ -83,7 +83,7 @@ import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.domain.PerfomedProcedure;
+import gov.nih.nci.pa.domain.PerformedProcedure;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedClinicalResult;
 import gov.nih.nci.pa.domain.PerformedDiagnosis;
@@ -155,7 +155,7 @@ public class TestSchema {
     public static List<PerformedImaging> performedImagings;
     public static List<PerformedSubstanceAdministration> performedSubstanceAdministrations;
     public static List<PerformedRadiationAdministration> performedRadiationAdministrations;
-    public static List<PerfomedProcedure> performedProcedures;
+    public static List<PerformedProcedure> performedProcedures;
     public static List<PerformedDiagnosis> performedDiagnosis;
     public static List<PerformedImage> performedImages;
     public static List<PerformedHistopathology> performedHistopathologies;
@@ -240,7 +240,7 @@ public class TestSchema {
         performedImagings = new ArrayList<PerformedImaging>();
         performedSubstanceAdministrations = new ArrayList<PerformedSubstanceAdministration>();
         performedRadiationAdministrations = new ArrayList<PerformedRadiationAdministration>();
-        performedProcedures = new ArrayList<PerfomedProcedure>();
+        performedProcedures = new ArrayList<PerformedProcedure>();
         performedDiagnosis = new ArrayList<PerformedDiagnosis>();
         performedImages = new ArrayList<PerformedImage>();
         performedHistopathologies = new ArrayList<PerformedHistopathology>();
@@ -593,7 +593,7 @@ public class TestSchema {
         performedRadiationAdministrations.add(pra);
 
          // PerformedProcedure
-        PerfomedProcedure pp = new PerfomedProcedure();
+        PerformedProcedure pp = new PerformedProcedure();
         pp.setStudyProtocol(studyProtocols.get(0));
         pp.setCategoryCode(ActivityCategoryCode.OTHER);
         pp.setTextDescription("SurgeryDescription");

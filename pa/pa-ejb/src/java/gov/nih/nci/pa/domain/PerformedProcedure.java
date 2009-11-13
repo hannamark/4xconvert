@@ -81,13 +81,13 @@ package gov.nih.nci.pa.domain;
 import javax.persistence.Entity;
 
 /**
- * The Class PerfomedProcedure.
+ * The Class PerformedProcedure.
  * 
  * @author Kalpana Guthikonda
  * @since 11/4/2009
  */
 @Entity
-public class PerfomedProcedure extends PerformedActivity {
+public class PerformedProcedure extends PerformedActivity {
 
     private static final long serialVersionUID = 1L; 
     
