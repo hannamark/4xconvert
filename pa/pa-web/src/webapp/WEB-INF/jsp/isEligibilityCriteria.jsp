@@ -194,7 +194,7 @@ BubbleTips.activateTipOn("dfn");
                        <s:textfield  name="eligibilityList[%{#stat.index}].inclusionIndicator" value="%{inclusionIndicator}" cssStyle="width:60px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].textDescription" value="%{textDescription}" cssStyle="width:100px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <s:textfield  name="eligibilityList[%{#stat.index}].textDescription" value="%{textDescription}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
                         <s:textfield  name="eligibilityList[%{#stat.index}].criterionName" value="%{criterionName}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
@@ -210,6 +210,10 @@ BubbleTips.activateTipOn("dfn");
                        </td>
                        <td class="tdBoxed">
                           <s:hidden  name="eligibilityList[%{#stat.index}].id" value="%{id}" />
+                          <s:hidden  name="eligibilityList[%{#stat.index}].valueText" value="%{valueText}" />
+                          <s:hidden  name="eligibilityList[%{#stat.index}].structuredType" value="%{structuredType}" />
+                          <s:hidden  name="eligibilityList[%{#stat.index}].valueIntegerMin" value="%{valueIntegerMin}" />
+                          <s:hidden  name="eligibilityList[%{#stat.index}].valueIntegerMax" value="%{valueIntegerMax}" />
                           <s:textfield  name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />
                          </td>
                          <td>  
@@ -240,9 +244,11 @@ BubbleTips.activateTipOn("dfn");
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 					|| (sessionScope.role == 'SuAbstractor')}">
                 <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
-                <li><s:a href="#" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span>Re-Order</span></span></s:a></li>
+                <s:if test="eligibilityList != null" >
+                <li><s:a href="#" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span class="save">Re-Order</span></span></s:a></li>
+                </s:if>
                 <s:if test="list != null">
-                <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">AddOtherCriterion</span></span></s:a></li>
+                <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Other Criterion</span></span></s:a></li>
                </s:if>
                 </c:if>
                 <!-- 

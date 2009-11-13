@@ -110,11 +110,16 @@ public class ISDesignDetailsWebDTO {
     private String criterionName;
     private String inclusionIndicator;
     private String operator;
-    private String value;
+    private String valueText;
     private String unit;
     private String textDescription;
     
     private String displayOrder;
+    
+    private String structuredType;
+    private String valueIntegerMin;
+    private String valueIntegerMax;
+    
     
     /**
      * @return the displayOrder
@@ -369,18 +374,7 @@ public class ISDesignDetailsWebDTO {
     public void setUnit(String unit) {
         this.unit = unit;
     }
-    /**
-     * @return value
-     */
-    public String getValue() {
-      return value;
-    }
-    /**
-     * @param value value
-     */
-    public void setValue(String value) {
-      this.value = value;
-    }
+    
     /**
      * @return textDescription
      */
@@ -392,6 +386,54 @@ public class ISDesignDetailsWebDTO {
      */
     public void setTextDescription(String textDescription) {
       this.textDescription = textDescription;
+    }
+    /**
+     * @return the valueText
+     */
+    public String getValueText() {
+      return valueText;
+    }
+    /**
+     * @param valueText the valueText to set
+     */
+     public void setValueText(String valueText) {
+       this.valueText = valueText;
+     }
+    /**
+     * @return the structuredType
+     */
+     public String getStructuredType() {
+       return structuredType;
+     }
+    /**
+     * @param structuredType the structuredType to set
+     */
+     public void setStructuredType(String structuredType) {
+       this.structuredType = structuredType;
+     }
+    /**
+     * @return the valueIntegerMin
+     */
+    public String getValueIntegerMin() {
+      return valueIntegerMin;
+    }
+    /**
+     * @param valueIntegerMin the valueIntegerMin to set
+     */
+     public void setValueIntegerMin(String valueIntegerMin) {
+       this.valueIntegerMin = valueIntegerMin;
+     }
+    /**
+     * @return the valueIntegerMax
+     */
+     public String getValueIntegerMax() {
+       return valueIntegerMax;
+     }
+    /**
+     * @param valueIntegerMax the valueIntegerMax to set
+     */
+     public void setValueIntegerMax(String valueIntegerMax) {
+      this.valueIntegerMax = valueIntegerMax;
     }
     
 }

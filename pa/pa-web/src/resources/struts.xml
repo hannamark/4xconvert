@@ -248,6 +248,9 @@
 			<result name="eligibility">/WEB-INF/jsp/isEligibilityCriteria.jsp</result>
 			<result name="eligibilityAdd">/WEB-INF/jsp/isEligibilityCriteriaAdd.jsp</result>
 		</action>
+		 <action name="ajaxEligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
+            <result name="loadUOMDetails">/WEB-INF/jsp/nodecorate/displayUOM.jsp</result>
+        </action>
 		<action name="trialIndide*" class="gov.nih.nci.pa.action.TrialIndideAction" method="{1}">
 			<result>/WEB-INF/jsp/trialIndideAdd.jsp</result>
 			<result name="add">/WEB-INF/jsp/trialIndideAdd.jsp</result>

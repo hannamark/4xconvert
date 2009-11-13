@@ -101,6 +101,8 @@ public class PlannedEligibilityCriterionDTO extends PlannedActivityDTO {
     private Ivl<Pq> value;
     private Cd eligibleGenderCode;
     private Int displayOrder;
+    private Bl structuredIndicator;
+    private St textValue;
     /**
      * @return inclusionIndicator
      */
@@ -173,4 +175,28 @@ public class PlannedEligibilityCriterionDTO extends PlannedActivityDTO {
     public void setValue(Ivl<Pq> value) {
       this.value = value;
     }
+   /**
+     * @return the structuredIndicator
+     */
+    public Bl getStructuredIndicator() {
+      return structuredIndicator;
+    }
+    /**
+     * @param structuredIndicator the structuredIndicator to set
+     */
+     public void setStructuredIndicator(Bl structuredIndicator) {
+       this.structuredIndicator = structuredIndicator;
+     }
+    /**
+     * @return the textValue
+     */
+     public St getTextValue() {
+       return textValue;
+     }
+    /**
+     * @param textValue the textValue to set
+     */
+     public void setTextValue(St textValue) {
+       this.textValue = textValue;
+     }
 }

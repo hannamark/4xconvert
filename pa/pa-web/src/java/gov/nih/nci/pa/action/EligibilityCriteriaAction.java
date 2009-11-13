@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.domain.UnitOfMeasurement;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -95,12 +96,15 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.BaseLookUpService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -123,6 +127,7 @@ private static final String ELIGIBILITY = "eligibility";
   private static final String ELIGIBILITYADD = "eligibilityAdd";
   private static final int MAXIMUM_CHAR_POPULATION = 800;
   private static final int MAXIMUM_CHAR_DESCRIPTION = 5000;
+  private static final String SP = " ";
   private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
   private Long id = null;
   private String page;
@@ -138,7 +143,7 @@ private static final String ELIGIBILITY = "eligibility";
   private static final int RECORDSVALUE = 2;
   private String studyPopulationDescription;
   private String samplingMethodCode;
- 
+   
   /**
    * @return res
    */
@@ -296,7 +301,8 @@ private static final String ELIGIBILITY = "eligibility";
   try {
     for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
       ruleError.append(rulesForDisplayOrder(dto.getDisplayOrder()));
-      ruleError.append(checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId())));
+      ruleError.append(
+        checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId()), buildDisplayOrderUIList()));
     }
     if (ruleError.length() > 0) {
       addFieldError("reOrder", ruleError.toString());
@@ -312,6 +318,43 @@ private static final String ELIGIBILITY = "eligibility";
       ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
   }
   return ELIGIBILITY;
+  }
+  
+  
+  /**
+   * Generate.
+   * 
+   * @return the string
+   * 
+   * @throws PAException the PA exception
+   */
+  public String generate() throws PAException {
+     StringBuffer generatedName = new StringBuffer();
+     if (PAUtil.isNotEmpty(webDTO.getCriterionName())) {
+         generatedName.append("Name: ").append(webDTO.getCriterionName());
+     }
+     if (PAUtil.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
+         generatedName.append(SP).append("In:");
+     }
+     if (PAUtil.isNotEmpty(webDTO.getOperator()) && !webDTO.getOperator().equalsIgnoreCase("In")) {
+         generatedName.append(SP).append(webDTO.getOperator());
+     }
+     if (PAUtil.isNotEmpty(webDTO.getValueIntegerMin())) {
+      if (PAUtil.isNotEmpty(webDTO.getValueIntegerMin())) {
+         generatedName.append(webDTO.getValueIntegerMin());
+      }
+      if (PAUtil.isNotEmpty(webDTO.getValueIntegerMax())) {
+       generatedName.append(" - ").append(webDTO.getValueIntegerMax());
+      }
+      if (PAUtil.isNotEmpty(webDTO.getUnit())) {
+         generatedName.append(SP).append(webDTO.getUnit());
+      }
+     } else if (PAUtil.isNotEmpty(webDTO.getValueText())) {
+         generatedName.append(SP).append(webDTO.getValueText());
+     }
+     webDTO.setTextDescription(generatedName.toString());
+    
+     return ELIGIBILITYADD;
   }
   
   /**
@@ -384,6 +427,29 @@ private static final String ELIGIBILITY = "eligibility";
     return ELIGIBILITY;
   }
   
+  /**
+   * Display selected type.
+   * 
+   * @return the string
+   * 
+   * @throws PAException the PA exception
+   */
+  @SuppressWarnings({"PMD" })  
+  public String displaySelectedType() throws PAException {
+      String uomid = ServletActionContext.getRequest().getParameter("id");
+      String className =  ServletActionContext.getRequest().getParameter("className");
+      String divName =  ServletActionContext.getRequest().getParameter("divName");
+       if (PAUtil.isNotEmpty(uomid)) {
+        if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadUOM")) {
+           BaseLookUpService<UnitOfMeasurement> lookUpService = 
+                        new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
+           UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(uomid));
+           webDTO.setUnit(uom.getCode());
+         }
+       }
+       return divName; 
+  }
+  
   private PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(ISDesignDetailsWebDTO dtoWeb,
                                                                            Long identifier) {
      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
@@ -392,7 +458,7 @@ private static final String ELIGIBILITY = "eligibility";
       pecDTO.setIdentifier(IiConverter.convertToIi(identifier));
       pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
       pecDTO.setCriterionName(StConverter.convertToSt(dtoWeb.getCriterionName()));
-      pecDTO.setValue(convertToIvlPq(dtoWeb.getUnit(), dtoWeb.getValue(), null));
+      pecDTO.setValue(convertToIvlPq(dtoWeb.getUnit(), dtoWeb.getValueIntegerMin(), dtoWeb.getValueIntegerMax()));
       if (dtoWeb.getInclusionIndicator() == null) {
           pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
       } else  if (dtoWeb.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
@@ -404,7 +470,14 @@ private static final String ELIGIBILITY = "eligibility";
       pecDTO.setTextDescription(StConverter.convertToSt(dtoWeb.getTextDescription()));
       pecDTO.setOperator(StConverter.convertToSt(dtoWeb.getOperator()));
       pecDTO.setDisplayOrder(IntConverter.convertToInt(dtoWeb.getDisplayOrder()));
-      
+      pecDTO.setTextValue(StConverter.convertToSt(dtoWeb.getValueText()));
+      if (dtoWeb.getStructuredType() == null) {
+          pecDTO.setStructuredIndicator(BlConverter.convertToBl(null));
+      } else  if (dtoWeb.getStructuredType().equalsIgnoreCase("Structured")) {
+          pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.TRUE));
+      } else {
+           pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.FALSE));
+      }
       return pecDTO;
   }
 
@@ -446,15 +519,27 @@ private static final String ELIGIBILITY = "eligibility";
         webdto.setTextDescription(dto.getTextDescription().getValue());
       }
       if (dto.getValue().getLow().getValue() != null) {
-        webdto.setValue(dto.getValue().getLow().getValue().toString());
+        webdto.setValueIntegerMin(dto.getValue().getLow().getValue().toString());
       }
+      if (dto.getValue().getHigh().getValue() != null) {
+          webdto.setValueIntegerMax(dto.getValue().getHigh().getValue().toString());
+        }
       if (dto.getValue().getLow().getUnit() != null) {
         webdto.setUnit(dto.getValue().getLow().getUnit());
       }
       if (dto.getDisplayOrder() != null) {
           webdto.setDisplayOrder(IntConverter.convertToString(dto.getDisplayOrder()));
+      }
+      if (dto.getTextValue() != null) {
+          webdto.setValueText(StConverter.convertToString(dto.getTextValue()));
+      }
+      if (dto.getStructuredIndicator().getValue() != null) {
+          if (BlConverter.covertToBool(dto.getStructuredIndicator())) {
+            webdto.setStructuredType("Structured");
+          } else {
+            webdto.setStructuredType("Unstructured");
+          } 
         }
-
     }
     return webdto;
   }
@@ -520,21 +605,25 @@ private static final String ELIGIBILITY = "eligibility";
     if (PAUtil.isEmpty(webDTO.getTextDescription())) {
       if (PAUtil.isEmpty(webDTO.getCriterionName())  
           && PAUtil.isEmpty(webDTO.getOperator())
-          && PAUtil.isEmpty(webDTO.getValue())
+          && PAUtil.isEmpty(webDTO.getValueIntegerMin())
           && PAUtil.isEmpty(webDTO.getUnit())) {
 
         addFieldError("webDTO.mandatory",  getText("error.mandatory"));
         return;
       } else if (PAUtil.isEmpty(webDTO.getCriterionName())
           || PAUtil.isEmpty(webDTO.getOperator())
-          || PAUtil.isEmpty(webDTO.getValue())
+          || PAUtil.isEmpty(webDTO.getValueIntegerMin())
+          || PAUtil.isEmpty(webDTO.getValueText())
           || PAUtil.isEmpty(webDTO.getUnit()))  {
 
         addFieldError("webDTO.buldcriterion", getText("error.buldcriterion"));
 
       }
-    }
-    String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id);
+      if (PAUtil.isNotEmpty(webDTO.getValueIntegerMax()) && PAUtil.isEmpty(webDTO.getValueIntegerMin())) {
+         addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
+      }
+     }
+    String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList());
     if (dispOrder != null && !dispOrder.equals("")) {
       addFieldError("webDTO.displayOrder", dispOrder);
     }
@@ -554,29 +643,16 @@ private static final String ELIGIBILITY = "eligibility";
     }
       return err.toString();
   }
-  
-  private String checkDisplayOrderExists(String displayOrder, Long dtoId) throws PAException {
-     StringBuffer order = new StringBuffer();
-     boolean exists = false;
-     Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-     .getAttribute(Constants.STUDY_PROTOCOL_II);
-     List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
-         .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
-     if (pecList != null && !pecList.isEmpty()) {
-       order.append("Display Order(s) exist: ");
-       for (PlannedEligibilityCriterionDTO dto : pecList) {
-        if (dto.getCategoryCode() != null 
-             && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
-          if (!IntConverter.convertToString(dto.getDisplayOrder()).equals(displayOrder)
-               || (dtoId != null && dto.getIdentifier().getExtension().equals(dtoId.toString()))
-                   && IntConverter.convertToString(dto.getDisplayOrder()).equals(displayOrder)) {
-               order.append(IntConverter.convertToString(dto.getDisplayOrder())).append(" ,");
-          } else {
-             order.append(IntConverter.convertToString(dto.getDisplayOrder())).append(" ,");
+  @SuppressWarnings({"PMD" })  
+  private String checkDisplayOrderExists(String displayOrder, Long dtoId, HashMap<String, String> orderList) 
+  throws PAException {
+    boolean exists = false; 
+    StringBuffer order =  new StringBuffer("Display Order(s) exist: ");
+     if (orderList != null && !orderList.isEmpty()) {
+       if (doesContainInList(displayOrder, dtoId, orderList)) {
+             order.append(displayOrder).append(" ,");
              exists = true;
           }
-       }
-      }
      }
      if (exists) {
       return order.toString().substring(0, order.length() - 1);
@@ -584,7 +660,54 @@ private static final String ELIGIBILITY = "eligibility";
       return "";
      }
    }
- 
+  @SuppressWarnings({"PMD" })  
+  private boolean doesContainInList(String displayOrder, Long dtoId, HashMap<String, String> dList) {
+    boolean containsInList = false;
+    ArrayList<String> valueList = new ArrayList<String>();
+     if (dList != null && !dList.isEmpty()) {
+        Iterator iterator = dList.keySet().iterator();
+        while (iterator.hasNext()) {
+         String keyId = (String) iterator.next();
+          if (dtoId == null || !dtoId.toString().equals(keyId)) {           
+            valueList.add(dList.get(keyId));
+          }
+        }
+     }
+     if (!valueList.isEmpty() && valueList.contains(displayOrder)) {
+       containsInList = true;
+     }
+    
+     return containsInList;
+  }
+  @SuppressWarnings({"PMD" }) 
+  private HashMap<String, String> buildDisplayOrderDBList() throws PAException {
+    HashMap<String, String> orderListDB = new HashMap<String, String>();
+    Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+    List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
+      .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+    if (pecList != null && !pecList.isEmpty()) {
+     for (PlannedEligibilityCriterionDTO dto : pecList) {
+      if (dto.getCategoryCode() != null 
+          && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
+           orderListDB
+            .put(dto.getIdentifier().getExtension(), Integer.toString(dto.getDisplayOrder().getValue().intValue()));
+         }
+      }
+     }
+    return orderListDB;
+  }
+  @SuppressWarnings({"PMD" }) 
+  private HashMap<String, String> buildDisplayOrderUIList() throws PAException {
+    HashMap<String, String> orderListUI = new HashMap<String, String>();
+    if (getEligibilityList() != null && !getEligibilityList().isEmpty()) {
+     for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
+       if (dto.getDisplayOrder() != null) {
+         orderListUI.put(dto.getId(), dto.getDisplayOrder());
+        }
+       }
+      } 
+      return orderListUI;
+    }
   /**
    * @return webDTO
    */

@@ -117,7 +117,8 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        Ivl<Pq> ivlValue = IvlConverter.convertPq().convertToIvl(minValue, maxValue);
        pecDTO.setValue(ivlValue);
        pecDTO.setDisplayOrder(IntConverter.convertToInt(pec.getDisplayOrder()));
-      
+       pecDTO.setTextValue(StConverter.convertToSt(pec.getTextValue()));
+       pecDTO.setStructuredIndicator(BlConverter.convertToBl(pec.getStructuredIndicator()));
        return pecDTO;
    }
 
@@ -135,6 +136,8 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        pec.setEligibleGenderCode(EligibleGenderCode.getByCode(
                CdConverter.convertCdToString(pecDTO.getEligibleGenderCode())));
        pec.setDisplayOrder(IntConverter.convertToInteger(pecDTO.getDisplayOrder()));
+       pec.setTextValue(StConverter.convertToString(pecDTO.getTextValue()));
+       pec.setStructuredIndicator(BlConverter.covertToBoolean(pecDTO.getStructuredIndicator()));
        if (pecDTO.getValue() != null) {
            if (!PAUtil.isIvlLowNull(pecDTO.getValue())) {
               pec.setMinValue(pecDTO.getValue().getLow().getValue());
