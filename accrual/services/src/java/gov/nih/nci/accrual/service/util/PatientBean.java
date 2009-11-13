@@ -84,7 +84,9 @@ import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
@@ -93,14 +95,20 @@ import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.DataFormatException;
 
@@ -126,7 +134,6 @@ public class PatientBean implements PatientService {
     private SessionContext ejbContext;
     @EJB
     CountryService countryServ;
-
     @EJB
     PatientServiceRemote patientCorrelationSvc;
 
@@ -211,7 +218,7 @@ public class PatientBean implements PatientService {
             bo.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
            //PO generated Player identifier
             bo.setPersonIdentifier(IiConverter.convertToString(dto.getPersonIdentifier()));
-//            updatePOPatientDetails(dto);
+            updatePOPatientDetails(dto);
             bo.setStatusCode(StructuralRoleStatusCode.PENDING);
             bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         } catch (DataFormatException e) {
@@ -245,29 +252,29 @@ public class PatientBean implements PatientService {
         return resultDto;
     }
 
-//    private void updatePOPatientDetails(PatientDto dto) throws RemoteException {
-//
-//        gov.nih.nci.services.person.PersonDTO poPersonDTO = new gov.nih.nci.services.person.PersonDTO();
-//        try {
-//            PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
-//             Ii personID = IiConverter.convertToPoPersonIi(dto.getPersonIdentifier().getExtension());
-//             poPersonDTO = peService.getPerson(personID);
-//        } catch (NullifiedEntityException e) {
-//            LOG.info("This Person is nullified " + dto.getPersonIdentifier().getExtension());
-//        }
-//
-//        poPersonDTO.setBirthDate(dto.getBirthDate());
-//        poPersonDTO.setRaceCode(dto.getRaceCode());
-//        poPersonDTO.setSexCode(dto.getGenderCode());
-//        List<Cd> cds = new ArrayList<Cd>();
-//        cds.add(dto.getEthnicCode());
-//        poPersonDTO.setEthnicGroupCode(DSetConverter.convertCdListToDSet(cds));
-//       try {
-//            PoRegistry.getPersonEntityService().updatePerson(poPersonDTO);
-//        } catch (EntityValidationException e) {
-//            LOG.info("EntityValidationException in updatePOPatientDetails:  " + e.getMessage());
-//        }
-//    }
+    private void updatePOPatientDetails(PatientDto dto) throws RemoteException {
+
+        gov.nih.nci.services.person.PersonDTO poPersonDTO = new gov.nih.nci.services.person.PersonDTO();
+        try {
+            PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
+             Ii personID = IiConverter.convertToPoPersonIi(dto.getPersonIdentifier().getExtension());
+             poPersonDTO = peService.getPerson(personID);
+        } catch (NullifiedEntityException e) {
+            LOG.info("This Person is nullified " + dto.getPersonIdentifier().getExtension());
+        }
+
+        poPersonDTO.setBirthDate(dto.getBirthDate());
+        poPersonDTO.setRaceCode(dto.getRaceCode());
+        poPersonDTO.setSexCode(dto.getGenderCode());
+        List<Cd> cds = new ArrayList<Cd>();
+        cds.add(dto.getEthnicCode());
+        poPersonDTO.setEthnicGroupCode(DSetConverter.convertCdListToDSet(cds));
+       try {
+            PoRegistry.getPersonEntityService().updatePerson(poPersonDTO);
+        } catch (EntityValidationException e) {
+            LOG.info("EntityValidationException in updatePOPatientDetails:  " + e.getMessage());
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private void updatePOPatientCorrelation(PatientDto dto)
@@ -285,19 +292,17 @@ public class PatientBean implements PatientService {
         popDTO.setPostalAddress(new DSet<Ad>());
         popDTO.getPostalAddress().setItem(Collections.singleton(ad));
 
-//        POPatientDTO poPatientDTO = null;
-//            if (dto.getAssignedIdentifier() != null && dto.getAssignedIdentifier().getExtension() != null) {
-//                poPatientDTO = patientCorrelationSvc.get(IiConverter.convertToPOPatientIi(
-//                    IiConverter.convertToLong(dto.getAssignedIdentifier())));
-//                poPatientDTO.setScoperIdentifier(scoper);
-//                poPatientDTO.setPostalAddress(popDTO.getPostalAddress());
-//                popDTO = patientCorrelationSvc.update(poPatientDTO);
-//            } else {
-//                popDTO = patientCorrelationSvc.create(popDTO);
-//            }
-//      dto.setAssignedIdentifier(popDTO.getIdentifier());
-//      dto.setPersonIdentifier(popDTO.getPlayerIdentifier());
-      dto.setAssignedIdentifier(IiConverter.convertToPOPatientIi(1L));
-      dto.setPersonIdentifier(IiConverter.convertToPoPersonIi("1"));
+        POPatientDTO poPatientDTO = null;
+            if (dto.getAssignedIdentifier() != null && dto.getAssignedIdentifier().getExtension() != null) {
+                poPatientDTO = patientCorrelationSvc.get(IiConverter.convertToPOPatientIi(
+                    IiConverter.convertToLong(dto.getAssignedIdentifier())));
+                poPatientDTO.setScoperIdentifier(scoper);
+                poPatientDTO.setPostalAddress(popDTO.getPostalAddress());
+                popDTO = patientCorrelationSvc.update(poPatientDTO);
+            } else {
+                popDTO = patientCorrelationSvc.create(popDTO);
+            }
+        dto.setAssignedIdentifier(popDTO.getIdentifier());
+        dto.setPersonIdentifier(popDTO.getPlayerIdentifier());
     }
 }
