@@ -78,8 +78,11 @@
 */
 package gov.nih.nci.accrual.dto;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
@@ -92,6 +95,9 @@ public class PerformedActivityDto extends AbstractActivityDto {
 
     private Ivl<Ts> actualDateRange;
     private Ii studySubjectIdentifier;
+    private Pq actualDuration;
+    private St name;
+    private Cd nameCode;
 
     /**
      * @return the actualDateRange
@@ -116,5 +122,53 @@ public class PerformedActivityDto extends AbstractActivityDto {
      */
     public void setStudySubjectIdentifier(Ii studySubjectIdentifier) {
         this.studySubjectIdentifier = studySubjectIdentifier;
+    }
+    
+    /**
+     * Gets the actual duration.
+     * @return the actual duration
+     */
+    public Pq getActualDuration() {
+        return actualDuration;
+    }
+    
+    /**
+     * Sets the actual duration.
+     * @param actualDuration the new actual duration
+     */
+    public void setActualDuration(Pq actualDuration) {
+        this.actualDuration = actualDuration;
+    }
+    
+    /**
+     * Gets the name.
+     * @return the name
+     */
+    public St getName() {
+        return name;
+    }
+    
+    /**
+     * Sets the name.
+     * @param name the new name
+     */
+    public void setName(St name) {
+        this.name = name;
+    }
+    
+    /**
+     * Gets the name code.
+     * @return the name code
+     */
+    public Cd getNameCode() {
+        return nameCode;
+    }
+    
+    /**
+     * Sets the name code.
+     * @param nameCode the new name code
+     */
+    public void setNameCode(Cd nameCode) {
+        this.nameCode = nameCode;
     }
 }

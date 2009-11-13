@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
@@ -186,5 +187,12 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
      */
     public PerformedObservationResultService getPerformedObservationResultService() {
         return serviceLocator.getPerformedObservationResultService();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public ActivityRelationshipService getActivityRelationshipService() {
+        return serviceLocator.getActivityRelationshipService();
     }
 }

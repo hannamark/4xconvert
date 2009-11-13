@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
@@ -100,6 +101,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final PerformedActivityService psmService = new MockPerformedActivityBean();
     private final PatientServiceRemote poPatientService = new MockPaPatientServiceBean();
     private final PerformedObservationResultService porService = new MockPerformedObservationResultBean();
+    private final ActivityRelationshipService arService = new MockActivityRelationshipBean();
     
     /**
      * {@inheritDoc}
@@ -154,5 +156,8 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      */
     public PerformedObservationResultService getPerformedObservationResultService() {
         return porService;
+    }
+    public ActivityRelationshipService getActivityRelationshipService() {
+        return arService;
     }
 }

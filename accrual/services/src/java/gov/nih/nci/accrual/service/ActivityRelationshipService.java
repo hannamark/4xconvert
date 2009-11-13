@@ -73,90 +73,21 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.accweb.util;
 
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+package gov.nih.nci.accrual.service;
+
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
+
+import javax.ejb.Remote;
 
 /**
- * @author Hugh Reinhart
- * @since 7/7/2009
+ * @author Kalpana Guthikonda
+ * @since 11/13/2009
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface{
-    private final SearchTrialService searchTrial = new MockSearchTrialBean();
-    private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
-    private final SubmissionService submissionService = new MockSubmissionBean();
-    private final CountryService countryService = new MockCountryBean();
-    private final StudySubjectService studySubjectService = new MockStudySubjectBean();
-    private final PatientService patientService = new MockPatientBean();
-    private final PerformedActivityService psmService = new MockPerformedActivityBean();
-    private final PatientServiceRemote poPatientService = new MockPaPatientServiceBean();
-    private final PerformedObservationResultService porService = new MockPerformedObservationResultBean();
-    private final ActivityRelationshipService arService = new MockActivityRelationshipBean();
-    /**
-     * {@inheritDoc}
-     */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return searchStudySite;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return searchTrial;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PatientService getPatientService() {
-        return patientService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedActivityService getPerformedActivityService() {
-        return psmService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectService getStudySubjectService() {
-        return studySubjectService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() {
-        return submissionService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public CountryService getCountryService() {
-        return countryService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PatientServiceRemote getPOPatientService() {
-        return poPatientService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedObservationResultService getPerformedObservationResultService() {
-        return porService;
-    }
-    public ActivityRelationshipService getActivityRelationshipService() {
-        return arService;
-    }
+@Remote
+public interface ActivityRelationshipService
+        extends BaseAccrualStudyService<ActivityRelationshipDto> {
 }

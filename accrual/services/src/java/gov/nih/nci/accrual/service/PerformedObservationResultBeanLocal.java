@@ -238,7 +238,8 @@ public class PerformedObservationResultBeanLocal
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedHistopathology) session.merge(bo);
+        session.flush();
         resultDto = PerformedHistopathologyConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -350,7 +351,8 @@ public class PerformedObservationResultBeanLocal
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedImage) session.merge(bo);
+        session.flush();
         resultDto = PerformedImageConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -463,7 +465,8 @@ public class PerformedObservationResultBeanLocal
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedDiagnosis) session.merge(bo);
+        session.flush();
         resultDto = PerformedDiagnosisConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -577,7 +580,8 @@ public class PerformedObservationResultBeanLocal
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedClinicalResult) session.merge(bo);
+        session.flush();
         resultDto = PerformedClinicalResultConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -692,7 +696,8 @@ public class PerformedObservationResultBeanLocal
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedMedicalHistoryResult) session.merge(bo);
+        session.flush();
         resultDto = PerformedMedicalHistoryResultConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -807,7 +812,8 @@ public class PerformedObservationResultBeanLocal
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedLesionDescription) session.merge(bo);
+        session.flush();
         resultDto = PerformedLesionDescriptionConverter.convertFromDomainToDto(bo);
         return resultDto;
     }

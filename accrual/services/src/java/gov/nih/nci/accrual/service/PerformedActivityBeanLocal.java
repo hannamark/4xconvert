@@ -282,7 +282,8 @@ implements PerformedActivityService {
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedSubjectMilestone) session.merge(bo);
+        session.flush();
         resultDto = PerformedSubjectMilestoneConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -394,7 +395,8 @@ implements PerformedActivityService {
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedImaging) session.merge(bo);
+        session.flush();
         resultDto = PerformedImagingConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -507,7 +509,8 @@ implements PerformedActivityService {
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedObservation) session.merge(bo);
+        session.flush();
         resultDto = PerformedObservationConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -621,7 +624,8 @@ implements PerformedActivityService {
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerfomedProcedure) session.merge(bo);
+        session.flush();
         resultDto = PerformedProcedureConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -736,7 +740,8 @@ implements PerformedActivityService {
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedRadiationAdministration) session.merge(bo);
+        session.flush();
         resultDto = PerformedRadiationAdministrationConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -851,7 +856,8 @@ implements PerformedActivityService {
             session.evict(bo);
         }
 
-        session.merge(bo);
+        bo = (PerformedSubstanceAdministration) session.merge(bo);
+        session.flush();
         resultDto = PerformedSubstanceAdministrationConverter.convertFromDomainToDto(bo);
         return resultDto;
     }

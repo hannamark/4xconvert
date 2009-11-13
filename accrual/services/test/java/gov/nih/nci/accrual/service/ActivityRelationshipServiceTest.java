@@ -73,90 +73,64 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
-package gov.nih.nci.accrual.accweb.util;
 
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
+package gov.nih.nci.accrual.service;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+
+import java.rmi.RemoteException;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * @author Hugh Reinhart
- * @since 7/7/2009
+ * @author Kalpana Guthikonda
+ * @since 11/13/2009
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface{
-    private final SearchTrialService searchTrial = new MockSearchTrialBean();
-    private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
-    private final SubmissionService submissionService = new MockSubmissionBean();
-    private final CountryService countryService = new MockCountryBean();
-    private final StudySubjectService studySubjectService = new MockStudySubjectBean();
-    private final PatientService patientService = new MockPatientBean();
-    private final PerformedActivityService psmService = new MockPerformedActivityBean();
-    private final PatientServiceRemote poPatientService = new MockPaPatientServiceBean();
-    private final PerformedObservationResultService porService = new MockPerformedObservationResultBean();
-    private final ActivityRelationshipService arService = new MockActivityRelationshipBean();
-    /**
-     * {@inheritDoc}
-     */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return searchStudySite;
+public class ActivityRelationshipServiceTest extends AbstractServiceTest<ActivityRelationshipService> {
+
+    @Override
+    @Before
+    public void instantiateServiceBean() throws Exception {
+        bean = new ActivityRelationshipBeanLocal();
     }
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return searchTrial;
+
+    @Test
+    public void get() throws Exception {
+        ActivityRelationshipDto dto = bean.get(IiConverter.convertToIi(TestSchema.activityRelationships.get(0).getId()));
+        assertNotNull(dto);
+        try {
+            dto = bean.get(BII);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
     }
-    /**
-     * {@inheritDoc}
-     */
-    public PatientService getPatientService() {
-        return patientService;
+  @Test
+    public void create() throws Exception {
+        ActivityRelationshipDto dto = new ActivityRelationshipDto();
+        dto.setPlannedIdentifier(IiConverter.convertToPlannedActivityIi(TestSchema.plannedActivities.get(0).getId()));
+        dto.setPerformedIdentifier(IiConverter.convertToIi(TestSchema.performedActivities.get(0).getId()));
+        dto.setTypeCode(CdConverter.convertStringToCd("tes"));
+        ActivityRelationshipDto r = bean.create(dto);
+        assertNotNull(r);
+        assertNotNull(r.getIdentifier().getExtension());
     }
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedActivityService getPerformedActivityService() {
-        return psmService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectService getStudySubjectService() {
-        return studySubjectService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() {
-        return submissionService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public CountryService getCountryService() {
-        return countryService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PatientServiceRemote getPOPatientService() {
-        return poPatientService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedObservationResultService getPerformedObservationResultService() {
-        return porService;
-    }
-    public ActivityRelationshipService getActivityRelationshipService() {
-        return arService;
+    @Test
+    public void update() throws Exception {
+        String newtype = "newType";
+        assertFalse(newtype.equals(TestSchema.activityRelationships.get(0).getTypeCode()));
+        ActivityRelationshipDto dto = bean.get(IiConverter.convertToIi(TestSchema.activityRelationships.get(0).getId()));
+        dto.setTypeCode(CdConverter.convertStringToCd(newtype));
+        ActivityRelationshipDto r = bean.update(dto);
+        assertTrue(newtype.equals(r.getTypeCode().getCode()));
     }
 }

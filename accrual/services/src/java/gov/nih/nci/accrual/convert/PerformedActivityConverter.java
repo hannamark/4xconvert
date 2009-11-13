@@ -79,10 +79,12 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -94,6 +96,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @author Kalpana Guthikonda
  * @since 11/09/2009
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PerformedActivityConverter extends AbstractConverter
         <PerformedActivityDto, PerformedActivity> {
 
@@ -132,6 +135,14 @@ public class PerformedActivityConverter extends AbstractConverter
                 bo.getStudySubject() == null ? null : bo.getStudySubject().getId()));
         dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
+        dto.setName(StConverter.convertToSt(bo.getName()));
+        dto.setNameCode(CdConverter.convertToCd(bo.getNameCode()));
+        Pq actualDuration = new Pq();
+        actualDuration.setValue(bo.getActualDurationValue());
+        if (bo.getActualDurationUnit() != null) {
+            actualDuration.setUnit(bo.getActualDurationUnit());
+        }
+        dto.setActualDuration(actualDuration);
         return dto;
     }
 
@@ -168,6 +179,18 @@ public class PerformedActivityConverter extends AbstractConverter
             bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
         }
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
+        bo.setName(StConverter.convertToString(dto.getName()));
+        if (!PAUtil.isCdNull(dto.getNameCode())) {
+            bo.setNameCode(ActivityNameCode.getByCode(dto.getNameCode().getCode()));
+        }
+        if (dto.getActualDuration() != null) {
+            if (!PAUtil.isPqValueNull(dto.getActualDuration())) {
+                bo.setActualDurationValue(dto.getActualDuration().getValue());
+            }
+            if (!PAUtil.isPqValueNull(dto.getActualDuration())) {
+                bo.setActualDurationUnit(dto.getActualDuration().getUnit());
+            }
+        }
         return bo;
     }
 }

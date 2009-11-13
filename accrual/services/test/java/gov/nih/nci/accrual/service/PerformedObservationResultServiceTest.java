@@ -172,6 +172,7 @@ public class PerformedObservationResultServiceTest
         
         PerformedDiagnosisDto pdr = bean.createPerformedDiagnosis(pddto);
         assertNotNull(pdr);
+        assertNotNull(pdr.getIdentifier().getExtension());
    
         Timestamp newValue = PAUtil.dateStringToTimestamp("11/13/2009");
         assertFalse(newValue.equals(TestSchema.performedDiagnosis.get(0).getResultDateRangeLow()));
@@ -193,6 +194,7 @@ public class PerformedObservationResultServiceTest
         
         PerformedClinicalResultDto pcr = bean.createPerformedClinicalResult(pcrdto);
         assertNotNull(pcr);
+        assertNotNull(pcr.getIdentifier().getExtension());
    
         PerformedClinicalResultDto pcrdto2 = bean.getPerformedClinicalResult(IiConverter.convertToIi(TestSchema.performedClinicalResults.get(0).getId()));
         pcrdto2.setStageCodingSystem(CdConverter.convertStringToCd("test"));
@@ -207,6 +209,7 @@ public class PerformedObservationResultServiceTest
         
         PerformedHistopathologyDto phpr = bean.createPerformedHistopathology(phpdto);
         assertNotNull(phpr);
+        assertNotNull(phpr.getIdentifier().getExtension());
    
         PerformedHistopathologyDto phpdto2 = bean.getPerformedHistopathology(IiConverter.convertToIi(TestSchema.performedHistopathologies.get(0).getId()));
         phpdto2.setGradeCode(CdConverter.convertStringToCd("test"));
@@ -224,6 +227,7 @@ public class PerformedObservationResultServiceTest
         
         PerformedMedicalHistoryResultDto pmhrr = bean.createPerformedMedicalHistoryResult(pmhrdto);
         assertNotNull(pmhrr);
+        assertNotNull(pmhrr.getIdentifier().getExtension());
    
         PerformedMedicalHistoryResultDto pmhrdto2 = bean.getPerformedMedicalHistoryResult(IiConverter.convertToIi(TestSchema.performedMedicalHistoryResults.get(0).getId()));
         pmhrdto2.setTypeCode(CdConverter.convertStringToCd("test"));
@@ -238,6 +242,7 @@ public class PerformedObservationResultServiceTest
         
         PerformedLesionDescriptionDto pldr = bean.createPerformedLesionDescription(plddto);
         assertNotNull(pldr);
+        assertNotNull(pldr.getIdentifier().getExtension());
    
         PerformedLesionDescriptionDto plddto2 = bean.getPerformedLesionDescription(IiConverter.convertToIi(TestSchema.performedLesionDescriptions.get(0).getId()));
         plddto2.setLesionNumber(IntConverter.convertToInt("4"));

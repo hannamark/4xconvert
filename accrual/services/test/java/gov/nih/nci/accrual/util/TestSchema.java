@@ -77,12 +77,14 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
+import gov.nih.nci.pa.domain.ActivityRelationship;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerfomedProcedure;
+import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedClinicalResult;
 import gov.nih.nci.pa.domain.PerformedDiagnosis;
 import gov.nih.nci.pa.domain.PerformedHistopathology;
@@ -94,6 +96,7 @@ import gov.nih.nci.pa.domain.PerformedObservation;
 import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
+import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -159,6 +162,9 @@ public class TestSchema {
     public static List<PerformedClinicalResult> performedClinicalResults;
     public static List<PerformedMedicalHistoryResult> performedMedicalHistoryResults;
     public static List<PerformedLesionDescription> performedLesionDescriptions;
+    public static List<PlannedActivity> plannedActivities;
+    public static List<PerformedActivity> performedActivities;
+    public static List<ActivityRelationship> activityRelationships;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -178,6 +184,7 @@ public class TestSchema {
         session.flush();
         Connection connection = session.connection();
         Statement statement = connection.createStatement();
+        statement.executeUpdate("delete from activity_relationship");
         statement.executeUpdate("delete from performed_observation_result");
         statement.executeUpdate("delete from performed_activity");
         statement.executeUpdate("delete from study_disease");
@@ -240,6 +247,9 @@ public class TestSchema {
         performedClinicalResults = new  ArrayList<PerformedClinicalResult>();
         performedMedicalHistoryResults = new ArrayList<PerformedMedicalHistoryResult>();
         performedLesionDescriptions = new ArrayList<PerformedLesionDescription>();
+        plannedActivities = new ArrayList<PlannedActivity>();
+        performedActivities = new ArrayList<PerformedActivity>();
+        activityRelationships = new ArrayList<ActivityRelationship>();
 
         // Organization
         Organization org = new Organization();
@@ -647,6 +657,27 @@ public class TestSchema {
         pld.setPerformedObservation(performedObservation);
         addUpdObject(pld);
         performedLesionDescriptions.add(pld);
+        
+        PlannedActivity pa = new PlannedActivity();
+        pa.setCategoryCode(ActivityCategoryCode.OTHER);
+        pa.setTextDescription("PlannedActivity");
+        pa.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(pa);
+        plannedActivities.add(pa);
+        
+        PerformedActivity pera = new PerformedActivity();
+        pera.setCategoryCode(ActivityCategoryCode.OTHER);
+        pera.setTextDescription("PerformedActivity");
+        pera.setStudyProtocol(studyProtocols.get(0));
+        addUpdObject(pera);
+        performedActivities.add(pera);
+        
+        ActivityRelationship ar = new ActivityRelationship();
+        ar.setTypeCode("ActivityRelationship");
+        ar.setPlannedActivity(pa);
+        ar.setPerformedActivity(pera);
+        addUpdObject(ar);
+        activityRelationships.add(ar);
     }
 
 }

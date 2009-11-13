@@ -109,6 +109,7 @@ public class Converters {
     PerformedSubjectMilestoneConverter();
     private static PerformedRadiationAdministrationConverter pRadiationAdministrationConverter = new
     PerformedRadiationAdministrationConverter();
+    private static ActivityRelationshipConverter activityRelationshipConverter = new ActivityRelationshipConverter();
 
     /**
      * @param clazz class
@@ -151,6 +152,8 @@ public class Converters {
             return (CONV) pSubjectMilestoneConverter;
         } else if (clazz.equals(PerformedRadiationAdministrationConverter.class)) {
             return (CONV) pRadiationAdministrationConverter;
+        } else if (clazz.equals(ActivityRelationshipConverter.class)) {
+            return (CONV) activityRelationshipConverter;
         }
         return null;
     }

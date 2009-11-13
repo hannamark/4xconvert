@@ -177,6 +177,7 @@ public class PerformedActivityServiceTest
 
         PerformedSubjectMilestoneDto psmr = bean.createPerformedSubjectMilestone(psmdto);
         assertNotNull(psmr);
+        assertNotNull(psmr.getIdentifier().getExtension());
         
         Timestamp newValue = PAUtil.dateStringToTimestamp("2/3/2003");
         assertFalse(newValue.equals(TestSchema.performedSubjectMilestones.get(0).getInformedConsentDate()));
@@ -195,6 +196,7 @@ public class PerformedActivityServiceTest
 
         PerformedObservationDto por = bean.createPerformedObservation(podto);
         assertNotNull(por);
+        assertNotNull(por.getIdentifier().getExtension());
         
         PerformedObservationDto podto2 = bean.getPerformedObservation(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         podto2.setTargetSiteCode(CdConverter.convertStringToCd("targetSiteCode2"));
@@ -208,6 +210,7 @@ public class PerformedActivityServiceTest
 
         PerformedObservationDto pir = bean.createPerformedObservation(pidto);
         assertNotNull(pir);
+        assertNotNull(pir.getIdentifier().getExtension());
         
         PerformedImagingDto pidto2 = bean.getPerformedImaging(IiConverter.convertToIi(TestSchema.performedImagings.get(0).getId()));
         pidto2.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(false));
@@ -228,6 +231,7 @@ public class PerformedActivityServiceTest
         psadto.setRouteOfAdministrationCode(CdConverter.convertStringToCd("ORAL"));
         PerformedSubstanceAdministrationDto psar = bean.createPerformedSubstanceAdministration(psadto);
         assertNotNull(psar);
+        assertNotNull(psar.getIdentifier().getExtension());
         
         PerformedSubstanceAdministrationDto psadto2 = bean.getPerformedSubstanceAdministration(IiConverter.convertToIi(TestSchema.performedSubstanceAdministrations.get(0).getId()));
         psadto2.setDoseDescription(StConverter.convertToSt("Dose Changed"));
@@ -244,6 +248,7 @@ public class PerformedActivityServiceTest
         pradto.setMachineTypeCode(CdConverter.convertStringToCd("machineTypeCode"));
         PerformedRadiationAdministrationDto prar = bean.createPerformedRadiationAdministration(pradto);
         assertNotNull(prar);
+        assertNotNull(prar.getIdentifier().getExtension());
         
         PerformedRadiationAdministrationDto pradto2 = bean.getPerformedRadiationAdministration(IiConverter.convertToIi(TestSchema.performedRadiationAdministrations.get(0).getId()));
         pradto2.setMachineTypeCode(CdConverter.convertStringToCd("machineCode"));
@@ -257,6 +262,7 @@ public class PerformedActivityServiceTest
         ppdto.setCategoryCode(CdConverter.convertStringToCd("PerformedProcedure"));
         PerformedProcedureDto ppr = bean.createPerformedProcedure(ppdto);
         assertNotNull(ppr);
+        assertNotNull(ppr.getIdentifier().getExtension());
         
         PerformedProcedureDto ppdto2 = bean.getPerformedProcedure(IiConverter.convertToIi(TestSchema.performedProcedures.get(0).getId()));
         ppdto2.setTextDescription(StConverter.convertToSt("Text Changed"));
