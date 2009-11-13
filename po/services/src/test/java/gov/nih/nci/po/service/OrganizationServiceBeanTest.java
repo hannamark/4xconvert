@@ -119,7 +119,6 @@ import java.util.Map;
 import javax.jms.JMSException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.HibernateException;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.junit.After;
@@ -141,7 +140,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     public OrganizationServiceBean getOrgServiceBean() {
         return orgServiceBean;
     }
-    
+
     @Before
     public void setUpData() {
         orgServiceBean = EjbTestHelper.getOrganizationServiceBean();
@@ -153,15 +152,16 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     }
 
     public Organization getBasicOrganization() {
-        Address mailingAddress = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
-                getDefaultCountry());
+        Address mailingAddress =
+                new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345", getDefaultCountry());
         Organization org = new Organization();
         org.setPostalAddress(mailingAddress);
         org.setName("oName");
         org.setStatusCode(EntityStatus.PENDING);
 
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode",
-                getDefaultCountry());
+        Address a =
+                new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode",
+                        getDefaultCountry());
         a.setDeliveryAddressLine("deliveryAddressLine");
         org.setPostalAddress(a);
 
@@ -197,7 +197,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         List<AuditLogRecord> alr = AuditTestUtil.find(Organization.class, saved.getId());
         AuditTestUtil.assertDetail(alr, AuditType.INSERT, "name", null, "oName", false);
-        
+
         MessageProducerTest.assertMessageCreated(org, getOrgServiceBean(), true);
         return id;
     }
@@ -227,12 +227,14 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     }
 
     public long createOrganizationNoSessionFlushAndClear() throws EntityValidationException, JMSException {
-        return createOrganizationNoSessionFlushAndClear("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
+        return createOrganizationNoSessionFlushAndClear("defaultName", "defaultCity", "defaultOrgCode",
+                "defaultDescription");
     }
 
-    public long createOrganizationNoSessionFlushAndClear(String oName, String cityOrMunicipality, String abbrvName, String desc) throws EntityValidationException, JMSException {
-        Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345",
-                getDefaultCountry());
+    public long createOrganizationNoSessionFlushAndClear(String oName, String cityOrMunicipality, String abbrvName,
+            String desc) throws EntityValidationException, JMSException {
+        Address mailingAddress =
+                new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345", getDefaultCountry());
         Organization org = new Organization();
         org.setPostalAddress(mailingAddress);
         org.setName(oName);
@@ -253,7 +255,8 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
     /**
      * Test creating a Org with a name that exceed maximum limit.
-     * @throws JMSException 
+     *
+     * @throws JMSException
      */
     @Test
     public void testCreateOrgWithNameTooLong() throws JMSException {
@@ -261,7 +264,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().save(country);
 
         Organization org = new Organization();
-        //161 char long name string
+        // 161 char long name string
         String name = StringUtils.repeat("1", 161);
         org.setName(name);
         Address mailingAddress = new Address("test", "test", "test", "test", country);
@@ -274,11 +277,10 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
             long orgId = orgServiceBean.create(org);
             fail("expected to receive an EntityValidationException on .name property");
         } catch (EntityValidationException e) {
-            //ensure an error exists on the name field
+            // ensure an error exists on the name field
             assertNotNull(e.getErrors().get("name"));
         }
     }
-
 
     @Test
     public void testCreateOrg() throws EntityValidationException, JMSException {
@@ -286,8 +288,8 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().save(country);
 
         Organization org = new Organization();
-        //32 * 5 = 160 chars long
-        org.setName(StringUtils.repeat("testO",32));
+        // 32 * 5 = 160 chars long
+        org.setName(StringUtils.repeat("testO", 32));
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
         org.setStatusCode(EntityStatus.NULLIFIED);
@@ -306,10 +308,10 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         List<Organization> orgs = getAllOrganizations();
         assertEquals(1, orgs.size());
         assertEquals(new Long(orgId), orgs.get(0).getId());
-        
+
         MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), true);
     }
-    
+
     @Test
     public void testOrgWithCtepRolesStatusChange() throws EntityValidationException, JMSException {
         Country country = new Country("testorg", "996", "IJ", "IJI");
@@ -342,16 +344,16 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         ctepIi.setIdentifierName("name");
         ctepIi.setExtension("CTEP");
         hcf.getOtherIdentifiers().add(ctepIi);
-        
+
         long hcfId = EjbTestHelper.getHealthCareFacilityServiceBean().create(hcf);
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), true);
-        
+
         // create non-ctep hcf
-        
+
         HealthCareFacility hcfNotCtep = new HealthCareFacility();
         Address mailingAddress3 = new Address("test", "test", "test", "test", country);
         hcfNotCtep.getPostalAddresses().add(mailingAddress3);
@@ -359,12 +361,12 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         hcfNotCtep.getEmail().add(new Email("foo@example.com"));
         hcfNotCtep.getUrl().add(new URL("http://example.com"));
         hcfNotCtep.setPlayer(retrievedOrg);
-        
+
         long hcfNotCtepId = EjbTestHelper.getHealthCareFacilityServiceBean().create(hcfNotCtep);
-        
+
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         // create ctep ro
         ResearchOrganization ro = new ResearchOrganization();
         Address mailingAddress4 = new Address("test", "test", "test", "test", country);
@@ -378,21 +380,21 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         ctepRoIi.setIdentifierName("ro id name");
         ctepRoIi.setExtension("CTEP");
         ro.getOtherIdentifiers().add(ctepRoIi);
-        
+
         long roId = EjbTestHelper.getResearchOrganizationServiceBean().create(ro);
-        
+
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         Organization freshOrg = orgServiceBean.getById(orgId);
         assertEquals(2, freshOrg.getHealthCareFacilities().size());
         assertEquals(1, freshOrg.getResearchOrganizations().size());
-        
+
         freshOrg.setStatusCode(EntityStatus.ACTIVE);
         orgServiceBean.curate(freshOrg);
-   
+
         MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), false);
-        
+
         // check that hcf1 is ACTIVE
         HealthCareFacility hcf1 = EjbTestHelper.getHealthCareFacilityServiceBean().getById(hcfId);
         assertEquals(RoleStatus.ACTIVE, hcf1.getStatus());
@@ -402,7 +404,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         // check that ro1 is ACTIVE
         ResearchOrganization ro1 = EjbTestHelper.getResearchOrganizationServiceBean().getById(roId);
         assertEquals(RoleStatus.ACTIVE, ro1.getStatus());
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -456,7 +458,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().clear();
 
         Organization result = getOrgServiceBean().getById(id);
-        assertTrue(result.getStatusDate().getTime() >  oldDate.getTime());
+        assertTrue(result.getStatusDate().getTime() > oldDate.getTime());
         assertEquals(EntityStatus.ACTIVE, result.getStatusCode());
         assertEquals(1, result.getEmail().size());
         assertEquals(1, result.getFax().size());
@@ -513,6 +515,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         verifyCurateThrowsInvalidStateException(o, id2, EntityStatus.PENDING);
     }
+
     @Test
     public void curateToACTIVEWithDuplicateOf() throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
@@ -529,6 +532,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         verifyCurateThrowsInvalidStateException(o, id2, EntityStatus.ACTIVE);
     }
+
     @Test
     public void curateToINACTIVEWithDuplicateOf() throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
@@ -624,7 +628,6 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
 
-
     @Test
     public void curatorCreatesOrgAsPENDING() throws JMSException {
         Organization o = curatorCreatesOrg(EntityStatus.PENDING);
@@ -663,9 +666,10 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(status, result.getPriorEntityStatus());
         return result;
     }
-    
+
     @Test
-    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrg() throws EntityValidationException, JMSException {
+    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrg()
+            throws EntityValidationException, JMSException {
         final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
         setDefaultCountry(c);
         Organization o = getBasicOrganization();
@@ -679,29 +683,27 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.getTty().size();
         o.getFax().size();
         o.getPostalAddress().getCountry().getStates().size();
-        
-        
+
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setPlayer(o);
         hcf.setName("HCF Name");
         HealthCareFacilityServiceLocal healthCareFacilityServiceBean = EjbTestHelper.getHealthCareFacilityServiceBean();
         long hcfId = healthCareFacilityServiceBean.create(hcf);
         hcf = healthCareFacilityServiceBean.getById(hcfId);
-        
-        PersonServiceBeanTest pst = new PersonServiceBeanTest(){
+
+        PersonServiceBeanTest pst = new PersonServiceBeanTest() {
             @Override
             public Country getDefaultCountry() {
                 return c;
             }
         };
-//        Don't load the data since duplicate entries would be created.
-//        pst.loadData();
+        // Don't load the data since duplicate entries would be created.
+        // pst.loadData();
         pst.setUpData();
         long perId = pst.createPerson();
         PersonServiceBean personServiceBean = EjbTestHelper.getPersonServiceBean();
         Person person = personServiceBean.getById(perId);
-        
-        
+
         HealthCareProvider hcp = new HealthCareProvider();
         hcp.setScoper(o);
         hcp.setPlayer(person);
@@ -723,25 +725,26 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         HealthCareProviderServiceBean hcpSB = EjbTestHelper.getHealthCareProviderServiceBean();
         long hcpId = hcpSB.create(hcp);
         hcp = hcpSB.getById(hcpId);
-        
+
         o.setStatusCode(EntityStatus.NULLIFIED);
         o2 = getOrgServiceBean().getById(id2);
         o.setDuplicateOf(o2);
         getOrgServiceBean().curate(o);
-        
+
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.NULLIFIED, result.getStatusCode());
-        
+
         hcf = healthCareFacilityServiceBean.getById(hcfId);
         assertEquals(o2.getId(), hcf.getPlayer().getId());
         hcp = hcpSB.getById(hcpId);
         assertEquals(o2.getId(), hcp.getScoper().getId());
-        
+
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
-    
+
     @Test
-    public void curateToNullifiedWithDuplicateOfAndPointCtepRolesToDuplicateActiveOrg() throws EntityValidationException, JMSException {
+    public void curateToNullifiedWithDuplicateOfAndPointCtepRolesToDuplicateActiveOrg()
+            throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
         Organization o2 = getBasicOrganization();
         long id = createOrganization(o);
@@ -753,7 +756,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.getPhone().remove(0);
         o.getTty().remove(0);
         o.getUrl().remove(0);
-        
+
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setPlayer(o);
         hcf.setName("HCF Name");
@@ -766,16 +769,16 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         long hcfId = healthCareFacilityServiceBean.create(hcf);
         hcf = healthCareFacilityServiceBean.getById(hcfId);
         assertEquals(hcf.getStatus(), RoleStatus.PENDING);
-        
+
         // switch o2 status to active
         o2.setStatusCode(EntityStatus.ACTIVE);
         getOrgServiceBean().curate(o2);
-     
+
         o.setStatusCode(EntityStatus.NULLIFIED);
         o2 = getOrgServiceBean().getById(id2);
         o.setDuplicateOf(o2);
         getOrgServiceBean().curate(o);
-               
+
         Organization result = getOrgServiceBean().getById(id);
         assertEquals(EntityStatus.NULLIFIED, result.getStatusCode());
         assertEquals(1, result.getEmail().size());
@@ -789,9 +792,10 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(o2.getStatusCode(), EntityStatus.ACTIVE);
         assertEquals(hcf.getStatus(), RoleStatus.ACTIVE);
     }
-    
+
     @Test
-    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors() throws EntityValidationException, JMSException {
+    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors()
+            throws EntityValidationException, JMSException {
         final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
         setDefaultCountry(c);
         Organization o = getBasicOrganization();
@@ -805,14 +809,14 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.getTty().size();
         o.getFax().size();
         o.getPostalAddress().getCountry().getStates().size();
-        
+
         OversightCommittee oc1 = new OversightCommittee();
         oc1.setPlayer(o);
         oc1.setTypeCode(getOversightCommitee());
         OversightCommitteeServiceLocal correlationSB = EjbTestHelper.getOversightCommitteeServiceBean();
         long correlationId = correlationSB.create(oc1);
         oc1 = correlationSB.getById(correlationId);
-        
+
         OversightCommittee oc2 = new OversightCommittee();
         oc2.setPlayer(o2);
         oc2.setTypeCode(getOversightCommitee());
@@ -830,12 +834,15 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
             fail("expected ValidationException");
         } catch (CurateEntityValidationException e1) {
             assertEquals(1, e1.getErrors().size());
-            assertArrayEquals(new String[] {"Organization already has an Oversight Committee of this type"}, e1.getErrors().get("gov.nih.nci.po.data.bo.OversightCommittee:" + oc1.getId()));
+            assertArrayEquals(new String[] {"Organization already has an Oversight Committee of this type"}, e1
+                    .getErrors().get("gov.nih.nci.po.data.bo.OversightCommittee:" + oc1.getId()));
         }
         MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
     }
+
     @Test
-    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors2() throws EntityValidationException, JMSException {
+    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors2()
+            throws EntityValidationException, JMSException {
         final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
         setDefaultCountry(c);
         Organization o = getBasicOrganization();
@@ -849,7 +856,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.getTty().size();
         o.getFax().size();
         o.getPostalAddress().getCountry().getStates().size();
-        
+
         ResearchOrganization rorg1 = new ResearchOrganization();
         rorg1.setPlayer(o);
         rorg1.setTypeCode(getResearchOrgType());
@@ -857,7 +864,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         ResearchOrganizationServiceLocal correlationSB = EjbTestHelper.getResearchOrganizationServiceBean();
         long correlationId = correlationSB.create(rorg1);
         rorg1 = correlationSB.getById(correlationId);
-        
+
         ResearchOrganization rorg2 = new ResearchOrganization();
         rorg2.setPlayer(o2);
         rorg2.setTypeCode(getResearchOrgType());
@@ -867,7 +874,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         rorg2 = correlation2SB.getById(correlation2Id);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         o.setStatusCode(EntityStatus.NULLIFIED);
         o2 = getOrgServiceBean().getById(id2);
         o.setDuplicateOf(o2);
@@ -876,13 +883,16 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
             fail("expected ValidationException");
         } catch (CurateEntityValidationException e1) {
             assertEquals(1, e1.getErrors().size());
-            assertArrayEquals(new String[] {"Organization already has a Research Organization of this type and funding mechanism"}, e1.getErrors().get("gov.nih.nci.po.data.bo.ResearchOrganization:" + rorg1.getId()));
+            assertArrayEquals(
+                    new String[] {"Organization already has a Research Organization of this type and funding mechanism"},
+                    e1.getErrors().get("gov.nih.nci.po.data.bo.ResearchOrganization:" + rorg1.getId()));
         }
         MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
     }
-    
+
     @Test
-    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors3() throws EntityValidationException, JMSException {
+    public void curateToNullifiedWithDuplicateOfAndPointAssociatedRolesToDuplicateOrgWithValidationErrors3()
+            throws EntityValidationException, JMSException {
         final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
         setDefaultCountry(c);
         Organization o = getBasicOrganization();
@@ -896,7 +906,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.getTty().size();
         o.getFax().size();
         o.getPostalAddress().getCountry().getStates().size();
-        
+
         ResearchOrganization rorg1 = new ResearchOrganization();
         rorg1.setPlayer(o);
         rorg1.setTypeCode(getResearchOrgType());
@@ -904,7 +914,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         ResearchOrganizationServiceLocal correlationSB = EjbTestHelper.getResearchOrganizationServiceBean();
         long correlationId = correlationSB.create(rorg1);
         rorg1 = correlationSB.getById(correlationId);
-        
+
         ResearchOrganization rorg2 = new ResearchOrganization();
         rorg2.setPlayer(o2);
         rorg2.setTypeCode(getResearchOrgType());
@@ -912,25 +922,24 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         ResearchOrganizationServiceLocal correlation2SB = EjbTestHelper.getResearchOrganizationServiceBean();
         long correlation2Id = correlation2SB.create(rorg2);
         rorg2 = correlation2SB.getById(correlation2Id);
-        
-        
+
         OversightCommittee oc1 = new OversightCommittee();
         oc1.setPlayer(o);
         oc1.setTypeCode(getOversightCommitee());
         OversightCommitteeServiceLocal oc1SB = EjbTestHelper.getOversightCommitteeServiceBean();
         long oc1Id = oc1SB.create(oc1);
         oc1 = oc1SB.getById(oc1Id);
-        
+
         OversightCommittee oc2 = new OversightCommittee();
         oc2.setPlayer(o2);
         oc2.setTypeCode(getOversightCommitee());
         OversightCommitteeServiceLocal oc2SB = EjbTestHelper.getOversightCommitteeServiceBean();
         long oc2Id = oc2SB.create(oc2);
         oc2 = oc2SB.getById(oc2Id);
-        
+
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        
+
         o.setStatusCode(EntityStatus.NULLIFIED);
         o2 = getOrgServiceBean().getById(id2);
         o.setDuplicateOf(o2);
@@ -939,10 +948,13 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
             fail("expected ValidationException");
         } catch (CurateEntityValidationException e1) {
             assertEquals(2, e1.getErrors().size());
-            assertArrayEquals(new String[] {"Organization already has an Oversight Committee of this type"}, e1.getErrors().get("gov.nih.nci.po.data.bo.OversightCommittee:"+oc1Id));
-            assertArrayEquals(new String[] {"Organization already has a Research Organization of this type and funding mechanism"}, e1.getErrors().get("gov.nih.nci.po.data.bo.ResearchOrganization:"+correlationId));
+            assertArrayEquals(new String[] {"Organization already has an Oversight Committee of this type"}, e1
+                    .getErrors().get("gov.nih.nci.po.data.bo.OversightCommittee:" + oc1Id));
+            assertArrayEquals(
+                   new String[] {"Organization already has a Research Organization of this type and funding mechanism"},
+                   e1.getErrors().get("gov.nih.nci.po.data.bo.ResearchOrganization:" + correlationId));
         }
         MessageProducerTest.assertNoMessageCreated(o, getOrgServiceBean());
     }
-    
+
 }

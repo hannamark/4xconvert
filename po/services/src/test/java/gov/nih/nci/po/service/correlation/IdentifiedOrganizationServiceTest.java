@@ -108,7 +108,7 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
         io.setPlayer(basicOrganization);
         io.setScoper(basicOrganization);
 
-        Ii ii = new Ii();;
+        Ii ii = new Ii();
         // we're going to set to nonsense values, to ensure that the whole type can be persisted
         ii.setDisplayable(Boolean.TRUE);
         ii.setExtension("myExtension" + (ext++));
@@ -146,7 +146,7 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
         io1.setPlayer(io2.getPlayer());
         io1.setScoper(io2.getScoper());
         io1.setAssignedIdentifier(io2.getAssignedIdentifier());
-        
+
         EjbTestHelper.getIdentifiedOrganizationServiceBean().update(io1);
     }
 }

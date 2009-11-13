@@ -119,7 +119,8 @@ import org.junit.Test;
  * @author Scott Miller
  *
  */
-public abstract class AbstractStructrualRoleRemoteServiceTest<T extends CorrelationDto, CR extends CorrelationChangeRequest<?>> extends AbstractBeanTest {
+public abstract class AbstractStructrualRoleRemoteServiceTest<T extends CorrelationDto, CR extends CorrelationChangeRequest<?>>
+        extends AbstractBeanTest {
 
     protected Person basicPerson = null;
     protected Organization basicOrganization = null;
@@ -184,7 +185,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         Ii id1 = service.createCorrelation(getSampleDto());
         Ii id2 = service.createCorrelation(getSampleDto());
 
-        Ii[] ids = {id1, id2};
+        Ii[] ids = { id1, id2 };
         List<T> srs = service.getCorrelations(ids);
         assertEquals(2, srs.size());
 
@@ -205,7 +206,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         CorrelationService<T> correlationService = getCorrelationService();
         int max = 7;
         AbstractCorrelationServiceBean.setMaxResultsReturnedLimit(max - 2);
-        for(int i = 0; i < max; i++) {
+        for (int i = 0; i < max; i++) {
             T correlation1 = getSampleDto();
             Ii id1 = correlationService.createCorrelation(correlation1);
         }
@@ -213,50 +214,50 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         search2StatusChange(sc);
 
         List<T> results;
-        //verify walking forward with a page size of 1
-        LimitOffset page = new LimitOffset(1,-1);
-        for (int j = 0 ; j < max; j++) {
+        // verify walking forward with a page size of 1
+        LimitOffset page = new LimitOffset(1, -1);
+        for (int j = 0; j < max; j++) {
             page.next();
             results = correlationService.search(sc, page);
             assertEquals(1, results.size());
         }
-        //walk past the last record
+        // walk past the last record
         page.next();
         results = correlationService.search(sc, page);
         assertEquals(0, results.size());
 
-        //walk back to first record
-        for (int j = 0 ; j < max; j++) {
+        // walk back to first record
+        for (int j = 0; j < max; j++) {
             page.previous();
             results = correlationService.search(sc, page);
             assertEquals(1, results.size());
         }
-        //try to walk before first record, first record always returned
+        // try to walk before first record, first record always returned
         page.previous();
         results = correlationService.search(sc, page);
         assertEquals(1, results.size());
 
-        //verify TooManyResultsException is thrown
+        // verify TooManyResultsException is thrown
         try {
             correlationService.search(sc, new LimitOffset(max, 0));
             fail();
         } catch (TooManyResultsException e) {
         }
 
-        //verify TooManyResultsException is thrown
+        // verify TooManyResultsException is thrown
         try {
-            correlationService.search(sc, new LimitOffset(max-1, 0));
+            correlationService.search(sc, new LimitOffset(max - 1, 0));
             fail();
         } catch (TooManyResultsException e) {
         }
 
-        //verify results are returned
-        page = new LimitOffset(max-2, 0);
+        // verify results are returned
+        page = new LimitOffset(max - 2, 0);
         results = correlationService.search(sc, page);
         assertEquals(page.getLimit(), results.size());
 
-        //verify results are returned
-        page = new LimitOffset(max-3, 0);
+        // verify results are returned
+        page = new LimitOffset(max - 3, 0);
         results = correlationService.search(sc, page);
         assertEquals(page.getLimit(), results.size());
     }
@@ -275,7 +276,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         verifyAlterations(cr);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void incorrectUpdateCorrelationStatus() throws Exception {
         CorrelationService<T> service = getCorrelationService();
         Ii id = service.createCorrelation(getSampleDto());
@@ -284,7 +285,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         dto.setStatus(RoleStatusConverter.convertToCd(RoleStatus.SUSPENDED));
         service.updateCorrelation(dto);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void updateCorrelationWithNoISSIdentifier() throws Exception {
         CorrelationService<T> service = getCorrelationService();
@@ -297,7 +298,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         }
         service.updateCorrelation(dto);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void updateWithNoIdentifier() throws Exception {
         CorrelationService<T> service = getCorrelationService();
@@ -333,7 +334,6 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         getCorrelationService().updateCorrelationStatus(wrongId, cd);
     }
 
-
     @Test
     public void updateCorrelationStatus() throws Exception {
         CorrelationService<T> service = getCorrelationService();
@@ -359,8 +359,8 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         List<T> results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
 
-        Correlation role = (Correlation) PoHibernateUtil.getCurrentSession().get(clazz,
-                Long.parseLong(id2.getExtension()));
+        Correlation role =
+                (Correlation) PoHibernateUtil.getCurrentSession().get(clazz, Long.parseLong(id2.getExtension()));
         role.setStatus(RoleStatus.NULLIFIED);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(role);
         PoHibernateUtil.getCurrentSession().flush();

@@ -106,7 +106,6 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.PatientDTO;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -118,8 +117,7 @@ import org.junit.Test;
  * @author mshestopalov
  *
  */
-public class PatientRemoteServiceTest
-    extends AbstractPersonRoleDTORemoteServiceTest<PatientDTO, PatientCR> {
+public class PatientRemoteServiceTest extends AbstractPersonRoleDTORemoteServiceTest<PatientDTO, PatientCR> {
 
     /**
      * {@inheritDoc}
@@ -170,6 +168,7 @@ public class PatientRemoteServiceTest
         dto.getTelecomAddress().getItem().add(url);
     }
 
+    @Override
     @Test
     public void updateCorrelation() throws Exception {
         CorrelationService<PatientDTO> service = getCorrelationService();
@@ -180,19 +179,20 @@ public class PatientRemoteServiceTest
         List<Patient> l = PoHibernateUtil.getCurrentSession().createCriteria(Patient.class).list();
         assertEquals(1, l.size());
         Patient fresh = l.get(0);
-        assertTrue(CollectionUtils.exists(fresh.getTty(), new Predicate(){
+        assertTrue(CollectionUtils.exists(fresh.getTty(), new Predicate() {
             public boolean evaluate(Object object) {
-                return ((PhoneNumber)object).getValue().equals("+1234567890");
+                return ((PhoneNumber) object).getValue().equals("+1234567890");
             }
         }));
 
-        assertTrue(CollectionUtils.exists(fresh.getUrl(), new Predicate(){
+        assertTrue(CollectionUtils.exists(fresh.getUrl(), new Predicate() {
             public boolean evaluate(Object object) {
-                return ((URL)object).getValue().equals("http://example.com");
+                return ((URL) object).getValue().equals("http://example.com");
             }
         }));
     }
-    
+
+    @Override
     @Test
     public void updateCorrelationStatus() throws Exception {
         CorrelationService<PatientDTO> service = getCorrelationService();
@@ -206,8 +206,7 @@ public class PatientRemoteServiceTest
         Patient cr = l.get(0);
         assertEquals(cr.getStatus(), RoleStatus.NULLIFIED);
     }
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -228,49 +227,50 @@ public class PatientRemoteServiceTest
      * {@inheritDoc}
      */
     @Override
-    protected void testSearchOnSubClassSpecificFields(PatientDTO correlation1, Ii id2,
-            PatientDTO searchCriteria) throws NullifiedRoleException {
+    protected void testSearchOnSubClassSpecificFields(PatientDTO correlation1, Ii id2, PatientDTO searchCriteria)
+            throws NullifiedRoleException {
 
         testNullifiedRoleNotFoundInSearch(id2, searchCriteria, Patient.class);
     }
-    
+
     /**
      * test get by player ids.
-     * @throws Exception 
-     * @throws CurationException 
-     * @throws EntityValidationException 
+     *
+     * @throws Exception
+     * @throws CurationException
+     * @throws EntityValidationException
      */
     @Test
     public void testByPlayerIds() throws EntityValidationException, CurationException, Exception {
         Ii[] playerIis = new Ii[3];
         CorrelationService<PatientDTO> service = getCorrelationService();
-        
+
         Ii id1 = service.createCorrelation(getSampleDto());
         PatientDTO dto1 = service.getCorrelation(id1);
         playerIis[0] = dto1.getPlayerIdentifier();
-        
+
         Ii id2 = service.createCorrelation(getSampleDto());
         PatientDTO dto2 = service.getCorrelation(id2);
         playerIis[1] = dto2.getPlayerIdentifier();
-        
+
         Ii id3 = service.createCorrelation(getSampleDto());
         PatientDTO dto3 = service.getCorrelation(id3);
         playerIis[2] = dto3.getPlayerIdentifier();
-       
+
         for (Ii ii : playerIis) {
             assertTrue(ii.getExtension().startsWith("PT"));
         }
-        
+
         List<PatientDTO> patDtos = service.getCorrelationsByPlayerIds(playerIis);
         assertEquals(3, patDtos.size());
     }
-    
+
     @Test
     @Override
     public void incorrectUpdateCorrelationStatus() throws Exception {
-        //NOOP
+        // NOOP
     }
-    
+
     @Override
     protected void searchByStatus(PatientDTO searchCriteria, List<PatientDTO> results) {
         // search by status
@@ -279,7 +279,7 @@ public class PatientRemoteServiceTest
         results = getCorrelationService().search(searchCriteria);
         assertEquals(2, results.size());
     }
-    
+
     @Override
     protected void verifyPersonRoleDto(AbstractPersonRoleDTO e, AbstractPersonRoleDTO a) {
         assertEquals(e.getScoperIdentifier().getExtension(), a.getScoperIdentifier().getExtension());
@@ -288,10 +288,10 @@ public class PatientRemoteServiceTest
         assertEquals(e.getPostalAddress().getItem().size(), a.getPostalAddress().getItem().size());
         assertEquals(e.getTelecomAddress().getItem().size(), a.getTelecomAddress().getItem().size());
     }
-    
+
     @Override
     protected void search2StatusChange(PatientDTO sc) {
         sc.setStatus(RoleStatusConverter.convertToCd(RoleStatus.PENDING));
     }
-    
+
 }

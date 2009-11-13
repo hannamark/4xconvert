@@ -111,7 +111,8 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
 
     @Before
     public void setupType() throws Exception {
-        fm = new FundingMechanism("BXX","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);
+        fm = new FundingMechanism("BXX", "Mental Health Services Block Grant", "Block Grants",
+                        FundingMechanismStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().save(fm);
         sampleType = new ResearchOrganizationType("ST", "sampleType");
         sampleType.getFundingMechanisms().add(fm);
@@ -154,10 +155,10 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         try {
             EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
             Assert.fail();
-        } catch(InvalidStateException e) {
+        } catch (InvalidStateException e) {
         }
 
-        FundingMechanism otherfm = new FundingMechanism("ZZZ","bla","bla", FundingMechanismStatus.ACTIVE);
+        FundingMechanism otherfm = new FundingMechanism("ZZZ", "bla", "bla", FundingMechanismStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().save(otherfm);
         ResearchOrganizationType otherType = new ResearchOrganizationType("otherType", "Some other stuff");
         otherType.getFundingMechanisms().add(fm);
@@ -203,6 +204,5 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         r.getOtherIdentifiers().add(ctepRoIi);
         return r;
     }
-    
 
 }

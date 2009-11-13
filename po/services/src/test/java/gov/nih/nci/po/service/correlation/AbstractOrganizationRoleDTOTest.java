@@ -123,7 +123,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
     public void setUpTestData() {
         defaultCountry = CountryTestUtil.save(new Country("Afghanistan", "004", "AF", "AFG"));
     }
-    
+
     protected AbstractOrganizationRole fillInExampleOrgRoleFields(AbstractOrganizationRole or) {
         or.setId(1L);
         or.setStatus(RoleStatus.ACTIVE);
@@ -132,7 +132,7 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
 
         return or;
     }
-    
+
     abstract protected AbstractOrganizationRole getExampleTestClass();
 
     abstract protected void verifyTestClassFields(AbstractOrganizationRoleDTO dto);
@@ -177,9 +177,9 @@ public abstract class AbstractOrganizationRoleDTOTest extends AbstractHibernateT
         return ii;
     }
 
-    abstract protected AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) throws Exception;
+    protected abstract AbstractOrganizationRoleDTO getExampleTestClassDTO(Long playerId) throws Exception;
 
-    abstract protected void verifyTestClassDTOFields(AbstractOrganizationRole or);
+    protected abstract void verifyTestClassDTOFields(AbstractOrganizationRole or);
 
     @Test
     public void testCreateFullModelFromSnapshot() throws Exception {

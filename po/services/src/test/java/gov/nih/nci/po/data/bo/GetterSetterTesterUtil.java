@@ -107,8 +107,8 @@ public class GetterSetterTesterUtil {
     private static final Logger LOG = Logger
             .getLogger(GetterSetterTesterUtil.class);
 
-    public static ArrayList<Object> DEFAULT_TYPES = new ArrayList<Object>();
-    public static ArrayList<Object> DEFAULT_ARGUMENTS = new ArrayList<Object>();
+    public static final ArrayList<Object> DEFAULT_TYPES = new ArrayList<Object>();
+    public static final ArrayList<Object> DEFAULT_ARGUMENTS = new ArrayList<Object>();
 
     static {
 

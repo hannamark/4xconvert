@@ -49,7 +49,6 @@ public abstract
     class AbstractEnhancedOrganizationalRoleRemoteServiceTest<T extends AbstractEnhancedOrganizationRoleDTO, CR extends CorrelationChangeRequest<?>>
     extends AbstractOrganizationalRoleRemoteServiceTest<T, CR> {
 
-
     @SuppressWarnings("unchecked")
     protected void fillInFields(T dto) throws Exception {
         Ii ii = new Ii();
@@ -98,7 +97,7 @@ public abstract
         Ad ad = (Ad) correlation1.getPostalAddress().getItem().iterator().next();
         for (Adxp part : ad.getPart()) {
             if (!part.getType().equals(AddressPartType.CNT)) {
-                part.setValue(part.getValue()+ "2");
+                part.setValue(part.getValue() + "2");
             }
         }
         correlation2.getPostalAddress().setItem(Collections.singleton(ad));
@@ -213,7 +212,8 @@ public abstract
                 assertEquals(2, results.size());
             } else {
                 assertEquals(1, results.size());
-                assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
+                assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2
+                        .getExtension());
             }
         }
 
@@ -239,7 +239,8 @@ public abstract
 
                 results = getCorrelationService().search(searchCriteria);
                 assertEquals(1, results.size());
-                assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
+                assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2
+                        .getExtension());
 
                 part.setValue(part.getValue().substring(0, part.getValue().length() - 1).toUpperCase());
 
@@ -297,8 +298,8 @@ public abstract
 
 
     /**
-     * Should another system be allowed to imitate CTEP (or create data as though it was CTEP owned)? This test demonstrates
-     * that one could using remote ejb api.
+     * Should another system be allowed to imitate CTEP (or create data as though it was CTEP owned)? This test
+     * demonstrates that one could using remote ejb api.
      * @throws Exception
      */
     @Test
@@ -327,7 +328,7 @@ public abstract
                 ctepdIdFound = true;
             }
         }
-        assertTrue("Expected to find a CTEP ID (II) within identifier DSet",ctepdIdFound);
+        assertTrue("Expected to find a CTEP ID (II) within identifier DSet", ctepdIdFound);
     }
 
 

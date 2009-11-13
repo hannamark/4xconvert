@@ -1,19 +1,19 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 public class OrganizationWebTest extends AbstractPoWebTest {
-    protected String orgName= "orgName"+Long.toString(System.currentTimeMillis());
+    protected String orgName = "orgName" + Long.toString(System.currentTimeMillis());
     protected String poId = null;
-    
+
     private void setPoId(int row) {
         if (poId == null) {
-            poId = selenium.getText("//table[@id='row']/tbody/tr[" + row+ "]/td[1]");
+            poId = selenium.getText("//table[@id='row']/tbody/tr[" + row + "]/td[1]");
         }
     }
-    
+
     protected void verify() {
         verify(true);
     }
-    
+
     protected void verify(boolean clear) {
         int secondColumn = 1;
         int row = getRow(orgName, secondColumn);
@@ -21,11 +21,11 @@ public class OrganizationWebTest extends AbstractPoWebTest {
             fail("Did not find " + orgName + " in search results");
         } else {
             setPoId(row);
-            assertEquals(poId, selenium.getTable("row."+row+".0"));
-            assertEquals(orgName, selenium.getTable("row."+row+".1"));
-            assertEquals("PENDING", selenium.getTable("row."+row+".2"));
-            assertEquals("NONE", selenium.getTable("row."+row+".3"));
-            if(clear) {
+            assertEquals(poId, selenium.getTable("row." + row + ".0"));
+            assertEquals(orgName, selenium.getTable("row." + row + ".1"));
+            assertEquals("PENDING", selenium.getTable("row." + row + ".2"));
+            assertEquals("NONE", selenium.getTable("row." + row + ".3"));
+            if (clear) {
                 clear();
             }
         }
@@ -40,7 +40,7 @@ public class OrganizationWebTest extends AbstractPoWebTest {
     protected void searchByName() {
         searchByName(true);
     }
-    
+
     protected void addOrganization() {
         selenium.select("curateEntityForm.organization.statusCode", "label=PENDING");
         selenium.type("curateEntityForm_organization_name", orgName);
@@ -73,10 +73,11 @@ public class OrganizationWebTest extends AbstractPoWebTest {
         waitForElementById("url-entry-0", 5);
 
         clickAndWaitSaveButton();
-        assertTrue("Organization was successfully created!", selenium.isTextPresent("Organization was successfully created"));
+        assertTrue("Organization was successfully created!", selenium
+                .isTextPresent("Organization was successfully created"));
     }
 
     protected void clear() {
         openSearchOrganization();
-     } 
+    }
 }

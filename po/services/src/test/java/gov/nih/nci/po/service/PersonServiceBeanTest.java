@@ -126,7 +126,9 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
         person.setFirstName("fName");
         person.setLastName("lName");
 
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
+        Address a =
+                new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode",
+                        getDefaultCountry());
         a.setDeliveryAddressLine("deliveryAddressLine");
         person.setPostalAddress(a);
 
@@ -174,7 +176,8 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
     }
 
     @Test
-    public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException, JMSException {
+    public void createPersonWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws EntityValidationException,
+            JMSException {
         Person person = getBasicPerson();
         person.setStatusCode(EntityStatus.ACTIVE);
         person.setFirstName("fName");

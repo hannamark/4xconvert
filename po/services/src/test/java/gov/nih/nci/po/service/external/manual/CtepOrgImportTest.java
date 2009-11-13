@@ -83,21 +83,14 @@
 package gov.nih.nci.po.service.external.manual;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.service.AbstractBeanTest;
 import gov.nih.nci.po.service.EjbTestHelper;
-import gov.nih.nci.po.service.external.CtepEntityImporter;
 import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;

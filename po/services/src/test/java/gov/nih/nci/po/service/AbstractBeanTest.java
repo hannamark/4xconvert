@@ -94,7 +94,9 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
 
         oversightCommitee = new OversightCommitteeType("Ethics Committee");
         PoHibernateUtil.getCurrentSession().saveOrUpdate(oversightCommitee);
-        fundingMechanism = new FundingMechanism("B09","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);
+        fundingMechanism =
+                new FundingMechanism("B09", "Mental Health Services Block Grant", "Block Grants",
+                        FundingMechanismStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(fundingMechanism);
         researchOrgType = new ResearchOrganizationType("CCR", "Cancer Center");
         researchOrgType.getFundingMechanisms().add(fundingMechanism);

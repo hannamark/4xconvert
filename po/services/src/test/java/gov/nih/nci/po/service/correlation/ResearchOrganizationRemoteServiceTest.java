@@ -100,7 +100,8 @@ import java.util.List;
 /**
  * Remote service test.
  */
-public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrganizationalRoleRemoteServiceTest<ResearchOrganizationDTO, ResearchOrganizationCR> {
+public class ResearchOrganizationRemoteServiceTest extends
+        AbstractEnhancedOrganizationalRoleRemoteServiceTest<ResearchOrganizationDTO, ResearchOrganizationCR> {
 
     @Override
     CorrelationService<ResearchOrganizationDTO> getCorrelationService() {
@@ -135,13 +136,14 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrgan
 
     @Override
     protected void alter(ResearchOrganizationDTO dto) {
-        FundingMechanism fundingMechanismAlt = new FundingMechanism("B10","Mental Health Services Block Grant","Block Grants",FundingMechanismStatus.ACTIVE);;
+        FundingMechanism fundingMechanismAlt =
+                new FundingMechanism("B10", "Mental Health Services Block Grant", "Block Grants",
+                        FundingMechanismStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(fundingMechanismAlt);
         ResearchOrganizationType other = new ResearchOrganizationType("Foo", "Foo type");
         other.getFundingMechanisms().add(fundingMechanismAlt);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(other);
         PoHibernateUtil.getCurrentSession().flush();
-
 
         Cd type = new Cd();
         type.setCode("Foo");
@@ -169,7 +171,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrgan
     protected void modifySubClassSpecificFieldsForCorrelation2(ResearchOrganizationDTO correlation2) {
         assertEquals(getResearchOrgType().getCode(), correlation2.getTypeCode().getCode());
         assertEquals(getFundingMechanism().getCode(), correlation2.getFundingMechanism().getCode());
-        FundingMechanism otherFM = new FundingMechanism("BXX","???","Block Grants",FundingMechanismStatus.ACTIVE);
+        FundingMechanism otherFM = new FundingMechanism("BXX", "???", "Block Grants", FundingMechanismStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().saveOrUpdate(otherFM);
         Cd fm = new Cd();
         fm.setCode(otherFM.getCode());
@@ -200,7 +202,7 @@ public class ResearchOrganizationRemoteServiceTest extends AbstractEnhancedOrgan
         searchCriteria.setFundingMechanism(null);
         Cd type = new Cd();
         type.setCode("AT");
-        searchCriteria.setTypeCode(type );
+        searchCriteria.setTypeCode(type);
         results = getCorrelationService().search(searchCriteria);
         assertEquals(1, results.size());
 

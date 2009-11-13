@@ -82,38 +82,22 @@
  */
 package gov.nih.nci.po.service.correlation;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.AdxpAl;
-import gov.nih.nci.coppa.iso.AdxpCnt;
-import gov.nih.nci.coppa.iso.AdxpCty;
-import gov.nih.nci.coppa.iso.AdxpSta;
-import gov.nih.nci.coppa.iso.AdxpZip;
 import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelPhone;
-import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IiDsetConverter;
-import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.PatientDTO;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.junit.Test;
 
 /**
  * @author mshestopalov
@@ -139,7 +123,7 @@ public class PatientDTOTest extends AbstractPersonRoleDTOTest {
     protected AbstractPersonRoleDTO getExampleTestClassDTO(Long personId, Long orgId) throws URISyntaxException {
         PatientDTO dto = new PatientDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
-        
+
         Ii ii = new Ii();
         ii.setExtension("" + 1L);
         ii.setDisplayable(true);
@@ -175,6 +159,6 @@ public class PatientDTOTest extends AbstractPersonRoleDTOTest {
         Ii actualIi = IiDsetConverter.convertToIi(((PatientDTO) dto).getIdentifier());
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, actualIi));
     }
-    
-    
+
+
 }

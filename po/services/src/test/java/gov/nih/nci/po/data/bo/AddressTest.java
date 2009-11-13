@@ -14,7 +14,6 @@ import org.hibernate.validator.InvalidStateException;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class AddressTest extends AbstractHibernateTestCase {
     private Country validCountry;
 

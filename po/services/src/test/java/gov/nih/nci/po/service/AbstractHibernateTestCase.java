@@ -112,8 +112,8 @@ import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 public abstract class AbstractHibernateTestCase {
 
     private static final Logger LOG = Logger.getLogger(AbstractHibernateTestCase.class);
-    private static Configuration CFG;
-    private static SchemaExport SE;
+    private static Configuration cfg;
+    private static SchemaExport se;
     protected static SimpleNamingContextBuilder contextBuilder = new SimpleNamingContextBuilder();
     static {
         try {
@@ -193,18 +193,18 @@ public abstract class AbstractHibernateTestCase {
     }
 
     private SchemaExport getSchemaExporter() {
-        if (SE == null) {
-            SE = new SchemaExport(getConfigurationForSchemaExport());
+        if (se == null) {
+            se = new SchemaExport(getConfigurationForSchemaExport());
         }
-        return SE;
+        return se;
     }
 
     private Configuration getConfigurationForSchemaExport() {
-        if (CFG == null) {
-            CFG = PoHibernateUtil.getHibernateHelper().getConfiguration();
-            handleAutoNamingIndexes(CFG);
+        if (cfg == null) {
+            cfg = PoHibernateUtil.getHibernateHelper().getConfiguration();
+            handleAutoNamingIndexes(cfg);
         }
-        return CFG;
+        return cfg;
     }
 
     private void handleAutoNamingIndexes(Configuration configuration) {

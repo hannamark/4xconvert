@@ -111,21 +111,22 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
     private Ii personId;
     private String tableNameCR;
     private Connection c;
-    
+
     protected CorrelationTestBase(String tableNameCR) {
         this.tableNameCR = tableNameCR;
     }
 
     /**
      * cleanup after test is complete.
-     * 
+     *
      * @throws Exception on error.
      */
     @After
     public void cleanup() throws Exception {
         RemoteServiceHelper.close();
-        if (c != null)
+        if (c != null) {
             c.close();
+        }
     }
 
     protected void createMinimal() throws Exception {
@@ -140,22 +141,22 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         }
         assertNotNull(correlationId);
         assertNotNull(correlationId.getExtension());
-        
+
         dto = getCorrelationService().getCorrelation(correlationId);
-        verifyCreated(dto);        
+        verifyCreated(dto);
     }
 
     protected abstract DTO makeCorrelation() throws Exception;
-    
-    protected abstract void verifyCreated(DTO dto) throws Exception ;
+
+    protected abstract void verifyCreated(DTO dto) throws Exception;
 
     @Test
     public void getByPlayerIds() throws Exception {
         DTO sr1 = makeCorrelation();
         getCorrelationService().createCorrelation(sr1);
-    
+
         Ii[] pids = null;
-        
+
         if (sr1 instanceof AbstractPersonRoleDTO || sr1 instanceof AbstractIdentifiedPersonDTO) {
             pids = new Ii[1];
             pids[0] = this.getPersonId();
@@ -165,14 +166,14 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         } else {
             throw new Exception("Could not determine what type of DTO this is.");
         }
-        
+
         List<DTO> returnVals = getCorrelationService().getCorrelationsByPlayerIds(pids);
         assertEquals(1, returnVals.size());
-        
+
         returnVals = getCorrelationService().getCorrelationsByPlayerIds(new Ii[1]);
         assertEquals(0, returnVals.size());
-   }
-    
+    }
+
     @Test
     public void update() throws Exception {
         if (correlationId == null) {
@@ -180,7 +181,9 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         }
 
         c = DataGeneratorUtil.getJDBCConnection();
-        ResultSet rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension());
+        ResultSet rs =
+                c.createStatement().executeQuery(
+                        "select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension());
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
         rs.close();
@@ -190,30 +193,32 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         getCorrelationService().updateCorrelation(dto);
         getCorrelationService().updateCorrelation(dto);
 
-        rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension());
+        rs =
+                c.createStatement().executeQuery(
+                        "select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension());
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();
         assertEquals(count0 + 3, count1);
     }
-    
+
     @Test(expected = javax.ejb.EJBException.class)
     public void updateWithNoIdentifier() throws Exception {
         if (correlationId == null) {
             createMinimal();
         }
-        
+
         DTO dto = getCorrelationService().getCorrelation(correlationId);
         dto.getIdentifier().getItem().clear();
         getCorrelationService().updateCorrelation(dto);
     }
-     
+
     @Test(expected = javax.ejb.EJBException.class)
     public void updateWithWrongIdentifier() throws Exception {
         if (correlationId == null) {
             createMinimal();
         }
-        
+
         DTO dto = getCorrelationService().getCorrelation(correlationId);
         dto.getIdentifier().getItem().clear();
         Ii wrongId = new Ii();
@@ -221,18 +226,17 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         dto.getIdentifier().getItem().add(wrongId);
         getCorrelationService().updateCorrelation(dto);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void updateStatusWithWrongIdentifier() throws Exception {
         Cd cd = new Cd();
         cd.setCode("suspended"); // maps to SUSPENDED
-        
+
         Ii wrongId = new Ii();
         wrongId.setExtension("999");
-        
+
         getCorrelationService().updateCorrelationStatus(wrongId, cd);
     }
-    
 
     @Test
     public void updateStatus() throws Exception {
@@ -241,7 +245,10 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         }
 
         c = DataGeneratorUtil.getJDBCConnection();
-        ResultSet rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension() + " and status = 'DEPRECATED'");
+        ResultSet rs =
+                c.createStatement().executeQuery(
+                        "select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension()
+                                + " and status = 'DEPRECATED'");
         assertTrue(rs.next());
         int count0 = rs.getInt(1);
         rs.close();
@@ -250,13 +257,15 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         cd.setCode("suspended"); // maps to SUSPENDED
         getCorrelationService().updateCorrelationStatus(correlationId, cd);
 
-        rs = c.createStatement().executeQuery("select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension() + " and status = 'SUSPENDED'");
+        rs =
+                c.createStatement().executeQuery(
+                        "select count(*) from " + tableNameCR + " where target = " + correlationId.getExtension()
+                                + " and status = 'SUSPENDED'");
         assertTrue(rs.next());
         int count1 = rs.getInt(1);
         rs.close();
         assertEquals(count0 + 1, count1);
     }
-
 
     protected abstract SERVICE getCorrelationService() throws Exception;
 
@@ -272,7 +281,7 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
     }
 
     public Ii getPersonId() throws Exception {
-        if(personId == null) {
+        if (personId == null) {
             PersonEntityServiceTest test = new PersonEntityServiceTest();
             test.init();
             test.createMinimal();
@@ -281,26 +290,26 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         }
         return personId;
     }
-   
+
     /**
      * get correlation id.
+     *
      * @return correlation id
      */
     protected Ii getCorrelationId() {
-       return this.correlationId;
+        return this.correlationId;
     }
-    
+
     /**
      * Get connection.
+     *
      * @return connection.
      */
     protected Connection getConnection() {
         return this.c;
     }
-    
+
     protected void createConnection() {
         c = DataGeneratorUtil.getJDBCConnection();
     }
 }
-
- 

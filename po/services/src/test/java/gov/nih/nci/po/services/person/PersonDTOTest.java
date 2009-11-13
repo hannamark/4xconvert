@@ -66,7 +66,7 @@ public class PersonDTOTest {
 
     @Test
     public void convertIdentifier() {
-        dto.setIdentifier(new PersonIdConverter().convertToIi(1l));
+        dto.setIdentifier(new PersonIdConverter().convertToIi(1L));
         Person p = (Person) PoXsnapshotHelper.createModel(dto);
         assertEquals(new Long(1), p.getId());
     }
@@ -214,7 +214,7 @@ public class PersonDTOTest {
         Cd sexCode = new Cd();
         sexCode.setCode("MALE");
         dto.setSexCode(sexCode);
-        
+
         Cd raceCode = new Cd();
         raceCode.setCode("white");
         DSet<Cd> raceCodes = new DSet<Cd>();
@@ -224,7 +224,7 @@ public class PersonDTOTest {
         raceCode2.setCode("black_or_african_american");
         raceCodes.getItem().add(raceCode2);
         dto.setRaceCode(raceCodes);
-        
+
         Cd ethnicCode = new Cd();
         ethnicCode.setCode("hispanic_or_latino");
         DSet<Cd> ethnicCodes = new DSet<Cd>();
@@ -234,12 +234,12 @@ public class PersonDTOTest {
         ethnicCode2.setCode("not_hispanic_or_latino");
         ethnicCodes.getItem().add(ethnicCode2);
         dto.setEthnicGroupCode(ethnicCodes);
-        
+
         Ts birthDate = new Ts();
         SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
         birthDate.setValue(sdf.parse("09/28/1980"));
-        dto.setBirthDate(birthDate);      
-        
+        dto.setBirthDate(birthDate);
+
         EnPn pn = new EnPn();
         List<Enxp> part2 = pn.getPart();
 
@@ -289,12 +289,12 @@ public class PersonDTOTest {
         assertEquals("37232-6307", p.getPostalAddress().getPostalCode());
         assertEquals(EntityStatus.ACTIVE, p.getStatusCode());
         assertEquals(PersonSex.MALE, p.getSexCode());
-        
+
         assertEquals(2, p.getRaceCode().size());
         assertTrue(p.getRaceCode().contains(PersonRace.WHITE));
         assertTrue(p.getRaceCode().contains(PersonRace.BLACK_OR_AFRICAN_AMERICAN));
-        
-        
+
+
         assertEquals(2, p.getEthnicGroupCode().size());
         assertTrue(p.getEthnicGroupCode().contains(PersonEthnicGroup.HISPANIC_OR_LATINO));
         assertTrue(p.getEthnicGroupCode().contains(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO));
@@ -314,7 +314,7 @@ public class PersonDTOTest {
     // regression test for https://jira.5amsolutions.com/browse/PO-601
     @Test
     public void roundTripIdentifier() {
-        dto.setIdentifier(new PersonIdConverter().convertToIi(1l));
+        dto.setIdentifier(new PersonIdConverter().convertToIi(1L));
         Person bo = (Person) PoXsnapshotHelper.createModel(dto);
         PersonDTO copy = (PersonDTO) PoXsnapshotHelper.createSnapshot(bo);
         EqualsBuilder.reflectionEquals(dto.getIdentifier(), copy.getIdentifier());

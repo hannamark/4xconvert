@@ -111,76 +111,77 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
 
     public void testCreateActivePersonWithPendingHCP() throws Exception {
         loginAsCurator();
-        //create an ACTIVE ORG for later
+        // create an ACTIVE ORG for later
         createOrganization("ACTIVE", AFFILIATE_ORG_FOR_PERSON, getAddress(), "sample@example.com", "703-111-2345",
                 "703-111-1234", "703-111-1234", "http://www.example.com");
-        String activeOrgId =  selenium.getText("wwctrl_organization.id");
+        String activeOrgId = selenium.getText("wwctrl_organization.id");
         assertNotEquals("null", activeOrgId.trim());
 
-        //create the ACTIVE Person
+        // create the ACTIVE Person
         openCreatePerson();
-        createPerson("ACTIVE", "Dr", "po-1177", "L", "po-1177", "III",
-                getAddress(), "sample@example.com", "703-111-2345", "http://www.example.com", "703-111-1234");
+        createPerson("ACTIVE", "Dr", "po-1177", "L", "po-1177", "III", getAddress(), "sample@example.com",
+                "703-111-2345", "http://www.example.com", "703-111-1234");
         String personIdExt = selenium.getText("wwctrl_person.id");
         Ii personId = new Ii();
         personId.setExtension(personIdExt);
         savePersonAsActive(personId);
-        //open Person Curate page
+        // open Person Curate page
         openAndWait("po-web/protected/person/curate/start.action?person.id=" + personIdExt);
-        //Goto Manage HCP Page
+        // Goto Manage HCP Page
         accessManageHealthCareProviderScreen();
-        //add HCP
+        // add HCP
         clickAndWaitButton("add_button");
         assertTrue(selenium.isTextPresent("Health Care Provider Role Information"));
-        //ensure the player is ACTIVE
+        // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
         selenium.type("curateRoleForm.role.certificateLicenseText", "CR Original");
         clickAndWaitButton("save_button");
-        //assert validation messages
+        // assert validation messages
         assertEquals("ACTIVE", selenium.getSelectedLabel("curateRoleForm.role.status"));
-  //      assertTrue(selenium.isTextPresent("exact:Affiliated Organization ID must be set"));
-  //      assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
-  //      assertFalse(selenium.isTextPresent("exact:Role status not compatible with associated entity's status."));
+        // assertTrue(selenium.isTextPresent("exact:Affiliated Organization ID must be set"));
+        // assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
+        // assertFalse(selenium.isTextPresent("exact:Role status not compatible with associated entity's status."));
 
-        //select a ACTIVE Scoper
+        // select a ACTIVE Scoper
         selectOrganizationScoper(activeOrgId.trim(), AFFILIATE_ORG_FOR_PERSON);
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
         assertFalse(selenium.isTextPresent("exact:Role status not compatible with associated entity's status."));
         assertFalse(selenium.isTextPresent("exact:Affiliated Organization ID must be set."));
-        //add postal addresses
+        // add postal addresses
         addPostalAddressUsingPopup("456 jik", "suite xyz", "phoenix", "AZ", "67890", "United States", 1);
         selenium.selectFrame("relative=parent");
         waitForTelecomFormsToLoad();
-        //add Contact Information
-        inputContactInfoForUSAndCan("abc@example.com", new String[]{"123","456","7890"}, 
-                new String[]{"234","567","8901"}, new String[]{"345","678","9012"}, "http://www.example.com");
-        //save HCP
+        // add Contact Information
+        inputContactInfoForUSAndCan("abc@example.com", new String[] {"123", "456", "7890"}, new String[] {"234", "567",
+                "8901"}, new String[] {"345", "678", "9012"}, "http://www.example.com");
+        // save HCP
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully created!"));
-        String hcpId =  selenium.getTable("row.1.0");
+        String hcpId = selenium.getTable("row.1.0");
         assertNotEquals("null", hcpId.trim());
 
         clickAndWaitButton("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
         clickAndWaitButton("save_button");
-  //      assertTrue(selenium.isTextPresent("exact:Person was successfully curated!"));
+        // assertTrue(selenium.isTextPresent("exact:Person was successfully curated!"));
 
         updateRemoteHcpOrg(hcpId.trim());
 
-        //Goto Manage HCP Page.... should see CR
+        // Goto Manage HCP Page.... should see CR
         openAndWait("/po-web/protected/roles/person/HealthCareProvider/start.action?person=" + personIdExt);
-        clickAndWaitButton("edit_healthCareProvider_id_"+ hcpId.trim());
+        clickAndWaitButton("edit_healthCareProvider_id_" + hcpId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Health Care Provider - Comparison"));
-        //status
+        // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
-        //scoper
-        assertEquals(AFFILIATE_ORG_FOR_PERSON + " (" + activeOrgId.trim() + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
-        //cert
+        // scoper
+        assertEquals(AFFILIATE_ORG_FOR_PERSON + " (" + activeOrgId.trim() + ")", selenium
+                .getText("wwctrl_curateRoleForm_role_scoper_id"));
+        // cert
         assertEquals("CR Original", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
-        //address
+        // address
         assertEquals("456 jik", selenium.getText("wwctrl_address.streetAddressLine1"));
         assertEquals("suite xyz", selenium.getText("wwctrl_address.deliveryAddressLine1"));
         assertEquals("phoenix", selenium.getText("wwctrl_address.cityOrMunicipality1"));
@@ -190,60 +191,57 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
 
         // email, phone, fax, tty, url
         waitForElementById("email-remove-0", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
-       
+        assertEquals("abc@example.com | Remove",
+                selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
+
         waitForElementById("phone-remove-0", 5);
-        assertEquals("123-456-7890 | Remove", selenium.getText("//div[@id='phone-list']//div[@id='us_format_phone']/ul/li[@id='phone-entry-0']"));
+        assertEquals("123-456-7890 | Remove", selenium
+                .getText("//div[@id='phone-list']//div[@id='us_format_phone']/ul/li[@id='phone-entry-0']"));
 
         waitForElementById("fax-remove-0", 5);
-        assertEquals("234-567-8901 | Remove", selenium.getText("//div[@id='fax-list']//div[@id='us_format_fax']/ul/li[@id='fax-entry-0']"));
+        assertEquals("234-567-8901 | Remove", selenium
+                .getText("//div[@id='fax-list']//div[@id='us_format_fax']/ul/li[@id='fax-entry-0']"));
 
         waitForElementById("tty-remove-0", 5);
-        assertEquals("345-678-9012 | Remove", selenium.getText("//div[@id='tty-list']//div[@id='us_format_tty']/ul/li[@id='tty-entry-0']"));
+        assertEquals("345-678-9012 | Remove", selenium
+                .getText("//div[@id='tty-list']//div[@id='us_format_tty']/ul/li[@id='tty-entry-0']"));
 
         waitForElementById("url-remove-0", 5);
-        assertEquals("http://www.example.com | Remove", selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-0']"));
+        assertEquals("http://www.example.com | Remove", selenium
+                .getText("//div[@id='url-list']/ul/li[@id='url-entry-0']"));
 
         // new cert
-        assertEquals("CR cert license change", selenium.getText("wwctrl_curateCrForm_cr_certificateLicenseText").trim());
+        assertEquals("CR cert license change",
+                selenium.getText("wwctrl_curateCrForm_cr_certificateLicenseText").trim());
         // copy over new cert license
         selenium.click("copy_curateCrForm_role_certificateLicenseText");
         waitForElementById("curateRoleForm.role.certificateLicenseText", 5);
         assertEquals("CR cert license change", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
 
         /*
-         // removing items that are breaking the selenium test. need to move on.
-        selenium.click("copy_emailEntry_value0");
-        //waitForElementById("email-remove-1", 5);
-        pause(5000);
-        assertEquals("cr@cr.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
-
-        selenium.click("copy_phoneEntry_value0");
-        //waitForElementById("phone-remove-1", 5);
-        pause(5000);
-        assertEquals("1122334455 | Remove", selenium.getText("//div[@id='phone-list']/ul/li[@id='phone-entry-1']"));
-
-        selenium.click("copy_faxEntry_value0");
-        //waitForElementById("fax-remove-1", 5);
-        pause(5000);
-        assertEquals("1122334455 | Remove", selenium.getText("//div[@id='fax-list']/ul/li[@id='fax-entry-1']"));
-
-        selenium.click("copy_ttyEntry_value0");
-        //waitForElementById("tty-remove-1", 5);
-        pause(5000);
-        assertEquals("1122334455 | Remove", selenium.getText("//div[@id='tty-list']/ul/li[@id='tty-entry-1']"));
-
-        selenium.click("copy_urlEntry_value0");
-        //waitForElementById("url-remove-1", 5);
-        pause(5000);
-        assertEquals("http://www.cr.com | Remove", selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-1']"));
-       */
+         * // removing items that are breaking the selenium test. need to move on.
+         * selenium.click("copy_emailEntry_value0"); //waitForElementById("email-remove-1", 5); pause(5000);
+         * assertEquals("cr@cr.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
+         *
+         * selenium.click("copy_phoneEntry_value0"); //waitForElementById("phone-remove-1", 5); pause(5000);
+         * assertEquals("1122334455 | Remove", selenium.getText("//div[@id='phone-list']/ul/li[@id='phone-entry-1']"));
+         *
+         * selenium.click("copy_faxEntry_value0"); //waitForElementById("fax-remove-1", 5); pause(5000);
+         * assertEquals("1122334455 | Remove", selenium.getText("//div[@id='fax-list']/ul/li[@id='fax-entry-1']"));
+         *
+         * selenium.click("copy_ttyEntry_value0"); //waitForElementById("tty-remove-1", 5); pause(5000);
+         * assertEquals("1122334455 | Remove", selenium.getText("//div[@id='tty-list']/ul/li[@id='tty-entry-1']"));
+         *
+         * selenium.click("copy_urlEntry_value0"); //waitForElementById("url-remove-1", 5); pause(5000);
+         * assertEquals("http://www.cr.com | Remove",
+         * selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-1']"));
+         */
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully updated!".trim()));
     }
 
-
-    private void updateRemoteHcpOrg(String ext) throws EntityValidationException, NamingException, URISyntaxException, NullifiedEntityException, NullifiedRoleException {
+    private void updateRemoteHcpOrg(String ext) throws EntityValidationException, NamingException, URISyntaxException,
+            NullifiedEntityException, NullifiedRoleException {
         Ii id = new Ii();
         id.setExtension(ext);
         id.setRoot("2.16.840.1.113883.3.26.4.5.3");

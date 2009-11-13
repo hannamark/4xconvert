@@ -9,9 +9,6 @@ import org.junit.Test;
 
 public class EntityStatusTest {
 
-    /**
-     * Test canTransitionTo() method
-     */
     @Test
     public void testCanTransitionFromPENDINGTo() {
         EntityStatus cs = EntityStatus.PENDING;
@@ -29,7 +26,7 @@ public class EntityStatusTest {
         assertTrue(cs.canTransitionTo(EntityStatus.NULLIFIED));
         assertFalse(cs.canTransitionTo(EntityStatus.PENDING));
     }
-    
+
     @Test
     public void testCanTransitionFromNULLIFIEDTo() {
         EntityStatus cs = EntityStatus.NULLIFIED;
@@ -38,7 +35,7 @@ public class EntityStatusTest {
         assertFalse(cs.canTransitionTo(EntityStatus.INACTIVE));
         assertFalse(cs.canTransitionTo(EntityStatus.PENDING));
     }
-    
+
     @Test
     public void testCanTransitionFromINACTIVETo() {
         EntityStatus cs = EntityStatus.INACTIVE;
@@ -50,9 +47,6 @@ public class EntityStatusTest {
 
     // todo stm Add test to actually test valid transistion statuses
 
-    /**
-     * Test Curation Exceptions
-     */
     @Test
     public void testCurationException() {
         try {

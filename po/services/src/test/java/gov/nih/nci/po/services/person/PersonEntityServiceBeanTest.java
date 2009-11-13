@@ -76,7 +76,8 @@ import org.junit.Test;
 public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
     private PersonEntityServiceRemote remote;
-   // protected Ii orgId;
+
+    // protected Ii orgId;
 
     /**
      * setup the service.
@@ -104,31 +105,29 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals(per.getFirstName(), findValueByType(result.getName(), EntityNamePartType.GIV));
         assertEquals(per.getLastName(), findValueByType(result.getName(), EntityNamePartType.FAM));
     }
-    
+
     @Test
     public void getPatient() throws NullifiedEntityException, ParseException {
         Patient pat = makePatient();
-        
+
         Ii patIi = ISOUtils.ID_PERSON.convertToIi(pat.getId());
         patIi.setExtension("PT" + patIi.getExtension());
         PersonDTO result = remote.getPerson(patIi);
         // everything other than the status and 4 bio fields should be masked nullflavor
         assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, result.getName().getNullFlavor());
         assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, result.getPostalAddress().getNullFlavor());
-        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, ((Tel) result.getTelecomAddress().getItem()
-                .iterator().next()).getNullFlavor());
+        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, ((Tel) result.getTelecomAddress().getItem().iterator()
+                .next()).getNullFlavor());
         assertEquals(RoleStatus.ACTIVE, CdConverter.convertToRoleStatus(result.getStatusCode()));
-        
+
         // 4 prop fields
         assertEquals(IdConverter.PATIENT_PREFIX + pat.getId(), result.getIdentifier().getExtension());
         assertEquals(pat.getBirthDate(), TsConverter.convertToDate(result.getBirthDate()));
         assertEquals(pat.getSexCode(), SexCodeConverter.convertToStatusEnum(result.getSexCode()));
-        assertEquals((PersonEthnicGroup)pat.getEthnicGroupCode().iterator().next(), 
-                EthnicGroupCodeConverter.convertToEthnicGroupEnum((Cd)result.getEthnicGroupCode().getItem()
-                        .iterator().next()));
-        assertEquals((PersonRace)pat.getRaceCode().iterator().next(), 
-                RaceCodeConverter.convertToRaceEnum((Cd)result.getRaceCode().getItem()
-                        .iterator().next()));
+        assertEquals((PersonEthnicGroup) pat.getEthnicGroupCode().iterator().next(), EthnicGroupCodeConverter
+                .convertToEthnicGroupEnum((Cd) result.getEthnicGroupCode().getItem().iterator().next()));
+        assertEquals((PersonRace) pat.getRaceCode().iterator().next(), RaceCodeConverter.convertToRaceEnum((Cd) result
+                .getRaceCode().getItem().iterator().next()));
     }
 
     private Person makePerson() {
@@ -144,22 +143,22 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         p.getUrl().add(new URL("http://example.com"));
         return p;
     }
-    
+
     private Patient makePatient() throws ParseException {
         Patient p = new Patient();
         p.setStatus(RoleStatus.ACTIVE);
-        
+
         Address a = makeAddress();
         p.getPostalAddresses().add(a);
         p.getEmail().add(new Email("abc@example.com"));
         p.getUrl().add(new URL("http://example.com"));
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
         p.setBirthDate(sdf.parse("09/28/1980"));
         p.setSexCode(PersonSex.MALE);
         p.getEthnicGroupCode().add(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO);
         p.getRaceCode().add(PersonRace.WHITE);
-        
+
         Organization org = new Organization();
         org.setName("test org");
         org.setPostalAddress(makeAddress());
@@ -174,7 +173,9 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     private Address makeAddress() {
-        Address a = new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode", getDefaultCountry());
+        Address a =
+                new Address("streetAddressLine", "cityOrMunicipality", "stateOrProvince", "postalCode",
+                        getDefaultCountry());
         return a;
     }
 
@@ -201,7 +202,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         Address a = makeAddress();
         PoHibernateUtil.getCurrentSession().save(a.getCountry());
         dto.setPostalAddress(AddressConverter.SimpleConverter.convertToAd(a));
-        
+
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         Tel t = new Tel();
@@ -263,7 +264,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstName() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
+    public void findByFirstName() throws EntityValidationException, NullifiedEntityException, URISyntaxException,
+            CurationException {
         init();
 
         PersonDTO crit = new PersonDTO();
@@ -273,7 +275,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
+    public void findByFirstNameWildcardAsFirstAndLast() throws EntityValidationException, NullifiedEntityException,
+            URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "%a%", null, null));
@@ -282,7 +285,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWildcardsInSitu() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
+    public void findByFirstNameWildcardsInSitu() throws EntityValidationException, NullifiedEntityException,
+            URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "b%b", null, null));
@@ -291,7 +295,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWilcardAttempt1() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
+    public void findByFirstNameWilcardAttempt1() throws EntityValidationException, NullifiedEntityException,
+            URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "?a?", null, null));
@@ -300,7 +305,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameWilcardAttempt2() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
+    public void findByFirstNameWilcardAttempt2() throws EntityValidationException, NullifiedEntityException,
+            URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "_a_", null, null));
@@ -309,7 +315,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByFirstNameNoMatches() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
+    public void findByFirstNameNoMatches() throws EntityValidationException, NullifiedEntityException,
+            URISyntaxException, CurationException {
         init();
         PersonDTO crit = new PersonDTO();
         crit.setName(PersonNameConverterUtil.convertToEnPn(null, null, "foobar", null, null));
@@ -317,7 +324,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertEquals(0, result.size());
     }
 
-    private void init() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
+    private void init() throws EntityValidationException, NullifiedEntityException, URISyntaxException,
+            CurationException {
         PersonDTO dto = new PersonDTO();
         dto.setName(PersonNameConverterUtil.convertToEnPn("bab", "m", "a", "c", "d"));
         Person p = (Person) PoXsnapshotHelper.createModel(dto);
@@ -359,7 +367,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void findByMiddleName() throws EntityValidationException, NullifiedEntityException, URISyntaxException, CurationException {
+    public void findByMiddleName() throws EntityValidationException, NullifiedEntityException, URISyntaxException,
+            CurationException {
         init();
 
         PersonDTO crit = new PersonDTO();
@@ -374,12 +383,13 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     }
 
     @Test
-    public void updatePerson() throws EntityValidationException, URISyntaxException, NullifiedEntityException, JMSException {
+    public void updatePerson() throws EntityValidationException, URISyntaxException, NullifiedEntityException,
+            JMSException {
         long id = super.createPerson();
         Person p = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
         assertEquals(EntityStatus.PENDING, StatusCodeConverter.convertToStatusEnum(dto.getStatusCode()));
-        //dto.setName(StringConverter.convertToEnOn("newName"));
+        // dto.setName(StringConverter.convertToEnOn("newName"));
         Adxp adl = new AdxpAdl();
         adl.setValue("additional ADL");
         dto.getPostalAddress().getPart().add(adl);
@@ -392,61 +402,61 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         List<PersonCR> l = PoHibernateUtil.getCurrentSession().createCriteria(PersonCR.class).list();
         assertEquals(1, l.size());
         PersonCR cr = l.get(0);
-//        assertEquals("newName", cr.getName());
-        assertEquals(p.getPostalAddress().getDeliveryAddressLine() + " additional ADL", cr.getPostalAddress().getDeliveryAddressLine());
+        // assertEquals("newName", cr.getName());
+        assertEquals(p.getPostalAddress().getDeliveryAddressLine() + " additional ADL", cr.getPostalAddress()
+                .getDeliveryAddressLine());
         assertEquals(1, cr.getEmail().size());
         assertEquals("another.email@example.com", cr.getEmail().get(0).getValue());
         assertEquals(EntityStatus.PENDING, cr.getStatusCode());
     }
-    
-    private long createPatient() throws Exception { 
-      
+
+    private long createPatient() throws Exception {
+
         PatientRemoteServiceTest patCTest = new PatientRemoteServiceTest();
         patCTest.setDefaultCountry(CountryTestUtil.save(new Country("Zcountry Zworld", "999", "ZZ", "ZZZ")));
         patCTest.setUpData();
         PatientDTO patDto = patCTest.getSampleDto();
-        
-        
+
         Ii id = EjbTestHelper.getPatientCorrelationServiceRemote().createCorrelation(patDto);
         assertNotNull(id);
         assertNotNull(id.getExtension());
-        
+
         Ii patIi = ISOUtils.ID_PERSON.convertToIi(Long.valueOf(id.getExtension()));
         patIi.setExtension(IdConverter.PATIENT_PREFIX + patIi.getExtension());
         PersonDTO result = remote.getPerson(patIi);
-        
-         
+
         SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
         result.setBirthDate(DateConverter.convertToTs(sdf.parse("09/28/1980")));
         result.setSexCode(SexCodeConverter.convertToCd(PersonSex.MALE));
-        result.getEthnicGroupCode().getItem().add(EthnicGroupCodeConverter.convertToCd(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO));
+        result.getEthnicGroupCode().getItem().add(
+                EthnicGroupCodeConverter.convertToCd(PersonEthnicGroup.NOT_HISPANIC_OR_LATINO));
         result.getRaceCode().getItem().add(RaceCodeConverter.convertToCd(PersonRace.WHITE));
-        
+
         remote.updatePerson(result);
-           
+
         return Long.valueOf(id.getExtension());
-           
+
     }
-    
+
     @Test
     public void updatePatient() throws Exception {
         long id = this.createPatient();
-        
+
         Patient p = (Patient) PoHibernateUtil.getCurrentSession().get(Patient.class, id);
         Ii patIi = ISOUtils.ID_PERSON.convertToIi(id);
         patIi.setExtension(IdConverter.PATIENT_PREFIX + patIi.getExtension());
         PersonDTO result = remote.getPerson(patIi);
-        
+
         Cd sexCode = new Cd();
         sexCode.setCode("FEMALE");
         result.setSexCode(sexCode);
         remote.updatePerson(result);
-        
+
         PersonDTO fresh = remote.getPerson(patIi);
         assertEquals("female", fresh.getSexCode().getCode());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void updatePersonChangeCtatus() throws EntityValidationException, NullifiedEntityException, JMSException {
         long id = super.createPerson();
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
@@ -467,80 +477,80 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         PersonCR cr = l.get(0);
         assertEquals(cr.getStatusCode(), EntityStatus.INACTIVE);
     }
-    
-    @Test 
+
+    @Test
     public void search() throws TooManyResultsException, EntityValidationException, JMSException {
         int max = 7;
-        PersonEntityServiceBean.setMaxResultsReturnedLimit(max-2);
-        for(int i = 0 ; i < max; i++) {
+        PersonEntityServiceBean.setMaxResultsReturnedLimit(max - 2);
+        for (int i = 0; i < max; i++) {
             createPerson();
         }
-        
+
         PersonDTO sc = new PersonDTO();
         sc.setName(PersonNameConverterUtil.convertToEnPn("fName", null, null, null, null));
         List<PersonDTO> results;
-        //verify walking forward with a page size of 1
-        LimitOffset page = new LimitOffset(1,-1);
-        for (int j = 0 ; j < max; j++) {
+        // verify walking forward with a page size of 1
+        LimitOffset page = new LimitOffset(1, -1);
+        for (int j = 0; j < max; j++) {
             page.next();
             results = remote.search(sc, page);
             assertEquals(1, results.size());
         }
-        //walk past the last record
+        // walk past the last record
         page.next();
         results = remote.search(sc, page);
         assertEquals(0, results.size());
-        
-        //walk back to first record
-        for (int j = 0 ; j < max; j++) {
+
+        // walk back to first record
+        for (int j = 0; j < max; j++) {
             page.previous();
             results = remote.search(sc, page);
             assertEquals(1, results.size());
         }
-        //try to walk before first record, first record always returned 
+        // try to walk before first record, first record always returned
         page.previous();
         results = remote.search(sc, page);
         assertEquals(1, results.size());
-        
-        //verify TooManyResultsException is thrown
+
+        // verify TooManyResultsException is thrown
         try {
             remote.search(sc, new LimitOffset(max, 0));
             fail();
         } catch (TooManyResultsException e) {
         }
-        
-        //verify TooManyResultsException is thrown
+
+        // verify TooManyResultsException is thrown
         try {
-            remote.search(sc, new LimitOffset(max-1, 0));
+            remote.search(sc, new LimitOffset(max - 1, 0));
             fail();
         } catch (TooManyResultsException e) {
         }
-        
-        //verify results are returned
-        page = new LimitOffset(max-2, 0);
+
+        // verify results are returned
+        page = new LimitOffset(max - 2, 0);
         results = remote.search(sc, page);
         assertEquals(page.getLimit(), results.size());
-        
-        //verify results are returned
-        page = new LimitOffset(max-3, 0);
+
+        // verify results are returned
+        page = new LimitOffset(max - 3, 0);
         results = remote.search(sc, page);
         assertEquals(page.getLimit(), results.size());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void updateWithNoIdentifier() throws Exception {
         long id = super.createPerson();
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
-        
+
         dto.setIdentifier(null);
         remote.updatePerson(dto);
     }
-     
+
     @Test(expected = IllegalArgumentException.class)
     public void updateWithWrongIdentifier() throws Exception {
         long id = super.createPerson();
         PersonDTO dto = remote.getPerson(ISOUtils.ID_PERSON.convertToIi(id));
-        
+
         Ii wrongId = new Ii();
         wrongId.setRoot(IdConverter.PERSON_ROOT);
         wrongId.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
@@ -548,18 +558,18 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         dto.setIdentifier(wrongId);
         remote.updatePerson(dto);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void updateStatusWithWrongIdentifier() throws Exception {
 
         Cd cd = new Cd();
         cd.setCode("suspended"); // maps to SUSPENDED
-        
+
         Ii wrongId = new Ii();
         wrongId.setRoot(IdConverter.PERSON_ROOT);
         wrongId.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
         wrongId.setExtension("999");
-        
+
         remote.updatePersonStatus(wrongId, cd);
     }
 }

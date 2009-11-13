@@ -139,7 +139,7 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     public void testStart() {
         action.getOrganization().setId(1L);
         assertEquals(CurateOrganizationAction.CURATE_RESULT, action.start());
-        assertEquals(1l, action.getOrganization().getId().longValue());
+        assertEquals(1L, action.getOrganization().getId().longValue());
         assertEquals("name", action.getOrganization().getName());
     }
 
@@ -206,7 +206,7 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
             i++;
         }
     }
-    
+
     @Test
     public void testUsFormat() {
         assertFalse(action.isUsOrCanadaFormat());

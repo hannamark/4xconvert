@@ -105,7 +105,7 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
         ip.setPlayer(basicPerson);
         ip.setScoper(basicOrganization);
 
-        Ii ii = new Ii();;
+        Ii ii = new Ii();
         ii.setDisplayable(Boolean.TRUE);
         ii.setExtension("myExtension" + (ext++));
         ii.setIdentifierName("myIdName");
