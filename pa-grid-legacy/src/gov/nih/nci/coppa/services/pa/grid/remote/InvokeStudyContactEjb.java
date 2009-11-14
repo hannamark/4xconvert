@@ -2,6 +2,8 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -67,6 +69,14 @@ public class InvokeStudyContactEjb
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyContactDTO> search(StudyContactDTO arg0, LimitOffset arg1)
+            throws PAException, TooManyResultsException {
+        throw new UnsupportedOperationException("Method not implemented");
     }
 
 }

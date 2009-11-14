@@ -2,6 +2,8 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -65,6 +67,15 @@ public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> im
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudySiteDTO> search(StudySiteDTO arg0, LimitOffset arg1)
+            throws PAException, TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -117,8 +117,6 @@ public class PlannedEligibilityCriterionTransformerTest
         result.setSubcategoryCode(new CDTransformerTest().makeDtoSimple());
         result.setEligibleGenderCode(new CDTransformerTest().makeDtoSimple());
 
-        //PQ
-        result.setValue(new PQTransformerTest().makeDtoSimple());
 
         return result;
     }
@@ -145,8 +143,6 @@ public class PlannedEligibilityCriterionTransformerTest
         result.setSubcategoryCode(new CDTransformerTest().makeXmlSimple());
         result.setEligibleGenderCode(new CDTransformerTest().makeXmlSimple());
 
-        //PQ
-        result.setValue(new PQTransformerTest().makeXmlSimple());
         return result;
     }
 
@@ -163,7 +159,6 @@ public class PlannedEligibilityCriterionTransformerTest
         new CDTransformerTest().verifyDtoSimple(x.getCategoryCode());
         new CDTransformerTest().verifyDtoSimple(x.getSubcategoryCode());
         new CDTransformerTest().verifyDtoSimple(x.getEligibleGenderCode());
-        new PQTransformerTest().verifyDtoSimple(x.getValue());
     }
 
     @Override
@@ -179,6 +174,5 @@ public class PlannedEligibilityCriterionTransformerTest
         new CDTransformerTest().verifyXmlSimple(x.getCategoryCode());
         new CDTransformerTest().verifyXmlSimple(x.getSubcategoryCode());
         new CDTransformerTest().verifyXmlSimple(x.getEligibleGenderCode());
-        new PQTransformerTest().verifyXmlSimple(x.getValue());
     }
 }

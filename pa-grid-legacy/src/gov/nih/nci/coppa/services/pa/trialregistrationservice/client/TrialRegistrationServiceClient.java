@@ -82,7 +82,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
               System.out.println("updating a protocol");
               updateInterventionalStudyProtocol(client);
               System.out.println("amending a protocol");
-              amendInterventionalStudyProtocol(client);
+              //amendInterventionalStudyProtocol(client);
               System.out.println("creating a proprietary protocol");
               createProprietaryInterventionalStudyProtocol(client);
             } else {
@@ -346,6 +346,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setPrimaryCompletionDate(futureDate);
         studyProtocol.setPrimaryCompletionDateTypeCode(ISOUtils.buildCD("Anticipated"));
         studyProtocol.setOfficialTitle(dummyString);
+        studyProtocol.setUserLastCreated(ISOUtils.buildST("namiruddin@scenpro.com"));
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
@@ -365,13 +366,13 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Organization leadOrganization = new Organization();
         II leadOrgIi = new II();
         leadOrgIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        leadOrgIi.setExtension("574");
+        leadOrgIi.setExtension("584");
         leadOrganization.setIdentifier(leadOrgIi);
 
         Person studySiteInvestigator = new Person();
         II studySiteInvestigatorIi = new II();
         studySiteInvestigatorIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        studySiteInvestigatorIi.setExtension("531");
+        studySiteInvestigatorIi.setExtension("2705");
         studySiteInvestigator.setIdentifier(studySiteInvestigatorIi);
 
         StudySite leadOrganizationStudySite = new StudySite();
@@ -380,7 +381,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         Organization studySiteOrganization = new Organization();
         II studySiteOrganizationIi = new II();
         studySiteOrganizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        studySiteOrganizationIi.setExtension("574");
+        studySiteOrganizationIi.setExtension("584");
         studySiteOrganization.setIdentifier(studySiteOrganizationIi);
 
         StudySite studySite = new StudySite();

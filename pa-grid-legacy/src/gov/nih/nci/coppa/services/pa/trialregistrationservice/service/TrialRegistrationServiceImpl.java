@@ -1,9 +1,12 @@
 package gov.nih.nci.coppa.services.pa.trialregistrationservice.service;
 
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.IdTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
@@ -19,6 +22,9 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeTrialRegistrationEjb;
 import gov.nih.nci.coppa.services.pa.studyprotocolservice.service.StudyProtocolServiceImpl;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudySiteStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -74,11 +80,13 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
+            Bl isBatch = new Bl();
+            isBatch.setValue(Boolean.FALSE);
             Ii ii = service.createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, nctIdentifierSiteIdentifierDTO,
                             studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                            responsiblePartyContactIi);
+                            responsiblePartyContactIi, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -106,11 +114,14 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
+            Bl isBatch = new Bl();
+            isBatch.setValue(Boolean.FALSE);
+
             Ii ii = service.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                             documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
                             leadOrganizationSiteIdentifierDTO, nctIdentifierSiteIdentifierDTO, studyContactDTO,
                             studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                            responsiblePartyContactIi);
+                            responsiblePartyContactIi, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -138,12 +149,14 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs =
                     StudySiteAccrualStatusTransformer.INSTANCE.convert(studySiteAccrualStatuses);
             List<StudySiteDTO> studySiteDTOs = StudySiteTransformer.INSTANCE.convert(studySites);
+            Bl isBatch = new Bl();
+            isBatch.setValue(Boolean.FALSE);
 
             service.update(studyProtocolDTO, overallStatusDTO, studySiteDTO, studyIndldeDTOs, studyResourcingDTOs,
                     documentDTOs,
                     studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                     responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, studySiteAccrualStatusDTOs,
-                    studySiteDTOs);
+                    studySiteDTOs, isBatch);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);
@@ -165,10 +178,48 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             OrganizationDTO summary4organizationDTO = OrganizationTransformer.INSTANCE.toDto(summaryForOrganization);
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
-            Ii ii = service.createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteOverallStatusDTO,
+            
+            // convert from studySiteOverallStatus to studySiteAccrualStatus
+            Cd ssosc = null;
+            Cd ssasc = new Cd();;
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO = new StudySiteAccrualStatusDTO(); 
+            if (studySiteOverallStatusDTO != null) {
+                studySiteAccrualStatusDTO.setStatusDate(studySiteOverallStatusDTO.getStatusDate());
+                ssosc =  studySiteOverallStatusDTO.getStatusCode();
+            }
+            if (ssosc != null) {
+                if (StudySiteStatusCode.IN_REVIEW.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.NOT_YET_RECRUITING.getCode());
+                } else if (StudySiteStatusCode.APPROVED.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.NOT_YET_RECRUITING.getCode());
+                } else if (StudySiteStatusCode.DISAPPROVED.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.WITHDRAWN.getCode());
+                } else if (StudySiteStatusCode.ACTIVE.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.RECRUITING.getCode());
+                } else if (StudySiteStatusCode.CLOSED_TO_ACCRUAL.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING.getCode());
+                } else if (StudySiteStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING.getCode());
+                } else if (StudySiteStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode());
+                } else if (StudySiteStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode().
+                            equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode());
+                } else if (StudySiteStatusCode.WITHDRAWN.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.WITHDRAWN.getCode());
+                } else if (StudySiteStatusCode.COMPLETE.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.COMPLETED.getCode());
+                } else if (StudySiteStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(ssosc.getCode())) {
+                    ssasc.setCode(RecruitmentStatusCode.TERMINATED_RECRUITING.getCode());
+                }
+            }
+            studySiteAccrualStatusDTO.setStatusCode(ssasc);
+            Bl isBatch = new Bl();
+            isBatch.setValue(Boolean.FALSE);
+            Ii ii = service.createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                             studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
-                            summary4studyResourcingDTO);
+                            summary4studyResourcingDTO, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
