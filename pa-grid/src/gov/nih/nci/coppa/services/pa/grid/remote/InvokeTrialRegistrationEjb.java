@@ -142,7 +142,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      */
     // CHECKSTYLE:OFF
     public Ii createProprietaryInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
-            StudySiteAccrualStatusDTO studySiteOverallStatusDTO, List<DocumentDTO> documentDTOs,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
@@ -150,15 +150,13 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         // CHECKSTYLE:ON
 
         try {
-            Ii ii = null;
-            return ii;
-//            return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
-//                    .createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteOverallStatusDTO,
-//                            documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
-//                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
-//                            summary4StudyResourcingDTO, isBatch);
-//        } catch (PAException pae) {
-//            throw pae;
+            return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
+                    .createProprietaryInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
+                            documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
+                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
+                            summary4StudyResourcingDTO, isBatch);
+        } catch (PAException pae) {
+            throw pae;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
