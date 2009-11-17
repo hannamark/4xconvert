@@ -249,7 +249,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -267,7 +267,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     public Set<PersonEthnicGroup> getEthnicGroupCode() {
         return super.getEthnicGroupCode();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -390,6 +390,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
      * @return comments
      */
     @Lob
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getComments() {
         return comments;
     }

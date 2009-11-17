@@ -132,7 +132,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    @Searchable(fields = {"id" })
+    @Searchable(nested = true)
     @Transient
     public Person getPlayer() {
         return this.player;
@@ -262,7 +262,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
     public void setTty(List<PhoneNumber> tty) {
         this.tty = tty;
     }
-    
+
     /**
      * Returns boolean if the address is US.
      * @return bool
