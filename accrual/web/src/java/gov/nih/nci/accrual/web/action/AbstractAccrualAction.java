@@ -83,7 +83,6 @@ import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
@@ -134,18 +133,16 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected DiseaseServiceRemote diseaseSvc;
     /** PlannedActivityService. */
     protected PlannedActivityServiceRemote plannedActivitySvc;
-    /** PatientService. */
-    protected PatientServiceRemote patientCorrelationSvc;
     /** DiseaseService. */
     protected DiseaseParentServiceRemote diseaseParentSvc;
     /** PerformedObservationResultService. */
     protected PerformedObservationResultService porServiceSvc;
     /** Name of the next target when needed. */
     private String nextTarget = null;
-    
+
     /** The action result to perform a redirect using "next". */
     public static final String NEXT = "next";
-    
+
     /**
      * {@inheritDoc}
      */
@@ -159,7 +156,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
-        patientCorrelationSvc = AccrualServiceLocator.getInstance().getPOPatientService();
         diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
         porServiceSvc = AccrualServiceLocator.getInstance().getPerformedObservationResultService();
     }
@@ -255,7 +251,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
             }
         }
     }
-    
+
     /**
      * @param nextTarget the nextTarget to set
      */

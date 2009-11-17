@@ -4,7 +4,7 @@
 <!-- ant script for Accrual Web                                             -->
 <!-- ====================================================================== -->
 
-<project name="accrual.web" default="war" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="accrual.accrual-web" default="war" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
@@ -13,7 +13,7 @@
     <property name="checkstyleFile" value="${resource.dir}/accrualCheckstyle.xml"/>
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
-    <property name="web.report.dir" value="${software.dir}/target/accrual/reports/web"/>
+    <property name="web.report.dir" value="${software.dir}/target/accrual/reports/accrual-web"/>
     <property name="web.build.finalName" value="accrual"/>
     <property name="web.build.dir" value="${basedir}/target"/>
     <property name="web.build.outputDir" value="${web.build.dir}/classes"/>
@@ -29,7 +29,7 @@
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
     <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
-    <property name="ivy.def.file" location="ivy-accrual-web.xml" />
+    <property name="ivy.def.file" location="ivy-accrual-accrual-web.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
 
@@ -38,7 +38,7 @@
     <!-- ====================================================================== -->
 
 
-    <property name="compile.jar.dir" location="${lib.dir}/web/compile"/>
+    <property name="compile.jar.dir" location="${lib.dir}/accrual-web/compile"/>
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
         <fileset dir="${software.dir}/accrual/services/target">
@@ -46,27 +46,27 @@
         </fileset>
     </path>
 
-    <property name="test.jar.dir" location="${lib.dir}/web/test"/>
+    <property name="test.jar.dir" location="${lib.dir}/accrual-web/test"/>
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}"/>
     </path>
 
-    <property name="test-simian.jar.dir" location="${lib.dir}/web/test-simian"/>
+    <property name="test-simian.jar.dir" location="${lib.dir}/accrual-web/test-simian"/>
     <path id="test-simian.classpath">
         <fileset dir="${test-simian.jar.dir}"/>
     </path>
 
-    <property name="test-cobertura.jar.dir" location="${lib.dir}/web/test-cobertura"/>
+    <property name="test-cobertura.jar.dir" location="${lib.dir}/accrual-web/test-cobertura"/>
     <path id="test-cobertura.classpath">
         <fileset dir="${test-cobertura.jar.dir}"/>
     </path>
 
-    <property name="test-checkstyle.jar.dir" location="${lib.dir}/web/test-checkstyle"/>
+    <property name="test-checkstyle.jar.dir" location="${lib.dir}/accrual-web/test-checkstyle"/>
     <path id="test-checkstyle.classpath">
         <fileset dir="${test-checkstyle.jar.dir}"/>
     </path>
 
-    <property name="test-pmd.jar.dir" location="${lib.dir}/web/test-pmd"/>
+    <property name="test-pmd.jar.dir" location="${lib.dir}/accrual-web/test-pmd"/>
     <path id="test-pmd.classpath">
         <fileset dir="${test-pmd.jar.dir}"/>
     </path>
@@ -302,7 +302,7 @@
     <target name="create-war">
         <mkdir dir="${web.build.dir}/${web.build.finalName}/WEB-INF/lib"/>
         <copy todir="${web.build.dir}/${web.build.finalName}/WEB-INF/lib">
-            <fileset dir="${lib.dir}/web/runtime"/>
+            <fileset dir="${lib.dir}/accrual-web/runtime"/>
         </copy>
         <war destfile="${web.build.dir}/${web.war}" 
              compress="false" 
@@ -328,48 +328,48 @@
 
     <target name="init:ivy">
         <mkdir dir="${local.repo.dir}"/>
-        <mkdir dir="${lib.dir}/web"/>
+        <mkdir dir="${lib.dir}/accrual-web"/>
         <property name="ivy.dep.file" value="${ivy.def.file}"/>
         <ivy:settings file="${ivy.settings.file}"/>
     </target>
 
     <target name="ivy-test-pmd" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-pmd"/>
-        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="test-pmd"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test-pmd"/>
     </target>
 
     <target name="ivy-test-checkstyle" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-checkstyle"/>
-        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle"/>
     </target>
 
     <target name="ivy-test-simian" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-simian"/>
-        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="test-simian"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test-simian"/>
     </target>
 
     <target name="ivy-test-cobertura" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-cobertura"/>
-        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura"/>
     </target>
 
     <target name="ivy-compile" depends="init:ivy"
             description="Resolves and retrieves the JARs needed to compile the subproject">
         <ivy:resolve refresh="true" conf="compile"/>
-        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="compile"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="compile"/>
     </target>
 
     <target name="ivy-runtime" depends="init:ivy"
             description="Resolves and retrieves the JARs needed to run the subproject">
         <ivy:resolve refresh="true" conf="runtime"/>
-        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="runtime"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="runtime"/>
     </target>
 
     <target name="ivy-test"
             depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura"
             description="Resolves and retrieves the JARs needed to test the subproject">
         <ivy:resolve refresh="true" conf="test"/>
-        <ivy:retrieve pattern="${lib.dir}/web/[conf]/[artifact]-[revision].[ext]" conf="test"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test"/>
     </target>
 
     <target name="ivy-get"
@@ -378,7 +378,7 @@
     </target>
     
     <target name="ivy-clean" description="Delete jars.">
-        <delete dir="${lib.dir}/web"/>
+        <delete dir="${lib.dir}/accrual-web"/>
     </target>
 
 

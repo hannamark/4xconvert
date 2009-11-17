@@ -99,11 +99,6 @@
              basedir="${ear.build.dir}/${ear.build.finalName}" 
              compress="false" 
              appxml="${ear.resource.dir}/META-INF/application.xml"/>
-
-        <!-- other jboss files to target folder -->
-        <copy todir="${ear.build.dir}/container.lib" overwrite="true">
-            <fileset dir="${lib.dir}/ear/container"/>
-        </copy>
     </target>
 
 
@@ -122,13 +117,8 @@
         <ivy:retrieve pattern="${lib.dir}/ear/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
     </target>
 
-    <target name="ivy-container" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="container" />
-        <ivy:retrieve pattern="${lib.dir}/ear/[conf]/[artifact]-[revision].[ext]" conf="container" />
-    </target>
-
     <target name="ivy-get" 
-            depends="ivy-runtime, ivy-container" 
+            depends="ivy-runtime" 
             description="Updates the local ivy repository">
     </target>
 
