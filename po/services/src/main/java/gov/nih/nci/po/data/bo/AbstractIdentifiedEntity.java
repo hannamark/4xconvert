@@ -143,7 +143,7 @@ public abstract class AbstractIdentifiedEntity<T extends CuratableEntity<?, ?>> 
     @ManyToOne
     @ForeignKey(name = "identifiedentity_scoper_fkey")
     @NotNull
-    @Searchable(fields = {"id" })
+    @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return this.scoper;

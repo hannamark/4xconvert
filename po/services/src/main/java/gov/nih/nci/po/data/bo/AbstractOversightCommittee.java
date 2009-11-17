@@ -126,7 +126,7 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
      */
     @ManyToOne
     @ForeignKey(name = "oversight_comm_type_fkey")
-    @Searchable
+    @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
     @NotNull
     public OversightCommitteeType getTypeCode() {

@@ -121,7 +121,7 @@ public abstract class AbstractOrganizationRole extends AbstractRole implements P
     @ManyToOne
     @NotNull
     @ForeignKey(name = "organizationrole_player_fkey")
-    @Searchable(fields = {"id" })
+    @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Organization getPlayer() {
         return player;

@@ -198,7 +198,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @JoinColumn(name = "orgcontacttype_id", nullable = false)
     @Index(name = "oc_orgcontacttypeid_idx")
     @ForeignKey(name = "ORGCNCT_TYPE_ORGCNCT_FK")
-    @Searchable
+    @Searchable(nested = true)
     @Override
     @NotNull
     public OrganizationalContactType getType() {

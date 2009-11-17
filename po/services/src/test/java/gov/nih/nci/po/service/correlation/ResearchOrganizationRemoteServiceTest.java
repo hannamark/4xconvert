@@ -97,6 +97,8 @@ import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import java.util.List;
 
+import org.junit.Test;
+
 /**
  * Remote service test.
  */
@@ -184,6 +186,25 @@ public class ResearchOrganizationRemoteServiceTest extends
         type.setCode(other.getCode());
         correlation2.setTypeCode(type);
 
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testNestedTypeCode() throws Exception {
+        ResearchOrganizationDTO ro = getSampleDto();
+        Ii id1 = getCorrelationService().createCorrelation(ro);
+
+    
+        ResearchOrganizationDTO searchCriteria = getEmptySearchCriteria();
+     
+        List<ResearchOrganizationDTO> results = null;
+
+        Cd fm = new Cd();
+        fm.setCode(getResearchOrgType().getCode());
+        searchCriteria.setTypeCode(fm);
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getTypeCode().getCode(), getResearchOrgType().getCode());
     }
 
     @Override
