@@ -1,0 +1,93 @@
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+
+<SCRIPT language="JavaScript">
+
+    
+    function callParentSubmit(disid)
+    {   
+        top.window.loadDiv(disid);
+        window.top.hidePopWin(true); 
+    }
+    function loadDiv() {     
+        
+        var jsName = document.getElementById("searchName").value;
+        var jcsiName = document.getElementById("csiName").value;
+        var restrictToSt = false;  
+        if (document.getElementById("restrictToStandard") != null && document.getElementById("restrictToStandard").checked==true)
+        {
+            restrictToSt = true;
+        } 
+        var url = '/pa/protected/popupCadsrgetClassifiedCDEs.action?searchName='+jsName+'&csiName=' + jcsiName + '&restrictToStandard='+restrictToSt;
+        var div = document.getElementById('getCadsr');
+        div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+        var aj = new Ajax.Updater(div,url, {
+            asynchronous: true,
+            method: 'get',
+            evalScripts: false
+        });
+    }
+</SCRIPT>
+
+</head> 
+<body>
+<div class="box">
+<s:form id="cadsrlookup" name="cadsrlookup" >
+<h2>Search CaDSR</h2>
+<table  class="form">  
+    <tr>    
+        <td scope="row" class="label">
+            <label for="searchName">Data Element Name: </label>
+        </td>
+        <td>
+            <s:textfield id="searchName" name="searchName"  maxlength="60" size="60"  cssStyle="width:200px" />
+        </td>
+            <td class="value">
+            <ul style="margin-top: -6px;">
+                <li style="padding-left: 0"><a href="#" class="btn" onclick=";" /><span class="btn_img"><span
+                    class="search">CDE Create Request</span></span></a></li>
+            </ul>
+            </td>
+       </tr>
+       <tr> 
+                <td scope="row" class="label">
+                   <label  for="restrictToStandard"> <fmt:message key="cadsr.restrictToStandard"/></label>                        
+                </td>
+                <td colspan="2">
+                    <s:checkbox name="restrictToStandard" id="restrictToStandard" />
+                </td>
+
+        </tr>
+       <tr> 
+                <td scope="row" class="label">
+                   <label  for="Classification Code"> <fmt:message key="cadsr.classificationCode"/></label>                        
+                </td>
+                <td colspan="2">
+                    <s:textfield id="csiName" name="csiName"  maxlength="60" size="60"  cssStyle="width:200px" />
+                </td>
+
+        </tr>
+
+</table>
+    <div class="actionsrow">
+         <del class="btnwrapper">
+            <ul class="btnrow">
+               <li>
+                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>  
+               </li>
+            </ul>
+          </del>
+    </div>
+    <div class="line"></div>
+    <div id="getCadsr" align="center">   
+        <jsp:include page="/WEB-INF/jsp/nodecorate/lookupcadsrdisplaycadsr.jsp"/>
+    </div>
+</s:form>
+</div>
+
+
+</body>
+</html>

@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.cadsr.domain.ClassSchemeClassSchemeItem;
+import gov.nih.nci.cadsr.domain.ClassificationScheme;
+import gov.nih.nci.cadsr.domain.ClassificationSchemeItem;
+import gov.nih.nci.cadsr.domain.DataElement;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
@@ -101,13 +105,20 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.system.applicationservice.ApplicationService;
+import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Expression;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -120,84 +131,197 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
   "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.TooManyFields" , 
       "PMD.AvoidDeeplyNestedIfStmts" })
-  public class EligibilityCriteriaAction extends ActionSupport {
+public class EligibilityCriteriaAction extends ActionSupport {
 
-  private static final long serialVersionUID = -5307419735675359757L;
-private static final String ELIGIBILITY = "eligibility";
-  private static final String ELIGIBILITYADD = "eligibilityAdd";
-  private static final int MAXIMUM_CHAR_POPULATION = 800;
-  private static final int MAXIMUM_CHAR_DESCRIPTION = 5000;
-  private static final String SP = " ";
-  private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
-  private Long id = null;
-  private String page;
-  private String acceptHealthyVolunteersIndicator;
-  private String eligibleGenderCode;
-  private String maximumValue;
-  private String valueUnit;
-  private String minimumValue;
-  private String eligibleGenderCodeId = null;
-  private String valueId = null;
-  private List<ISDesignDetailsWebDTO> eligibilityList;
-   private List<ISDesignDetailsWebDTO> list = null;
-  private static final int RECORDSVALUE = 2;
-  private String studyPopulationDescription;
-  private String samplingMethodCode;
-   
-  /**
-   * @return res
-   */
-
-  public String query() {
+    private static final long serialVersionUID = -5307419735675359757L;
+    private static final String ELIGIBILITY = "eligibility";
+    private static final String ELIGIBILITYADD = "eligibilityAdd";
+    private static final int MAXIMUM_CHAR_POPULATION = 800;
+    private static final int MAXIMUM_CHAR_DESCRIPTION = 5000;
+    private static final String SP = " ";
+    private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
+    private Long id = null;
+    private String page;
+    private String acceptHealthyVolunteersIndicator;
+    private String eligibleGenderCode;
+    private String maximumValue;
+    private String valueUnit;
+    private String minimumValue;
+    private String eligibleGenderCodeId = null;
+    private String valueId = null;
+    private List<ISDesignDetailsWebDTO> eligibilityList;
+    private List<ISDesignDetailsWebDTO> list = null;
+    private static final int RECORDSVALUE = 2;
+    private String studyPopulationDescription;
+    private String samplingMethodCode;
+    private List<DataElement> cadsrResult = new ArrayList<DataElement>();  
+    private static final long CADSR_CS_ID = 2960572;
+    private static final float CADSR_CS_VERSION = 1;  
+    private List<ClassificationSchemeItem> csisResult = new ArrayList<ClassificationSchemeItem>();
+    private static final String CSIS = "csisResult";
+    private static final String CDES_BY_CSI = "cdesByCsiResult";
+  
+    /**
+     * 
+     * @return String
+     */
+    public String query() {
 
     try {
-      Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-      .getAttribute(Constants.STUDY_PROTOCOL_II);
-      List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
-      .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
-      if (pecList != null && !pecList.isEmpty()) {
-        list = new ArrayList<ISDesignDetailsWebDTO>();
-        for (PlannedEligibilityCriterionDTO dto : pecList) {
-          list.add(setEligibilityDetailsDTO(dto));
-        }
-        if (list.size() > RECORDSVALUE) {
-         eligibilityList = new ArrayList<ISDesignDetailsWebDTO>();
-          for (ISDesignDetailsWebDTO weblist : list) {
-            if (weblist.getCriterionName() == null
-                || (!(weblist.getCriterionName().equalsIgnoreCase("GENDER")))
-                && (!(weblist.getCriterionName().equalsIgnoreCase("AGE")))) {
-              eligibilityList.add(weblist);             
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+            .getAttribute(Constants.STUDY_PROTOCOL_II);
+        List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
+        .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+        if (pecList != null && !pecList.isEmpty()) {
+            list = new ArrayList<ISDesignDetailsWebDTO>();
+            for (PlannedEligibilityCriterionDTO dto : pecList) {
+                list.add(setEligibilityDetailsDTO(dto));
             }
-          }
+            if (list.size() > RECORDSVALUE) {
+                eligibilityList = new ArrayList<ISDesignDetailsWebDTO>();
+                for (ISDesignDetailsWebDTO weblist : list) {
+                    if (weblist.getCriterionName() == null
+                            || (!(weblist.getCriterionName().equalsIgnoreCase("GENDER")))
+                            && (!(weblist.getCriterionName().equalsIgnoreCase("AGE")))) {
+                        eligibilityList.add(weblist);             
+                    }
+                }
+            }
         }
-      }
      
-      StudyProtocolDTO spDTO = new StudyProtocolDTO();
-      spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-      if (spDTO.getAcceptHealthyVolunteersIndicator().getValue() != null) {
-        acceptHealthyVolunteersIndicator = spDTO.getAcceptHealthyVolunteersIndicator().getValue().toString();
-      }
-      StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext
-      .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-      if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
-        ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
-        ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
-        if (ospDTO != null) {
-        if (ospDTO.getSamplingMethodCode().getCode() != null) {
-          samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        if (spDTO.getAcceptHealthyVolunteersIndicator().getValue() != null) {
+            acceptHealthyVolunteersIndicator = spDTO.getAcceptHealthyVolunteersIndicator().getValue().toString();
         }
-        if (ospDTO.getStudyPopulationDescription().getValue() != null) {
-          studyPopulationDescription = ospDTO.getStudyPopulationDescription().getValue().toString();
-        }
-      }
-      }   
+        StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext
+        .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
+            ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
+            ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
+            if (ospDTO != null) {
+                if (ospDTO.getSamplingMethodCode().getCode() != null) {
+                    samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
+                }   
+                if (ospDTO.getStudyPopulationDescription().getValue() != null) {
+                    studyPopulationDescription = ospDTO.getStudyPopulationDescription().getValue().toString();
+                }
+            }
+        }   
 
-    } catch (PAException e) {
-      ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        return ELIGIBILITY;
     }
-    return ELIGIBILITY;
-  }
 
+    /**
+     * this is will return list of category.
+     * @return result
+     */
+    public String getClassSchemeItems() {
+        try {
+            ClassificationScheme cs = new ClassificationScheme();
+            cs.setPublicID(CADSR_CS_ID);
+            cs.setVersion(CADSR_CS_VERSION);
+            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
+            Collection csResult = appService.search(ClassificationScheme.class, cs);
+            ClassificationScheme classifSch = (ClassificationScheme) csResult.iterator().next();
+         
+            Collection<ClassSchemeClassSchemeItem> csItem = classifSch.getClassSchemeClassSchemeItemCollection();
+            csisResult = new ArrayList<ClassificationSchemeItem>();
+            for (ClassSchemeClassSchemeItem csCsi : csItem) {
+                csisResult.add(csCsi.getClassificationSchemeItem());
+            }
+            
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }   
+      
+        return CSIS;
+    }
+  
+    /**
+     * call this from pop-search.
+     * @return result
+     */
+    public String getClassifiedCDEs() {
+        cadsrResult.clear();
+        String csiName = ServletActionContext.getRequest().getParameter("csiName");
+        String deName = ServletActionContext.getRequest().getParameter("searchName");
+        boolean restrictToStandards = 
+            Boolean.valueOf(ServletActionContext.getRequest().getParameter("restrictToStandard"));
+        try {
+            ApplicationService appService = ApplicationServiceProvider.getApplicationService();          
+            DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
+            criteria.add(Expression.ilike("longName", "%" + deName + "%"));
+            criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
+            if (restrictToStandards) {
+                criteria.add(Expression.eq("registrationStatus", "Standard"));
+            }
+            DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
+            .createCriteria("classSchemeClassSchemeItem");
+          
+            DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
+            csCriteria.add(Expression.eq("publicID", CADSR_CS_ID));
+            csCriteria.add(Expression.eq("version", CADSR_CS_VERSION));
+          
+            DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
+            csiCriteria.add(Expression.eq("longName", csiName));
+          
+            List classCes = appService.query(criteria);
+          
+            for (Object obj : classCes) {
+                cadsrResult.add((DataElement) obj);
+            }
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }     
+        return CDES_BY_CSI;      
+    }  
+
+    /**
+     * can be removed.
+     * @return String
+     */
+    public String displaycadsr() {
+        cadsrResult.clear();
+        String name = ServletActionContext.getRequest().getParameter("searchName");
+        boolean restrictToStandards = 
+            Boolean.valueOf(ServletActionContext.getRequest().getParameter("restrictToStandard"));
+        try {
+            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
+            DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
+            criteria.add(Expression.ilike("longName", "%" + name + "%"));
+            criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
+            if (restrictToStandards) {
+                criteria.add(Expression.eq("registrationStatus", "Standard"));
+            }
+      
+            Set result = new HashSet();
+            result.addAll(appService.query(criteria));
+      
+            criteria = DetachedCriteria.forClass(DataElement.class, "de");
+            criteria.add(Expression.ilike("preferredName", "%" + name + "%"));
+            criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
+      
+            if (restrictToStandards) {
+                criteria.add(Expression.eq("registrationStatus", "Standard"));
+            } 
+      
+            result.addAll(appService.query(criteria));
+      
+            for (Object obj : result) {
+                getCadsrResult().add((DataElement) obj);
+            }
+      
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        } 
+      
+        return SUCCESS;
+    }
+  
   /**
    * @return res
    */
@@ -916,4 +1040,27 @@ private static final String ELIGIBILITY = "eligibility";
     this.valueId = valueId;
   }
 
+  /**
+   * 
+   * @return cadsrResult
+   */
+  public List<DataElement> getCadsrResult() {
+      return cadsrResult;
+  }
+  /**
+   * 
+   * @param result data element
+   */
+  public void setCadsrResult(List<DataElement> result) {
+      this.cadsrResult = result;
+  }
+  
+  /**
+   * 
+   * @return csisResult
+   */
+  public List<ClassificationSchemeItem> getCsisResult() {
+      return csisResult;
+  }
+  
  }

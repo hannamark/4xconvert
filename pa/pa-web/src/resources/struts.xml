@@ -200,6 +200,10 @@
         <action name="popupInt*" class="gov.nih.nci.pa.action.PopUpIntAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupinterventions{1}.jsp</result>
         </action>
+        <action name="popupCadsr*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/lookupcadsr{1}.jsp</result>
+            <result name ="cdesByCsiResult">/WEB-INF/jsp/nodecorate/lookupcadsrdisplaycadsr.jsp</result>
+        </action>        
         <action name="popupTypeIntervention*" class="gov.nih.nci.pa.action.PopUpTypeInterventionAction" method="{1}">
            <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
            <result name="lookUp">/WEB-INF/jsp/nodecorate/lookUpInterventionTypes.jsp</result>            

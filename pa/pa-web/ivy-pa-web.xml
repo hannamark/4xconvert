@@ -56,6 +56,11 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="runtime->master"/>
     <dependency org="opensymphony"           name="quartz"                   rev="1.6.5"           conf="runtime->master"/>
     <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.4-SNAPSHOT"           conf="runtime->default"/>
+    <dependency org="caintegrator2"          name="caDSR-beans"        		rev="4.0"         	  conf="runtime->master"/>
+    <dependency org="caintegrator2"          name="caDSR-client-framework"  rev="4.0"         	  conf="runtime->master"/>
+    <dependency org="springsource"           name="acegi-security"  		rev="1.0.4"         	  conf="runtime->master"/>
+    
+    
     <!-- compile -->
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="compile->master"/>
     <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
@@ -68,8 +73,6 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="ncicb"                  name="po-services-client"      rev="3.1rc1"  conf="compile->master"/>
     <dependency org="ncicb"                  name="coppa-commons"           rev="1.2.2"           conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
-    <dependency org="caintegrator2"          name="caDSR-beans"        		rev="4.0"         	  conf="compile->master"/>
-    <dependency org="caintegrator2"          name="caDSR-client-framework"  rev="4.0"         	  conf="compile->master"/>
     <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="compile->master"/>
 
     <!-- test -->

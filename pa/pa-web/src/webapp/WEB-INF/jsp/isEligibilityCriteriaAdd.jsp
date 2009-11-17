@@ -3,6 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
+<c:url value="/protected/popupCadsr.action" var="lookupUrl" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><c:choose>
@@ -21,6 +22,9 @@ function callOnloadFunctions(){
     setFocusToFirstControl();
     activate();         
 }
+function lookup(){
+    showPopWin('${lookupUrl}', 900, 400, '', 'CaDSR Lookup');
+} 
 function handleAction(){
 var page;
 page=document.forms[0].page.value;
@@ -192,7 +196,13 @@ function loadDetails(id, divName,className){
                     </td>
                     <td class="value">
                         <s:textfield name="webDTO.criterionName" maxlength="30" cssStyle="width:220px" />
+					    <ul style="margin-top: -6px;">
+					        <li style="padding-left: 0"><a href="#" class="btn" onclick="lookup();" /><span class="btn_img"><span
+					            class="search">Look Up</span></span></a></li>
+					    </ul>
+
                     </td>
+                  
                 </tr>
                 <tr>
                      <td scope="row" class="label">
