@@ -79,7 +79,13 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class PriorTherapiesWebDto.
@@ -91,86 +97,105 @@ public class PriorTherapiesWebDto implements Serializable {
 
     private static final long serialVersionUID = -2181055279094490613L;
 
-    private String id;    
-    private int totalRegimenNum;     
-    private int chemoRegimenNum;
-    private String type;    
-    private String description;
+    private Ii id = new Ii();
+    private Pq totalRegimenNum = new Pq();
+    private Pq chemoRegimenNum = new Pq();
+    private List<PriorTherapiesItemWebDto> list = new ArrayList<PriorTherapiesItemWebDto>();
+    private boolean hasPrior = false;
     
     /**
      * Instantiates a new prior therapies web dto.
      */
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public PriorTherapiesWebDto() {
-        // default constructor
+        id.setExtension(id.toString());
+        clear();
+    }
+    
+    /**
+     * Clear the values.
+     */
+    public void clear() {
+        totalRegimenNum.setValue(BigDecimal.valueOf(0));
+        chemoRegimenNum.setValue(BigDecimal.valueOf(0));
+        list = new ArrayList<PriorTherapiesItemWebDto>();
+        list.add(new PriorTherapiesItemWebDto());
     }
 
     /**
      * @return the totalRegimenNum
      */
-    public int getTotalRegimenNum() {
+    public Pq getTotalRegimenNum() {
         return totalRegimenNum;
     }
 
     /**
      * @param totalRegimenNum the totalRegimenNum to set
      */
-    public void setTotalRegimenNum(int totalRegimenNum) {
-        this.totalRegimenNum = totalRegimenNum;
+    public void setTotalRegimenNum(Pq totalRegimenNum) {
+        if (hasPrior) {
+            this.totalRegimenNum = totalRegimenNum;
+        }
     }    
 
     /**
      * @return the chemoRegimenNum
      */
-    public int getChemoRegimenNum() {
+    public Pq getChemoRegimenNum() {
         return chemoRegimenNum;
     }
 
     /**
      * @param chemoRegimenNum the chemoRegimenNum to set
      */
-    public void setChemoRegimenNum(int chemoRegimenNum) {
-        this.chemoRegimenNum = chemoRegimenNum;
+    public void setChemoRegimenNum(Pq chemoRegimenNum) {
+        if (hasPrior) {
+            this.chemoRegimenNum = chemoRegimenNum;
+        }
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Ii id) {
         this.id = id;
     }
 
     /**
      * @return the id
      */
-    public String getId() {
+    public Ii getId() {
         return id;
     }
-    
+
     /**
-     * @return the type
+     * @param list the list to set
      */
-    public String getType() {
-        return type;
+    public void setList(List<PriorTherapiesItemWebDto> list) {
+        if (hasPrior) {
+            this.list = list;
+        }
     }
 
     /**
-     * @param type the type to set
+     * @return the list
      */
-    public void setType(String type) {
-        this.type = type;
+    public List<PriorTherapiesItemWebDto> getList() {
+        return list;
     }
 
     /**
-     * @return the description
+     * @param hasPrior the updateFlag to set
      */
-    public String getDescription() {
-        return description;
+    public void setHasPrior(boolean hasPrior) {
+        this.hasPrior = hasPrior;
     }
 
     /**
-     * @param description the description to set
+     * @return the updateFlag
      */
-    public void setDescription(String description) {
-        this.description = description;
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getHasPrior() {
+        return hasPrior;
     }
 }

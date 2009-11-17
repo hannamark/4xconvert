@@ -77,74 +77,73 @@
 *
 */
 
-package gov.nih.nci.accrual.web.converter;
+package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.pa.iso.util.PqConverter;
+import java.io.Serializable;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
-import org.apache.struts2.util.StrutsTypeConverter;
-
-import com.opensymphony.xwork2.conversion.TypeConversionException;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 /**
- * 
- * @author Lisa Kelley
- *
+ * @author lhebel
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class StrutsPqConverter extends StrutsTypeConverter {
+public class PriorTherapiesItemWebDto implements Serializable {
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public Object convertFromString(Map map, String[] strings, Class aClass) {
-        if (strings.length != 1) {
-            throw new TypeConversionException(
-                    "Error in custom struts2 converter StrutsPqConverter.convertFromString().  "
-                    + "Expecting 1 string; " + strings.length + "were passed in.");
-        }
+    private static final long serialVersionUID = 1800901171926087044L;
+    private static int key = 0;
 
-        BigDecimal value = null;
-        String[] parts = null;
-        if (strings[0] == null || strings[0].trim().length() == 0) {
-            value = BigDecimal.valueOf(0);
-            parts = new String[0];
-        } else {
-            parts = strings[0].trim().split(" ");
-            try {
-                value = new BigDecimal(parts[0]);
-            } catch (IllegalArgumentException ex) {
-                throw new TypeConversionException(
-                        "Error in custom struts2 converter StrutsPqConverter.convertFromString().  "
-                        + "Value is not a valid Decimal. [" + strings[0] + "]", ex);
-            }
-        }
-        String units = "Unitary";
-        if (parts.length > 1 && parts[1] != null && parts[1].length() > 0) {
-            units = parts[1];
-        }
-        return PqConverter.convertToPq(value, units);
+    private Ii id = new Ii();
+    private Cd type = new Cd();
+    private St description = new St();
+
+    private synchronized int getKey() {
+        return ++key;
     }
-
+    
     /**
-     * {@inheritDoc}
+     * Default constructor.
      */
-    @SuppressWarnings({"unchecked", "PMD.UseStringBufferForStringAppends" })
-    @Override
-    public String convertToString(Map arg0, Object arg1) {
-        String txt = "";
-        Pq obj = (Pq) arg1;
-        if (obj.getValue() != null) {
-            txt = " " + obj.getValue().toString();
-        }
-        if (obj.getUnit() != null && !"Unitary".equals(obj.getUnit())) {
-            txt += " " + obj.getUnit();
-        }
-        return txt.substring(1);
+    public PriorTherapiesItemWebDto() {
+        id.setExtension(String.valueOf(getKey()));
+        type.setCode("");
+        description.setValue("");
+    }
+    
+    /**
+     * @param type the type to set
+     */
+    public void setType(Cd type) {
+        this.type = type;
+    }
+    /**
+     * @return the type
+     */
+    public Cd getType() {
+        return type;
+    }
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(St description) {
+        this.description = description;
+    }
+    /**
+     * @return the description
+     */
+    public St getDescription() {
+        return description;
+    }
+    /**
+     * @param id the id to set
+     */
+    public void setId(Ii id) {
+        this.id = id;
+    }
+    /**
+     * @return the id
+     */
+    public Ii getId() {
+        return id;
     }
 }

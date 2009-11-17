@@ -76,9 +76,24 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.web.action;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import gov.nih.nci.accrual.web.dto.util.PriorTherapiesItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.PriorTherapiesWebDto;
+import gov.nih.nci.accrual.web.dto.util.PriorTherapyTypesWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.PqConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * The Class PriorTherapiesAction.
@@ -86,8 +101,364 @@ import gov.nih.nci.accrual.web.dto.util.PriorTherapiesWebDto;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
 public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapiesWebDto> {
 
     private static final long serialVersionUID = 1L;
 
+    private PriorTherapiesWebDto priors = new PriorTherapiesWebDto();
+    private PriorTherapiesItemWebDto newPrior = new PriorTherapiesItemWebDto();
+    private String delItem = null;
+    private String lookupItem = null;
+    
+    private List<PriorTherapyTypesWebDto> disWebList = new ArrayList<PriorTherapyTypesWebDto>();
+    private PriorTherapyTypesWebDto priorTherapy = new PriorTherapyTypesWebDto();
+    private String searchTherapy = null;
+
+    //TODO remove these private methods when database implementation is complete
+    private void setSessionData() {
+        ServletActionContext.getRequest().getSession().setAttribute(priors.getClass().getName(), priors);
+    }
+
+    private void clearSessionData() {
+        ServletActionContext.getRequest().getSession().removeAttribute(priors.getClass().getName());
+    }
+    
+    private PriorTherapiesWebDto getSessionData() {
+        return (PriorTherapiesWebDto)
+            ServletActionContext.getRequest().getSession().getAttribute(priors.getClass().getName());
+    }
+    
+    private PriorTherapiesWebDto getData() {
+        PriorTherapiesWebDto db = getSessionData();
+        if (db == null) {
+            setSessionData();
+            priors = new PriorTherapiesWebDto();
+            db = priors;
+        }
+        return db;
+    }
+    //TODO remove these private methods when database implementation is complete
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD")
+    @SkipValidation
+    @Override
+    public String execute() {
+        PriorTherapiesWebDto db = getData();
+
+        resetData(db);
+
+        applyTypeSelection(db);
+
+        loadForm(db);
+
+        return super.execute();
+    }
+
+    /**
+     * Load the bean for the UI.
+     * 
+     * @param db the memory buffer containing the persisted data
+     */
+    private void loadForm(PriorTherapiesWebDto db) {
+        List<PriorTherapiesItemWebDto> temp = new ArrayList<PriorTherapiesItemWebDto>();
+        for (PriorTherapiesItemWebDto item : db.getList()) {
+            temp.add(item);
+        }
+        temp.add(newPrior);
+        priors.setList(temp);
+        priors.setChemoRegimenNum(db.getChemoRegimenNum());
+        priors.setTotalRegimenNum(db.getTotalRegimenNum());
+        delItem = null;
+        lookupItem = null;
+    }
+
+    /**
+     * Reset the memory buffers. And update the persistent copy as needed when the user
+     * toggles the "has prior" checkbox.
+     * 
+     * @param db the memory buffer containing the persisted data
+     */
+    private void resetData(PriorTherapiesWebDto db) {
+        if ("reset".equals(getCurrentAction())) {
+            db.clear();
+            db.getList().remove(0);
+            priors.clear();
+            newPrior = priors.getList().get(0);
+        }
+    }
+    
+    /**
+     * Apply the Therapy Type selection. After performing a lookup the selection is
+     * applied immediately to the target item.
+     * 
+     * @param db the memory buffer containing the persisted data
+     */
+    private void applyTypeSelection(PriorTherapiesWebDto db) {
+        if (priorTherapy.getId().getExtension() != null && lookupItem != null) {
+            if (lookupItem.equals(newPrior.getId().getExtension())) {
+                newPrior.setType(priorTherapy.getType());
+            } else {
+                for (PriorTherapiesItemWebDto item : db.getList()) {
+                    if (lookupItem.equals(item.getId().getExtension())) {
+                        item.setType(priorTherapy.getType());
+                        calcTotals(db);
+                        break;
+                    }
+                }
+            }
+            priorTherapy = new PriorTherapyTypesWebDto();
+            lookupItem = null;
+        }
+    }
+
+    /**
+     * @return result for next action
+     */
+    public String cancel() {
+        clearSessionData();
+        return execute();
+    }
+
+    /**
+     * Save user entries.
+     * @return result for next action
+     */
+    public String save() {
+        PriorTherapiesWebDto db = getSessionData();
+        
+        saveDesc(db);
+
+        saveNew(db);
+
+        deletes(db);
+
+        calcTotals(db);
+
+        return execute();
+    }
+
+    /**
+     * Calculate the numeric totals.
+     * 
+     * @param db the memory buffer containing the persisted data
+     */
+    private void calcTotals(PriorTherapiesWebDto db) {
+        if (priors.getTotalRegimenNum().getValue().intValue() < db.getList().size()) {
+            priors.setTotalRegimenNum(PqConverter.convertToPq(BigDecimal.valueOf(db.getList().size()), "Unitary"));
+        }
+
+        int chemoCnt = 0;
+        for (PriorTherapiesItemWebDto item : db.getList()) {
+            if ("Chemo".equals(item.getType().getCode())) {
+                ++chemoCnt;
+            }
+        }
+        priors.setChemoRegimenNum(PqConverter.convertToPq(BigDecimal.valueOf(chemoCnt), "Unitary"));
+
+        db.setHasPrior(priors.getHasPrior());
+        db.setTotalRegimenNum(priors.getTotalRegimenNum());
+        db.setChemoRegimenNum(priors.getChemoRegimenNum());
+    }
+
+    /**
+     * Process delete actions.
+     * 
+     * @param db the memory buffer containing the persisted data
+     */
+    private void deletes(PriorTherapiesWebDto db) {
+        if (delItem != null && delItem.length() > 0) {
+            for (PriorTherapiesItemWebDto item : db.getList()) {
+                if (delItem.equals(item.getId().getExtension())) {
+                    db.getList().remove(item);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Save changes for all the descriptions.
+     * 
+     * @param db the memory buffer containing the persisted data
+     */
+    private void saveDesc(PriorTherapiesWebDto db) {
+        for (PriorTherapiesItemWebDto item : db.getList()) {
+            String desc = ServletActionContext.getRequest().getParameter("desc_" + item.getId().getExtension());
+            St descrip = StConverter.convertToSt(desc);
+            item.setDescription(descrip);
+        }
+    }
+
+    /**
+     * Save the new prior therapy information.
+     * 
+     * @param db the memory buffer containing the persisted data
+     */
+    private void saveNew(PriorTherapiesWebDto db) {
+        if ((newPrior.getDescription().getValue() != null && newPrior.getDescription().getValue().length() > 0)
+                || (newPrior.getType().getCode() != null && newPrior.getType().getCode().length() > 0)) {
+            db.getList().add(newPrior);
+            newPrior = new PriorTherapiesItemWebDto();
+        }
+    }
+
+    /**
+     * Save user entries.
+     * @return result for next action
+     */
+    public String next() {
+        String rc = save();
+        return (SUCCESS.equals(rc)) ? NEXT : rc;
+    }
+    
+    /**
+     * @return result for next action
+     */
+    @SuppressWarnings("PMD")
+    public String lookup() {
+        //TODO test data population - needs real search
+        if (searchTherapy != null && searchTherapy.length() > 0) {
+            disWebList = new ArrayList<PriorTherapyTypesWebDto>();
+            PriorTherapyTypesWebDto temp;
+            
+            if ("*".equals(searchTherapy) || "%".equals(searchTherapy) || searchTherapy.toLowerCase().startsWith("c")) {
+                temp = new PriorTherapyTypesWebDto();
+                temp.setId(new Ii());
+                temp.setType(CdConverter.convertStringToCd("Chemo"));
+                temp.getId().setExtension("1");
+                disWebList.add(temp);
+            }
+            
+            if ("*".equals(searchTherapy) || "%".equals(searchTherapy) || searchTherapy.toLowerCase().startsWith("d")) {
+                temp = new PriorTherapyTypesWebDto();
+                temp.setId(new Ii());
+                temp.setType(CdConverter.convertStringToCd("Drug 1"));
+                temp.getId().setExtension("2");
+                disWebList.add(temp);
+                
+                temp = new PriorTherapyTypesWebDto();
+                temp.setId(new Ii());
+                temp.setType(CdConverter.convertStringToCd("Drug 2"));
+                temp.getId().setExtension("3");
+                disWebList.add(temp);
+            }
+            
+            if ("*".equals(searchTherapy) || "%".equals(searchTherapy) || searchTherapy.toLowerCase().startsWith("s")) {
+                temp = new PriorTherapyTypesWebDto();
+                temp.setId(new Ii());
+                temp.setType(CdConverter.convertStringToCd("Surgery 1"));
+                temp.getId().setExtension("4");
+                disWebList.add(temp);
+                
+                temp = new PriorTherapyTypesWebDto();
+                temp.setId(new Ii());
+                temp.setType(CdConverter.convertStringToCd("Surgery 2"));
+                temp.getId().setExtension("5");
+                disWebList.add(temp);
+            }
+        }
+        return super.execute();
+    }
+
+    /**
+     * @param priors the priors to set
+     */
+    public void setPriors(PriorTherapiesWebDto priors) {
+        this.priors = priors;
+    }
+
+    /**
+     * @return the priors
+     */
+    public PriorTherapiesWebDto getPriors() {
+        return priors;
+    }
+
+    /**
+     * @param newPrior the newPrior to set
+     */
+    public void setNewPrior(PriorTherapiesItemWebDto newPrior) {
+        this.newPrior = newPrior;
+    }
+
+    /**
+     * @return the newPrior
+     */
+    public PriorTherapiesItemWebDto getNewPrior() {
+        return newPrior;
+    }
+
+    /**
+     * @param delItem the delItem to set
+     */
+    public void setDelItem(String delItem) {
+        this.delItem = delItem;
+    }
+
+    /**
+     * @return the delItem
+     */
+    public String getDelItem() {
+        return delItem;
+    }
+
+    /**
+     * @param disWebList the disWebList to set
+     */
+    public void setDisWebList(List<PriorTherapyTypesWebDto> disWebList) {
+        this.disWebList = disWebList;
+    }
+
+    /**
+     * @return the disWebList
+     */
+    public List<PriorTherapyTypesWebDto> getDisWebList() {
+        return disWebList;
+    }
+
+    /**
+     * @param searchTherapy the searchTherapy to set
+     */
+    public void setSearchTherapy(String searchTherapy) {
+        this.searchTherapy = searchTherapy;
+    }
+
+    /**
+     * @return the searchTherapy
+     */
+    public String getSearchTherapy() {
+        return searchTherapy;
+    }
+
+    /**
+     * @param priorTherapy the priorTherapy to set
+     */
+    public void setPriorTherapy(PriorTherapyTypesWebDto priorTherapy) {
+        this.priorTherapy = priorTherapy;
+    }
+
+    /**
+     * @return the priorTherapy
+     */
+    public PriorTherapyTypesWebDto getPriorTherapy() {
+        return priorTherapy;
+    }
+
+    /**
+     * @param lookupItem the lookupItem to set
+     */
+    public void setLookupItem(String lookupItem) {
+        this.lookupItem = lookupItem;
+    }
+
+    /**
+     * @return the lookupItem
+     */
+    public String getLookupItem() {
+        return lookupItem;
+    }
 }

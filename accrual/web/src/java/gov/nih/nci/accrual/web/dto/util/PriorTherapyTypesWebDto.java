@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,78 +73,46 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
 
-package gov.nih.nci.accrual.web.converter;
+package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.pa.iso.util.PqConverter;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
-import org.apache.struts2.util.StrutsTypeConverter;
-
-import com.opensymphony.xwork2.conversion.TypeConversionException;
+import java.io.Serializable;
 
 /**
- * 
- * @author Lisa Kelley
- *
+ * @author lhebel
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class StrutsPqConverter extends StrutsTypeConverter {
+public class PriorTherapyTypesWebDto implements Serializable {
 
+    private static final long serialVersionUID = 2597341224612493133L;
+
+    private Cd type = new Cd();
+    private Ii id = new Ii();
     /**
-     * {@inheritDoc}
+     * @param type the name to set
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public Object convertFromString(Map map, String[] strings, Class aClass) {
-        if (strings.length != 1) {
-            throw new TypeConversionException(
-                    "Error in custom struts2 converter StrutsPqConverter.convertFromString().  "
-                    + "Expecting 1 string; " + strings.length + "were passed in.");
-        }
-
-        BigDecimal value = null;
-        String[] parts = null;
-        if (strings[0] == null || strings[0].trim().length() == 0) {
-            value = BigDecimal.valueOf(0);
-            parts = new String[0];
-        } else {
-            parts = strings[0].trim().split(" ");
-            try {
-                value = new BigDecimal(parts[0]);
-            } catch (IllegalArgumentException ex) {
-                throw new TypeConversionException(
-                        "Error in custom struts2 converter StrutsPqConverter.convertFromString().  "
-                        + "Value is not a valid Decimal. [" + strings[0] + "]", ex);
-            }
-        }
-        String units = "Unitary";
-        if (parts.length > 1 && parts[1] != null && parts[1].length() > 0) {
-            units = parts[1];
-        }
-        return PqConverter.convertToPq(value, units);
+    public void setType(Cd type) {
+        this.type = type;
     }
-
     /**
-     * {@inheritDoc}
+     * @return the name
      */
-    @SuppressWarnings({"unchecked", "PMD.UseStringBufferForStringAppends" })
-    @Override
-    public String convertToString(Map arg0, Object arg1) {
-        String txt = "";
-        Pq obj = (Pq) arg1;
-        if (obj.getValue() != null) {
-            txt = " " + obj.getValue().toString();
-        }
-        if (obj.getUnit() != null && !"Unitary".equals(obj.getUnit())) {
-            txt += " " + obj.getUnit();
-        }
-        return txt.substring(1);
+    public Cd getType() {
+        return type;
+    }
+    /**
+     * @param id the id to set
+     */
+    public void setId(Ii id) {
+        this.id = id;
+    }
+    /**
+     * @return the id
+     */
+    public Ii getId() {
+        return id;
     }
 }
