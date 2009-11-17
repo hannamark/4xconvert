@@ -7,21 +7,18 @@
 <SCRIPT language="JavaScript">
 
     
-    function callParentSubmit(disid)
+    function callParentSubmit(disid,prefName,pId,version)
     {   
-        top.window.loadDiv(disid);
+        window.top.document.getElementsByName("webDTO.criterionName")[0].value = prefName;
+        window.top.document.getElementsByName("webDTO.cdePublicIdentifier")[0].value = pId;
+        window.top.document.getElementsByName("webDTO.cdeVersionNumber")[0].value = version;
         window.top.hidePopWin(true); 
     }
     function loadDiv() {     
         
         var jsName = document.getElementById("searchName").value;
         var jcsiName = document.getElementById("csiName").value;
-        var restrictToSt = false;  
-        if (document.getElementById("restrictToStandard") != null && document.getElementById("restrictToStandard").checked==true)
-        {
-            restrictToSt = true;
-        } 
-        var url = '/pa/protected/popupCadsrgetClassifiedCDEs.action?searchName='+jsName+'&csiName=' + jcsiName + '&restrictToStandard='+restrictToSt;
+        var url = '/pa/protected/popupCadsrgetClassifiedCDEs.action?searchName='+jsName+'&csiName=' + jcsiName;
         var div = document.getElementById('getCadsr');
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {
@@ -40,7 +37,7 @@
 <table  class="form">  
     <tr>    
         <td scope="row" class="label">
-            <label for="searchName">Data Element Name: </label>
+            <label for="searchName"><fmt:message key="cadsr.dataElementName"/>:</label>
         </td>
         <td>
             <s:textfield id="searchName" name="searchName"  maxlength="60" size="60"  cssStyle="width:200px" />
@@ -54,21 +51,12 @@
        </tr>
        <tr> 
                 <td scope="row" class="label">
-                   <label  for="restrictToStandard"> <fmt:message key="cadsr.restrictToStandard"/></label>                        
+                   <label  for="Classification Code"> <fmt:message key="cadsr.classificationCode"/>:</label>                        
                 </td>
-                <td colspan="2">
-                    <s:checkbox name="restrictToStandard" id="restrictToStandard" />
-                </td>
-
-        </tr>
-       <tr> 
-                <td scope="row" class="label">
-                   <label  for="Classification Code"> <fmt:message key="cadsr.classificationCode"/></label>                        
-                </td>
-                <td colspan="2">
-                    <s:textfield id="csiName" name="csiName"  maxlength="60" size="60"  cssStyle="width:200px" />
-                </td>
-
+               <td>
+                <s:select id ="csiName" name="csiName" headerValue="-Select-" headerKey="" list="csisResult"
+                  listKey="longName" listValue="longName"/>
+              </td>
         </tr>
 
 </table>

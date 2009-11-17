@@ -119,8 +119,34 @@ public class ISDesignDetailsWebDTO {
     private String structuredType;
     private String valueIntegerMin;
     private String valueIntegerMax;
+    private String cdePublicIdentifier;
+    private String cdeVersionNumber;
     
     
+    /**
+     * @return the cdePublicIdentifier
+     */
+     public String getCdePublicIdentifier() {
+        return cdePublicIdentifier;
+     }
+    /**
+     * @param cdePublicIdentifier the cdePublicIdentifier to set
+     */
+     public void setCdePublicIdentifier(String cdePublicIdentifier) {
+       this.cdePublicIdentifier = cdePublicIdentifier;
+     }
+    /**
+     * @return the cdeVersionNumber
+     */
+     public String getCdeVersionNumber() {
+       return cdeVersionNumber;
+     }
+    /**
+     * @param cdeVersionNumber the cdeVersionNumber to set
+     */
+     public void setCdeVersionNumber(String cdeVersionNumber) {
+       this.cdeVersionNumber = cdeVersionNumber;
+    }
     /**
      * @return the displayOrder
      */

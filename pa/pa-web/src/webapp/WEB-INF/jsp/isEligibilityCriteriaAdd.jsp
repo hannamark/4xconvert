@@ -92,7 +92,7 @@ function loadDetails(id, divName,className){
             method: 'get',
             evalScripts: false
          });
-}      
+}   
  function handleGenerateCriteriaText() {
         document.forms[0].action="eligibilityCriteriagenerate.action";
         document.forms[0].submit();
@@ -191,55 +191,12 @@ function loadDetails(id, divName,className){
                 <th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildCriterion"/></th>
                 </tr>
                 <tr>
-                    <td scope="row"  class="label"><label>
-                        <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/></label>
-                    </td>
-                    <td class="value">
-                        <s:textfield name="webDTO.criterionName" maxlength="30" cssStyle="width:220px" />
-					    <ul style="margin-top: -6px;">
-					        <li style="padding-left: 0"><a href="#" class="btn" onclick="lookup();" /><span class="btn_img"><span
-					            class="search">Look Up</span></span></a></li>
-					    </ul>
-
-                    </td>
-                  
-                </tr>
-                <tr>
-                     <td scope="row" class="label">
-                     <label for="fileName">
-                            <fmt:message key="isdesign.eligibilitycriteria.operator"/>
-                     </label>
-                    </td>
-                    <td class="value">                        
-                      <s:select name="webDTO.operator" list="#{'=':'=', '<':'<', '<=':'<=', '>':'>', '>=':'>=', 'In':'In'}" cssStyle="width:106px"/>
-                    </td>         
-                </tr> 
-                <tr>
-                     <td scope="row" class="label">
-                        <label for="typeCode">
-                            <fmt:message key="isdesign.eligibilitycriteria.valueInteger"/>
-                        </label>
-                    </td>
-                    <td>
-                      Min: <s:textfield name="webDTO.valueIntegerMin" maxlength="12" cssStyle="width:80px" />
-                      Max: <s:textfield name="webDTO.valueIntegerMax" maxlength="12" cssStyle="width:80px" />
-                      <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>webDTO.valueIntegerMin</s:param>
-                                </s:fielderror>                            
-                         </span>
-                     </td> 
-                 </tr>
-                  <tr>
-                     <td scope="row" class="label">
-                        <label for="typeCode">
-                            <fmt:message key="isdesign.eligibilitycriteria.valueText"/>
-                        </label>
-                    </td>
-                    <td class="value">
-                        <s:textfield name="webDTO.valueText" maxlength="12" cssStyle="width:100px" onblur='inactivateText();'/>
-                      </td>
-                 </tr>
+                <td>
+                 <div id="loadCriteriaName">
+                        <%@ include file="/WEB-INF/jsp/nodecorate/eligibilityCriteriaBuild.jsp"%>
+                 </div>
+                 </td>
+                 </tr> 
                  <tr>
                       <td scope="row" class="label">
                      <label for="typeCode">

@@ -157,7 +157,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private List<DataElement> cadsrResult = new ArrayList<DataElement>();  
     private static final long CADSR_CS_ID = 2960572;
     private static final float CADSR_CS_VERSION = 1;  
-    private List<ClassificationSchemeItem> csisResult = new ArrayList<ClassificationSchemeItem>();
+    private static List<ClassificationSchemeItem> csisResult = null;
     private static final String CSIS = "csisResult";
     private static final String CDES_BY_CSI = "cdesByCsiResult";
   
@@ -168,6 +168,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     public String query() {
 
     try {
+        getClassSchemeItems();
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.STUDY_PROTOCOL_II);
         List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
@@ -221,6 +222,9 @@ public class EligibilityCriteriaAction extends ActionSupport {
      */
     public String getClassSchemeItems() {
         try {
+            if (csisResult == null) {
+              csisResult = new ArrayList<ClassificationSchemeItem>();
+            }
             ClassificationScheme cs = new ClassificationScheme();
             cs.setPublicID(CADSR_CS_ID);
             cs.setVersion(CADSR_CS_VERSION);
@@ -249,16 +253,11 @@ public class EligibilityCriteriaAction extends ActionSupport {
         cadsrResult.clear();
         String csiName = ServletActionContext.getRequest().getParameter("csiName");
         String deName = ServletActionContext.getRequest().getParameter("searchName");
-        boolean restrictToStandards = 
-            Boolean.valueOf(ServletActionContext.getRequest().getParameter("restrictToStandard"));
         try {
             ApplicationService appService = ApplicationServiceProvider.getApplicationService();          
             DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
             criteria.add(Expression.ilike("longName", "%" + deName + "%"));
             criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
-            if (restrictToStandards) {
-                criteria.add(Expression.eq("registrationStatus", "Standard"));
-            }
             DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
             .createCriteria("classSchemeClassSchemeItem");
           
