@@ -155,7 +155,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
     @NotNull
     @JoinColumn(name = "organization_id")
     @ForeignKey(name = "personrole_org_fkey")
-    @Searchable(fields = {"id" })
+    @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return this.scoper;
