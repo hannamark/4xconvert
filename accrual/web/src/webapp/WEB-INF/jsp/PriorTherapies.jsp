@@ -104,11 +104,11 @@
              </s:if>
              <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:textfield readonly="true" size="50" name="newPrior.type"
                cssStyle="width:280px;float:left" cssClass="readonly"/>
-               <s:a href="#" cssClass="btn" onclick="lookup('%{newPrior.id.extension}');"><span class="btn_img"><span class="search">&nbsp;</span></span></s:a>
+               <s:a href="#" cssClass="btn" onclick="lookup('%{newPrior.id.extension}');"><span class="btn_img"><span class="search">Look Up</span></span></s:a>
              </s:elseif>
              <s:else><s:textfield readonly="true" size="50" name="type_%{#attr.row.id.extension}"
                cssStyle="width:280px;float:left" cssClass="readonly" value="%{#attr.row.type}"/>
-               <s:a href="#" cssClass="btn" onclick="lookup('%{#attr.row.id.extension}');"><span class="btn_img"><span class="search">&nbsp;</span></span></s:a>
+               <s:a href="#" cssClass="btn" onclick="lookup('%{#attr.row.id.extension}');"><span class="btn_img"><span class="search">Look Up</span></span></s:a>
              </s:else>
         </display:column>
         <display:column titleKey="priorTherapy.label.list.description" headerClass="left" sortable="true" class="${roClass}">
@@ -123,9 +123,10 @@
          headerClass="centered" class="centered" headerScope="col">
              <s:if test="%{!priors.hasPrior}">&nbsp;
              </s:if>
-             <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:a href="#" onclick="handleAddPriorAction()">Add</s:a>
+             <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:a href="#" onclick="handleAddPriorAction()"><span class="btn_img"><span class="add">Add</span></span></s:a>
              </s:elseif>
-             <s:else><s:a href="#" onclick="handleDelPriorAction('%{#attr.row.id.extension}')">Delete</s:a></s:else></display:column>
+             <s:else><s:a href="#" onclick="handleDelPriorAction('%{#attr.row.id.extension}')"><span class="btn_img"><span class="delete">Delete</span></span></s:a></s:else>
+        </display:column>
     </display:table>
 </td></tr>
 <tr><td scope="row" class="label"><label style="${roClass}"><fmt:message key="priorTherapy.label.chemoNum"/></label></td>
@@ -139,7 +140,7 @@
        <li>
             <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="save">Next</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="next">Next</span></span></s:a>
         </li>
       </ul>
    </del>
