@@ -158,6 +158,7 @@ public class Country implements PersistentObject, Auditable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return id;
     }
