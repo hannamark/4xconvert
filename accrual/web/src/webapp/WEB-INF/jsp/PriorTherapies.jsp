@@ -123,9 +123,9 @@
          headerClass="centered" class="centered" headerScope="col">
              <s:if test="%{!priors.hasPrior}">&nbsp;
              </s:if>
-             <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:a href="#" onclick="handleAddPriorAction()"><span class="btn_img"><span class="add">Add</span></span></s:a>
+             <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:a href="#" cssClass="btn" onclick="handleAddPriorAction()"><span class="btn_img"><span class="add">Add</span></span></s:a>
              </s:elseif>
-             <s:else><s:a href="#" onclick="handleDelPriorAction('%{#attr.row.id.extension}')"><span class="btn_img"><span class="delete">Delete</span></span></s:a></s:else>
+             <s:else><s:a href="#" cssClass="btn" onclick="handleDelPriorAction('%{#attr.row.id.extension}')"><span class="btn_img"><span class="delete">Delete</span></span></s:a></s:else>
         </display:column>
     </display:table>
 </td></tr>
