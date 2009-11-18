@@ -1,1 +1,0 @@
-PatientOutcomesDetail.jsp

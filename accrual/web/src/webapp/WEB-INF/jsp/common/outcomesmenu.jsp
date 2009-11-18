@@ -117,10 +117,10 @@
     <c:if test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
         <li class="hassubmenu"><c:choose>
             <c:when test="${(requestScope.topic == 'patientOutcomes_detail')}">
-                <a href="executePatientOutcomes.action" class="selected">Patient Outcomes</a>
+                <a href="executeParticipantOutcomes.action" class="selected">Patient Outcomes</a>
             </c:when>
             <c:otherwise>
-                <a href="executePatientOutcomes.action">Patient Outcomes</a>
+                <a href="executeParticipantOutcomes.action">Patient Outcomes</a>
             </c:otherwise>
         </c:choose>
         <ul id="part_sites">

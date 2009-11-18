@@ -17,7 +17,7 @@
     }
 
     function handleNextAction() {
-        document.getElementsByName("nextTarget")[0].value = "PatientOutcomes";
+        document.getElementsByName("nextTarget")[0].value = "ParticipantOutcomes";
         document.forms[0].action = "nextOffTreatment.action";
         document.forms[0].submit();
     }

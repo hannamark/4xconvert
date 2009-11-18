@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,195 +73,56 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
 
-package gov.nih.nci.accrual.web.dto.util;
+package gov.nih.nci.accrual.web.enums;
 
-import java.io.Serializable;
-import java.sql.Date;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
 
 /**
- * The Class PatientOutcomesWebDto.
- * 
  * @author lhebel
- * @since 10/28/2009
+ *
  */
-public class PatientOutcomesWebDto implements Serializable {
-
-    private static final long serialVersionUID = 1839478941711659167L;
+public enum AssessmentTypes implements CodedEnum<String> {
+    /** Yes. */
+    AST1("Assessment 1"),
+    /** No. */
+    AST2("Assessment 2");
     
-    private String id;
-    private String vitalStatus;
-    private String responseInd;
-    private String diseaseStatus;
-    private Date diseaseStatusDate;
-    private String assessmentType;
-    private String recurrenceInd;
-    private Date recurrenceDate;
-    private String progressionInd;
-    private String progressionSite;
-    private Date progressionDate;
-
-    /**
-     * Instantiates a new patient outcomes web dto.
-     */
-    public PatientOutcomesWebDto() {
-        // default constructor
+    private String code;
+    
+    private AssessmentTypes(String code) {
+        this.code = code;
     }
 
     /**
-     * @return the id
+     * {@inheritDoc}
      */
-    public String getId() {
-        return id;
+    public String getCode() {
+        return code;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
     }
 
     /**
-     * @param id the id to set
+     * @param code code
+     * @return StatusCode 
      */
-    public void setId(String id) {
-        this.id = id;
+    public static AssessmentTypes getByCode(String code) {
+        return getByClassAndCode(AssessmentTypes.class, code);
     }
-
+    
     /**
-     * @return the vitalStatus
+     * {@inheritDoc}
      */
-    public String getVitalStatus() {
-        return vitalStatus;
-    }
-
-    /**
-     * @param vitalStatus the vitalStatus to set
-     */
-    public void setVitalStatus(String vitalStatus) {
-        this.vitalStatus = vitalStatus;
-    }
-
-    /**
-     * @return the responseInd
-     */
-    public String getResponseInd() {
-        return responseInd;
-    }
-
-    /**
-     * @param responseInd the responseInd to set
-     */
-    public void setResponseInd(String responseInd) {
-        this.responseInd = responseInd;
-    }
-
-    /**
-     * @return the diseaseStatus
-     */
-    public String getDiseaseStatus() {
-        return diseaseStatus;
-    }
-
-    /**
-     * @param diseaseStatus the diseaseStatus to set
-     */
-    public void setDiseaseStatus(String diseaseStatus) {
-        this.diseaseStatus = diseaseStatus;
-    }
-
-    /**
-     * @return the diseaseStatusDate
-     */
-    public Date getDiseaseStatusDate() {
-        return diseaseStatusDate;
-    }
-
-    /**
-     * @param diseaseStatusDate the diseaseStatusDate to set
-     */
-    public void setDiseaseStatusDate(Date diseaseStatusDate) {
-        this.diseaseStatusDate = diseaseStatusDate;
-    }
-
-    /**
-     * @return the assessmentType
-     */
-    public String getAssessmentType() {
-        return assessmentType;
-    }
-
-    /**
-     * @param assessmentType the assessmentType to set
-     */
-    public void setAssessmentType(String assessmentType) {
-        this.assessmentType = assessmentType;
-    }
-
-    /**
-     * @return the recurrenceInd
-     */
-    public String getRecurrenceInd() {
-        return recurrenceInd;
-    }
-
-    /**
-     * @param recurrenceInd the recurrenceInd to set
-     */
-    public void setRecurrenceInd(String recurrenceInd) {
-        this.recurrenceInd = recurrenceInd;
-    }
-
-    /**
-     * @return the recurrenceDate
-     */
-    public Date getRecurrenceDate() {
-        return recurrenceDate;
-    }
-
-    /**
-     * @param recurrenceDate the recurrenceDate to set
-     */
-    public void setRecurrenceDate(Date recurrenceDate) {
-        this.recurrenceDate = recurrenceDate;
-    }
-
-    /**
-     * @return the progressionInd
-     */
-    public String getProgressionInd() {
-        return progressionInd;
-    }
-
-    /**
-     * @param progressionInd the progressionInd to set
-     */
-    public void setProgressionInd(String progressionInd) {
-        this.progressionInd = progressionInd;
-    }
-
-    /**
-     * @return the progressionSite
-     */
-    public String getProgressionSite() {
-        return progressionSite;
-    }
-
-    /**
-     * @param progressionSite the progressionSite to set
-     */
-    public void setProgressionSite(String progressionSite) {
-        this.progressionSite = progressionSite;
-    }
-
-    /**
-     * @return the progressionDate
-     */
-    public Date getProgressionDate() {
-        return progressionDate;
-    }
-
-    /**
-     * @param progressionDate the progressionDate to set
-     */
-    public void setProgressionDate(Date progressionDate) {
-        this.progressionDate = progressionDate;
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }

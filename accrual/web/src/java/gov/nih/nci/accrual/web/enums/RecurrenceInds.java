@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,29 +73,56 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.web.dto.util.PatientOutcomesWebDto;
+package gov.nih.nci.accrual.web.enums;
+
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
 
 /**
- * The Class PatientOutcomesAction.
+ * @author lhebel
  *
- * @author Kalpana Guthikonda
- * @since 10/28/2009
  */
-public class PatientOutcomesAction extends AbstractListEditAccrualAction<PatientOutcomesWebDto> {
-
-    private static final long serialVersionUID = 1L;
+public enum RecurrenceInds implements CodedEnum<String> {
+    /** Yes. */
+    REC1("Recurrence 1"),
+    /** No. */
+    REC2("Recurrence 2");
+    
+    private String code;
+    
+    private RecurrenceInds(String code) {
+        this.code = code;
+    }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void loadDisplayList() {
-        // TODO Auto-generated method stub
+    public String getCode() {
+        return code;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
+    /**
+     * @param code code
+     * @return StatusCode 
+     */
+    public static RecurrenceInds getByCode(String code) {
+        return getByClassAndCode(RecurrenceInds.class, code);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }
