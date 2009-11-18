@@ -57,6 +57,14 @@
                     Therapies</a></li>
                 </c:otherwise>
             </c:choose>
+            <c:choose>
+                <c:when test="${(requestScope.topic == 'performanceStatus_detail')}">
+                    <li><a href="executePerformanceStatus.action" class="selected">Performance Status</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><a href="executePerformanceStatus.action">Performance Status</a></li>
+                </c:otherwise>
+            </c:choose>
         </ul>
         </li>
     </c:if>

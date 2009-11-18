@@ -82,7 +82,7 @@ package gov.nih.nci.accrual.web.action;
  * @author Hugh Reinhart
  * @since Nov 5, 2009
  */
-public class PerformanceStatus extends AbstractEditAccrualAction<Object> {
+public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
 
     private static final long serialVersionUID = -2561560856212211656L;
 
