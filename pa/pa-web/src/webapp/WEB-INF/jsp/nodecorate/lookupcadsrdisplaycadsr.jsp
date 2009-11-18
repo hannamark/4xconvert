@@ -8,7 +8,7 @@
     <display:column title="Public Id" property="publicID"  headerClass="sortable"/>
     <display:column title="Version" property="version"  headerClass="sortable"/>   
     <display:column title="Select" headerClass="centered" class="action" sortable="false">
-           <a href="#" class="btn" onclick="callParentSubmit('${row.id}','${row.dataElementConcept.longName}','${row.publicID}','${row.version}')">
+           <a href="#" class="btn" onclick="top.window.loadDiv('${row.id}')">
                 <span class="btn_img"><span class="add">Select</span></span>
             </a>
     </display:column>

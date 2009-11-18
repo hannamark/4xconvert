@@ -117,6 +117,19 @@ function loadDetails(id, divName,className){
              maxElement.disabled = false;            
         }   
     }
+ function loadDiv(deid) {
+	    
+     window.top.hidePopWin(true);
+     var url = '/pa/protected/ajaxEligibilityCriteriadisplaycde.action?cdeid='+deid;
+     var div = document.getElementById('eligibility.build.criterion');   
+     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+     var aj = new Ajax.Updater(div, url, {
+        asynchronous: true,
+        method: 'get',
+        evalScripts: false
+     });
+ }
+ 
 </SCRIPT>
 <body>
 <c:set var="topic" scope="request" value="abstract_eligibility"/>
@@ -186,63 +199,10 @@ function loadDetails(id, divName,className){
                          </span>
                     </td>
                 </tr>           
-                
-                <tr>
-                <th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildCriterion"/></th>
-                </tr>
-                <tr>
-                <td>
-                 <div id="loadCriteriaName">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/eligibilityCriteriaBuild.jsp"%>
+                </table>
+                 <div id="eligibility.build.criterion">
+                        <jsp:include page="/WEB-INF/jsp/nodecorate/eligibilityBuildCriterion.jsp" />
                  </div>
-                 </td>
-                 </tr> 
-                 <tr>
-                      <td scope="row" class="label">
-                     <label for="typeCode">
-                            <fmt:message key="isdesign.eligibilitycriteria.unit"/>
-                     </label>
-                   </td>
-                    <td class="value">
-                    <div id="loadUOMDetails">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/displayUOM.jsp"%>
-                    </div> 
-                    </td> 
-                      <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>webDTO.buldcriterion</s:param>
-                               </s:fielderror>                            
-                         </span>           
-                </tr> 
-                  <tr>
-                      <td scope="row" class="label">
-                     
-                   </td>
-                    <td class="value">
-                    <s:a href="#" cssClass="btn" onclick="handleGenerateCriteriaText()"><span class="btn_img"><span class="save">Generate Criteria Text</span></span></s:a>
-                </tr> 
-            <tr>
-                <th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildDescription"/><span class="required">*</span></th>              
-                </tr>
-                <tr>
-                        <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>webDTO.mandatory</s:param>
-                               </s:fielderror>                            
-                         </span>
-                    <td scope="row"  class="label"><label>
-                        <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/>(Max 5,000 chars)</label>
-                    </td>
-                    <td class="value">
-                        <s:textarea name="webDTO.textDescription" rows="6" cssStyle="width:600px" onblur='activate();' />
-                        <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                <s:param>webDTO.TextDescription</s:param>
-                               </s:fielderror>                            
-                         </span>
-                    </td>
-                </tr>           
-        </table>
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">

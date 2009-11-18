@@ -82,6 +82,9 @@ import gov.nih.nci.cadsr.domain.ClassSchemeClassSchemeItem;
 import gov.nih.nci.cadsr.domain.ClassificationScheme;
 import gov.nih.nci.cadsr.domain.ClassificationSchemeItem;
 import gov.nih.nci.cadsr.domain.DataElement;
+import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
+import gov.nih.nci.cadsr.domain.ValueDomain;
+import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
@@ -160,6 +163,11 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static List<ClassificationSchemeItem> csisResult = null;
     private static final String CSIS = "csisResult";
     private static final String CDES_BY_CSI = "cdesByCsiResult";
+    private DataElement cdeResult;
+    private List<String> permValues;
+    private String cdeDatatype;
+    private static final String DISPLAY_CDE = "displaycde";
+    
   
     /**
      * 
@@ -279,6 +287,46 @@ public class EligibilityCriteriaAction extends ActionSupport {
         return CDES_BY_CSI;      
     }  
 
+    /**
+     * display the cdes.
+     * @return String
+     */
+    public String displaycde() {      
+        String cdeid = ServletActionContext.getRequest().getParameter("cdeid");
+        
+        try {
+          ApplicationService appService = ApplicationServiceProvider.getApplicationService();
+          DataElement de = new DataElement();
+          de.setId(cdeid);
+            
+          Collection collResult = appService.search(DataElement.class, de);
+          
+          cdeResult = (DataElement) collResult.iterator().next();
+          webDTO.setCriterionName(cdeResult.getDataElementConcept().getLongName());
+          
+          ValueDomain vd = cdeResult.getValueDomain();
+          if (vd instanceof EnumeratedValueDomain) {
+              EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
+              
+              permValues = new ArrayList<String>();
+              Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
+              for (ValueDomainPermissibleValue vdPv : vdPvList) {
+                  permValues.add(vdPv.getPermissibleValue().getValue());
+              }
+              
+          } else {
+              permValues = null;
+          }
+          cdeDatatype = vd.getDatatypeName();
+          
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        
+        return DISPLAY_CDE;
+       
+    }
+    
     /**
      * can be removed.
      * @return String
@@ -1061,5 +1109,29 @@ public class EligibilityCriteriaAction extends ActionSupport {
   public List<ClassificationSchemeItem> getCsisResult() {
       return csisResult;
   }
-  
+
+    /**
+     * 
+     * @return cdeResult
+     */
+    public DataElement getCdeResult() {
+        return cdeResult;
+    }
+    
+    /**
+     * 
+     * @return permValues
+     */
+    public List<String> getPermValues() {
+        return permValues;
+    }
+
+    /**
+     * 
+     * @return cdeDatatype
+     */
+    public String getCdeDatatype() {
+        return cdeDatatype;
+    }
+
  }
