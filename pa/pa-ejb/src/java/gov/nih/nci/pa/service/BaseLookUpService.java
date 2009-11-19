@@ -77,6 +77,27 @@ public class BaseLookUpService <BO extends AbstractLookUpEntity> {
           LOG.info("Leaving getById");
           return bo;
       }
+      /**
+       * Gets By Code.
+       * 
+       * @param bo the bo
+       * 
+       * @return the selected
+       * 
+       * @throws PAException the PA exception
+       */
+      @SuppressWarnings(UNCHECKED)
+      public BO getByCode(BO bo) throws PAException {
+          LOG.info("Entering getByCode ");
+          Session session = null;
+          List<BO> bos = new ArrayList<BO>();
+          session = HibernateUtil.getCurrentSession();
+          Example example = Example.create(bo);
+          Criteria criteria = session.createCriteria(getTypeArgument()).add(example);
+          bos = criteria.list();
+          LOG.info("Leaving getByCode");
+          return bos.get(0);
+      }
       
      /**
      * @return the typeArgument
