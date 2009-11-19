@@ -80,6 +80,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -167,6 +168,9 @@ public final class MilestoneAction extends AbstractListEditAction {
                 } else {
                     PaRegistry.getMailManagerService().sendAcceptEmail(spIi);
                 }
+                TrialHelper helper = new TrialHelper();
+                ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
+                        helper.setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
