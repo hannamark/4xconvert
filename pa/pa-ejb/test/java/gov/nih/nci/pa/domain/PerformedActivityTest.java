@@ -130,7 +130,7 @@ public class PerformedActivityTest {
         pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
         pa.setDateLastUpdated(new Date());
         pa.setStudyProtocol(sp);
-        pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT);
+        pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
         pa.setUserLastUpdated("Joe");
         sess.saveOrUpdate(pa);
         sess.flush();

@@ -1,107 +1,438 @@
-/*
-* caBIG Open Source Software License
-*
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
-* was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
-* includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-*
-* This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
-* person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
-* entity.  Control for purposes of this definition means
-*
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
-* or otherwise,or
-*
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
-*
-* (iii) beneficial ownership of such entity.
-* License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
-* worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to
-*
-* (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
-* publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so;
-*
-* (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof);
-*
-* (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
-* derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
-* including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
-* caBIG Participant shall have no right of accounting or right of payment from You or Your sub licensees for the rights
-* granted under this License.   This  License  is  granted  at no  charge  to You. Your downloading, copying, modifying,
-* displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
-* Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
-* distribute or use the caBIG Software.
-*
-* 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
-* of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
-* form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
-* documentation and/or other materials provided with the distribution, if any.
-*
-* 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
-* This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
-* appear.
-*
-* 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
-* caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
-* any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
-* as required to comply with the terms of this License.
-*
-* 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
-* programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
-* party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
-* parties required to incorporate the caBIG Software  into such third party proprietary programs and for informing Your
-* sub licensees, including without limitation Your end-users, of their obligation  to  secure  any  required permissions
-* from such third parties before incorporating the caBIG Software into such third party proprietary  software programs.
-* In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
-* against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
-* to obtain such permissions.
-*
-* 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
-* and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
-* sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
-* provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
-* License.
-*
-* 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
-* NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-* OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
-* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
-* IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
-*/
+/**
+ * 
+ */
 package gov.nih.nci.pa.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
+/**
+ * @author asharma
+ *
+ */
 public class PAUtilTest {
-    @Test
-    public void normalizeDateStringTest() {
-        assertEquals("01/31/2001", PAUtil.normalizeDateString("1/31/2001abcdefg"));
+ 
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNull(gov.nih.nci.coppa.iso.Ii)}.
+	 */
+	@Test
+	public void testIsIiNull() {
+		Ii ii = null;
+		assertTrue(PAUtil.isIiNull(ii));
+		
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNotNull(gov.nih.nci.coppa.iso.Ii)}.
+	 */
+	@Test
+	public void testIsIiNotNull() {
+		assertTrue(PAUtil.isIiNotNull(IiConverter.convertToIi("1")));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidIi(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)}.
+	 */
+	@Test
+	public void testIsValidIi() throws  PAException {
+		assertTrue(PAUtil.isValidIi(IiConverter.convertToStudyProtocolIi(1L) , IiConverter.convertToStudyProtocolIi(null)));
+	}
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCdNull(gov.nih.nci.coppa.iso.Cd)}.
+	 */
+	@Test
+	public void testIsCdNull() {
+		Cd cd = null;
+		assertTrue(PAUtil.isCdNull(cd));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isStNull(gov.nih.nci.coppa.iso.St)}.
+	 */
+	@Test
+	public void testIsStNull() {
+		St st = null;
+		assertTrue(PAUtil.isStNull(st));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTsNull(gov.nih.nci.coppa.iso.Ts)}.
+	 */
+	@Test
+	public void testIsTsNull() {
+		Ts ts = null;
+		assertTrue(PAUtil.isTsNull(ts));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isBlNull(gov.nih.nci.coppa.iso.Bl)}.
+	 */
+	@Test
+	public void testIsBlNull() {
+		Bl bl = null;
+		assertTrue(PAUtil.isBlNull(bl));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIntNull(gov.nih.nci.coppa.iso.Int)}.
+	 */
+	@Test
+	public void testIsIntNull() {
+		Int in = null;
+		assertTrue(PAUtil.isIntNull(in));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqValueNull(gov.nih.nci.coppa.iso.Pq)}.
+	 */
+	@Test
+	public void testIsPqValueNull() {
+		Pq pq =null;
+		assertTrue(PAUtil.isPqValueNull(pq));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqUnitNull(gov.nih.nci.coppa.iso.Pq)}.
+	 */
+	@Test
+	public void testIsPqUnitNull() {
+		Pq pq =null;
+		assertTrue(PAUtil.isPqValueNull(pq));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlHighNull(gov.nih.nci.coppa.iso.Ivl)}.
+	 */
+	@Test
+	public void testIsIvlHighNull() {
+		Ivl<Pq> ivl = new Ivl<Pq>();
+		Pq pqHigh = null;
+		Pq pqLow = new Pq();
+		ivl.setHigh(pqHigh);
+		ivl.setLow(pqLow);
+		assertTrue(PAUtil.isIvlHighNull(ivl));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlLowNull(gov.nih.nci.coppa.iso.Ivl)}.
+	 */
+	@Test
+	public void testIsIvlLowNull() {
+		Ivl<Pq> ivl = new Ivl<Pq>();
+		Pq pqHigh = new Pq();
+		Pq pqLow = null;
+		ivl.setHigh(pqHigh);
+		ivl.setLow(pqLow);
+		assertTrue(PAUtil.isIvlLowNull(ivl));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlUnitNull(gov.nih.nci.coppa.iso.Ivl)}.
+	 */
+	@Test
+	public void testIsIvlUnitNull() {
+		Ivl<Pq> ivl = new Ivl<Pq>();
+		Pq pqHigh = new Pq();
+		pqHigh.setUnit(null);
+		Pq pqLow = new Pq();
+		ivl.setHigh(pqHigh);
+		ivl.setLow(pqLow);
+		assertTrue(PAUtil.isIvlUnitNull(ivl));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertTsToFormarttedDate(gov.nih.nci.coppa.iso.Ts, java.lang.String)}.
+	 */
+	@Test
+	public void testConvertTsToFormarttedDate() {
+		String date = 
+			PAUtil.convertTsToFormarttedDate(TsConverter.convertToTs(new Timestamp(new Date("11/16/2009").getTime())), "yyyy-MM");
+		assertEquals("2009-11",date);
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#normalizeDateString(java.lang.String)}.
+	 */
+	@Test
+	public void testNormalizeDateString() {
+		assertEquals("01/31/2001", PAUtil.normalizeDateString("1/31/2001abcdefg"));
         assertEquals("01/31/2001", PAUtil.normalizeDateString("2001-01-31abcdefg"));
         assertNull(PAUtil.normalizeDateString("Tuesday"));
-    }
+	}
 
-    @Test
-    public void dateStringToTimestampTest() {
-        Timestamp now = new Timestamp(new Date().getTime());
-        //assertTrue(now.after(PAUtil.dateStringToTimestamp(now.toString())));
-        assertEquals (new Timestamp(101,0,31,0,0,0,0)
-                      , PAUtil.dateStringToTimestamp("01/31/2001"));
-    }
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#normalizeDateStringWithTime(java.lang.String)}.
+	 */
+	@Test
+	public void testNormalizeDateStringWithTime() {
+		assertNull(PAUtil.normalizeDateStringWithTime(null));
+	}
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#dateStringToTimestamp(java.lang.String)}.
+	 */
+	@Test
+	public void testDateStringToTimestamp() {
+		 Timestamp now = new Timestamp(new Date().getTime());
+	     assertTrue(now.after(PAUtil.dateStringToTimestamp(now.toString())));
+	        
+	}
+	
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#today()}.
+	 */
+	@Test
+	public void testToday() {
+		assertNotNull(PAUtil.today());
+	}
 
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isEmpty(java.lang.String)}.
+	 */
+	@Test
+	public void testIsEmpty() {
+		assertTrue(PAUtil.isEmpty(null));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isNotEmpty(java.lang.String)}.
+	 */
+	@Test
+	public void testIsNotEmpty() {
+		assertTrue(PAUtil.isNotEmpty("hello"));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#stringSetter(java.lang.String, int)}.
+	 */
+	@Test
+	public void testStringSetterStringInt() {
+		assertEquals("He",PAUtil.stringSetter("Hello",2));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#stringSetter(java.lang.String)}.
+	 */
+	@Test
+	public void testStringSetterString() {
+		assertEquals("Hello",PAUtil.stringSetter("Hello"));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidEmail(java.lang.String)}.
+	 */
+	@Test
+	public void testIsValidEmail() {
+		assertTrue(PAUtil.isValidEmail("a@a.com"));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#trim(java.lang.String, int)}.
+	 */
+	@Test
+	public void testTrim() {
+		assertNull(PAUtil.trim(null, 2));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#wildcardCriteria(java.lang.String)}.
+	 */
+	@Test
+	public void testWildcardCriteria() {
+		assertEquals("",PAUtil.wildcardCriteria(null));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isGreatenThan(gov.nih.nci.coppa.iso.St, int)}.
+	 */
+	@Test
+	public void testIsGreatenThan() {
+		assertTrue(PAUtil.isGreatenThan(StConverter.convertToSt("hello"), 2));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isWithinRange(gov.nih.nci.coppa.iso.St, int, int)}.
+	 */
+	@Test
+	public void testIsWithinRange() {
+		assertTrue(PAUtil.isWithinRange(StConverter.convertToSt("hello"), 2 , 6));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getIiExtension(gov.nih.nci.coppa.iso.Ii)}.
+	 */
+	@Test
+	public void testGetIiExtension() {
+		assertEquals("1", PAUtil.getIiExtension(IiConverter.convertToIi("1")));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getErrorMsg(java.util.Map)}.
+	 */
+	@Test
+	public void testGetErrorMsg() {
+		Map<String, String[]> errMap = new HashMap<String, String[]>();
+		assertEquals("",PAUtil.getErrorMsg(errMap));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#containsIi(java.util.Map, gov.nih.nci.coppa.iso.Ii)}.
+	 */
+	@Test
+	public void testContainsIi() {
+		Map<Ii, Ii> map = null;
+		Ii key = null;
+		assertNull(PAUtil.containsIi(map, key));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getFirstObj(java.util.List)}.
+	 */
+	@Test
+	public void testGetFirstObj() {
+		List<StudyDTO> studyList = null;
+		assertNull(PAUtil.getFirstObj(studyList));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getDocumentFilePath(java.lang.Long, java.lang.String, java.lang.String)}.
+	 */
+	@Test
+	public void testGetDocumentFilePath() throws PAException {
+		PAUtil.getDocumentFilePath(1L, "IRB.doc", "1");
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isDateCurrentOrPast(java.lang.String)}.
+	 */
+	@Test
+	public void testIsDateCurrentOrPastString() {
+		assertFalse(PAUtil.isDateCurrentOrPast("10/29/2009"));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isDateCurrentOrPast(java.sql.Timestamp)}.
+	 */
+	@Test
+	public void testIsDateCurrentOrPastTimestamp() {
+		assertFalse(PAUtil.isDateCurrentOrPast(new Timestamp(new Date().getTime())));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidDate(java.lang.String)}.
+	 */
+	@Test
+	public void testIsValidDate() {
+		assertFalse(PAUtil.isValidDate(""));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isAbstractedAndAbove(gov.nih.nci.coppa.iso.Cd)}.
+	 */
+	@Test
+	public void testIsAbstractedAndAbove() {
+		assertTrue(
+	      PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ABSTRACTED.getCode())));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isListNotEmpty(java.util.List)}.
+	 */
+	@Test
+	public void testIsListNotEmpty() {
+		assertFalse(PAUtil.isListNotEmpty(new ArrayList()));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isListEmpty(java.util.List)}.
+	 */
+	@Test
+	public void testIsListEmpty() {
+		assertFalse(PAUtil.isListNotEmpty(new ArrayList()));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#checkIfValueExists(java.lang.String, java.lang.String, java.lang.String)}.
+	 */
+	@Test(expected=Exception.class)
+	public void testCheckIfValueExists() throws PAException {
+		PAUtil.checkIfValueExists("GAS", "DoseForm", "code");
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertStringToDecimal(java.lang.String)}.
+	 */
+	@Test
+	public void testConvertStringToDecimal() {
+		assertNotNull(PAUtil.convertStringToDecimal("2"));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isNumber(java.lang.String)}.
+	 */
+	@Test
+	public void testIsNumber() {
+		assertTrue(PAUtil.isNumber("3"));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToUnit(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
+	 */
+	@Test
+	public void testConvertPqToUnit() {
+		assertNull(PAUtil.convertPqToUnit(null));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToDecimal(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
+	 */
+	@Test
+	public void testConvertPqToDecimal() {
+		assertNull(PAUtil.convertPqToDecimal(null));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertPqToPrecision(gov.nih.nci.pa.iso.util.IvlConverter.JavaPq)}.
+	 */
+	@Test
+	public void testConvertPqToPrecision() {
+		assertNull(PAUtil.convertPqToPrecision(null));
+	}
+
+	/**
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTypeIntervention(gov.nih.nci.coppa.iso.Cd)}.
+	 */
+	@Test
+	public void testIsTypeIntervention() {
+		assertTrue(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(ActivityCategoryCode.INTERVENTION.getCode())));
+	}
 
 }

@@ -290,7 +290,7 @@ public class PAUtil {
      */
     public static boolean isIvlHighNull(Ivl<Pq> ivl) {
         boolean isNull = false;
-        if (ivl == null || ivl.getHigh().getValue() == null) {
+        if (ivl == null || ivl.getHigh() == null || ivl.getHigh().getValue() == null) {
             return true;
         }
         return isNull;
@@ -302,7 +302,7 @@ public class PAUtil {
      */
     public static boolean isIvlLowNull(Ivl<Pq> ivl) {
         boolean isNull = false;
-        if (ivl == null || ivl.getLow().getValue() == null) {
+        if (ivl == null || ivl.getLow() == null || ivl.getLow().getValue() == null) {
             return true;
         }
         return isNull;
@@ -314,7 +314,8 @@ public class PAUtil {
      */
     public static boolean isIvlUnitNull(Ivl<Pq> ivl) {
         boolean isNull = false;
-        if (ivl == null || ivl.getHigh().getUnit() == null || ivl.getLow().getUnit() == null) {
+        if (ivl == null ||  ivl.getHigh() == null
+            || ivl.getLow() == null || ivl.getHigh().getUnit() == null || ivl.getLow().getUnit() == null) {
             return true;
         }
         return isNull;

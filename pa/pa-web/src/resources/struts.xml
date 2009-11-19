@@ -203,11 +203,12 @@
         <action name="popupCadsr*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupcadsr{1}.jsp</result>
             <result name ="cdesByCsiResult">/WEB-INF/jsp/nodecorate/lookupcadsrdisplaycadsr.jsp</result>
-        </action>    
+            <result name ="requestToCreateCDE">/WEB-INF/jsp/nodecorate/requestToCreateCDE.jsp</result>
+        </action>
         <action name="ajaxEligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
             <result name="displaycde">/WEB-INF/jsp/nodecorate/eligibilityBuildCriterion.jsp</result>
             <result name="loadUOMDetails">/WEB-INF/jsp/nodecorate/displayUOM.jsp</result>
-        </action>            
+        </action> 
         <action name="popupTypeIntervention*" class="gov.nih.nci.pa.action.PopUpTypeInterventionAction" method="{1}">
            <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
            <result name="lookUp">/WEB-INF/jsp/nodecorate/lookUpInterventionTypes.jsp</result>            
@@ -255,6 +256,7 @@
 		<action name="eligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
 			<result name="eligibility">/WEB-INF/jsp/isEligibilityCriteria.jsp</result>
 			<result name="eligibilityAdd">/WEB-INF/jsp/isEligibilityCriteriaAdd.jsp</result>
+			<result name="displaycde">/WEB-INF/jsp/nodecorate/eligibilityBuildCriterion.jsp</result>
 		</action>
 		<action name="trialIndide*" class="gov.nih.nci.pa.action.TrialIndideAction" method="{1}">
 			<result>/WEB-INF/jsp/trialIndideAdd.jsp</result>

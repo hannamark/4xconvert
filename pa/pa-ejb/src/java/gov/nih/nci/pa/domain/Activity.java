@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -96,7 +95,7 @@ public class Activity extends AbstractStudyEntity {
     private static final long serialVersionUID = -4911602940850620244L;
 
     private ActivityCategoryCode categoryCode;
-    private ActivitySubcategoryCode subcategoryCode;
+    private String subcategoryCode;
     private String textDescription;
 
     /**
@@ -117,14 +116,13 @@ public class Activity extends AbstractStudyEntity {
      * @return the subcategoryCode
      */
     @Column(name = "SUBCATEGORY_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActivitySubcategoryCode getSubcategoryCode() {
+    public String getSubcategoryCode() {
         return subcategoryCode;
     }
     /**
      * @param subcategoryCode the subcategoryCode to set
      */
-    public void setSubcategoryCode(ActivitySubcategoryCode subcategoryCode) {
+    public void setSubcategoryCode(String subcategoryCode) {
         this.subcategoryCode = subcategoryCode;
     }
     /**

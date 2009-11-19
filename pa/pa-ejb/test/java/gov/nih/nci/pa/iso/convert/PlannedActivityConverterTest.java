@@ -113,7 +113,7 @@ public class PlannedActivityConverterTest {
     bo.setId(123L);
     bo.setCategoryCode(ActivityCategoryCode.INTERVENTION);
     bo.setLeadProductIndicator(Boolean.TRUE);
-    bo.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT);
+    bo.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
     bo.setStudyProtocol(sp);
     PlannedActivityConverter sg = new PlannedActivityConverter();
     PlannedActivityDTO dto = sg.convertFromDomainToDto(bo);
@@ -125,7 +125,7 @@ public class PlannedActivityConverterTest {
     assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
     assertEquals(bo.getLeadProductIndicator(),  dto.getLeadProductIndicator().getValue());
     assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-    assertEquals(bo.getSubcategoryCode().getCode(),  dto.getSubcategoryCode().getCode());
+    assertEquals(bo.getSubcategoryCode(),  dto.getSubcategoryCode().getCode());
     assertEquals(bo.getCategoryCode().getCode(),  dto.getCategoryCode().getCode());
   }
 

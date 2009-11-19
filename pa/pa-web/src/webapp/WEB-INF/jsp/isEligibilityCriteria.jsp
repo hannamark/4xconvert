@@ -197,7 +197,7 @@ BubbleTips.activateTipOn("dfn");
                         <s:textfield  name="eligibilityList[%{#stat.index}].textDescription" value="%{textDescription}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].criterionName" value="%{criterionName}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <s:textfield  name="eligibilityList[%{#stat.index}].criterionName" value="%{criterionName}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
                         <s:textfield  name="eligibilityList[%{#stat.index}].operator" value="%{operator}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>

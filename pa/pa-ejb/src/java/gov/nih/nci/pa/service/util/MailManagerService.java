@@ -141,5 +141,15 @@ public interface MailManagerService {
      * @throws PAException ex
      */
     void sendUpdateNotificationMail(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * Send cde request mail.
+     * 
+     * @param mailFrom the mail from
+     * @param mailBody the mail body
+     * 
+     * @throws PAException the PA exception
+     */
+    void sendCDERequestMail(String mailFrom, String mailBody) throws PAException;
 
 }

@@ -110,6 +110,9 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     private String minUnit;
     private BigDecimal maxValue;    
     private String maxUnit;
+    private Long cdePublicIdentifier;
+    private String cdeVersionNumber;
+    
     
     /**
      * @return inclusionIndicator
@@ -269,5 +272,31 @@ public class PlannedEligibilityCriterion extends PlannedActivity {
     public void setTextValue(String textValue) {
        this.textValue = textValue;
     }
+    /**
+     * @return the cdePublicIdentifier
+     */
+    @Column(name = "CDE_PUBLIC_IDENTIFIER")
+    public Long getCdePublicIdentifier() {
+      return cdePublicIdentifier;
+    }
+    /**
+     * @param cdePublicIdentifier the cdePublicIdentifier to set
+     */
+    public void setCdePublicIdentifier(Long cdePublicIdentifier) {
+      this.cdePublicIdentifier = cdePublicIdentifier;
+    }
+   /**
+    * @return the cdeVersionNumber
+    */
+    @Column(name = "CDE_VERSION_NUMBER")
+    public String getCdeVersionNumber() {
+      return cdeVersionNumber;
+    }
+    /**
+     * @param cdeVersionNumber the cdeVersionNumber to set
+     */
+     public void setCdeVersionNumber(String cdeVersionNumber) {
+       this.cdeVersionNumber = cdeVersionNumber;
+     }
 
 }

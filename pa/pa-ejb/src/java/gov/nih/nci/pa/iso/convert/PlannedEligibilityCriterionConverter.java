@@ -85,6 +85,7 @@ import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -119,6 +120,9 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        pecDTO.setDisplayOrder(IntConverter.convertToInt(pec.getDisplayOrder()));
        pecDTO.setTextValue(StConverter.convertToSt(pec.getTextValue()));
        pecDTO.setStructuredIndicator(BlConverter.convertToBl(pec.getStructuredIndicator()));
+       pecDTO.setCdePublicIdentifier(IiConverter.convertToIi(pec.getCdePublicIdentifier()));
+       pecDTO.setCdeVersionNumber(StConverter.convertToSt(pec.getCdeVersionNumber()));
+       
        return pecDTO;
    }
 
@@ -138,6 +142,8 @@ public class PlannedEligibilityCriterionConverter extends PlannedActivityConvert
        pec.setDisplayOrder(IntConverter.convertToInteger(pecDTO.getDisplayOrder()));
        pec.setTextValue(StConverter.convertToString(pecDTO.getTextValue()));
        pec.setStructuredIndicator(BlConverter.covertToBoolean(pecDTO.getStructuredIndicator()));
+       pec.setCdePublicIdentifier(IiConverter.convertToLong(pecDTO.getCdePublicIdentifier()));
+       pec.setCdeVersionNumber(StConverter.convertToString(pecDTO.getCdeVersionNumber()));
        if (pecDTO.getValue() != null) {
            if (!PAUtil.isIvlLowNull(pecDTO.getValue())) {
               pec.setMinValue(pecDTO.getValue().getLow().getValue());

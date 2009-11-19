@@ -82,7 +82,6 @@ import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -140,7 +139,7 @@ public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
         if (bo.getStudyProtocol() != null) {
             dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         }
-        dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
+        dto.setSubcategoryCode(CdConverter.convertStringToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         return dto;
     }
@@ -169,8 +168,7 @@ public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
         bo.setIntervention(invBo);
         bo.setLeadProductIndicator(BlConverter.covertToBoolean(dto.getLeadProductIndicator()));
         bo.setStudyProtocol(spBo);
-        bo.setSubcategoryCode(ActivitySubcategoryCode.
-                getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
+        bo.setSubcategoryCode(CdConverter.convertCdToString(dto.getSubcategoryCode()));
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         return bo;
     }

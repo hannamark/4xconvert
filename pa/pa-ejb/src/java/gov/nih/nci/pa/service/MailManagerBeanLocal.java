@@ -488,5 +488,42 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     }
 
+  /**
+   * Send cde request mail.
+   * 
+   * @param mailFrom the mail from
+   * @param mailBody the mail body
+   */
+  public void sendCDERequestMail(String mailFrom, String mailBody) {
+    try {
+          // get system properties
+          Properties props = System.getProperties();
+
+           // Set up mail server
+           props.put("mail.smtp.host",
+           lookUpTableService.getPropertyValue("smtp"));
+           // Get session
+            Session session = Session.getDefaultInstance(props, null);
+
+           // Define Message
+            MimeMessage message = new MimeMessage(session);
+           // body
+           Multipart multipart = new MimeMultipart();
+           message.setFrom(new InternetAddress(mailFrom));
+           message.addRecipient(Message.RecipientType.TO, 
+                    new InternetAddress(lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL")));
+           message.setSentDate(new java.util.Date());
+           message.setSubject(lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT"));
+
+           BodyPart msgPart = new MimeBodyPart();
+           msgPart.setText(mailBody);
+           multipart.addBodyPart(msgPart);
+           message.setContent(multipart);
+           // Send Message
+           Transport.send(message);
+           } catch (Exception e) {
+             LOG.error("Send Mail error", e);
+           } // catch
+  }
 
  }

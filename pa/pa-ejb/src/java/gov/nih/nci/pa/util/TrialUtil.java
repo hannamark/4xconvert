@@ -546,9 +546,8 @@ public class TrialUtil {
     *
     * @param docList dto
     * @return isoDTOList
-    * @throws PAException ex
     */
-   public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentDTO> docList) throws PAException {
+   public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentDTO> docList) {
        List<DocumentDTO> studyDocDTOList = new ArrayList<DocumentDTO>();
        //loop thru the iso dto
        for (TrialDocumentDTO dto : docList) {

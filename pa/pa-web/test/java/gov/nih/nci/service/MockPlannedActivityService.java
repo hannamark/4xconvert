@@ -317,7 +317,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
         for (PlannedActivity item : list) {
             if (item.getId().equals(IiConverter.convertToLong(dto.getIdentifier()))) {
                 item.setLeadProductIndicator(BlConverter.covertToBoolean(dto.getLeadProductIndicator()));
-                item.setSubcategoryCode(ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())));
+                item.setSubcategoryCode(ActivitySubcategoryCode.getByCode(CdConverter.convertCdToString(dto.getSubcategoryCode())).getCode());
                 item.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
                 return converter.convertFromDomainToDto(item);
             }

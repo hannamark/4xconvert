@@ -142,6 +142,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static final int MAXIMUM_CHAR_POPULATION = 800;
     private static final int MAXIMUM_CHAR_DESCRIPTION = 5000;
     private static final String SP = " ";
+    private static final String BR = "<br>";
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
     private Long id = null;
     private String page;
@@ -158,15 +159,17 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private String studyPopulationDescription;
     private String samplingMethodCode;
     private List<DataElement> cadsrResult = new ArrayList<DataElement>();  
-    private static final long CADSR_CS_ID = 2960572;
-    private static final float CADSR_CS_VERSION = 1;  
+    private static long cadsrCsId;
+    private static float cadsrCsVersion;  
     private static List<ClassificationSchemeItem> csisResult = null;
     private static final String CSIS = "csisResult";
     private static final String CDES_BY_CSI = "cdesByCsiResult";
+    private static final String REQUEST_TO_CREATE_CDE = "requestToCreateCDE";
     private DataElement cdeResult;
-    private List<String> permValues;
-    private String cdeDatatype;
+    private static List<String> permValues;
+    private static String cdeDatatype;
     private static final String DISPLAY_CDE = "displaycde";
+    private static String cdeCategoryCode;
     
   
     /**
@@ -176,6 +179,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     public String query() {
 
     try {
+        retrieveFromPaProperties();
         getClassSchemeItems();
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.STUDY_PROTOCOL_II);
@@ -234,8 +238,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
               csisResult = new ArrayList<ClassificationSchemeItem>();
             }
             ClassificationScheme cs = new ClassificationScheme();
-            cs.setPublicID(CADSR_CS_ID);
-            cs.setVersion(CADSR_CS_VERSION);
+            cs.setPublicID(cadsrCsId);
+            cs.setVersion(cadsrCsVersion);
             ApplicationService appService = ApplicationServiceProvider.getApplicationService();
             Collection csResult = appService.search(ClassificationScheme.class, cs);
             ClassificationScheme classifSch = (ClassificationScheme) csResult.iterator().next();
@@ -270,8 +274,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
             .createCriteria("classSchemeClassSchemeItem");
           
             DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
-            csCriteria.add(Expression.eq("publicID", CADSR_CS_ID));
-            csCriteria.add(Expression.eq("version", CADSR_CS_VERSION));
+            csCriteria.add(Expression.eq("publicID", cadsrCsId));
+            csCriteria.add(Expression.eq("version", cadsrCsVersion));
           
             DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
             csiCriteria.add(Expression.eq("longName", csiName));
@@ -281,6 +285,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
             for (Object obj : classCes) {
                 cadsrResult.add((DataElement) obj);
             }
+            webDTO.setCdeCategoryCode(csiName);
+            setCdeCategoryCode(csiName);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }     
@@ -318,7 +324,9 @@ public class EligibilityCriteriaAction extends ActionSupport {
               permValues = null;
           }
           cdeDatatype = vd.getDatatypeName();
-          
+          webDTO.setCdePublicIdentifier(Long.toString(vd.getPublicID()));
+          webDTO.setCdeVersionNumber(Float.toString(vd.getVersion()));
+          webDTO.setCdeCategoryCode(getCdeCategoryCode());
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -368,7 +376,46 @@ public class EligibilityCriteriaAction extends ActionSupport {
       
         return SUCCESS;
     }
-  
+    
+    /**
+     * Request to create cde.
+     * 
+     * @return the string
+     */
+    public String requestToCreateCDE() {
+       return REQUEST_TO_CREATE_CDE;
+    }
+    
+    /**
+     * Send email to request to create cde.
+     * @return the string
+     */
+    public String sendCDERequestEmail() {
+    try {
+        StringBuffer err = new StringBuffer();
+        String fromEmail = (String) ServletActionContext.getRequest().getParameter("fromEmail");
+        String emailMessage = (String) ServletActionContext.getRequest().getParameter("emailMsg");
+        if (PAUtil.isEmpty(fromEmail)) {
+          err.append("Please enter an email address").append(BR);
+        } 
+        if (PAUtil.isNotEmpty(fromEmail) && !PAUtil.isValidEmail(fromEmail)) {
+          err.append("Please enter a valid email address").append(BR);
+        }
+        if (PAUtil.isEmpty(emailMessage)) {
+          err.append("Please enter a request to CDE message").append(BR);
+        }
+        if (err.length() > 0) {
+           ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, err.toString());
+           return REQUEST_TO_CREATE_CDE;
+        } else {
+          PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
+          ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "CDE Request sent successfully");
+        }  
+    } catch (PAException e) {
+       ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+    }
+    return REQUEST_TO_CREATE_CDE;
+  }
   /**
    * @return res
    */
@@ -502,7 +549,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
   public String generate() throws PAException {
      StringBuffer generatedName = new StringBuffer();
      if (PAUtil.isNotEmpty(webDTO.getCriterionName())) {
-         generatedName.append("Name: ").append(webDTO.getCriterionName());
+         generatedName.append(webDTO.getCriterionName());
      }
      if (PAUtil.isNotEmpty(webDTO.getOperator()) && webDTO.getOperator().equalsIgnoreCase("In")) {
          generatedName.append(SP).append("In:");
@@ -649,6 +696,9 @@ public class EligibilityCriteriaAction extends ActionSupport {
       } else {
            pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.FALSE));
       }
+      pecDTO.setCdePublicIdentifier(IiConverter.convertToIi(dtoWeb.getCdePublicIdentifier()));
+      pecDTO.setCdeVersionNumber(StConverter.convertToSt(dtoWeb.getCdeVersionNumber()));
+      pecDTO.setSubcategoryCode(CdConverter.convertStringToCd(dtoWeb.getCdeCategoryCode()));
       return pecDTO;
   }
 
@@ -1109,8 +1159,12 @@ public class EligibilityCriteriaAction extends ActionSupport {
   public List<ClassificationSchemeItem> getCsisResult() {
       return csisResult;
   }
-
-    /**
+  
+  private void retrieveFromPaProperties() throws PAException {
+     cadsrCsId = Long.parseLong(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_ID"));
+     cadsrCsVersion = Float.parseFloat(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_VERSION"));
+  }
+     /**
      * 
      * @return cdeResult
      */
@@ -1134,4 +1188,19 @@ public class EligibilityCriteriaAction extends ActionSupport {
         return cdeDatatype;
     }
 
+   /**
+    * @return the cdeCategoryCode
+    */
+    public String getCdeCategoryCode() {
+      return cdeCategoryCode;
+    }
+
+   /**
+    * @param cdeCategoryCode the cdeCategoryCode to set
+    */
+    public void setCdeCategoryCode(String cdeCategoryCode) {
+      this.cdeCategoryCode = cdeCategoryCode;
+    }
+  
+  
  }

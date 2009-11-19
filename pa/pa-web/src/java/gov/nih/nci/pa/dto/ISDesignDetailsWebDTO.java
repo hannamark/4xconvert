@@ -121,6 +121,7 @@ public class ISDesignDetailsWebDTO {
     private String valueIntegerMax;
     private String cdePublicIdentifier;
     private String cdeVersionNumber;
+    private String cdeCategoryCode;
     
     
     /**
@@ -461,5 +462,17 @@ public class ISDesignDetailsWebDTO {
      public void setValueIntegerMax(String valueIntegerMax) {
       this.valueIntegerMax = valueIntegerMax;
     }
+    /**
+     * @return the cdeCategoryCode
+     */
+     public String getCdeCategoryCode() {
+       return cdeCategoryCode;
+     }
+    /**
+     * @param cdeCategoryCode the cdeCategoryCode to set
+     */
+     public void setCdeCategoryCode(String cdeCategoryCode) {
+       this.cdeCategoryCode = cdeCategoryCode;
+     }
     
 }

@@ -472,7 +472,7 @@ public class TestSchema {
             pa.setIntervention(inv);
             pa.setLeadProductIndicator(true);
             pa.setStudyProtocol(sp);
-            pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT);
+            pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
             pa.setUserLastUpdated("Joe");
             addUpdObject(pa);
             plannedActivityIds.add(pa.getId());

@@ -3,6 +3,16 @@
 <tr>
     <th colspan="3"><fmt:message key="isdesign.eligibilitycriteria.buildCriterion" /></th>
 </tr>
+            <tr>
+                     <td scope="row" class="label">
+                        <label for="typeCode">
+                            <fmt:message key="cadsr.classificationCode"/>
+                        </label>
+                    </td>
+                    <td class="value">
+                        <s:textfield name="webDTO.cdeCategoryCode" readonly="true" cssClass="readonly" cssStyle="width:100px" />
+                      </td>
+                 </tr> 
              <tr >
                     <td scope="row"  class="label"><label>
                         <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/></label>
@@ -13,7 +23,7 @@
                         <s:hidden name="webDTO.cdeVersionNumber"/>
                           <ul >              
                     <li >
-                     <a href="#" class="btn" onclick="lookup();" />
+                     <a href="#" class="btn" id="criteriaNameLookup" onclick="lookup();" />
                      <span class="btn_img"><span class="search">Look Up</span></span></a>
                     </li>
                 </ul>
@@ -27,7 +37,7 @@
                      </label>
                     </td>
                     <td class="value">                        
-                      <s:select name="webDTO.operator" list="#{'=':'=', '<':'<', '<=':'<=', '>':'>', '>=':'>=', 'In':'In'}" cssStyle="width:106px"/>
+                      <s:select name="webDTO.operator" list="#{'=':'=', '<':'<', '<=':'<=', '>':'>', '>=':'>=', 'In':'In'}" cssStyle="width:106px" value="webDTO.operator" onclick="activateMax()"/>
                     </td>         
                 </tr> 
                 <s:if test="permValues == null">
@@ -41,7 +51,12 @@
                     </td>
                     <td>
                       Min: <s:textfield name="webDTO.valueIntegerMin" maxlength="12" cssStyle="width:80px" />
-                      Max: <s:textfield name="webDTO.valueIntegerMax" maxlength="12" cssStyle="width:80px" />
+                      <s:if test="%{webDTO.operator=='In'}">
+                       Max: <s:textfield name="webDTO.valueIntegerMax" maxlength="12" cssStyle="width:80px" />
+                       </s:if>
+                       <s:else>
+                        Max: <s:textfield name="webDTO.valueIntegerMax" maxlength="12" cssStyle="width:80px" disabled="true"/>
+                       </s:else>
                       <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.valueIntegerMin</s:param>
@@ -58,7 +73,7 @@
                         </label>
                     </td>
                     <td class="value">
-                        <s:textfield name="webDTO.valueText" maxlength="12" cssStyle="width:100px" onblur='inactivateText();'/>
+                        <s:textfield name="webDTO.valueText" maxlength="12" cssStyle="width:100px" />
                       </td>
                  </tr>
                  </s:if>
@@ -72,10 +87,16 @@
                         </label>
                     </td>
                     <td>
-                      Min: <s:select headerKey="" headerValue="" name="webDTO.valueIntegerMin"
-                list="permValues" value="1" cssStyle="width:150px" />
-                      Max: <s:select headerKey="" headerValue="" name="webDTO.valueIntegerMax"
-                list="permValues" value="1" cssStyle="width:150px" /> 
+                      Min: <s:select headerKey="" headerValue="" name="webDTO.valueIntegerMin" value="webDTO.valueIntegerMin"
+                list="permValues"  cssStyle="width:150px" />
+                <s:if test="%{webDTO.operator=='In'}">
+                      Max: <s:select headerKey="" headerValue="" name="webDTO.valueIntegerMax" value="webDTO.valueIntegerMax"
+                list="permValues" cssStyle="width:150px" /> 
+                 </s:if>
+                  <s:else>
+                    Max: <s:select headerKey="" headerValue="" name="webDTO.valueIntegerMax" value="webDTO.valueIntegerMax"
+                list="permValues" cssStyle="width:150px" disabled="true"/> 
+                  </s:else>
                                 <s:fielderror>
                                 <s:param>webDTO.valueIntegerMin</s:param>
                                 </s:fielderror>                            
@@ -91,8 +112,8 @@
                         </label>
                     </td>
                     <td class="value">
-                        <s:select headerKey="" headerValue="" name="webDTO.valueText"
-                list="permValues" value="1" cssStyle="width:150px" />
+                        <s:select headerKey="" headerValue="" name="webDTO.valueText" value="webDTO.valueText"
+                list="permValues"  cssStyle="width:150px" />
                       </td>
                  </tr>
                  </s:if>
@@ -119,7 +140,7 @@
                      
                    </td>
                     <td class="value">
-                    <s:a href="#" cssClass="btn" onclick="handleGenerateCriteriaText()"><span class="btn_img"><span class="save">Generate Criteria Text</span></span></s:a>
+                    <s:a href="#" cssClass="btn" id="generateTextButton" onclick="handleGenerateCriteriaText()"><span class="btn_img"><span class="save">Generate Criteria Text</span></span></s:a>
                 </tr> 
             <tr>
                 <th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildDescription"/><span class="required">*</span></th>              

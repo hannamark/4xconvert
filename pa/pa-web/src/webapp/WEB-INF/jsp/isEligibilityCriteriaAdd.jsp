@@ -20,58 +20,106 @@
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     setFocusToFirstControl();
-    activate();         
+    var len =  document.eligibilityCriteraiAdd.group3.length;
+    var selElement;
+    for (i = 0; i < len; i++)
+     {
+     if(document.eligibilityCriteraiAdd.group3[i].checked){
+       selElement = document.eligibilityCriteraiAdd.group3[i];
+       }
+     }  
+    activate(selElement);         
 }
 function lookup(){
     showPopWin('${lookupUrl}', 900, 400, '', 'CaDSR Lookup');
 } 
+
 function handleAction(){
 var page;
 page=document.forms[0].page.value;
 input_box=confirm("Click OK to save changes or Cancel to Abort.");
 if (input_box==true){
     if (page == "Edit"){
-        document.forms[0].action="eligibilityCriteriaupdate.action";
-        document.forms[0].submit();     
+        document.forms["eligibilityCriteraiAdd"].action="eligibilityCriteriaupdate.action";
+        document.forms["eligibilityCriteraiAdd"].submit();     
     } else {
-        document.forms[0].action="eligibilityCriteriacreate.action";
-        document.forms[0].submit();   
+        document.forms["eligibilityCriteraiAdd"].action="eligibilityCriteriacreate.action";
+        document.forms["eligibilityCriteraiAdd"].submit();   
     } 
  }
 } 
-function activate(){
+function activate(selected){
+   
     var input="webDTO.textDescription";
-    var inputElement = document.forms[0].elements[input];
-
-    var criterionName="webDTO.criterionName";
-    var cnElement = document.forms[0].elements[criterionName];
-    var operator="webDTO.operator";
-    var opElement = document.forms[0].elements[operator];
-    var min="webDTO.valueIntegerMin";
-    var minElement = document.forms[0].elements[min];
-    var max="webDTO.valueIntegerMax";
-    var maxElement = document.forms[0].elements[max];
-    var txt="webDTO.valueText";
-    var txtElement = document.forms[0].elements[txt];
-    var unit="webDTO.unit";
-    var uElement = document.forms[0].elements[unit];
+    var inputElement = document.forms["eligibilityCriteraiAdd"].elements[input];
     
-        if (inputElement.value != "")
+    
+    var criterionName="webDTO.criterionName";
+    var cnElement = document.forms["eligibilityCriteraiAdd"].elements[criterionName];
+    var operator="webDTO.operator";
+    var opElement = document.forms["eligibilityCriteraiAdd"].elements[operator];
+    var min="webDTO.valueIntegerMin";
+    var minElement = "";
+    var max="webDTO.valueIntegerMax";
+    var maxElement="";
+    var txt="webDTO.valueText";
+    var txtElement="";
+    
+    if (document.forms["eligibilityCriteraiAdd"].elements[min] != 'undefined' && document.forms["eligibilityCriteraiAdd"].elements[min] != null) {     
+     minElement = document.forms["eligibilityCriteraiAdd"].elements[min];
+    }
+    if(document.forms["eligibilityCriteraiAdd"].elements[max] != 'undefined' && document.forms["eligibilityCriteraiAdd"].elements[max] !=null) {     
+      maxElement = document.forms["eligibilityCriteraiAdd"].elements[max];
+    }  
+    if ( document.forms["eligibilityCriteraiAdd"].elements[txt] !='undefined' &&  document.forms["eligibilityCriteraiAdd"].elements[txt] != null) {     
+     txtElement = document.forms["eligibilityCriteraiAdd"].elements[txt];
+    }
+    var unit="webDTO.unit";
+    var uElement = document.forms["eligibilityCriteraiAdd"].elements[unit];
+    
+    
+        if (selected.value == 'Unstructured')
         {
             cnElement.disabled = true;
             opElement.disabled = true;
-            minElement.disabled = true;
-            maxElement.disabled = true;
-            txtElement.disabled = true;
-            uElement.disabled = true;
+            if (minElement != "") {
+             minElement.disabled = true;
+            } 
+            if (maxElement != "") {
+             maxElement.disabled = true;
+            } 
+            if (txtElement != "") {
+             txtElement.disabled = true;
+            } 
+            if (uElement != "") {
+             uElement.disabled = true;
+            } 
+            inputElement.disabled=false;
+            document.getElementById("loadUOMDetails").disabled=true;
+            document.getElementById("criteriaNameLookup").disabled=true;
+            document.getElementById("generateTextButton").disabled=true;
+            
         }else
         {
-            cnElement.disabled = false;
-            opElement.disabled = false;
-             minElement.disabled = false;
-         maxElement.disabled = false;
-            txtElement.disabled = false;
+             cnElement.disabled = false;
+             opElement.disabled = false;
+             if (minElement != 'undefined'|| minElement != null) {
+            minElement.disabled = false;
+         } 
+         if (maxElement != 'undefined'|| maxElement != null) {
+            maxElement.disabled = false;
+         } 
+         if (txtElement != 'undefined'|| txtElement != null) {
+             txtElement.disabled = false;
+         } 
+         if (uElement != 'undefined'|| uElement != null) {
             uElement.disabled = false;
+            } 
+             inputElement.disabled=false;
+             document.getElementById("loadUOMDetails").disabled=false;
+             document.getElementById("criteriaNameLookup").disabled=false;
+             document.getElementById("generateTextButton").disabled=false;
+           
         }   
     }
 
@@ -97,28 +145,7 @@ function loadDetails(id, divName,className){
         document.forms[0].action="eligibilityCriteriagenerate.action";
         document.forms[0].submit();
  }   
- function inactivateText(){
-    var min="webDTO.valueIntegerMin";
-    var minElement = document.forms[0].elements[min];
-
-    var max="webDTO.valueIntegerMax";
-    var maxElement = document.forms[0].elements[max];
-    var txt="webDTO.valueText";
-    var txtElement = document.forms[0].elements[txt];
-    
-    
-        if (txtElement.value != "")
-        {
-            minElement.disabled = true; 
-            maxElement.disabled = true; 
-        }else
-        {
-             minElement.disabled = false; 
-             maxElement.disabled = false;            
-        }   
-    }
  function loadDiv(deid) {
-	    
      window.top.hidePopWin(true);
      var url = '/pa/protected/ajaxEligibilityCriteriadisplaycde.action?cdeid='+deid;
      var div = document.getElementById('eligibility.build.criterion');   
@@ -130,6 +157,19 @@ function loadDetails(id, divName,className){
      });
  }
  
+ function activateMax(){
+   
+     var operate="webDTO.operator";
+     var operateElement = document.forms["eligibilityCriteraiAdd"].elements[operate];
+      var intMaxName="webDTO.valueIntegerMax";
+      var intMaxElement = document.forms["eligibilityCriteraiAdd"].elements[intMaxName];
+     if(operateElement.value != 'In') {
+     intMaxElement.disabled = true;
+     } else {
+      intMaxElement.disabled = false;
+     }
+   }  
+    
 </SCRIPT>
 <body>
 <c:set var="topic" scope="request" value="abstract_eligibility"/>
@@ -142,7 +182,7 @@ function loadDetails(id, divName,className){
   <div class="box">  
    <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form><s:actionerror/>    
+    <s:form id="eligibilityCriteraiAdd" name="eligibilityCriteraiAdd"><s:actionerror/>    
     <h2><fmt:message key="isdesign.eligibilitycriteria.subtitle"/></h2>
     <s:hidden name="page"/>
     <s:hidden name="id"/>
@@ -166,17 +206,17 @@ function loadDetails(id, divName,className){
                         </td>
                         <td class="value">   
                             <s:if test="%{webDTO.structuredType == 'Structured'}">
-                            <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  checked="checked"/>Structured<br/>
-                            <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured"/>Un-structured
+                            <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  checked="checked" onclick='activate(this)'/>Structured<br/>
+                            <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" onclick='activate(this)'/>Un-structured
                             </s:if>
                             <s:elseif test="%{webDTO.structuredType == 'Unstructured'}">
-                            <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  />Structured<br/>
-                <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" checked="checked"/>Un-structured
+                            <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  onclick='activate(this)'/>Structured<br/>
+                            <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" checked="checked" onclick='activate(this)'/>Un-structured
                                 
                             </s:elseif>
                              <s:else>
-                     <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  />Structured<br/>
-                 <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" />Un-structured
+                           <input type="radio" id="group3" name="webDTO.structuredType" value="Structured" onclick='activate(this)' />Structured<br/>
+                           <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" onclick='activate(this)'/>Un-structured
                                                                        
                             </s:else>
                             <span class="formErrorMsg"> 

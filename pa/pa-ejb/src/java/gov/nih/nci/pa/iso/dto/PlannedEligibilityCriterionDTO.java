@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
@@ -103,9 +104,36 @@ public class PlannedEligibilityCriterionDTO extends PlannedActivityDTO {
     private Int displayOrder;
     private Bl structuredIndicator;
     private St textValue;
+    private Ii cdePublicIdentifier; 
+    private St cdeVersionNumber;
+
+    /**
+     * @return the cdePublicIdentifier
+     */
+     public Ii getCdePublicIdentifier() {
+       return cdePublicIdentifier;
+     }
+    /**
+     * @param cdePublicIdentifier the cdePublicIdentifier to set
+     */
+     public void setCdePublicIdentifier(Ii cdePublicIdentifier) {
+       this.cdePublicIdentifier = cdePublicIdentifier;
+     } 
+    /**
+     * @return the cdeVersionNumber
+     */
+     public St getCdeVersionNumber() {
+       return cdeVersionNumber;
+     }
+    /**
+     * @param cdeVersionNumber the cdeVersionNumber to set
+     */
+     public void setCdeVersionNumber(St cdeVersionNumber) {
+       this.cdeVersionNumber = cdeVersionNumber;
+     }
     /**
      * @return inclusionIndicator
-     */
+     s*/
     public Bl getInclusionIndicator() {
         return inclusionIndicator;
     }
