@@ -44,12 +44,12 @@ function handleEdit(rowId){
         <tr><td colspan="2">
             <s:set name="accessList" value="accessList" scope="request"/>
             <display:table name="accessList" id="row" class="data" sort="list" pagesize="10" requestURI="manageAccrualAccess.action">
-                <display:column property="userName" sortable="false" titleKey="manageAccrualAccess.userName"/>
-                <display:column property="email" sortable="false" titleKey="manageAccrualAccess.email"/>
-                <display:column property="phone" sortable="false" titleKey="manageAccrualAccess.phone"/>
-                <display:column property="siteName" sortable="false" titleKey="manageAccrualAccess.siteName"/>
-                <display:column property="siteRecruitmentStatus" sortable="false" titleKey="manageAccrualAccess.siteRecruitmentStatus"/>
-                <display:column property="statusCode.code" sortable="false" titleKey="manageAccrualAccess.statusCode"/>
+                <display:column property="userName" sortable="true" titleKey="manageAccrualAccess.userName"/>
+                <display:column property="email" sortable="true" titleKey="manageAccrualAccess.email"/>
+                <display:column property="phone" sortable="true" titleKey="manageAccrualAccess.phone"/>
+                <display:column property="siteName" sortable="true" titleKey="manageAccrualAccess.siteName"/>
+                <display:column property="siteRecruitmentStatus" sortable="true" titleKey="manageAccrualAccess.siteRecruitmentStatus"/>
+                <display:column property="statusCode.code" sortable="true" titleKey="manageAccrualAccess.statusCode"/>
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
                 					|| (sessionScope.role == 'SuAbstractor')}">
                 <display:column titleKey="magageAccrualAccess.edit" headerClass="centered" class="action">
