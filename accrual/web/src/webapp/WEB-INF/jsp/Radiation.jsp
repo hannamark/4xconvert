@@ -6,12 +6,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <script type="text/javascript">
+
+    function handleAddAction() {
+        document.forms[0].action = "createRadiation.action";
+        document.forms[0].submit();
+    }
+    
+    function handleNextAction() {
+        document.forms[0].action = "executeOffTreatment.action";
+        document.forms[0].submit();
+    }
+    
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
         <c:set var="topic" scope="request" value="radiation_detail"/> 
      </s:if>
-     Radiation
+     <fmt:message key="radiation.mainPage"/>
 </title>        
     <s:head/>
 </head>
@@ -19,22 +30,31 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>
-    Radiation
+    <fmt:message key="radiation.mainPage"/>
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <accrual:sucessMessage /> 
 <s:form name="detailForm">
-<table class="form">
-
-</table>
+    <display:table class="data" name="displayTagList" sort="list" pagesize="10">    
+            <display:column titleKey="radiation.name" property="type.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="radiation.date" property="radDate.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="radiation.totalDose" property="totalDose.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="radiation.totalDoseUOM" property="totalDose.unit" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="radiation.machineType" property="machineType.code" sortable="true" headerClass="sortable"/>
+            <display:column title="Edit" class="action">
+    		<s:url id="url" action="updateRadiation"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
+    		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+    	</display:column>   
+    </display:table>
 </s:form>
 
 <div class="actionsrow">
    <del class="btnwrapper">
       <ul class="btnrow">
        <li>        
-            <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleAddAction()"><span class="btn_img"><span class="add">Add</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="next">Next</span></span></s:a>
         </li>
       </ul>
    </del>

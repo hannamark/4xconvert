@@ -125,6 +125,7 @@ public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrual
     @SkipValidation
     public String execute() {
         loadDisplayList();
+        setCurrentAction(AR_DETAIL);
         return super.execute();
     }
     /**

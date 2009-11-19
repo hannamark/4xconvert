@@ -80,6 +80,11 @@ package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.web.dto.util.DrugBiologicsWebDto;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 /**
  * The Class DrugBiologicsAction.
  *
@@ -89,14 +94,51 @@ import gov.nih.nci.accrual.web.dto.util.DrugBiologicsWebDto;
 public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiologicsWebDto> {
 
     private static final long serialVersionUID = 1L;
-
+    private DrugBiologicsWebDto drugBiologic = new DrugBiologicsWebDto();
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void loadDisplayList() {
-        // TODO Auto-generated method stub
-
+        setDisplayTagList(new ArrayList<DrugBiologicsWebDto>());
+        //just to test the functionality
+        getDisplayTagList().add(drugBiologic);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String add() {
+        DrugBiologicsWebDto.validate(drugBiologic, this);
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        try {
+            return super.add();
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+    }
+    
+    /**
+     * Gets the drug biologic.
+     * @return the drug biologic
+     */
+    @VisitorFieldValidator(message = "> ")
+    public DrugBiologicsWebDto getDrugBiologic() {
+        return drugBiologic;
     }
 
+    /**
+     * Sets the drug biologic.
+     * @param drugBiologic the new drug biologic
+     */
+    public void setDrugBiologic(DrugBiologicsWebDto drugBiologic) {
+        this.drugBiologic = drugBiologic;
+    }
 }

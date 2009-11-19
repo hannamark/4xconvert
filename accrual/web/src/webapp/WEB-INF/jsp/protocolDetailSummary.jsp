@@ -14,20 +14,26 @@
     </div>        
     <div class="float33_first">
       <div class="row">
-          <span class="label"> <fmt:message key="accrual.trialSummary.lead.organization.trialID"/></span> 
-          <span class="value"><c:out value="${sessionScope.trialSummary.leadOrgTrialIdentifier.value}"/></span>
+          <span class="label"> <fmt:message key="accrual.trialSummary.physician"/></span> 
+          <span class="value"><c:out value=""/></span>
       </div>
       <div class="row">
-          <span class="label"><fmt:message key="accrual.trialSummary.lead.organization"/></span> 
-          <span class="value"><c:out value="${sessionScope.trialSummary.leadOrgName.value}"/></span>
+          <span class="label"><fmt:message key="accrual.trialSummary.participantID"/></span> 
+          <span class="value"><c:out value=""/></span>
       </div>
      
     </div>
     <div class="float33">
       <div class="row">
-          <span class="label"><fmt:message key="accrual.trialSummary.principal.investigator"/></span> 
-          <span class="value"> <c:out value="${sessionScope.trialSummary.principalInvestigator.value}"/></span>
+          <span class="label"><fmt:message key="accrual.trialSummary.submittingOrganization"/></span> 
+          <span class="value"> <c:out value=""/></span>
       </div>
+      <div class="row">
+          <span class="label"><fmt:message key="accrual.trialSummary.submittingPerson"/></span> 
+          <span class="value"> <c:out value=""/></span>
+      </div>
+      
     </div>
+    
     <div class="clear"></div>
 </div>

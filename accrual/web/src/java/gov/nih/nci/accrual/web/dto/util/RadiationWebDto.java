@@ -79,7 +79,16 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+
 import java.io.Serializable;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * The Class RadiationWebDto.
@@ -87,19 +96,17 @@ import java.io.Serializable;
  * @author lhebel
  * @since 10/28/2009
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class RadiationWebDto implements Serializable {
 
     private static final long serialVersionUID = -3658357689383961868L;
     
-    private String id;
-    private String type;
-    private String dose;
-    private String doseUom;
-    private String doseFreq;
-    private String doseTotalPerCourse;
-    private String doseDur;
-    private String doseDurUom;
-    private String machineType;
+    private Ii id;
+    private St type;
+    private Ts radDate;
+    private Pq totalDose;
+    private Pq duration;
+    private Cd machineType;
 
     /**
      * Instantiates a new radiation web dto.
@@ -107,130 +114,115 @@ public class RadiationWebDto implements Serializable {
     public RadiationWebDto() {
         // default constructor
     }
+    
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(RadiationWebDto dto, AbstractAccrualAction action) {       
+        if (dto.getTotalDose() == null || dto.getTotalDose().getValue() == null) {
+            action.addFieldError("radiation.totalDose.value", "Please enter Total Dose Value.");
+        }
+        if (dto.getTotalDose() == null || dto.getTotalDose().getUnit().equals("")) {
+            action.addFieldError("radiation.totalDose.unit", "Please select Total Dose UOM.");
+        }
+        if (dto.getDuration() == null || dto.getDuration().getValue() == null) {
+            action.addFieldError("radiation.duration.value", "Please enter Duration Value.");
+        }
+        if (dto.getDuration() == null || dto.getDuration().getUnit().equals("")) {
+            action.addFieldError("radiation.duration.unit", "Please select Duration UOM.");
+        }
+    }
 
     /**
      * @return the id
      */
-    public String getId() {
+    public Ii getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Ii id) {
         this.id = id;
     }
 
     /**
      * @return the type
      */
-    public String getType() {
+    @FieldExpressionValidator(expression = "type.value != null && type.value.length() > 0", 
+            message = "Please select a Radiation Type")
+    public St getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(String type) {
+    public void setType(St type) {
         this.type = type;
     }
 
     /**
-     * @return the dose
+     * @return radDate
      */
-    public String getDose() {
-        return dose;
+    @FieldExpressionValidator(expression = "radDate.value != null",
+            message = "Please provide a Radiation Date.")
+    public Ts getRadDate() {
+        return radDate;
     }
 
     /**
-     * @param dose the dose to set
+     * @param radDate the radDate to set
      */
-    public void setDose(String dose) {
-        this.dose = dose;
+    public void setRadDate(Ts radDate) {
+        this.radDate = radDate;
     }
 
     /**
-     * @return the doseUom
+     * @return totalDose
      */
-    public String getDoseUom() {
-        return doseUom;
+    public Pq getTotalDose() {
+        return totalDose;
     }
 
     /**
-     * @param doseUom the doseUom to set
+     * @param totalDose the totalDose to set
      */
-    public void setDoseUom(String doseUom) {
-        this.doseUom = doseUom;
+    public void setTotalDose(Pq totalDose) {
+        this.totalDose = totalDose;
     }
 
     /**
-     * @return the doseFreq
+     * @return duration
      */
-    public String getDoseFreq() {
-        return doseFreq;
+    public Pq getDuration() {
+        return duration;
     }
 
     /**
-     * @param doseFreq the doseFreq to set
+     * @param duration the duration to set
      */
-    public void setDoseFreq(String doseFreq) {
-        this.doseFreq = doseFreq;
-    }
-
-    /**
-     * @return the doseTotalPerCourse
-     */
-    public String getDoseTotalPerCourse() {
-        return doseTotalPerCourse;
-    }
-
-    /**
-     * @param doseTotalPerCourse the doseTotalPerCourse to set
-     */
-    public void setDoseTotalPerCourse(String doseTotalPerCourse) {
-        this.doseTotalPerCourse = doseTotalPerCourse;
-    }
-
-    /**
-     * @return the doseDur
-     */
-    public String getDoseDur() {
-        return doseDur;
-    }
-
-    /**
-     * @param doseDur the doseDur to set
-     */
-    public void setDoseDur(String doseDur) {
-        this.doseDur = doseDur;
-    }
-
-    /**
-     * @return the doseDurUom
-     */
-    public String getDoseDurUom() {
-        return doseDurUom;
-    }
-
-    /**
-     * @param doseDurUom the doseDurUom to set
-     */
-    public void setDoseDurUom(String doseDurUom) {
-        this.doseDurUom = doseDurUom;
+    public void setDuration(Pq duration) {
+        this.duration = duration;
     }
 
     /**
      * @return the machineType
      */
-    public String getMachineType() {
+    @FieldExpressionValidator(expression = "machineType.code != null && machineType.code.length() > 0", 
+            message = "Please select a Radiation Machine Type")
+    public Cd getMachineType() {
         return machineType;
     }
 
     /**
      * @param machineType the machineType to set
      */
-    public void setMachineType(String machineType) {
+    public void setMachineType(Cd machineType) {
         this.machineType = machineType;
     }
 }

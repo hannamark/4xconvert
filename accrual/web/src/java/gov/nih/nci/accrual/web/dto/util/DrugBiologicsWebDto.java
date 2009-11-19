@@ -79,7 +79,15 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.coppa.iso.St;
+
 import java.io.Serializable;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * The Class DrugBiologicsWebDto.
@@ -87,28 +95,22 @@ import java.io.Serializable;
  * @author lhebel
  * @since 10/28/2009
  */
-@SuppressWarnings({"PMD.TooManyFields" })
+@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.TooManyFields", "PMD.NPathComplexity" })
 public class DrugBiologicsWebDto implements Serializable {
 
     private static final long serialVersionUID = -1395879742701837870L;
-    
-    private String id;    
-    private String drugName;    
-    private String nscNumber;    
-    private String lotNumber;    
-     private String dose;    
-    private String doseUom;    
-    private String doseRoute;    
-    private String doseFreq;    
-    private String doseDur;    
-     private String doseDurUom;    
-    private String height;    
-    private String heightUom;    
-     private String weight;    
-    private String weightUom;    
-    private String bsa;    
-    private String doseTotalPerCourse;    
-     private String doseModType;
+
+    private Ii id; 
+    private St drugName;
+    private Pq dose; 
+    private Cd doseRoute;  
+    private Cd doseFreq;    
+    private Pq doseDur;  
+    private Pq height; 
+    private Pq weight;   
+    private Pq bsa;    
+    private Pq doseTotal;    
+    private Cd doseModType;
 
     /**
      * Instantiates a new drug biologics web dto.
@@ -116,242 +118,230 @@ public class DrugBiologicsWebDto implements Serializable {
     public DrugBiologicsWebDto() {
         // default constructor
     }
+    
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(DrugBiologicsWebDto dto, AbstractAccrualAction action) {
+        if (dto.getDose() == null || dto.getDose().getValue() == null) {
+            action.addFieldError("drugBiologic.dose.value", "Please enter Dose Value.");
+        }
+        if (dto.getDose() == null || dto.getDose().getUnit().equals("")) {
+            action.addFieldError("drugBiologic.dose.unit", "Please select Dose UOM.");
+        }
+        if (dto.getDoseDur() == null || dto.getDoseDur().getValue() == null) {
+            action.addFieldError("drugBiologic.doseDur.value", "Please enter Duration Value.");
+        }
+        if (dto.getDoseDur() == null || dto.getDoseDur().getUnit().equals("")) {
+            action.addFieldError("drugBiologic.doseDur.unit", "Please select Duration UOM.");
+        }
+        if (dto.getHeight() == null || dto.getHeight().getValue() == null) {
+            action.addFieldError("drugBiologic.height.value", "Please enter Height Value.");
+        }
+        if (dto.getHeight() == null || dto.getHeight().getUnit().equals("")) {
+            action.addFieldError("drugBiologic.height.unit", "Please select Height UOM.");
+        }
+        if (dto.getWeight() == null || dto.getWeight().getValue() == null) {
+            action.addFieldError("drugBiologic.weight.value", "Please enter Weight Value.");
+        }
+        if (dto.getWeight() == null || dto.getWeight().getUnit().equals("")) {
+            action.addFieldError("drugBiologic.weight.unit", "Please select Weight UOM.");  
+        }
+        if (dto.getBsa() == null || dto.getBsa().getValue() == null) {
+            action.addFieldError("drugBiologic.bsa.value", "Please enter Body Surface Area Value.");  
+        }
+        if (dto.getDoseTotal() == null || dto.getDoseTotal().getValue() == null) { 
+            action.addFieldError("drugBiologic.doseTotal.value", "Please enter Dose Total Value.");
+        }
+        if (dto.getDoseTotal() == null || dto.getDoseTotal().getUnit().equals("")) {
+            action.addFieldError("drugBiologic.doseTotal.unit", "Please select Dose Total UOM.");
+        }
+    }
 
     /**
+     * Gets the id.
      * @return the id
      */
-    public String getId() {
+    public Ii getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
+     * Sets the id.
+     * @param id the new id
      */
-    public void setId(String id) {
+    public void setId(Ii id) {
         this.id = id;
     }
 
     /**
-     * @return the drugName
+     * Gets the drug name.
+     * @return the drug name
      */
-    public String getDrugName() {
+    @FieldExpressionValidator(expression = "drugName.value != null && drugName.value.length() > 0", 
+            message = "Please select a Drug Name")
+    public St getDrugName() {
         return drugName;
     }
 
     /**
-     * @param drugName the drugName to set
+     * Sets the drug name.
+     * @param drugName the new drug name
      */
-    public void setDrugName(String drugName) {
+    public void setDrugName(St drugName) {
         this.drugName = drugName;
     }
 
     /**
-     * @return the nscNumber
-     */
-    public String getNscNumber() {
-        return nscNumber;
-    }
-
-    /**
-     * @param nscNumber the nscNumber to set
-     */
-    public void setNscNumber(String nscNumber) {
-        this.nscNumber = nscNumber;
-    }
-
-    /**
-     * @return the lotNumber
-     */
-    public String getLotNumber() {
-        return lotNumber;
-    }
-
-    /**
-     * @param lotNumber the lotNumber to set
-     */
-    public void setLotNumber(String lotNumber) {
-        this.lotNumber = lotNumber;
-    }
-
-    /**
+     * Gets the dose.
      * @return the dose
      */
-    public String getDose() {
+    public Pq getDose() {
         return dose;
     }
 
     /**
-     * @param dose the dose to set
+     * Sets the dose.
+     * @param dose the new dose
      */
-    public void setDose(String dose) {
+    public void setDose(Pq dose) {
         this.dose = dose;
     }
 
     /**
-     * @return the doseUom
+     * Gets the dose route.
+     * @return the dose route
      */
-    public String getDoseUom() {
-        return doseUom;
-    }
-
-    /**
-     * @param doseUom the doseUom to set
-     */
-    public void setDoseUom(String doseUom) {
-        this.doseUom = doseUom;
-    }
-
-    /**
-     * @return the doseRoute
-     */
-    public String getDoseRoute() {
+    @FieldExpressionValidator(expression = "doseRoute.code != null && doseRoute.code.length() > 0", 
+            message = "Please select a Route of Administration")
+    public Cd getDoseRoute() {
         return doseRoute;
     }
 
     /**
-     * @param doseRoute the doseRoute to set
+     * Sets the dose route.
+     * @param doseRoute the new dose route
      */
-    public void setDoseRoute(String doseRoute) {
+    public void setDoseRoute(Cd doseRoute) {
         this.doseRoute = doseRoute;
     }
 
     /**
-     * @return the doseFreq
+     * Gets the dose freq.
+     * @return the dose freq
      */
-    public String getDoseFreq() {
+    @FieldExpressionValidator(expression = "doseFreq.code != null && doseFreq.code.length() > 0", 
+            message = "Please select a Frequency")
+    public Cd getDoseFreq() {
         return doseFreq;
     }
 
     /**
-     * @param doseFreq the doseFreq to set
+     * Sets the dose freq.
+     * @param doseFreq the new dose freq
      */
-    public void setDoseFreq(String doseFreq) {
+    public void setDoseFreq(Cd doseFreq) {
         this.doseFreq = doseFreq;
     }
 
     /**
-     * @return the doseDur
+     * Gets the dose dur.
+     * @return the dose dur
      */
-    public String getDoseDur() {
+    public Pq getDoseDur() {
         return doseDur;
     }
 
     /**
-     * @param doseDur the doseDur to set
+     * Sets the dose dur.
+     * @param doseDur the new dose dur
      */
-    public void setDoseDur(String doseDur) {
+    public void setDoseDur(Pq doseDur) {
         this.doseDur = doseDur;
     }
 
     /**
-     * @return the doseDurUom
-     */
-    public String getDoseDurUom() {
-        return doseDurUom;
-    }
-
-    /**
-     * @param doseDurUom the doseDurUom to set
-     */
-    public void setDoseDurUom(String doseDurUom) {
-        this.doseDurUom = doseDurUom;
-    }
-
-    /**
+     * Gets the height.
      * @return the height
      */
-    public String getHeight() {
+    public Pq getHeight() {
         return height;
     }
 
     /**
-     * @param height the height to set
+     * Sets the height.
+     * @param height the new height
      */
-    public void setHeight(String height) {
+    public void setHeight(Pq height) {
         this.height = height;
     }
 
     /**
-     * @return the heightUom
-     */
-    public String getHeightUom() {
-        return heightUom;
-    }
-
-    /**
-     * @param heightUom the heightUom to set
-     */
-    public void setHeightUom(String heightUom) {
-        this.heightUom = heightUom;
-    }
-
-    /**
+     * Gets the weight.
      * @return the weight
      */
-    public String getWeight() {
+    public Pq getWeight() {
         return weight;
     }
 
     /**
-     * @param weight the weight to set
+     * Sets the weight.
+     * @param weight the new weight
      */
-    public void setWeight(String weight) {
+    public void setWeight(Pq weight) {
         this.weight = weight;
     }
 
     /**
-     * @return the weightUom
-     */
-    public String getWeightUom() {
-        return weightUom;
-    }
-
-    /**
-     * @param weightUom the weightUom to set
-     */
-    public void setWeightUom(String weightUom) {
-        this.weightUom = weightUom;
-    }
-
-    /**
+     * Gets the bsa.
      * @return the bsa
      */
-    public String getBsa() {
+    public Pq getBsa() {
         return bsa;
     }
 
     /**
-     * @param bsa the bsa to set
+     * Sets the bsa.
+     * @param bsa the new bsa
      */
-    public void setBsa(String bsa) {
+    public void setBsa(Pq bsa) {
         this.bsa = bsa;
     }
 
     /**
-     * @return the doseTotalPerCourse
+     * Gets the dose total.
+     * @return the dose total
      */
-    public String getDoseTotalPerCourse() {
-        return doseTotalPerCourse;
+    public Pq getDoseTotal() {
+        return doseTotal;
     }
 
     /**
-     * @param doseTotalPerCourse the doseTotalPerCourse to set
+     * Sets the dose total.
+     * @param doseTotal the new dose total
      */
-    public void setDoseTotalPerCourse(String doseTotalPerCourse) {
-        this.doseTotalPerCourse = doseTotalPerCourse;
+    public void setDoseTotal(Pq doseTotal) {
+        this.doseTotal = doseTotal;
     }
 
     /**
-     * @return the doseModType
+     * Gets the dose mod type.
+     * @return the dose mod type
      */
-    public String getDoseModType() {
+    @FieldExpressionValidator(expression = "doseModType.code != null && doseModType.code.length() > 0", 
+            message = "Please select a Dose Modification Type")
+    public Cd getDoseModType() {
         return doseModType;
     }
 
     /**
-     * @param doseModType the doseModType to set
+     * Sets the dose mod type.
+     * @param doseModType the new dose mod type
      */
-    public void setDoseModType(String doseModType) {
+    public void setDoseModType(Cd doseModType) {
         this.doseModType = doseModType;
     }
 }

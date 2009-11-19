@@ -80,6 +80,11 @@ package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 /**
  * The Class TreatmentAction.
  *
@@ -89,13 +94,50 @@ import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
 public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebDto> {
 
     private static final long serialVersionUID = 1L;
-
+    private TreatmentWebDto treatment = new TreatmentWebDto();
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void loadDisplayList() {
-        // TODO Auto-generated method stub
+        setDisplayTagList(new ArrayList<TreatmentWebDto>());
+        //just to test the functionality
+        getDisplayTagList().add(treatment);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String add() {
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        try {
+            return super.add();
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+    }
 
+    /**
+     * Gets the treatment.
+     * @return the treatment
+     */
+    @VisitorFieldValidator(message = "> ")
+    public TreatmentWebDto getTreatment() {
+        return treatment;
+    }
+
+    /**
+     * Sets the treatment.
+     * @param treatment the new treatment
+     */
+    public void setTreatment(TreatmentWebDto treatment) {
+        this.treatment = treatment;
     }
 }

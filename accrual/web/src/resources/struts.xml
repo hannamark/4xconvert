@@ -136,6 +136,11 @@
             <result>/WEB-INF/jsp/nodecorate/lookup{1}.jsp</result>
             <result name="input">/WEB-INF/jsp/nodecorate/lookup{1}.jsp</result>
         </action>
+        
+         <action name="lookUp*" class="gov.nih.nci.accrual.web.action.LookUpAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/lookupForFields.jsp</result>
+            <result name="input">/WEB-INF/jsp/nodecorate/lookupDisplayList.jsp</result>
+        </action>
     	
     </package>
 </struts>

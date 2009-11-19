@@ -76,67 +76,96 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
- * @author Hugh Reinhart
- * @since Nov 5, 2009
+ * @author Kalpana Guthikonda
+ * @since 11/17/2009
  */
-public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
-
-    private static final long serialVersionUID = -3007738923753747925L;
-    private CourseWebDto course = new CourseWebDto();
-     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<CourseWebDto>());
-        //just to test the functionality
-        getDisplayTagList().add(course);
-    }
+public class LookUpWebDto {
+    private Ii id;
+    private St code;
+    private St displayName;
+    private St publicId;
+    private St description;
+    private St type;
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String add() {
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-        try {
-            return super.add();
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
+  /**
+   * @return the id
+   */
+   public Ii getId() {
+     return id;
+  }
+  /**
+   * @param id the id to set
+   */
+   public void setId(Ii id) {
+     this.id = id;
+   }
+  /**
+   * @return the code
+   */
+   public St getCode() {
+     return code;
+   }
+   /**
+    * @param code the code to set
+    */
+   public void setCode(St code) {
+      this.code = code;
+   }
+  /**
+   * @return the displayName
+   */
+    public St getDisplayName() {
+      return displayName;
     }
+  /**
+   * @param displayName the displayName to set
+   */
+   public void setDisplayName(St displayName) {
+     this.displayName = displayName;
+   }
+  /**
+   * @return the publicId
+   */
+   public St getPublicId() {
+     return publicId;
+   }
+  /**
+   * @param publicId the publicId to set
+   */
+   public void setPublicId(St publicId) {
+     this.publicId = publicId;
+   }
+   /**
+    * @return the description
+    */
+    public St getDescription() {
+      return description;
+    }
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(St description) {
+       this.description = description;
+    }
+    /**
+     * @return the type
+     */
+    public St getType() {
+       return type;
+    }
+   /**
+    * @param type the type to set
+    */
+   public void setType(St type) {
+     this.type = type;
+   }
     
-    /**
-     * Gets the course.
-     * @return the course
-     */
-    @VisitorFieldValidator(message = "> ")
-    public CourseWebDto getCourse() {
-        return course;
-    }
-
-    /**
-     * Sets the course.
-     * @param course the new course
-     */
-    public void setCourse(CourseWebDto course) {
-        this.course = course;
-    }
-
+      
 }

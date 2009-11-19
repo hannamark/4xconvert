@@ -8,21 +8,21 @@
 <script type="text/javascript">
 
     function handleAddAction() {
-        document.forms[0].action = "createCourse.action";
+        document.forms[0].action = "createSurgery.action";
         document.forms[0].submit();
     }
     
     function handleNextAction() {
-        document.forms[0].action = "executeDrugBiologics.action";
+        document.forms[0].action = "executeRadiation.action";
         document.forms[0].submit();
     }
     
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="course_detail"/> 
-     </s:if>
-     <fmt:message key="course.mainPage"/>
+        <c:set var="topic" scope="request" value="surgery_detail"/> 
+      </s:if>
+      <fmt:message key="surgery.mainPage"/>
 </title>        
     <s:head/>
 </head>
@@ -30,17 +30,17 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>
-        <fmt:message key="course.mainPage"/>
+    <fmt:message key="surgery.mainPage"/>
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <accrual:sucessMessage /> 
 <s:form name="detailForm">
     <display:table class="data" name="displayTagList" sort="list" pagesize="10">    
-            <display:column titleKey="course.name" property="name.value" sortable="true" headerClass="sortable"/>
-            <display:column titleKey="course.startDate" property="createDate.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="surgery.name" property="name.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="surgery.startDate" property="createDate.value" sortable="true" headerClass="sortable"/>
             <display:column title="Edit" class="action">
-    		<s:url id="url" action="updateCourse"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
+    		<s:url id="url" action="updateSurgery"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>   
     </display:table>

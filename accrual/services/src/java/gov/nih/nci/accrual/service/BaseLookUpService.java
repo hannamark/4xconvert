@@ -76,26 +76,86 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.web.dto.util.ProcedureWebDto;
+package gov.nih.nci.accrual.service;
 
-/**
- * The Class ProcedureAction.
- *
+import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.interceptor.Interceptors;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Example;
+import org.hibernate.criterion.MatchMode;
+
+
+ /**
  * @author Kalpana Guthikonda
- * @since 10/28/2009
+ *@since 11/17/2009
+ * @param <BO>
  */
-public class ProcedureAction extends AbstractListEditAccrualAction<ProcedureWebDto> {
+@Interceptors(AccrualHibernateSessionInterceptor.class)
+@SuppressWarnings("unchecked")
+public class BaseLookUpService <BO extends AbstractLookUpEntity> {
 
-    private static final long serialVersionUID = 1L;
+    private final Class<BO> typeArgument;    
+    private static final Logger LOG = Logger.getLogger(BaseLookUpService.class);
 
     /**
-     * {@inheritDoc}
+     * @param typeArgument BO
      */
-    @Override
-    public void loadDisplayList() {
-        // TODO Auto-generated method stub
+    public BaseLookUpService(Class<BO> typeArgument) {
+        this.typeArgument = typeArgument;
+    }
 
+    /**
+     * Search.
+     * @param bo the bo
+     * @return the list< b o>
+     * @throws RemoteException the remote exception
+     */ 
+    public List<BO> search(BO bo) throws RemoteException {
+        LOG.info("Entering search");
+        AccrualHibernateUtil.getHibernateHelper().openAndBindSession();
+        Session session = null;
+        List<BO> bos = new ArrayList<BO>();
+        session = AccrualHibernateUtil.getCurrentSession();
+        Example example = Example.create(bo).enableLike(MatchMode.ANYWHERE).ignoreCase();
+        Criteria criteria = session.createCriteria(getTypeArgument()).add(example);
+        bos = criteria.list();
+        AccrualHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+        LOG.info("Leaving search");
+        return bos;
+        }
+
+    /**
+     * Gets By Id.
+     * @param boId the bo id
+     * @return the selected
+     * @throws RemoteException the remote exception
+     */
+    public BO getById(Long boId) throws RemoteException {
+        LOG.info("Entering getById ");
+        AccrualHibernateUtil.getHibernateHelper().openAndBindSession();
+        Session session = null;
+        session = AccrualHibernateUtil.getCurrentSession();
+        BO bo = (BO) session.get(getTypeArgument(), boId);
+        AccrualHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+        LOG.info("Leaving getById");
+        return bo;
+    }
+
+    /**
+     * @return the typeArgument
+     */
+    public Class<BO> getTypeArgument() {
+        return typeArgument;
     }
 }

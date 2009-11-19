@@ -6,6 +6,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <script type="text/javascript">
+
+    function handleAddAction() {
+        document.forms[0].action = "createDrugBiologics.action";
+        document.forms[0].submit();
+    }
+    
+    function handleNextAction() {
+        document.forms[0].action = "executeSurgery.action";
+        document.forms[0].submit();
+    }
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
@@ -23,18 +33,28 @@
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+  <accrual:sucessMessage /> 
 <s:form name="detailForm">
-<table class="form">
-
-</table>
+    <display:table class="data" name="displayTagList" sort="list" pagesize="10">    
+            <display:column titleKey="drugBiologic.name" property="drugName.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="drugBiologic.dose" property="dose.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="drugBiologic.doseUOM" property="dose.unit" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="drugBiologic.roa" property="doseRoute.code" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="drugBiologic.frequency" property="doseFreq.code" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="drugBiologic.doseMT" property="doseModType.code" sortable="true" headerClass="sortable"/>
+            <display:column title="Edit" class="action">
+    		<s:url id="url" action="updateDrugBiologics"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
+    		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+    	</display:column>   
+    </display:table>
 </s:form>
 
 <div class="actionsrow">
    <del class="btnwrapper">
       <ul class="btnrow">
        <li>        
-            <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleAddAction()"><span class="btn_img"><span class="add">Add</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="next">Next</span></span></s:a>
         </li>
       </ul>
    </del>

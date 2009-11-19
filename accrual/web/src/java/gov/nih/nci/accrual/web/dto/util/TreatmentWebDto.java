@@ -79,8 +79,12 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+
 import java.io.Serializable;
-import java.sql.Date;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * The Class TreatmentWebDto.
@@ -92,13 +96,9 @@ public class TreatmentWebDto implements Serializable {
 
     private static final long serialVersionUID = -2839999612985254553L;
 
-    private String id;    
-    private int courseNum;    
-    private Date courseDate;    
-    private String intervention;    
-    private String ecog;    
-    private String karnosky;    
-    private String lansky;
+    private Ii id;  
+    private St name;
+    private St description;
 
     /**
      * Instantiates a new treatment web dto.
@@ -108,100 +108,48 @@ public class TreatmentWebDto implements Serializable {
     }
 
     /**
-     * @return the courseNum
+     * @return name
      */
-    public int getCourseNum() {
-        return courseNum;
+    @FieldExpressionValidator(expression = "name.value != null && name.value.length() > 0", 
+            message = "Please enter a Treatment Plan Name")
+    public St getName() {
+        return name;
     }
 
     /**
-     * @param courseNum the courseNum to set
+     * @param name the name to set
      */
-    public void setCourseNum(int courseNum) {
-        this.courseNum = courseNum;
+    public void setName(St name) {
+        this.name = name;
     }
 
     /**
-     * @return the courseDate
+     * @return description
      */
-    public Date getCourseDate() {
-        return courseDate;
+    @FieldExpressionValidator(expression = "description.value != null && description.value.length() > 0", 
+            message = "Please enter a Treatment Plan Description")
+    public St getDescription() {
+        return description;
     }
 
     /**
-     * @param courseDate the courseDate to set
+     * @param description the description to set
      */
-    public void setCourseDate(Date courseDate) {
-        this.courseDate = courseDate;
-    }
-
-    /**
-     * @return the intervention
-     */
-    public String getIntervention() {
-        return intervention;
-    }
-
-    /**
-     * @param intervention the intervention to set
-     */
-    public void setIntervention(String intervention) {
-        this.intervention = intervention;
-    }
-
-    /**
-     * @return the ecog
-     */
-    public String getEcog() {
-        return ecog;
-    }
-
-    /**
-     * @param ecog the ecog to set
-     */
-    public void setEcog(String ecog) {
-        this.ecog = ecog;
-    }
-
-    /**
-     * @return the karnosky
-     */
-    public String getKarnosky() {
-        return karnosky;
-    }
-
-    /**
-     * @param karnosky the karnosky to set
-     */
-    public void setKarnosky(String karnosky) {
-        this.karnosky = karnosky;
-    }
-
-    /**
-     * @return the lansky
-     */
-    public String getLansky() {
-        return lansky;
-    }
-
-    /**
-     * @param lansky the lansky to set
-     */
-    public void setLansky(String lansky) {
-        this.lansky = lansky;
+    public void setDescription(St description) {
+        this.description = description;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Ii id) {
         this.id = id;
     }
 
     /**
      * @return the id
      */
-    public String getId() {
+    public Ii getId() {
         return id;
     }
 }

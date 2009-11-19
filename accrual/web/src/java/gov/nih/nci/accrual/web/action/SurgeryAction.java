@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
+import gov.nih.nci.accrual.web.dto.util.SurgeryWebDto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -86,22 +86,24 @@ import java.util.ArrayList;
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
- * @author Hugh Reinhart
- * @since Nov 5, 2009
+ * The Class SurgeryAction.
+ *
+ * @author Kalpana Guthikonda
+ * @since 10/28/2009
  */
-public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
+public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> {
 
-    private static final long serialVersionUID = -3007738923753747925L;
-    private CourseWebDto course = new CourseWebDto();
-     
+    private static final long serialVersionUID = 1L;
+    private SurgeryWebDto surgery = new SurgeryWebDto();
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<CourseWebDto>());
-        //just to test the functionality
-        getDisplayTagList().add(course);
+        setDisplayTagList(new ArrayList<SurgeryWebDto>());
+      //just to test the functionality
+        getDisplayTagList().add(surgery);
     }
     
     /**
@@ -121,22 +123,21 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
             return INPUT;
         }
     }
-    
+
     /**
-     * Gets the course.
-     * @return the course
+     * Gets the surgery.
+     * @return the surgery
      */
     @VisitorFieldValidator(message = "> ")
-    public CourseWebDto getCourse() {
-        return course;
+    public SurgeryWebDto getSurgery() {
+        return surgery;
     }
 
     /**
-     * Sets the course.
-     * @param course the new course
+     * Sets the surgery.
+     * @param surgery the new surgery
      */
-    public void setCourse(CourseWebDto course) {
-        this.course = course;
+    public void setSurgery(SurgeryWebDto surgery) {
+        this.surgery = surgery;
     }
-
 }

@@ -79,99 +79,77 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+
 import java.io.Serializable;
-import java.sql.Date;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
- * The Class ProcedureWebDto.
+ * Supports CourseAction and course.jsp.
  * 
- * @author lhebel
- * @since 10/28/2009
+ * @author Kalpana Guthikonda
+ * @since 11/17/2009
  */
-public class ProcedureWebDto implements Serializable {
+public class CourseWebDto implements Serializable {
 
-    private static final long serialVersionUID = -1169014776715899917L;
+    private static final long serialVersionUID = 1L;
+    private Ii identifier;
+    private St name;    
+    private Ts createDate;
     
-    private String id;
-    private String name;
-    private Date createDate;
-    private String info;
-    private String physQual;
-
     /**
-     * Instantiates a new procedure web dto.
+     * Instantiates a new Course web dto.
      */
-    public ProcedureWebDto() {
+    public CourseWebDto() {
         // default constructor
-    }
-
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
     }
 
     /**
      * @return the name
      */
-    public String getName() {
+    @FieldExpressionValidator(expression = "name.value != null && name.value.length() > 0",
+            message = "Please provide a Course")
+    public St getName() {
         return name;
     }
 
     /**
      * @param name the name to set
      */
-    public void setName(String name) {
+    public void setName(St name) {
         this.name = name;
     }
 
     /**
      * @return the createDate
      */
-    public Date getCreateDate() {
+    @FieldExpressionValidator(expression = "createDate.value != null",
+            message = "Please provide a Course Date")
+    public Ts getCreateDate() {
         return createDate;
     }
 
     /**
      * @param createDate the createDate to set
      */
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(Ts createDate) {
         this.createDate = createDate;
     }
 
     /**
-     * @return the info
+     * @param id the id to set
      */
-    public String getInfo() {
-        return info;
+    public void setIdentifier(Ii id) {
+        this.identifier = id;
     }
 
     /**
-     * @param info the info to set
+     * @return the id
      */
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    /**
-     * @return the physQual
-     */
-    public String getPhysQual() {
-        return physQual;
-    }
-
-    /**
-     * @param physQual the physQual to set
-     */
-    public void setPhysQual(String physQual) {
-        this.physQual = physQual;
+    public Ii getIdentifier() {
+        return identifier;
     }
 }

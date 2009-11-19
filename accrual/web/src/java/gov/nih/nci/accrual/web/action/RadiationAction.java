@@ -80,6 +80,11 @@ package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.web.dto.util.RadiationWebDto;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 /**
  * The Class RadiationAction.
  *
@@ -89,14 +94,52 @@ import gov.nih.nci.accrual.web.dto.util.RadiationWebDto;
 public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebDto> {
 
     private static final long serialVersionUID = 1L;
-
+    private RadiationWebDto radiation = new RadiationWebDto();
+   
     /**
      * {@inheritDoc}
      */
     @Override
     public void loadDisplayList() {
-        // TODO Auto-generated method stub
+        setDisplayTagList(new ArrayList<RadiationWebDto>());
+        //just to test the functionality
+        getDisplayTagList().add(radiation);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String add() {
+        RadiationWebDto.validate(radiation, this);
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        try {
+            return super.add();
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+    }
 
+    /**
+     * Gets the radiation.
+     * @return the radiation
+     */
+    @VisitorFieldValidator(message = "> ")
+    public RadiationWebDto getRadiation() {
+        return radiation;
+    }
+
+    /**
+     * Sets the radiation.
+     * @param radiation the new radiation
+     */
+    public void setRadiation(RadiationWebDto radiation) {
+        this.radiation = radiation;
     }
 
 }

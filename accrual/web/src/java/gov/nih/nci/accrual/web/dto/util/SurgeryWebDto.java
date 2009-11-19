@@ -76,67 +76,98 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
+package gov.nih.nci.accrual.web.dto.util;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+import java.io.Serializable;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
- * @author Hugh Reinhart
- * @since Nov 5, 2009
+ * The Class SurgeryWebDto.
+ * 
+ * @author lhebel
+ * @since 10/28/2009
  */
-public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
+public class SurgeryWebDto implements Serializable {
 
-    private static final long serialVersionUID = -3007738923753747925L;
-    private CourseWebDto course = new CourseWebDto();
-     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<CourseWebDto>());
-        //just to test the functionality
-        getDisplayTagList().add(course);
-    }
+    private static final long serialVersionUID = -1169014776715899917L;
     
+    private Ii id;
+    private St name;
+    private Ts createDate;
+    private St info;
+
     /**
-     * {@inheritDoc}
+     * Instantiates a new surgery web dto.
      */
-    @Override
-    public String add() {
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-        try {
-            return super.add();
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-    }
-    
-    /**
-     * Gets the course.
-     * @return the course
-     */
-    @VisitorFieldValidator(message = "> ")
-    public CourseWebDto getCourse() {
-        return course;
+    public SurgeryWebDto() {
+        // default constructor
     }
 
     /**
-     * Sets the course.
-     * @param course the new course
+     * @return the id
      */
-    public void setCourse(CourseWebDto course) {
-        this.course = course;
+    public Ii getId() {
+        return id;
     }
 
+    /**
+     * @param id the id to set
+     */
+    public void setId(Ii id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the name
+     */
+    @FieldExpressionValidator(expression = "name.value != null && name.value.length() > 0", 
+            message = "Please select a Surgery Name")
+    public St getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(St name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the createDate
+     */
+    @FieldExpressionValidator(expression = "createDate.value != null",
+            message = "Please provide a Surgery Date")
+    public Ts getCreateDate() {
+        return createDate;
+    }
+
+    /**
+     * @param createDate the createDate to set
+     */
+    public void setCreateDate(Ts createDate) {
+        this.createDate = createDate;
+    }
+
+    /**
+     * @return the info
+     */
+    @FieldExpressionValidator(expression = "info.value != null && info.value.length() > 0", 
+            message = "Please enter Additional Information")
+    public St getInfo() {
+        return info;
+    }
+
+    /**
+     * @param info the info to set
+     */
+    public void setInfo(St info) {
+        this.info = info;
+    }
 }
