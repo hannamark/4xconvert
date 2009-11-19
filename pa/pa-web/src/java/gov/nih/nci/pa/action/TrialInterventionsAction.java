@@ -124,8 +124,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     static final String SPACE = " ";
     static final String COMMA_SPACE = ", ";
     static final String DASH = "-";
-    static final String SEMI_COLON = "; ";
-    
+      
     static final String MESSAGE = "Numeric value between 0.0-100.000";
     static final String KEY = "i18n.key";
     static final String MIN = "0.0";
@@ -154,6 +153,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     private String routeOfAdministration;
     private String doseForm;
     private String doseFrequency;
+    private String doseFrequencyCode;
     
     private String approachSite;
     private String targetSite;
@@ -292,6 +292,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
                setDoseDurationValue(i.getDoseDurationValue());
                setDoseForm(i.getDoseForm());
                setDoseFrequency(i.getDoseFrequency());
+               setDoseFrequencyCode(i.getDoseFrequencyCode());
                setDoseRegimen(i.getDoseRegimen());
                setDoseTotalUOM(i.getDoseTotalUOM());
                setMinDoseValue(i.getMinDoseValue());
@@ -441,7 +442,8 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             BaseLookUpService<DoseFrequency> lookUpService = 
                     new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
             DoseFrequency dfreq = lookUpService.getById(Long.parseLong(id));
-            setDoseFrequency(dfreq.getCode());
+            setDoseFrequency(dfreq.getDisplayName());
+            setDoseFrequencyCode(dfreq.getCode());
          } else if ("RouteOfAdministration".equalsIgnoreCase(className)) {
              BaseLookUpService<RouteOfAdministration> lookUpService = 
                      new BaseLookUpService<RouteOfAdministration>(RouteOfAdministration.class);
@@ -751,7 +753,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          if (interDto.getDoseRegimen() != null && !"".equals(interDto.getDoseRegimen())) {
              sbuf.append(COMMA_SPACE);
              sbuf.append(interDto.getDoseRegimen());
-             sbuf.append(SEMI_COLON);
+             sbuf.append(SPACE);
          }
          if (interDto.getMinDoseTotalValue() != null && !"".equals(interDto.getMinDoseTotalValue())) {
              sbuf.append(" Total dose:  ");
@@ -762,18 +764,18 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
              if (interDto.getDoseTotalUOM() != null) {
                  sbuf.append(SPACE);
                  sbuf.append(interDto.getDoseTotalUOM());
-                 sbuf.append(SEMI_COLON);
+                 sbuf.append(SPACE);
              }
          }
          if (interDto.getApproachSite() != null && !"".equals(interDto.getApproachSite())) {
             sbuf.append("Approach Site:  ");
             sbuf.append(interDto.getApproachSite());
-            sbuf.append(SEMI_COLON);
+            sbuf.append(SPACE);
          }
          if (interDto.getTargetSite() != null && !"".equals(interDto.getTargetSite())) {
              sbuf.append("Target Site:  ");
              sbuf.append(interDto.getTargetSite());
-             sbuf.append(SEMI_COLON);
+             sbuf.append(SPACE);
          }
          if (interDto.getProcedureName() != null && !"".equals(interDto.getProcedureName())) {
              sbuf.append("Method:  ");
@@ -878,7 +880,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          paDto.setDoseDescription(StConverter.convertToSt(getInterventionDescription()));
          paDto.setDoseDuration(convertToPq(getDoseDurationUOM(), getDoseDurationValue()));
          paDto.setDoseFormCode(CdConverter.convertStringToCd(getDoseForm()));
-         paDto.setDoseFrequencyCode(CdConverter.convertStringToCd(getDoseFrequency()));
+         paDto.setDoseFrequencyCode(CdConverter.convertStringToCd(getDoseFrequencyCode()));
          paDto.setDoseRegimen(StConverter.convertToSt(getDoseRegimen()));
          if (getInterventionType().equals(ActivitySubcategoryCode.DRUG.getCode())) {
           paDto.setRouteOfAdministrationCode(CdConverter.convertStringToCd(getRouteOfAdministration()));
@@ -975,6 +977,8 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
                 ? pa.getDoseDuration().getValue().toString() : "");
           webDto.setDoseForm(!PAUtil.isCdNull(pa.getDoseFormCode()) ? pa.getDoseFormCode().getCode() : "");
           webDto.setDoseFrequency(!PAUtil.isCdNull(pa.getDoseFrequencyCode()) 
+                ? getDoseFreq(pa.getDoseFrequencyCode().getCode()) : "");
+          webDto.setDoseFrequencyCode(!PAUtil.isCdNull(pa.getDoseFrequencyCode()) 
                 ? pa.getDoseFrequencyCode().getCode() : "");
           webDto.setDoseRegimen(!PAUtil.isStNull(pa.getDoseRegimen()) ? pa.getDoseRegimen().getValue() : "");
          
@@ -1009,6 +1013,31 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
              onBuff.append(StConverter.convertToString(ian.getName()));
          }
          return onBuff.toString();
+     }
+     
+     private String getDoseFreq(String doseFreqCode) throws PAException {
+      String doseFreqDisplayName = "";
+      BaseLookUpService<DoseFrequency> lookUpService = 
+          new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
+      DoseFrequency example = new DoseFrequency();
+      example.setCode(doseFreqCode);
+      DoseFrequency dfreq = lookUpService.getByCode(example);
+      doseFreqDisplayName =  dfreq.getDisplayName();
+      return doseFreqDisplayName;
+     }
+     
+    /**
+     * @return the doseFrequencyCode
+     */
+     public String getDoseFrequencyCode() {
+      return doseFrequencyCode;
+     }
+
+    /**
+     * @param doseFrequencyCode the doseFrequencyCode to set
+     */
+     public void setDoseFrequencyCode(String doseFrequencyCode) {
+      this.doseFrequencyCode = doseFrequencyCode;
      }
 
 }

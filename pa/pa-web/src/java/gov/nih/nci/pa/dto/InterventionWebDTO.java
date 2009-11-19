@@ -109,6 +109,7 @@ public class InterventionWebDTO {
     private String routeOfAdministration;
     private String doseForm;
     private String doseFrequency;
+    private String doseFrequencyCode;
     
     private String approachSite;
     private String targetSite;
@@ -406,6 +407,18 @@ public class InterventionWebDTO {
      */
      public void setTargetSite(String targetSite) {
        this.targetSite = targetSite;
+     }
+    /**
+     * @return the doseFrequencyCode
+     */
+     public String getDoseFrequencyCode() {
+       return doseFrequencyCode;
+     }
+    /**
+     * @param doseFrequencyCode the doseFrequencyCode to set
+     */
+     public void setDoseFrequencyCode(String doseFrequencyCode) {
+       this.doseFrequencyCode = doseFrequencyCode;
      }
     
 }
