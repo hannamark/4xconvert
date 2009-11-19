@@ -284,4 +284,9 @@
         <comment>execute accrual_dev_23941_4.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_4.sql"/>
     </changeSet>
+	<changeSet id="70" author="Vrushali">
+        <comment>execute pa_defect_24160.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/pa_defect_24160.sql"/>
+    </changeSet>
+	
 </databaseChangeLog>
