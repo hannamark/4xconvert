@@ -94,6 +94,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
+
 /**
  * @author lhebel
  * @since 10/28/2009
@@ -146,6 +148,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the vitalStatus
      */
+    @FieldExpressionValidator(expression = "vitalStatus.code != null && vitalStatus.code.length() > 0",
+            message = "Please provide a Vital Status")
     public Cd getVitalStatus() {
         return vitalStatus;
     }
@@ -160,6 +164,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the responseInd
      */
+    @FieldExpressionValidator(expression = "responseInd.code != null && responseInd.code.length() > 0",
+            message = "Please provide an Evaluable for Response")
     public Cd getResponseInd() {
         return responseInd;
     }
@@ -174,6 +180,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the diseaseStatus
      */
+    @FieldExpressionValidator(expression = "diseaseStatus.code != null && diseaseStatus.code.length() > 0",
+            message = "Please provide a Disease Status")
     public Cd getDiseaseStatus() {
         return diseaseStatus;
     }
@@ -188,6 +196,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the diseaseStatusDate
      */
+    @FieldExpressionValidator(expression = "diseaseStatusDate.value != null",
+            message = "Please provide a Disease Status Date")
     public Ts getDiseaseStatusDate() {
         return diseaseStatusDate;
     }
@@ -202,6 +212,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the assessmentType
      */
+    @FieldExpressionValidator(expression = "assessmentType.code != null && assessmentType.code.length() > 0",
+            message = "Please provide a Method of Disease Status Evaluation")
     public Cd getAssessmentType() {
         return assessmentType;
     }
@@ -216,6 +228,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the recurrenceInd
      */
+    @FieldExpressionValidator(expression = "recurrenceInd.code != null && recurrenceInd.code.length() > 0",
+            message = "Please provide a Disease Recurrence Indicator")
     public Cd getRecurrenceInd() {
         return recurrenceInd;
     }
@@ -230,6 +244,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the recurrenceDate
      */
+    @FieldExpressionValidator(expression = "recurrenceDate.value != null",
+            message = "Please provide a Recurrence Date")
     public Ts getRecurrenceDate() {
         return recurrenceDate;
     }
@@ -244,6 +260,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the progressionInd
      */
+    @FieldExpressionValidator(expression = "progressionInd.code != null && progressionInd.code.length() > 0",
+            message = "Please provide a Disease Progression Indicator")
     public Cd getProgressionInd() {
         return progressionInd;
     }
@@ -258,6 +276,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the progressionSite
      */
+    @FieldExpressionValidator(expression = "progressionSite.value != null && progressionSite.value.length() > 0",
+            message = "Please provide a Disease Progression Anatomic Site")
     public St getProgressionSite() {
         return progressionSite;
     }
@@ -272,6 +292,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the progressionDate
      */
+    @FieldExpressionValidator(expression = "progressionDate.value != null",
+            message = "Please provide a Disease Progression Date")
     public Ts getProgressionDate() {
         return progressionDate;
     }
@@ -293,6 +315,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the evaluationDate
      */
+    @FieldExpressionValidator(expression = "evaluationDate.value != null",
+            message = "Please provide an Outcomes Evaluation Date")
     public Ts getEvaluationDate() {
         return evaluationDate;
     }

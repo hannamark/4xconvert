@@ -9,8 +9,11 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript">
     function handleSaveAction() {
-        document.forms[0].action = "addParticipantOutcomes.action";
-        document.forms[0].submit();
+        if (confirm("Please confirm all information is correct, select OK to complete the Save, select Cancel to "
+                + "correct errors. Once saved the outcome can not be Edited or Deleted!")) {
+            document.forms[0].action = "addParticipantOutcomes.action";
+            document.forms[0].submit();
+        }
     }
 
     function handleCancelAction() {

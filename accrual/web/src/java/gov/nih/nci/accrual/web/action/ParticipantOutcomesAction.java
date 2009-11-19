@@ -80,23 +80,15 @@
 package gov.nih.nci.accrual.web.action;
 
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 import gov.nih.nci.accrual.web.dto.util.ParticipantOutcomesWebDto;
-import gov.nih.nci.accrual.web.enums.AssessmentTypes;
-import gov.nih.nci.accrual.web.enums.DiseaseStatuses;
-import gov.nih.nci.accrual.web.enums.ProgressionInds;
-import gov.nih.nci.accrual.web.enums.RecurrenceInds;
-import gov.nih.nci.accrual.web.enums.ResponseInds;
-import gov.nih.nci.accrual.web.enums.VitalStatuses;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * @author Kalpana Guthikonda
@@ -119,31 +111,19 @@ public class ParticipantOutcomesAction extends AbstractListEditAccrualAction<Par
         }
         if (db == null) {
             db = new ArrayList<ParticipantOutcomesWebDto>();
-            
-            ParticipantOutcomesWebDto rec = new ParticipantOutcomesWebDto();
-            rec.setVitalStatus(CdConverter.convertStringToCd(VitalStatuses.values()[0].getCode()));
-            rec.setAssessmentType(CdConverter.convertStringToCd(AssessmentTypes.values()[0].getCode()));
-            rec.setDiseaseStatus(CdConverter.convertStringToCd(DiseaseStatuses.values()[0].getCode()));
-            rec.setProgressionInd(CdConverter.convertStringToCd(ProgressionInds.values()[0].getCode()));
-            rec.setRecurrenceInd(CdConverter.convertStringToCd(RecurrenceInds.values()[0].getCode()));
-            rec.setResponseInd(CdConverter.convertStringToCd(ResponseInds.values()[0].getCode()));
-            rec.setDiseaseStatusDate(TsConverter.convertToTs(new Timestamp(System.currentTimeMillis())));
-            rec.setEvaluationDate(TsConverter.convertToTs(new Timestamp(System.currentTimeMillis())));
-            rec.setProgressionDate(TsConverter.convertToTs(new Timestamp(System.currentTimeMillis())));
-            rec.setRecurrenceDate(TsConverter.convertToTs(new Timestamp(System.currentTimeMillis())));
-            rec.setProgressionSite(StConverter.convertToSt("Test Outcome 1"));
-
-            db.add(rec);
+            ServletActionContext.getRequest().getSession().setAttribute(ParticipantOutcomesWebDto.class.getName(), db);
         }
     }
     
     private ParticipantOutcomesWebDto findOutcome(Ii id) {
-        initDb();
-        if (id == null) {
-            id = getTargetOutcomeId();
+        Ii target = id;
+        if (target == null) {
+            target = targetOutcomeId;
         }
+        
+        initDb();
         for (ParticipantOutcomesWebDto item : db) {
-            if (item.getId().getExtension().equals(getTargetOutcomeId().getExtension())) {
+            if (item.getId().getExtension().equals(target.getExtension())) {
                 targetOutcome = item;
             }
         }
@@ -166,6 +146,10 @@ public class ParticipantOutcomesAction extends AbstractListEditAccrualAction<Par
     public void loadDisplayList() {
         initDb();
         displayTagList = new ArrayList<ParticipantOutcomesWebDto>();
+        if (db.isEmpty()) {
+            displayTagList.add(new ParticipantOutcomesWebDto());
+            return;
+        }
         for (ParticipantOutcomesWebDto item : db) {
             displayTagList.add(item);
         }
@@ -217,6 +201,7 @@ public class ParticipantOutcomesAction extends AbstractListEditAccrualAction<Par
     /**
      * @return the targetOutcome
      */
+    @VisitorFieldValidator(message = "> ")
     public ParticipantOutcomesWebDto getTargetOutcome() {
         return targetOutcome;
     }
