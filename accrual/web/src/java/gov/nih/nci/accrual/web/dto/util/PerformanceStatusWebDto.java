@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,61 +73,128 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-package gov.nih.nci.accrual.web.action;
 
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
+import gov.nih.nci.accrual.web.enums.EcogStatuses;
+import gov.nih.nci.accrual.web.enums.KarnofskyStatuses;
+import gov.nih.nci.accrual.web.enums.LanskyStatuses;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
- * @author Hugh Reinhart
- * @since Nov 5, 2009
+ * @author lhebel
+ *
  */
-public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+public class PerformanceStatusWebDto implements Serializable {
 
-    private static final long serialVersionUID = -2561560856212211656L;
-    
-    private PerformanceStatusWebDto performance = new PerformanceStatusWebDto();
+    private static final long serialVersionUID = -5148496195378850252L;
+
+    private Ii id;
+    private Cd ecogStatus;
+    private Cd karnofskyStatus;
+    private Cd lanskyStatus;
 
     /**
-     * {@inheritDoc}
+     * @return false if the page has errors
      */
-    public String execute() {
-        performance = new PerformanceStatusWebDto();
-        return super.execute();
+    public boolean validate() {
+        if (lanskyStatus.getCode() != null && lanskyStatus.getCode().length() > 0
+            && (ecogStatus.getCode() == null || ecogStatus.getCode().length() == 0)
+            && (karnofskyStatus.getCode() == null || karnofskyStatus.getCode().length() == 0)) {
+                return true;
+        }
+        if (ecogStatus.getCode() != null && ecogStatus.getCode().length() > 0
+            && (lanskyStatus.getCode() == null || lanskyStatus.getCode().length() == 0)
+            && (karnofskyStatus.getCode() == null || karnofskyStatus.getCode().length() == 0)) {
+                return true;
+        }
+        if (karnofskyStatus.getCode() != null && karnofskyStatus.getCode().length() > 0
+            && (ecogStatus.getCode() == null || ecogStatus.getCode().length() == 0)
+            && (lanskyStatus.getCode() == null || lanskyStatus.getCode().length() == 0)) {
+                return true;
+        }
+        return false;
     }
     
     /**
-     * {@inheritDoc}
+     * @param id the id to set
      */
-    @SuppressWarnings("PMD.UselessOverridingMethod")
-    public String save() {
-        return super.save();
+    public void setId(Ii id) {
+        this.id = id;
     }
-    
     /**
-     * @return result for next action
+     * @return the id
      */
-    public String next() {
-        String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : INPUT;
+    public Ii getId() {
+        return id;
+    }
+    /**
+     * @param ecogStatus the ecogStatus to set
+     */
+    public void setEcogStatus(Cd ecogStatus) {
+        this.ecogStatus = ecogStatus;
+    }
+    /**
+     * @return the ecogStatus
+     */
+    @FieldExpressionValidator(expression = "validate()", message = "Please select exactly ONE Status Code.")
+    public Cd getEcogStatus() {
+        return ecogStatus;
+    }
+    /**
+     * @param karnofskyStatus the karnofskyStatus to set
+     */
+    public void setKarnofskyStatus(Cd karnofskyStatus) {
+        this.karnofskyStatus = karnofskyStatus;
+    }
+    /**
+     * @return the karnofskyStatus
+     */
+    @FieldExpressionValidator(expression = "validate()", message = "Please select exactly ONE Status Code.")
+    public Cd getKarnofskyStatus() {
+        return karnofskyStatus;
+    }
+    /**
+     * @param lanskyStatus the lanskyStatus to set
+     */
+    public void setLanskyStatus(Cd lanskyStatus) {
+        this.lanskyStatus = lanskyStatus;
+    }
+    /**
+     * @return the lanskyStatus
+     */
+    @FieldExpressionValidator(expression = "validate()", message = "Please select exactly ONE Status Code.")
+    public Cd getLanskyStatus() {
+        return lanskyStatus;
     }
 
     /**
-     * @param performance the performance to set
+     * @return the Ecog statuses
      */
-    public void setPerformance(PerformanceStatusWebDto performance) {
-        this.performance = performance;
+    public List<EcogStatuses> getEcogStatuses() {
+        return Arrays.asList(EcogStatuses.values());
     }
 
     /**
-     * @return the performance
+     * @return the Karnofsky statuses
      */
-    @VisitorFieldValidator(message = "> ")
-    public PerformanceStatusWebDto getPerformance() {
-        return performance;
+    public List<KarnofskyStatuses> getKarnofskyStatuses() {
+        return Arrays.asList(KarnofskyStatuses.values());
+    }
+
+    /**
+     * @return the Lansky statuses
+     */
+    public List<LanskyStatuses> getLanskyStatuses() {
+        return Arrays.asList(LanskyStatuses.values());
     }
 }

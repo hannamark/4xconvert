@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,61 +73,55 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-package gov.nih.nci.accrual.web.action;
 
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+package gov.nih.nci.accrual.web.enums;
 
-import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.enums.CodedEnum;
 
 /**
- * @author Hugh Reinhart
- * @since Nov 5, 2009
+ * @author lhebel
  */
-public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
-
-    private static final long serialVersionUID = -2561560856212211656L;
+public enum EcogStatuses implements CodedEnum<String> {
+    /** Yes. */
+    ECOG1("Ecog 1"),
+    /** No. */
+    ECOG2("Ecog 2");
     
-    private PerformanceStatusWebDto performance = new PerformanceStatusWebDto();
+    private String code;
+    
+    private EcogStatuses(String code) {
+        this.code = code;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public String execute() {
-        performance = new PerformanceStatusWebDto();
-        return super.execute();
+    public String getCode() {
+        return code;
     }
     
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.UselessOverridingMethod")
-    public String save() {
-        return super.save();
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     * @param code code
+     * @return StatusCode 
+     */
+    public static EcogStatuses getByCode(String code) {
+        return getByClassAndCode(EcogStatuses.class, code);
     }
     
     /**
-     * @return result for next action
+     * {@inheritDoc}
      */
-    public String next() {
-        String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : INPUT;
-    }
-
-    /**
-     * @param performance the performance to set
-     */
-    public void setPerformance(PerformanceStatusWebDto performance) {
-        this.performance = performance;
-    }
-
-    /**
-     * @return the performance
-     */
-    @VisitorFieldValidator(message = "> ")
-    public PerformanceStatusWebDto getPerformance() {
-        return performance;
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
 }
