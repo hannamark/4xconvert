@@ -215,8 +215,8 @@ var winprint=window.open("","",sOption);
       </tr>
       <tr>     
         <td scope="row" class="label">
-        <label for="Current Trial Status">
-            <fmt:message key="view.trial.currentTrialStatus"/>                
+        <label for="Site Recruitment Status">
+            <fmt:message key="view.trial.siteRecruitmentStatus"/>                
         </label>
        </td>
          <td class="value">
@@ -225,8 +225,8 @@ var winprint=window.open("","",sOption);
       </tr> 
       <tr>     
         <td scope="row" class="label">
-          <label for="Current Trial Status Date">
-              <fmt:message key="view.trial.currentTrialStatusDate"/>                
+          <label for="Site Recruitment Status Date">
+              <fmt:message key="view.trial.siteRecruitmentStatusDate"/>                
           </label>
          </td>
          <td class="value">
