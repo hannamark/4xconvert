@@ -171,7 +171,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
             return (TO) PoRegistry.getGenericService().getPersistentObject((Class<PersistentObject>) returnClass, id);
         }
     }
-    
+
     /**
      * @param value an II used to identify PO entities.
      * @return a long suitable for a hibernate entity Id
@@ -191,7 +191,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
 
         return Long.valueOf(value.getExtension());
     }
-    
+
     /**
      * @param value an II used to identify PO entities.
      * @return a long suitable for a hibernate entity Id
@@ -208,7 +208,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         if (root == null) {
             throw new IllegalArgumentException("root is required");
         }
-        
+
         return Long.valueOf(value.getExtension().substring(IdConverter.PATIENT_PREFIX.length()));
     }
 
@@ -241,7 +241,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
     }
 
     /**
-     * Cinver the ii to an org by loading from the db.
+     * Convert the ii to an org by loading from the db.
      * @param value the ii
      * @return the Org.
      */
@@ -273,7 +273,7 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         dset.getItem().add(value);
         return dset;
     }
-    
+
     /**
      * Convert from array to set of ids.
      * @param ids array of Ii.

@@ -31,16 +31,15 @@ import java.util.Set;
 
 /**
  * EntityNodeConverter transforms from EntityNode to EntityNodeDto.
- * 
+ *
  * @author ludetc
  *
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
 
-    
     /**
-     * Converts an array of Entity object to array of EntityNodeDTO object. 
+     * Converts an array of Entity object to array of EntityNodeDTO object.
      * @param entities The entities to be converted
      * @param players the players that should also be converted
      * @param scopers the scopers that should also be converted
@@ -48,43 +47,42 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
      */
     public static List<EntityNodeDto> convertToEntityNodeDtoList(
         List<Entity> entities, Cd[] players, Cd[] scopers) {
-        
+
         if (entities == null) {
            return null;
         }
-           
+
         List<EntityNodeDto> results = new ArrayList<EntityNodeDto>();
-        
+
         for (Entity entity : entities) {
             results.add(convertToEntityNodeDto(entity, players, scopers));
         }
-        
+
         return results;
     }
-    
-    
+
     /**
-     * If _either_ players or scopers individually is greater than 500 (use Utils.MAX_SEARCH_RESULTS), 
+     * If _either_ players or scopers individually is greater than 500 (use Utils.MAX_SEARCH_RESULTS),
      * then just that array is null and overflow is set.
      *
      * Examples:
      * if overflow is set, players != null, scopers == null, then there were more than 500 scopers
      * if overflow is set, players == null, scopers == null, then there were more than 500 scopers and 500 players
-     * 
+     *
      * @param entity an instance of a poEntity (Person / Organization)
      * @param playerFilters a list of classes to filter players by
      * @param scoperFilters a list of classes to filter scopers by
-     * @return The EntityNodeDto. 
+     * @return The EntityNodeDto.
      */
     @SuppressWarnings({ "PMD.AvoidReassigningParameters" })
     public static EntityNodeDto convertToEntityNodeDto(
             Entity entity, Cd[] playerFilters, Cd[] scoperFilters) {
         EntityNodeDto entityNodeDto = new EntityNodeDto();
-        
+
         Set<String> playerFilterColl = new HashSet<String>();
         if (playerFilters != null) {
             for (Cd cd : playerFilters) {
-                if (cd.getCode() != null) {        
+                if (cd.getCode() != null) {
                     playerFilterColl.add(cd.getCode());
                 }
             }
@@ -92,69 +90,69 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
         Set<String> scoperFilterColl = new HashSet<String>();
         if (scoperFilters != null) {
             for (Cd cd : scoperFilters) {
-                if (cd.getCode() != null) {        
+                if (cd.getCode() != null) {
                     scoperFilterColl.add(cd.getCode());
                 }
             }
         }
         entityNodeDto.setEntityDto((EntityDto) PoXsnapshotHelper.createSnapshot(entity));
-        
+
         if (entity instanceof Person) {
             convertPersonToEntityNodeDto(entityNodeDto, (Person) entity, playerFilterColl);
         } else if (entity instanceof Organization) {
             convertOrganizationToEntityNodeDto(
                     entityNodeDto, (Organization) entity, playerFilterColl, scoperFilterColl);
         }
-        
-        return entityNodeDto;       
+
+        return entityNodeDto;
     }
-    
+
     private static void convertOrganizationToEntityNodeDto(
         EntityNodeDto entityNodeDto, Organization organization,
         Set<String> playerFilters, Set<String> scoperFilters) {
-        
+
         Set<CorrelationDto> playerDtoList = new HashSet<CorrelationDto>();
         Set<CorrelationDto> scoperDtoList = new HashSet<CorrelationDto>();
 
         addToListByFilter(playerDtoList, PoXsnapshotHelper.createSnapshotList(
                 organization.getResearchOrganizations()),
                 playerFilters, RoleList.RESEARCH_ORGANIZATION.toString());
-        
+
         addToListByFilter(playerDtoList, PoXsnapshotHelper.createSnapshotList(
-                organization.getHealthCareFacilities()), 
+                organization.getHealthCareFacilities()),
                 playerFilters, RoleList.HEALTH_CARE_FACILITY.toString());
-        
+
         addToListByFilter(playerDtoList, PoXsnapshotHelper.createSnapshotList(
-                organization.getOversightCommittees()), 
+                organization.getOversightCommittees()),
                 playerFilters, RoleList.OVERSIGHT_COMMITTEE.toString());
-        
+
         addToListByFilter(scoperDtoList, PoXsnapshotHelper.createSnapshotList(
-                organization.getOrganizationalContacts()), 
+                organization.getOrganizationalContacts()),
                 scoperFilters, RoleList.ORGANIZATIONAL_CONTACT.toString());
 
         addToListByFilter(scoperDtoList, PoXsnapshotHelper.createSnapshotList(
-                organization.getClinicalResearchStaff()), 
-                scoperFilters, RoleList.CLINICAL_RESEARCH_STAFF.toString()); 
-        
+                organization.getClinicalResearchStaff()),
+                scoperFilters, RoleList.CLINICAL_RESEARCH_STAFF.toString());
+
         addToListByFilter(scoperDtoList, PoXsnapshotHelper.createSnapshotList(
-                organization.getIdentifiedPersons()), 
-                scoperFilters, RoleList.IDENTIFIED_PERSON.toString()); 
-        
+                organization.getIdentifiedPersons()),
+                scoperFilters, RoleList.IDENTIFIED_PERSON.toString());
+
         addToListByFilter(scoperDtoList, PoXsnapshotHelper.createSnapshotList(
-                organization.getHealthCareProviders()), 
-                scoperFilters, RoleList.HEALTH_CARE_PROVIDER.toString()); 
-            
+                organization.getHealthCareProviders()),
+                scoperFilters, RoleList.HEALTH_CARE_PROVIDER.toString());
+
         for (IdentifiedOrganization idOrg : organization.getIdentifiedOrganizations()) {
-            if (idOrg.getPlayer().equals(organization) 
+            if (idOrg.getPlayer().equals(organization)
                     && playerFilters.contains(RoleList.IDENTIFIED_ORGANIZATION.toString())) {
-                playerDtoList.add((CorrelationDto) PoXsnapshotHelper.createSnapshot(idOrg));        
-            }   
-            if (idOrg.getScoper().equals(organization) 
+                playerDtoList.add((CorrelationDto) PoXsnapshotHelper.createSnapshot(idOrg));
+            }
+            if (idOrg.getScoper().equals(organization)
                     && playerFilters.contains(RoleList.IDENTIFIED_ORGANIZATION.toString())) {
                 scoperDtoList.add((CorrelationDto) PoXsnapshotHelper.createSnapshot(idOrg));
             }
         }
- 
+
         setCorrelationOverflow(entityNodeDto, playerDtoList, scoperDtoList);
     }
 
@@ -176,34 +174,34 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
         }
         entityNodeDto.setCorrelationOverflow(bl);
     }
-    
-    private static void addToListByFilter(
-        Set<CorrelationDto> dtoList, List addList, Set<String> filters, String type) {
+
+    @SuppressWarnings("unchecked")
+    private static void addToListByFilter(Set<CorrelationDto> dtoList, List addList, Set<String> filters, String type) {
         if (filters.contains(type)) {
             dtoList.addAll(addList);
         }
     }
-    
+
     private static CorrelationDto[] listToArray(Set<CorrelationDto> list) {
-        return (CorrelationDto[]) list.toArray(new CorrelationDto[list.size()]);    
+        return list.toArray(new CorrelationDto[list.size()]);
     }
 
     private static void convertPersonToEntityNodeDto(
             EntityNodeDto entityNodeDto, Person person, Set<String> filters) {
         Set<CorrelationDto> playerDtoList = new HashSet<CorrelationDto>();
 
-        addToListByFilter(playerDtoList, 
-                    PoXsnapshotHelper.createSnapshotList(person.getOrganizationalContacts()), 
+        addToListByFilter(playerDtoList,
+                    PoXsnapshotHelper.createSnapshotList(person.getOrganizationalContacts()),
                     filters, RoleList.ORGANIZATIONAL_CONTACT.toString());
-        addToListByFilter(playerDtoList, 
-                        PoXsnapshotHelper.createSnapshotList(person.getClinicalResearchStaff()), 
+        addToListByFilter(playerDtoList,
+                        PoXsnapshotHelper.createSnapshotList(person.getClinicalResearchStaff()),
                         filters, RoleList.CLINICAL_RESEARCH_STAFF.toString());
-        addToListByFilter(playerDtoList, 
-                        PoXsnapshotHelper.createSnapshotList(person.getHealthCareProviders()), 
+        addToListByFilter(playerDtoList,
+                        PoXsnapshotHelper.createSnapshotList(person.getHealthCareProviders()),
                         filters, RoleList.HEALTH_CARE_PROVIDER.toString());
-        addToListByFilter(playerDtoList, 
-                        PoXsnapshotHelper.createSnapshotList(person.getIdentifiedPersons()), 
-                        filters, RoleList.IDENTIFIED_PERSON.toString());         
+        addToListByFilter(playerDtoList,
+                        PoXsnapshotHelper.createSnapshotList(person.getIdentifiedPersons()),
+                        filters, RoleList.IDENTIFIED_PERSON.toString());
 
         Bl bl = new Bl();
         if (playerDtoList.size() > Utils.MAX_SEARCH_RESULTS) {
@@ -214,33 +212,33 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
             entityNodeDto.setPlayers(listToArray(playerDtoList));
         }
         entityNodeDto.setCorrelationOverflow(bl);
-        entityNodeDto.setScopers(new CorrelationDto[0]);        
+        entityNodeDto.setScopers(new CorrelationDto[0]);
     }
 
     /**
-     * 
+     *
      * @param entityNodeDto EntityNodeDto
      * @return PoEntity
      */
     public static Entity convertToEntity(EntityNodeDto entityNodeDto) {
         Entity entity = (Entity) PoXsnapshotHelper.createModel(entityNodeDto.getEntityDto());
-        
+
         CorrelationDto[] players = entityNodeDto.getPlayers();
         CorrelationDto[] scopers = entityNodeDto.getScopers();
-        
+
         if (entity instanceof Person) {
             attachCorrelationToPerson((Person) entity, players);
         } else if (entity instanceof Organization) {
             attachCorrelationToOrganization((Organization) entity, players);
             attachCorrelationToOrganization((Organization) entity, scopers);
         }
-        
+
         return entity;
     }
-    
+
     /**
      * Attach correlations to an Organization.
-     * 
+     *
      * @param organization to attach to
      * @param correlations to attach
      */
@@ -276,7 +274,7 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
 
     /**
      * Attach correlations to a player.
-     * 
+     *
      * @param person to attach to
      * @param correlations to attach
      */
@@ -297,5 +295,5 @@ public class EntityNodeDtoConverter extends AbstractOrganizationDTOHelper {
             }
         }
     }
-    
+
 }

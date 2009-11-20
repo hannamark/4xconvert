@@ -183,9 +183,6 @@ public abstract class AbstractRole implements PersistentObject {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Formula("status")
     @SuppressWarnings("unused")
     private String getPriorAsString() {
@@ -217,9 +214,9 @@ public abstract class AbstractRole implements PersistentObject {
     public void setOtherIdentifiers(Set<Ii> otherIdentifiers) {
         this.otherIdentifiers = otherIdentifiers;
     }
-    
+
     /**
-     * 
+     *
      * @param addrs addresses to check
      * @return bool
      */

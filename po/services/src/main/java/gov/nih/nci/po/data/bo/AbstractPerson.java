@@ -462,9 +462,6 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
         return this.birthDate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Formula("status")
     @SuppressWarnings({"unused", "PMD.EmptyMethodInAbstractClassShouldBeAbstract" })
     private String getPriorAsString() {
