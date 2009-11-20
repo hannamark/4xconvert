@@ -80,12 +80,12 @@
 package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
-import gov.nih.nci.accrual.web.enums.DeathCausesByAutopsy;
-import gov.nih.nci.accrual.web.enums.DeathInfoCauses;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.AutopsyDeathCause;
+import gov.nih.nci.pa.enums.DeathCause;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -214,8 +214,8 @@ public class DeathInfoWebDto implements Serializable {
     /**
      * @return the permissible value list for the death causes
      */
-    public List<DeathInfoCauses> getCauses() {
-        return Arrays.asList(DeathInfoCauses.values());
+    public List<DeathCause> getCauses() {
+        return Arrays.asList(DeathCause.values());
     }
     
     /**
@@ -228,7 +228,7 @@ public class DeathInfoWebDto implements Serializable {
     /**
      * @return the permissible value list for the death causes by autopsy
      */
-    public List<DeathCausesByAutopsy> getCausesByAutopsy() {
-        return Arrays.asList(DeathCausesByAutopsy.values());
+    public List<AutopsyDeathCause> getCausesByAutopsy() {
+        return Arrays.asList(AutopsyDeathCause.values());
     }
 }

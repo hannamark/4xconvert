@@ -77,9 +77,9 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.accrual.web.enums.EcogStatuses;
-import gov.nih.nci.accrual.web.enums.KarnofskyStatuses;
-import gov.nih.nci.accrual.web.enums.LanskyStatuses;
+import gov.nih.nci.pa.enums.EcogPerformanceStatusCode;
+import gov.nih.nci.pa.enums.KarnoskyPerformanceStatusCode;
+import gov.nih.nci.pa.enums.LanskyPerformanceStatusCode;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 
@@ -180,21 +180,21 @@ public class PerformanceStatusWebDto implements Serializable {
     /**
      * @return the Ecog statuses
      */
-    public List<EcogStatuses> getEcogStatuses() {
-        return Arrays.asList(EcogStatuses.values());
+    public List<EcogPerformanceStatusCode> getEcogStatuses() {
+        return Arrays.asList(EcogPerformanceStatusCode.values());
     }
 
     /**
      * @return the Karnofsky statuses
      */
-    public List<KarnofskyStatuses> getKarnofskyStatuses() {
-        return Arrays.asList(KarnofskyStatuses.values());
+    public List<KarnoskyPerformanceStatusCode> getKarnofskyStatuses() {
+        return Arrays.asList(KarnoskyPerformanceStatusCode.values());
     }
 
     /**
      * @return the Lansky statuses
      */
-    public List<LanskyStatuses> getLanskyStatuses() {
-        return Arrays.asList(LanskyStatuses.values());
+    public List<LanskyPerformanceStatusCode> getLanskyStatuses() {
+        return Arrays.asList(LanskyPerformanceStatusCode.values());
     }
 }

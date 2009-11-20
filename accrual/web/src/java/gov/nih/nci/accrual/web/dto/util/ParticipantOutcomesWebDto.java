@@ -80,7 +80,7 @@
 package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.web.enums.AssessmentTypes;
-import gov.nih.nci.accrual.web.enums.DiseaseStatuses;
+import gov.nih.nci.pa.enums.DiseaseStatusCode;
 import gov.nih.nci.accrual.web.enums.ProgressionInds;
 import gov.nih.nci.accrual.web.enums.RecurrenceInds;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
@@ -331,8 +331,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return list of assessment types
      */
-    public List<DiseaseStatuses> getDiseaseStatuses() {
-        return Arrays.asList(DiseaseStatuses.values());
+    public List<DiseaseStatusCode> getDiseaseStatuses() {
+        return Arrays.asList(DiseaseStatusCode.values());
     }
 
     /**

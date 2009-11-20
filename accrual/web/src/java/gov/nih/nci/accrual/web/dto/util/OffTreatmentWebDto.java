@@ -79,7 +79,7 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.accrual.web.enums.OffTreatmentReasons;
+import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ts;
@@ -160,7 +160,7 @@ public class OffTreatmentWebDto implements Serializable {
     /**
      * @return the OffTreatmentReasons list for user selection
      */
-    public List<OffTreatmentReasons> getOffTreatmentReasons() {
-        return Arrays.asList(OffTreatmentReasons.values());
+    public List<OffTreatmentReasonCode> getOffTreatmentReasons() {
+        return Arrays.asList(OffTreatmentReasonCode.values());
     }
 }

@@ -90,7 +90,9 @@ public enum AutopsyPerformed implements CodedEnum<String> {
     /** Yes. */
     YES("Yes"),
     /** No. */
-    NO("No");
+    NO("No"),
+    /** Unknown. */
+    UNKNOWN("Unknown");
     
     private String code;
     
