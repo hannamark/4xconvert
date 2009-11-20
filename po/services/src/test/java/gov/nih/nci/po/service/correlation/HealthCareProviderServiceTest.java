@@ -86,9 +86,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.po.data.bo.Address;
-import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
@@ -99,9 +96,7 @@ import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
-import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -318,176 +313,6 @@ public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest
         s.create(hcp);
         int c = s.getHotRoleCount(hcp.getPlayer());
         assertEquals(1, c);
-    }
-    
-    @Test
-    public void testSearchHcpByEmail() throws Exception {
-        HealthCareProvider hcp = createSample();
-        hcp.getEmail().add(new Email("sample1@example.com"));
-        hcp.getEmail().add(new Email("sample2@example.com"));
-        getService().update(hcp);
-        
-        hcp = getSampleStructuralRole();
-        hcp.getEmail().add(new Email("sample2@example.com"));
-        hcp.getEmail().add(new Email("sample3@example.com"));
-        getService().create(hcp);
- 
-        hcp = new HealthCareProvider();
-        hcp.getEmail().add(new Email("sample3@example.com"));
-        
-        List<HealthCareProvider> hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(1, hcp_result.size());
-
-        hcp = new HealthCareProvider();
-        hcp.getEmail().add(new Email("sample2"));
-        
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(2, hcp_result.size());
-
-        hcp = new HealthCareProvider();
-        hcp.getEmail().add(new Email("sample4@example.com"));
-        
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(0, hcp_result.size());
-
-    }
-    
-    
-    @Test
-    public void testSearchHcpByPhoneNumber() throws Exception {
-        HealthCareProvider hcp = createSample();
-        hcp.getPhone().add(new PhoneNumber("101 555 8888"));
-        hcp.getPhone().add(new PhoneNumber("202 555 8888"));
-        getService().update(hcp);
-        
-        hcp = getSampleStructuralRole();
-        hcp.getPhone().add(new PhoneNumber("202 555 8888"));
-        hcp.getPhone().add(new PhoneNumber("303 555 8888"));
-        getService().create(hcp);
- 
-        hcp = new HealthCareProvider();
-        hcp.getPhone().add(new PhoneNumber("101 555 8888"));
-        
-        List<HealthCareProvider> hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(1, hcp_result.size());
-
-        hcp = new HealthCareProvider();
-        hcp.getPhone().add(new PhoneNumber("202 555 8888"));
-        
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(2, hcp_result.size());
-
-        hcp = new HealthCareProvider();
-        hcp.getPhone().add(new PhoneNumber("404 555 8888"));
-        
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(0, hcp_result.size());
-    }
-
-    @Test
-    public void testSearchHcpByFAxNumber() throws Exception {
-        HealthCareProvider hcp = createSample();
-        hcp.getFax().add(new PhoneNumber("101 555 8888"));
-        hcp.getFax().add(new PhoneNumber("202 555 8888"));
-        getService().update(hcp);
-        
-        hcp = getSampleStructuralRole();
-        hcp.getFax().add(new PhoneNumber("202 555 8888"));
-        hcp.getFax().add(new PhoneNumber("303 555 8888"));
-        getService().create(hcp);
-        
-        hcp = new HealthCareProvider();
-        hcp.getFax().add(new PhoneNumber("101 555 8888"));
-        List<HealthCareProvider> hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(1, hcp_result.size());
-        
-        hcp = new HealthCareProvider();
-        hcp.getFax().add(new PhoneNumber("202 555 8888"));
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(2, hcp_result.size());
-        
-        hcp = new HealthCareProvider();
-        hcp.getFax().add(new PhoneNumber("404 555 8888"));     
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(0, hcp_result.size());
-    }
-
-    @Test
-    public void testSearchHcpByTtyNumber() throws Exception {
-        HealthCareProvider hcp = createSample();
-        hcp.getTty().add(new PhoneNumber("101 555 8888"));
-        hcp.getTty().add(new PhoneNumber("202 555 8888"));
-        getService().update(hcp);
-        
-        hcp = getSampleStructuralRole();
-        hcp.getTty().add(new PhoneNumber("202 555 8888"));
-        hcp.getTty().add(new PhoneNumber("303 555 8888"));
-        getService().create(hcp);
-        
-        hcp = new HealthCareProvider();
-        hcp.getTty().add(new PhoneNumber("101 555 8888"));
-        List<HealthCareProvider> hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(1, hcp_result.size());
-        
-        hcp = new HealthCareProvider();
-        hcp.getTty().add(new PhoneNumber("202 555 8888"));
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(2, hcp_result.size());
-        
-        hcp = new HealthCareProvider();
-        hcp.getTty().add(new PhoneNumber("404 555 8888"));     
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(0, hcp_result.size());
-    }
-
-    @Test
-    public void testSearchHcpByURL() throws Exception {
-        HealthCareProvider hcp = createSample();
-        hcp.getUrl().add(new URL("http://111.com"));
-        hcp.getUrl().add(new URL("http://222.com"));
-        getService().update(hcp);
-        
-        hcp = getSampleStructuralRole();
-        hcp.getUrl().add(new URL("http://222.com"));
-        hcp.getUrl().add(new URL("http://333.com"));
-        getService().create(hcp);
-        
-        hcp = new HealthCareProvider();
-        hcp.getUrl().add(new URL("http://111.com"));
-        List<HealthCareProvider> hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(1, hcp_result.size());
-        
-        hcp = new HealthCareProvider();
-        hcp.getUrl().add(new URL("http://222.com"));
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(2, hcp_result.size());
-        
-        hcp = new HealthCareProvider();
-        hcp.getUrl().add(new URL("http://444.com"));
-        hcp_result = getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp)); 
-        assertEquals(0, hcp_result.size());
-    }
-    
-    @Test
-    public void testSearchHcpByAddress() throws Exception {
-        Country country = new Country("JKL", "901", "JK", "JKL");
-        Serializable cid = PoHibernateUtil.getCurrentSession().save(country);
-        Country validCountry = (Country) PoHibernateUtil.getCurrentSession().get(Country.class, cid);
-        
-        HealthCareProvider hcp = getSampleStructuralRole();
-        hcp.getPostalAddresses().add(new Address("10 Green D. Street", "Rockville", "MD", "20857", validCountry));
-        getService().create(hcp);
- 
-        hcp = getSampleStructuralRole();
-        hcp.getPostalAddresses().add(new Address("11 Green D. Street", "Rockville", "MD", "20857", validCountry));
-        hcp.getPostalAddresses().add(new Address("12 Green D. Street", "Rockville", "MD", "20857", validCountry));
-        getService().create(hcp);
- 
-        hcp = new HealthCareProvider();
-        hcp.getPostalAddresses().add(new Address("11", null, null, null, null));
-        List<HealthCareProvider> hcp_result =  getService().search(new AnnotatedBeanSearchCriteria<HealthCareProvider>(hcp));
-        assertEquals(1, hcp_result.size());
-        
     }
 
     @Override

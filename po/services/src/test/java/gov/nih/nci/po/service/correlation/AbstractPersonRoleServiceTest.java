@@ -4,13 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,35 +36,26 @@ public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extend
     }
     
     @Test
-    public void testSearchByPhoneNumber() throws Exception {
-        T obj = createSample();
+    public void testSearchByAddress() throws Exception {
+        Country country = new Country("JKL", "901", "JK", "JKL");
+        Serializable cid = PoHibernateUtil.getCurrentSession().save(country);
+        Country validCountry = (Country) PoHibernateUtil.getCurrentSession().get(Country.class, cid);
+        
+        T obj = getSampleStructuralRole();
         if (obj instanceof AbstractPersonRole) {
-            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("101 555 8888"));
-            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("202 555 8888"));
-            getService().update(obj);
-            
-            obj = getSampleStructuralRole();
-            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("202 555 8888"));
-            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("303 555 8888"));
+            ((AbstractPersonRole) obj).getPostalAddresses().add(new Address("10 Green D. Street", "Rockville", "MD", "20857",
+                    validCountry));
             getService().create(obj);
-     
+ 
+            obj = getSampleStructuralRole();
+            ((AbstractPersonRole) obj).getPostalAddresses().add(new Address("11 Green D. Street", "Rockville", "MD", "20857", validCountry));
+            ((AbstractPersonRole) obj).getPostalAddresses().add(new Address("12 Green D. Street", "Rockville", "MD", "20857", validCountry));
+            getService().create(obj);
+ 
             obj = getNewStructuralRole();
-            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("101 555 8888"));
-            
-            List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
+            ((AbstractPersonRole) obj).getPostalAddresses().add(new Address("11", null, null, null, null));
+            List<T> obj_result =  getService().search(new AnnotatedBeanSearchCriteria<T>(obj));
             assertEquals(1, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("202 555 8888"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(2, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("404 555 8888"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(0, obj_result.size());
         }
     }
 
