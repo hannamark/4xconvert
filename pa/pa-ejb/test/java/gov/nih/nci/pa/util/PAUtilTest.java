@@ -321,14 +321,14 @@ public class PAUtilTest {
 		List<StudyDTO> studyList = null;
 		assertNull(PAUtil.getFirstObj(studyList));
 	}
-
-	/**
+/*
+	*//**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getDocumentFilePath(java.lang.Long, java.lang.String, java.lang.String)}.
-	 */
+	 *//*
 	@Test
 	public void testGetDocumentFilePath() throws PAException {
 		PAUtil.getDocumentFilePath(1L, "IRB.doc", "1");
-	}
+	}*/
 
 	/**
 	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isDateCurrentOrPast(java.lang.String)}.
