@@ -121,7 +121,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @javax.persistence.Entity
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class Person extends AbstractPerson implements Auditable, CuratableEntity<Person, PersonCR>, Entity {
-    private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private Person duplicateOf;
     private Set<PersonCR> changeRequests = new HashSet<PersonCR>();
@@ -156,7 +155,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
     @Valid
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     @NotEmpty(message = "{validator.notEmpty.collection}")
     public List<Email> getEmail() {
         return super.getEmail();
@@ -179,7 +178,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @ForeignKey(name = "PER_FAX_FK", inverseName = "FAX_PER_FK")
     @Valid
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -201,7 +200,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @ForeignKey(name = "PER_PHONE_FK", inverseName = "PHONE_PER_FK")
     @Valid
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -223,7 +222,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @ForeignKey(name = "PER_URL_FK", inverseName = "URL_PER_FK")
     @Valid
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<URL> getUrl() {
         return super.getUrl();
     }
@@ -245,7 +244,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @ForeignKey(name = "PER_TTY_FK", inverseName = "TTY_PER_FK")
     @Valid
     @Override
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -323,6 +322,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
      */
     @OneToMany(mappedBy = "player")
     @Where(clause = "status <> 'NULLIFIED'")
+    @Searchable(nested = true)
     public Set<ClinicalResearchStaff> getClinicalResearchStaff() {
         return clinicalResearchStaff;
     }
@@ -340,6 +340,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
      */
     @OneToMany(mappedBy = "player")
     @Where(clause = "status <> 'NULLIFIED'")
+    @Searchable(nested = true)
     public Set<HealthCareProvider> getHealthCareProviders() {
         return healthCareProviders;
     }

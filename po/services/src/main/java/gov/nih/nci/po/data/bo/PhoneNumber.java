@@ -97,6 +97,7 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.Pattern;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Stores phone number information.
@@ -128,6 +129,7 @@ public class PhoneNumber implements Auditable, Contact, Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return id;
     }
@@ -144,6 +146,7 @@ public class PhoneNumber implements Auditable, Contact, Serializable {
     @Pattern(regex = "[\\w\\s-.+();=]+", message = "{validator.phone}")
     @Length(max = PHONE_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "value")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getValue() {
         return value;
     }

@@ -8,10 +8,12 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -28,6 +30,39 @@ public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extend
         obj2.setScoper(obj.getScoper());
         getService().create(obj);
         getService().create(obj2);
+    }
+    
+    @Test
+    public void testSearchByPhoneNumber() throws Exception {
+        T obj = createSample();
+        if (obj instanceof AbstractPersonRole) {
+            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("101 555 8888"));
+            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("202 555 8888"));
+            getService().update(obj);
+            
+            obj = getSampleStructuralRole();
+            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("202 555 8888"));
+            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("303 555 8888"));
+            getService().create(obj);
+     
+            obj = getNewStructuralRole();
+            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("101 555 8888"));
+            
+            List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
+            assertEquals(1, obj_result.size());
+    
+            obj = getNewStructuralRole();
+            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("202 555 8888"));
+            
+            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
+            assertEquals(2, obj_result.size());
+    
+            obj = getNewStructuralRole();
+            ((AbstractPersonRole) obj).getPhone().add(new PhoneNumber("404 555 8888"));
+            
+            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
+            assertEquals(0, obj_result.size());
+        }
     }
 
     protected void fillinPersonRoleFields(AbstractPersonRole pr) {
@@ -61,4 +96,6 @@ public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extend
         assertEquals(expected.getPostalAddresses().size(), actual.getPostalAddresses().size());
         assertTrue(expected.isUsOrCanadaAddress());
     }
+    
+    
 }

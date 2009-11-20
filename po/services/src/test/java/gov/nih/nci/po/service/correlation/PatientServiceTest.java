@@ -261,4 +261,9 @@ public class PatientServiceTest extends AbstractPersonRoleServiceTest<Patient> {
         // typically have a player role of null or a disregarded player role.
         
     }
+
+    @Override
+    Patient getNewStructuralRole() {
+        return new Patient();
+    }
 }

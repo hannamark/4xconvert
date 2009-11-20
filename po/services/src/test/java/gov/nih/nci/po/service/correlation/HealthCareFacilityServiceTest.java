@@ -220,4 +220,9 @@ public class HealthCareFacilityServiceTest extends AbstractOrganizationalRoleSer
         r.getOtherIdentifiers().add(ctepRoIi);
         return r;
     }
+
+    @Override
+    HealthCareFacility getNewStructuralRole() {
+        return new HealthCareFacility();
+    }
 }

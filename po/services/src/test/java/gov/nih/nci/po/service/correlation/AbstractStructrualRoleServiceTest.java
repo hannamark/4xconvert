@@ -155,6 +155,8 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
     abstract T getSampleStructuralRole() throws Exception;
 
     abstract void verifyStructuralRole(T expected, T actual);
+    
+    abstract T getNewStructuralRole();
 
     @SuppressWarnings("unchecked")
     protected AbstractCuratableServiceBean<T> getService() {

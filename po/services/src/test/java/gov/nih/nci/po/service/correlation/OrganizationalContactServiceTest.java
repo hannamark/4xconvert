@@ -336,4 +336,9 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         assertEquals(1, errors.get(null).length);
     }
 
+    @Override
+    OrganizationalContact getNewStructuralRole() {
+        return new OrganizationalContact();
+    }
+
 }

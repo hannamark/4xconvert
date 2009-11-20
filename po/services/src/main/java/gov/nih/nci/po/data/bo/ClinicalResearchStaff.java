@@ -201,8 +201,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_ADDRESS_FK", inverseName = "ADDRESS_CRS_FK")
     @Valid
-    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -223,7 +222,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_EMAIL_FK", inverseName = "EMAIL_CRS_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -244,7 +243,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_FAX_FK", inverseName = "FAX_CRS_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -265,7 +264,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_PHONE_FK", inverseName = "PHONE_CRS_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -286,7 +285,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_TTY_FK", inverseName = "TTY_CRS_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -307,7 +306,7 @@ public class ClinicalResearchStaff extends AbstractPersonRole implements Correla
     @IndexColumn(name = "idx")
     @ForeignKey(name = "CRS_URL_FK", inverseName = "URL_CRS_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<URL> getUrl() {
         return super.getUrl();
     }
