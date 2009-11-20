@@ -78,19 +78,16 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.web.dto.util.DiagnosisItemWebDto;
+import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
+import gov.nih.nci.coppa.iso.St;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
-
-import gov.nih.nci.accrual.web.dto.util.DiagnosisItemWebDto;
-import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * The Class DiagnosisAction.
@@ -138,45 +135,6 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     public String next() {
         String rc = save();
         return (SUCCESS.equals(rc)) ? NEXT : rc;
-    }
-    
-    /**
-     * Lookup a diagnosis.
-     * @return result for next action
-     */
-    @SkipValidation
-    public String lookup() {
-        if (searchDiagnosis == null) {
-            searchDiagnosis = new St();
-            return SUCCESS;
-        }
-
-        String sTxt = searchDiagnosis.getValue();
-        if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError("Please provide some search values.");
-            return INPUT;
-        }
-
-        St name;
-        DiagnosisItemWebDto item;
-        Ii id;
-        
-        disWebList = new ArrayList<DiagnosisItemWebDto>();
-        
-        name = StConverter.convertToSt("Diagnosis 1");
-        id = IiConverter.convertToIi("1");
-        item = new DiagnosisItemWebDto();
-        item.setName(name);
-        item.setIdentifier(id);
-        disWebList.add(item);
-
-        name = StConverter.convertToSt("Diagnosis 2");
-        id = IiConverter.convertToIi("2");
-        item = new DiagnosisItemWebDto();
-        item.setName(name);
-        item.setIdentifier(id);
-        disWebList.add(item);
-        return super.execute();
     }
     
     /**

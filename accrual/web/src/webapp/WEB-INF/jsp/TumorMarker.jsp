@@ -4,7 +4,7 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:url value="/outcomes/lookupTumorMarker.action?lookupType=tumorMarker" var="tumorMarkerLookupUrl" />
+<c:url value="/outcomes/lookUptumorMarker.action?type=tumorMarker" var="tumorMarkerLookupUrl" />
 <c:url value="/outcomes/lookupTumorMarker.action?lookupType=tmvUom" var="tmvUomLookupUrl" />
 <head>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>

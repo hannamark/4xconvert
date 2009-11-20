@@ -79,137 +79,42 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.accrual.web.enums.StagingMethods;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.enums.StatgineSystemCode;
+import gov.nih.nci.coppa.iso.Ts;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
- * The Class StagingWebDto.
+ * The Class LesionAssessmentWebDto.
  * 
- * @author Lisa Kelley
- * @since 10/28/2009
+ * @author Kalpana Guthikonda
+ * @since 11/20/2009
  */
-public class StagingWebDto implements Serializable {
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
+public class LesionAssessmentWebDto implements Serializable {
 
-    private static final long serialVersionUID = 1820061539697238678L;
+    private static final long serialVersionUID = -3658357689383961868L;
+    
+    private Ii id;
+    private Ii lesionNum;
+    private Cd lesionSite;
+    private Cd measurableEvaluableDiseaseType;
+    private Cd lesionMeasurementMethod;
+    private Cd contrastAgentIndicator;
+    private Ii imageSeriesIdentifier;
+    private Ii imageIdentifier;
+    private Ii lesionLongestDiameter;
+    private Ts clinicalAssessmentDate;
 
-    private Ii id;    
-    private Cd method;    
-    private St tt;    
-    private St nn;    
-    private St mm;   
-    private St stage;    
-    private Cd system;
-
+   
     /**
-     * Instantiates a new staging web dto.
+     * Instantiates a new lesion assessment web dto.
      */
-    public StagingWebDto() {
+    public LesionAssessmentWebDto() {
         // default constructor
-    }
-
-    /**
-     * @return the method
-     */
-    @FieldExpressionValidator(expression = "method.code != null && method.code.length() > 0", 
-                              message = "Please select a Staging Method")
-    public Cd getMethod() {
-        return method;
-    }
-
-    /**
-     * @param method the method to set
-     */
-    public void setMethod(Cd method) {
-        this.method = method;
-    }
-
-    /**
-     * @return the tt
-     */
-    @FieldExpressionValidator(expression = "tt.value != null && tt.value.length() > 0", 
-                              message = "Please enter a value for T")
-    public St getTt() {
-        return tt;
-    }
-
-    /**
-     * @param tt the tt to set
-     */
-    public void setTt(St tt) {
-        this.tt = tt;
-    }
-
-    /**
-     * @return the nn
-     */
-    @FieldExpressionValidator(expression = "nn.value != null && nn.value.length() > 0", 
-                              message = "Please enter a value for N")
-    public St getNn() {
-        return nn;
-    }
-
-    /**
-     * @param nn the nn to set
-     */
-    public void setNn(St nn) {
-        this.nn = nn;
-    }
-
-    /**
-     * @return the mm
-     */
-    @FieldExpressionValidator(expression = "mm.value != null && mm.value.length() > 0", 
-                              message = "Please enter a value for M")
-    public St getMm() {
-        return mm;
-    }
-
-    /**
-     * @param mm the mm to set
-     */
-    public void setMm(St mm) {
-        this.mm = mm;
-    }
-
-    /**
-     * @return the stage
-     */
-    @FieldExpressionValidator(expression = "stage.value != null && stage.value.length() > 0", 
-                              message = "Please enter a value for Stage")
-    public St getStage() {
-        return stage;
-    }
-
-    /**
-     * @param stage the stage to set
-     */
-    public void setStage(St stage) {
-        this.stage = stage;
-    }
-
-    /**
-     * @return the system
-     */
-    @FieldExpressionValidator(expression = "system.code != null && system.code.length() > 0", 
-                              message = "Please select a Staging system")
-    public Cd getSystem() {
-        return system;
-    }
-
-    /**
-     * @param system the system to set
-     */
-    public void setSystem(Cd system) {
-        this.system = system;
     }
 
     /**
@@ -218,25 +123,179 @@ public class StagingWebDto implements Serializable {
     public Ii getId() {
         return id;
     }
-    
+
     /**
      * @param id the id to set
      */
     public void setId(Ii id) {
         this.id = id;
     }
-    
+
     /**
-     * @return the list of staging methods
+     * Gets the lesion num.
+     * @return the lesion num
      */
-    public List<StagingMethods> getMethods() {
-        return Arrays.asList(StagingMethods.values());
+    @FieldExpressionValidator(expression = "lesionNum.extension != null && lesionNum.extension.length() > 0", 
+            message = "Please enter Lesion Number")
+    public Ii getLesionNum() {
+        return lesionNum;
     }
-    
+
     /**
-     * @return the list of staging systems
+     * Sets the lesion num.
+     * @param lesionNum the new lesion num
      */
-    public List<StatgineSystemCode> getSystems() {
-        return Arrays.asList(StatgineSystemCode.values());
+    public void setLesionNum(Ii lesionNum) {
+        this.lesionNum = lesionNum;
+    }
+
+    /**
+     * Gets the lesion site.
+     * @return the lesion site
+     */
+    @FieldExpressionValidator(expression = "lesionSite.code != null && lesionSite.code.length() > 0", 
+            message = "Please select a Lesion Site")
+    public Cd getLesionSite() {
+        return lesionSite;
+    }
+
+    /**
+     * Sets the lesion site.
+     * @param lesionSite the new lesion site
+     */
+    public void setLesionSite(Cd lesionSite) {
+        this.lesionSite = lesionSite;
+    }
+
+    /**
+     * Gets the measurable evaluable disease type.
+     * @return the measurable evaluable disease type
+     */
+    @FieldExpressionValidator(
+      expression = "measurableEvaluableDiseaseType.code != null && measurableEvaluableDiseaseType.code.length() > 0", 
+            message = "Please select a Measurable Evaluable Disease Type")
+    public Cd getMeasurableEvaluableDiseaseType() {
+        return measurableEvaluableDiseaseType;
+    }
+
+    /**
+     * Sets the measurable evaluable disease type.
+     * @param measurableEvaluableDiseaseType the new measurable evaluable disease type
+     */
+    public void setMeasurableEvaluableDiseaseType(Cd measurableEvaluableDiseaseType) {
+        this.measurableEvaluableDiseaseType = measurableEvaluableDiseaseType;
+    }
+
+    /**
+     * Gets the lesion measurement method.
+     * @return the lesion measurement method
+     */
+    @FieldExpressionValidator(
+            expression = "lesionMeasurementMethod.code != null && lesionMeasurementMethod.code.length() > 0", 
+            message = "Please select a Lesion Measurement Method")
+    public Cd getLesionMeasurementMethod() {
+        return lesionMeasurementMethod;
+    }
+
+    /**
+     * Sets the lesion measurement method.
+     * @param lesionMeasurementMethod the new lesion measurement method
+     */
+    public void setLesionMeasurementMethod(Cd lesionMeasurementMethod) {
+        this.lesionMeasurementMethod = lesionMeasurementMethod;
+    }
+
+    /**
+     * Gets the contrast agent indicator.
+     * @return the contrast agent indicator
+     */
+    @FieldExpressionValidator(
+            expression = "contrastAgentIndicator.code != null && contrastAgentIndicator.code.length() > 0", 
+            message = "Please select a Contrast Agent Indicator")
+    public Cd getContrastAgentIndicator() {
+        return contrastAgentIndicator;
+    }
+
+    /**
+     * Sets the contrast agent indicator.
+     * @param contrastAgentIndicator the new contrast agent indicator
+     */
+    public void setContrastAgentIndicator(Cd contrastAgentIndicator) {
+        this.contrastAgentIndicator = contrastAgentIndicator;
+    }
+
+    /**
+     * Gets the image series identifier.
+     * @return the image series identifier
+     */
+    @FieldExpressionValidator(
+            expression = "imageSeriesIdentifier.extension != null && imageSeriesIdentifier.extension.length() > 0", 
+            message = "Please enter Image Series Identifier")
+    public Ii getImageSeriesIdentifier() {
+        return imageSeriesIdentifier;
+    }
+
+    /**
+     * Sets the image series identifier.
+     * @param imageSeriesIdentifier the new image series identifier
+     */
+    public void setImageSeriesIdentifier(Ii imageSeriesIdentifier) {
+        this.imageSeriesIdentifier = imageSeriesIdentifier;
+    }
+
+    /**
+     * Gets the image identifier.
+     * @return the image identifier
+     */
+    @FieldExpressionValidator(
+            expression = "imageIdentifier.extension != null && imageIdentifier.extension.length() > 0", 
+            message = "Please enter Image Identifier")
+    public Ii getImageIdentifier() {
+        return imageIdentifier;
+    }
+
+    /**
+     * Sets the image identifier.
+     * @param imageIdentifier the new image identifier
+     */
+    public void setImageIdentifier(Ii imageIdentifier) {
+        this.imageIdentifier = imageIdentifier;
+    }
+
+    /**
+     * Gets the lesion longest diameter.
+     * @return the lesion longest diameter
+     */
+    @FieldExpressionValidator(
+            expression = "lesionLongestDiameter.extension != null && lesionLongestDiameter.extension.length() > 0", 
+            message = "Please enter Lesion Longest Diameter")
+    public Ii getLesionLongestDiameter() {
+        return lesionLongestDiameter;
+    }
+
+    /**
+     * Sets the lesion longest diameter.
+     * @param lesionLongestDiameter the new lesion longest diameter
+     */
+    public void setLesionLongestDiameter(Ii lesionLongestDiameter) {
+        this.lesionLongestDiameter = lesionLongestDiameter;
+    }
+
+    /**
+     * Gets the clinical assessment date.
+     * @return the clinical assessment date
+     */
+    @FieldExpressionValidator(expression = "clinicalAssessmentDate.value != null",
+            message = "Please provide a Clinical Assessment Date")
+    public Ts getClinicalAssessmentDate() {
+        return clinicalAssessmentDate;
+    }
+
+    /**
+     * Sets the clinical assessment date.
+     * @param clinicalAssessmentDate the new clinical assessment date
+     */
+    public void setClinicalAssessmentDate(Ts clinicalAssessmentDate) {
+        this.clinicalAssessmentDate = clinicalAssessmentDate;
     }
 }

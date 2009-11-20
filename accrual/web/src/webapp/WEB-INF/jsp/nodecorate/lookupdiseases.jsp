@@ -5,9 +5,10 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 
 <SCRIPT language="JavaScript">
-    function submitform(disid)
+    function submitform(name)
     {
-        top.window.loadDiv(disid);
+        //top.window.loadDiv(disid);
+		window.top.document.getElementsByName("diagnosis.name")[0].value = name;
         window.top.hidePopWin(true); 
     }
     
@@ -30,7 +31,7 @@
            exactMat = true; 
         }
         
-        var url = '/accrual/protected/popupdisplayList.action?searchName='+jsName+'&includeSynonym='+includeSyn+'&exactMatch='+exactMat;
+        var url = '/outcomes/outcomes/popupdisplayList.action?searchName='+jsName+'&includeSynonym='+includeSyn+'&exactMatch='+exactMat;
         var div = document.getElementById('getDiseases');
         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
         var aj = new Ajax.Updater(div,url, {

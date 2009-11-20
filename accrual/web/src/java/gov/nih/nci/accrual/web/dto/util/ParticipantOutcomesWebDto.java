@@ -116,6 +116,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     private Ts progressionDate;
     private Ts evaluationDate;
     private St progressionSite;
+    private Cd bestResponse;
+    private Ts bestResponseDate;
 
     private static int key = 0;
     
@@ -361,5 +363,37 @@ public class ParticipantOutcomesWebDto implements Serializable {
      */
     public List<ProgressionInds> getProgressionInds() {
         return Arrays.asList(ProgressionInds.values());
+    }
+
+    /**
+     * @return bestResponse
+     */
+    @FieldExpressionValidator(expression = "bestResponse.code != null && bestResponse.code.length() > 0",
+            message = "Please provide a Best Response")
+    public Cd getBestResponse() {
+        return bestResponse;
+    }
+
+    /**
+     * @param bestResponse bestResponse
+     */
+    public void setBestResponse(Cd bestResponse) {
+        this.bestResponse = bestResponse;
+    }
+
+    /**
+     * @return bestResponseDate
+     */
+    @FieldExpressionValidator(expression = "bestResponseDate.value != null",
+            message = "Please provide an Best Response Date")
+    public Ts getBestResponseDate() {
+        return bestResponseDate;
+    }
+
+    /**
+     * @param bestResponseDate bestResponseDate
+     */
+    public void setBestResponseDate(Ts bestResponseDate) {
+        this.bestResponseDate = bestResponseDate;
     }
 }

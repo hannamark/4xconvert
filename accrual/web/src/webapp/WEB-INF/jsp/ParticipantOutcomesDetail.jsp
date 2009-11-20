@@ -4,6 +4,7 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<c:url value="/outcomes/lookUpassessmentType.action?type=assessmentType" var="lookupUrl" />
 <head>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
@@ -20,6 +21,10 @@
         document.forms[0].action = "executeParticipantOutcomes.action";
         document.forms[0].submit();
     }
+    
+    function lookup(){
+        showPopWin('${lookupUrl}', 900, 400, '', 'Assessment Type');
+	}
 </script>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
@@ -35,10 +40,16 @@
         setFormat("mm/dd/yyyy");
         addCalendar("Cal4", "Select Date", "targetOutcome.progressionDate", "detailForm");
         setWidth(90, 1, 15, 1);
+        setFormat("mm/dd/yyyy");        
+        addCalendar("Cal5", "Select Date", "targetOutcome.bestResponseDate", "detailForm");
+        setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 </script>
 <title>
-     Participant Outcome
+	<s:if test="%{currentAction == 'create'}">
+        <c:set var="topic" scope="request" value="diseaseEvaluation_adding"/> 
+    </s:if>    
+     Disease Evaluation
 </title>        
     <s:head/>
 </head>
@@ -46,7 +57,7 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>
-    Participant Outcome
+    Add Disease Evaluation
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
@@ -76,9 +87,19 @@
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
                     <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.diseaseStatusDate</s:param></s:fielderror></td></tr>
 <tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.method"/><span class="required">*</span></label></td>
-<td><s:select id="targetOutcome.assessmentType" name="targetOutcome.assessmentType" headerKey="" headerValue="--Select--"
-                    list="targetOutcome.assessmentTypes" listKey="code" listValue="code" value="targetOutcome.assessmentType.code"/>
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.assessmentType</s:param></s:fielderror></td></tr>
+<td><s:textfield readonly="true" size="50" name="targetOutcome.assessmentType" cssStyle="width:280px;float:left" cssClass="readonly"/>
+            <a href="#" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+            <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.assessmentType</s:param></s:fielderror></td></tr>        
+<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.bestResponse"/><span class="required">*</span></label></td>
+<td><s:set name="bestResponseCodeValues" value="@gov.nih.nci.pa.enums.BestResponseCode@getDisplayNames()" />
+			<s:select id="targetOutcome.bestResponse" name="targetOutcome.bestResponse" headerKey="" headerValue="--Select--"
+                    list="#bestResponseCodeValues" value="targetOutcome.bestResponse.code"/>
+                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.bestResponse</s:param></s:fielderror></td></tr>
+<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.bestResponseDate"/><span class="required">*</span></label></td>
+<td><s:textfield id="targetOutcome.bestResponseDate" name="targetOutcome.bestResponseDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal5')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
+                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.bestResponseDate</s:param></s:fielderror></td></tr>                              
 <tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.recInd"/><span class="required">*</span></label></td>
 <td><s:select id="targetOutcome.recurrenceInd" name="targetOutcome.recurrenceInd" headerKey="" headerValue="--Select--"
                     list="targetOutcome.recurrenceInds" listKey="code" listValue="code" value="targetOutcome.recurrenceInd.code"/>

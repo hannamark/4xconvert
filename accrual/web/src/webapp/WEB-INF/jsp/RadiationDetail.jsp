@@ -67,7 +67,7 @@
 <table class="form">
  
  	<tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.name"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.name"/>:<span class="required">*</span></label></td>
         <td>
             <s:textfield readonly="true" size="50" name="radiation.type" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
@@ -76,7 +76,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.date"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.date"/>:<span class="required">*</span></label></td>
         <td>
         	<s:textfield id="radiationDate" name="radiation.radDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
@@ -94,7 +94,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.totalDoseUOM"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.totalDoseUOM"/>:<span class="required">*</span></label></td>
         <td class="value">
         <s:textfield readonly="true" size="50" name="radiation.totalDose.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupTotalDoseUom();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
@@ -103,7 +103,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.duration"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.duration"/>:<span class="required">*</span></label></td>
         <td class="value">
             <s:textfield name="radiation.duration.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>radiation.duration.value</s:param></s:fielderror>
@@ -111,7 +111,7 @@
     </tr>
     
      <tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.durationUOM"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.durationUOM"/>:<span class="required">*</span></label></td>
         <td class="value">
         <s:textfield readonly="true" size="50" name="radiation.duration.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupDurationUom();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
@@ -120,7 +120,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.machineType"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.machineType"/>:<span class="required">*</span></label></td>
         <td class="value">
             <s:set name="radiationProcedureTypeCodeValues" value="@gov.nih.nci.pa.enums.RadiationProcedureTypeCode@getDisplayNames()" />
             <s:select id ="radiationCode" name="radiation.machineType" headerKey="" headerValue="--Select--"

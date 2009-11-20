@@ -95,20 +95,21 @@
 <td><s:textfield readonly="%{!priors.hasPrior}" size="10" name="priors.totalRegimenNum" cssStyle="float:left"/>
 <s:fielderror cssClass="formErrorMsg"><s:param>priors.totalRegimenNum</s:param></s:fielderror></td></tr>
 <tr><td>&nbsp;</td><td>
-    <s:set name="priorsList" scope="request" value="priors.list"/>
+    <s:set name="priorsList" scope="request" value="priors.list"/>    
+    <s:set name="priorTherapyTypeCodeValues" value="@gov.nih.nci.pa.enums.PriorTherapyTypeCode@getDisplayNames()" />
     <display:table class="data" summary="The list of Prior Therapy Regimens.
             Please use column headers to sort results." length="0" pagesize="0"
             sort="list" uid="row" name="priorsList" requestURI="PriorTherapies.action" export="false">
         <display:column titleKey="priorTherapy.label.list.type" headerClass="left" sortable="true" class="${roClass}">
              <s:if test="%{!priors.hasPrior}">&nbsp;
              </s:if>
-             <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:textfield readonly="true" size="50" name="newPrior.type"
-               cssStyle="width:280px;float:left" cssClass="readonly"/>
-               <s:a href="#" cssClass="btn" onclick="lookup('%{newPrior.id.extension}');"><span class="btn_img"><span class="search">Look Up</span></span></s:a>
+             <s:elseif test="%{#attr.row_rowNum == priors.list.size()}">
+			 <s:select id="newPrior.type" name="newPrior.type" headerKey="" headerValue="--Select--"
+                    list="#priorTherapyTypeCodeValues" value="newPrior.type.code"/>
              </s:elseif>
-             <s:else><s:textfield readonly="true" size="50" name="type_%{#attr.row.id.extension}"
-               cssStyle="width:280px;float:left" cssClass="readonly" value="%{#attr.row.type}"/>
-               <s:a href="#" cssClass="btn" onclick="lookup('%{#attr.row.id.extension}');"><span class="btn_img"><span class="search">Look Up</span></span></s:a>
+             <s:else>
+			 <s:select id="newPrior.type" name="newPrior.type" headerKey="" headerValue="--Select--"
+                    list="#priorTherapyTypeCodeValues" value="newPrior.type.code"/>
              </s:else>
         </display:column>
         <display:column titleKey="priorTherapy.label.list.description" headerClass="left" sortable="true" class="${roClass}">

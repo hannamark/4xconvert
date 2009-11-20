@@ -55,7 +55,7 @@
 <s:form name="detailForm">
 <table class="form">
 <tr>
-        <td scope="row" class="label"><label><fmt:message key="surgery.name"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="surgery.name"/>:<span class="required">*</span></label></td>
         <td>
             <s:textfield readonly="true" size="50" name="surgery.name" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
@@ -64,7 +64,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="surgery.startDate"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="surgery.startDate"/>:<span class="required">*</span></label></td>
         <td>
         	<s:textfield id="surgeryDate" name="surgery.createDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
@@ -74,7 +74,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="surgery.relatedInfo"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="surgery.relatedInfo"/>:<span class="required">*</span></label></td>
         <td class="value">
             <s:textarea name="surgery.info" cols="4" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>surgery.info</s:param></s:fielderror>

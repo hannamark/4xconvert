@@ -14,16 +14,16 @@
 
     function handleNextAction() {
         document.getElementsByName("currentAction")[0].value = "next";
-        document.getElementsByName("nextTarget")[0].value = "DeathInformation";
+        document.getElementsByName("nextTarget")[0].value = "LesionAssessment";
         document.forms[0].action = "nextParticipantOutcomes.action";
         document.forms[0].submit();
     }
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="patientOutcomes_detail"/> 
+        <c:set var="topic" scope="request" value="diseaseEvaluation_detail"/> 
      </s:if>
-     Participant Outcomes
+     Disease Evaluation
 </title>        
     <s:head/>
 </head>
@@ -31,7 +31,7 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>
-    Participant Outcomes
+    Disease Evaluation
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
@@ -60,6 +60,12 @@
         </display:column>
         <display:column titleKey="partOut.label.method" headerClass="left" sortable="true">
             <s:label value="%{#attr.row.assessmentType}"/>
+        </display:column>
+        <display:column titleKey="partOutEdit.label.bestResponse" headerClass="left" sortable="true">
+            <s:label value="%{#attr.row.bestResponse}"/>
+        </display:column>
+        <display:column titleKey="partOutEdit.label.bestResponseDate" headerClass="left" sortable="true">
+            <s:label value="%{#attr.row.bestResponseDate}"/>
         </display:column>
         <display:column titleKey="partOut.label.recInd" headerClass="left" sortable="true">
             <s:label value="%{#attr.row.recurrenceInd}"/>

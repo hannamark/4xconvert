@@ -149,24 +149,32 @@
         </li>
     </c:if>
     <c:if test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
-        <li class="hassubmenu"><c:choose>
-            <c:when test="${(requestScope.topic == 'patientOutcomes_detail')}">
-                <a href="executeParticipantOutcomes.action" class="selected">Patient Outcomes</a>
+        <li class="hassubmenu">Patient Outcomes
+         <ul id="part_sites">
+        <c:choose>
+            <c:when test="${(requestScope.topic == 'diseaseEvaluation_detail') || (requestScope.topic == 'diseaseEvaluation_adding') }">
+                <a href="executeParticipantOutcomes.action" class="selected">Disease Evaluation</a>
             </c:when>
             <c:otherwise>
-                <a href="executeParticipantOutcomes.action">Patient Outcomes</a>
+                <a href="executeParticipantOutcomes.action">Disease Evaluation</a>
             </c:otherwise>
         </c:choose>
-        <ul id="part_sites">
-            <c:choose>
+        <c:choose>
+                <c:when test="${(requestScope.topic == 'lesionAssessment_detail') || (requestScope.topic == 'lesionAssessment_adding') || (requestScope.topic == 'lesionAssessment_update')}">
+                    <li><a href="executeLesionAssessment.action" class="selected">Lesion Assessment</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><a href="executeLesionAssessment.action">Lesion Assessment</a></li>
+                </c:otherwise>
+         </c:choose>
+         <c:choose>
                 <c:when test="${(requestScope.topic == 'deathInformation_detail')}">
                     <li><a href="executeDeathInformation.action" class="selected">Death Information</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="executeDeathInformation.action">Death
-                    Information</a></li>
+                    <li><a href="executeDeathInformation.action">Death Information</a></li>
                 </c:otherwise>
-            </c:choose>
+         </c:choose>
         </ul>
         </li>
     </c:if>

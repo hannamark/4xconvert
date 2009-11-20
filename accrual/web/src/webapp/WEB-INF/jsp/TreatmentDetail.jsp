@@ -42,7 +42,7 @@
 <s:form name="detailForm">
 <table class="form">
 <tr>
-        <td scope="row" class="label"><label><fmt:message key="treatPlan.name"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="treatPlan.name"/>:<span class="required">*</span></label></td>
         <td>
             <s:textfield size="50" name="treatment.name" cssStyle="width:280px;float:left" />
             <s:fielderror cssClass="formErrorMsg"><s:param>treatment.name</s:param></s:fielderror>
@@ -50,7 +50,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="treatPlan.description"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="treatPlan.description"/>:<span class="required">*</span></label></td>
         <td class="value">
             <s:textarea name="treatment.description" cols="4" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>treatment.description</s:param></s:fielderror>

@@ -81,9 +81,13 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.service.BaseLookUpService;
 import gov.nih.nci.accrual.web.dto.util.LookUpWebDto;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.domain.AnatomicSites;
+import gov.nih.nci.pa.domain.AssessmentType;
 import gov.nih.nci.pa.domain.DoseFrequency;
+import gov.nih.nci.pa.domain.LesionLocationAnatomicSite;
 import gov.nih.nci.pa.domain.ProcedureName;
 import gov.nih.nci.pa.domain.RouteOfAdministration;
+import gov.nih.nci.pa.domain.TumorMarker;
 import gov.nih.nci.pa.domain.UnitOfMeasurement;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -250,6 +254,158 @@ public class LookUpAction extends AbstractAccrualAction {
             new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
         list.addAll(lookUpService.search(criteria));
         for (DoseFrequency bean :  list) {
+            LookUpWebDto lookupdto = new LookUpWebDto();
+            lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
+            lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setId(IiConverter.convertToIi(bean.getId()));
+            lookupdto.setType(StConverter.convertToSt(type));
+            lookUpList.add(lookupdto);
+        }
+        ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
+        return super.execute();
+    }
+    
+    /**
+     * Lookup for anatomicSites.
+     * 
+     * @return the string
+     * @throws RemoteException remote Exception
+     */
+    @SkipValidation
+    public String anatomicSites() throws RemoteException {
+        if (searchText == null) {
+            searchText = new St();
+            return SUCCESS;
+        }
+
+        String sTxt = searchText.getValue();
+        if (sTxt == null || sTxt.length() == 0) {
+            this.addActionError(seacrhMsg);
+            return INPUT;
+        }        
+
+        AnatomicSites criteria = new AnatomicSites();
+        criteria.setCode(sTxt);
+        List<AnatomicSites> list = new ArrayList<AnatomicSites>();
+        BaseLookUpService<AnatomicSites> lookUpService = 
+            new BaseLookUpService<AnatomicSites>(AnatomicSites.class);
+        list.addAll(lookUpService.search(criteria));
+        for (AnatomicSites bean :  list) {
+            LookUpWebDto lookupdto = new LookUpWebDto();
+            lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
+            lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setId(IiConverter.convertToIi(bean.getId()));
+            lookupdto.setType(StConverter.convertToSt(type));
+            lookUpList.add(lookupdto);
+        }
+        ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
+        return super.execute();
+    }
+    
+    /**
+     * Lookup for assessmentType.
+     * 
+     * @return the string
+     * @throws RemoteException remote Exception
+     */
+    @SkipValidation
+    public String assessmentType() throws RemoteException {
+        if (searchText == null) {
+            searchText = new St();
+            return SUCCESS;
+        }
+
+        String sTxt = searchText.getValue();
+        if (sTxt == null || sTxt.length() == 0) {
+            this.addActionError(seacrhMsg);
+            return INPUT;
+        }        
+
+        AssessmentType criteria = new AssessmentType();
+        criteria.setCode(sTxt);
+        List<AssessmentType> list = new ArrayList<AssessmentType>();
+        BaseLookUpService<AssessmentType> lookUpService = 
+            new BaseLookUpService<AssessmentType>(AssessmentType.class);
+        list.addAll(lookUpService.search(criteria));
+        for (AssessmentType bean :  list) {
+            LookUpWebDto lookupdto = new LookUpWebDto();
+            lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
+            lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setId(IiConverter.convertToIi(bean.getId()));
+            lookupdto.setType(StConverter.convertToSt(type));
+            lookUpList.add(lookupdto);
+        }
+        ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
+        return super.execute();
+    }
+    
+    /**
+     * Lookup for tumorMarker.
+     * 
+     * @return the string
+     * @throws RemoteException remote Exception
+     */
+    @SkipValidation
+    public String tumorMarker() throws RemoteException {
+        if (searchText == null) {
+            searchText = new St();
+            return SUCCESS;
+        }
+
+        String sTxt = searchText.getValue();
+        if (sTxt == null || sTxt.length() == 0) {
+            this.addActionError(seacrhMsg);
+            return INPUT;
+        }        
+
+        TumorMarker criteria = new TumorMarker();
+        criteria.setCode(sTxt);
+        List<TumorMarker> list = new ArrayList<TumorMarker>();
+        BaseLookUpService<TumorMarker> lookUpService = 
+            new BaseLookUpService<TumorMarker>(TumorMarker.class);
+        list.addAll(lookUpService.search(criteria));
+        for (TumorMarker bean :  list) {
+            LookUpWebDto lookupdto = new LookUpWebDto();
+            lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
+            lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setId(IiConverter.convertToIi(bean.getId()));
+            lookupdto.setType(StConverter.convertToSt(type));
+            lookUpList.add(lookupdto);
+        }
+        ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
+        return super.execute();
+    }
+    
+    /**
+     * Lookup for lesionLocationAnatomicSite.
+     * 
+     * @return the string
+     * @throws RemoteException remote Exception
+     */
+    @SkipValidation
+    public String lesionLocationAnatomicSite() throws RemoteException {
+        if (searchText == null) {
+            searchText = new St();
+            return SUCCESS;
+        }
+
+        String sTxt = searchText.getValue();
+        if (sTxt == null || sTxt.length() == 0) {
+            this.addActionError(seacrhMsg);
+            return INPUT;
+        }        
+
+        LesionLocationAnatomicSite criteria = new LesionLocationAnatomicSite();
+        criteria.setCode(sTxt);
+        List<LesionLocationAnatomicSite> list = new ArrayList<LesionLocationAnatomicSite>();
+        BaseLookUpService<LesionLocationAnatomicSite> lookUpService = 
+            new BaseLookUpService<LesionLocationAnatomicSite>(LesionLocationAnatomicSite.class);
+        list.addAll(lookUpService.search(criteria));
+        for (LesionLocationAnatomicSite bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
             lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));

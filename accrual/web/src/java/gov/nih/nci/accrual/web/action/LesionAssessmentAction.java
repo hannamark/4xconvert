@@ -76,167 +76,69 @@
 *
 *
 */
+package gov.nih.nci.accrual.web.action;
 
-package gov.nih.nci.accrual.web.dto.util;
+import gov.nih.nci.accrual.web.dto.util.LesionAssessmentWebDto;
 
-import gov.nih.nci.accrual.web.enums.StagingMethods;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.enums.StatgineSystemCode;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
-import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
- * The Class StagingWebDto.
- * 
- * @author Lisa Kelley
- * @since 10/28/2009
+ * The Class LesionAssessmentAction.
+ *
+ * @author Kalpana Guthikonda
+ * @since 11/20/2009
  */
-public class StagingWebDto implements Serializable {
+public class LesionAssessmentAction extends AbstractListEditAccrualAction<LesionAssessmentWebDto> {
 
-    private static final long serialVersionUID = 1820061539697238678L;
-
-    private Ii id;    
-    private Cd method;    
-    private St tt;    
-    private St nn;    
-    private St mm;   
-    private St stage;    
-    private Cd system;
-
+    private static final long serialVersionUID = 1L;
+    private LesionAssessmentWebDto lesionAssessment = new LesionAssessmentWebDto();
+   
     /**
-     * Instantiates a new staging web dto.
+     * {@inheritDoc}
      */
-    public StagingWebDto() {
-        // default constructor
-    }
-
-    /**
-     * @return the method
-     */
-    @FieldExpressionValidator(expression = "method.code != null && method.code.length() > 0", 
-                              message = "Please select a Staging Method")
-    public Cd getMethod() {
-        return method;
-    }
-
-    /**
-     * @param method the method to set
-     */
-    public void setMethod(Cd method) {
-        this.method = method;
-    }
-
-    /**
-     * @return the tt
-     */
-    @FieldExpressionValidator(expression = "tt.value != null && tt.value.length() > 0", 
-                              message = "Please enter a value for T")
-    public St getTt() {
-        return tt;
-    }
-
-    /**
-     * @param tt the tt to set
-     */
-    public void setTt(St tt) {
-        this.tt = tt;
-    }
-
-    /**
-     * @return the nn
-     */
-    @FieldExpressionValidator(expression = "nn.value != null && nn.value.length() > 0", 
-                              message = "Please enter a value for N")
-    public St getNn() {
-        return nn;
-    }
-
-    /**
-     * @param nn the nn to set
-     */
-    public void setNn(St nn) {
-        this.nn = nn;
-    }
-
-    /**
-     * @return the mm
-     */
-    @FieldExpressionValidator(expression = "mm.value != null && mm.value.length() > 0", 
-                              message = "Please enter a value for M")
-    public St getMm() {
-        return mm;
-    }
-
-    /**
-     * @param mm the mm to set
-     */
-    public void setMm(St mm) {
-        this.mm = mm;
-    }
-
-    /**
-     * @return the stage
-     */
-    @FieldExpressionValidator(expression = "stage.value != null && stage.value.length() > 0", 
-                              message = "Please enter a value for Stage")
-    public St getStage() {
-        return stage;
-    }
-
-    /**
-     * @param stage the stage to set
-     */
-    public void setStage(St stage) {
-        this.stage = stage;
-    }
-
-    /**
-     * @return the system
-     */
-    @FieldExpressionValidator(expression = "system.code != null && system.code.length() > 0", 
-                              message = "Please select a Staging system")
-    public Cd getSystem() {
-        return system;
-    }
-
-    /**
-     * @param system the system to set
-     */
-    public void setSystem(Cd system) {
-        this.system = system;
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
+    @Override
+    public void loadDisplayList() {
+        setDisplayTagList(new ArrayList<LesionAssessmentWebDto>());
+        //just to test the functionality
+        getDisplayTagList().add(lesionAssessment);
     }
     
     /**
-     * @param id the id to set
+     * {@inheritDoc}
      */
-    public void setId(Ii id) {
-        this.id = id;
+    @Override
+    public String add() {
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        try {
+            return super.add();
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
     }
-    
+
     /**
-     * @return the list of staging methods
+     * Gets the lesion assessment.
+     * @return the lesion assessment
      */
-    public List<StagingMethods> getMethods() {
-        return Arrays.asList(StagingMethods.values());
+    @VisitorFieldValidator(message = "> ")
+    public LesionAssessmentWebDto getLesionAssessment() {
+        return lesionAssessment;
     }
-    
+
     /**
-     * @return the list of staging systems
+     * Sets the lesion assessment.
+     * @param lesionAssessment the new lesion assessment
      */
-    public List<StatgineSystemCode> getSystems() {
-        return Arrays.asList(StatgineSystemCode.values());
-    }
+    public void setLesionAssessment(LesionAssessmentWebDto lesionAssessment) {
+        this.lesionAssessment = lesionAssessment;
+    }  
+
 }

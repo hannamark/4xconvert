@@ -49,7 +49,7 @@
 <s:form name="detailForm">
 <table class="form">
 <tr>
-        <td scope="row" class="label"><label><fmt:message key="course.name"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="course.name"/>:<span class="required">*</span></label></td>
         <td>
             <s:textfield size="50" name="course.name" cssStyle="width:280px;float:left" />
             <s:fielderror cssClass="formErrorMsg"><s:param>course.name</s:param></s:fielderror>
@@ -57,7 +57,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="course.startDate"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="course.startDate"/>:<span class="required">*</span></label></td>
         <td class="value">
             <s:textfield id="courseDate" name="course.createDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">

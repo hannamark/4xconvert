@@ -37,6 +37,18 @@
 		}else if(type == 'totalDoseUom') {
 			document.forms[0].action="lookUpunitOfMeasurement.action";
 			document.getElementById("type").value = 'totalDoseUom';
+		}else if(type == 'lesionSite') {
+			document.forms[0].action="lookUplesionLocationAnatomicSite.action";
+			document.getElementById("type").value = 'lesionSite';
+		}else if(type == 'assessmentType') {
+			document.forms[0].action="lookUpassessmentType.action";
+			document.getElementById("type").value = 'assessmentType';
+		}else if(type == 'diseaseAutopsy') {
+			document.forms[0].action="lookUpanatomicSites.action";
+			document.getElementById("type").value = 'diseaseAutopsy';
+		}else if(type == 'tumorMarker') {
+			document.forms[0].action="lookUptumorMarker.action";
+			document.getElementById("type").value = 'tumorMarker';
 		}
 	    document.forms[0].submit();
 	}
@@ -61,6 +73,14 @@
 			window.top.document.getElementsByName("drugBiologic.doseDur.unit")[0].value = name;
 		}else if(type == 'totalDoseUom') {
 			window.top.document.getElementsByName("drugBiologic.doseTotal.unit")[0].value = name;
+		}else if(type == 'lesionSite') {
+			window.top.document.getElementsByName("lesionAssessment.lesionSite")[0].value = name;
+		}else if(type == 'assessmentType') {
+			window.top.document.getElementsByName("targetOutcome.assessmentType")[0].value = name;
+		}else if(type == 'diseaseAutopsy') {
+			window.top.document.getElementsByName("deathInfo.autopsySite")[0].value = name;
+		}else if(type == 'tumorMarker') {
+			window.top.document.getElementsByName("tumorMarker.tumorMarker")[0].value = name;
 		}
         window.top.hidePopWin(false); 
 	}
@@ -91,6 +111,18 @@
 			</s:elseif>
 			<s:elseif test="type == 'doseFrequency'">
 			Dose Frequency
+			</s:elseif>
+			<s:elseif test="type == 'lesionSite'">
+			Lesion Site
+			</s:elseif>
+			<s:elseif test="type == 'assessmentType'">
+			Assessment Type
+			</s:elseif>
+			<s:elseif test="type == 'diseaseAutopsy'">
+			Anatomic Site
+			</s:elseif>
+			<s:elseif test="type == 'tumorMarker'">
+			Tumor Marker
 			</s:elseif>
 		</label></td>
 		<td><s:textfield size="50" name="searchText"
