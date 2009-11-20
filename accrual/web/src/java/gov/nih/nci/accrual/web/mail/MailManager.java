@@ -37,12 +37,12 @@ public class MailManager {
             String[] params = {mailTo , };
 
             MessageFormat formatterSubject = new MessageFormat(
-                PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("user.account.subject"));
+                PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("outcomes.email.subject"));
             String emailSubject = formatterSubject.format(params);
             logger.info("emailSubject is: " + emailSubject);
 
             MessageFormat formatterBody = new MessageFormat(
-                PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("user.account.body"));
+                PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("outcomes.email.body"));
 
             MessageFormat formatterBodyUrl = 
                 new MessageFormat(PoPropertyReader.getProperties().getProperty("outcomes.url"));            
