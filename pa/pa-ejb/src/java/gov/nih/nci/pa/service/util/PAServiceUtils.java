@@ -1102,7 +1102,7 @@ public class PAServiceUtils {
             errorMsg.append(PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
                     ? "Site recruitment Status Code cannot be null , " : "");
             errorMsg.append(PAUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())
-                    ? "Site recruitment Status Date cannot be null , " : "");
+                    ? "Site recruitment Status Date should be a valid date , " : "");
             if (!PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
                     && null == RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode())) {
                 errorMsg.append("Please enter valid RecruitmentStatusCode.");
@@ -1140,12 +1140,12 @@ public class PAServiceUtils {
                           errorMsg.append("Date Opened for Acrual must be null for ").append(recStatus);
                       }
                   }  else if (dateOpenedForAccrual == null) {
-                      errorMsg.append("Date Opened for Acrual must be not null for ").append(recStatus);
+                      errorMsg.append("Date Opened for Acrual must be a valid date for ").append(recStatus);
                   }
                   if ((RecruitmentStatusCode.TERMINATED_RECRUITING.getCode().equalsIgnoreCase(recStatus)
                           || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus)) 
                           && dateClosedForAccrual == null) {
-                         errorMsg.append("Date Closed for Acrual must not be null for ").append(recStatus);
+                         errorMsg.append("Date Closed for Acrual must be a valid date for ").append(recStatus);
                   }
               }
 
