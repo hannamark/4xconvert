@@ -85,7 +85,6 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -102,26 +101,26 @@ public class PerformedActivityConverter extends AbstractConverter
 
     /**
      * {@inheritDoc}
-     */   
+     */
     @Override
     public PerformedActivityDto convertFromDomainToDto(PerformedActivity pa) {
            return convertFromDomainToDTO(pa, new PerformedActivityDto());
        }
-       
+
     /**
      * {@inheritDoc}
-     */   
+     */
     @Override
       public PerformedActivity convertFromDtoToDomain(PerformedActivityDto paDto) {
           return convertFromDTOToDomain(paDto , new PerformedActivity());
       }
-    
+
     /**
      * Convert from domain to dto.
-     * 
+     *
      * @param bo the bo
      * @param dto the dto
-     * 
+     *
      * @return the performed activity dto
      */
     public static PerformedActivityDto convertFromDomainToDTO(PerformedActivity bo, PerformedActivityDto dto) {
@@ -133,7 +132,7 @@ public class PerformedActivityConverter extends AbstractConverter
                 bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(
                 bo.getStudySubject() == null ? null : bo.getStudySubject().getId()));
-        dto.setSubcategoryCode(CdConverter.convertToCd(bo.getSubcategoryCode()));
+        dto.setSubcategoryCode(CdConverter.convertStringToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
         dto.setName(StConverter.convertToSt(bo.getName()));
         dto.setNameCode(CdConverter.convertToCd(bo.getNameCode()));
@@ -148,10 +147,10 @@ public class PerformedActivityConverter extends AbstractConverter
 
    /**
     * Convert from dto to domain.
-    * 
+    *
     * @param dto the dto
     * @param bo the bo
-    * 
+    *
     * @return the performed activity
     */
    public static PerformedActivity convertFromDTOToDomain(PerformedActivityDto dto, PerformedActivity bo) {
@@ -175,9 +174,7 @@ public class PerformedActivityConverter extends AbstractConverter
             ssBo.setId(IiConverter.convertToLong(dto.getStudySubjectIdentifier()));
         }
         bo.setStudySubject(ssBo);
-        if (!PAUtil.isCdNull(dto.getSubcategoryCode())) {
-            bo.setSubcategoryCode(ActivitySubcategoryCode.getByCode(dto.getSubcategoryCode().getCode()));
-        }
+        bo.setSubcategoryCode(CdConverter.convertCdToString(dto.getSubcategoryCode()));
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
         bo.setName(StConverter.convertToString(dto.getName()));
         if (!PAUtil.isCdNull(dto.getNameCode())) {
