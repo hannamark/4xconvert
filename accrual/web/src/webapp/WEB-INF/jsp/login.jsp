@@ -4,15 +4,47 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
-<c:url value="/../registry/registerUser.action" var="createAccountUrl"/>
-<c:url value="/../registry/registerUser.action?resetPassword=true" var="resetPasswordUrl"/>
+<c:url value="/userAccount.action" var="createAccountUrl" />
+<c:url value="/userAccount.action?userAction=resetPassword" var="resetPasswordUrl" />
 <body>
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>Login</h1>
-<div class="box"> 
-    <p style="margin:0; padding:0">Please log in to manage Accrual Submissions. 
-             If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>. 
-         </p>
+<div class="box">
+
+    <c:choose>
+        <c:when test="${param.userAction == 'createAccount'}">
+            <div class="confirm_msg">
+                <strong>Your User Account has been successfully created. Please log in using your email address and password.</strong>
+            </div>
+        </c:when>
+        <c:when test="${param.userAction == 'resetPassword'}">
+            <div class="confirm_msg">
+                <strong>Your password has been successfully reset. Please log in using your email address and password.</strong>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <p style="margin:0; padding:0">Please log in to report outcomes information on patient outcomes.
+                If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>. 
+            </p>
+        </c:otherwise>
+    </c:choose>
+    
+<!--    <s:if test="userAction == 'createAccount'">-->
+<!--        <div class="confirm_msg">-->
+<!--            <strong>Your User Account has been successfully created. Please log in using your email address and password.</strong>-->
+<!--        </div>-->
+<!--    </s:if>-->
+<!--    <s:elseif test="userAction == 'resetPassword'">-->
+<!--        <div class="confirm_msg">-->
+<!--            <strong>Your password has been successfully reset. Please log in using your email address and password.</strong>-->
+<!--        </div>-->
+<!--    </s:elseif>    -->
+<!--    <s:else>-->
+<!--        <p style="margin:0; padding:0">Please log in to report outcomes information on patient outcomes.-->
+<!--            If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>. -->
+<!--        </p>-->
+<!--    </s:else>-->
+     
     <form action="j_security_check" method="post" id="loginForm">
 
     <table style="margin:0 auto">

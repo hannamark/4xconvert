@@ -253,6 +253,23 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     }
 
     /**
+     * @param fieldValue fieldValue
+     * @param fieldName fieldName
+     * @param errorMessage action error message to put on stack if object is empty
+     */
+    public void addFieldErrorIfEmpty(Object fieldValue, String fieldName, String errorMessage) {    
+        if (fieldValue instanceof String) {
+            if (PAUtil.isEmpty((String) fieldValue)) {
+                addFieldError(fieldName, errorMessage);
+            }
+        } else {
+            if (fieldValue == null) {
+                addFieldError(fieldName, errorMessage);
+            }
+        }
+    }
+    
+    /**
      * @param nextTarget the nextTarget to set
      */
     public void setNextTarget(String nextTarget) {

@@ -107,6 +107,10 @@
         <copy todir="${services.build.domainDir}/util">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/PAAttributeMaxLen.java"/>
         </copy>
+    	<copy todir="${services.build.domainDir}/service/util">
+    		<fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/LookUpTableServiceRemote.java"/>
+    		<fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/RegistryUserServiceRemote.java"/>
+    	</copy>
     </target>
 
 
@@ -144,6 +148,7 @@
                 <filter token="po.jnp.url" value="${po.jnp.url}"/>
             	<filter token="po.port.number" value="${po.port.number}"/>
                 <filter token="jboss.server.hostname" value="${jboss.server.hostname}"/>
+            	<filter token="outcomes.url" value="${outcomes.url}"/>
             </filterset>
             <fileset dir="${services.build.resourceDir}"/>
         </copy>

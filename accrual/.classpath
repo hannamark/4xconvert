@@ -64,6 +64,7 @@
     <classpathentry kind="var" path="ACCRUAL_LIB/web/compile/jta-1.0.1B.jar"/>
     <classpathentry kind="var" path="ACCRUAL_LIB/web/compile/log4j-1.2.15.jar"/>
     <classpathentry kind="var" path="ACCRUAL_LIB/web/compile/log4j-4.0.5.GA.jar"/>
+    <classpathentry kind="var" path="ACCRUAL_LIB/web/compile/mail-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="ACCRUAL_LIB/web/compile/nci-commons-struts2-1.2.3.jar"/>
     <classpathentry kind="var" path="ACCRUAL_LIB/web/compile/ognl-2.6.11.jar"/>
     <classpathentry kind="var" path="ACCRUAL_LIB/web/compile/persistence-api-1.0.jar"/>

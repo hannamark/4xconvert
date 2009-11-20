@@ -187,6 +187,7 @@
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
         	<property name="po.port.number" value="${po.port.number}" />
         	<property name="jboss.server.hostname" value="${jboss.server.hostname}" />
+        	<property name="outcomes.url" value="${outcomes.url}" />
             <target name="${services.build.target}${notask}"/>
         </ant>
     </target>

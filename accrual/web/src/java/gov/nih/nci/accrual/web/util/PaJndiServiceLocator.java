@@ -82,6 +82,8 @@ import gov.nih.nci.accrual.util.JNDIUtil;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -108,5 +110,19 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
         return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityServiceBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public LookUpTableServiceRemote getLookUpTableService() {
+        return (LookUpTableServiceRemote) JNDIUtil.lookupPa("/pa/LookUpTableServiceBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUserServiceRemote getRegistryUserService() {
+        return (RegistryUserServiceRemote) JNDIUtil.lookupPa("/pa/RegistryUserServiceBean/remote");
     }
 }

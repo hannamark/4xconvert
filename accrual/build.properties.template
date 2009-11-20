@@ -15,3 +15,4 @@ database.url=jdbc:postgresql://${database.hostname}:${database.port}/ctods_pa
 jdbc.driver=org.postgresql.Driver
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 jboss.deploy.dir=C:/jboss/jboss-4.0.5.GA/server/default/deploy
+outcomes.url=http://${jboss.server.hostname}:${jboss.server.port}/outcomes

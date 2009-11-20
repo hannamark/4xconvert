@@ -81,6 +81,8 @@ package gov.nih.nci.accrual.web.util;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -141,5 +143,19 @@ public final class PaServiceLocator implements ServiceLocatorPaInterface {
      */
     public DiseaseParentServiceRemote getDiseaseParentService() {
          return serviceLocator.getDiseaseParentService();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public LookUpTableServiceRemote getLookUpTableService() {
+        return serviceLocator.getLookUpTableService();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUserServiceRemote getRegistryUserService() {
+        return serviceLocator.getRegistryUserService();
     }
 }

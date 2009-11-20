@@ -65,6 +65,7 @@
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="compile->master"/>
+    <dependency org="jboss"                  name="mail"                    rev="4.0.5.GA"        conf="compile->master"/>
 
     <!-- test -->
     <dependency org="mockrunner"             name="mockrunner"              rev="0.4.1"           conf="test->master"/>

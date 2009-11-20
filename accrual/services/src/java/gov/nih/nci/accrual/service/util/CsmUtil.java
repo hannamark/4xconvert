@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.rmi.RemoteException;
@@ -94,4 +95,22 @@ public interface CsmUtil {
      * @throws RemoteException exception
      */
     User getCSMUser(String loginName) throws RemoteException;
+    
+    /**
+     * @param user user
+     * @param loginName loginName
+     * @param password  password
+     * @return csm user object
+     * @throws RemoteException exception
+     */
+    User createCSMUser(RegistryUser user, String loginName, String password) throws RemoteException;
+    
+    /**
+     * @param user user
+     * @param loginName loginName
+     * @param password  password
+     * @return csm user object
+     * @throws RemoteException exception
+     */
+    User updateCSMUser(RegistryUser user, String loginName, String password) throws RemoteException;
 }

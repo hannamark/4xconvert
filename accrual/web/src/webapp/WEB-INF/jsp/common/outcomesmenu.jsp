@@ -10,6 +10,30 @@
             <li><a href="home.action">Home</a></li>
         </c:otherwise>
     </c:choose>
+    
+    <c:choose>
+        <c:when test="${pageContext.request.remoteUser == null}">            
+            <c:choose>
+                <c:when test="${requestScope.topic == 'create_account'}">
+                    <li><a href="/outcomes/userAccount.action" class="selected">Create Account</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><a href="/outcomes/userAccount.action">Create Account</a></li>
+                </c:otherwise>
+            </c:choose>
+        </c:when>
+        <c:otherwise>
+            <c:choose>
+                <c:when test="${requestScope.topic == 'create_account'}">
+                    <li><a href="/outcomes/userAccountupdateAccount.action" class="selected">My Account</a></li> 
+                </c:when>
+                <c:otherwise>
+                    <li><a href="/outcomes/userAccountupdateAccount.action" >My Account</a></li>
+                </c:otherwise>
+            </c:choose>
+        </c:otherwise>
+    </c:choose>
+    
     <c:if test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
         <c:choose>
             <c:when test="${(requestScope.topic == 'subjects_intro') || (requestScope.topic == 'subjects_adding') || (requestScope.topic == 'subjects_update')}">

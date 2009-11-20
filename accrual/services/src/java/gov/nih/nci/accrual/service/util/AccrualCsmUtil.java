@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -116,5 +117,74 @@ public class AccrualCsmUtil implements CsmUtil {
             throw new RemoteException(" CSM exception while retrieving CSM user :" + loginName, cse);
         }
         return csmUser;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public User createCSMUser(RegistryUser user, String loginName, String password) throws RemoteException {
+        User createdCSMUser = null;
+        try {
+            // create the csm user
+            User csmUser = new User();
+            // get values from Registry User object and set in CSM User object
+            csmUser.setLoginName(loginName);
+            csmUser.setPassword(password);
+            csmUser.setFirstName(user.getFirstName());
+            csmUser.setLastName(user.getLastName());
+            csmUser.setOrganization(user.getAffiliateOrg());
+            csmUser.setPhoneNumber(user.getPhone());
+            ///create new user in CSM table
+            UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
+            upManager.createUser(csmUser);
+            // assign the created user to the appropriate group
+            // read the CSM group name from the properties
+// temporary            
+            //String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
+            String submitterGroup = "Outcomes";
+            upManager.assignUserToGroup(loginName, submitterGroup);
+            createdCSMUser = upManager.getUser(loginName);
+        } catch (CSException cse) {
+            LOG.error(" CSM Exception while creating CSM user : " + loginName, cse);
+            throw new RemoteException(" CSM exception while creating CSM user :" + loginName, cse);
+        }
+
+        return createdCSMUser;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public User updateCSMUser(RegistryUser user, String loginName, String password) throws RemoteException {
+        User createdCSMUser = null;
+        try {
+            // create the csm user
+            User csmUser = new User();
+            UserProvisioningManager upManager = SecurityServiceProvider.
+            getUserProvisioningManager("pa");
+            csmUser = upManager.getUser(loginName);
+
+            //upManager.getGroups(csmUser.getUserId().toString());
+            // get values from Registry User object and set in CSM User object
+            csmUser.setUserId(user.getCsmUserId());
+            csmUser.setLoginName(loginName);
+            csmUser.setPassword(password);
+            csmUser.setFirstName(user.getFirstName());
+            csmUser.setLastName(user.getLastName());
+            csmUser.setOrganization(user.getAffiliateOrg());
+            csmUser.setPhoneNumber(user.getPhone());
+            ///update the user info in CSM table
+            upManager.modifyUser(csmUser);
+            // assign the updated user to the appropriate group
+            // read the CSM group name from the properties
+            /*String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
+            upManager.assignUserToGroup(loginName, submitterGroup);*/
+            createdCSMUser = upManager.getUser(loginName);
+        } catch (CSException cse) {
+            LOG.error(" CSM Exception while updating CSM user : " + loginName, cse);
+            throw new RemoteException(" CSM exception while updating CSM user :" + loginName, cse);
+        }
+
+        return createdCSMUser;
     }
 }
