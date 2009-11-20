@@ -77,5 +77,14 @@ public class MockMailManagerService implements MailManagerServiceLocal {
 
     }
 
+	/* (non-Javadoc)
+	 * @see gov.nih.nci.pa.service.util.MailManagerService#sendCDERequestMail(java.lang.String, java.lang.String)
+	 */
+	public void sendCDERequestMail(String mailFrom, String mailBody)
+			throws PAException {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
