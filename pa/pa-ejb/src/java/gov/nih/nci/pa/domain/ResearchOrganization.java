@@ -83,8 +83,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -96,28 +94,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "RESEARCH_ORGANIZATION")
-public class ResearchOrganization extends StructuralRole {
+public class ResearchOrganization extends OrganizationalStructuralRole {
     private static final long serialVersionUID = 1736507890L;
 
-    private Organization organization;
     private List<StudySite> studySites = new ArrayList<StudySite>();
-
-    /**
-     *
-     * @return organization
-     */
-    @ManyToOne
-    @JoinColumn(name = "ORGANIZATION_IDENTIFIER",  nullable = false, updatable = false)
-    public Organization getOrganization() {
-        return organization;
-    }
-    /**
-     *
-     * @param organization organization
-     */
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
     /**
      *
      * @return studySites

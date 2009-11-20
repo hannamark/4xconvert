@@ -3,6 +3,24 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.domain.StructuralRole;
+import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.iso.convert.StudyContactConverter;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,20 +33,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Expression;
-
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.iso.convert.StudyContactConverter;
-import gov.nih.nci.pa.iso.dto.StudyContactDTO;
-import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 
 /**
  * @author asharma
@@ -140,6 +144,36 @@ implements StudyContactServiceLocal {
         }
         return studyContactDTOList;
     }
+    /**
+     * @param dto dto
+     * @throws PAException e
+     * @return updated dto
+     */
+    @Override
+    public StudyContactDTO update(StudyContactDTO dto) throws PAException {
+        getStatusCode(dto);
+        return super.update(dto);
+    }
 
-
+    private void getStatusCode(StudyContactDTO dto) throws PAException {
+        PAServiceUtils paServiceUtil = new PAServiceUtils();
+        StructuralRole sr =  null;
+        if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
+            sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(
+                    dto.getClinicalResearchStaffIi().getExtension()));
+        }
+        if (!PAUtil.isIiNull(dto.getHealthCareProviderIi())) {
+            sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoHealtcareProviderIi(
+                    dto.getHealthCareProviderIi().getExtension()));
+        }
+        if (!PAUtil.isIiNull(dto.getOrganizationalContactIi())) {
+            sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoOrganizationalContactIi(
+                    dto.getOrganizationalContactIi().getExtension()));
+        }
+        if (sr != null) {
+               dto.setStatusCode(getFunctionalRoleStatusCode(CdConverter.convertStringToCd(
+                       sr.getStatusCode().getCode()), ActStatusCode.ACTIVE));    
+         }
+        
+    }
 }

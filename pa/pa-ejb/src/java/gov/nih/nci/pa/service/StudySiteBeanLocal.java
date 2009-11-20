@@ -6,6 +6,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -25,6 +26,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -87,12 +89,14 @@ implements StudySiteServiceLocal {
   public StudySiteDTO update(StudySiteDTO dto)
           throws PAException {
       StudySiteDTO updateDto = businessRules(dto);
+      getStatusCode(updateDto);
       StudySiteDTO resultDto = super.update(updateDto);
       enforceOnlyOneOversightCommittee(resultDto);
       return resultDto;
   }
 
-  /**
+
+/**
    * creates a new record of studyprotocol by changing to new studyprotocol identifier.
    * @param fromStudyProtocolIi from where the study protocol objects to be copied  
    * @param toStudyProtocolIi to where the study protocol objects to be copied
@@ -417,5 +421,25 @@ implements StudySiteServiceLocal {
       enforceNoDuplicateTrial(dto);    
   }
 
-
+  private void getStatusCode(StudySiteDTO dto) throws PAException {
+      PAServiceUtils paServiceUtil = new PAServiceUtils();
+      StructuralRole sr =  null;
+      if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
+          sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoHealthCareFacilityIi(
+                  dto.getHealthcareFacilityIi().getExtension()));
+      }
+      if (!PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
+          sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoResearchOrganizationIi(
+                  dto.getResearchOrganizationIi().getExtension()));
+      }
+      if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+          sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoOversightCommitteeIi(
+                  dto.getOversightCommitteeIi().getExtension()));
+      }
+      if (sr != null) {
+          dto.setStatusCode(getFunctionalRoleStatusCode(CdConverter.convertStringToCd(
+                  sr.getStatusCode().getCode()), ActStatusCode.ACTIVE));
+     }
+      
+  }
 }

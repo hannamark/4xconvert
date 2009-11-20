@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -261,6 +262,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         for (BO sp : sps) {
             sp.setStatusCode(newFRStatusCode(roleStatusCode , ActStatusCode.ACTIVE));
             session.update(sp);
+            session.flush();
         }
     }
 
@@ -275,5 +277,14 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
             returnStatusCode = FunctionalRoleStatusCode.PENDING;
         }
         return returnStatusCode;
+    }
+    /**
+     * 
+     * @param roleStatusCode
+     * @param actStatusCode
+     * @return cd
+     */
+    Cd getFunctionalRoleStatusCode(Cd roleStatusCode , ActStatusCode actStatusCode) {
+        return CdConverter.convertToCd(newFRStatusCode(roleStatusCode, actStatusCode));
     }
 }

@@ -150,6 +150,7 @@ public class PABaseCorrelation < PADTO extends PACorrelationDTO ,
             sr.setIdentifier(srPoIi.getExtension());
             Session session =  HibernateUtil.getCurrentSession();
             session.save(sr);
+            session.flush();
             srPaIdentifier = sr.getId();
         }
         return srPaIdentifier; 

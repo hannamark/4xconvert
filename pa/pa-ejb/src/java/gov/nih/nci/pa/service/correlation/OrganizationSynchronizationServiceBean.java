@@ -89,9 +89,12 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
@@ -124,7 +127,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({ "PMD.TooManyMethods" , "PMD.CyclomaticComplexity",  "PMD.NPathComplexity" , 
-    "PMD.PreserveStackTrace" })
+    "PMD.PreserveStackTrace", "PMD.ExcessiveMethodLength" })
  
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -132,6 +135,8 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
     private static final Logger LOG  = Logger.getLogger(OrganizationSynchronizationServiceBean.class);
     private static CorrelationUtils cUtils = new CorrelationUtils();
+    private static PAServiceUtils paServiceUtil = new PAServiceUtils();
+    private CorrelationService  correlationService = null;;
     private SessionContext ejbContext;
     @EJB
     StudySiteServiceLocal spsLocal = null;
@@ -244,6 +249,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                organization.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
            }
            session.update(organization);
+           session.flush();
        }
        LOG.debug("Leaving updateOrganization");
    }
@@ -258,35 +264,81 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
            session = HibernateUtil.getCurrentSession();
            if (roDto == null) {
                // this is a nullified scenario .....
+               Long duplicateRoId = null;
+               String poOrgId  = null;
+               Ii dupSRIi = null; 
                // check if it does have an valid organization 
-               Long paOrgId = ro.getOrganization().getId();
-               String poOrgId = cUtils.getPAOrganizationByIi(IiConverter.
-                           convertToPaOrganizationIi(paOrgId)).getIdentifier();
-               OrganizationDTO organizationDto = getPoOrganization(poOrgId);
-               if (organizationDto != null) {
-                   OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
-                   Long duplicateRoId = osb.createResearchOrganizationCorrelations(
-                           organizationDto.getIdentifier().getExtension());
-                   ResearchOrganization dupRo = new ResearchOrganization();
-                   dupRo.setId(duplicateRoId);
-                   dupRo = cUtils.getStructuralRole(dupRo);
-                   newRoleCode = dupRo.getStatusCode();
-                   roCurrentIi = IiConverter.convertToPoResearchOrganizationIi(duplicateRoId.toString());
-                   replaceStudySiteIdentifiers(
-                           IiConverter.convertToPoResearchOrganizationIi(ro.getId().toString()),  roCurrentIi);     
-                   ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-               } else {
-                   // this is nullified scenario with no org 
-                   ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-                   newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+               try {
+                   correlationService = paServiceUtil.getPoService(roIdentifier);
+                   correlationService.getCorrelation(roIdentifier);
+               } catch (NullifiedRoleException e) {
+                 LOG.info("Nullified Role exception for Research Organization for id" + ro.getIdentifier());
+                 // SR is nullified, find out if it has any duplicates
+                 Ii nullfiedIi = null;
+                 Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+                 for (Ii tmp : nullifiedEntities.keySet()) {
+                     if (tmp.getExtension().equals(roIdentifier.getExtension())) {
+                         nullfiedIi = tmp;
+                     }
+                 }
+                 if (nullfiedIi != null) {
+                     //this scenario is sr nullification with duplicate
+                     dupSRIi = nullifiedEntities.get(nullfiedIi);
+                     LOG.info("Nullified Role with Duplicate Research Organization for id" + dupSRIi.getExtension());
+                 } 
+                 if (PAUtil.isIiNotNull(dupSRIi)) {
+                         ResearchOrganization dupRo = paServiceUtil.getOrganizationalStructuralRoleInPA(dupSRIi);
+                         duplicateRoId = dupRo.getId();
+                         newRoleCode = dupRo.getStatusCode();
+                         roCurrentIi = IiConverter.convertToPoResearchOrganizationIi(duplicateRoId.toString());
+                         replaceStudySiteIdentifiers(
+                                 IiConverter.convertToPoResearchOrganizationIi(ro.getId().toString()),
+                                 roCurrentIi);     
+                         ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                 } else {
+                     //this scenario is sr nullification with out duplicate
+                   Long paOrgId = ro.getOrganization().getId();
+                   poOrgId = cUtils.getPAOrganizationByIi(IiConverter.
+                                 convertToPaOrganizationIi(paOrgId)).getIdentifier();
+                   OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+                   if (organizationDto != null) {
+                       //or entity nullification with duplicate
+                       OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
+                       duplicateRoId = osb.createResearchOrganizationCorrelations(
+                               organizationDto.getIdentifier().getExtension());
+                       ResearchOrganization dupRo = new ResearchOrganization();
+                       dupRo.setId(duplicateRoId);
+                       dupRo = cUtils.getStructuralRole(dupRo);
+                       newRoleCode = dupRo.getStatusCode();
+                       roCurrentIi = IiConverter.convertToPoResearchOrganizationIi(duplicateRoId.toString());
+                       replaceStudySiteIdentifiers(
+                               IiConverter.convertToPoResearchOrganizationIi(ro.getId().toString()),  roCurrentIi);     
+                       ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                   } else {
+                       // this is nullified scenario with nullified org or nullified structural role no duplicate   
+                       ro.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                       newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+                   }
+                 }
+             } //catch
+           } else  {
+               String poOrgIi = roDto.getPlayerIdentifier().getExtension();
+               String paOrgAssignedId = ro.getOrganization().getIdentifier();
+               if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                       && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
+                   //this means scoper is changed. check if exist in PA if not create and update the SR
+                   Organization paOrg = paServiceUtil.getPAOrganizationByIi(roDto.getPlayerIdentifier());
+                   ro.setOrganization(paOrg);
                }
-           } else if (!ro.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()))) {
+               if (!ro.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus()))) {
                // this is a update scenario with a status change
                newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(roDto.getStatus());
                ro.setStatusCode(newRoleCode);
+               }
            }
            ro.setDateLastUpdated(new Timestamp((new Date()).getTime()));
            session.update(ro);
+           session.flush();
            spsLocal.cascadeRoleStatus(roCurrentIi, CdConverter.convertToCd(newRoleCode));           
        }
    }
@@ -301,38 +353,77 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
            session = HibernateUtil.getCurrentSession();
            if (oscDto == null) {
                // this is a nullified scenario .....
-               // check if it does have an valid organization 
-               Long paOrgId = osc.getOrganization().getId();
-               
-               String poOrgId = cUtils.getPAOrganizationByIi(
-                           IiConverter.convertToPaOrganizationIi(paOrgId)).getIdentifier();
-               OrganizationDTO organizationDto = getPoOrganization(poOrgId);
-               
-               if (organizationDto != null) {
-                   OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
-                   Long duplicateOscId = osb.createOversightCommitteeCorrelations(
-                           organizationDto.getIdentifier().getExtension());
-                   
-                   OversightCommittee dupOsc = new OversightCommittee();
-                   dupOsc.setId(duplicateOscId);
-                   dupOsc = cUtils.getStructuralRole(dupOsc);
-                   newRoleCode = dupOsc.getStatusCode();
-                   hcfCurrentIi = IiConverter.convertToPoOversightCommitteeIi(duplicateOscId.toString());
-                   replaceStudySiteIdentifiers(
-                           IiConverter.convertToPoOversightCommitteeIi(osc.getId().toString()),  hcfCurrentIi);     
-                   osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-               } else {
-                   // this is nullified scenario with no org 
-                   osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-                   newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+               Ii dupSRIi = null;
+               try {
+                   correlationService = paServiceUtil.getPoService(oscIdentifier);
+                   correlationService.getCorrelation(oscIdentifier);
+               } catch (NullifiedRoleException e) {
+                 LOG.info("Nullified Role exception for HealthCareFacility for id" + oscIdentifier.getExtension());
+                 // SR is nullified, find out if it has any duplicates
+                 Ii nullfiedIi = null;
+                 Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+                 for (Ii tmp : nullifiedEntities.keySet()) {
+                     if (tmp.getExtension().equals(oscIdentifier.getExtension())) {
+                         nullfiedIi = tmp;
+                     }
+                 }
+                 if (nullfiedIi != null) {
+                     //this scenario is sr nullification with duplicate
+                     dupSRIi = nullifiedEntities.get(nullfiedIi);
+                     LOG.info("Nullified Role with Duplicate HealthCareFacility for id" + dupSRIi.getExtension());
+                 }
+                 if (PAUtil.isIiNotNull(dupSRIi)) {
+                     OversightCommittee dupOsc = paServiceUtil.getOrganizationalStructuralRoleInPA(dupSRIi);
+                         Long duplicateOscId = dupOsc .getId();
+                         newRoleCode = dupOsc.getStatusCode();
+                         hcfCurrentIi = IiConverter.convertToPoOversightCommitteeIi(duplicateOscId.toString());
+                         replaceStudySiteIdentifiers(IiConverter.convertToPoOversightCommitteeIi(
+                                 osc.getId().toString()),  hcfCurrentIi);     
+                         osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                 } else {
+                   // check if it does have an valid organization 
+                   Long paOrgId = osc.getOrganization().getId();
+                   String poOrgId = cUtils.getPAOrganizationByIi(
+                               IiConverter.convertToPaOrganizationIi(paOrgId)).getIdentifier();
+                   OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+                   if (organizationDto != null) {
+                       OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
+                       Long duplicateOscId = osb.createOversightCommitteeCorrelations(
+                               organizationDto.getIdentifier().getExtension());
+                       
+                       OversightCommittee dupOsc = new OversightCommittee();
+                       dupOsc.setId(duplicateOscId);
+                       dupOsc = cUtils.getStructuralRole(dupOsc);
+                       newRoleCode = dupOsc.getStatusCode();
+                       hcfCurrentIi = IiConverter.convertToPoOversightCommitteeIi(duplicateOscId.toString());
+                       replaceStudySiteIdentifiers(
+                               IiConverter.convertToPoOversightCommitteeIi(osc.getId().toString()),  hcfCurrentIi);     
+                       osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                   } else {
+                       // this is nullified scenario with no org 
+                       osc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                       newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+                   }
+                 }
+               } //catch
+           } else {
+               String poOrgIi = oscDto.getPlayerIdentifier().getExtension();
+               String paOrgAssignedId = osc.getOrganization().getIdentifier();
+               if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                       && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
+                   //this means scoper is changed. check if exist in PA if not create and update the SR
+                   Organization paOrg = paServiceUtil.getPAOrganizationByIi(oscDto.getPlayerIdentifier());
+                   osc.setOrganization(paOrg);
                }
-           } else if (!osc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(oscDto.getStatus()))) {
+               if (!osc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(oscDto.getStatus()))) {
                // this is a update scenario with a status change
                newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(oscDto.getStatus());
                osc.setStatusCode(newRoleCode);
+               }
            }
            osc.setDateLastUpdated(new Timestamp((new Date()).getTime()));
            session.update(osc);
+           session.flush();
            spsLocal.cascadeRoleStatus(hcfCurrentIi, CdConverter.convertToCd(newRoleCode));           
        }
    }
@@ -347,38 +438,78 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
            session = HibernateUtil.getCurrentSession();
            if (hcfDto == null) {
                // this is a nullified scenario .....
-               // check if it does have an valid organization 
-               Long paOrgId = hcf.getOrganization().getId();
-               
-               String poOrgId = cUtils.getPAOrganizationByIi(
-                       IiConverter.convertToPaOrganizationIi(paOrgId)).getIdentifier();
-               OrganizationDTO organizationDto = getPoOrganization(poOrgId);
-               
-               if (organizationDto != null) {
-                   OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
-                   Long duplicateHcfId = osb.createHealthCareFacilityCorrelations(
-                           organizationDto.getIdentifier().getExtension());
-                   
-                   HealthCareFacility dupHcf = new HealthCareFacility();
-                   dupHcf.setId(duplicateHcfId);
-                   dupHcf = cUtils.getStructuralRole(dupHcf);
-                   newRoleCode = dupHcf.getStatusCode();
-                   hcfCurrentIi = IiConverter.convertToPoHealthCareFacilityIi(duplicateHcfId.toString());
-                   replaceStudySiteIdentifiers(
-                           IiConverter.convertToPoHealthCareFacilityIi(hcf.getId().toString()),  hcfCurrentIi);     
-                   hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-               } else {
-                   // this is nullified scenario with no org 
-                   hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
-                   newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+               //check sr has duplicate
+               Ii dupSRIi = null;
+               try {
+                   correlationService = paServiceUtil.getPoService(hcfIdentifier);
+                   correlationService.getCorrelation(hcfIdentifier);
+               } catch (NullifiedRoleException e) {
+                 LOG.info("Nullified Role exception for HealthCareFacility for id" + hcfIdentifier.getExtension());
+                 // SR is nullified, find out if it has any duplicates
+                 Ii nullfiedIi = null;
+                 Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+                 for (Ii tmp : nullifiedEntities.keySet()) {
+                     if (tmp.getExtension().equals(hcfIdentifier.getExtension())) {
+                         nullfiedIi = tmp;
+                     }
+                 }
+                 if (nullfiedIi != null) {
+                     //this scenario is sr nullification with duplicate
+                     dupSRIi = nullifiedEntities.get(nullfiedIi);
+                     LOG.info("Nullified Role with Duplicate HealthCareFacility for id" + dupSRIi.getExtension());
+                 }
+                 if (PAUtil.isIiNotNull(dupSRIi)) {
+                         HealthCareFacility dupHcf = paServiceUtil.getOrganizationalStructuralRoleInPA(dupSRIi);
+                         Long duplicateHcfId = dupHcf.getId();
+                         newRoleCode = dupHcf.getStatusCode();
+                         hcfCurrentIi = IiConverter.convertToPoHealthCareFacilityIi(duplicateHcfId.toString());
+                         replaceStudySiteIdentifiers(IiConverter.convertToPoHealthCareFacilityIi(
+                                 hcf.getId().toString()),  hcfCurrentIi);     
+                         hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                 } else {
+                   // check if it does have an valid organization 
+                   Long paOrgId = hcf.getOrganization().getId();
+                   String poOrgId = cUtils.getPAOrganizationByIi(
+                           IiConverter.convertToPaOrganizationIi(paOrgId)).getIdentifier();
+                   OrganizationDTO organizationDto = getPoOrganization(poOrgId);
+                   if (organizationDto != null) {
+                       OrganizationCorrelationServiceBean osb = new OrganizationCorrelationServiceBean();
+                       Long duplicateHcfId = osb.createHealthCareFacilityCorrelations(
+                               organizationDto.getIdentifier().getExtension());
+                       
+                       HealthCareFacility dupHcf = new HealthCareFacility();
+                       dupHcf.setId(duplicateHcfId);
+                       dupHcf = cUtils.getStructuralRole(dupHcf);
+                       newRoleCode = dupHcf.getStatusCode();
+                       hcfCurrentIi = IiConverter.convertToPoHealthCareFacilityIi(duplicateHcfId.toString());
+                       replaceStudySiteIdentifiers(
+                               IiConverter.convertToPoHealthCareFacilityIi(hcf.getId().toString()),  hcfCurrentIi);     
+                       hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                   } else {
+                       // this is nullified scenario with no org 
+                       hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+                       newRoleCode = StructuralRoleStatusCode.NULLIFIED;
+                   }
+                 }
                }
-           } else if (!hcf.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()))) {
-               // this is a update scenario with a status change
-               newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus());
-               hcf.setStatusCode(newRoleCode);
+           } else {
+               String poOrgIi = hcfDto.getPlayerIdentifier().getExtension();
+               String paOrgAssignedId = hcf.getOrganization().getIdentifier();
+               if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                       && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
+                   //this means scoper is changed. check if exist in PA if not create and update the SR
+                   Organization paOrg = paServiceUtil.getPAOrganizationByIi(hcfDto.getPlayerIdentifier());
+                   hcf.setOrganization(paOrg);
+               }
+               if (!hcf.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()))) {
+                   // this is a update scenario with a status change
+                   newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus());
+                   hcf.setStatusCode(newRoleCode);
+               }
            }
            hcf.setDateLastUpdated(new Timestamp((new Date()).getTime()));
            session.update(hcf);
+           session.flush();
            spsLocal.cascadeRoleStatus(hcfCurrentIi, CdConverter.convertToCd(newRoleCode));           
        }
    }

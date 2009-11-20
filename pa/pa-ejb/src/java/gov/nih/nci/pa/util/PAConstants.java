@@ -135,5 +135,9 @@ public class PAConstants {
     public static final String YES = "Yes";
     /** no. */
     public static final String NO = "No";
+    /**
+     * Responsible Party.
+     */
+    public static final String RESPONSIBLE_PARTY = "Responsible Party";
     
 }

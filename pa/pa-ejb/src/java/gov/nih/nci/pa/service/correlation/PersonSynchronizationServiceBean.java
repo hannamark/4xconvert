@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service.correlation;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
@@ -88,14 +89,17 @@ import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -132,7 +136,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @SuppressWarnings({ "PMD.TooManyMethods" , "PMD.PreserveStackTrace" , "PMD.ExcessiveMethodLength",
-   "PMD.CyclomaticComplexity",  "PMD.NPathComplexity" })
+   "PMD.CyclomaticComplexity",  "PMD.NPathComplexity", "PMD.ExcessiveClassLength" })
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
@@ -141,7 +145,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     private static  CorrelationUtils cUtils = new CorrelationUtils();
     private static final String STUDY_CONTACT = "STUDY_CONTACT";
     private static final String STUDY_SITE_CONTACT = "STUDY_SITE_CONTACT";
-    
+    private static  PAServiceUtils paServiceUtil = new PAServiceUtils();
+    private CorrelationService correlationService = null; 
     private SessionContext ejbContext;
     @EJB
     StudyContactServiceLocal scLocal = null;
@@ -252,6 +257,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 person.setUserLastUpdated(ejbContext.getCallerPrincipal().getName());
             }
             session.update(person);
+            session.flush();
         }
         LOG.debug("Leaving updatePerson");
     }
@@ -301,18 +307,28 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     crs.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                     newRoleCode = StructuralRoleStatusCode.NULLIFIED;
                 }
-            } else if (!crs.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus()))) {
-                // this is a update scenario with a status change
-                newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus());
-                crs.setStatusCode(newRoleCode);
+            } else {
+                String poOrgIi = crsDto.getScoperIdentifier().getExtension();
+                String paOrgAssignedId = crs.getOrganization().getIdentifier();
+                if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                        && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
+                    //this means scoper is changed. check if exist in PA if not create and update the SR
+                    Organization paOrg = paServiceUtil.getPAOrganizationByIi(crsDto.getScoperIdentifier());
+                    crs.setOrganization(paOrg);
+                } 
+                if (!crs.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus()))) {
+                    // this is a update scenario with a status change
+                    newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(crsDto.getStatus());
+                    crs.setStatusCode(newRoleCode);
+                }
                 
             }
             crs.setDateLastUpdated(new Timestamp((new Date()).getTime()));
             session.update(crs);
+            session.flush();
             scLocal.cascadeRoleStatus(crsIdentifier, CdConverter.convertToCd(newRoleCode));
             spcLocal.cascadeRoleStatus(crsIdentifier, CdConverter.convertToCd(newRoleCode));
-        }
-        
+        } //if (crsDto == null)        
     }
     
     private void updateHealthCareProvider(final Ii hcpIdentifier , 
@@ -357,14 +373,26 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     hcp.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                     newRoleCode = StructuralRoleStatusCode.NULLIFIED;
                 }
-            } else if (!hcp.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcpDto.getStatus()))) {
+            } else {
+                String poOrgIi = hcpDto.getScoperIdentifier().getExtension();
+                String paOrgAssignedId = hcp.getOrganization().getIdentifier();
+                if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                        && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
+                    //this means scoper is changed. check if exist in PA if not create and update the SR
+                    Organization paOrg = paServiceUtil.getPAOrganizationByIi(hcpDto.getScoperIdentifier());
+                    hcp.setOrganization(paOrg);
+                }
+
+                if (!hcp.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcpDto.getStatus()))) {
                 // this is a update scenario with a status change
                 newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(hcpDto.getStatus());
                 hcp.setStatusCode(newRoleCode);
+                }
                 
             }
             hcp.setDateLastUpdated(new Timestamp((new Date()).getTime()));
             session.update(hcp);
+            session.flush();
             scLocal.cascadeRoleStatus(hcpIdentifier, CdConverter.convertToCd(newRoleCode));
             spcLocal.cascadeRoleStatus(hcpIdentifier, CdConverter.convertToCd(newRoleCode));
         }
@@ -387,7 +415,8 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 // step 1: get the po person,org identifier (player)
                 Long duplicateOcId = null;
                 try {
-                    PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(ocIdentifier);
+                    correlationService = paServiceUtil.getPoService(ocIdentifier);
+                    correlationService.getCorrelation(ocIdentifier);
                 } catch (NullifiedRoleException e) {
                   LOG.info("Nullified Role exception for Organizational Contatc for id" + oc.getIdentifier());
                   // SR is nullified, find out if it has any duplicates
@@ -402,9 +431,28 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                       srIi = nullifiedEntities.get(nullfiedIi);
                       //srIi = IiConverter.converToPoOrganizationalContactIi("12897");
                   }
-                  if (srIi != null) {
+                  PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , 
+                  OrganizationalContact , OrganizationalContactConverter> ocBean = new 
+                      PABaseCorrelation<PAOrganizationalContactDTO , 
+                      OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
+                      PAOrganizationalContactDTO.class, OrganizationalContact.class,
+                      OrganizationalContactConverter.class);
+
+                  if (PAUtil.isIiNotNull(srIi)) {
                       //nullified with Duplicate
-                      replaceStudyContactIdentifiers(ocIdentifier, srIi, STUDY_SITE_CONTACT);
+                      OrganizationalContactDTO poOrgContactDto = (OrganizationalContactDTO) 
+                          paServiceUtil.getCorrelationByIi(srIi);
+                      PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
+                      orgContacPaDto.setOrganizationIdentifier(poOrgContactDto.getScoperIdentifier());
+                      if (PAUtil.isIiNotNull(poOrgContactDto.getPlayerIdentifier())) {
+                          orgContacPaDto.setPersonIdentifier(poOrgContactDto.getPlayerIdentifier());
+                      }
+                      orgContacPaDto.setIdentifier(DSetConverter.convertToIi(poOrgContactDto.getIdentifier()));
+                      duplicateOcId = ocBean.create(orgContacPaDto);
+                      replaceStudyContactIdentifiers(IiConverter.convertToPoOrganizationalContactIi(
+                              oc.getId().toString()), IiConverter.convertToPoOrganizationalContactIi(
+                              duplicateOcId.toString()), STUDY_SITE_CONTACT);
+                      oc.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                   } else {
                     String poOrgId = oc.getOrganization().getIdentifier();
                     PersonDTO personDto = null;
@@ -418,12 +466,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     if (organizationDto != null && personDto != null) {
                         //This means Oc is having player as person
                       // create a new crs 
-                      PABaseCorrelation<PAOrganizationalContactDTO , OrganizationalContactDTO , 
-                      OrganizationalContact , OrganizationalContactConverter> ocBean = new 
-                      PABaseCorrelation<PAOrganizationalContactDTO , 
-                      OrganizationalContactDTO , OrganizationalContact , OrganizationalContactConverter>(
-                      PAOrganizationalContactDTO.class, OrganizationalContact.class,
-                      OrganizationalContactConverter.class);
                             
                       PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
                       orgContacPaDto.setOrganizationIdentifier(organizationDto.getIdentifier());
@@ -447,13 +489,24 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                         }
                     }
                   } //end if (ocDto == null)
-            } else if (!oc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()))) {
-                // this is a update scenario with a status change
-                newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus());
-                oc.setStatusCode(newRoleCode);
+            } else {
+                String poOrgIi = ocDto.getScoperIdentifier().getExtension();
+                String paOrgAssignedId = oc.getOrganization().getIdentifier();
+                if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                        && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
+                    //this means scoper is changed. check if exist in PA if not create and update the SR
+                    Organization paOrg = paServiceUtil.getPAOrganizationByIi(ocDto.getScoperIdentifier());
+                    oc.setOrganization(paOrg);
+                }
+                if (!oc.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus()))) {
+                    // this is a update scenario with a status change
+                    newRoleCode = cUtils.convertPORoleStatusToPARoleStatus(ocDto.getStatus());
+                    oc.setStatusCode(newRoleCode);
+                }
             }
             oc.setDateLastUpdated(new Timestamp((new Date()).getTime()));
             session.update(oc);
+            session.flush();
             spcLocal.cascadeRoleStatus(ocIdentifier, CdConverter.convertToCd(newRoleCode));
         }
     }

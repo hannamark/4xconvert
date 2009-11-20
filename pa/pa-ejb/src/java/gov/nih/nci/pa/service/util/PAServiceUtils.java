@@ -86,6 +86,8 @@ import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.OrganizationalStructuralRole;
+import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -135,7 +137,10 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.CorrelationDto;
+import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -1147,4 +1152,150 @@ public class PAServiceUtils {
           }
         return errorMsg.toString();
       }
+      /**
+       * 
+       * @param <TYPE> type
+       * @param correlationIi ii
+       * @return service
+       * @throws PAException e
+       */
+      public <TYPE extends CorrelationService> TYPE getPoService(Ii correlationIi) throws PAException {
+          if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+              return (TYPE) PoRegistry.getHealthCareFacilityCorrelationService();
+          }
+          if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+              return (TYPE) PoRegistry.getResearchOrganizationCorrelationService();
+          }
+          if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+              return (TYPE) PoRegistry.getOversightCommitteeCorrelationService();
+          }
+          if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+              return (TYPE) PoRegistry.getClinicalResearchStaffCorrelationService();
+          }
+          if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+              return (TYPE) PoRegistry.getHealthCareProviderCorrelationService();
+          }
+          if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(correlationIi.getIdentifierName())) {
+              return (TYPE) PoRegistry.getOrganizationalContactCorrelationService();
+          }
+          throw new PAException(" Unknown identifier for " + correlationIi.getIdentifierName());
+      }
+      /**
+       * 
+       * @param <T> any class extends {@link StructuralRole} 
+       * @param isoIi iso identitifier
+       * @return StucturalRole class for an correspondong iso ii
+       * @throws PAException on error
+       */
+
+      public <T extends StructuralRole> T getStructuralRole(Ii isoIi) throws PAException {
+          
+          StringBuffer hql = new StringBuffer("select role from ");
+          if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+              hql.append("HealthCareFacility role where role.id = '" + isoIi.getExtension() + "'"); 
+          } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+              hql.append("ResearchOrganization role where role.id = '" + isoIi.getExtension() + "'");
+          } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+              hql.append("OversightCommittee role where role.id = '" + isoIi.getExtension() + "'");
+          } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {    
+              hql.append("ClinicalResearchStaff role where role.id = '" + isoIi.getExtension() + "'");
+          } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+              hql.append("HealthCareProvider role where role.id = '" + isoIi.getExtension() + "'");   
+          } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
+              hql.append("OrganizationalContact role where role.id  = '" + isoIi.getExtension() + "'");   
+          } else {
+              throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());            
+          }
+          List<T> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
+          T sr = null;
+
+          if (!queryList.isEmpty()) { 
+              sr = queryList.get(0);
+          }
+          
+          return sr;
+      }
+      /**
+       * 
+       * @param correlationIi Ii
+       * @return poDto
+       * @throws PAException e
+       */
+      @SuppressWarnings({"PMD.PreserveStackTrace" })
+      public PoDto getCorrelationByIi(Ii correlationIi) throws PAException {
+          PoDto poCorrelationDto = null;
+          CorrelationService corrService = getPoService(correlationIi);
+          try {
+              poCorrelationDto = corrService.getCorrelation(correlationIi);
+          } catch (NullifiedRoleException e1) {
+              Ii nullfiedIi = null;
+              Map<Ii, Ii> nullifiedEntities = e1.getNullifiedEntities();
+              for (Ii tmp : nullifiedEntities.keySet()) {
+                  if (tmp.getExtension().equals(correlationIi.getExtension())) {
+                      nullfiedIi = tmp;
+                  }
+              }
+              Ii dupCorrelationIi = null;
+              if (nullfiedIi != null) {
+                  dupCorrelationIi = nullifiedEntities.get(nullfiedIi);
+              }
+              if (PAUtil.isIiNotNull(dupCorrelationIi)) {
+                  try {
+                      poCorrelationDto = corrService.getCorrelation(dupCorrelationIi);
+                  } catch (NullifiedRoleException e2) {
+                      throw new PAException("This scenario is currrently not handled .... " 
+                      + "Duplicate Ii of nullified is also nullified" , e2);
+                  }
+              }
+          }
+          return poCorrelationDto;
+      }
+      /**
+       * 
+       * @param isoIi iso Identifier
+       * @return Organization
+       * @throws PAException on error
+       */
+      public Organization getPAOrganizationByIi(Ii isoIi) throws PAException {
+          Organization org = null;
+          CorrelationUtils cUtils = new CorrelationUtils();
+          org = cUtils.getPAOrganizationByIi(isoIi);
+          if (org == null) {
+              OrganizationDTO poOrg = null;
+              try {
+                  poOrg = PoRegistry.getOrganizationEntityService().
+                      getOrganization(isoIi);
+              } catch (NullifiedEntityException e) {
+                 throw new PAException("This Organization is no longer available instead use ", e);
+              }
+              org = cUtils.createPAOrganization(poOrg);
+          }
+          return org;  
+      }
+      /**
+       * 
+       * @param <T> type
+       * @param isoIi ii
+       * @return sr
+       * @throws PAException e
+       */
+      public <T extends OrganizationalStructuralRole> T getOrganizationalStructuralRoleInPA(Ii isoIi)
+          throws PAException {
+          CorrelationUtils cUtils =  new CorrelationUtils();
+          CorrelationDto poDto = (CorrelationDto) getCorrelationByIi(isoIi);
+          // Step 1 : Check of PA has structural role , if not create one
+          OrganizationalStructuralRole dupSR = cUtils.getStructuralRoleByIi(DSetConverter.convertToIi(
+                  poDto.getIdentifier()));
+      if (dupSR == null) {
+          // create a new structural role 
+          dupSR = new OrganizationalStructuralRole();
+          dupSR.setOrganization(getPAOrganizationByIi(((AbstractEnhancedOrganizationRoleDTO) poDto)
+                  .getPlayerIdentifier()));
+          dupSR.setIdentifier(DSetConverter.convertToIi(poDto.getIdentifier()).getExtension());
+          dupSR.setStatusCode(cUtils.convertPORoleStatusToPARoleStatus(poDto.getStatus()));
+          return (T) cUtils.createPADomain(dupSR);
+      }
+       return null;
+      }
+      
  }

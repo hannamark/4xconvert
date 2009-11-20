@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
@@ -188,6 +189,7 @@ public class PARelationServiceBean {
         orgContacPaDto.setOrganizationIdentifier(contactDto.getOrganizationIdentifier());
         orgContacPaDto.setIdentifier(contactDto.getSrIdentifier());
         orgContacPaDto.setPersonIdentifier(contactDto.getPersonIdentifier());
+        orgContacPaDto.setTypeCode(PAConstants.RESPONSIBLE_PARTY);
         Long ocId = oc.create(orgContacPaDto);
         
         StudySiteContactDTO spcDTO = new StudySiteContactDTO();
@@ -197,8 +199,8 @@ public class PARelationServiceBean {
         emailList.add(contactDto.getEmail());
         telList.add(contactDto.getPhone());
         DSet<Tel> list = new DSet<Tel>();
-        list = DSetConverter.convertListToDSet(emailList, "EMAIL", list);
-        list = DSetConverter.convertListToDSet(telList, "PHONE", list);
+        list = DSetConverter.convertListToDSet(emailList, PAConstants.EMAIL, list);
+        list = DSetConverter.convertListToDSet(telList, PAConstants.PHONE, list);
         spcDTO.setTelecomAddresses(list);
         //
         spcDTO.setOrganizationalContactIi(IiConverter.convertToIi(ocId));

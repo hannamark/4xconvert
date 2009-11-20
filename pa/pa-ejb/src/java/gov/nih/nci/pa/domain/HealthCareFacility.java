@@ -82,12 +82,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.hibernate.validator.NotNull;
 
 
 /**
@@ -102,29 +98,10 @@ import org.hibernate.validator.NotNull;
 
 @Entity
 @Table(name = "HEALTHCARE_FACILITY")
-public class HealthCareFacility  extends StructuralRole {
+public class HealthCareFacility  extends OrganizationalStructuralRole {
 
     private static final long serialVersionUID = -5085371602155096105L;
-    private Organization organization;
     private List<StudySite> studySites = new ArrayList<StudySite>();
-
-    /**
-     *
-     * @return organization
-     */
-    @ManyToOne
-    @JoinColumn(name = "ORGANIZATION_IDENTIFIER", updatable = false)
-    @NotNull
-    public Organization getOrganization() {
-        return organization;
-    }
-    /**
-     *
-     * @param organization organization
-     */
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
     /**
      *
      * @return studySites

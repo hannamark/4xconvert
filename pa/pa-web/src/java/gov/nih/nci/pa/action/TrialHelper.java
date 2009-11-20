@@ -323,7 +323,7 @@ public class TrialHelper {
             if (!PAUtil.isIiNull(scDto.getOrganizationalContactIi())) {
                 PAContactDTO pcontact = cUtils.getContactByPAOrganizationalContactId(
                     Long.valueOf(scDto.getOrganizationalContactIi().getExtension()));
-                gtdDTO.setCentralContactIdentifier(pcontact.getSrIdentifier().getExtension());
+                gtdDTO.setCentralContactIdentifier(PAUtil.getIiExtension(pcontact.getSrIdentifier()));
                 gtdDTO.setCentralContactTitle(pcontact.getTitle());
             }
             DSet<Tel> dset = scDto.getTelecomAddresses();

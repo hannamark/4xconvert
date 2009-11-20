@@ -7,6 +7,7 @@ import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -53,6 +54,9 @@ public class OrganizationalContactConverter
              Ii ii = dto.getIdentifier();
              ii.setReliability(IdentifierReliability.ISS);
              poOcDto.setIdentifier(DSetConverter.convertIiToDset(ii));
+            }
+            if (PAUtil.isNotEmpty(dto.getTypeCode())) {
+                poOcDto.setTypeCode(CdConverter.convertStringToCd(dto.getTypeCode()));
             }
         }
         return poOcDto;

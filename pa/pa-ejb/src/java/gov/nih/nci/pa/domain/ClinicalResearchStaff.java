@@ -133,7 +133,7 @@ public class ClinicalResearchStaff  extends StructuralRole {
      * @return person person
      */
     @ManyToOne
-    @JoinColumn(name = "ORGANIZATION_IDENTIFIER", updatable = false)
+    @JoinColumn(name = "ORGANIZATION_IDENTIFIER")
     @NotNull
     public Organization getOrganization() {
         return organization;

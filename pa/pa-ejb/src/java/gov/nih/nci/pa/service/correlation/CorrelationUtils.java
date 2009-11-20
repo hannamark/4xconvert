@@ -283,7 +283,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());            
         }
-        List<T> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
+        Session session = HibernateUtil.getCurrentSession();
+        List<T> queryList = session.createQuery(hql.toString()).list();
         T sr = null;
         if (queryList.size() > 1) {
             throw new PAException(" More than 1 structural role found for a given identifier "
@@ -293,7 +294,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         if (!queryList.isEmpty()) { 
             sr = queryList.get(0);
         }
-        
+        session.flush();
         return sr;
     }
     
@@ -311,8 +312,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     <T extends StructuralRole> T getStructuralRole(T sr) throws PAException {
         
         Session s = HibernateUtil.getCurrentSession();
-        s.load(sr, sr.getId());
-        return sr;
+
+        T sr1 = (T) s.get(sr.getClass(), sr.getId());
+        s.flush();
+        return sr1;
     }
     
 
@@ -387,12 +390,12 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
 
     /**
-     *
-     * @param crs ClinicalResearchStaff
-     * @return ClinicalResearchStaff
-     * @throws PAException PAException
+     * 
+     * @param ae ae
+     * @return entity
+     * @throws PAException e
      */
-    AbstractEntity createPADomain(AbstractEntity ae) throws PAException {
+    public AbstractEntity createPADomain(AbstractEntity ae) throws PAException {
         if (ae == null) {
             LOG.error(" domain should not be null ");
             throw new PAException(" domaon should not be null ");
@@ -431,11 +434,11 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
     /**
      *
-     * @param cd
-     * @return
-     * @throws PAException
+     * @param cd cd
+     * @return sr
+     * @throws PAException e
      */
-    StructuralRoleStatusCode convertPORoleStatusToPARoleStatus(Cd cd) throws PAException {
+    public StructuralRoleStatusCode convertPORoleStatusToPARoleStatus(Cd cd) throws PAException {
         if (cd == null) {
             throw new PAException(" Cd cannot be null");
         }
