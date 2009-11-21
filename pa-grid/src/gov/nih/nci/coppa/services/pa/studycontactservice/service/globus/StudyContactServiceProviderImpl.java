@@ -74,4 +74,10 @@ public class StudyContactServiceProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchResponse search(gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchResponse();
+    boxedResult.setStudyContact(impl.search(params.getStudyContact().getStudyContact(),params.getLimitOffset().getLimitOffset()));
+    return boxedResult;
+  }
+
 }

@@ -28,5 +28,17 @@ public interface StudySiteServiceI {
 
   public gov.nih.nci.coppa.services.pa.StudySite update(gov.nih.nci.coppa.services.pa.StudySite studySite) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
+  /**
+   * search
+   *
+   * @param studySite
+   * @param limitOffset
+   * @throws PAFault
+   *	
+   * @throws TooManyResultsFault
+   *	
+   */
+  public gov.nih.nci.coppa.services.pa.StudySite[] search(gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
+
 }
 

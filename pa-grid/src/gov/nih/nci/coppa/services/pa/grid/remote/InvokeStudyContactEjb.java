@@ -71,11 +71,17 @@ public class InvokeStudyContactEjb extends InvokeStudyPaServiceEjb<StudyContactD
     /**
      * {@inheritDoc}
      */
-
-    public List<StudyContactDTO> search(StudyContactDTO arg0, LimitOffset arg1)
+    public List<StudyContactDTO> search(StudyContactDTO studyContact, LimitOffset pagingParams)
             throws PAException, TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return GridSecurityJNDIServiceLocator.newInstance().getStudyContactService()
+                        .search(studyContact, pagingParams);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (TooManyResultsException tmre) {
+            throw tmre;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
-
 }

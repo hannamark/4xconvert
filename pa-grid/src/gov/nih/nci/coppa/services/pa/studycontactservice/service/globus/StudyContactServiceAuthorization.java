@@ -114,6 +114,13 @@ public class StudyContactServiceAuthorization implements PDP {
 		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
 		 	  
 	}
+	   				
+	public void authorizeSearch(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -148,6 +155,9 @@ public class StudyContactServiceAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("delete")){
 			authorizeDelete(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("search")){
+			authorizeSearch(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

@@ -225,6 +225,33 @@
           <sequence />
         </complexType>
       </element>
+      <element name="SearchRequest">
+        <complexType>
+          <sequence>
+            <element name="studyContact">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudyContact" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="limitOffset">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:LimitOffset" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="SearchResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyContact" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
       <element name="StudyContactServiceResourceProperties">
         <complexType>
           <sequence />
@@ -281,8 +308,17 @@
   <message name="DeleteResponse">
     <part name="parameters" element="tns:DeleteResponse" />
   </message>
+  <message name="SearchRequest">
+    <part name="parameters" element="tns:SearchRequest" />
+  </message>
+  <message name="SearchResponse">
+    <part name="parameters" element="tns:SearchResponse" />
+  </message>
   <message name="PAFaultFaultMessage">
     <part name="fault" element="ns4:PAFault" />
+  </message>
+  <message name="TooManyResultsFaultFaultMessage">
+    <part name="fault" element="ns4:TooManyResultsFault" />
   </message>
   <!--============================================================
 
@@ -329,6 +365,12 @@
       <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/DeleteRequest" />
       <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/DeleteResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="search">
+      <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/SearchRequest" />
+      <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/SearchResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/PAFaultFaultMessage" />
+      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/TooManyResultsFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

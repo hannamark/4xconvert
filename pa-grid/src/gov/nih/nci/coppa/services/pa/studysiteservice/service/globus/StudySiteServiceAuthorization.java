@@ -114,6 +114,13 @@ public class StudySiteServiceAuthorization implements PDP {
 	public void authorizeGetServiceSecurityMetadata(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
+	   				
+	public void authorizeSearch(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -148,6 +155,9 @@ public class StudySiteServiceAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("getServiceSecurityMetadata")){
 			authorizeGetServiceSecurityMetadata(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("search")){
+			authorizeSearch(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

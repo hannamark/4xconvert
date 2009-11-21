@@ -68,10 +68,16 @@ public class InvokeStudySiteEjb extends InvokeStudyPaServiceEjb<StudySiteDTO> im
     /**
      * {@inheritDoc}
      */
-    public List<StudySiteDTO> search(StudySiteDTO arg0, LimitOffset arg1)
+    public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams)
             throws PAException, TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return GridSecurityJNDIServiceLocator.newInstance().getStudySiteService().search(dto, pagingParams);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (TooManyResultsException tmre) {
+            throw tmre;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
-
 }

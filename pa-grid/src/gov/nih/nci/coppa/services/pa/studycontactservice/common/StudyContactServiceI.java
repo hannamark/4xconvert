@@ -54,5 +54,17 @@ public interface StudyContactServiceI {
 
   public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
+  /**
+   * searh study contact
+   *
+   * @param studyContact
+   * @param limitOffset
+   * @throws PAFault
+   *	
+   * @throws TooManyResultsFault
+   *	
+   */
+  public gov.nih.nci.coppa.services.pa.StudyContact[] search(gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
+
 }
 

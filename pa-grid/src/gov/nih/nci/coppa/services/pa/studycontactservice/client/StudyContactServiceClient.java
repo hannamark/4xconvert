@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.services.pa.studycontactservice.client;
 
+import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyContact;
 import gov.nih.nci.coppa.services.pa.studycontactservice.common.StudyContactServiceI;
@@ -10,6 +11,8 @@ import java.rmi.RemoteException;
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 
 /**
@@ -55,6 +58,7 @@ public class StudyContactServiceClient extends StudyContactServiceClientBase imp
               // test....
               getForStudyContact(client);
               getStudyContact(client);
+              search(client);
             } else {
                 usage();
                 System.exit(1);
@@ -92,6 +96,19 @@ public class StudyContactServiceClient extends StudyContactServiceClientBase imp
             System.out.println("StudyParticipant 27439 found.");
         }
     }
+
+    private static void search(StudyContactServiceClient client) throws RemoteException {
+        StudyContact sc = new StudyContact();
+        LimitOffset limit = new LimitOffset();
+        limit.setLimit(10);
+        limit.setOffset(0);
+        StudyContact[] results = client.search(sc, limit);
+        System.out.println("search found " + results.length + " study contact objects based on source study contact");
+        for (int i = 0; i < results.length; i++) {
+            System.out.println(ToStringBuilder.reflectionToString(results[i], ToStringStyle.MULTI_LINE_STYLE));
+        }
+    }
+    
 
   public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudyContact studyContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
@@ -193,6 +210,21 @@ public class StudyContactServiceClient extends StudyContactServiceClientBase imp
     idContainer.setId(id);
     params.setId(idContainer);
     gov.nih.nci.coppa.services.pa.studycontactservice.stubs.DeleteResponse boxedResult = portType.delete(params);
+    }
+  }
+
+  public gov.nih.nci.coppa.services.pa.StudyContact[] search(gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"search");
+    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchRequest params = new gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchRequest();
+    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchRequestStudyContact studyContactContainer = new gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchRequestStudyContact();
+    studyContactContainer.setStudyContact(studyContact);
+    params.setStudyContact(studyContactContainer);
+    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.pa.studycontactservice.stubs.SearchResponse boxedResult = portType.search(params);
+    return boxedResult.getStudyContact();
     }
   }
 

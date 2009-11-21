@@ -1,5 +1,6 @@
 package gov.nih.nci.coppa.services.pa.studysiteservice.client;
 
+import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudySite;
 import gov.nih.nci.coppa.services.pa.studysiteservice.common.StudySiteServiceI;
@@ -59,6 +60,7 @@ public class StudySiteServiceClient extends StudySiteServiceClientBase implement
               // test....
               getById(client);
               getByStudyProtocol(client);
+              search(client);
             } else {
                 usage();
                 System.exit(1);
@@ -95,6 +97,20 @@ public class StudySiteServiceClient extends StudySiteServiceClientBase implement
         }
         System.out.println(ToStringBuilder.reflectionToString(stCont, ToStringStyle.MULTI_LINE_STYLE));
     }
+
+    private static void search(StudySiteServiceClient client) throws RemoteException {
+        StudySite sp = new StudySite();
+
+        LimitOffset limit = new LimitOffset();
+        limit.setLimit(10);
+        limit.setOffset(0);
+        StudySite[] results = client.search(sp, limit);
+        System.out.println("search found " + results.length + " study site objects based on source study site");
+        for (int i = 0; i < results.length; i++) {
+            System.out.println(ToStringBuilder.reflectionToString(results[i], ToStringStyle.MULTI_LINE_STYLE));
+        }
+    }
+    
 
   public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
@@ -195,6 +211,21 @@ public class StudySiteServiceClient extends StudySiteServiceClientBase implement
     studySiteContainer.setStudySite(studySite);
     params.setStudySite(studySiteContainer);
     gov.nih.nci.coppa.services.pa.studysiteservice.stubs.UpdateResponse boxedResult = portType.update(params);
+    return boxedResult.getStudySite();
+    }
+  }
+
+  public gov.nih.nci.coppa.services.pa.StudySite[] search(gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"search");
+    gov.nih.nci.coppa.services.pa.studysiteservice.stubs.SearchRequest params = new gov.nih.nci.coppa.services.pa.studysiteservice.stubs.SearchRequest();
+    gov.nih.nci.coppa.services.pa.studysiteservice.stubs.SearchRequestStudySite studySiteContainer = new gov.nih.nci.coppa.services.pa.studysiteservice.stubs.SearchRequestStudySite();
+    studySiteContainer.setStudySite(studySite);
+    params.setStudySite(studySiteContainer);
+    gov.nih.nci.coppa.services.pa.studysiteservice.stubs.SearchRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.pa.studysiteservice.stubs.SearchRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.pa.studysiteservice.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getStudySite();
     }
   }

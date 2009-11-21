@@ -1,6 +1,8 @@
 package gov.nih.nci.coppa.services.pa.studycontactservice.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.StudyContact;
 import gov.nih.nci.coppa.services.pa.grid.GenericStudyPaGridServiceImpl;
@@ -66,6 +68,26 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
       }
   }
 
+  public gov.nih.nci.coppa.services.pa.StudyContact[] search(gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+      try {
+          LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
+          StudyContactDTO sc = StudyContactTransformer.INSTANCE.toDto(studyContact);
+          List<StudyContactDTO> results = studyContactService.search(sc, limitOffsetDTO);
+          if (results == null) {
+              return null;
+          }
+          StudyContact[] returnResults = new StudyContact[results.size()];
+          int i = 0;
+          for (StudyContactDTO res : results) {
+              returnResults[i++] = StudyContactTransformer.INSTANCE.toXml(res);
+          }
+          return returnResults;
+      } catch (Exception e) {
+          logger.error("SEARCH:STUDYSITE", e);
+          throw FaultUtil.reThrowRemote(e);
+      }
+    }
+  
   public gov.nih.nci.coppa.services.pa.StudyContact[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       return impl.getByStudyProtocol(id);
   }
