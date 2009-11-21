@@ -123,6 +123,11 @@ public class ISDesignDetailsWebDTO {
     private String cdeVersionNumber;
     private String cdeCategoryCode;
     
+    private String toEmail;
+    private String subject;
+    private String message;
+    
+    
     
     /**
      * @return the cdePublicIdentifier
@@ -473,6 +478,42 @@ public class ISDesignDetailsWebDTO {
      */
      public void setCdeCategoryCode(String cdeCategoryCode) {
        this.cdeCategoryCode = cdeCategoryCode;
+     }
+    /**
+     * @return the toEmail
+     */
+     public String getToEmail() {
+       return toEmail;
+     }
+    /**
+     * @param toEmail the toEmail to set
+     */
+     public void setToEmail(String toEmail) {
+       this.toEmail = toEmail;
+     }
+    /**
+     * @return the subject
+     */
+     public String getSubject() {
+       return subject;
+     }
+    /**
+     * @param subject the subject to set
+     */
+     public void setSubject(String subject) {
+       this.subject = subject;
+     }
+    /**
+     * @return the message
+     */
+     public String getMessage() {
+       return message;
+     }
+    /**
+     * @param message the message to set
+     */
+     public void setMessage(String message) {
+       this.message = message;
      }
     
 }

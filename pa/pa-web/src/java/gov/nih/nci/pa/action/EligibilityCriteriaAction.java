@@ -142,7 +142,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static final int MAXIMUM_CHAR_POPULATION = 800;
     private static final int MAXIMUM_CHAR_DESCRIPTION = 5000;
     private static final String SP = " ";
-    private static final String BR = "<br>";
+    private static final String BR = " ;";
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
     private Long id = null;
     private String page;
@@ -170,6 +170,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static String cdeDatatype;
     private static final String DISPLAY_CDE = "displaycde";
     private static String cdeCategoryCode;
+    private static String cdeRequestToEmail;
+    private static String cdeRequestSubject;
     
   
     /**
@@ -252,8 +254,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
             
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        }   
-      
+        }        
         return CSIS;
     }
   
@@ -383,7 +384,10 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @return the string
      */
     public String requestToCreateCDE() {
-       return REQUEST_TO_CREATE_CDE;
+        webDTO.setToEmail(cdeRequestToEmail);
+        webDTO.setSubject(cdeRequestSubject);
+        webDTO.setMessage("Create the CDE :");
+        return REQUEST_TO_CREATE_CDE;
     }
     
     /**
@@ -406,7 +410,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
         }
         if (err.length() > 0) {
            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, err.toString());
-           return REQUEST_TO_CREATE_CDE;
+           return requestToCreateCDE();
         } else {
           PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
           ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "CDE Request sent successfully");
@@ -414,7 +418,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     } catch (PAException e) {
        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
     }
-    return REQUEST_TO_CREATE_CDE;
+    return requestToCreateCDE();
   }
   /**
    * @return res
@@ -761,6 +765,9 @@ public class EligibilityCriteriaAction extends ActionSupport {
             webdto.setStructuredType("Unstructured");
           } 
         }
+      if (dto.getSubcategoryCode().getCode() != null) {
+        webdto.setCdeCategoryCode(dto.getSubcategoryCode().getCode());
+      }
     }
     return webdto;
   }
@@ -815,6 +822,9 @@ public class EligibilityCriteriaAction extends ActionSupport {
   
   private void enforceEligibilityBusinessRules() throws PAException {
    
+   if (PAUtil.isEmpty(webDTO.getStructuredType())) {
+    addFieldError("webDTO.structuredType", getText("error.structuredType.mandatory"));
+   }
    String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());  
    if (ruleError.length() > 0) {
       addFieldError("webDTO.displayOrder", ruleError);  
@@ -1163,6 +1173,9 @@ public class EligibilityCriteriaAction extends ActionSupport {
   private void retrieveFromPaProperties() throws PAException {
      cadsrCsId = Long.parseLong(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_ID"));
      cadsrCsVersion = Float.parseFloat(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_VERSION"));
+     cdeRequestToEmail = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL");
+     cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT");
+          
   }
      /**
      * 

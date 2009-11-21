@@ -202,7 +202,7 @@ function loadDetails(id, divName,className){
                 </tr>
                 <tr>
                         <td scope="row"  class="label"><label>
-                            <fmt:message key="isdesign.eligibilitycriteria.structuredOrUnstructured"/>:</label>
+                            <fmt:message key="isdesign.eligibilitycriteria.structuredOrUnstructured"/><span class="required">*</span>:</label>
                         </td>
                         <td class="value">   
                             <s:if test="%{webDTO.structuredType == 'Structured'}">

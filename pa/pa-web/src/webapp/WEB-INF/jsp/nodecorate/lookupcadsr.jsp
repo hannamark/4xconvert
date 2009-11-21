@@ -38,6 +38,14 @@
         document.getElementById("searchcaDSR").style.display="none";
         document.getElementById("getCadsr").style.display="none";
         document.getElementById("cdeRequestEmail").style.display="";
+        var url = '/pa/protected/popupCadsrrequestToCreateCDE.action';
+            var div = document.getElementById('cdeRequestEmail');
+            div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+            var aj = new Ajax.Updater(div,url, {
+                asynchronous: true,
+                method: 'get',
+                evalScripts: false
+        });
     }
     
    

@@ -24,8 +24,15 @@ function handleMailAction(){
             </div>
             <h2>Email: Request to create CDE</h2>
             <table class="form">
+                 <tr>
+                    <td scope="row" class="label"><s:label for="toEmail">To Email:</s:label>                  
+                    <td class="value" colspan="2">
+                        
+                        <s:textfield id="toEmail" name="webDTO.ToEmail" readonly="true" cssClass="readonly"  cssStyle="height: 25px"/>                                        
+                    </td>                   
+                </tr>
                 <tr>
-                    <td scope="row" class="label"><s:label for="fromEmail">Email:</s:label><span class="required">*</span></td>
+                    <td scope="row" class="label"><s:label for="fromEmail">Sender's Email:</s:label><span class="required">*</span></td>
                   
                     <td class="value" colspan="2">
                         
@@ -36,6 +43,13 @@ function handleMailAction(){
                               <s:param>webDTO.fromEmail</s:param>
                               </s:fielderror>                            
                         </span>                     
+                    </td>                   
+                </tr>                
+                 <tr>
+                    <td scope="row" class="label"><s:label for="subject">Subject:</s:label>                  
+                    <td class="value" colspan="2">
+                        
+                        <s:textfield id="subject" name="webDTO.subject" readonly="true" cssClass="readonly"  cssStyle="height: 25px"/>                                        
                     </td>                   
                 </tr>
                 <tr>

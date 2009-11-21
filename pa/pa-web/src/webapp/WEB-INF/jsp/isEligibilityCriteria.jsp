@@ -25,8 +25,8 @@ function callOnloadFunctions(){
 }
 
 function handleAction(){
- 	document.forms[0].action="eligibilityCriteriasave.action";
- 	document.forms[0].submit(); 
+    document.forms[0].action="eligibilityCriteriasave.action";
+    document.forms[0].submit(); 
 } 
 function handleReOrderAction(){
     document.forms[0].action="eligibilityCriteriareOrder.action";
@@ -72,7 +72,7 @@ BubbleTips.activateTipOn("dfn");
                 <fmt:message key="osdesign.eligibilitycriteria.samplingMethod"/><span class="required">*</span></label>
             </td>   
                <s:set name="samplingMethodValues" value="@gov.nih.nci.pa.enums.SamplingMethodCode@getDisplayNames()" />
-			  <td class="value">
+              <td class="value">
                 <s:select headerKey="" headerValue="" 
                         name="samplingMethodCode" 
                         list="#samplingMethodValues"  
@@ -85,19 +85,19 @@ BubbleTips.activateTipOn("dfn");
             </td>
         </tr>
     </c:if>
-	<tr>
-		<td scope="row"  class="label"><label>
-			<fmt:message key="isdesign.eligibilitycriteria.ahv"/><span class="required">*</span></label>
-		 </td> <td class="value">   
-			<s:select name="acceptHealthyVolunteersIndicator" list="#{'':'','false':'No', 'true':'Yes'}" />
-			<span class="formErrorMsg"> 
+    <tr>
+        <td scope="row"  class="label"><label>
+            <fmt:message key="isdesign.eligibilitycriteria.ahv"/><span class="required">*</span></label>
+         </td> <td class="value">   
+            <s:select name="acceptHealthyVolunteersIndicator" list="#{'':'','false':'No', 'true':'Yes'}" />
+            <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>acceptHealthyVolunteersIndicator</s:param>
                    </s:fielderror>                            
              </span>
-		</td>
-	</tr>
-	<tr>
+        </td>
+    </tr>
+    <tr>
          <td scope="row" class="label">
          <label for="fileName">
                 <fmt:message key="isdesign.eligibilitycriteria.eligibleGender"/><span class="required">*</span>
@@ -106,9 +106,9 @@ BubbleTips.activateTipOn("dfn");
         <s:set name="genderValues" value="@gov.nih.nci.pa.enums.EligibleGenderCode@getDisplayNames()" />
        <td class="value">   
             <s:select headerKey="" headerValue="" 
-               		name="eligibleGenderCode" 
-               		list="#genderValues"  
-               		cssStyle="width:75px" /> 
+                    name="eligibleGenderCode" 
+                    list="#genderValues"  
+                    cssStyle="width:75px" /> 
             <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>eligibleGenderCode</s:param>
@@ -123,8 +123,8 @@ BubbleTips.activateTipOn("dfn");
                 <fmt:message key="isdesign.eligibilitycriteria.minimumAge"/><span class="required">*</span>
          </label>
          </td> <td class="value" colspan="2">    
-				<s:textfield name="minimumValue" maxlength="12" cssStyle="width:85px" />
-               	<span class="formErrorMsg"> 
+                <s:textfield name="minimumValue" maxlength="12" cssStyle="width:85px" />
+                <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>minimumValue</s:param>
                    </s:fielderror>                            
@@ -147,12 +147,12 @@ BubbleTips.activateTipOn("dfn");
                 <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">*</span>
          </label>
          </td> 
-		<s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
+        <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
        <td class="value" colspan="2">   
             <s:select headerKey="" headerValue="" 
-               		name="valueUnit" 
-               		list="#unitsValues"  
-               		cssStyle="width:76px" /> 
+                    name="valueUnit" 
+                    list="#unitsValues"  
+                    cssStyle="width:76px" /> 
             <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>valueUnit</s:param>
@@ -162,11 +162,11 @@ BubbleTips.activateTipOn("dfn");
           </td>           
     </tr> 
     <tr> 
-		<td/>
-		<td class="info" colspan="2">Write 0 if no min age is indicated</td>
-		<td/>
-		<td class="info" colspan="2">Write 999 if no max age is indicated and select 'Years' as Unit</td>
-	</tr> 		                                     
+        <td/>
+        <td class="info" colspan="2">Write 0 if no min age is indicated</td>
+        <td/>
+        <td class="info" colspan="2">Write 999 if no max age is indicated and select 'Years' as Unit</td>
+    </tr>                                            
     </table>
     <h2><fmt:message key="eligibilitycriteria.other" /></h2>
     <s:if test="eligibilityList != null" >
@@ -203,7 +203,19 @@ BubbleTips.activateTipOn("dfn");
                         <s:textfield  name="eligibilityList[%{#stat.index}].operator" value="%{operator}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
+                        <s:if test="%{eligibilityList[#stat.index].valueText != null}">
+                       <s:textfield  name="eligibilityList[%{#stat.index}].valueText" value="%{valueText}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                       </s:if>
+                       <s:elseif test="%{eligibilityList[#stat.index].valueIntegerMin != null || eligibilityList[#stat.index].valueIntegerMax != null}">
+                        Min:<s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMin" value="%{valueIntegerMin}" cssStyle="width:20px;border: 1px solid #FFFFFF" readonly="true"/> 
+                        <s:if test="%{eligibilityList[#stat.index].valueIntegerMax != null}">
+                        Max:<s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMax" value="%{valueIntegerMax}" cssStyle="width:20px;border: 1px solid #FFFFFF" readonly="true"/>
+                        </s:if>
+                       </s:elseif>
+                       <s:else>
                         <s:textfield  name="eligibilityList[%{#stat.index}].value" value="%{value}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                       </s:else> 
+                       
                        </td>
                        <td class="tdBoxed">
                         <s:textfield  name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
@@ -238,11 +250,11 @@ BubbleTips.activateTipOn("dfn");
            </td></tr></table>
        </s:if>
    
-   	<div class="actionsrow">
+    <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
                 <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                					|| (sessionScope.role == 'SuAbstractor')}">
+                                    || (sessionScope.role == 'SuAbstractor')}">
                 <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
                 <s:if test="eligibilityList != null" >
                 <li><s:a href="#" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span class="save">Re-Order</span></span></s:a></li>
@@ -252,9 +264,9 @@ BubbleTips.activateTipOn("dfn");
                </s:if>
                 </c:if>
                 <!-- 
-				<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-				<li><a href="disease.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
-				 -->                
+                <li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+                <li><a href="disease.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+                 -->                
             </ul>   
         </del>
     </div> 
