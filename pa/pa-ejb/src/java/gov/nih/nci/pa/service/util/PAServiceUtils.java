@@ -1297,5 +1297,50 @@ public class PAServiceUtils {
       }
        return null;
       }
-      
+      /**
+       * @param nullifiedIi ii
+       * @return ii
+       * @throws PAException e
+       */
+      public Ii getDuplicateIiOfNullifiedSR(Ii nullifiedIi) throws PAException {
+          Ii dupSRIi = null;
+          try {
+             CorrelationService<PoDto> correlationService = getPoService(nullifiedIi);
+              correlationService.getCorrelation(nullifiedIi);
+          } catch (NullifiedRoleException e) {
+            // SR is nullified, find out if it has any duplicates
+            Ii nullfiedIi = null;
+            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+            for (Ii tmp : nullifiedEntities.keySet()) {
+                if (tmp.getExtension().equals(nullifiedIi.getExtension())) {
+                    nullfiedIi = tmp;
+                }
+            }
+            if (nullfiedIi != null) {
+                //this scenario is sr nullification with duplicate
+                dupSRIi = nullifiedEntities.get(nullfiedIi);
+            } 
+          }
+          return dupSRIi;
+      }
+      /**
+       * 
+       * @param <T> type 
+       * @param poIi poIi
+       * @param srDTO srdto
+       * @return srdto
+       * @throws PAException e
+       */
+      public <T extends OrganizationalStructuralRole> T updateScoper(Ii poIi, T srDTO) throws PAException {
+          String poOrgIi = poIi.getExtension();
+          String paOrgAssignedId = srDTO.getOrganization().getIdentifier();
+          if (PAUtil.isNotEmpty(poOrgIi) && PAUtil.isNotEmpty(paOrgAssignedId) 
+                  && !poOrgIi.equalsIgnoreCase(paOrgAssignedId)) {
+              //this means scoper is changed. check if exist in PA if not create and update the SR
+              Organization paOrg = getPAOrganizationByIi(poIi);
+              srDTO.setOrganization(paOrg);
+          }
+          return srDTO;
+      }
+
  }
