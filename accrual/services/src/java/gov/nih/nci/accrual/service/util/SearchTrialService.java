@@ -116,4 +116,10 @@ public interface SearchTrialService {
      * @throws RemoteException exception
      */
     SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException;
+    /**
+     * @return studyProtocolIi for outcomes
+     * @throws RemoteException exception
+     */
+    Ii getOutcomesStudyProtocolIi() throws RemoteException;
+
 }

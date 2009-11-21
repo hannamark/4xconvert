@@ -110,6 +110,7 @@ public class StudySubject extends Subject {
     private Patient patient;
     private StudySite studySite;
     private Disease disease;
+    private String outcomesLoginName;
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
 
     /**
@@ -195,5 +196,18 @@ public class StudySubject extends Subject {
      */
     public void setPerformedActivities(List<PerformedActivity> performedActivities) {
         this.performedActivities = performedActivities;
+    }
+    /**
+     * @return the outcomesLoginName
+     */
+    @Column(name = "outcomes_login_name")
+    public String getOutcomesLoginName() {
+        return outcomesLoginName;
+    }
+    /**
+     * @param outcomesLoginName the outcomesLoginName to set
+     */
+    public void setOutcomesLoginName(String outcomesLoginName) {
+        this.outcomesLoginName = outcomesLoginName;
     }
 }

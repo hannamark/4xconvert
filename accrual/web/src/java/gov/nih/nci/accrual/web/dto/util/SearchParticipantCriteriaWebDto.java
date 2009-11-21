@@ -84,11 +84,9 @@ import gov.nih.nci.accrual.util.AccrualUtil;
  * @author Hugh Reinhart
  * @since Sep 21, 2009
  */
-public class SearchPatientsCriteriaWebDto {
+public class SearchParticipantCriteriaWebDto {
     private String assignedIdentifier;
-    private Long studySiteId;
     private String birthDate;
-    private String statusCode;
     /**
      * @return the assignedIdentifier
      */
@@ -112,29 +110,5 @@ public class SearchPatientsCriteriaWebDto {
      */
     public void setBirthDate(String birthDate) {
         this.birthDate = AccrualUtil.normalizeYearMonthString(birthDate);
-    }
-    /**
-     * @return the statusCode
-     */
-    public String getStatusCode() {
-        return statusCode;
-    }
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-    /**
-     * @return the studySiteId
-     */
-    public Long getStudySiteId() {
-        return studySiteId;
-    }
-    /**
-     * @param studySiteId the studySiteId to set
-     */
-    public void setStudySiteId(Long studySiteId) {
-        this.studySiteId = studySiteId;
     }
 }

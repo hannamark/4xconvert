@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.web.util;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -168,6 +169,22 @@ public class MockStudySubjectBean implements StudySubjectService {
      * {@inheritDoc}
      */
     public List<StudySubjectDto> getByStudyProtocol(Ii ii) throws RemoteException {
+        return ssList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySubjectDto createOutcomes(StudySubjectDto dto)
+            throws RemoteException {
+        return create(dto);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudySubjectDto> getOutcomes(St outcomesLoginName)
+            throws RemoteException {
         return ssList;
     }
 

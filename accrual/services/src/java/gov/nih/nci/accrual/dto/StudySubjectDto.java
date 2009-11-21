@@ -99,6 +99,7 @@ public class StudySubjectDto extends AbstractStudyDto {
     private Cd paymentMethodCode;
     private Cd statusCode;
     private Ivl<Ts> statusDateRange;
+    private St outcomesLoginName;
     /**
      * @return the assignedIdentifier
      */
@@ -182,5 +183,17 @@ public class StudySubjectDto extends AbstractStudyDto {
      */
     public void setDiseaseIdentifier(Ii diseaseIdentifier) {
         this.diseaseIdentifier = diseaseIdentifier;
+    }
+    /**
+     * @return the outcomesLoginName
+     */
+    public St getOutcomesLoginName() {
+        return outcomesLoginName;
+    }
+    /**
+     * @param outcomesLoginName the outcomesLoginName to set
+     */
+    public void setOutcomesLoginName(St outcomesLoginName) {
+        this.outcomesLoginName = outcomesLoginName;
     }
 }

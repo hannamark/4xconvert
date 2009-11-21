@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
@@ -88,20 +87,12 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
-
-import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
-import java.sql.Timestamp;
-import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -114,7 +105,6 @@ import com.opensymphony.xwork2.Preparable;
  */
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
-
     /** SearchTrialService. */
     protected SearchTrialService searchTrialSvc;
     /** SearchStudySiteService. */
@@ -191,51 +181,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected St getAuthorizedUser() {
         return StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser());
     }
-    /**
-     * @return the spIi
-     */
-    public Ii getSpIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_SPII);
-    }
-    /**
-     * @return cutoff date for current submission
-     */
-    public Timestamp getCutOffDate() {
-        return (Timestamp) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE);
-    }
-    /**
-     * @param spIi the spIi to set
-     * @param spIi
-     * @throws GeneralSecurityException authorization exception
-     * @throws RemoteException exception
-     */
-    public void setSpIi(Ii spIi) throws GeneralSecurityException, RemoteException {
-        if (PAUtil.isIiNull(spIi)) {
-            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, null);
-        } else {
-            if (BlConverter.covertToBool(searchTrialSvc.isAuthorized(spIi, getAuthorizedUser()))) {
-                ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, spIi);
 
-                List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
-                Boolean isOpen = false;
-                Timestamp cutOffDate = null;
-                for (SubmissionDto sDto : listOfSubmissions) {
-                    if (sDto.getStatusCode().getCode().equalsIgnoreCase("Opened")) {
-                      isOpen = true;
-                      cutOffDate = TsConverter.convertToTimestamp(sDto.getCutOffDate());
-                    }
-                }
-                ServletActionContext.getRequest().getSession().
-                        setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, isOpen);
-                ServletActionContext.getRequest().getSession().
-                        setAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE, cutOffDate);
-            } else {
-                throw new GeneralSecurityException("Authorization exception in AbstractAccrualAction.setSpIi().");
-            }
-        }
-    }
     /**
      * @param value object being tested
      * @param errorMsg action error message to put on stack if object is empty
@@ -257,7 +203,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @param fieldName fieldName
      * @param errorMessage action error message to put on stack if object is empty
      */
-    public void addFieldErrorIfEmpty(Object fieldValue, String fieldName, String errorMessage) {    
+    public void addFieldErrorIfEmpty(Object fieldValue, String fieldName, String errorMessage) {
         if (fieldValue instanceof String) {
             if (PAUtil.isEmpty((String) fieldValue)) {
                 addFieldError(fieldName, errorMessage);
@@ -268,7 +214,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
             }
         }
     }
-    
+
     /**
      * @param nextTarget the nextTarget to set
      */

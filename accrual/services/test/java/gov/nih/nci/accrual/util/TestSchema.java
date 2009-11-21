@@ -83,7 +83,6 @@ import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.domain.PerformedProcedure;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedClinicalResult;
 import gov.nih.nci.pa.domain.PerformedDiagnosis;
@@ -93,6 +92,7 @@ import gov.nih.nci.pa.domain.PerformedImaging;
 import gov.nih.nci.pa.domain.PerformedLesionDescription;
 import gov.nih.nci.pa.domain.PerformedMedicalHistoryResult;
 import gov.nih.nci.pa.domain.PerformedObservation;
+import gov.nih.nci.pa.domain.PerformedProcedure;
 import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
@@ -165,6 +165,9 @@ public class TestSchema {
     public static List<PlannedActivity> plannedActivities;
     public static List<PerformedActivity> performedActivities;
     public static List<ActivityRelationship> activityRelationships;
+
+    public static int outcomesSpId = 0;
+    public static int outcomesSsId = 0;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -416,6 +419,26 @@ public class TestSchema {
         addUpdObject(ss);
         studySites.add(ss);
 
+        // Outcomes SP
+        outcomesSpId = studyProtocols.size();
+        sp = new StudyProtocol();
+        sp.setIdentifier("Outcomes");
+        sp.setSubmissionNumber(1);
+        addUpdObject(sp);
+        studyProtocols.add(sp);
+
+        outcomesSsId = studySites.size();
+        ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("Outcomes");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(healthCareFacilities.get(0));
+        ss.setStudyProtocol(sp);
+        addUpdObject(ss);
+        studySites.add(ss);
+
+
+
         // StudySiteAccrualAccess
         StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
         ssaa.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
@@ -657,21 +680,21 @@ public class TestSchema {
         pld.setPerformedObservation(performedObservation);
         addUpdObject(pld);
         performedLesionDescriptions.add(pld);
-        
+
         PlannedActivity pa = new PlannedActivity();
         pa.setCategoryCode(ActivityCategoryCode.OTHER);
         pa.setTextDescription("PlannedActivity");
         pa.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(pa);
         plannedActivities.add(pa);
-        
+
         PerformedActivity pera = new PerformedActivity();
         pera.setCategoryCode(ActivityCategoryCode.OTHER);
         pera.setTextDescription("PerformedActivity");
         pera.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(pera);
         performedActivities.add(pera);
-        
+
         ActivityRelationship ar = new ActivityRelationship();
         ar.setTypeCode("ActivityRelationship");
         ar.setPlannedActivity(pa);

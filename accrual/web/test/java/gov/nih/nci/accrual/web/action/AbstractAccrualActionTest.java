@@ -84,9 +84,6 @@ import gov.nih.nci.accrual.web.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.web.util.MockServiceLocator;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
@@ -215,13 +212,6 @@ public class AbstractAccrualActionTest {
        assertNotNull(action.getSelectedRowIdentifier());
     }
 
-    @Test
-    public void cutOffDatePropertyTest() {
-        Timestamp testDate = new Timestamp(new Date().getTime());
-        setCutOffDate(testDate);
-        assertEquals(testDate, action.getCutOffDate());
-    }
-
     /**
      * Clean out the action context to ensure one test does not impact another.
      */
@@ -244,15 +234,6 @@ public class AbstractAccrualActionTest {
                     AccrualConstants.DISCLAIMER_ACCEPTED);
         } else {
             ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
-        }
-    }
-
-    public void setCutOffDate(Timestamp value) {
-        if (value != null) {
-            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE,
-                    value);
-        } else {
-            ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE);
         }
     }
 }

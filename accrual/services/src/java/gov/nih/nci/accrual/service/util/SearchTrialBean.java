@@ -131,10 +131,14 @@ public class SearchTrialBean implements SearchTrialService {
     private static final int SOS_STATUS_IDX = 5;
     private static final int PERSON_IDX = 6;
 
+    private static final String UNCHECKED = "unchecked";
+
+    private static Ii outcomesSpIi = null;
+
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,  St authorizedUser)
             throws RemoteException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
@@ -171,7 +175,7 @@ public class SearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException {
         SearchTrialResultDto result = new SearchTrialResultDto();
         Session session = null;
@@ -222,7 +226,35 @@ public class SearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
+    public Ii getOutcomesStudyProtocolIi() throws RemoteException {
+        if (outcomesSpIi == null) {
+            Session session = null;
+            List<Long> queryList = new ArrayList<Long>();
+            try {
+                session = AccrualHibernateUtil.getCurrentSession();
+                Query query = null;
+                String hql = "select sp.id "
+                           + "from StudyProtocol sp "
+                           + "where sp.identifier = 'Outcomes' "
+                           + "order by sp.id ";
+                query = session.createQuery(hql);
+                queryList = query.list();
+            } catch (HibernateException hbe) {
+                throw new RemoteException("Hibernate exception in getOutcomesStudyProtocolIi().", hbe);
+            }
+            if (queryList.size() < 1) {
+                throw new RemoteException("Outcomes StudyProtocol not found.");
+            }
+            outcomesSpIi = IiConverter.convertToStudyProtocolIi(queryList.get(0));
+        }
+        return outcomesSpIi;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings(UNCHECKED)
     private Set<Long> getAuthorizedTrials(St user) throws RemoteException {
         Set<Long> result = new HashSet<Long>();
         User csmUser = AccrualCsmUtil.getInstance().getCSMUser(StConverter.convertToString(user));

@@ -105,6 +105,7 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         dto.setStudyProtocolIdentifier(iiVal);
         dto.setStudySiteIdentifier(iiVal);
         dto.setDiseaseIdentifier(iiVal);
+        dto.setOutcomesLoginName(stVal);
 
         StudySubject bo = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(dto);
         StudySubjectDto r = Converters.get(StudySubjectConverter.class).convertFromDomainToDto(bo);
@@ -117,5 +118,6 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(iiTest(r.getStudyProtocolIdentifier()));
         assertTrue(iiTest(r.getStudySiteIdentifier()));
         assertTrue(iiTest(r.getDiseaseIdentifier()));
+        assertTrue(stTest(r.getOutcomesLoginName()));
     }
 }

@@ -84,19 +84,6 @@
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
         </action>
 
-        <action name="patients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">
-            <result>/WEB-INF/jsp/searchPatients.jsp</result>
-            <result name="detail">/WEB-INF/jsp/searchPatientsDetail.jsp</result>
-        </action>
-        
-        <action name="ajaxpatients*" class="gov.nih.nci.accrual.web.action.PatientAction" method="{1}">
-            <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
-        </action>
-        
-        <action name="popup*" class="gov.nih.nci.accrual.web.action.PopUpAction" method="{1}">
-            <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
-        </action>
-    
         <action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action">
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
@@ -156,5 +143,8 @@
             <result name="input">/WEB-INF/jsp/nodecorate/lookupDisplayList.jsp</result>
         </action>
     	
+        <action name="popup*" class="gov.nih.nci.accrual.web.action.PopUpAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
+        </action>
     </package>
 </struts>

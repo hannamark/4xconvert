@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -100,4 +101,19 @@ public interface StudySubjectService
      * @throws RemoteException exception
      */
     List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException;
+
+    /**
+     * @return list of outcomes study subjects for the user
+     * @param outcomesLoginName login name of outcomes user
+     * @throws RemoteException exception
+     */
+    List<StudySubjectDto> getOutcomes(St outcomesLoginName) throws RemoteException;
+
+    /**
+     * @param dto study subject iso dto
+     * @return created study subject iso dto
+     * @throws RemoteException exception
+     */
+    StudySubjectDto createOutcomes(StudySubjectDto dto) throws RemoteException;
+
 }

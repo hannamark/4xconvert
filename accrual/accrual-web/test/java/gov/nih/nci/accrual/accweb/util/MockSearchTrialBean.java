@@ -169,4 +169,12 @@ public class MockSearchTrialBean implements SearchTrialService {
     public Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException {
         return BlConverter.convertToBl(true);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Ii getOutcomesStudyProtocolIi() throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

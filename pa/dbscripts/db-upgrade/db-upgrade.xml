@@ -296,4 +296,8 @@
         <comment>execute accrual_dev_24123.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24123.sql"/>
     </changeSet>
+    <changeSet id="73" author="Hugh">
+        <comment>execute accrual_dev_24168.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24168.sql"/>
+    </changeSet>
 </databaseChangeLog>

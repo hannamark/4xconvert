@@ -78,9 +78,13 @@
 */
 package gov.nih.nci.accrual.web.dto.util;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -91,31 +95,26 @@ import org.junit.Test;
  */
 public class PatientWebDtoTest {
 
-   PatientWebDto patientWebDto;
+   ParticipantWebDto patientWebDto;
 
 
     @Before
     public void initDto() {
-      patientWebDto = new PatientWebDto();
-      patientWebDto.setAssignedIdentifier("assignedIdentifier");
+      patientWebDto = new ParticipantWebDto();
+      patientWebDto.setAssignedIdentifier(StConverter.convertToSt("assignedIdentifier"));
       patientWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1977/01"));
       patientWebDto.setCountryIdentifier(Long.valueOf(1));
-      patientWebDto.setDiseaseIdentifier(Long.valueOf(1));
-      patientWebDto.setDiseasePreferredName("diseasePreferredName");
+      patientWebDto.setDiseaseIdentifier(IiConverter.convertToIi(1L));
       patientWebDto.setEthnicCode("ethnicCode");
       patientWebDto.setGenderCode("genderCode");
       patientWebDto.setIdentifier("identifier");
       patientWebDto.setPatientId(Long.valueOf(1));
       patientWebDto.setPaymentMethodCode("paymentMethodCode");
-      patientWebDto.setPerformedSubjectMilestoneId(Long.valueOf(1));
       patientWebDto.setPoIdentifier(Long.valueOf(1));
       //patientWebDto.setRaceCode("");
-      patientWebDto.setRegistrationDate("1/1/2009");
       patientWebDto.setStatusCode("statusCode");
-      patientWebDto.setStudyProtocolId(Long.valueOf(1));
-      patientWebDto.setStudySiteId(Long.valueOf(1));
-      patientWebDto.setStudySubjectId(Long.valueOf(1));
-      patientWebDto.setZip("zip");
+      patientWebDto.setStudyProtocolIi(IiConverter.convertToIi(1L));
+      patientWebDto.setStudySubjectIi(IiConverter.convertToIi(1L));
 
 
     }
@@ -138,11 +137,6 @@ public class PatientWebDtoTest {
     @Test
     public void diseaseIdentifierPropertyTest() {
        assertNotNull(patientWebDto.getDiseaseIdentifier());
-    }
-
-    @Test
-    public void diseasePreferredNamePropertyTest() {
-       assertNotNull(patientWebDto.getDiseasePreferredName());
     }
 
     @Test
@@ -171,18 +165,8 @@ public class PatientWebDtoTest {
     }
 
     @Test
-    public void performedSubjectMilestoneIdPropertyTest() {
-      assertNotNull(patientWebDto.getPerformedSubjectMilestoneId());
-    }
-
-    @Test
     public void poIdentifierPropertyTest() {
       assertNotNull(patientWebDto.getPoIdentifier());
-    }
-
-    @Test
-    public void registrationDatePropertyTest() {
-      assertNotNull(patientWebDto.getRegistrationDate());
     }
 
     @Test
@@ -191,33 +175,17 @@ public class PatientWebDtoTest {
     }
 
     @Test
-    public void studyProtocolIdPropertyTest() {
-      assertNotNull(patientWebDto.getStudyProtocolId());
-    }
-
-    @Test
-    public void studySiteIdPropertyTest() {
-      assertNotNull(patientWebDto.getStudySiteId());
+    public void studyProtocolIiPropertyTest() {
+        assertFalse(PAUtil.isIiNull(patientWebDto.getStudyProtocolIi()));
     }
 
     @Test
     public void studySubjectIdPropertyTest() {
-      assertNotNull(patientWebDto.getStudySubjectId());
-    }
-
-    @Test
-    public void zipPropertyTest() {
-      assertNotNull(patientWebDto.getZip());
+        assertFalse(PAUtil.isIiNull(patientWebDto.getStudySubjectIi()));
     }
 
     @Test
     public void countryNameTest() {
       assertNull(patientWebDto.getCountryName());
     }
-
-    @Test
-    public void organizationNamePropertyTest() {
-      assertNull(patientWebDto.getOrganizationName());
-    }
-
 }

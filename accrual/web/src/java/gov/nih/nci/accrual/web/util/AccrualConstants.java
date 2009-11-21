@@ -85,8 +85,6 @@ package gov.nih.nci.accrual.web.util;
  */
 public final class AccrualConstants {
 
-    /** Attribute used to store the authorized user in session. */
-    public static final String SESSION_ATTR_AUTHORIZED_USER = "authorizedUser";
     /** Attribute used to store the role in session. */
     public static final String SESSION_ATTR_ROLE = "accrualRole";
     /** Role-name for the outcomes role. */
@@ -95,12 +93,21 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_DISCLAIMER = "accrualDisclaimer";
     /** Role-name for the public role. */
     public static final String DISCLAIMER_ACCEPTED = "Accepted";
-    /** Role-name for the public role. */
-    public static final String SESSION_ATTR_SPII = "studyProtocolIi";
-    /** Attribute to check if there is a submission opened. */
-    public static final String SESSION_ATTR_IS_SUBMISSION_OPENED = "submissionOpened";
-    /** Attribute to check if there is a submission opened. */
-    public static final String SESSION_ATTR_SUBMISSION_CUTOFF_DATE = "submissionCutOffDate";
+    /** Attribute used to hold selected participant key. */
+    public static final String SESSION_ATTR_PARTICIPANT_II = "studySubjectIi";
+    /** Attribute used to hold submitting organization key. */
+    public static final String SESSION_ATTR_SUBMITTING_ORG_II = "personIi";
+    /** Attribute used to hold Physician key. */
+    public static final String SESSION_ATTR_PHYSICIAN_II = "organizationIi";
+
+    /** Attribute used to store the authorized user in session. */
+    public static final String SESSION_ATTR_AUTHORIZED_USER_NAME = "authorizedUserName";
+    /** Attribute used to hold selected participant key. */
+    public static final String SESSION_ATTR_PARTICIPANT_ID = "studySubjectAssignedIdentifier";
+    /** Attribute used to hold submitting organization key. */
+    public static final String SESSION_ATTR_SUBMITTING_ORG_NAME = "organizationName";
+    /** Attribute used to hold Physician key. */
+    public static final String SESSION_ATTR_PHYSICIAN_NAME = "personName";
 
     /** Action result for the global log out result. */
     public static final String AR_LOGOUT = "logout";

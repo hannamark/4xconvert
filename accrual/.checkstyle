@@ -7,5 +7,6 @@
   <fileset name="src_java" enabled="true" check-config-name="accrualCheckstyle" local="true">
     <file-match-pattern match-pattern="web\\src\\java\\*" include-pattern="true"/>
     <file-match-pattern match-pattern="services\\src\\java\\*" include-pattern="true"/>
+    <file-match-pattern match-pattern="accrual-web\\src\\java\\*" include-pattern="true"/>
   </fileset>
 </fileset-config>

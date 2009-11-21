@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -286,7 +287,7 @@ public class PatientBean implements PatientService {
         popDTO.setScoperIdentifier(scoper);
 
         Country country = countryServ.getCountry(dto.getCountryIdentifier());
-        String zip = !dto.getZip().getValue().equals("") ? dto.getZip().getValue() : "11111";
+        String zip = PAUtil.isStNull(dto.getZip()) ? "11111" : StConverter.convertToString(dto.getZip());
 
         Ad ad = AddressConverterUtil.create("Street", null, "City", "VA", zip, country.getAlpha3());
         popDTO.setPostalAddress(new DSet<Ad>());

@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.zip.DataFormatException;
@@ -117,6 +118,12 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     private final Logger logger;
     private SessionContext ejbContext;
 
+    /**
+     * @return the ejbContext
+     */
+    protected SessionContext getEjbContext() {
+        return ejbContext;
+    }
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
@@ -126,7 +133,13 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      */
     @SuppressWarnings(UNCHECKED)
     public AbstractBaseAccrualBean() {
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        Class clss = getClass();
+        Type type = clss.getGenericSuperclass();
+        while (!(type instanceof ParameterizedType)) {
+            clss = clss.getSuperclass();
+            type = clss.getGenericSuperclass();
+        }
+        ParameterizedType parameterizedType = (ParameterizedType) type;
         typeArgument = (Class) parameterizedType.getActualTypeArguments()[1];
         converterArgument = (Class) parameterizedType.getActualTypeArguments()[2];
         logger = Logger.getLogger(typeArgument);
@@ -214,7 +227,6 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         Session session = null;
         try {
             session = AccrualHibernateUtil.getCurrentSession();
-            //session.beginTransaction();
             BO bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             session.delete(bo);
             session.flush();

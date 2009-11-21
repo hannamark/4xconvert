@@ -81,11 +81,14 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -93,6 +96,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -112,6 +116,55 @@ import org.hibernate.Session;
 public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
         implements StudySubjectService {
+
+    private static final String DEFAULT_CONTEXT_NAME = "ejbclient";
+
+    @EJB
+    SearchTrialService searchTrialSvc;
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public List<StudySubjectDto> getOutcomes(St outcomesLoginName) throws RemoteException {
+        getLogger().info("Entering getOutcomesParticipants().");
+        validateOutcomesLoginName(outcomesLoginName);
+        Session session = null;
+        List<StudySubject> queryList = new ArrayList<StudySubject>();
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select ssub "
+                       + "from StudySubject ssub "
+                       + "where ssub.outcomesLoginName = :oln "
+                       + "order by ssub.id ";
+            getLogger().info("query StudySubject = " + hql + ".");
+            query = session.createQuery(hql);
+            query.setParameter("oln", StConverter.convertToString(outcomesLoginName));
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
+        }
+        ArrayList<StudySubjectDto> resultList = new ArrayList<StudySubjectDto>();
+        for (StudySubject bo : queryList) {
+            try {
+                resultList.add(convertFromDomainToDto(bo));
+            } catch (DataFormatException e) {
+                throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
+            }
+        }
+        getLogger().info("Leaving getByStudySite(), returning " + resultList.size() + " object(s).");
+        return resultList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudySubjectDto createOutcomes(StudySubjectDto dto) throws RemoteException {
+        validateOutcomesLoginName(dto.getOutcomesLoginName());
+        dto.setStudyProtocolIdentifier(searchTrialSvc.getOutcomesStudyProtocolIi());
+        return super.create(dto);
+    }
 
     /**
      * {@inheritDoc}
@@ -150,5 +203,27 @@ public class StudySubjectBeanLocal
         }
         getLogger().info("Leaving getByStudySite(), returning " + resultList.size() + " object(s).");
         return resultList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySubjectDto create(StudySubjectDto dto) throws RemoteException {
+        if (!PAUtil.isStNull(dto.getOutcomesLoginName())) {
+            throw new RemoteException("Method createOutcomes() should be used to create outcomes participants.");
+        }
+        return super.create(dto);
+    }
+
+    private void validateOutcomesLoginName(St oln) throws RemoteException {
+        String ln = StConverter.convertToString(oln);
+        if (ln == null) {
+            throw new RemoteException("OutcomesLoginName must be set.");
+        }
+        String cn = getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : DEFAULT_CONTEXT_NAME;
+        if (!DEFAULT_CONTEXT_NAME.equals(cn) && !ln.equals(cn)) {
+            throw new RemoteException("OutcomesLoginName does not match context.");
+        }
     }
 }

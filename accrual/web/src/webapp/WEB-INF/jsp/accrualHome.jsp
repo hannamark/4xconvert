@@ -23,7 +23,7 @@
     <h1>Outcomes Home
     </h1>
     <p class="padme2">
-        This Site enables you to report outcomes information on patient outcomes.
+        This Site enables you to report outcomes information on participant outcomes.
     </p>
     <p class="padme2">
         <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance

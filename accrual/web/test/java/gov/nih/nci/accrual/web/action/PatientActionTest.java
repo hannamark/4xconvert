@@ -81,25 +81,24 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.web.dto.util.PatientWebDto;
-import gov.nih.nci.accrual.web.dto.util.SearchPatientsCriteriaWebDto;
+import gov.nih.nci.accrual.web.dto.util.ParticipantWebDto;
+import gov.nih.nci.accrual.web.dto.util.SearchParticipantCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -107,20 +106,19 @@ import com.opensymphony.xwork2.ActionSupport;
  * @since Sep 26, 2009
  */
 public class PatientActionTest extends AbstractAccrualActionTest {
-    PatientAction action;
-    SearchPatientsCriteriaWebDto criteria;
+    ParticipantsAction action;
+    SearchParticipantCriteriaWebDto criteria;
     List<SearchStudySiteResultWebDto> listOfStudySites;
-    List<PatientWebDto> listOfPatients;
-    PatientWebDto patient;
+    List<ParticipantWebDto> listOfPatients;
+    ParticipantWebDto patient;
 
     @Before
     public void initAction() throws Exception {
-        action = new PatientAction();
+        action = new ParticipantsAction();
         action.prepare();
-        action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
-        criteria = new SearchPatientsCriteriaWebDto();
-        patient = new PatientWebDto();
-        listOfPatients = new ArrayList<PatientWebDto>();
+        criteria = new SearchParticipantCriteriaWebDto();
+        patient = new ParticipantWebDto();
+        listOfPatients = new ArrayList<ParticipantWebDto>();
         listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
     }
 
@@ -159,7 +157,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void addTest() throws Exception {
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.add());
+        assertEquals(ActionSupport.INPUT, action.add());
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
         patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
@@ -168,18 +166,16 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         raceCode.add(PatientRaceCode.WHITE.getName());
         patient.setRaceCode(raceCode);
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
-        patient.setAssignedIdentifier("PO PATIENT ID 01");
-        patient.setStudySiteId(Long.valueOf("01"));
-        patient.setDiseaseIdentifier(Long.valueOf("1"));
-        PatientAction.unitedStatesId = 1L;
-        action.setPatient(patient);
+        patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
+        ParticipantsAction.unitedStatesId = 1L;
+        action.setParticipant(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
 
     @Override
     @Test
     public void editTest() throws Exception {
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.edit());
+        assertEquals(ActionSupport.INPUT, action.edit());
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
         patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
@@ -188,19 +184,12 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         raceCode.add(PatientRaceCode.WHITE.getName());
         patient.setRaceCode(raceCode);
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
-        patient.setAssignedIdentifier("PO PATIENT ID 01");
-        patient.setStudySiteId(Long.valueOf("01"));
-        patient.setDiseaseIdentifier(Long.valueOf("1"));
-        patient.setStudySubjectId(1L);
+        patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
+        patient.setDiseaseIdentifier(IiConverter.convertToIi(1L));
+        patient.setStudySubjectIi(IiConverter.convertToIi(1L));
         patient.setPatientId(1L);
-        PatientAction.unitedStatesId = 1L;
-        action.setPatient(patient);
-        assertEquals("success", action.edit());
-    }
-
-    @Test
-    public void displayDiseaseTest() throws Exception {
-        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("diseaseId", "1");
-        assertEquals(ActionSupport.SUCCESS, action.displayDisease());
+        ParticipantsAction.unitedStatesId = 1L;
+        action.setParticipant(patient);
+        assertEquals(ActionSupport.SUCCESS, action.edit());
     }
 }

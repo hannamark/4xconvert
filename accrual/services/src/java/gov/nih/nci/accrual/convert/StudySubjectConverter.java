@@ -119,6 +119,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
                 bo.getStudySite() == null ? null : bo.getStudySite().getId()));
         dto.setDiseaseIdentifier(IiConverter.convertToIi(
                 bo.getDisease() == null ? null : bo.getDisease().getId()));
+        dto.setOutcomesLoginName(StConverter.convertToSt(bo.getOutcomesLoginName()));
         return dto;
     }
 
@@ -129,7 +130,9 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
     public StudySubject convertFromDtoToDomain(StudySubjectDto dto) throws DataFormatException {
         StudySubject bo = new StudySubject();
         bo.setAssignedIdentifier(StConverter.convertToString(dto.getAssignedIdentifier()));
-        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        }
         bo.setPatient(fKeySetter(Patient.class, dto.getPatientIdentifier()));
         if (!PAUtil.isCdNull(dto.getPaymentMethodCode())) {
             bo.setPaymentMethodCode(PaymentMethodCode.getByCode(dto.getPaymentMethodCode().getCode()));
@@ -144,6 +147,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
         bo.setStudySite(fKeySetter(StudySite.class, dto.getStudySiteIdentifier()));
         bo.setDisease(fKeySetter(Disease.class, dto.getDiseaseIdentifier()));
+        bo.setOutcomesLoginName(StConverter.convertToString(dto.getOutcomesLoginName()));
         return bo;
     }
 }

@@ -78,26 +78,23 @@
 */
 package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -111,37 +108,25 @@ import java.util.Set;
  * @since Sep 22, 2009
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyFields" })
-public class PatientWebDto {
+public class ParticipantWebDto {
     // from PatientDto
     private Long patientId;
     private Set<String> raceCode = new HashSet<String>();
     private String genderCode;
     private String ethnicCode;
     private String birthDate;
-    private String zip;
     private Long countryIdentifier;
     private String countryName;
     private Long poIdentifier;
 
     // from StudySubjectDto
-    private Long studySubjectId;
-    private Long studyProtocolId;
-    private Long studySiteId;
+    private Ii studySubjectIi;
+    private Ii studyProtocolIi;
     private String identifier;
     private String paymentMethodCode;
-    private String assignedIdentifier;
+    private St assignedIdentifier;
     private String statusCode;
-
-    // from PerformedSubjectMilestone
-    private Long performedSubjectMilestoneId;
-    private String registrationDate;
-
-    // from StudySite...Organization
-    private String organizationName;
-
-    // disease
-    private String diseasePreferredName;
-    private Long diseaseIdentifier;
+    private Ii diseaseIdentifier;
 
 
     /**
@@ -149,7 +134,7 @@ public class PatientWebDto {
      * @param dto dto
      * @param action action to add for errors
      */
-    public static void validate(PatientWebDto dto, AbstractAccrualAction action) {
+    public static void validate(ParticipantWebDto dto, AbstractAccrualAction action) {
         action.clearActionErrors();
         action.addActionErrorIfEmpty(dto, "Error inputing study subject data.");
         if (!action.hasActionErrors()) {
@@ -159,21 +144,12 @@ public class PatientWebDto {
             action.addActionErrorIfEmpty(dto.getRaceCode(), "Race is required.");
             action.addActionErrorIfEmpty(dto.getEthnicCode(), "Ethnicity is required.");
             action.addActionErrorIfEmpty(dto.getCountryIdentifier(), "Country is required.");
-            action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
-            action.addActionErrorIfEmpty(dto.getStudySiteId(), "Participating site is required.");
-        }
-        if (!action.hasActionErrors() && !PAUtil.isEmpty(dto.getRegistrationDate())) {
-            Timestamp registration = AccrualUtil.yearMonthStringToTimestamp(dto.getRegistrationDate());
-            Timestamp birth = AccrualUtil.yearMonthStringToTimestamp(dto.getBirthDate());
-            if (birth.after(registration)) {
-                action.addActionError("The birth date must be less then or equal to the registration date.");
-            }
         }
     }
     /**
      * Default constructor.
      */
-    public PatientWebDto() {
+    public ParticipantWebDto() {
         // default constructor
     }
 
@@ -182,8 +158,8 @@ public class PatientWebDto {
      * @param studyProtocolIi study protocol id
      * @param unitedStatesId country id of the United States
      */
-    public PatientWebDto(Ii studyProtocolIi, Long unitedStatesId) {
-        studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
+    public ParticipantWebDto(Ii studyProtocolIi, Long unitedStatesId) {
+        this.studyProtocolIi = studyProtocolIi;
         countryIdentifier = unitedStatesId;
         statusCode = FunctionalRoleStatusCode.PENDING.getCode();
     }
@@ -192,14 +168,10 @@ public class PatientWebDto {
      * Construct using iso dto's from service tier.
      * @param pIsoDto patient iso dto
      * @param ssIsoDto study subject iso dto
-     * @param orgName organization name
-     * @param psm registration date
      * @param listOfCountries country list
-     * @param dIsoDto disease iso dto
      */
     @SuppressWarnings({"PMD.ExcessiveParameterList" })
-    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName,
-    PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, DiseaseDTO dIsoDto) {
+    public ParticipantWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, List<Country> listOfCountries) {
         if (pIsoDto != null) {
             patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
             raceCode = DSetEnumConverter.convertDSetToSet(pIsoDto.getRaceCode());
@@ -212,30 +184,17 @@ public class PatientWebDto {
                     countryName = c.getName();
                 }
             }
-            zip = StConverter.convertToString(pIsoDto.getZip());
             poIdentifier = IiConverter.convertToLong(pIsoDto.getAssignedIdentifier());
         }
 
         if (ssIsoDto != null) {
-            studySubjectId = IiConverter.convertToLong(ssIsoDto.getIdentifier());
-            studyProtocolId = IiConverter.convertToLong(ssIsoDto.getStudyProtocolIdentifier());
-            studySiteId = IiConverter.convertToLong(ssIsoDto.getStudySiteIdentifier());
+            studySubjectIi = ssIsoDto.getIdentifier();
+            studyProtocolIi = ssIsoDto.getStudyProtocolIdentifier();
             identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
             paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
-            assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
+            assignedIdentifier = ssIsoDto.getAssignedIdentifier();
             statusCode = CdConverter.convertCdToString(ssIsoDto.getStatusCode());
-        }
-
-        organizationName = orgName;
-
-        if (psm != null) {
-            performedSubjectMilestoneId = IiConverter.convertToLong(psm.getIdentifier());
-            registrationDate = TsConverter.convertToString(psm.getRegistrationDate());
-        }
-
-        if (dIsoDto != null) {
-            diseasePreferredName = StConverter.convertToString(dIsoDto.getPreferredName());
-            diseaseIdentifier = IiConverter.convertToLong(dIsoDto.getIdentifier());
+            diseaseIdentifier = ssIsoDto.getDiseaseIdentifier();
         }
     }
 
@@ -252,39 +211,28 @@ public class PatientWebDto {
         pat.setRaceCode(DSetEnumConverter.convertSetToDSet(getRaceCode()));
         pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        pat.setZip(StConverter.convertToSt(getZip()));
         pat.setAssignedIdentifier(IiConverter.convertToIi(getPoIdentifier()));
         return pat;
     }
 
     /**
+     * @param loginName outcomes submitter account
      * @return study subject iso dto
      */
-    public StudySubjectDto getStudySubjectDto() {
+    public StudySubjectDto getStudySubjectDto(St loginName) {
         StudySubjectDto ssub = new StudySubjectDto();
-        ssub.setIdentifier(IiConverter.convertToIi(getStudySubjectId()));
-        ssub.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(Long.valueOf(getStudySiteId())));
-        ssub.setStudyProtocolIdentifier(IiConverter.convertToIi(getStudyProtocolId()));
+        ssub.setIdentifier(getStudySubjectIi());
+        ssub.setStudyProtocolIdentifier(getStudyProtocolIi());
         ssub.setPatientIdentifier(IiConverter.convertToIi(getPatientId()));
-        ssub.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
-        ssub.setDiseaseIdentifier(IiConverter.convertToIi(getDiseaseIdentifier()));
+        ssub.setAssignedIdentifier(getAssignedIdentifier());
+        ssub.setDiseaseIdentifier(getDiseaseIdentifier());
         ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(getPaymentMethodCode())));
         ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(getStatusCode())));
         ssub.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+        ssub.setOutcomesLoginName(loginName);
         return ssub;
     }
 
-    /**
-     * @return performed subject milestone dto
-     */
-    public PerformedSubjectMilestoneDto getPerformedStudySubjectMilestoneDto() {
-        PerformedSubjectMilestoneDto psm = new PerformedSubjectMilestoneDto();
-        psm.setIdentifier(IiConverter.convertToIi(getPerformedSubjectMilestoneId()));
-        psm.setStudySubjectIdentifier(IiConverter.convertToIi(getStudySubjectId()));
-        psm.setStudyProtocolIdentifier(IiConverter.convertToIi(getStudyProtocolId()));
-        psm.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(getRegistrationDate())));
-        return psm;
-    }
     /**
      * @return the raceCode
      */
@@ -357,25 +305,19 @@ public class PatientWebDto {
     public void setPaymentMethodCode(String paymentMethodCode) {
         this.paymentMethodCode = paymentMethodCode;
     }
-    /**
+   /**
      * @return the assignedIdentifier
      */
-    public String getAssignedIdentifier() {
+    public St getAssignedIdentifier() {
         return assignedIdentifier;
     }
     /**
      * @param assignedIdentifier the assignedIdentifier to set
      */
-    public void setAssignedIdentifier(String assignedIdentifier) {
+    public void setAssignedIdentifier(St assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
     /**
-     * @return the organizationName
-     */
-    public String getOrganizationName() {
-        return organizationName;
-    }
-   /**
      * @return the identifier
      */
     public String getIdentifier() {
@@ -388,30 +330,6 @@ public class PatientWebDto {
        this.identifier = identifier;
      }
     /**
-     * @return the registrationDate
-     */
-    public String getRegistrationDate() {
-        return registrationDate;
-    }
-    /**
-     * @param registrationDate the registrationDate to set
-     */
-    public void setRegistrationDate(String registrationDate) {
-        this.registrationDate = PAUtil.normalizeDateString(registrationDate);
-    }
-    /**
-     * @return the zip
-     */
-    public String getZip() {
-        return zip;
-    }
-    /**
-     * @param zip the zip to set
-     */
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-    /**
      * @return the countryIdentifier
      */
     public Long getCountryIdentifier() {
@@ -423,112 +341,48 @@ public class PatientWebDto {
     public void setCountryIdentifier(Long countryIdentifier) {
         this.countryIdentifier = countryIdentifier;
     }
-
     /**
      * @return the countryName
      */
     public String getCountryName() {
         return countryName;
     }
-
     /**
      * @return the patientId
      */
     public Long getPatientId() {
         return patientId;
     }
-
     /**
      * @param patientId the patientId to set
      */
     public void setPatientId(Long patientId) {
         this.patientId = patientId;
     }
-
     /**
-     * @return the studySubjectId
+     * @return the studySubjectIi
      */
-    public Long getStudySubjectId() {
-        return studySubjectId;
+    public Ii getStudySubjectIi() {
+        return studySubjectIi;
     }
-
     /**
-     * @param studySubjectId the studySubjectId to set
+     * @param studySubjectIi the studySubjectIi to set
      */
-    public void setStudySubjectId(Long studySubjectId) {
-        this.studySubjectId = studySubjectId;
+    public void setStudySubjectIi(Ii studySubjectIi) {
+        this.studySubjectIi = studySubjectIi;
     }
-
     /**
-     * @return the performedSubjectMilestoneId
+     * @return the studyProtocolIi
      */
-    public Long getPerformedSubjectMilestoneId() {
-        return performedSubjectMilestoneId;
+    public Ii getStudyProtocolIi() {
+        return studyProtocolIi;
     }
-
     /**
-     * @param performedSubjectMilestoneId the performedSubjectMilestoneId to set
+     * @param studyProtocolIi the studyProtocolIi to set
      */
-    public void setPerformedSubjectMilestoneId(Long performedSubjectMilestoneId) {
-        this.performedSubjectMilestoneId = performedSubjectMilestoneId;
+    public void setStudyProtocolIi(Ii studyProtocolIi) {
+        this.studyProtocolIi = studyProtocolIi;
     }
-
-    /**
-     * @return the studyProtocolId
-     */
-    public Long getStudyProtocolId() {
-        return studyProtocolId;
-    }
-
-    /**
-     * @param studyProtocolId the studyProtocolId to set
-     */
-    public void setStudyProtocolId(Long studyProtocolId) {
-        this.studyProtocolId = studyProtocolId;
-    }
-
-    /**
-     * @return the studySiteId
-     */
-    public Long getStudySiteId() {
-        return studySiteId;
-    }
-
-    /**
-     * @param studySiteId the studySiteId to set
-     */
-    public void setStudySiteId(Long studySiteId) {
-        this.studySiteId = studySiteId;
-    }
-
-    /**
-     * @return the diseasePreferredNames
-     */
-    public String getDiseasePreferredName() {
-        return diseasePreferredName;
-    }
-
-    /**
-     * @param diseasePreferredName the diseasePreferredName to set
-     */
-    public void setDiseasePreferredName(String diseasePreferredName) {
-        this.diseasePreferredName = diseasePreferredName;
-    }
-
-    /**
-     * @return the diseaseIdentifier
-     */
-    public Long getDiseaseIdentifier() {
-        return diseaseIdentifier;
-    }
-
-    /**
-     * @param diseaseIdentifier the diseaseIdentifier to set
-     */
-    public void setDiseaseIdentifier(Long diseaseIdentifier) {
-        this.diseaseIdentifier = diseaseIdentifier;
-    }
-
     /**
      * Gets the po identifier.
      * @return the po identifier
@@ -536,12 +390,23 @@ public class PatientWebDto {
     public Long getPoIdentifier() {
         return poIdentifier;
     }
-
     /**
      * Sets the po identifier.
      * @param poIdentifier the new po identifier
      */
     public void setPoIdentifier(Long poIdentifier) {
         this.poIdentifier = poIdentifier;
+    }
+    /**
+     * @return the diseaseIdentifier
+     */
+    public Ii getDiseaseIdentifier() {
+        return diseaseIdentifier;
+    }
+    /**
+     * @param diseaseIdentifier the diseaseIdentifier to set
+     */
+    public void setDiseaseIdentifier(Ii diseaseIdentifier) {
+        this.diseaseIdentifier = diseaseIdentifier;
     }
 }
