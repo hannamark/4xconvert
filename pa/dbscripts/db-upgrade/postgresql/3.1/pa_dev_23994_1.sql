@@ -1,4 +1,4 @@
-insert into pa_properties(IDENTIFIER,name,value) VALUES(31,'CDE_REQUEST_TO_EMAIL_TEXT',
+insert into pa_properties(IDENTIFIER,name,value) VALUES(33,'CDE_REQUEST_TO_EMAIL_TEXT',
 'The CTRO has identified a need for a new CDE to help us build structured eligibility criteria for Protocol <NCI-xxxxxx>  
  The concept is <xxxxx>.
  
