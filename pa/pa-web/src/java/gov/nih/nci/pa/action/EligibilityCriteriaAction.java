@@ -124,6 +124,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 
 import com.opensymphony.xwork2.ActionSupport;
+import org.apache.commons.lang.StringEscapeUtils;
+
 
 /**
  * @author Kalpana Guthikonda
@@ -172,6 +174,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static String cdeCategoryCode;
     private static String cdeRequestToEmail;
     private static String cdeRequestSubject;
+    private static String cdeRequestText;
     
   
     /**
@@ -386,7 +389,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     public String requestToCreateCDE() {
         webDTO.setToEmail(cdeRequestToEmail);
         webDTO.setSubject(cdeRequestSubject);
-        webDTO.setMessage("Create the CDE :");
+        webDTO.setMessage(cdeRequestText);
         return REQUEST_TO_CREATE_CDE;
     }
     
@@ -552,6 +555,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
    */
   public String generate() throws PAException {
      StringBuffer generatedName = new StringBuffer();
+     
      if (PAUtil.isNotEmpty(webDTO.getCriterionName())) {
          generatedName.append(webDTO.getCriterionName());
      }
@@ -574,7 +578,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
      } else if (PAUtil.isNotEmpty(webDTO.getValueText())) {
          generatedName.append(SP).append(webDTO.getValueText());
      }
-     webDTO.setTextDescription(generatedName.toString());
+     webDTO.setTextDescription(StringEscapeUtils.unescapeHtml(generatedName.toString()));
     
      return ELIGIBILITYADD;
   }
@@ -738,10 +742,10 @@ public class EligibilityCriteriaAction extends ActionSupport {
         webdto.setId(dto.getIdentifier().getExtension());
       }
       if (dto.getOperator() != null) {
-        webdto.setOperator(dto.getOperator().getValue());
+        webdto.setOperator(StringEscapeUtils.unescapeHtml(dto.getOperator().getValue()));
       }
       if (dto.getTextDescription() != null) {
-        webdto.setTextDescription(dto.getTextDescription().getValue());
+        webdto.setTextDescription(StringEscapeUtils.unescapeHtml(dto.getTextDescription().getValue()));
       }
       if (dto.getValue().getLow().getValue() != null) {
         webdto.setValueIntegerMin(dto.getValue().getLow().getValue().toString());
@@ -1175,6 +1179,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
      cadsrCsVersion = Float.parseFloat(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_VERSION"));
      cdeRequestToEmail = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL");
      cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT");
+     cdeRequestText = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_TEXT");
           
   }
      /**
