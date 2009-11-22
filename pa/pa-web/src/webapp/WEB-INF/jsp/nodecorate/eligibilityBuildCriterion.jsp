@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <table class="form">
 <tr>
-    <th colspan="3"><fmt:message key="isdesign.eligibilitycriteria.buildCriterion" /></th>
+    <th colspan="3"><fmt:message key="isdesign.eligibilitycriteria.buildDescription" /><span class="required">*</span></th>
 </tr>
             <tr>
                      <td scope="row" class="label">
@@ -143,7 +143,7 @@
                     <s:a href="#" cssClass="btn" id="generateTextButton" onclick="handleGenerateCriteriaText()"><span class="btn_img"><span class="save">Generate Criteria Text</span></span></s:a>
                 </tr> 
             <tr>
-                <th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.buildDescription"/><span class="required">*</span></th>              
+                <th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.description"/></th>              
                 </tr>
                 <tr>
                         <span class="formErrorMsg"> 
