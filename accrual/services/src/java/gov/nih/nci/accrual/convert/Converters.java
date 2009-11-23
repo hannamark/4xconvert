@@ -138,7 +138,7 @@ public class Converters {
             return (CONV) pImageConverter;
         } else if (clazz.equals(PerformedLesionDescriptionConverter.class)) {
             return (CONV) pLesionDescriptionConverter;
-        } else if (clazz.equals(PerformedObservationConverter.class)) {
+        } else if (clazz.equals(PerformedObservationResultConverter.class)) {
             return (CONV) pObservationResultConverter;
         } else if (clazz.equals(PerformedActivityConverter.class)) {
             return (CONV) performedActivityConverter;
