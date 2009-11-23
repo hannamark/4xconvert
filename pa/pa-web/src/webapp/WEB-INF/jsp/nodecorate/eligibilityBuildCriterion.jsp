@@ -18,7 +18,7 @@
                         <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/></label>
                     </td>
                     <td>
-                        <s:textfield name="webDTO.criterionName" maxlength="30" size="120" cssStyle="width:200px;float:left" />
+                        <s:textfield name="webDTO.criterionName" maxlength="30" size="120" readonly="true" cssClass="readonly" cssStyle="width:200px;float:left" />
                         <s:hidden name="webDTO.cdePublicIdentifier"/>
                         <s:hidden name="webDTO.cdeVersionNumber"/>
                           <ul >              

@@ -579,7 +579,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
          generatedName.append(SP).append(webDTO.getValueText());
      }
      webDTO.setTextDescription(StringEscapeUtils.unescapeHtml(generatedName.toString()));
-    
+     webDTO.setOperator(StringEscapeUtils.unescapeHtml(webDTO.getOperator()));
      return ELIGIBILITYADD;
   }
   
