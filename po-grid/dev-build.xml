@@ -300,7 +300,7 @@
     <!-- Post Jar Tests Build Target                                    -->
     <!-- ============================================================== -->
     <target name="postJarTests">
-
+        <antcall target="test-quick" inheritRefs="true" />
     </target>
 
     <!-- ============================================================== -->
@@ -473,8 +473,8 @@
                 <arg value="${run-client.service.url}" />
             </java>
         </sequential>
-    </macrodef> 
-	
+    </macrodef>
+
     <target name="runPersonClient" depends="checkGlobus, defineClasspaths" description="Run the sample Person Client">
         <run-client serviceEndpointName="Person" class="gov.nih.nci.coppa.services.entities.person.client.PersonClient" debug-suspend="n" />
     </target>

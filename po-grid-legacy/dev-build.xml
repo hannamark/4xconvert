@@ -299,7 +299,7 @@
     <!-- Post Jar Tests Build Target                                    -->
     <!-- ============================================================== -->
     <target name="postJarTests">
-
+        <antcall target="test-quick" inheritRefs="true" />
     </target>
 
     <!-- ============================================================== -->
