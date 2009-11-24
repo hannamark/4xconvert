@@ -107,7 +107,6 @@ import java.util.Set;
  * @author Hugh Reinhart
  * @since Sep 22, 2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyFields" })
 public class ParticipantWebDto {
     // from PatientDto
     private Long patientId;

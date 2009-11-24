@@ -376,6 +376,6 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         ServletActionContext.getRequest().getSession().setAttribute(
                 AccrualConstants.SESSION_ATTR_PARTICIPANT_II, ssIi);
         ServletActionContext.getRequest().getSession().setAttribute(
-                AccrualConstants.SESSION_ATTR_PARTICIPANT_ID, ssAssignedId);
+                AccrualConstants.SESSION_ATTR_PARTICIPANT_NAME, ssAssignedId);
     }
 }

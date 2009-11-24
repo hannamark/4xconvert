@@ -80,7 +80,7 @@
 
     <package name="outcomes" namespace="/outcomes" extends="default">
         <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
-            <result>home.action</result>
+            <result>executeParticipants.action</result>
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
         </action>
 

@@ -98,9 +98,11 @@ public class WelcomeAction extends AbstractAccrualAction {
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_OUTCOMES);
             ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_SUBMITTER_NAME, "Smith, Jane");
+            ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, "Doe, John");
             ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, IiConverter.convertToPoOrganizationIi("36908"));
+                    AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, IiConverter.convertToPoOrganizationIi("518"));
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, "CBIIT");
             return AR_OUTCOMES;
