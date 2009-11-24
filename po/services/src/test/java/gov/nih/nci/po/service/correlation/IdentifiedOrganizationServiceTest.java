@@ -149,9 +149,4 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
 
         EjbTestHelper.getIdentifiedOrganizationServiceBean().update(io1);
     }
-
-    @Override
-    IdentifiedOrganization getNewStructuralRole() {
-        return new IdentifiedOrganization();
-    }
 }

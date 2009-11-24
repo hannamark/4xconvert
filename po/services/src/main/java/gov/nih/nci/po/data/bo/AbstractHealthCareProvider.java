@@ -142,7 +142,7 @@ public abstract class AbstractHealthCareProvider extends AbstractPersonRole impl
     @NotNull
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
-    @Searchable(nested = true)
+    @Searchable(fields = {"id" })
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Person getPlayer() {
         return super.getPlayer();

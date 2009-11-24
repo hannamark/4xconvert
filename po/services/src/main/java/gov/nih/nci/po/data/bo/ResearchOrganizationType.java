@@ -102,8 +102,6 @@ import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.validator.Length;
 
-import com.fiveamsolutions.nci.commons.search.Searchable;
-
 /**
  * Lookup class for types of Research Organization.
  */
@@ -142,7 +140,6 @@ public class ResearchOrganizationType extends AbstractCodeValue {
     @Length(max = DESC_LENGTH)
     @NotEmpty
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "desc")
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getDescription() {
         return description;
     }

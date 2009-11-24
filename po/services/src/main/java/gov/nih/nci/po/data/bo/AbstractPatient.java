@@ -118,40 +118,40 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @SuppressWarnings("PMD.UselessOverridingMethod")
 public abstract class AbstractPatient extends AbstractPersonRole implements Contactable {
     private static final long serialVersionUID = 1L;
-
+   
     private PersonSex sexCode;
     private Set<PersonRace> raceCode = new HashSet<PersonRace>();
     private Set<PersonEthnicGroup> ethnicGroupCode = new HashSet<PersonEthnicGroup>();
     private Date birthDate;
-
+    
     /**
      * @param newSexCode the sex of this person record
      */
     public void setSexCode(PersonSex newSexCode) {
         this.sexCode = newSexCode;
     }
-
+    
     /**
      * @param newRaceCodes the races of this person record
      */
     public void setRaceCode(Set<PersonRace> newRaceCodes) {
         this.raceCode = newRaceCodes;
     }
-
+    
     /**
      * @param newEthnicCodes the ethnicity of this person record
      */
     public void setEthnicGroupCode(Set<PersonEthnicGroup> newEthnicCodes) {
         this.ethnicGroupCode = newEthnicCodes;
     }
-
+    
     /**
      * @param newBirthDate the birth date of this person record
      */
     public void setBirthDate(Date newBirthDate) {
         this.birthDate = newBirthDate;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -168,7 +168,7 @@ public abstract class AbstractPatient extends AbstractPersonRole implements Cont
     public Set<PersonEthnicGroup> getEthnicGroupCode() {
         return this.ethnicGroupCode;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -185,7 +185,7 @@ public abstract class AbstractPatient extends AbstractPersonRole implements Cont
     public Set<PersonRace> getRaceCode() {
         return this.raceCode;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -196,7 +196,7 @@ public abstract class AbstractPatient extends AbstractPersonRole implements Cont
     public PersonSex getSexCode() {
         return this.sexCode;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -211,10 +211,10 @@ public abstract class AbstractPatient extends AbstractPersonRole implements Cont
     @Override
     @ManyToOne
     @JoinColumn(name = "person_id")
-    @Searchable(nested = true)
+    @Searchable(fields = {"id" })
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Person getPlayer() {
         return super.getPlayer();
     }
-
+    
 }

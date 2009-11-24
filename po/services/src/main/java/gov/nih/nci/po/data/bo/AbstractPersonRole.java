@@ -132,7 +132,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
-    @Searchable(nested = true)
+    @Searchable(fields = {"id" })
     @Transient
     public Person getPlayer() {
         return this.player;
@@ -155,7 +155,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
     @NotNull
     @JoinColumn(name = "organization_id")
     @ForeignKey(name = "personrole_org_fkey")
-    @Searchable(nested = true)
+    @Searchable(fields = {"id" })
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return this.scoper;
@@ -262,7 +262,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
     public void setTty(List<PhoneNumber> tty) {
         this.tty = tty;
     }
-
+    
     /**
      * Returns boolean if the address is US.
      * @return bool

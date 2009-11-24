@@ -106,8 +106,6 @@ import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 
 import java.util.List;
 
-import org.junit.Test;
-
 import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 
 /**
@@ -273,25 +271,6 @@ public class OversightCommitteeRemoteServiceTest extends AbstractOrganizationalR
         assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
 
         testNullifiedRoleNotFoundInSearch(id2, searchCriteria, OversightCommittee.class);
-    }
-    
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testNestedTypeCode() throws Exception {
-        OversightCommitteeDTO oc = getSampleDto();
-        Ii id1 = getCorrelationService().createCorrelation(oc);
-
-    
-        OversightCommitteeDTO searchCriteria = getEmptySearchCriteria();
-     
-        List<OversightCommitteeDTO> results = null;
-
-        Cd type = new Cd();
-        type.setCode("Ethics Committee");
-        searchCriteria.setTypeCode(type);
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals("Ethics Committee", results.get(0).getTypeCode().getCode());
     }
 
     @Override

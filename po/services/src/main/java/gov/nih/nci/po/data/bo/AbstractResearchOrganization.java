@@ -137,7 +137,7 @@ public abstract class AbstractResearchOrganization extends AbstractEnhancedOrgan
      */
     @ManyToOne
     @ForeignKey(name = "research_org_type_fkey")
-    @Searchable(nested = true)
+    @Searchable
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
     public ResearchOrganizationType getTypeCode() {
         return typeCode;

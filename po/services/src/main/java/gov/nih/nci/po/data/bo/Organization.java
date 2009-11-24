@@ -122,6 +122,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.UselessOverridingMethod" })
 public class Organization extends AbstractOrganization
         implements Auditable, CuratableEntity<Organization, OrganizationCR>, Entity {
+    private static final String VALUE = "value";
     private static final long serialVersionUID = 1L;
     private Organization duplicateOf;
     private Set<OrganizationCR> changeRequests = new HashSet<OrganizationCR>();
@@ -161,7 +162,7 @@ public class Organization extends AbstractOrganization
     @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")
     @Valid
     @Override
-    @Searchable(nested = true)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     @NotEmpty(message = "{validator.notEmpty.collection}")
     public List<Email> getEmail() {
         return super.getEmail();
@@ -184,7 +185,7 @@ public class Organization extends AbstractOrganization
     @ForeignKey(name = "ORG_FAX_FK", inverseName = "FAX_ORG_FK")
     @Valid
     @Override
-    @Searchable(nested = true)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -206,7 +207,7 @@ public class Organization extends AbstractOrganization
     @ForeignKey(name = "ORG_PHONE_FK", inverseName = "PHONE_ORG_FK")
     @Override
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -228,7 +229,7 @@ public class Organization extends AbstractOrganization
     @ForeignKey(name = "ORG_URL_FK", inverseName = "URL_ORG_FK")
     @Override
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
         return super.getUrl();
     }
@@ -250,7 +251,7 @@ public class Organization extends AbstractOrganization
     @ForeignKey(name = "ORG_TTY_FK", inverseName = "TTY_ORG_FK")
     @Valid
     @Override
-    @Searchable(nested = true)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -359,7 +360,6 @@ public class Organization extends AbstractOrganization
      */
     @OneToMany(mappedBy = "player")
     @Where(clause = "status <> 'NULLIFIED'")
-    @Searchable(nested = true)
     public Set<ResearchOrganization> getResearchOrganizations() {
         return researchOrganizations;
     }

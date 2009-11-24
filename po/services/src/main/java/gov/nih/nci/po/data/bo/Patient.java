@@ -125,6 +125,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 public class Patient extends AbstractPatient implements Correlation, PersonRole {
     private static final long serialVersionUID = 1L;
     private static final String IDX = "idx";
+    private static final String VALUE = "value";
     private static final String PATIENT_ID = "patient_id";
     
 
@@ -155,7 +156,8 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     @IndexColumn(name = IDX)
     @ForeignKey(name = "PATIENT_ADDRESS_FK", inverseName = "ADDRESS_PATIENT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -176,7 +178,7 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     @IndexColumn(name = IDX)
     @ForeignKey(name = "PATIENT_EMAIL_FK", inverseName = "EMAIL_PATIENT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -197,7 +199,7 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     @IndexColumn(name = IDX)
     @ForeignKey(name = "PATIENT_FAX_FK", inverseName = "FAX_PATIENT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -218,7 +220,7 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     @IndexColumn(name = IDX)
     @ForeignKey(name = "PATIENT_PHONE_FK", inverseName = "PHONE_PATIENT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -239,7 +241,7 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     @IndexColumn(name = IDX)
     @ForeignKey(name = "PATIENT_TTY_FK", inverseName = "TTY_PATIENT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -260,7 +262,7 @@ public class Patient extends AbstractPatient implements Correlation, PersonRole 
     @IndexColumn(name = IDX)
     @ForeignKey(name = "PATIENT_URL_FK", inverseName = "URL_PATIENT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
         return super.getUrl();
     }

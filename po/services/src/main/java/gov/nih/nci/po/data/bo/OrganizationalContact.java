@@ -198,7 +198,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @JoinColumn(name = "orgcontacttype_id", nullable = false)
     @Index(name = "oc_orgcontacttypeid_idx")
     @ForeignKey(name = "ORGCNCT_TYPE_ORGCNCT_FK")
-    @Searchable(nested = true)
+    @Searchable
     @Override
     @NotNull
     public OrganizationalContactType getType() {
@@ -221,7 +221,8 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCT_ADDRESS_FK", inverseName = "ADDRESS_ORGCNCT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -242,7 +243,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCT_EMAIL_FK", inverseName = "EMAIL_ORGCNCT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -263,7 +264,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCT_FAX_FK", inverseName = "FAX_ORGCNCT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -284,7 +285,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCT_PHONE_FK", inverseName = "PHONE_ORGCNCT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -305,7 +306,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCT_TTY_FK", inverseName = "TTY_ORGCNCT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -326,7 +327,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @IndexColumn(name = "idx")
     @ForeignKey(name = "ORGCNCT_URL_FK", inverseName = "URL_ORGCNCT_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
         return super.getUrl();
     }
@@ -338,7 +339,7 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
     @ManyToOne
     @JoinColumn(name = "person_id")
     @ForeignKey(name = "personrole_per_fkey")
-    @Searchable(nested = true)
+    @Searchable(fields = {"id" })
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Person getPlayer() {
         return super.getPlayer();

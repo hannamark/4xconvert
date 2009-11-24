@@ -97,7 +97,6 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.Pattern;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Represents an email address.
@@ -150,7 +149,6 @@ public class Email implements Auditable, Contact, Serializable {
             message = "{validator.email}")
     @Length(max = MAX_NAME_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "value")
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getValue() {
         return value;
     }

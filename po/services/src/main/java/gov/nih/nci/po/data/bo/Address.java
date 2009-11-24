@@ -102,7 +102,6 @@ import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Primary address class.
@@ -185,7 +184,6 @@ public class Address implements Auditable, PersistentObject {
     @NotEmpty
     @Length(max = LINE_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "street1")
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getStreetAddressLine() {
         return streetAddressLine;
     }
@@ -202,7 +200,6 @@ public class Address implements Auditable, PersistentObject {
      */
     @Length(max = LINE_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "street2")
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getDeliveryAddressLine() {
         return deliveryAddressLine;
     }
@@ -220,7 +217,6 @@ public class Address implements Auditable, PersistentObject {
     @NotEmpty
     @Length(max = CITY_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "city")
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getCityOrMunicipality() {
         return cityOrMunicipality;
     }
@@ -238,7 +234,6 @@ public class Address implements Auditable, PersistentObject {
     @NotEmpty
     @Length(max = POSTAL_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "postalCode")
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getPostalCode() {
         return postalCode;
     }
@@ -255,7 +250,6 @@ public class Address implements Auditable, PersistentObject {
      */
     @Length(max = STATE_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "state")
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getStateOrProvince() {
         return stateOrProvince;
     }
@@ -274,7 +268,6 @@ public class Address implements Auditable, PersistentObject {
     @NotNull
     @ForeignKey(name = "ADDRESS_COUNTRY_FK")
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "country")
-    @Searchable(nested = true)
     public Country getCountry() {
         return country;
     }

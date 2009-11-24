@@ -86,25 +86,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
-import gov.nih.nci.po.data.bo.Country;
-import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IiConverter.CorrelationIiConverter;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.PoIsoConstraintException;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
@@ -213,10 +205,4 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         assertEquals(1, errors.size());
         assertEquals(1, errors.get(null).length);
     }
-
-    @Override
-    ClinicalResearchStaff getNewStructuralRole() {
-        return new ClinicalResearchStaff();
-    }
-    
 }

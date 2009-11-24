@@ -92,23 +92,18 @@ import gov.nih.nci.po.data.bo.AbstractIdentifiedPerson;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.AbstractRole;
-import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
-import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
-import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.AbstractBaseServiceBean;
 import gov.nih.nci.po.service.AbstractCuratableServiceBean;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
-import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
@@ -160,8 +155,6 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
     abstract T getSampleStructuralRole() throws Exception;
 
     abstract void verifyStructuralRole(T expected, T actual);
-    
-    abstract T getNewStructuralRole();
 
     @SuppressWarnings("unchecked")
     protected AbstractCuratableServiceBean<T> getService() {
@@ -487,169 +480,6 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         assertEquals("Invalid Ii per ISO OCL constraints.", errorStrings[0]);
         assertEquals("Extension must be set", errorStrings[1]);
         assertEquals("Root must be set", errorStrings[2]);
-    }
-    
-    @Test
-    public void testSearchByPhoneNumber() throws Exception {
-        T obj = createSample();
-        if (obj instanceof Contactable) {
-            ((Contactable) obj).getPhone().add(new PhoneNumber("101 555 8888"));
-            ((Contactable) obj).getPhone().add(new PhoneNumber("202 555 8888"));
-            getService().update(obj);
-            
-            obj = getSampleStructuralRole();
-            ((Contactable) obj).getPhone().add(new PhoneNumber("202 555 8888"));
-            ((Contactable) obj).getPhone().add(new PhoneNumber("303 555 8888"));
-            getService().create(obj);
-     
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getPhone().add(new PhoneNumber("101 555 8888"));
-            
-            List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(1, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getPhone().add(new PhoneNumber("202 555 8888"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(2, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getPhone().add(new PhoneNumber("404 555 8888"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(0, obj_result.size());
-        }
-    }
-    
-    @Test
-    public void testSearchByEmail() throws Exception {
-        T obj = createSample();
-        if (obj instanceof Contactable) {
-            ((Contactable) obj).getEmail().add(new Email("sample1@example.com"));
-            ((Contactable) obj).getEmail().add(new Email("sample2@example.com"));
-            getService().update(obj);
-        
-            obj = getSampleStructuralRole();
-            ((Contactable) obj).getEmail().add(new Email("sample2@example.com"));
-            ((Contactable) obj).getEmail().add(new Email("sample3@example.com"));
-            getService().create(obj);
- 
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getEmail().add(new Email("sample3@example.com"));
-        
-            List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(1, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getEmail().add(new Email("sample2"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(2, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getEmail().add(new Email("sample4@example.com"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(0, obj_result.size());
-        }
-
-    }
-
-    @Test
-    public void testSearchByFaxNumber() throws Exception {
-        T obj = createSample();
-        if (obj instanceof Contactable) {
-            ((Contactable) obj).getFax().add(new PhoneNumber("101 555 8888"));
-            ((Contactable) obj).getFax().add(new PhoneNumber("202 555 8888"));
-            getService().update(obj);
-            
-            obj = getSampleStructuralRole();
-            ((Contactable) obj).getFax().add(new PhoneNumber("202 555 8888"));
-            ((Contactable) obj).getFax().add(new PhoneNumber("303 555 8888"));
-            getService().create(obj);
-     
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getFax().add(new PhoneNumber("101 555 8888"));
-            
-            List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(1, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getFax().add(new PhoneNumber("202 555 8888"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(2, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getFax().add(new PhoneNumber("404 555 8888"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(0, obj_result.size());
-        }
-    }
-
-    @Test
-    public void testSearchByTtyNumber() throws Exception {
-        T obj = createSample();
-        if (obj instanceof Contactable) {
-            ((Contactable) obj).getTty().add(new PhoneNumber("101 555 8888"));
-            ((Contactable) obj).getTty().add(new PhoneNumber("202 555 8888"));
-            getService().update(obj);
-            
-            obj = getSampleStructuralRole();
-            ((Contactable) obj).getTty().add(new PhoneNumber("202 555 8888"));
-            ((Contactable) obj).getTty().add(new PhoneNumber("303 555 8888"));
-            getService().create(obj);
-     
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getTty().add(new PhoneNumber("101 555 8888"));
-            
-            List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(1, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getTty().add(new PhoneNumber("202 555 8888"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(2, obj_result.size());
-    
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getTty().add(new PhoneNumber("404 555 8888"));
-            
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(0, obj_result.size());
-        }
-    }
-
-    @Test
-    public void testSearchByURL() throws Exception {
-        T obj = createSample();
-        if (obj instanceof Contactable) {
-            ((Contactable) obj).getUrl().add(new URL("http://111.com"));
-            ((Contactable) obj).getUrl().add(new URL("http://222.com"));
-            getService().update(obj);
-        
-            obj = getSampleStructuralRole();
-            ((Contactable) obj).getUrl().add(new URL("http://222.com"));
-            ((Contactable) obj).getUrl().add(new URL("http://333.com"));
-            getService().create(obj);
-        
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getUrl().add(new URL("http://111.com"));
-            List<T> obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(1, obj_result.size());
-        
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getUrl().add(new URL("http://222.com"));
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(2, obj_result.size());
-        
-            obj = getNewStructuralRole();
-            ((Contactable) obj).getUrl().add(new URL("http://444.com"));
-            obj_result = getService().search(new AnnotatedBeanSearchCriteria<T>(obj)); 
-            assertEquals(0, obj_result.size());
-        }
     }
 
 }

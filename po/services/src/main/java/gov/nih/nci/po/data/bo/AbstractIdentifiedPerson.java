@@ -130,7 +130,7 @@ public abstract class AbstractIdentifiedPerson extends AbstractIdentifiedEntity<
     @ForeignKey(name = "identifiedperson_player_fkey")
     @Override
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })
-    @Searchable(nested = true)
+    @Searchable(fields = {"id" })
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Person getPlayer() {
         return super.getPlayer();

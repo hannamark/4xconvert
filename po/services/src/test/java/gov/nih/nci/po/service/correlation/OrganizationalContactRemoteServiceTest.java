@@ -95,7 +95,6 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
-import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -165,25 +164,6 @@ public class OrganizationalContactRemoteServiceTest extends
         OrganizationalContactDTO pr = new OrganizationalContactDTO();
         Map<String, String[]> errors = getCorrelationService().validate(pr);
         assertEquals(4, errors.keySet().size());
-    }
-    
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testNestedTypeCode() throws Exception {
-        OrganizationalContactDTO oc = getSampleDto();
-        Ii id1 = getCorrelationService().createCorrelation(oc);
-
-    
-        OrganizationalContactDTO searchCriteria = getEmptySearchCriteria();
-     
-        List<OrganizationalContactDTO> results = null;
-
-        Cd fm = new Cd();
-        fm.setCode(GenericTypeCodeConverter.convertToCd(getType()).getCode());
-        searchCriteria.setTypeCode(fm);
-        results = getCorrelationService().search(searchCriteria);
-        assertEquals(1, results.size());
-        assertEquals(results.get(0).getTypeCode().getCode(), fm.getCode());
     }
 
     @Override

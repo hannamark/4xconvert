@@ -137,6 +137,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @OnlyCtepOwnedMayBeActive
 public class ResearchOrganization extends AbstractResearchOrganization implements Correlation {
 
+    private static final String VALUE = "value";
     private static final String RO_ID = "ro_id";
     private static final String IDX = "idx";
 
@@ -209,7 +210,8 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
     @IndexColumn(name = IDX)
     @ForeignKey(name = "RO_ADDRESS_FK", inverseName = "ADDRESS_RO_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -230,7 +232,7 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
     @IndexColumn(name = IDX)
     @ForeignKey(name = "RO_EMAIL_FK", inverseName = "EMAIL_RO_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -251,7 +253,7 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
     @IndexColumn(name = IDX)
     @ForeignKey(name = "RO_FAX_FK", inverseName = "FAX_RO_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -272,7 +274,7 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
     @IndexColumn(name = IDX)
     @ForeignKey(name = "RO_PHONE_FK", inverseName = "PHONE_RO_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -293,7 +295,7 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
     @IndexColumn(name = IDX)
     @ForeignKey(name = "RO_TTY_FK", inverseName = "TTY_RO_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -314,7 +316,7 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
     @IndexColumn(name = IDX)
     @ForeignKey(name = "RO_URL_FK", inverseName = "URL_RO_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
     public List<URL> getUrl() {
         return super.getUrl();
     }

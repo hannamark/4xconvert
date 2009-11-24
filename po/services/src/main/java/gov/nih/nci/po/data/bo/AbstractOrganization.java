@@ -191,7 +191,8 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     @JoinColumn(name = "postal_address_id")
     @ForeignKey(name = "ORG_POSTAL_ADDRESS_FK")
     @Valid
-    @Searchable(nested = true)
+    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
+            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "address")
     public Address getPostalAddress() {
         return postalAddress;

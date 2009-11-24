@@ -152,9 +152,4 @@ public class OversightCommitteeServiceTest extends AbstractStructrualRoleService
         oc1.setTypeCode(oc2.getTypeCode());
         EjbTestHelper.getOversightCommitteeServiceBean().update(oc1);
     }
-
-    @Override
-    OversightCommittee getNewStructuralRole() {
-        return new OversightCommittee();
-    }
 }

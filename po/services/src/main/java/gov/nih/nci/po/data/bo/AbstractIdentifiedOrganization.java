@@ -129,7 +129,7 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
     @ForeignKey(name = "identifiedorg_player_fkey")
     @Override
     @SuppressWarnings({ "PMD.UselessOverridingMethod" })
-    @Searchable(nested = true)
+    @Searchable(fields = {"id" })
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "player")
     public Organization getPlayer() {
         return super.getPlayer();
