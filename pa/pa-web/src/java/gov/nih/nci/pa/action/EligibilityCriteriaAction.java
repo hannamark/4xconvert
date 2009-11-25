@@ -532,7 +532,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     if (ruleError.length() > 0) {
       addFieldError("reOrder", ruleError.toString());
     } 
-    if (!order.isEmpty() && order.size() > 0) {
+    if (!order.isEmpty()) {
       StringBuffer orderStr =  new StringBuffer("Display Order(s) exist: ");
       orderStr.append(order.toString());
       addFieldError("reOrder", orderStr.toString());

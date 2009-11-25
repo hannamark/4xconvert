@@ -6,6 +6,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -25,6 +26,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -271,9 +273,16 @@ implements StudySiteServiceLocal {
       query = session.createQuery(hql);
       query.setParameter("localStudyProtocolIdentifier",
               StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
-      query.setParameter("orgIdentifier",
+      if (PAUtil.isIiNotNull(dto.getResearchOrganizationIi()) 
+              && IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equalsIgnoreCase(
+              dto.getResearchOrganizationIi().getIdentifierName())) {
+          CorrelationUtils cUtils = new CorrelationUtils();
+          ResearchOrganization ro = cUtils.getStructuralRoleByIi(dto.getResearchOrganizationIi()); 
+          query.setParameter("orgIdentifier", ro.getId());
+      } else {
+          query.setParameter("orgIdentifier",
               IiConverter.convertToLong(dto.getResearchOrganizationIi()));
-
+      }
       // step 3: query the result
       queryList = query.list();
       if (StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode().equalsIgnoreCase(dto.getFunctionalCode().getCode())) {
