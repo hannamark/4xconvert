@@ -98,7 +98,9 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     /** Substance Administration. */
     SUBSTANCE_ADMINISTRATION("Substance Administration"),
     /** Substance Administration. */
-    PLANNED_PROCEDURE("Planned Procedure"), 
+    PLANNED_PROCEDURE("Planned Procedure"),
+    /** Treatment Plan. */
+    TREATMENT_PLAN("Treatment Plan"),
     /** Other. */
     OTHER("Other");
      
