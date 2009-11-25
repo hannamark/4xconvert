@@ -222,10 +222,7 @@ BubbleTips.activateTipOn("dfn");
                        </td>
                        <td class="tdBoxed">
                           <s:hidden  name="eligibilityList[%{#stat.index}].id" value="%{id}" />
-                          <s:hidden  name="eligibilityList[%{#stat.index}].valueText" value="%{valueText}" />
                           <s:hidden  name="eligibilityList[%{#stat.index}].structuredType" value="%{structuredType}" />
-                          <s:hidden  name="eligibilityList[%{#stat.index}].valueIntegerMin" value="%{valueIntegerMin}" />
-                          <s:hidden  name="eligibilityList[%{#stat.index}].valueIntegerMax" value="%{valueIntegerMax}" />
                           <s:textfield  name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />
                          </td>
                          <td>  

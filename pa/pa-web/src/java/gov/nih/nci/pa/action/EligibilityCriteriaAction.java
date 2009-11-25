@@ -522,15 +522,20 @@ public class EligibilityCriteriaAction extends ActionSupport {
    * @return the string
    */
   public String reOrder() {
-  StringBuffer ruleError = new StringBuffer();
-  try {
+   StringBuffer ruleError = new StringBuffer();
+   HashSet<String> order =  new HashSet<String>();
+   try {
     for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
       ruleError.append(rulesForDisplayOrder(dto.getDisplayOrder()));
-      ruleError.append(
-        checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId()), buildDisplayOrderUIList()));
+      checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId()), buildDisplayOrderUIList(), order);
     }
     if (ruleError.length() > 0) {
       addFieldError("reOrder", ruleError.toString());
+    } 
+    if (!order.isEmpty() && order.size() > 0) {
+      StringBuffer orderStr =  new StringBuffer("Display Order(s) exist: ");
+      orderStr.append(order.toString());
+      addFieldError("reOrder", orderStr.toString());
     } else {
         for (ISDesignDetailsWebDTO dto : eligibilityList) {
         PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(dto, Long.parseLong(dto.getId()));
@@ -858,9 +863,11 @@ public class EligibilityCriteriaAction extends ActionSupport {
          addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
       }
      }
-    String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList());
+    HashSet<String> order =  new HashSet<String>();
+    String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
     if (dispOrder != null && !dispOrder.equals("")) {
-      addFieldError("webDTO.displayOrder", dispOrder);
+      String mesg = "Display Order(s) exist: ";
+      addFieldError("webDTO.displayOrder", mesg + dispOrder);
     }
   }
   
@@ -879,18 +886,19 @@ public class EligibilityCriteriaAction extends ActionSupport {
       return err.toString();
   }
   @SuppressWarnings({"PMD" })  
-  private String checkDisplayOrderExists(String displayOrder, Long dtoId, HashMap<String, String> orderList) 
+  private String checkDisplayOrderExists(String displayOrder, Long dtoId, HashMap<String, String> orderList, 
+    HashSet<String> order) 
   throws PAException {
     boolean exists = false; 
-    StringBuffer order =  new StringBuffer("Display Order(s) exist: ");
+   
      if (orderList != null && !orderList.isEmpty()) {
        if (doesContainInList(displayOrder, dtoId, orderList)) {
-             order.append(displayOrder).append(" ,");
+             order.add(displayOrder);
              exists = true;
           }
      }
      if (exists) {
-      return order.toString().substring(0, order.length() - 1);
+       return order.toString();
      } else {
       return "";
      }

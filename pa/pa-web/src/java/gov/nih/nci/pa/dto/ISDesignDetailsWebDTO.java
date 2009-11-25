@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 
 /**
  * @author Kalpana Guthikonda
@@ -386,7 +388,7 @@ public class ISDesignDetailsWebDTO {
      * @return operator
      */
     public String getOperator() {
-        return operator;
+        return StringEscapeUtils.unescapeHtml(operator);
     }
     /**
      * @param operator operator
@@ -411,7 +413,7 @@ public class ISDesignDetailsWebDTO {
      * @return textDescription
      */
     public String getTextDescription() {
-      return textDescription;
+      return StringEscapeUtils.unescapeHtml(textDescription);
     }
     /**
      * @param textDescription textDescription
