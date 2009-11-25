@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.accrual.web.action;
 
@@ -29,7 +29,15 @@ public class UserAccountAction extends AbstractAccrualAction {
     private String userAction = "";
     /** Create. */
     public static final String CREATE = "create";
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.NULL;
+    }
+
     /**
      * @return success
      */
@@ -37,17 +45,17 @@ public class UserAccountAction extends AbstractAccrualAction {
     public String execute() {
         return SUCCESS;
     }
-    
+
     /**
      * Send e-mail to the registering user.
      * @return String
      */
     public String request() {
         UserAccountWebDTO.validate(userAccount, this, false);
-        if (this.hasFieldErrors()) {
+        if (hasFieldErrors()) {
             return ActionSupport.INPUT;
         }
-        
+
         try {
             final MailManager mailManager = new MailManager();
             mailManager.sendConfirmationMail(userAccount.getLoginName(), userAccount.getPassword());
@@ -56,10 +64,10 @@ public class UserAccountAction extends AbstractAccrualAction {
             LOG.error("error while sending e-mail");
             return ERROR;
         }
-        
+
         return "requestConfirmation";
     }
-    
+
     /**
      * activate user.
      * @return String
@@ -71,40 +79,40 @@ public class UserAccountAction extends AbstractAccrualAction {
         String password = null;
 
         if (encodedLoginName != null) {
-            loginName = EncoderDecoder.decodeString(encodedLoginName);             
+            loginName = EncoderDecoder.decodeString(encodedLoginName);
         }
         if (encodedPassword != null) {
             password = EncoderDecoder.decodeString(encodedPassword);
         }
-            
+
         RegistryUser user = null;
         try {
             user = PaServiceLocator.getInstance().getRegistryUserService().getUser(loginName);
         } catch (Exception e) {
             LOG.error("error while activating user :" + loginName);
             return ERROR;
-        }        
-            
-        if (user == null) { // new user  
+        }
+
+        if (user == null) { // new user
             userAccount.setLoginName(loginName);
-            userAccount.setPassword(password);            
+            userAccount.setPassword(password);
         } else { // user already exists
             userAccount = new UserAccountWebDTO(user, loginName, password);
         }
-        
+
         return CREATE;
     }
-    
+
     /**
      * create/update user.
      * @return String
      */
     public String create() {
         UserAccountWebDTO.validate(userAccount, this, true);
-        if (this.hasFieldErrors()) {
+        if (hasFieldErrors()) {
             return ActionSupport.INPUT;
         }
-        
+
         String actionResult =  null;
         try {
             RegistryUser user = new RegistryUser();
@@ -113,7 +121,7 @@ public class UserAccountAction extends AbstractAccrualAction {
             }
             if (PAUtil.isNotEmpty(userAccount.getCsmUserId())) {
                 user.setCsmUserId(Long.valueOf(userAccount.getCsmUserId()));
-            } 
+            }
             user.setFirstName(userAccount.getFirstName());
             user.setLastName(userAccount.getLastName());
             user.setMiddleName(userAccount.getMiddleName());
@@ -123,46 +131,46 @@ public class UserAccountAction extends AbstractAccrualAction {
             user.setPostalCode(userAccount.getZipCode());
             user.setCountry(userAccount.getCountry());
             user.setPhone(userAccount.getPhoneNumber());
-            user.setAffiliateOrg(userAccount.getOrganization());    
+            user.setAffiliateOrg(userAccount.getOrganization());
             user.setPrsOrgName(userAccount.getPrsOrganization());
-            
+
             if (PAUtil.isEmpty(userAccount.getId())) {
                 // create the CSM user
                 User csmUser = AccrualCsmUtil.getInstance().
                     createCSMUser(user, userAccount.getLoginName(), userAccount.getPassword());
-                
+
                 if (csmUser != null) {
                     user.setCsmUserId(csmUser.getUserId());
                 }
-                
+
                 // create the user
                 PaServiceLocator.getInstance().getRegistryUserService().createUser(user);
-                
+
                 userAction = "createAccount";
                 actionResult = "redirectToLogin";
-            } else {                
+            } else {
                 // update the CSM user
                 AccrualCsmUtil.getInstance().updateCSMUser(user, userAccount.getLoginName(), userAccount.getPassword());
-                
+
                 // update the user
                 PaServiceLocator.getInstance().getRegistryUserService().updateUser(user);
-                
+
                 if (ServletActionContext.getRequest().getRemoteUser() == null) {
                     userAction = "resetPassword";
                     actionResult = "redirectToLogin";
-                } else {                    
+                } else {
                     userAction = "updateAccount";
                     actionResult = CREATE;
                 }
-            }            
+            }
         } catch (Exception e) {
             LOG.error("error while updating user info");
             actionResult = ERROR;
         }
-        
+
         return actionResult;
     }
-    
+
     /**
      * Show My Account Page.
      * @return String
@@ -174,9 +182,9 @@ public class UserAccountAction extends AbstractAccrualAction {
         if (disclaimer == null || !disclaimer.equals(AccrualConstants.DISCLAIMER_ACCEPTED)) {
             return AccrualConstants.AR_DISCLAIMER;
         }
-        
+
         String loginName = ServletActionContext.getRequest().getRemoteUser();
-        try {            
+        try {
             // retrieve user info
             RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(loginName);
             User csmUser = AccrualCsmUtil.getInstance().getCSMUser(loginName);
@@ -185,13 +193,13 @@ public class UserAccountAction extends AbstractAccrualAction {
             }
         } catch (Exception e) {
             LOG.error("error while displaying My Account page for user :" + loginName);
-            return ERROR;            
+            return ERROR;
         }
-        
+
         return CREATE;
 
     }
-    
+
     /**
      * @return the userAccount
      */
@@ -205,7 +213,7 @@ public class UserAccountAction extends AbstractAccrualAction {
     public void setUserAccount(UserAccountWebDTO userAccount) {
         this.userAccount = userAccount;
     }
-    
+
     /**
      * @return the userAction
      */

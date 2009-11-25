@@ -95,7 +95,15 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
 
     private static final long serialVersionUID = 1L;
     private LesionAssessmentWebDto lesionAssessment = new LesionAssessmentWebDto();
-   
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -105,7 +113,7 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
         //just to test the functionality
         getDisplayTagList().add(lesionAssessment);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -139,6 +147,6 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
      */
     public void setLesionAssessment(LesionAssessmentWebDto lesionAssessment) {
         this.lesionAssessment = lesionAssessment;
-    }  
+    }
 
 }

@@ -91,17 +91,25 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
  * The Class DiagnosisAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
 public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> {
 
     private static final long serialVersionUID = 1L;
-    
+
     private DiagnosisWebDto diagnosis = new DiagnosisWebDto();
     private List<DiagnosisItemWebDto> disWebList = new ArrayList<DiagnosisItemWebDto>();
     private St searchDiagnosis = null;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.PRE_TREATMENT;
+    }
 
     /**
      * {@inheritDoc}
@@ -116,6 +124,7 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String cancel() {
         return execute();
     }
@@ -124,6 +133,7 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
      * Save user entries.
      * @return result for next action
      */
+    @Override
     public String save() {
         return super.execute();
     }
@@ -134,9 +144,9 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
      */
     public String next() {
         String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : rc;
+        return SUCCESS.equals(rc) ? NEXT : rc;
     }
-    
+
     /**
      * @param diagnosis the diagnosis to set
      */

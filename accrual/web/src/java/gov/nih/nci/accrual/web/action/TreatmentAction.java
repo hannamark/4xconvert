@@ -95,7 +95,15 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
 
     private static final long serialVersionUID = 1L;
     private TreatmentWebDto treatment = new TreatmentWebDto();
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -105,7 +113,7 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
         //just to test the functionality
         getDisplayTagList().add(treatment);
     }
-    
+
     /**
      * {@inheritDoc}
      */

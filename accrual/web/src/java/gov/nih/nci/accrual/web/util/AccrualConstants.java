@@ -102,16 +102,18 @@ public final class AccrualConstants {
 
     /** Attribute used to store the authorized user in session. */
     public static final String SESSION_ATTR_AUTHORIZED_USER_NAME = "authorizedUserName";
-    /** Attribute used to hold selected participant key. */
+    /** Attribute used to hold Selected participant name. */
     public static final String SESSION_ATTR_PARTICIPANT_NAME = "participantId";
-    /** Attribute used to hold submitting organization key. */
+    /** Attribute used to hold Submitting organization name. */
     public static final String SESSION_ATTR_SUBMITTING_ORG_NAME = "submittingOrganizationName";
-    /** Attribute used to hold Physician key. */
+    /** Attribute used to hold Physician name. */
     public static final String SESSION_ATTR_PHYSICIAN_NAME = "physicianName";
-    /** Attribute used to hold Physician key. */
+    /** Attribute used to hold submitter name. */
     public static final String SESSION_ATTR_SUBMITTER_NAME = "submitterName";
-    /** Attribute used to hold Physician key. */
+    /** Attribute used to hold Treatment Plan name. */
     public static final String SESSION_ATTR_TREATMENT_PLAN_NAME = "treatmentPlanName";
+    /** Attribute used to hold Epoch. */
+    public static final String SESSION_ATTR_EPOCH = "epoch";
 
 
     /** Action result for the global log out result. */

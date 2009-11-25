@@ -94,7 +94,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
  * The Class StagingAction.
- * 
+ *
  * @author Lisa Kelley
  * @since 10/30/2009
  */
@@ -102,17 +102,25 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
 
     private static final long serialVersionUID = 1L;
     private StagingWebDto staging = new StagingWebDto();
-    
+
     /**
      * {@inheritDoc}
-     */    
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.PRE_TREATMENT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SkipValidation
     @SuppressWarnings("PMD")
     public String execute() {
         return super.execute();
     }
-    
+
     /**
      * Save user entries.
      * @return result for next action
@@ -120,42 +128,42 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
     public String save() {
         return super.execute();
     }
-    
+
     /**
      * Save user entries.
      * @return result for next action
      */
     public String next() {
         String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : rc;
+        return SUCCESS.equals(rc) ? NEXT : rc;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void loadDisplayList() {
         List<TumorMarkerWebDto> tumorMarkerList = new ArrayList<TumorMarkerWebDto>();
-        
+
         TumorMarkerWebDto item = new TumorMarkerWebDto();
         item.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker 1"));
         item.setTumorMarkerValue(StConverter.convertToSt("Tumor Marker Value 1"));
         item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 1"));
         tumorMarkerList.add(item);
-        
+
         item = new TumorMarkerWebDto();
         item.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker 2"));
         item.setTumorMarkerValue(StConverter.convertToSt("Tumor Marker Value 2"));
         item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 2"));
         tumorMarkerList.add(item);
-        
+
         try {
             setDisplayTagList(tumorMarkerList);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }
     }
-    
+
     /**
      * @return the staging form data
      */
@@ -163,7 +171,7 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
     public StagingWebDto getStaging() {
         return staging;
     }
-    
+
     /**
      * @param staging the staging form data
      */

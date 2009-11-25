@@ -79,13 +79,6 @@
 
 package gov.nih.nci.accrual.web.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.struts2.interceptor.validation.SkipValidation;
-
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
-
 import gov.nih.nci.accrual.web.dto.util.DeathInfoItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.DeathInfoWebDto;
 import gov.nih.nci.coppa.iso.Ii;
@@ -93,9 +86,16 @@ import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 /**
  * The Class DeathInformationAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
@@ -104,9 +104,18 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
     private static final long serialVersionUID = 1L;
 
     private DeathInfoWebDto deathInfo = new DeathInfoWebDto();
-    
+
     private List<DeathInfoItemWebDto> disWebList;
     private St searchAutopsySite;
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
 
     /**
      * {@inheritDoc}
@@ -121,6 +130,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
     /**
      * {@inheritDoc}
      */
+    @Override
     public String cancel() {
         return execute();
     }
@@ -129,11 +139,12 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
      * Save user entries.
      * @return result for next action
      */
+    @Override
     @SuppressWarnings("PMD")
     public String save() {
         return super.save();
     }
-    
+
     /**
      * Lookup a diagnosis.
      * @return result for next action
@@ -147,16 +158,16 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
 
         String sTxt = searchAutopsySite.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError("Please provide some search values.");
+            addActionError("Please provide some search values.");
             return INPUT;
         }
 
         St name;
         DeathInfoItemWebDto item;
         Ii id;
-        
+
         setDisWebList(new ArrayList<DeathInfoItemWebDto>());
-        
+
         name = StConverter.convertToSt("Autopsy Site 1");
         id = IiConverter.convertToIi("1");
         item = new DeathInfoItemWebDto();

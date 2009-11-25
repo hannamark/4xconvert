@@ -95,7 +95,15 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
 
     private static final long serialVersionUID = 1L;
     private SurgeryWebDto surgery = new SurgeryWebDto();
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -105,7 +113,7 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
       //just to test the functionality
         getDisplayTagList().add(surgery);
     }
-    
+
     /**
      * {@inheritDoc}
      */

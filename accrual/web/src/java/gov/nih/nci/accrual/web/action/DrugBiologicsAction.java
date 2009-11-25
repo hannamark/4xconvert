@@ -95,7 +95,15 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
 
     private static final long serialVersionUID = 1L;
     private DrugBiologicsWebDto drugBiologic = new DrugBiologicsWebDto();
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -105,7 +113,7 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
         //just to test the functionality
         getDisplayTagList().add(drugBiologic);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -124,7 +132,7 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
             return INPUT;
         }
     }
-    
+
     /**
      * Gets the drug biologic.
      * @return the drug biologic

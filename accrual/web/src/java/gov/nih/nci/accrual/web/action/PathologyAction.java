@@ -79,23 +79,31 @@
 
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.web.dto.util.PathologyWebDto;
+
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
-import gov.nih.nci.accrual.web.dto.util.PathologyWebDto;
-
 /**
  * The Class PathologyAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
 public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> {
 
     private static final long serialVersionUID = 1L;
-    
+
     private PathologyWebDto pathology = new PathologyWebDto();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.PRE_TREATMENT;
+    }
 
     /**
      * {@inheritDoc}
@@ -110,6 +118,7 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String cancel() {
         return execute();
     }
@@ -118,6 +127,7 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      * Save user entries.
      * @return result for next action
      */
+    @Override
     public String save() {
         return super.execute();
     }

@@ -78,21 +78,21 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import org.apache.struts2.interceptor.validation.SkipValidation;
-
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
-
-import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 /**
  * The Class OffTreatmentAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
@@ -101,8 +101,16 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
     private static final long serialVersionUID = 1L;
 
     private PerformedSubjectMilestoneDto subMile = new PerformedSubjectMilestoneDto();
-    
+
     private OffTreatmentWebDto offTreat = new OffTreatmentWebDto();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
 
     /**
      * {@inheritDoc}
@@ -133,14 +141,16 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
     /**
      * {@inheritDoc}
      */
+    @Override
     public String cancel() {
         return execute();
     }
-    
+
     /**
      * Save user entries.
      * @return result for next action
      */
+    @Override
     public String save() {
         Cd offTreatCode = CdConverter.convertStringToCd("Off Treatment");
         subMile.setCategoryCode(offTreatCode);
@@ -157,7 +167,7 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
      */
     public String next() {
         String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : rc;
+        return SUCCESS.equals(rc) ? NEXT : rc;
     }
 
     /**

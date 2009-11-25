@@ -79,6 +79,9 @@
 
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.web.dto.util.ParticipantOutcomesWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,9 +90,6 @@ import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
-import gov.nih.nci.accrual.web.dto.util.ParticipantOutcomesWebDto;
-import gov.nih.nci.coppa.iso.Ii;
-
 /**
  * @author Kalpana Guthikonda
  * @since 10/28/2009
@@ -97,7 +97,7 @@ import gov.nih.nci.coppa.iso.Ii;
 public class ParticipantOutcomesAction extends AbstractListEditAccrualAction<ParticipantOutcomesWebDto> {
 
     private static final long serialVersionUID = 1L;
-    
+
     private ParticipantOutcomesWebDto targetOutcome;
     private Ii targetOutcomeId;
 
@@ -114,13 +114,13 @@ public class ParticipantOutcomesAction extends AbstractListEditAccrualAction<Par
             ServletActionContext.getRequest().getSession().setAttribute(ParticipantOutcomesWebDto.class.getName(), db);
         }
     }
-    
+
     private ParticipantOutcomesWebDto findOutcome(Ii id) {
         Ii target = id;
         if (target == null) {
             target = targetOutcomeId;
         }
-        
+
         initDb();
         for (ParticipantOutcomesWebDto item : db) {
             if (item.getId().getExtension().equals(target.getExtension())) {
@@ -134,11 +134,19 @@ public class ParticipantOutcomesAction extends AbstractListEditAccrualAction<Par
      * {@inheritDoc}
      */
     @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String execute() {
         initDb();
         return super.execute();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -165,6 +173,7 @@ public class ParticipantOutcomesAction extends AbstractListEditAccrualAction<Par
     /**
      * {@inheritDoc}
      */
+    @Override
     public String add() throws RemoteException {
         initDb();
         if (targetOutcomeId.getExtension() == null || targetOutcomeId.getExtension().length() == 0) {
@@ -172,25 +181,27 @@ public class ParticipantOutcomesAction extends AbstractListEditAccrualAction<Par
         }
         return super.add();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public String create() {
         targetOutcome = new ParticipantOutcomesWebDto();
         targetOutcomeId = new Ii();
         return super.create();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public String update() {
         targetOutcome = findOutcome(null);
         targetOutcomeId = targetOutcome.getId();
         return super.update();
     }
-    
+
     /**
      * @param targetOutcome the targetOutcome to set
      */

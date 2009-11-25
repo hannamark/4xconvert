@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
-
 import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
+
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
  * @author Hugh Reinhart
@@ -89,31 +89,41 @@ import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
 public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
 
     private static final long serialVersionUID = -2561560856212211656L;
-    
+
     private PerformanceStatusWebDto performance = new PerformanceStatusWebDto();
 
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.PRE_TREATMENT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String execute() {
         performance = new PerformanceStatusWebDto();
         return super.execute();
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("PMD.UselessOverridingMethod")
     public String save() {
         return super.save();
     }
-    
+
     /**
      * @return result for next action
      */
     public String next() {
         String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : INPUT;
+        return SUCCESS.equals(rc) ? NEXT : INPUT;
     }
 
     /**

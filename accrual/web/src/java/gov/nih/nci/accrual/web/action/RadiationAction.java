@@ -95,7 +95,15 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
 
     private static final long serialVersionUID = 1L;
     private RadiationWebDto radiation = new RadiationWebDto();
-   
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -105,7 +113,7 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
         //just to test the functionality
         getDisplayTagList().add(radiation);
     }
-    
+
     /**
      * {@inheritDoc}
      */

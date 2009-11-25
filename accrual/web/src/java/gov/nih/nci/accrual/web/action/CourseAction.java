@@ -93,7 +93,15 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
 
     private static final long serialVersionUID = -3007738923753747925L;
     private CourseWebDto course = new CourseWebDto();
-     
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.TREATMENT;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -103,7 +111,7 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
         //just to test the functionality
         getDisplayTagList().add(course);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -121,7 +129,7 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
             return INPUT;
         }
     }
-    
+
     /**
      * Gets the course.
      * @return the course

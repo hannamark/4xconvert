@@ -79,13 +79,6 @@
 
 package gov.nih.nci.accrual.web.action;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-
 import gov.nih.nci.accrual.web.dto.util.PriorTherapiesItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.PriorTherapiesWebDto;
 import gov.nih.nci.accrual.web.dto.util.PriorTherapyTypesWebDto;
@@ -95,9 +88,16 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.PqConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
 /**
  * The Class PriorTherapiesAction.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
@@ -110,7 +110,7 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
     private PriorTherapiesItemWebDto newPrior = new PriorTherapiesItemWebDto();
     private String delItem = null;
     private String lookupItem = null;
-    
+
     private List<PriorTherapyTypesWebDto> disWebList = new ArrayList<PriorTherapyTypesWebDto>();
     private PriorTherapyTypesWebDto priorTherapy = new PriorTherapyTypesWebDto();
     private String searchTherapy = null;
@@ -123,12 +123,12 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
     private void clearSessionData() {
         ServletActionContext.getRequest().getSession().removeAttribute(priors.getClass().getName());
     }
-    
+
     private PriorTherapiesWebDto getSessionData() {
         return (PriorTherapiesWebDto)
             ServletActionContext.getRequest().getSession().getAttribute(priors.getClass().getName());
     }
-    
+
     private PriorTherapiesWebDto getData() {
         PriorTherapiesWebDto db = getSessionData();
         if (db == null) {
@@ -139,7 +139,15 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
         return db;
     }
     //TODO remove these private methods when database implementation is complete
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.PRE_TREATMENT;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -160,7 +168,7 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
 
     /**
      * Load the bean for the UI.
-     * 
+     *
      * @param db the memory buffer containing the persisted data
      */
     private void loadForm(PriorTherapiesWebDto db) {
@@ -179,7 +187,7 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
     /**
      * Reset the memory buffers. And update the persistent copy as needed when the user
      * toggles the "has prior" checkbox.
-     * 
+     *
      * @param db the memory buffer containing the persisted data
      */
     private void resetData(PriorTherapiesWebDto db) {
@@ -190,11 +198,11 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
             newPrior = priors.getList().get(0);
         }
     }
-    
+
     /**
      * Apply the Therapy Type selection. After performing a lookup the selection is
      * applied immediately to the target item.
-     * 
+     *
      * @param db the memory buffer containing the persisted data
      */
     private void applyTypeSelection(PriorTherapiesWebDto db) {
@@ -218,6 +226,7 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
     /**
      * @return result for next action
      */
+    @Override
     public String cancel() {
         clearSessionData();
         return execute();
@@ -227,9 +236,10 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
      * Save user entries.
      * @return result for next action
      */
+    @Override
     public String save() {
         PriorTherapiesWebDto db = getSessionData();
-        
+
         saveDesc(db);
 
         saveNew(db);
@@ -243,7 +253,7 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
 
     /**
      * Calculate the numeric totals.
-     * 
+     *
      * @param db the memory buffer containing the persisted data
      */
     private void calcTotals(PriorTherapiesWebDto db) {
@@ -266,7 +276,7 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
 
     /**
      * Process delete actions.
-     * 
+     *
      * @param db the memory buffer containing the persisted data
      */
     private void deletes(PriorTherapiesWebDto db) {
@@ -282,7 +292,7 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
 
     /**
      * Save changes for all the descriptions.
-     * 
+     *
      * @param db the memory buffer containing the persisted data
      */
     private void saveDesc(PriorTherapiesWebDto db) {
@@ -295,12 +305,12 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
 
     /**
      * Save the new prior therapy information.
-     * 
+     *
      * @param db the memory buffer containing the persisted data
      */
     private void saveNew(PriorTherapiesWebDto db) {
-        if ((newPrior.getDescription().getValue() != null && newPrior.getDescription().getValue().length() > 0)
-                || (newPrior.getType().getCode() != null && newPrior.getType().getCode().length() > 0)) {
+        if (newPrior.getDescription().getValue() != null && newPrior.getDescription().getValue().length() > 0
+                || newPrior.getType().getCode() != null && newPrior.getType().getCode().length() > 0) {
             db.getList().add(newPrior);
             newPrior = new PriorTherapiesItemWebDto();
         }
@@ -312,9 +322,9 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
      */
     public String next() {
         String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : rc;
+        return SUCCESS.equals(rc) ? NEXT : rc;
     }
-    
+
     /**
      * @return result for next action
      */
@@ -324,7 +334,7 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
         if (searchTherapy != null && searchTherapy.length() > 0) {
             disWebList = new ArrayList<PriorTherapyTypesWebDto>();
             PriorTherapyTypesWebDto temp;
-            
+
             if ("*".equals(searchTherapy) || "%".equals(searchTherapy) || searchTherapy.toLowerCase().startsWith("c")) {
                 temp = new PriorTherapyTypesWebDto();
                 temp.setId(new Ii());
@@ -332,28 +342,28 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
                 temp.getId().setExtension("1");
                 disWebList.add(temp);
             }
-            
+
             if ("*".equals(searchTherapy) || "%".equals(searchTherapy) || searchTherapy.toLowerCase().startsWith("d")) {
                 temp = new PriorTherapyTypesWebDto();
                 temp.setId(new Ii());
                 temp.setType(CdConverter.convertStringToCd("Drug 1"));
                 temp.getId().setExtension("2");
                 disWebList.add(temp);
-                
+
                 temp = new PriorTherapyTypesWebDto();
                 temp.setId(new Ii());
                 temp.setType(CdConverter.convertStringToCd("Drug 2"));
                 temp.getId().setExtension("3");
                 disWebList.add(temp);
             }
-            
+
             if ("*".equals(searchTherapy) || "%".equals(searchTherapy) || searchTherapy.toLowerCase().startsWith("s")) {
                 temp = new PriorTherapyTypesWebDto();
                 temp.setId(new Ii());
                 temp.setType(CdConverter.convertStringToCd("Surgery 1"));
                 temp.getId().setExtension("4");
                 disWebList.add(temp);
-                
+
                 temp = new PriorTherapyTypesWebDto();
                 temp.setId(new Ii());
                 temp.setType(CdConverter.convertStringToCd("Surgery 2"));

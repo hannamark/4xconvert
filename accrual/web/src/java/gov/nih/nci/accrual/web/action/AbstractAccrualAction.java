@@ -105,6 +105,19 @@ import com.opensymphony.xwork2.Preparable;
  */
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
+
+    /** Epoch enumerator. */
+    protected enum Epoch {
+        /** Pre-treatment. */
+        PRE_TREATMENT,
+        /** Treatment. */
+        TREATMENT,
+        /** No associated epoch. */
+        NULL,
+        /** No change. */
+        NO_CHANGE
+    }
+
     /** SearchTrialService. */
     protected SearchTrialService searchTrialSvc;
     /** SearchStudySiteService. */
@@ -166,6 +179,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         if (strDesclaimer == null || !strDesclaimer.equals(AccrualConstants.DISCLAIMER_ACCEPTED)) {
             return AccrualConstants.AR_DISCLAIMER;
         }
+        setEpoch();
         return SUCCESS;
     }
     /**
@@ -181,7 +195,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected St getAuthorizedUser() {
         return StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser());
     }
-
     /**
      * @param value object being tested
      * @param errorMsg action error message to put on stack if object is empty
@@ -227,5 +240,26 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public String getNextTarget() {
         return nextTarget;
+    }
+
+    /**
+     * @return epoch
+     */
+    public abstract Epoch getEpoch();
+
+    /**
+     * Set the epoch in session.
+     */
+    public void setEpoch() {
+        if (!Epoch.NO_CHANGE.equals(getEpoch())) {
+            String epochString = null;
+            if (Epoch.PRE_TREATMENT.equals(getEpoch())) {
+                epochString = "Pre-treatment";
+            } else if (Epoch.TREATMENT.equals(getEpoch())) {
+                epochString = "Treatment";
+            }
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_EPOCH, epochString);
+        }
     }
 }

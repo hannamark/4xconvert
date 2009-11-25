@@ -112,13 +112,20 @@ public class PopUpAction extends AbstractAccrualAction {
     private String exactMatch;
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.NO_CHANGE;
+    }
 
     private void loadResultList() {
         disWebList.clear();
         String tName = ServletActionContext.getRequest().getParameter("searchName");
         String includeSyn = ServletActionContext.getRequest().getParameter("includeSynonym");
         String exactMat = ServletActionContext.getRequest().getParameter("exactMatch");
-        
+
         if (PAUtil.isEmpty(tName)) {
             String message = "Please enter at least one search criteria";
             addActionError(message);
@@ -130,7 +137,7 @@ public class PopUpAction extends AbstractAccrualAction {
         criteria.setPreferredName(StConverter.convertToSt(tName));
         criteria.setIncludeSynonym(StConverter.convertToSt(includeSyn));
         criteria.setExactMatch(StConverter.convertToSt(exactMat));
-        
+
         List<DiseaseDTO> diseaseList = null;
         try {
             diseaseList = diseaseSvc.search(criteria);
@@ -197,8 +204,8 @@ public class PopUpAction extends AbstractAccrualAction {
 
     private void error(String errMsg) {
         error(errMsg, null);
-    } 
-   
+    }
+
     /**
      * @return result
      */

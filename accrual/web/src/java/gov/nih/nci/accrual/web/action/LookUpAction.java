@@ -111,12 +111,20 @@ public class LookUpAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 1L;
     private St searchText = null;
     private String type = null;
-    private List<LookUpWebDto> lookUpList = new ArrayList<LookUpWebDto>();
-    private String seacrhMsg = "Please provide some search values.";
-           
+    private final List<LookUpWebDto> lookUpList = new ArrayList<LookUpWebDto>();
+    private final String seacrhMsg = "Please provide some search values.";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.NO_CHANGE;
+    }
+
     /**
      * Lookup for procedureName.
-     * 
+     *
      * @return the string
      * @throws RemoteException remote Exception
      */
@@ -129,21 +137,21 @@ public class LookUpAction extends AbstractAccrualAction {
 
         String sTxt = searchText.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError(seacrhMsg);
+            addActionError(seacrhMsg);
             return INPUT;
-        }        
-        
+        }
+
         ProcedureName criteria = new ProcedureName();
         criteria.setCode(sTxt);
           List<ProcedureName> procedureNameList = new ArrayList<ProcedureName>();
-          BaseLookUpService<ProcedureName> lookUpService = 
+          BaseLookUpService<ProcedureName> lookUpService =
               new BaseLookUpService<ProcedureName>(ProcedureName.class);
           procedureNameList.addAll(lookUpService.search(criteria));
           for (ProcedureName pn :  procedureNameList) {
              LookUpWebDto lookupdto = new LookUpWebDto();
              lookupdto.setCode(StConverter.convertToSt(pn.getCode()));
              lookupdto.setDescription(StConverter.convertToSt(pn.getDescription()));
-             lookupdto.setDisplayName(StConverter.convertToSt(pn.getDisplayName()));    
+             lookupdto.setDisplayName(StConverter.convertToSt(pn.getDisplayName()));
              lookupdto.setId(IiConverter.convertToIi(pn.getId()));
              lookupdto.setType(StConverter.convertToSt(type));
              lookUpList.add(lookupdto);
@@ -151,10 +159,10 @@ public class LookUpAction extends AbstractAccrualAction {
          ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
         return super.execute();
     }
-    
+
     /**
      * Lookup for unitOfMeasurement.
-     * 
+     *
      * @return the string
      * @throws RemoteException remote Exception
      */
@@ -167,21 +175,21 @@ public class LookUpAction extends AbstractAccrualAction {
 
         String sTxt = searchText.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError(seacrhMsg);
+            addActionError(seacrhMsg);
             return INPUT;
-        }        
+        }
 
         UnitOfMeasurement criteria = new UnitOfMeasurement();
         criteria.setCode(sTxt);
         List<UnitOfMeasurement> list = new ArrayList<UnitOfMeasurement>();
-        BaseLookUpService<UnitOfMeasurement> lookUpService = 
+        BaseLookUpService<UnitOfMeasurement> lookUpService =
             new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
         list.addAll(lookUpService.search(criteria));
         for (UnitOfMeasurement bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
             lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
-            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));
             lookupdto.setId(IiConverter.convertToIi(bean.getId()));
             lookupdto.setType(StConverter.convertToSt(type));
             lookUpList.add(lookupdto);
@@ -189,10 +197,10 @@ public class LookUpAction extends AbstractAccrualAction {
         ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
         return super.execute();
     }
-    
+
     /**
      * Lookup for routeOfAdministration.
-     * 
+     *
      * @return the string
      * @throws RemoteException remote Exception
      */
@@ -205,21 +213,21 @@ public class LookUpAction extends AbstractAccrualAction {
 
         String sTxt = searchText.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError(seacrhMsg);
+            addActionError(seacrhMsg);
             return INPUT;
-        }        
+        }
 
         RouteOfAdministration criteria = new RouteOfAdministration();
         criteria.setCode(sTxt);
         List<RouteOfAdministration> list = new ArrayList<RouteOfAdministration>();
-        BaseLookUpService<RouteOfAdministration> lookUpService = 
+        BaseLookUpService<RouteOfAdministration> lookUpService =
             new BaseLookUpService<RouteOfAdministration>(RouteOfAdministration.class);
         list.addAll(lookUpService.search(criteria));
         for (RouteOfAdministration bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
             lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
-            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));
             lookupdto.setId(IiConverter.convertToIi(bean.getId()));
             lookupdto.setType(StConverter.convertToSt(type));
             lookUpList.add(lookupdto);
@@ -227,10 +235,10 @@ public class LookUpAction extends AbstractAccrualAction {
         ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
         return super.execute();
     }
-    
+
     /**
      * Lookup for doseFrequency.
-     * 
+     *
      * @return the string
      * @throws RemoteException remote Exception
      */
@@ -243,21 +251,21 @@ public class LookUpAction extends AbstractAccrualAction {
 
         String sTxt = searchText.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError(seacrhMsg);
+            addActionError(seacrhMsg);
             return INPUT;
-        }        
+        }
 
         DoseFrequency criteria = new DoseFrequency();
         criteria.setCode(sTxt);
         List<DoseFrequency> list = new ArrayList<DoseFrequency>();
-        BaseLookUpService<DoseFrequency> lookUpService = 
+        BaseLookUpService<DoseFrequency> lookUpService =
             new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
         list.addAll(lookUpService.search(criteria));
         for (DoseFrequency bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
             lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
-            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));
             lookupdto.setId(IiConverter.convertToIi(bean.getId()));
             lookupdto.setType(StConverter.convertToSt(type));
             lookUpList.add(lookupdto);
@@ -265,10 +273,10 @@ public class LookUpAction extends AbstractAccrualAction {
         ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
         return super.execute();
     }
-    
+
     /**
      * Lookup for anatomicSites.
-     * 
+     *
      * @return the string
      * @throws RemoteException remote Exception
      */
@@ -281,21 +289,21 @@ public class LookUpAction extends AbstractAccrualAction {
 
         String sTxt = searchText.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError(seacrhMsg);
+            addActionError(seacrhMsg);
             return INPUT;
-        }        
+        }
 
         AnatomicSites criteria = new AnatomicSites();
         criteria.setCode(sTxt);
         List<AnatomicSites> list = new ArrayList<AnatomicSites>();
-        BaseLookUpService<AnatomicSites> lookUpService = 
+        BaseLookUpService<AnatomicSites> lookUpService =
             new BaseLookUpService<AnatomicSites>(AnatomicSites.class);
         list.addAll(lookUpService.search(criteria));
         for (AnatomicSites bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
             lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
-            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));
             lookupdto.setId(IiConverter.convertToIi(bean.getId()));
             lookupdto.setType(StConverter.convertToSt(type));
             lookUpList.add(lookupdto);
@@ -303,10 +311,10 @@ public class LookUpAction extends AbstractAccrualAction {
         ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
         return super.execute();
     }
-    
+
     /**
      * Lookup for assessmentType.
-     * 
+     *
      * @return the string
      * @throws RemoteException remote Exception
      */
@@ -319,21 +327,21 @@ public class LookUpAction extends AbstractAccrualAction {
 
         String sTxt = searchText.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError(seacrhMsg);
+            addActionError(seacrhMsg);
             return INPUT;
-        }        
+        }
 
         AssessmentType criteria = new AssessmentType();
         criteria.setCode(sTxt);
         List<AssessmentType> list = new ArrayList<AssessmentType>();
-        BaseLookUpService<AssessmentType> lookUpService = 
+        BaseLookUpService<AssessmentType> lookUpService =
             new BaseLookUpService<AssessmentType>(AssessmentType.class);
         list.addAll(lookUpService.search(criteria));
         for (AssessmentType bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
             lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
-            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));
             lookupdto.setId(IiConverter.convertToIi(bean.getId()));
             lookupdto.setType(StConverter.convertToSt(type));
             lookUpList.add(lookupdto);
@@ -341,10 +349,10 @@ public class LookUpAction extends AbstractAccrualAction {
         ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
         return super.execute();
     }
-    
+
     /**
      * Lookup for tumorMarker.
-     * 
+     *
      * @return the string
      * @throws RemoteException remote Exception
      */
@@ -357,21 +365,21 @@ public class LookUpAction extends AbstractAccrualAction {
 
         String sTxt = searchText.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError(seacrhMsg);
+            addActionError(seacrhMsg);
             return INPUT;
-        }        
+        }
 
         TumorMarker criteria = new TumorMarker();
         criteria.setCode(sTxt);
         List<TumorMarker> list = new ArrayList<TumorMarker>();
-        BaseLookUpService<TumorMarker> lookUpService = 
+        BaseLookUpService<TumorMarker> lookUpService =
             new BaseLookUpService<TumorMarker>(TumorMarker.class);
         list.addAll(lookUpService.search(criteria));
         for (TumorMarker bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
             lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
-            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));
             lookupdto.setId(IiConverter.convertToIi(bean.getId()));
             lookupdto.setType(StConverter.convertToSt(type));
             lookUpList.add(lookupdto);
@@ -379,10 +387,10 @@ public class LookUpAction extends AbstractAccrualAction {
         ServletActionContext.getRequest().setAttribute("lookUpList", lookUpList);
         return super.execute();
     }
-    
+
     /**
      * Lookup for lesionLocationAnatomicSite.
-     * 
+     *
      * @return the string
      * @throws RemoteException remote Exception
      */
@@ -395,21 +403,21 @@ public class LookUpAction extends AbstractAccrualAction {
 
         String sTxt = searchText.getValue();
         if (sTxt == null || sTxt.length() == 0) {
-            this.addActionError(seacrhMsg);
+            addActionError(seacrhMsg);
             return INPUT;
-        }        
+        }
 
         LesionLocationAnatomicSite criteria = new LesionLocationAnatomicSite();
         criteria.setCode(sTxt);
         List<LesionLocationAnatomicSite> list = new ArrayList<LesionLocationAnatomicSite>();
-        BaseLookUpService<LesionLocationAnatomicSite> lookUpService = 
+        BaseLookUpService<LesionLocationAnatomicSite> lookUpService =
             new BaseLookUpService<LesionLocationAnatomicSite>(LesionLocationAnatomicSite.class);
         list.addAll(lookUpService.search(criteria));
         for (LesionLocationAnatomicSite bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
             lookupdto.setDescription(StConverter.convertToSt(bean.getDescription()));
-            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));    
+            lookupdto.setDisplayName(StConverter.convertToSt(bean.getDisplayName()));
             lookupdto.setId(IiConverter.convertToIi(bean.getId()));
             lookupdto.setType(StConverter.convertToSt(type));
             lookUpList.add(lookupdto);

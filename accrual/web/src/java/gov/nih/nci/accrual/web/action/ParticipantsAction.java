@@ -128,6 +128,14 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      * {@inheritDoc}
      */
     @Override
+    public Epoch getEpoch() {
+        return Epoch.NULL;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String execute() {
         try {
             loadListOfCountries();

@@ -95,7 +95,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
  * The Class StagingAction.
- * 
+ *
  * @author Lisa Kelley
  * @since 10/30/2009
  */
@@ -107,25 +107,34 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
     private Cd searchTumorMarker = null;
     private Pq searchTmvUom = null;
     private List<TumorMarkerWebDto> tumorMarkerList;
-    
+
     /**
      * {@inheritDoc}
-     */    
+     */
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.PRE_TREATMENT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SkipValidation
     @SuppressWarnings("PMD")
     public String execute() {
         return super.execute();
     }
-    
+
     /**
      * Save user entries.
      * @return result for next action
      */
+    @Override
     public String save() {
         return super.execute();
     }
-    
+
     /**
      * Lookup tumor marker data.
      * @return result for next action
@@ -133,14 +142,14 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
     @SkipValidation
     public String lookup() {
         if ("tumorMarker".equals(lookupType)) {
-            return lookupTumorMarker();            
+            return lookupTumorMarker();
         } else if ("tmvUom".equals(lookupType)) {
             return lookupTmvUom();
         }
-        
+
         return super.execute();
     }
-    
+
     /**
      * Lookup a tumor marker.
      * @return result for next action
@@ -152,12 +161,12 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
         }
 
         if (searchTumorMarker.getCode() == null || searchTumorMarker.getCode().length() == 0) {
-            this.addActionError("Please provide some search values.");
+            addActionError("Please provide some search values.");
             return INPUT;
         }
-        
+
         tumorMarkerList = new ArrayList<TumorMarkerWebDto>();
-        
+
         TumorMarkerWebDto item = new TumorMarkerWebDto();
         item.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker 1"));
         item.setId(IiConverter.convertToIi("1"));
@@ -167,28 +176,28 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
         item.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker 2"));
         item.setId(IiConverter.convertToIi("2"));
         tumorMarkerList.add(item);
-        
+
         return super.execute();
     }
-    
+
     /**
      * Lookup a tumor marker value UOM.
      * @return result for next action
      */
     @SkipValidation
-    public String lookupTmvUom() {        
+    public String lookupTmvUom() {
         if (searchTmvUom == null) {
             searchTmvUom = new Pq();
             return SUCCESS;
         }
 
         if (searchTmvUom.getUnit() == null || searchTmvUom.getUnit().length() == 0) {
-            this.addActionError("Please provide some search values.");
+            addActionError("Please provide some search values.");
             return INPUT;
         }
-        
+
         tumorMarkerList = new ArrayList<TumorMarkerWebDto>();
-        
+
         TumorMarkerWebDto item = new TumorMarkerWebDto();
         item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 1"));
         item.setId(IiConverter.convertToIi("1"));
@@ -198,19 +207,19 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
         item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 2"));
         item.setId(IiConverter.convertToIi("2"));
         tumorMarkerList.add(item);
-        
+
         return super.execute();
     }
-    
+
     /**
      * Save user entries.
      * @return result for next action
      */
     public String next() {
         String rc = save();
-        return (SUCCESS.equals(rc)) ? NEXT : rc;
+        return SUCCESS.equals(rc) ? NEXT : rc;
     }
-    
+
     /**
      * @return the tumorMarker form data
      */
@@ -218,28 +227,28 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
     public TumorMarkerWebDto getTumorMarker() {
         return tumorMarker;
     }
-    
+
     /**
      * @param tumorMarker the tumorMarker form data
      */
     public void setTumorMarker(TumorMarkerWebDto tumorMarker) {
         this.tumorMarker = tumorMarker;
     }
-    
+
     /**
      * @param lookupType the lookupType to set
      */
     public void setLookupType(String lookupType) {
         this.lookupType = lookupType;
     }
-    
+
     /**
      * @return the lookupType
      */
     public String getLookupType() {
         return lookupType;
     }
-    
+
     /**
      * @param searchTumorMarker the searchTumorMarker to set
      */
@@ -253,7 +262,7 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
     public Cd getSearchTumorMarker() {
         return searchTumorMarker;
     }
-    
+
     /**
      * @param searchTmvUom the searchTmvUom to set
      */
