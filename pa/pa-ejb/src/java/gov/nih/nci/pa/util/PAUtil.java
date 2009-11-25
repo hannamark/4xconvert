@@ -879,7 +879,7 @@ public class PAUtil {
     public static BigDecimal convertStringToDecimal(String value) {
         BigDecimal bd = null;
         if (value != null && isNumber(value)) {
-            bd = BigDecimal.valueOf(Long.parseLong(value));
+            bd = BigDecimal.valueOf(Double.parseDouble(value));
         }
         return bd;
     }
@@ -894,7 +894,7 @@ public class PAUtil {
     public static boolean isNumber(String value) {
       boolean isNumber = true;
       try {
-         Long.parseLong(value);
+         Double.parseDouble(value);
       } catch (NumberFormatException e) {
          isNumber = false;
       }

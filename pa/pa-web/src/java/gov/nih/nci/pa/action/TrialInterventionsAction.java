@@ -487,8 +487,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the minDoseValue
      */
-    @DoubleRangeFieldValidator(message = "Numeric value between 0.0-100.000", key = "i18n.key", shortCircuit = true, 
-     minInclusive = "0.0", maxInclusive = "100.000")
+    @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
      public String getMinDoseValue() {
        return minDoseValue;
      }
@@ -501,8 +500,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      /**
       * @return the maxDoseValue
       */
-     @DoubleRangeFieldValidator(message = "Numeric value between 0.0-100.000", key = "i18n.key", shortCircuit = true, 
-      minInclusive = "0.0", maxInclusive = "100.000")
+     @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
      public String getMaxDoseValue() {
        return maxDoseValue;
      }
@@ -527,8 +525,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the doseDurationValue
      */
-      @DoubleRangeFieldValidator(message = MESSAGE, key = KEY, shortCircuit = true, 
-       minInclusive = MIN, maxInclusive = MAX) 
+      @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX) 
      public String getDoseDurationValue() {
        return doseDurationValue;
      }
@@ -553,7 +550,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the doseRegimen
      */
-    @DoubleRangeFieldValidator(message = MESSAGE, key = KEY, shortCircuit = true, 
+    @DoubleRangeFieldValidator(message = MESSAGE,  
      minInclusive = MIN, maxInclusive = MAX)  
      public String getDoseRegimen() {
        return doseRegimen;
@@ -567,8 +564,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the minDoseTotalValue
      */
-     @DoubleRangeFieldValidator(message = MESSAGE, key = KEY, shortCircuit = true, 
-      minInclusive = MIN, maxInclusive = MAX)  
+     @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)  
      public String getMinDoseTotalValue() {
       return minDoseTotalValue;
      }
@@ -581,8 +577,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the maxDoseTotalValue
      */
-    @DoubleRangeFieldValidator(message = MESSAGE, key = KEY, shortCircuit = true, 
-     minInclusive = MIN, maxInclusive = MAX)  
+    @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)  
      public String getMaxDoseTotalValue() {
         return maxDoseTotalValue;
      }

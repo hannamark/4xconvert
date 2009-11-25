@@ -11,6 +11,14 @@
         <td class="value" >
             <s:textfield  name="minDoseValue" maxlength="160" /> 
              <s:textfield name="maxDoseValue" maxlength="160"/>         
+              <span class="formErrorMsg"> 
+             <s:fielderror>
+                 <s:param>minDoseValue</s:param>
+               </s:fielderror>  
+             <s:fielderror>
+          <s:param>maxDoseValue</s:param>
+         </s:fielderror> 
+            </span>
         </td>
         <td scope="row" class="label"><s:label>Dose UOM:</s:label></td>
         <td class="value" >
@@ -42,6 +50,11 @@
         <td class="value">
             <s:textfield name="doseDurationValue" maxlength="160"  
                    /> 
+                   <span class="formErrorMsg"> 
+                     <s:fielderror>
+                         <s:param>doseDurationValue</s:param>
+                       </s:fielderror>  
+        </span>
         </td>
        <td scope="row" class="label"><s:label>Dose Duration UOM:</s:label></td>
         <td class="value" >
@@ -55,6 +68,11 @@
         <td class="value" >
             <s:textfield name="doseRegimen" maxlength="160"  
                     /> 
+                    <span class="formErrorMsg"> 
+                             <s:fielderror>
+                                 <s:param>doseRegimen</s:param>
+                               </s:fielderror>  
+        </span>
         </td>
        
     </tr>
@@ -64,7 +82,15 @@
             <s:textfield name="minDoseTotalValue" maxlength="160" 
                     /> 
              <s:textfield name="maxDoseTotalValue" maxlength="160" 
-                    />         
+                    />  
+                      <span class="formErrorMsg"> 
+                             <s:fielderror>
+                                 <s:param>minDoseTotalValue</s:param>
+                               </s:fielderror>  
+                               <s:fielderror>
+                    <s:param>maxDoseTotalValue</s:param>
+                               </s:fielderror> 
+        </span>              
         </td>
        <td scope="row" class="label"><s:label>Total Dose UOM:</s:label></td>
         <td class="value" >

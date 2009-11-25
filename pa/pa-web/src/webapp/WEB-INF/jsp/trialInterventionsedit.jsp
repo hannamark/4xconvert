@@ -132,7 +132,9 @@
 <!--Help Content-->
 <!-- <a href="#" class="helpbutton" onclick="Help.popHelp('login');">Help</a> -->
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
-<div class="box"><pa:sucessMessage /> <s:if
+<div class="box"><pa:sucessMessage />
+<pa:failureMessage/>
+<s:if
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if>
@@ -145,7 +147,7 @@
     <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
     <tr>
         <td colspan="2">
-        <s:form name="interventionForm">
+        <s:form name="interventionForm" validate="true">
             <div id="loadDetails">
                 <%@ include file="/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp"%>
             </div>
