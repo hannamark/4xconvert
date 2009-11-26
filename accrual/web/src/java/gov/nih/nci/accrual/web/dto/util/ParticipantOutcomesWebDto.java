@@ -79,16 +79,14 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.accrual.web.enums.AssessmentTypes;
-import gov.nih.nci.pa.enums.DiseaseStatusCode;
-import gov.nih.nci.accrual.web.enums.ProgressionInds;
-import gov.nih.nci.accrual.web.enums.RecurrenceInds;
+import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
-import gov.nih.nci.accrual.web.enums.VitalStatuses;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.DiseaseStatusCode;
+import gov.nih.nci.pa.enums.PatientVitalStatus;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -119,18 +117,12 @@ public class ParticipantOutcomesWebDto implements Serializable {
     private Cd bestResponse;
     private Ts bestResponseDate;
 
-    private static int key = 0;
-    
-    private synchronized int getKey() {
-        return ++key;
-    }
 
     /**
      * Instantiates a new patient outcomes web dto.
      */
     public ParticipantOutcomesWebDto() {
-        id = new Ii();
-        id.setExtension(String.valueOf(getKey()));
+        // default constructor
     }
 
     /**
@@ -326,8 +318,8 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return list of vital statuses
      */
-    public List<VitalStatuses> getVitalStatuses() {
-        return Arrays.asList(VitalStatuses.values());
+    public List<PatientVitalStatus> getVitalStatuses() {
+        return Arrays.asList(PatientVitalStatus.values());
     }
 
     /**
@@ -335,13 +327,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
      */
     public List<DiseaseStatusCode> getDiseaseStatuses() {
         return Arrays.asList(DiseaseStatusCode.values());
-    }
-
-    /**
-     * @return list of assessment types
-     */
-    public List<AssessmentTypes> getAssessmentTypes() {
-        return Arrays.asList(AssessmentTypes.values());
     }
 
     /**
@@ -354,15 +339,15 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return list of recurrence indicators
      */
-    public List<RecurrenceInds> getRecurrenceInds() {
-        return Arrays.asList(RecurrenceInds.values());
+    public List<AutopsyPerformed> getRecurrenceInds() {
+        return Arrays.asList(AutopsyPerformed.values());
     }
 
     /**
      * @return list of progression indicators
      */
-    public List<ProgressionInds> getProgressionInds() {
-        return Arrays.asList(ProgressionInds.values());
+    public List<AutopsyPerformed> getProgressionInds() {
+        return Arrays.asList(AutopsyPerformed.values());
     }
 
     /**

@@ -62,8 +62,6 @@
 	<s:hidden name = "currentAction"/>
 	<s:hidden name = "selectedRowIdentifier"/>
     <s:hidden name = "lesionAssessment.Id" />
-    <s:hidden name = "lesionAssessment.performedLesionDesId" />
-    <s:hidden name = "lesionAssessment.performedImageId" />
      <s:hidden name = "lesionAssessment.oldTreatmentPlanId" />
 <table class="form">
 	<tr>
