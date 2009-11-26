@@ -82,12 +82,26 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.ActivityRelationshipConverter;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.accrual.util.AccrualHibernateUtil;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.ActivityRelationship;
+import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.iso.util.IiConverter;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author Kalpana Guthikonda
@@ -99,5 +113,81 @@ import javax.interceptor.Interceptors;
 public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
        <ActivityRelationshipDto, ActivityRelationship, ActivityRelationshipConverter>
         implements ActivityRelationshipService {
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii ii, Cd typeCode) throws RemoteException {
+        getLogger().info("Entering getByTargetPerformedActivity().");
+        Session session = null;
+        List<ActivityRelationship> queryList = new ArrayList<ActivityRelationship>();
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select ars "
+                       + "from ActivityRelationship ars "
+                       + "where ars.typeCode = :typeCode "
+                       + "and ars.targetPerformedActivity = :targetPerformedActivityIi "
+                       + "order by ars.id ";
+            getLogger().info("query ActivityRelationship = " + hql + ".");
+            query = session.createQuery(hql);
+            query.setParameter("typeCode", typeCode.getDisplayName().getValue());
+            
+            PerformedActivity pa = new PerformedActivity();
+            pa.setId(IiConverter.convertToLong(ii));
+            query.setParameter("targetPerformedActivityIi", pa);
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getByTargetPerformedActivity().", hbe);
+        }
+        ArrayList<ActivityRelationshipDto> resultList = new ArrayList<ActivityRelationshipDto>();
+        for (ActivityRelationship bo : queryList) {
+            try {
+                resultList.add(convertFromDomainToDto(bo));
+            } catch (DataFormatException e) {
+                throw new RemoteException("Iso conversion exception in getByTargetPerformedActivity().", e);
+            }
+        }
+        getLogger().info("Leaving getByTargetPerformedActivity(), returning " + resultList.size() + " object(s).");
+        return resultList;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii ii, Cd typeCode) throws RemoteException {
+        getLogger().info("Entering getBySourcePerformedActivity().");
+        Session session = null;
+        List<ActivityRelationship> queryList = new ArrayList<ActivityRelationship>();
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select ars "
+                       + "from ActivityRelationship ars "
+                       + "where ars.typeCode = :typeCode "
+                       + "and ars.sourcePerformedActivity = :sourcePerformedActivityIi "
+                       + "order by ars.id ";
+            getLogger().info("query ActivityRelationship = " + hql + ".");
+            query = session.createQuery(hql);
+            query.setParameter("typeCode", typeCode.getDisplayName().getValue());
+            
+            PerformedActivity pa = new PerformedActivity();
+            pa.setId(IiConverter.convertToLong(ii));
+            query.setParameter("sourcePerformedActivityIi", pa);
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getBySourcePerformedActivity().", hbe);
+        }
+        ArrayList<ActivityRelationshipDto> resultList = new ArrayList<ActivityRelationshipDto>();
+        for (ActivityRelationship bo : queryList) {
+            try {
+                resultList.add(convertFromDomainToDto(bo));
+            } catch (DataFormatException e) {
+                throw new RemoteException("Iso conversion exception in getBySourcePerformedActivity().", e);
+            }
+        }
+        getLogger().info("Leaving getBySourcePerformedActivity(), returning " + resultList.size() + " object(s).");
+        return resultList;
+    }
     
 }

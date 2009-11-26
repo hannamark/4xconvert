@@ -80,6 +80,11 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+
+import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.ejb.Remote;
 
@@ -90,4 +95,23 @@ import javax.ejb.Remote;
 @Remote
 public interface ActivityRelationshipService
         extends BaseAccrualStudyService<ActivityRelationshipDto> {
+    
+   
+    /**
+     * Gets the by target performed activity.
+     * @param ii the ii
+     * @param typeCode the type code
+     * @return the by target performed activity
+     * @throws RemoteException the remote exception
+     */
+    List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii ii, Cd typeCode) throws RemoteException;
+    
+    /**
+     * Gets the by source performed activity.
+     * @param ii the ii
+     * @param typeCode the type code
+     * @return the by source performed activity
+     * @throws RemoteException the remote exception
+     */
+    List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii ii, Cd typeCode) throws RemoteException;
 }

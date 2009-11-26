@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 
 import java.rmi.RemoteException;
@@ -116,6 +117,18 @@ public class MockActivityRelationshipBean implements ActivityRelationshipService
 
     public ActivityRelationshipDto update(ActivityRelationshipDto dto)
             throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii ii,
+            Cd typeCode) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii ii,
+            Cd typeCode) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -23,6 +23,11 @@
     function lookup(){
         showPopWin('${lookupUrl}', 900, 400, '', 'Lesion Site');
 	}
+	
+	function handleEditAction(){
+	    document.forms[0].action="editLesionAssessment.action";
+	    document.forms[0].submit();
+	}
 
 </script>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
@@ -54,7 +59,21 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
+	<s:hidden name = "currentAction"/>
+	<s:hidden name = "selectedRowIdentifier"/>
+    <s:hidden name = "lesionAssessment.Id" />
+    <s:hidden name = "lesionAssessment.performedLesionDesId" />
+    <s:hidden name = "lesionAssessment.performedImageId" />
+     <s:hidden name = "lesionAssessment.oldTreatmentPlanId" />
 <table class="form">
+	<tr>
+        <td scope="row" class="label"><label><fmt:message key="outcomes.summary.treatmentPlan"/>:<span class="required">*</span></label></td>
+        <td class="value">
+            <s:select  name="lesionAssessment.treatmentPlanId" headerKey="" headerValue="--Select--"
+                      list="treatmentPlans"  listKey="id" listValue="name"/>
+            <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.treatmentPlanId</s:param></s:fielderror>
+        </td>      
+    </tr>
  
  	<tr>
         <td scope="row" class="label"><label><fmt:message key="lesionAssessment.num"/>:<span class="required">*</span></label></td>
@@ -96,7 +115,7 @@
     <tr>
     	<td scope="row" class="label"><label><fmt:message key="lesionAssessment.contrastAgentIndicator"/>:<span class="required">*</span></label></td>
 		<td><s:select  name="lesionAssessment.contrastAgentIndicator" headerKey="" headerValue="--Select--"
-                      list="#{'No':'No', 'Yes':'Yes'}" value="lesionAssessment.contrastAgentIndicator.code"/>
+                      list="lesionAssessment.contrastAgentInds" listKey="code" listValue="code" value="lesionAssessment.contrastAgentIndicator.code"/>
                     <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.contrastAgentIndicator</s:param></s:fielderror>
          </td>
     </tr>
@@ -120,8 +139,8 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="lesionAssessment.lesionLongestDiameter"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="lesionAssessment.lesionLongestDiameter" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
-            <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.lesionLongestDiameter</s:param></s:fielderror>
+            <s:textfield name="lesionAssessment.lesionLongestDiameter.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.lesionLongestDiameter.value</s:param></s:fielderror>
         </td>      
     </tr>
                     
@@ -142,7 +161,12 @@
    <del class="btnwrapper">
       <ul class="btnrow">
        <li>
+        <s:if test="%{currentAction == 'create'}">
             <s:a href="#" cssClass="btn" onclick="handleSaveAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+        </s:if>
+         <s:if test="%{currentAction == 'update'}">
+         	<s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+         </s:if>    
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
         </li>
       </ul>

@@ -79,11 +79,25 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.PerformedImageDto;
+import gov.nih.nci.accrual.dto.PerformedImagingDto;
+import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
+import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -106,8 +120,10 @@ public class LesionAssessmentWebDto implements Serializable {
     private Cd contrastAgentIndicator;
     private Ii imageSeriesIdentifier;
     private Ii imageIdentifier;
-    private Ii lesionLongestDiameter;
+    private Pq lesionLongestDiameter;
     private Ts clinicalAssessmentDate;
+    private String treatmentPlanId;
+    private String oldTreatmentPlanId;
 
    
     /**
@@ -115,6 +131,50 @@ public class LesionAssessmentWebDto implements Serializable {
      */
     public LesionAssessmentWebDto() {
         // default constructor
+    }
+    
+    /**
+     * Instantiates a new lesion assessment web dto.
+     * @param po the po
+     * @param pi the pi
+     * @param pldList the pld list
+     * @param imageList the image list
+     * @param sourceTreatmentPlanId thetreatment plan id
+     */
+    public LesionAssessmentWebDto(PerformedObservationDto po,
+            PerformedImagingDto pi, List<PerformedLesionDescriptionDto> pldList,
+            List<PerformedImageDto> imageList, Ii sourceTreatmentPlanId) {        
+        lesionSite = po.getTargetSiteCode();
+        List<Cd> cds = new ArrayList<Cd>();
+        cds = DSetConverter.convertDsetToCdList(po.getMethodCode());
+        lesionMeasurementMethod = cds.get(0);
+        lesionNum = IiConverter.convertToIi(IntConverter.convertToString(pldList.get(0).getLesionNumber()));
+        lesionLongestDiameter = pldList.get(0).getLongestDiameter();
+        measurableEvaluableDiseaseType = pldList.get(0).getMeasurableIndicator();
+        if (pi.getContrastAgentEnhancementIndicator().getValue().equals(true)) {
+            contrastAgentIndicator = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
+        } else if (pi.getContrastAgentEnhancementIndicator().getValue().equals(false)) {
+            contrastAgentIndicator = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
+        }
+        imageIdentifier = imageList.get(0).getImageIdentifier();
+        imageSeriesIdentifier = imageList.get(0).getSeriesIdentifier();
+        clinicalAssessmentDate = imageList.get(0).getResultDateRange().getLow();
+        id = po.getIdentifier();
+        treatmentPlanId = sourceTreatmentPlanId.getExtension();
+        oldTreatmentPlanId = sourceTreatmentPlanId.getExtension();
+    }
+
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(LesionAssessmentWebDto dto, AbstractAccrualAction action) {       
+        if (dto.getLesionLongestDiameter() == null || dto.getLesionLongestDiameter().getValue() == null) {
+            action.addFieldError("lesionAssessment.lesionLongestDiameter.value", 
+                    "Please enter Lesion Longest Diameter Value.");
+        }
     }
 
     /**
@@ -266,10 +326,7 @@ public class LesionAssessmentWebDto implements Serializable {
      * Gets the lesion longest diameter.
      * @return the lesion longest diameter
      */
-    @FieldExpressionValidator(
-            expression = "lesionLongestDiameter.extension != null && lesionLongestDiameter.extension.length() > 0", 
-            message = "Please enter Lesion Longest Diameter")
-    public Ii getLesionLongestDiameter() {
+    public Pq getLesionLongestDiameter() {
         return lesionLongestDiameter;
     }
 
@@ -277,7 +334,7 @@ public class LesionAssessmentWebDto implements Serializable {
      * Sets the lesion longest diameter.
      * @param lesionLongestDiameter the new lesion longest diameter
      */
-    public void setLesionLongestDiameter(Ii lesionLongestDiameter) {
+    public void setLesionLongestDiameter(Pq lesionLongestDiameter) {
         this.lesionLongestDiameter = lesionLongestDiameter;
     }
 
@@ -297,5 +354,46 @@ public class LesionAssessmentWebDto implements Serializable {
      */
     public void setClinicalAssessmentDate(Ts clinicalAssessmentDate) {
         this.clinicalAssessmentDate = clinicalAssessmentDate;
+    }
+    
+    /**
+     * @return list of response indicators
+     */
+    public List<ResponseInds> getContrastAgentInds() {
+        return Arrays.asList(ResponseInds.values());
+    }
+
+    /**
+     * Gets the treatment plan id.
+     * @return the treatment plan id
+     */
+    @FieldExpressionValidator(
+            expression = "treatmentPlanId != null && treatmentPlanId.length() > 0", 
+            message = "Please Select TreatmentPlan")
+    public String getTreatmentPlanId() {
+        return treatmentPlanId;
+    }
+
+    /**
+     * Sets the treatment plan id.
+     * @param treatmentPlanId the new treatment plan id
+     */
+    public void setTreatmentPlanId(String treatmentPlanId) {
+        this.treatmentPlanId = treatmentPlanId;
+    }
+    /**
+     * Gets the old treatment plan id.
+     * @return the old treatment plan id
+     */
+    public String getOldTreatmentPlanId() {
+        return oldTreatmentPlanId;
+    }
+
+    /**
+     * Sets the old treatment plan id.
+     * @param oldTreatmentPlanId the new old treatment plan id
+     */
+    public void setOldTreatmentPlanId(String oldTreatmentPlanId) {
+        this.oldTreatmentPlanId = oldTreatmentPlanId;
     }
 }

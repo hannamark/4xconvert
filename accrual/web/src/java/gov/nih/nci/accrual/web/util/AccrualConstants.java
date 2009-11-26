@@ -99,6 +99,8 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_SUBMITTING_ORG_II = "personIi";
     /** Attribute used to hold Physician key. */
     public static final String SESSION_ATTR_PHYSICIAN_II = "organizationIi";
+    /** Attribute used to hold StudyProtocol Ii. */
+    public static final String SESSION_ATTR_STUDYPROTOCOL_II = "studyProtocolIi";
 
     /** Attribute used to store the authorized user in session. */
     public static final String SESSION_ATTR_AUTHORIZED_USER_NAME = "authorizedUserName";

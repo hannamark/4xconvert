@@ -250,18 +250,18 @@ public class PerformedObservationResultServiceTest
         assertTrue(plddto2.getLesionNumber().getValue().equals(pldr2.getLesionNumber().getValue()));
     }
     @Test
-    public void getByStudyProtocol() throws Exception {
-        List<PerformedDiagnosisDto> rList1 = bean.getPerformedDiagnosisByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+    public void getByPerformedActivity() throws Exception {
+        List<PerformedDiagnosisDto> rList1 = bean.getPerformedDiagnosisByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList1.size());
-        List<PerformedImageDto> rList2 = bean.getPerformedImageByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedImageDto> rList2 = bean.getPerformedImageByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList2.size());
-        List<PerformedHistopathologyDto> rList3 = bean.getPerformedHistopathologyByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedHistopathologyDto> rList3 = bean.getPerformedHistopathologyByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList3.size());
-        List<PerformedClinicalResultDto> rList4 = bean.getPerformedClinicalResultByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedClinicalResultDto> rList4 = bean.getPerformedClinicalResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList4.size());
-        List<PerformedMedicalHistoryResultDto> rList5 = bean.getPerformedMedicalHistoryResultByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedMedicalHistoryResultDto> rList5 = bean.getPerformedMedicalHistoryResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList5.size());
-        List<PerformedLesionDescriptionDto> rList6 = bean.getPerformedLesionDescriptionByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedLesionDescriptionDto> rList6 = bean.getPerformedLesionDescriptionByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList6.size());
     }  
 }

@@ -106,7 +106,15 @@ public interface PerformedActivityService
      * @return list of dto's
      * @throws RemoteException exception
      */
-    List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException;
+    List<PerformedActivityDto> getByStudySubject(Ii ii) throws RemoteException;
+    
+    /**
+     * Gets the performed observation by study subject.
+     * @param ii the ii
+     * @return the performed observation by study subject
+     * @throws RemoteException the remote exception
+     */
+    List<PerformedObservationDto> getPerformedObservationByStudySubject(Ii ii) throws RemoteException;
     
     /**
      * Gets the performed subject milestone by study protocol.
@@ -114,7 +122,7 @@ public interface PerformedActivityService
      * @return the performed subject milestone by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudyProtocol(Ii ii)
+    List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii)
     throws RemoteException;
     
     /**
@@ -143,17 +151,8 @@ public interface PerformedActivityService
      * @throws DataFormatException the Data Format Exception  
      */
     PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(
-            PerformedSubjectMilestoneDto dto) throws RemoteException, DataFormatException;
-    
-    /**
-     * Gets the performed observation by study protocol.
-     * @param ii the ii
-     * @return the performed observation by study protocol
-     * @throws RemoteException the remote exception
-     */
-    List<PerformedObservationDto> getPerformedObservationByStudyProtocol(Ii ii)
-    throws RemoteException;
-    
+            PerformedSubjectMilestoneDto dto) throws RemoteException, DataFormatException;   
+      
     /**
      * Gets the performed observation.
      * @param ii the ii
@@ -188,7 +187,7 @@ public interface PerformedActivityService
      * @return the performed imaging by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedImagingDto> getPerformedImagingByStudyProtocol(Ii ii)
+    List<PerformedImagingDto> getPerformedImagingByStudySubject(Ii ii)
     throws RemoteException;
     
     /**
@@ -226,7 +225,7 @@ public interface PerformedActivityService
      * @return the performed procedure by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedProcedureDto> getPerformedProcedureByStudyProtocol(Ii ii)
+    List<PerformedProcedureDto> getPerformedProcedureByStudySubject(Ii ii)
     throws RemoteException;
     
     /**
@@ -264,7 +263,7 @@ public interface PerformedActivityService
      * @return the performed substance administration by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudyProtocol(Ii ii)
+    List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudySubject(Ii ii)
     throws RemoteException;
     
     /**
@@ -301,7 +300,7 @@ public interface PerformedActivityService
      * @return the performed radiation administration by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudyProtocol(Ii ii)
+    List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudySubject(Ii ii)
     throws RemoteException;
     
     /**

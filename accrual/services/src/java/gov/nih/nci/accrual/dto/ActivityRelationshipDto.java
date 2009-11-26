@@ -169,8 +169,8 @@ public class ActivityRelationshipDto extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
     private Cd typeCode;
-    private Ii plannedIdentifier;
-    private Ii performedIdentifier;
+    private Ii sourcePerformedActivityIdentifier;
+    private Ii targetPerformedActivityIdentifier;
     
     /**
      * Gets the type code.
@@ -187,37 +187,39 @@ public class ActivityRelationshipDto extends BaseDTO {
     public void setTypeCode(Cd typeCode) {
         this.typeCode = typeCode;
     }
-    
+
     /**
-     * Gets the planned identifier.
-     * @return the planned identifier
+     * Gets the source performed activity identifier.
+     * @return the source performed activity identifier
      */
-    public Ii getPlannedIdentifier() {
-        return plannedIdentifier;
+    public Ii getSourcePerformedActivityIdentifier() {
+        return sourcePerformedActivityIdentifier;
     }
-    
+
     /**
-     * Sets the planned identifier.
-     * @param plannedIdentifier the new planned identifier
+     * Sets the source performed activity identifier.
+     * @param sourcePerformedActivityIdentifier the new source performed activity identifier
      */
-    public void setPlannedIdentifier(Ii plannedIdentifier) {
-        this.plannedIdentifier = plannedIdentifier;
+    public void setSourcePerformedActivityIdentifier(
+            Ii sourcePerformedActivityIdentifier) {
+        this.sourcePerformedActivityIdentifier = sourcePerformedActivityIdentifier;
     }
-    
+
     /**
-     * Gets the performed identifier.
-     * @return the performed identifier
+     * Gets the target performed activity identifier.
+     * @return the target performed activity identifier
      */
-    public Ii getPerformedIdentifier() {
-        return performedIdentifier;
+    public Ii getTargetPerformedActivityIdentifier() {
+        return targetPerformedActivityIdentifier;
     }
-    
+
     /**
-     * Sets the performed identifier.
-     * @param performedIdentifier the new performed identifier
+     * Sets the target performed activity identifier.
+     * @param targetPerformedActivityIdentifier the new target performed activity identifier
      */
-    public void setPerformedIdentifier(Ii performedIdentifier) {
-        this.performedIdentifier = performedIdentifier;
+    public void setTargetPerformedActivityIdentifier(
+            Ii targetPerformedActivityIdentifier) {
+        this.targetPerformedActivityIdentifier = targetPerformedActivityIdentifier;
     }
     
 }

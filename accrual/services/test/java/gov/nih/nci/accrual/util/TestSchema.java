@@ -187,9 +187,9 @@ public class TestSchema {
         session.flush();
         Connection connection = session.connection();
         Statement statement = connection.createStatement();
+        statement.executeUpdate("delete from performed_activity");
         statement.executeUpdate("delete from activity_relationship");
         statement.executeUpdate("delete from performed_observation_result");
-        statement.executeUpdate("delete from performed_activity");
         statement.executeUpdate("delete from study_disease");
         statement.executeUpdate("delete from study_subject");
         statement.executeUpdate("delete from patient");
@@ -568,6 +568,7 @@ public class TestSchema {
         m.setCategoryCode(ActivityCategoryCode.OTHER);
         m.setInformedConsentDate(PAUtil.dateStringToTimestamp("6/13/2009"));
         m.setStudyProtocol(studyProtocols.get(0));
+        m.setStudySubject(studySubjects.get(0));
         addUpdObject(m);
         performedSubjectMilestones.add(m);
 
@@ -582,12 +583,14 @@ public class TestSchema {
         performedObservation.setMethodCode("methodCode");
         performedObservation.setTargetSiteCode("targetSiteCode");
         performedObservation.setStudyProtocol(studyProtocols.get(0));
+        performedObservation.setStudySubject(studySubjects.get(0));
         addUpdObject(performedObservation);
         performedObservations.add(performedObservation);
 
         // PerformedImaging
         PerformedImaging pimaging = new PerformedImaging();
         pimaging.setStudyProtocol(studyProtocols.get(0));
+        pimaging.setStudySubject(studySubjects.get(0));        
         pimaging.setContrastAgentEnhancementIndicator(true);
         addUpdObject(pimaging);
         performedImagings.add(pimaging);
@@ -605,6 +608,7 @@ public class TestSchema {
         psa.setDoseTotalValue(new BigDecimal("5"));
         psa.setRouteOfAdministrationCode("Oral");
         psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
+        psa.setStudySubject(studySubjects.get(0)); 
         addUpdObject(psa);
         performedSubstanceAdministrations.add(psa);
 
@@ -612,6 +616,7 @@ public class TestSchema {
         PerformedRadiationAdministration pra = new PerformedRadiationAdministration();
         pra.setStudyProtocol(studyProtocols.get(0));
         pra.setMachineTypeCode("machineTypeCode");
+        pra.setStudySubject(studySubjects.get(0)); 
         addUpdObject(pra);
         performedRadiationAdministrations.add(pra);
 
@@ -620,6 +625,7 @@ public class TestSchema {
         pp.setStudyProtocol(studyProtocols.get(0));
         pp.setCategoryCode(ActivityCategoryCode.OTHER);
         pp.setTextDescription("SurgeryDescription");
+        pp.setStudySubject(studySubjects.get(0)); 
         addUpdObject(pp);
         performedProcedures.add(pp);
 
@@ -695,12 +701,12 @@ public class TestSchema {
         addUpdObject(pera);
         performedActivities.add(pera);
 
-        ActivityRelationship ar = new ActivityRelationship();
+       /* ActivityRelationship ar = new ActivityRelationship();
         ar.setTypeCode("ActivityRelationship");
-        ar.setPlannedActivity(pa);
-        ar.setPerformedActivity(pera);
+        ar.setSourcePerformedActivity(performedActivities.get(0));
+        ar.setTargetPerformedActivity(performedActivities.get(0));
         addUpdObject(ar);
-        activityRelationships.add(ar);
+        activityRelationships.add(ar);*/
     }
 
 }

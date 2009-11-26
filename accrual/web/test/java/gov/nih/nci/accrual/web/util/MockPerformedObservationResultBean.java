@@ -146,7 +146,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         return null;
     }
 
-    public List<PerformedClinicalResultDto> getPerformedClinicalResultByStudyProtocol(
+    public List<PerformedClinicalResultDto> getPerformedClinicalResultByPerformedActivity(
             Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -158,7 +158,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         return null;
     }
 
-    public List<PerformedDiagnosisDto> getPerformedDiagnosisByStudyProtocol(
+    public List<PerformedDiagnosisDto> getPerformedDiagnosisByPerformedActivity(
             Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -170,7 +170,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         return null;
     }
 
-    public List<PerformedHistopathologyDto> getPerformedHistopathologyByStudyProtocol(
+    public List<PerformedHistopathologyDto> getPerformedHistopathologyByPerformedActivity(
             Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -181,7 +181,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         return null;
     }
 
-    public List<PerformedImageDto> getPerformedImageByStudyProtocol(Ii ii)
+    public List<PerformedImageDto> getPerformedImageByPerformedActivity(Ii ii)
             throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -193,7 +193,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         return null;
     }
 
-    public List<PerformedLesionDescriptionDto> getPerformedLesionDescriptionByStudyProtocol(
+    public List<PerformedLesionDescriptionDto> getPerformedLesionDescriptionByPerformedActivity(
             Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -205,7 +205,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         return null;
     }
 
-    public List<PerformedMedicalHistoryResultDto> getPerformedMedicalHistoryResultByStudyProtocol(
+    public List<PerformedMedicalHistoryResultDto> getPerformedMedicalHistoryResultByPerformedActivity(
             Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -252,12 +252,6 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         return null;
     }
 
-    public List<PerformedObservationResultDto> getByStudyProtocol(Ii ii)
-            throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public PerformedObservationResultDto create(
             PerformedObservationResultDto dto) throws RemoteException {
         // TODO Auto-generated method stub
@@ -276,6 +270,12 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public PerformedObservationResultDto update(
             PerformedObservationResultDto dto) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<PerformedObservationResultDto> getPerformedObservationResultByPerformedActivity(
+            Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
     }

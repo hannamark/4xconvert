@@ -82,7 +82,6 @@ package gov.nih.nci.accrual.convert;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.pa.domain.ActivityRelationship;
 import gov.nih.nci.pa.domain.PerformedActivity;
-import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -103,8 +102,8 @@ public class ActivityRelationshipConverter extends AbstractConverter<ActivityRel
         ActivityRelationshipDto dto = new ActivityRelationshipDto();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setTypeCode(CdConverter.convertStringToCd(bo.getTypeCode()));
-        dto.setPlannedIdentifier(IiConverter.convertToPlannedActivityIi(bo.getPlannedActivity().getId()));
-        dto.setPerformedIdentifier(IiConverter.convertToIi(bo.getPerformedActivity().getId()));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(bo.getSourcePerformedActivity().getId()));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(bo.getTargetPerformedActivity().getId()));
         return dto;
     }
 
@@ -116,13 +115,13 @@ public class ActivityRelationshipConverter extends AbstractConverter<ActivityRel
         ActivityRelationship bo = new ActivityRelationship();
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         
-        PlannedActivity plannedActivity = new PlannedActivity();
-        plannedActivity.setId(IiConverter.convertToLong(dto.getPlannedIdentifier()));
-        bo.setPlannedActivity(plannedActivity);
+        PerformedActivity sourcePerformedActivity = new PerformedActivity();
+        sourcePerformedActivity.setId(IiConverter.convertToLong(dto.getSourcePerformedActivityIdentifier()));
+        bo.setSourcePerformedActivity(sourcePerformedActivity);
         
-        PerformedActivity performedActivity = new PerformedActivity();
-        performedActivity.setId(IiConverter.convertToLong(dto.getPerformedIdentifier()));
-        bo.setPerformedActivity(performedActivity);
+        PerformedActivity targetPerformedActivity = new PerformedActivity();
+        targetPerformedActivity.setId(IiConverter.convertToLong(dto.getTargetPerformedActivityIdentifier()));
+        bo.setTargetPerformedActivity(targetPerformedActivity);
         
         if (!PAUtil.isCdNull(dto.getTypeCode())) {
             bo.setTypeCode(dto.getTypeCode().getCode());

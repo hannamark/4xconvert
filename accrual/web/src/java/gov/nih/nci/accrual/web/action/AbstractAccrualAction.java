@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
@@ -139,9 +140,11 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     /** DiseaseService. */
     protected DiseaseParentServiceRemote diseaseParentSvc;
     /** PerformedObservationResultService. */
-    protected PerformedObservationResultService porServiceSvc;
+    protected PerformedObservationResultService performedObservationResultSvc;
     /** Name of the next target when needed. */
     private String nextTarget = null;
+    /** ActivityRelationshipService. */
+    protected ActivityRelationshipService activityRelationshipSvc;
 
     /** The action result to perform a redirect using "next". */
     public static final String NEXT = "next";
@@ -160,7 +163,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         diseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
-        porServiceSvc = AccrualServiceLocator.getInstance().getPerformedObservationResultService();
+        performedObservationResultSvc = AccrualServiceLocator.getInstance().getPerformedObservationResultService();
+        activityRelationshipSvc = AccrualServiceLocator.getInstance().getActivityRelationshipService();
     }
     /**
      * Default execute method for action classes.

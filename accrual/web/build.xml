@@ -40,10 +40,10 @@
 
     <property name="compile.jar.dir" location="${lib.dir}/web/compile"/>
     <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}"/>
         <fileset dir="${software.dir}/accrual/services/target">
            <include name="*.jar"/>
         </fileset>
+        <fileset dir="${compile.jar.dir}"/>
     </path>
 
     <property name="test.jar.dir" location="${lib.dir}/web/test"/>

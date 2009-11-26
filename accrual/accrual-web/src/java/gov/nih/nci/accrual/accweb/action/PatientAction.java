@@ -438,7 +438,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private PerformedSubjectMilestoneDto getRegistrationDate(StudySubjectDto sub) {
         List<PerformedSubjectMilestoneDto> smList;
         try {
-            smList = performedActivitySvc.getByStudySubject(sub.getIdentifier());
+            smList = performedActivitySvc.getPerformedSubjectMilestoneByStudySubject(sub.getIdentifier());
         } catch (RemoteException e) {
             LOG.error("Error in PatientAction.getRegistrationDate().", e);
             return null;

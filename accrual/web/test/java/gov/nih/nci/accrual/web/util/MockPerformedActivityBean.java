@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.PerformedActivity;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -108,9 +109,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         return null;
     }
 
-    public List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii)
+    public List<PerformedActivityDto> getByStudySubject(Ii ii)
             throws RemoteException {
-         return psmList;
+         return null;
     }
 
     public PerformedSubjectMilestoneDto getPerformedSubjectMilestone(Ii ii)
@@ -119,7 +120,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         return null;
     }
 
-    public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudyProtocol(
+    public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(
             Ii ii) throws RemoteException {
         return psmList;
     }
@@ -198,7 +199,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         return null;
     }
 
-    public List<PerformedImagingDto> getPerformedImagingByStudyProtocol(Ii ii)
+    public List<PerformedImagingDto> getPerformedImagingByStudySubject(Ii ii)
             throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -210,19 +211,13 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         return null;
     }
 
-    public List<PerformedObservationDto> getPerformedObservationByStudyProtocol(
-            Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public PerformedProcedureDto getPerformedProcedure(Ii ii)
             throws RemoteException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public List<PerformedProcedureDto> getPerformedProcedureByStudyProtocol(
+    public List<PerformedProcedureDto> getPerformedProcedureByStudySubject(
             Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -234,7 +229,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         return null;
     }
 
-    public List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudyProtocol(
+    public List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudySubject(
             Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -246,7 +241,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         return null;
     }
 
-    public List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudyProtocol(
+    public List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudySubject(
             Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
@@ -282,6 +277,12 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public PerformedSubstanceAdministrationDto updatePerformedSubstanceAdministration(
             PerformedSubstanceAdministrationDto dto) throws RemoteException,
             DataFormatException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<PerformedObservationDto> getPerformedObservationByStudySubject(
+            Ii ii) throws RemoteException {
         // TODO Auto-generated method stub
         return null;
     }

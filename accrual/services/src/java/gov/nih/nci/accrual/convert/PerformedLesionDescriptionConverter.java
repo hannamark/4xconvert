@@ -81,7 +81,7 @@ package gov.nih.nci.accrual.convert;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PerformedLesionDescription;
-import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -104,7 +104,7 @@ public class PerformedLesionDescriptionConverter extends PerformedObservationRes
         PerformedLesionDescriptionDto dto = (PerformedLesionDescriptionDto)
         PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedLesionDescriptionDto());
         dto.setLesionNumber(IntConverter.convertToInt(bo.getLesionNumber()));
-        dto.setMeasurableIndicator(BlConverter.convertToBl(bo.getMeasurableIndicator()));
+        dto.setMeasurableIndicator(CdConverter.convertStringToCd(bo.getMeasurableIndicator()));
         Pq pq = new Pq();
         pq.setValue(bo.getLongestDiameterValue());
         if (bo.getLongestDiameterUnit() != null) {
@@ -125,7 +125,7 @@ public class PerformedLesionDescriptionConverter extends PerformedObservationRes
         PerformedLesionDescription bo = (PerformedLesionDescription)
         PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedLesionDescription());
         bo.setLesionNumber(dto.getLesionNumber().getValue());
-        bo.setMeasurableIndicator(BlConverter.covertToBoolean(dto.getMeasurableIndicator()));
+        
         if (dto.getLongestDiameter() != null) {
             if (!PAUtil.isPqValueNull(dto.getLongestDiameter())) {
                 bo.setLongestDiameterValue(dto.getLongestDiameter().getValue());
@@ -133,6 +133,9 @@ public class PerformedLesionDescriptionConverter extends PerformedObservationRes
             if (!PAUtil.isPqValueNull(dto.getLongestDiameter())) {
                 bo.setLongestDiameterUnit(dto.getLongestDiameter().getUnit());
             }
+        }
+        if (!PAUtil.isCdNull(dto.getMeasurableIndicator())) {
+            bo.setMeasurableIndicator(dto.getMeasurableIndicator().getCode());
         }
         return bo;
     }

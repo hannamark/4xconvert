@@ -102,15 +102,24 @@ import javax.ejb.Remote;
 @Remote
 @SuppressWarnings({"PMD.TooManyMethods" })
 public interface PerformedObservationResultService
-        extends BaseAccrualStudyService<PerformedObservationResultDto> {
+        extends BaseAccrualService<PerformedObservationResultDto> {
     
     /**
-     * Gets the performed histopathology by study protocol.
+     * Gets the performed observation by performed activity.
+     * @param ii the ii
+     * @return the performed observation by study protocol
+     * @throws RemoteException the remote exception
+     */
+    List<PerformedObservationResultDto> getPerformedObservationResultByPerformedActivity(Ii ii)
+    throws RemoteException;
+    
+    /**
+     * Gets the performed histopathology by performed activity.
      * @param ii the ii
      * @return the performed histopathology by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedHistopathologyDto> getPerformedHistopathologyByStudyProtocol(Ii ii)
+    List<PerformedHistopathologyDto> getPerformedHistopathologyByPerformedActivity(Ii ii)
     throws RemoteException;
     
     /**
@@ -142,12 +151,12 @@ public interface PerformedObservationResultService
             PerformedHistopathologyDto dto) throws RemoteException, DataFormatException;
     
     /**
-     * Gets the performed diagnosis by study protocol.
+     * Gets the performed diagnosis by performed activity.
      * @param ii the ii
      * @return the performed diagnosis by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedDiagnosisDto> getPerformedDiagnosisByStudyProtocol(Ii ii)
+    List<PerformedDiagnosisDto> getPerformedDiagnosisByPerformedActivity(Ii ii)
     throws RemoteException;
     
     /**
@@ -179,12 +188,12 @@ public interface PerformedObservationResultService
             PerformedDiagnosisDto dto) throws RemoteException, DataFormatException;
     
     /**
-     * Gets the performed image by study protocol.
+     * Gets the performed image by performed activity.
      * @param ii the ii
      * @return the performed image by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedImageDto> getPerformedImageByStudyProtocol(Ii ii)
+    List<PerformedImageDto> getPerformedImageByPerformedActivity(Ii ii)
     throws RemoteException;
     
     /**
@@ -217,12 +226,12 @@ public interface PerformedObservationResultService
     
     
     /**
-     * Gets the performed clinical result by study protocol.
+     * Gets the performed clinical result by performed activity.
      * @param ii the ii
      * @return the performed clinical result by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedClinicalResultDto> getPerformedClinicalResultByStudyProtocol(Ii ii)
+    List<PerformedClinicalResultDto> getPerformedClinicalResultByPerformedActivity(Ii ii)
     throws RemoteException;
     
     /**
@@ -255,12 +264,12 @@ public interface PerformedObservationResultService
     
     
     /**
-     * Gets the performed medical history result by study protocol.
+     * Gets the performed medical history result by performed activity.
      * @param ii the ii
      * @return the performed medical history result by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedMedicalHistoryResultDto> getPerformedMedicalHistoryResultByStudyProtocol(Ii ii)
+    List<PerformedMedicalHistoryResultDto> getPerformedMedicalHistoryResultByPerformedActivity(Ii ii)
     throws RemoteException;
     
     /**
@@ -292,12 +301,12 @@ public interface PerformedObservationResultService
             PerformedMedicalHistoryResultDto dto) throws RemoteException, DataFormatException;
     
     /**
-     * Gets the performed lesion description by study protocol.
+     * Gets the performed lesion description by performed activity.
      * @param ii the ii
      * @return the performed lesion description by study protocol
      * @throws RemoteException the remote exception
      */
-    List<PerformedLesionDescriptionDto> getPerformedLesionDescriptionByStudyProtocol(Ii ii)
+    List<PerformedLesionDescriptionDto> getPerformedLesionDescriptionByPerformedActivity(Ii ii)
     throws RemoteException;
     
     /**

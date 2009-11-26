@@ -36,18 +36,18 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <accrual:sucessMessage /> 
 <s:form name="detailForm">
-    <display:table class="data" name="displayTagList" sort="list" pagesize="10">    
+    <display:table class="data" id="row" name="displayTagList" sort="list" pagesize="10">    
             <display:column titleKey="lesionAssessment.num" property="lesionNum.extension" sortable="true" headerClass="sortable"/>
             <display:column titleKey="lesionAssessment.site" property="lesionSite.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="lesionAssessment.medt" property="measurableEvaluableDiseaseType.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="lesionAssessment.lmmethod" property="lesionMeasurementMethod.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="lesionAssessment.clinicalAssessmentDate" property="clinicalAssessmentDate.value" sortable="true" headerClass="sortable"/>
             <display:column title="Edit" class="action">
-    		<s:url id="url" action="updateLesionAssessment"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
+    		<s:url id="url" action="updateLesionAssessment"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>
 		<display:column title="Delete"	headerClass="centered" class="action">
-				<s:url id="url" action="deleteLesionAssessment"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Delete'}"/></s:url>
+				<s:url id="url" action="deleteLesionAssessment"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
     			<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif"	alt="Delete" width="16" height="16" /></s:a>
 				</display:column>  
     </display:table>

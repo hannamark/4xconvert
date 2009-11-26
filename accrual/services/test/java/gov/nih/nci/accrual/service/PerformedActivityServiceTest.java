@@ -270,18 +270,18 @@ public class PerformedActivityServiceTest
         assertTrue(ppdto2.getTextDescription().getValue().equals(ppr2.getTextDescription().getValue()));
     }
     @Test
-    public void getByStudyProtocol() throws Exception {
-        List<PerformedSubjectMilestoneDto> rList1 = bean.getPerformedSubjectMilestoneByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+    public void getByStudySubject() throws Exception {
+        List<PerformedSubjectMilestoneDto> rList1 = bean.getPerformedSubjectMilestoneByStudySubject(IiConverter.convertToIi(TestSchema.performedSubjectMilestones.get(0).getStudySubject().getId()));
         assertTrue(0 < rList1.size());
-        List<PerformedObservationDto> rList2 = bean.getPerformedObservationByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedObservationDto> rList2 = bean.getPerformedObservationByStudySubject(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getStudySubject().getId()));
         assertTrue(0 < rList2.size());
-        List<PerformedImagingDto> rList3 = bean.getPerformedImagingByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedImagingDto> rList3 = bean.getPerformedImagingByStudySubject(IiConverter.convertToIi(TestSchema.performedImagings.get(0).getStudySubject().getId()));
         assertTrue(0 < rList3.size());
-        List<PerformedSubstanceAdministrationDto> rList4 = bean.getPerformedSubstanceAdministrationByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedSubstanceAdministrationDto> rList4 = bean.getPerformedSubstanceAdministrationByStudySubject(IiConverter.convertToIi(TestSchema.performedSubstanceAdministrations.get(0).getStudySubject().getId()));
         assertTrue(0 < rList4.size());
-        List<PerformedRadiationAdministrationDto> rList5 = bean.getPerformedRadiationAdministrationByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedRadiationAdministrationDto> rList5 = bean.getPerformedRadiationAdministrationByStudySubject(IiConverter.convertToIi(TestSchema.performedRadiationAdministrations.get(0).getStudySubject().getId()));
         assertTrue(0 < rList5.size());
-        List<PerformedProcedureDto> rList6 = bean.getPerformedProcedureByStudyProtocol(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        List<PerformedProcedureDto> rList6 = bean.getPerformedProcedureByStudySubject(IiConverter.convertToIi(TestSchema.performedProcedures.get(0).getStudySubject().getId()));
         assertTrue(0 < rList6.size());
     }
     
@@ -305,7 +305,7 @@ public class PerformedActivityServiceTest
         
         ii = IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId());
         
-        List<PerformedSubjectMilestoneDto> dto = bean.getByStudySubject(ii);
+        List<PerformedSubjectMilestoneDto> dto = bean.getPerformedSubjectMilestoneByStudySubject(ii);
         assertNotNull(dto);
     }
 }

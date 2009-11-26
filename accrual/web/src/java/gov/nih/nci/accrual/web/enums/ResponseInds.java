@@ -87,9 +87,9 @@ import gov.nih.nci.pa.enums.CodedEnum;
  */
 public enum ResponseInds implements CodedEnum<String> {
     /** Yes. */
-    RESP1("Response 1"),
+    YES("Yes"),
     /** No. */
-    RESP2("Response 2");
+    NO("No");
     
     private String code;
     

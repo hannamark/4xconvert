@@ -156,7 +156,7 @@
 */
 package gov.nih.nci.accrual.dto;
 
-import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Pq;
 
@@ -170,7 +170,7 @@ public class PerformedLesionDescriptionDto extends PerformedObservationResultDto
     private static final long serialVersionUID = 1L;
     private Int lesionNumber;
     private Pq longestDiameter;
-    private Bl measurableIndicator;
+    private Cd measurableIndicator;
     
     /**
      * Gets the lesion number.
@@ -208,7 +208,7 @@ public class PerformedLesionDescriptionDto extends PerformedObservationResultDto
      * Gets the measurable indicator.
      * @return the measurable indicator
      */
-    public Bl getMeasurableIndicator() {
+    public Cd getMeasurableIndicator() {
         return measurableIndicator;
     }
     
@@ -216,7 +216,7 @@ public class PerformedLesionDescriptionDto extends PerformedObservationResultDto
      * Sets the measurable indicator.
      * @param measurableIndicator the new measurable indicator
      */
-    public void setMeasurableIndicator(Bl measurableIndicator) {
+    public void setMeasurableIndicator(Cd measurableIndicator) {
         this.measurableIndicator = measurableIndicator;
     }
 }

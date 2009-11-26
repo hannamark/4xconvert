@@ -95,10 +95,10 @@ import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.PerformedProcedure;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedImaging;
 import gov.nih.nci.pa.domain.PerformedObservation;
+import gov.nih.nci.pa.domain.PerformedProcedure;
 import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
@@ -135,24 +135,24 @@ implements PerformedActivityService {
     /**
      * {@inheritDoc}
      */   
-    public List<PerformedSubjectMilestoneDto> getByStudySubject(Ii ii) throws RemoteException {
+    public List<PerformedActivityDto> getByStudySubject(Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called getByStudySubject() with Ii == null.");
         }
         getLogger().info("EnteringgetByStudySubject().");
 
         Session session = null;
-        List<PerformedSubjectMilestone> queryList = new ArrayList<PerformedSubjectMilestone>();
+        List<PerformedActivity> queryList = new ArrayList<PerformedActivity>();
         try {
             session = AccrualHibernateUtil.getCurrentSession();
             Query query = null;
 
             // step 1: form the hql
-            String hql = "select psm "
-                + "from PerformedSubjectMilestone psm "
-                + "join psm.studySubject ssub "
+            String hql = "select pa "
+                + "from PerformedActivity pa "
+                + "join pa.studySubject ssub "
                 + "where ssub.id = :studySubjectId "
-                + "order by psm.id ";
+                + "order by pa.id ";
 
             // step 2: construct query object
             query = session.createQuery(hql);
@@ -161,15 +161,11 @@ implements PerformedActivityService {
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
+            throw new RemoteException("Hibernate exception in getByStudySubject().", hbe);
         }
-        ArrayList<PerformedSubjectMilestoneDto> resultList = new ArrayList<PerformedSubjectMilestoneDto>();
-        for (PerformedSubjectMilestone bo : queryList) {
-            try {
-                resultList.add((PerformedSubjectMilestoneConverter.convertFromDomainToDto(bo)));
-            } catch (DataFormatException e) {
-                throw new RemoteException("Iso conversion exception in getByStudySubject().", e);
-            }
+        ArrayList<PerformedActivityDto> resultList = new ArrayList<PerformedActivityDto>();
+        for (PerformedActivity bo : queryList) {
+            resultList.add((new PerformedActivityConverter().convertFromDomainToDto(bo)));
         }
         getLogger().info("Leaving getByStudySubject, returning " + resultList.size() + " object(s).  ");
         return resultList;
@@ -203,7 +199,7 @@ implements PerformedActivityService {
     /**
      * {@inheritDoc}
      */
-    public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudyProtocol(
+    public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(
             Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             return null;
@@ -215,15 +211,15 @@ implements PerformedActivityService {
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa "
-            + "from PerformedSubjectMilestone pa "
-            + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId "
-            + "order by pa.id ";
+        String hql = "select psm "
+            + "from PerformedSubjectMilestone psm "
+            + "join psm.studySubject ssub "
+            + "where ssub.id = :studySubjectId "
+            + "order by psm.id ";
 
         // step 2: construct query object
         query = session.createQuery(hql);
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+        query.setParameter("studySubjectId", IiConverter.convertToLong(ii));
 
         // step 3: query the result
         queryList = query.list();
@@ -233,7 +229,7 @@ implements PerformedActivityService {
                 resultList.add(PerformedSubjectMilestoneConverter.convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
-                        + " getPerformedSubjectMilestoneByStudyProtocol().", e);
+                        + " getPerformedSubjectMilestoneByStudySubject().", e);
             }
         }
         return resultList;
@@ -316,7 +312,7 @@ implements PerformedActivityService {
     /**
      * {@inheritDoc}
      */
-    public List<PerformedImagingDto> getPerformedImagingByStudyProtocol(Ii ii)
+    public List<PerformedImagingDto> getPerformedImagingByStudySubject(Ii ii)
     throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             return null;
@@ -328,15 +324,15 @@ implements PerformedActivityService {
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa "
-            + "from PerformedImaging pa "
-            + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId "
-            + "order by pa.id ";
+        String hql = "select pi "
+            + "from PerformedImaging pi "
+            + "join pi.studySubject ssub "
+            + "where ssub.id = :studySubjectId "
+            + "order by pi.id ";
 
         // step 2: construct query object
         query = session.createQuery(hql);
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+        query.setParameter("studySubjectId", IiConverter.convertToLong(ii));
 
         // step 3: query the result
         queryList = query.list();
@@ -346,7 +342,7 @@ implements PerformedActivityService {
                 resultList.add(PerformedImagingConverter.convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
-                        + " getPerformedImagingByStudyProtocol().", e);
+                        + " getPerformedImagingByStudySubject().", e);
             }
         }
         return resultList;
@@ -425,46 +421,7 @@ implements PerformedActivityService {
         }
         return resultDto;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<PerformedObservationDto> getPerformedObservationByStudyProtocol(
-            Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
-            return null;
-        }
-
-        Session session = null;
-        List<PerformedObservation> queryList = new ArrayList<PerformedObservation>();
-        session = AccrualHibernateUtil.getCurrentSession();
-        Query query = null;
-
-        // step 1: form the hql
-        String hql = "select pa "
-            + "from PerformedObservation pa "
-            + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId "
-            + "order by pa.id ";
-
-        // step 2: construct query object
-        query = session.createQuery(hql);
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
-
-        // step 3: query the result
-        queryList = query.list();
-        ArrayList<PerformedObservationDto> resultList = new ArrayList<PerformedObservationDto>();
-        for (PerformedObservation bo : queryList) {
-            try {
-                resultList.add(PerformedObservationConverter.convertFromDomainToDto(bo));
-            } catch (DataFormatException e) {
-                throw new RemoteException("Iso conversion exception in "
-                        + " getPerformedObservationByStudyProtocol().", e);
-            }
-        }
-        return resultList;
-    }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -543,7 +500,7 @@ implements PerformedActivityService {
     /**
      * {@inheritDoc}
      */
-    public List<PerformedProcedureDto> getPerformedProcedureByStudyProtocol(
+    public List<PerformedProcedureDto> getPerformedProcedureByStudySubject(
             Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             return null;
@@ -555,15 +512,15 @@ implements PerformedActivityService {
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa "
-            + "from PerformedProcedure pa "
-            + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId "
-            + "order by pa.id ";
+        String hql = "select pp "
+            + "from PerformedProcedure pp "
+            + "join pp.studySubject ssub "
+            + "where ssub.id = :studySubjectId "
+            + "order by pp.id ";
 
         // step 2: construct query object
         query = session.createQuery(hql);
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+        query.setParameter("studySubjectId", IiConverter.convertToLong(ii));
 
         // step 3: query the result
         queryList = query.list();
@@ -573,7 +530,7 @@ implements PerformedActivityService {
                 resultList.add(PerformedProcedureConverter.convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
-                        + " getPerformedProcedureByStudyProtocol().", e);
+                        + " getPerformedProcedureByStudySubject().", e);
             }
         }
         return resultList;
@@ -658,7 +615,7 @@ implements PerformedActivityService {
     /**
      * {@inheritDoc}
      */
-    public List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudyProtocol(
+    public List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudySubject(
             Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             return null;
@@ -670,15 +627,15 @@ implements PerformedActivityService {
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa "
-            + "from PerformedRadiationAdministration pa "
-            + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId "
-            + "order by pa.id ";
+        String hql = "select pra "
+            + "from PerformedRadiationAdministration pra "
+            + "join pra.studySubject ssub "
+            + "where ssub.id = :studySubjectId "
+            + "order by pra.id ";
 
         // step 2: construct query object
         query = session.createQuery(hql);
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+        query.setParameter("studySubjectId", IiConverter.convertToLong(ii));
 
         // step 3: query the result
         queryList = query.list();
@@ -689,7 +646,7 @@ implements PerformedActivityService {
                 resultList.add(PerformedRadiationAdministrationConverter.convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
-                        + " getPerformedRadiationAdministrationByStudyProtocol().", e);
+                        + " getPerformedRadiationAdministrationByStudySubject().", e);
             }
         }
         return resultList;
@@ -774,7 +731,7 @@ implements PerformedActivityService {
     /**
      * {@inheritDoc}
      */
-    public List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudyProtocol(
+    public List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudySubject(
             Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             return null;
@@ -786,15 +743,15 @@ implements PerformedActivityService {
         Query query = null;
 
         // step 1: form the hql
-        String hql = "select pa "
-            + "from PerformedSubstanceAdministration pa "
-            + "join pa.studyProtocol sp "
-            + "where sp.id = :studyProtocolId "
-            + "order by pa.id ";
+        String hql = "select psa "
+            + "from PerformedSubstanceAdministration psa "
+            + "join psa.studySubject ssub "
+            + "where ssub.id = :studySubjectId "
+            + "order by psa.id ";
 
         // step 2: construct query object
         query = session.createQuery(hql);
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+        query.setParameter("studySubjectId", IiConverter.convertToLong(ii));
 
         // step 3: query the result
         queryList = query.list();
@@ -805,7 +762,7 @@ implements PerformedActivityService {
                 resultList.add(PerformedSubstanceAdministrationConverter.convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
-                        + " getPerformedSubstanceAdministrationByStudyProtocol().", e);
+                        + " getPerformedSubstanceAdministrationByStudySubject().", e);
             }
         }
         return resultList;
@@ -860,5 +817,48 @@ implements PerformedActivityService {
         session.flush();
         resultDto = PerformedSubstanceAdministrationConverter.convertFromDomainToDto(bo);
         return resultDto;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */   
+    public List<PerformedObservationDto> getPerformedObservationByStudySubject(Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            throw new RemoteException("Called getPerformedObservationByStudySubject() with Ii == null.");
+        }
+        getLogger().info("EnteringgetPerformedObservationByStudySubject().");
+
+        Session session = null;
+        List<PerformedObservation> queryList = new ArrayList<PerformedObservation>();
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            Query query = null;
+
+            // step 1: form the hql
+            String hql = "select po "
+                + "from PerformedObservation po "
+                + "join po.studySubject ssub "
+                + "where ssub.id = :studySubjectId "
+                + "order by po.id ";
+
+            // step 2: construct query object
+            query = session.createQuery(hql);
+            query.setParameter("studySubjectId", IiConverter.convertToLong(ii));
+
+            // step 3: query the result
+            queryList = query.list();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in getPerformedObservationByStudySubject().", hbe);
+        }
+        ArrayList<PerformedObservationDto> resultList = new ArrayList<PerformedObservationDto>();
+        for (PerformedObservation bo : queryList) {
+            try {
+                resultList.add((PerformedObservationConverter.convertFromDomainToDto(bo)));
+            } catch (DataFormatException e) {
+                throw new RemoteException("Iso conversion exception in getPerformedObservationByStudySubject().", e);
+            }
+        }
+        getLogger().info("Leaving getPerformedObservationByStudySubject " + resultList.size() + " object(s).  ");
+        return resultList;
     }
 }

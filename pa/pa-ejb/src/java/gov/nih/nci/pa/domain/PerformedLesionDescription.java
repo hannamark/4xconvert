@@ -97,7 +97,7 @@ public class PerformedLesionDescription extends PerformedObservationResult {
     private Integer lesionNumber;
     private BigDecimal longestDiameterValue;
     private String longestDiameterUnit;
-    private Boolean measurableIndicator;
+    private String measurableIndicator;
     
     /**
      * Gets the lesion number.
@@ -155,7 +155,7 @@ public class PerformedLesionDescription extends PerformedObservationResult {
      * @return the measurable indicator
      */
     @Column(name = "MEASURABLE_INDICATOR")
-    public Boolean getMeasurableIndicator() {
+    public String getMeasurableIndicator() {
         return measurableIndicator;
     }
     
@@ -163,7 +163,7 @@ public class PerformedLesionDescription extends PerformedObservationResult {
      * Sets the measurable indicator.
      * @param measurableIndicator the new measurable indicator
      */
-    public void setMeasurableIndicator(Boolean measurableIndicator) {
+    public void setMeasurableIndicator(String measurableIndicator) {
         this.measurableIndicator = measurableIndicator;
     }     
 }

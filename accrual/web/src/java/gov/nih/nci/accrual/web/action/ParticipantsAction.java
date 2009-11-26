@@ -150,11 +150,8 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String create() {
-        try {
-            participant = new ParticipantWebDto(searchTrialSvc.getOutcomesStudyProtocolIi(), unitedStatesId);
-        } catch (RemoteException e) {
-            return ERROR;
-        }
+        participant = new ParticipantWebDto((Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II), unitedStatesId);
         putParticipantInSession(null, null);
         return super.create();
     }

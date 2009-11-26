@@ -84,6 +84,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 /**
  * The Class ActivityRelationship.
  * 
@@ -96,8 +99,8 @@ public class ActivityRelationship extends AbstractEntity {
     private static final long serialVersionUID = 1L;
 
     private String typeCode;
-    private PlannedActivity plannedActivity = new PlannedActivity();
-    private PerformedActivity performedActivity = new PerformedActivity();
+    private PerformedActivity sourcePerformedActivity = new PerformedActivity();
+    private PerformedActivity targetPerformedActivity = new PerformedActivity();
        
     /**
      * Gets the type code.
@@ -117,38 +120,40 @@ public class ActivityRelationship extends AbstractEntity {
     }
 
     /**
-     * Gets the planned activity.
-     * @return the planned activity
+     * Gets the source performed activity.
+     * @return the source performed activity
      */
     @ManyToOne
-    @JoinColumn(name = "PLANNED_ACTIVITY_IDENTIFIER")    
-    public PlannedActivity getPlannedActivity() {
-        return plannedActivity;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "SOURCE_PERFORMED_ACTIVITY_IDENTIFIER")    
+    public PerformedActivity getSourcePerformedActivity() {
+        return sourcePerformedActivity;
     }
 
     /**
-     * Sets the planned activity.
-     * @param plannedActivity the new planned activity
+     * Sets the source performed activity.
+     * @param sourcePerformedActivity the new source performed activity
      */
-    public void setPlannedActivity(PlannedActivity plannedActivity) {
-        this.plannedActivity = plannedActivity;
+    public void setSourcePerformedActivity(PerformedActivity sourcePerformedActivity) {
+        this.sourcePerformedActivity = sourcePerformedActivity;
     }
 
     /**
-     * Gets the performed activity.
-     * @return the performed activity
+     * Gets the target performed activity.
+     * @return the target performed activity
      */
     @ManyToOne
-    @JoinColumn(name = "PERFORMED_ACTIVITY_IDENTIFIER")    
-    public PerformedActivity getPerformedActivity() {
-        return performedActivity;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "TARGET_PERFORMED_ACTIVITY_IDENTIFIER") 
+    public PerformedActivity getTargetPerformedActivity() {
+        return targetPerformedActivity;
     }
 
     /**
-     * Sets the performed activity.
-     * @param performedActivity the new performed activity
+     * Sets the target performed activity.
+     * @param targetPerformedActivity the new target performed activity
      */
-    public void setPerformedActivity(PerformedActivity performedActivity) {
-        this.performedActivity = performedActivity;
+    public void setTargetPerformedActivity(PerformedActivity targetPerformedActivity) {
+        this.targetPerformedActivity = targetPerformedActivity;
     }
 }

@@ -104,7 +104,7 @@ public class ActivityRelationshipServiceTest extends AbstractServiceTest<Activit
         bean = new ActivityRelationshipBeanLocal();
     }
 
-    @Test
+    /*@Test
     public void get() throws Exception {
         ActivityRelationshipDto dto = bean.get(IiConverter.convertToIi(TestSchema.activityRelationships.get(0).getId()));
         assertNotNull(dto);
@@ -113,18 +113,31 @@ public class ActivityRelationshipServiceTest extends AbstractServiceTest<Activit
         } catch (RemoteException e) {
             // expected behavior
         }
-    }
+    }*/
   @Test
     public void create() throws Exception {
         ActivityRelationshipDto dto = new ActivityRelationshipDto();
-        dto.setPlannedIdentifier(IiConverter.convertToPlannedActivityIi(TestSchema.plannedActivities.get(0).getId()));
-        dto.setPerformedIdentifier(IiConverter.convertToIi(TestSchema.performedActivities.get(0).getId()));
-        dto.setTypeCode(CdConverter.convertStringToCd("tes"));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(TestSchema.performedActivities.get(0).getId()));
+        dto.setTypeCode(CdConverter.convertStringToCd("PERT"));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(TestSchema.performedActivities.get(0).getId()));
         ActivityRelationshipDto r = bean.create(dto);
         assertNotNull(r);
         assertNotNull(r.getIdentifier().getExtension());
+        ActivityRelationshipDto dto2 = bean.get(r.getIdentifier());
+        assertNotNull(dto2);
+        try {
+            dto2 = bean.get(BII);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        String newtype = "newType";
+        assertFalse(newtype.equals(dto.getTypeCode()));
+        ActivityRelationshipDto dto3 = bean.get(r.getIdentifier());
+        dto3.setTypeCode(CdConverter.convertStringToCd(newtype));
+        ActivityRelationshipDto r2 = bean.update(dto3);
+        assertTrue(newtype.equals(r2.getTypeCode().getCode()));
     }
-    @Test
+   /* @Test
     public void update() throws Exception {
         String newtype = "newType";
         assertFalse(newtype.equals(TestSchema.activityRelationships.get(0).getTypeCode()));
@@ -132,5 +145,5 @@ public class ActivityRelationshipServiceTest extends AbstractServiceTest<Activit
         dto.setTypeCode(CdConverter.convertStringToCd(newtype));
         ActivityRelationshipDto r = bean.update(dto);
         assertTrue(newtype.equals(r.getTypeCode().getCode()));
-    }
+    }*/
 }
