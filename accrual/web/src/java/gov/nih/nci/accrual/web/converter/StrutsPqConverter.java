@@ -81,21 +81,23 @@ package gov.nih.nci.accrual.web.converter;
 
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.iso.util.PqConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.util.StrutsTypeConverter;
 
-import com.opensymphony.xwork2.conversion.TypeConversionException;
-
 /**
- * 
+ *
  * @author Lisa Kelley
  *
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class StrutsPqConverter extends StrutsTypeConverter {
+
+    private static final Logger LOG  = Logger.getLogger(StrutsPqConverter.class);
 
     /**
      * {@inheritDoc}
@@ -103,10 +105,14 @@ public class StrutsPqConverter extends StrutsTypeConverter {
     @SuppressWarnings("unchecked")
     @Override
     public Object convertFromString(Map map, String[] strings, Class aClass) {
-        if (strings.length != 1) {
-            throw new TypeConversionException(
-                    "Error in custom struts2 converter StrutsPqConverter.convertFromString().  "
-                    + "Expecting 1 string; " + strings.length + "were passed in.");
+        if (strings == null) {
+            LOG.warn("Error in custom struts2 converter.  Expecting 1 string; null was passed in.");
+            return new Pq();
+        } else if (strings.length != 1) {
+            LOG.warn("Error in custom struts2 converter.  Expecting 1 string; " + strings.length + "were passed in.");
+            return new Pq();
+        } else if (PAUtil.isEmpty(strings[0])) {
+            return new Pq();
         }
 
         BigDecimal value = null;
@@ -119,9 +125,9 @@ public class StrutsPqConverter extends StrutsTypeConverter {
             try {
                 value = new BigDecimal(parts[0]);
             } catch (IllegalArgumentException ex) {
-                throw new TypeConversionException(
-                        "Error in custom struts2 converter StrutsPqConverter.convertFromString().  "
+                LOG.warn("Error in custom struts2 converter StrutsPqConverter.convertFromString().  "
                         + "Value is not a valid Decimal. [" + strings[0] + "]", ex);
+                return new Pq();
             }
         }
         String units = "Unitary";
@@ -137,6 +143,9 @@ public class StrutsPqConverter extends StrutsTypeConverter {
     @SuppressWarnings({"unchecked", "PMD.UseStringBufferForStringAppends" })
     @Override
     public String convertToString(Map arg0, Object arg1) {
+        if (arg1 == null) {
+            return "";
+        }
         String txt = "";
         Pq obj = (Pq) arg1;
         if (obj.getValue() != null) {

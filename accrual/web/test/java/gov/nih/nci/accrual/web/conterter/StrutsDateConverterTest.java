@@ -81,20 +81,16 @@ package gov.nih.nci.accrual.web.conterter;
 
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.converter.StrutsDateConverter;
-import java.sql.Date;
 
-import org.junit.Test;
+import java.sql.Date;
 
 /**
  * Converter test.
- * 
+ *
  * @author lhebel
  */
-public class StrutsDateConverterTest extends StrutsConverterTest {
+public class StrutsDateConverterTest extends AbstractStrutsConverterTest {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void init() {
         converter = new StrutsDateConverter();
@@ -102,7 +98,7 @@ public class StrutsDateConverterTest extends StrutsConverterTest {
         invalidText = "George";
     }
 
-    @Test
+    @Override
     public void checkType() {
         assertTrue(obj instanceof Date);
     }

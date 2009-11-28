@@ -81,19 +81,21 @@ package gov.nih.nci.accrual.web.converter;
 
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.util.StrutsTypeConverter;
 
-import com.opensymphony.xwork2.conversion.TypeConversionException;
-
 /**
- * 
+ *
  * @author lhebel
  *
  */
 public class StrutsBlConverter extends StrutsTypeConverter {
+
+    private static final Logger LOG  = Logger.getLogger(StrutsBlConverter.class);
 
     /**
      * {@inheritDoc}
@@ -101,10 +103,14 @@ public class StrutsBlConverter extends StrutsTypeConverter {
     @SuppressWarnings("unchecked")
     @Override
     public Object convertFromString(Map map, String[] strings, Class aClass) {
-        if (strings.length != 1) {
-            throw new TypeConversionException(
-                    "Error in custom struts2 converter StrutsBlConverter.convertFromString().  "
-                    + "Expecting 1 string; " + strings.length + "were passed in.");
+        if (strings == null) {
+            LOG.warn("Error in custom struts2 converter.  Expecting 1 string; null was passed in.");
+            return new Bl();
+        } else if (strings.length != 1) {
+            LOG.warn("Error in custom struts2 converter.  Expecting 1 string; " + strings.length + "were passed in.");
+            return new Bl();
+        } else if (PAUtil.isEmpty(strings[0])) {
+            return new Bl();
         }
         return BlConverter.convertToBl("true".equals(strings[0].trim()));
     }

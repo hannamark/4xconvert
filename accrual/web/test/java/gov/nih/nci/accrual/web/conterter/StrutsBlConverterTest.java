@@ -79,31 +79,28 @@
 
 package gov.nih.nci.accrual.web.conterter;
 
-import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.accrual.web.converter.StrutsBlConverter;
-
 import gov.nih.nci.coppa.iso.Bl;
 
-import org.junit.Test;
+import org.junit.Assert;
+
 
 /**
  * Converter test.
- * 
+ *
  * @author lhebel
  */
-public class StrutsBlConverterTest extends StrutsConverterTest {
+public class StrutsBlConverterTest extends AbstractStrutsConverterTest {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void init() {
         converter = new StrutsBlConverter();
         validText = "true";
+        nullObj = new Bl();
     }
 
-    @Test
+    @Override
     public void checkType() {
-        assertTrue(obj instanceof Bl);
+        Assert.assertTrue(obj instanceof Bl);
     }
 }

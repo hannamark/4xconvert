@@ -80,88 +80,71 @@
 package gov.nih.nci.accrual.web.conterter;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.struts2.util.StrutsTypeConverter;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.opensymphony.xwork2.conversion.TypeConversionException;
-
 /**
  * Converter test root.
- * 
+ *
  * @author lhebel
  */
-public class StrutsConverterTest {
-    
-    protected StrutsTypeConverter converter = null;
-    protected String validText = null;
-    protected String invalidText = null;
+public abstract class AbstractStrutsConverterTest {
+
+    protected StrutsTypeConverter converter = null;     // required
+    protected String validText = null;                  // required
+    protected String invalidText = null;                // can be left null
     protected Object obj = null;
-    private boolean skipTests = false;
-    
+    protected Object nullObj = null;                    // must be changed for iso types
+
+    public abstract void init();
+    public abstract void checkType();
+
     /**
      * Always initialize first.
      */
     @Before
     public void initialize() {
         init();
-        if (skipTests) {
-            return;
-        }
         assertNotNull(converter);
         assertNotNull(validText);
         obj = converter.convertFromString(null, new String[]{validText}, String.class);
         assertNotNull(obj);
     }
 
-    public void init() {
-        skipTests = true;
-    }
-
     @Test
-    public void checkNull() {
-        if (skipTests) {
-            return;
-        }
+    public void checkInvalidFromString() {
+        Object tmp = converter.convertFromString(null, null, String.class);
+        assertTrue (nullObj == null ? tmp == null : nullObj.equals(tmp));
 
-        Object tmp = null;
-        try {
-            tmp = converter.convertFromString(null, null, String.class);
-            fail();
-        } catch (TypeConversionException ex) {
-            // expected
-        } catch (NullPointerException ex) {
-            // expected
-        }
+        tmp = converter.convertFromString(null, new String[]{null}, String.class);
+        assertTrue (nullObj == null ? tmp == null : nullObj.equals(tmp));
 
-        try {
-            tmp = converter.convertFromString(null, new String[]{}, String.class);
-            fail();
-        } catch (TypeConversionException ex) {
-            // expected
-        } catch (NullPointerException ex) {
-            // expected
-        }
+        tmp = converter.convertFromString(null, new String[]{validText, "text2"}, String.class);
+        assertTrue (nullObj == null ? tmp == null : nullObj.equals(tmp));
 
         if (invalidText != null) {
             tmp = converter.convertFromString(null, new String[]{invalidText}, String.class);
-            assertNull(tmp);
+            assertTrue (nullObj == null ? tmp == null : nullObj.equals(tmp));
         }
-        
-        String val = converter.convertToString(null, null);
-        assertTrue(val == null || val.equals(""));
     }
-    
+
     @Test
-    public void checkObject() {
-        if (skipTests) {
-            return;
-        }
+    public void checkValidFromString() {
         String val = converter.convertToString(null, obj);
         assertTrue(validText.equals(val));
+    }
+
+    @Test
+    public void checkNullToString() {
+        String val = converter.convertToString(null, null);
+        assertTrue(val.equals(""));
+    }
+
+    @Test
+    public void checkObjectType() {
+        checkType();
     }
 }

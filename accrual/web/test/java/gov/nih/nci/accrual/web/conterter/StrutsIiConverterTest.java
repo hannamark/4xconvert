@@ -76,54 +76,29 @@
 *
 *
 */
+package gov.nih.nci.accrual.web.conterter;
 
-package gov.nih.nci.accrual.web.converter;
+import gov.nih.nci.accrual.web.converter.StrutsIiConverter;
+import gov.nih.nci.coppa.iso.Ii;
 
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
-
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.apache.struts2.util.StrutsTypeConverter;
+import org.junit.Assert;
 
 /**
- *
- * @author lhebel
+ * @author Hugh Reinhart
+ * @since Nov 28, 2009
  *
  */
-public class StrutsStConverter extends StrutsTypeConverter {
+public class StrutsIiConverterTest extends AbstractStrutsConverterTest {
 
-    private static final Logger LOG  = Logger.getLogger(StrutsStConverter.class);
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
     @Override
-    public Object convertFromString(Map map, String[] strings, Class aClass) {
-        if (strings == null) {
-            LOG.warn("Error in custom struts2 converter.  Expecting 1 string; null was passed in.");
-            return new St();
-        } else if (strings.length != 1) {
-            LOG.warn("Error in custom struts2 converter.  Expecting 1 string; " + strings.length + "were passed in.");
-            return new St();
-        } else if (PAUtil.isEmpty(strings[0])) {
-            return new St();
-        }
-        return StConverter.convertToSt(strings[0].trim());
+    public void init() {
+        converter = new StrutsIiConverter();
+        validText = "123";
+        nullObj = new Ii();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
     @Override
-    public String convertToString(Map map, Object object) {
-        if (object == null) {
-            return "";
-        }
-        return StConverter.convertToString((St) object);
+    public void checkType() {
+        Assert.assertTrue(obj instanceof Ii);
     }
 }

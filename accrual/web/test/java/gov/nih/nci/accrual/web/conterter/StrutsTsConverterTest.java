@@ -83,14 +83,12 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.converter.StrutsTsConverter;
 import gov.nih.nci.coppa.iso.Ts;
 
-import org.junit.Test;
-
 /**
  * Converter test.
- * 
+ *
  * @author lhebel
  */
-public class StrutsTsConverterTest extends StrutsConverterTest {
+public class StrutsTsConverterTest extends AbstractStrutsConverterTest {
 
     /**
      * {@inheritDoc}
@@ -99,9 +97,11 @@ public class StrutsTsConverterTest extends StrutsConverterTest {
     public void init() {
         converter = new StrutsTsConverter();
         validText = "11/21/2008";
+        invalidText = "xyz";
+        nullObj = new Ts();
     }
 
-    @Test
+    @Override
     public void checkType() {
         assertTrue(obj instanceof Ts);
     }

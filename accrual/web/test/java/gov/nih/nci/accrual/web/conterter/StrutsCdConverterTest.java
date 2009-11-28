@@ -80,29 +80,25 @@
 package gov.nih.nci.accrual.web.conterter;
 
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
 import gov.nih.nci.accrual.web.converter.StrutsCdConverter;
 import gov.nih.nci.coppa.iso.Cd;
 
 /**
  * Converter test.
- * 
+ *
  * @author lhebel
  */
-public class StrutsCdConverterTest extends StrutsConverterTest {
+public class StrutsCdConverterTest extends AbstractStrutsConverterTest {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void init() {
         converter = new StrutsCdConverter();
         validText = "Active Status Code";
+        nullObj = new Cd();
+
     }
 
-    @Test
+    @Override
     public void checkType() {
         assertTrue(obj instanceof Cd);
     }

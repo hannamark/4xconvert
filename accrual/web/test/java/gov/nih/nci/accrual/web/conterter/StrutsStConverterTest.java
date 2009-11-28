@@ -81,28 +81,23 @@ package gov.nih.nci.accrual.web.conterter;
 
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.converter.StrutsStConverter;
-
 import gov.nih.nci.coppa.iso.St;
-
-import org.junit.Test;
 
 /**
  * Converter test.
- * 
+ *
  * @author lhebel
  */
-public class StrutsStConverterTest extends StrutsConverterTest {
+public class StrutsStConverterTest extends AbstractStrutsConverterTest {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void init() {
         converter = new StrutsStConverter();
         validText = "A test string";
+        nullObj = new St();
     }
 
-    @Test
+    @Override
     public void checkType() {
         assertTrue(obj instanceof St);
     }

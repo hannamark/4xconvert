@@ -83,9 +83,8 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.sql.Date;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.util.StrutsTypeConverter;
-
-import com.opensymphony.xwork2.conversion.TypeConversionException;
 
 /**
  * @author Hugh Reinhart
@@ -93,21 +92,28 @@ import com.opensymphony.xwork2.conversion.TypeConversionException;
  */
 public class StrutsDateConverter extends StrutsTypeConverter {
 
+    private static final Logger LOG  = Logger.getLogger(StrutsDateConverter.class);
+
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     @Override
     public Object convertFromString(Map map, String[] strings, Class aClass) {
-        if (strings.length != 1) {
-            throw new TypeConversionException(
-                    "Error in custom struts2 converter StrutsDateConverter.convertFromString().  "
-                    + "Expecting 1 string; " + strings.length + "were passed in.");
+        if (strings == null) {
+            LOG.warn("Error in custom struts2 converter.  Expecting 1 string; null was passed in.");
+            return null;
+        } else if (strings.length != 1) {
+            LOG.warn("Error in custom struts2 converter.  Expecting 1 string; " + strings.length + "were passed in.");
+            return null;
+        } else if (PAUtil.isEmpty(strings[0])) {
+            return null;
         }
         Date result;
         try {
             result = new Date(PAUtil.dateStringToTimestamp(strings[0].trim()).getTime());
         } catch (Exception e) {
+            LOG.warn(e.getLocalizedMessage());
             result = null;
         }
         return result;
