@@ -308,4 +308,8 @@
         <comment>execute accrual_dev_23941_5.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_5.sql"/>
     </changeSet>
+    <changeSet id="76" author="Kalpana">
+        <comment>execute accrual_dev_23941_6.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_6.sql"/>
+    </changeSet>
 </databaseChangeLog>

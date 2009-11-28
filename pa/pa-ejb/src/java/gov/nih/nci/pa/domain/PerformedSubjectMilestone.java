@@ -78,10 +78,14 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
+
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 /**
  * @author Hugh Reinhart
@@ -94,6 +98,7 @@ public class PerformedSubjectMilestone extends PerformedAdministrativeActivity {
 
     private Timestamp informedConsentDate;
     private Timestamp registrationDate;
+    private OffTreatmentReasonCode reasonCode;
 
     /**
      * @return the informedConsentDate
@@ -120,5 +125,23 @@ public class PerformedSubjectMilestone extends PerformedAdministrativeActivity {
      */
     public void setRegistrationDate(Timestamp registrationDate) {
         this.registrationDate = registrationDate;
+    }
+    
+    /**
+     * Gets the reason code.
+     * @return the reason code
+     */
+    @Column(name = "REASON_CODE")
+    @Enumerated(EnumType.STRING)
+    public OffTreatmentReasonCode getReasonCode() {
+        return reasonCode;
+    }
+    
+    /**
+     * Sets the reason code.
+     * @param reasonCode the new reason code
+     */
+    public void setReasonCode(OffTreatmentReasonCode reasonCode) {
+        this.reasonCode = reasonCode;
     }
 }

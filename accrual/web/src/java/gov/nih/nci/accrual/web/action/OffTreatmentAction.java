@@ -78,13 +78,17 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+
+import java.rmi.RemoteException;
+import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -96,12 +100,10 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWebDto> {
 
     private static final long serialVersionUID = 1L;
-
-    private PerformedSubjectMilestoneDto subMile = new PerformedSubjectMilestoneDto();
-
     private OffTreatmentWebDto offTreat = new OffTreatmentWebDto();
 
     /**
@@ -115,35 +117,25 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD")
     @SkipValidation
     @Override
     public String execute() {
-        subMile = new PerformedSubjectMilestoneDto();
-        Ii id = subMile.getIdentifier();
-        if (id != null) {
-            offTreat.setId(id);
-        }
-        Ivl<Ts> range = subMile.getActualDateRange();
-        if (range != null) {
-            Ts lastDate = range.getLow();
-            if (lastDate != null) {
-                offTreat.setLastTreatmentDate(lastDate);
+        try {
+        List<PerformedSubjectMilestoneDto> psmList = performedActivitySvc.getPerformedSubjectMilestoneByStudySubject(
+                                                                   getParticipantIi());
+        for (PerformedSubjectMilestoneDto psm : psmList) {
+            if (psm.getNameCode() != null && psm.getNameCode().getCode() != null
+                    && psm.getNameCode().getCode().equals(ActivityNameCode.OFF_TREATMENT.getCode())) {
+                offTreat.setId(psm.getIdentifier());
+                offTreat.setLastTreatmentDate(psm.getActualDateRange().getLow());
+                offTreat.setOffTreatmentReason(psm.getReasonCode());
             }
-        }
-        Cd reason = subMile.getSubcategoryCode();
-        if (reason != null) {
-            offTreat.setOffTreatmentReason(reason);
+        }        
+        } catch (RemoteException e) {
+            LOG.error("Error in OffTreatmentAction.execute() " + e.getLocalizedMessage());
+            return ERROR;
         }
         return super.execute();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String cancel() {
-        return execute();
     }
 
     /**
@@ -152,12 +144,35 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
      */
     @Override
     public String save() {
-        Cd offTreatCode = CdConverter.convertStringToCd("Off Treatment");
-        subMile.setCategoryCode(offTreatCode);
-        Ivl<Ts> actualDateRange = new Ivl<Ts>();
-        actualDateRange.setLow(offTreat.getLastTreatmentDate());
-        subMile.setActualDateRange(actualDateRange);
-        subMile.setSubcategoryCode(offTreat.getOffTreatmentReason());
+        try {
+            PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
+            if (offTreat.getId() != null && offTreat.getId().getExtension() != null) {
+                dto = performedActivitySvc.getPerformedSubjectMilestone(offTreat.getId());
+            }
+            if (dto.getActualDateRange() == null) {
+                dto.setActualDateRange(new Ivl<Ts>());
+            }
+            dto.getActualDateRange().setLow(offTreat.getLastTreatmentDate());
+            dto.setReasonCode(offTreat.getOffTreatmentReason());
+
+            if (offTreat.getId() != null && offTreat.getId().getExtension() == null) {
+                dto.setStudyProtocolIdentifier(getSpIi());
+                dto.setStudySubjectIdentifier(getParticipantIi());
+                dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.OFF_TREATMENT));
+                dto = performedActivitySvc.createPerformedSubjectMilestone(dto);
+
+                ActivityRelationshipDto arDto = new ActivityRelationshipDto();
+                arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+                arDto.setSourcePerformedActivityIdentifier(getTpIi());
+                arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
+                activityRelationshipSvc.create(arDto);
+            } else {
+                dto = performedActivitySvc.updatePerformedSubjectMilestone(dto);
+            }
+        } catch (Exception e) {
+            addActionError("Error in OffTreatmentAction save().  " + e.getLocalizedMessage());
+            return INPUT;
+        }
         return super.execute();
     }
 

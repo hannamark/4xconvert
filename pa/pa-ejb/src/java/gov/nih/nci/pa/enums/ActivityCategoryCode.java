@@ -103,6 +103,12 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     TREATMENT_PLAN("Treatment Plan"),
     /** Course. */
     COURSE("Course"),
+    /** Surgery. */
+    SURGERY("Surgery"),
+    /** Radiation. */
+    RADIATION("Radiation"),
+    /** Drug/Biologic. */
+    DRUG_BIOLOGIC("Drug/Biologic"),
     /** Other. */
     OTHER("Other");
      

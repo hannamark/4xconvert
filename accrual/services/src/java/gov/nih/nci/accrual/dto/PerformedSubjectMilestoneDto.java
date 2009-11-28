@@ -156,6 +156,7 @@
 */
 package gov.nih.nci.accrual.dto;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ts;
 
 /**
@@ -168,6 +169,7 @@ public class PerformedSubjectMilestoneDto extends PerformedActivityDto {
 
     private Ts informedConsentDate;
     private Ts registrationDate;
+    private Cd reasonCode;
 
     /**
      * @return the informedConsentDate
@@ -192,5 +194,21 @@ public class PerformedSubjectMilestoneDto extends PerformedActivityDto {
      */
     public void setRegistrationDate(Ts registrationDate) {
         this.registrationDate = registrationDate;
+    }
+    
+    /**
+     * Gets the reason code.
+     * @return the reason code
+     */
+    public Cd getReasonCode() {
+        return reasonCode;
+    }
+    
+    /**
+     * Sets the reason code.
+     * @param reasonCode the new reason code
+     */
+    public void setReasonCode(Cd reasonCode) {
+        this.reasonCode = reasonCode;
     }
 }

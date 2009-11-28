@@ -46,6 +46,7 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <s:hidden name="nextTarget"/>
+<s:hidden name="offTreat.id"/>
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="offtreat.label.date"/><span class="required">*</span></label></td>
 <td><s:textfield id="offTreatLastDate" name="offTreat.lastTreatmentDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>

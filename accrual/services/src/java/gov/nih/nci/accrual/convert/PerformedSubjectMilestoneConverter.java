@@ -80,7 +80,10 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -102,6 +105,7 @@ public class PerformedSubjectMilestoneConverter extends PerformedActivityConvert
         PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedSubjectMilestoneDto());
         dto.setInformedConsentDate(TsConverter.convertToTs(bo.getInformedConsentDate()));
         dto.setRegistrationDate(TsConverter.convertToTs(bo.getRegistrationDate()));
+        dto.setReasonCode(CdConverter.convertToCd(bo.getReasonCode()));
         return dto;
     }
 
@@ -117,6 +121,9 @@ public class PerformedSubjectMilestoneConverter extends PerformedActivityConvert
         PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedSubjectMilestone());      
         bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));
         bo.setRegistrationDate(TsConverter.convertToTimestamp(dto.getRegistrationDate()));
+        if (!PAUtil.isCdNull(dto.getReasonCode())) {
+            bo.setReasonCode(OffTreatmentReasonCode.getByCode(dto.getReasonCode().getCode()));
+        }
         return bo;
     }
 }
