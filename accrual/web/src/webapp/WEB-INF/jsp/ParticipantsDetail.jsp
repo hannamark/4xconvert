@@ -170,7 +170,7 @@ function handleEditAction(){
                      listKey="id" listValue="name"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:label name="participant.countryIdentifier" cssStyle="font-weight:normal"/>
+            <s:label name="participant.countryName" cssStyle="font-weight:normal"/>
           </s:elseif>
         </td>
     </tr>

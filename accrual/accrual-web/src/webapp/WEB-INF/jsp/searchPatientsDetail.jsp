@@ -183,7 +183,7 @@ function loadDiv(intid){
                      listKey="id" listValue="name"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:label name="patient.countryIdentifier" cssStyle="font-weight:normal"/>
+            <s:label name="patient.countryName" cssStyle="font-weight:normal"/>
           </s:elseif>
         </td>
     </tr>
