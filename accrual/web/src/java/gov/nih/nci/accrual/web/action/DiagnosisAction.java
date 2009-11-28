@@ -78,11 +78,22 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -114,10 +125,29 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD")
     @SkipValidation
     @Override
     public String execute() {
+        try {
+            new LinkedHashMap<Ii, String>();
+            List<PerformedActivityDto> dtoList = performedActivitySvc.getByStudySubject(getParticipantIi());
+            for (PerformedActivityDto dto : dtoList) {
+                if (ActivityNameCode.DIAGNOSIS.getCode().equals(CdConverter.convertCdToString(dto.getNameCode()))) {
+                    diagnosis.setIdentifier(dto.getIdentifier());
+                    List<PerformedDiagnosisDto> pdList =
+                        performedObservationResultSvc.getPerformedDiagnosisByPerformedActivity(dto.getIdentifier());
+                    if (!pdList.isEmpty()) {
+                        PerformedDiagnosisDto pd = pdList.get(0);
+                        diagnosis.setName(pd.getResultCodeModifiedText());
+                        diagnosis.setResultCode(pd.getResultCode());
+                        diagnosis.setCreateDate(pd.getResultDateRange().getLow());
+                    }
+                }
+            }
+        } catch (RemoteException e) {
+            LOG.error("Error in DiagnosisAction.execute()", e);
+            return ERROR;
+        }
         return super.execute();
     }
 
@@ -135,6 +165,41 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
      */
     @Override
     public String save() {
+        if (PAUtil.isIiNull(diagnosis.getIdentifier())) {
+            PerformedObservationDto obs = new PerformedObservationDto();
+            obs.setStudyProtocolIdentifier(getSpIi());
+            obs.setStudySubjectIdentifier(getParticipantIi());
+            obs.setNameCode(CdConverter.convertToCd(ActivityNameCode.DIAGNOSIS));
+            try {
+                obs = performedActivitySvc.createPerformedObservation(obs);
+                List<PerformedDiagnosisDto> pdList =
+                    performedObservationResultSvc.getPerformedDiagnosisByPerformedActivity(obs.getIdentifier());
+                PerformedDiagnosisDto pd;
+                boolean pdUpdate = false;
+                if (!pdList.isEmpty()) {
+                    pd = pdList.get(0);
+                    pdUpdate = true;
+                } else {
+                    pd = new PerformedDiagnosisDto();
+                    pd.setPerformedObservationIdentifier(obs.getIdentifier());
+                    pd.setStudyProtocolIdentifier(getSpIi());
+                }
+                pd.setResultCode(diagnosis.getResultCode());
+                pd.setResultCodeModifiedText(diagnosis.getName());
+                if (pd.getResultDateRange() == null) {
+                    pd.setResultDateRange(new Ivl<Ts>());
+                }
+                pd.getResultDateRange().setLow(diagnosis.getCreateDate());
+                if (pdUpdate) {
+                    performedObservationResultSvc.updatePerformedDiagnosis(pd);
+                } else {
+                    performedObservationResultSvc.createPerformedDiagnosis(pd);
+                }
+            } catch (Exception e) {
+                addActionError("Error in save().  " + e.getLocalizedMessage());
+                return INPUT;
+            }
+        }
         return super.execute();
     }
 

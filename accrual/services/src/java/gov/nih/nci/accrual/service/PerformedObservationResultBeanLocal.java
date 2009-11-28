@@ -128,9 +128,9 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
  @SuppressWarnings({"unchecked", "PMD" })
 public class PerformedObservationResultBeanLocal
-        extends AbstractBaseAccrualBean<PerformedObservationResultDto, PerformedObservationResult, 
+        extends AbstractBaseAccrualBean<PerformedObservationResultDto, PerformedObservationResult,
         PerformedObservationResultConverter> implements PerformedObservationResultService {
-      
+
     /**
      * {@inheritDoc}
      */
@@ -215,7 +215,7 @@ public class PerformedObservationResultBeanLocal
     public PerformedHistopathologyDto updatePerformedHistopathology(
             PerformedHistopathologyDto dto) throws RemoteException, DataFormatException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to modify existing.  ");
+            throw new RemoteException("Create method should be used to create new.  ");
         }
         return createOrUpdatePerformedHistopathology(dto);
     }
@@ -328,7 +328,7 @@ public class PerformedObservationResultBeanLocal
     public PerformedImageDto updatePerformedImage(PerformedImageDto dto)
     throws RemoteException, DataFormatException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to modify existing.  ");
+            throw new RemoteException("Create method should be used to create new.  ");
         }
         return createOrUpdatePerformedImage(dto);
     }
@@ -442,7 +442,7 @@ public class PerformedObservationResultBeanLocal
             PerformedDiagnosisDto dto) throws RemoteException,
             DataFormatException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to modify existing.  ");
+            throw new RemoteException("Create method should be used to create new.  ");
         }
         return createOrUpdatePerformedDiagnosis(dto);
     }
@@ -557,7 +557,7 @@ public class PerformedObservationResultBeanLocal
             PerformedClinicalResultDto dto) throws RemoteException,
             DataFormatException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to modify existing.  ");
+            throw new RemoteException("Create method should be used to create new.  ");
         }
         return createOrUpdatePerformedClinicalResult(dto);
     }
@@ -638,7 +638,7 @@ public class PerformedObservationResultBeanLocal
 
         // step 3: query the result
         queryList = query.list();
-        ArrayList<PerformedMedicalHistoryResultDto> resultList = new 
+        ArrayList<PerformedMedicalHistoryResultDto> resultList = new
         ArrayList<PerformedMedicalHistoryResultDto>();
         for (PerformedMedicalHistoryResult bo : queryList) {
             try {
@@ -672,7 +672,7 @@ public class PerformedObservationResultBeanLocal
             PerformedMedicalHistoryResultDto dto) throws RemoteException,
             DataFormatException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to modify existing.  ");
+            throw new RemoteException("Create method should be used to create new.  ");
         }
         return createOrUpdatePerformedMedicalHistoryResult(dto);
     }
@@ -754,7 +754,7 @@ public class PerformedObservationResultBeanLocal
 
         // step 3: query the result
         queryList = query.list();
-        ArrayList<PerformedLesionDescriptionDto> resultList = new 
+        ArrayList<PerformedLesionDescriptionDto> resultList = new
         ArrayList<PerformedLesionDescriptionDto>();
         for (PerformedLesionDescription bo : queryList) {
             try {
@@ -774,7 +774,7 @@ public class PerformedObservationResultBeanLocal
             PerformedLesionDescriptionDto dto) throws RemoteException,
             DataFormatException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to modify existing.  ");
+            throw new RemoteException("Create method should be used to create new.  ");
         }
         return createOrUpdatePerformedLesionDescription(dto);
     }

@@ -54,6 +54,8 @@
 <s:form name="detailForm">
 <s:hidden name="nextTarget"/>
 <s:hidden name="selectedDiagnosis"/>
+<s:hidden name="diagnosis.identifier"/>
+<s:hidden name="diagnosis.resultCode"/>
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="diagnosis.label.name"/><span class="required">*</span></label></td>
 <td><s:textfield readonly="true" size="50" name="diagnosis.name"

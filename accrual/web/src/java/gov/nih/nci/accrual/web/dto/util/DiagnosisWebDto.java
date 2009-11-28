@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
@@ -89,23 +90,39 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * Supports DiagnosisAction and diagnosis.jsp.
- * 
+ *
  * @author lhebel
  * @since 10/28/2009
  */
 public class DiagnosisWebDto implements Serializable {
 
     private static final long serialVersionUID = -2554496551018810110L;
-    
+
     private Ii identifier = new Ii();
-    private St name = new St();    
+    private Cd resultCode = new Cd();
+    private St name = new St();
     private Ts createDate = new Ts();
-    
+
+
     /**
      * Instantiates a new diagnosis web dto.
      */
     public DiagnosisWebDto() {
         // default constructor
+    }
+
+    /**
+     * @return the resultCode
+     */
+    public Cd getResultCode() {
+        return resultCode;
+    }
+
+    /**
+     * @param resultCode the resultCode to set
+     */
+    public void setResultCode(Cd resultCode) {
+        this.resultCode = resultCode;
     }
 
     /**
@@ -144,7 +161,7 @@ public class DiagnosisWebDto implements Serializable {
      * @param id the id to set
      */
     public void setIdentifier(Ii id) {
-        this.identifier = id;
+        identifier = id;
     }
 
     /**

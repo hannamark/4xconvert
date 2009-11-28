@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
@@ -192,6 +193,20 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected String getUserRole() {
         return (String) ServletActionContext.getRequest().getSession().getAttribute(
                 AccrualConstants.SESSION_ATTR_ROLE);
+    }
+    /**
+     * @return the Ii of the current participant, null if none selected
+     */
+    protected Ii getParticipantIi() {
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_PARTICIPANT_II);
+    }
+    /**
+     * @return the Ii of the outcomes StudyProtocol Ii
+     */
+    protected Ii getSpIi() {
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II);
     }
     /**
      * @return user login name as iso string
