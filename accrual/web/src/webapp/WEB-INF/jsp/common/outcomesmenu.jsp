@@ -37,10 +37,10 @@
     <c:if test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
         <c:choose>
             <c:when test="${(requestScope.topic == 'subjects_intro') || (requestScope.topic == 'subjects_adding') || (requestScope.topic == 'subjects_update')}">
-                <li><a href="executeParticipants.action" class="selected">Participant Search</a></li>
+                <li><a href="executeParticipants.action" class="selected">Patient Search</a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="executeParticipants.action">Participant Search</a></li>
+                <li><a href="executeParticipants.action">Patient Search</a></li>
             </c:otherwise>
         </c:choose>
     </c:if>

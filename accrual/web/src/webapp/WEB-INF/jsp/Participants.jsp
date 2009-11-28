@@ -28,7 +28,7 @@ function handleUpdate(rowId){
     document.forms[0].submit();
 }
 function handleDelete(rowId){
-    input_box=confirm("Click OK to remove the participant from the study.  Cancel to abort.");
+    input_box=confirm("Click OK to remove the patient from the study.  Cancel to abort.");
     if (input_box==true){
         document.forms[0].selectedRowIdentifier.value = rowId;
         document.forms[0].action="deleteParticipants.action";
@@ -75,7 +75,7 @@ function handleDelete(rowId){
            <ul class="btnrow">
             <li>
             <s:a href="#" cssClass="btn" onclick="handleSearch()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleCreate()"><span class="btn_img"><span class="add">Add New Participant</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleCreate()"><span class="btn_img"><span class="add">Add New Patient</span></span></s:a>
             </li>
            </ul>
         </del>

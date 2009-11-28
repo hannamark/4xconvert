@@ -76,10 +76,10 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import java.rmi.RemoteException;
-
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.pa.iso.util.IiConverter;
+
+import java.rmi.RemoteException;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -113,7 +113,7 @@ public class WelcomeAction extends AbstractAccrualAction {
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, "Doe, John");
             ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, IiConverter.convertToPoOrganizationIi("501"));
+                    AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, IiConverter.convertToPoOrganizationIi("518"));
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, "CBIIT");
             try {
