@@ -78,10 +78,14 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -100,7 +104,7 @@ public class ObservationResult extends AbstractStudyEntity {
     private BigDecimal resultQuantityValue;
     private String resultQuantityUnit;
     private String resultText;
-    private String typeCode;
+    private PerformedObservationResultTypeCode typeCode;
     private String unitOfMeasureCode;
     private Timestamp resultDateRangeLow;
     private Timestamp resultDateRangeHigh;
@@ -212,7 +216,8 @@ public class ObservationResult extends AbstractStudyEntity {
      * @return the type code
      */
     @Column(name = "TYPE_CODE")
-    public String getTypeCode() {
+    @Enumerated(EnumType.STRING)
+    public PerformedObservationResultTypeCode getTypeCode() {
         return typeCode;
     }
     
@@ -220,7 +225,7 @@ public class ObservationResult extends AbstractStudyEntity {
      * Sets the type code.
      * @param typeCode the new type code
      */
-    public void setTypeCode(String typeCode) {
+    public void setTypeCode(PerformedObservationResultTypeCode typeCode) {
         this.typeCode = typeCode;
     }
     

@@ -78,8 +78,12 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -98,7 +102,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class ActivityRelationship extends AbstractEntity {
     private static final long serialVersionUID = 1L;
 
-    private String typeCode;
+    private ActivityRelationshipTypeCode typeCode;
     private PerformedActivity sourcePerformedActivity = new PerformedActivity();
     private PerformedActivity targetPerformedActivity = new PerformedActivity();
        
@@ -107,7 +111,8 @@ public class ActivityRelationship extends AbstractEntity {
      * @return the type code
      */
     @Column(name = "TYPE_CODE")    
-    public String getTypeCode() {
+    @Enumerated(EnumType.STRING)
+    public ActivityRelationshipTypeCode getTypeCode() {
         return typeCode;
     }
 
@@ -115,7 +120,7 @@ public class ActivityRelationship extends AbstractEntity {
      * Sets the type code.
      * @param typeCode the new type code
      */
-    public void setTypeCode(String typeCode) {
+    public void setTypeCode(ActivityRelationshipTypeCode typeCode) {
         this.typeCode = typeCode;
     }
 

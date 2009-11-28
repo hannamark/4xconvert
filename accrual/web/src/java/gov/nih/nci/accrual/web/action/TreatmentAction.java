@@ -78,10 +78,18 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -110,8 +118,18 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
     @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<TreatmentWebDto>());
-        //just to test the functionality
-        getDisplayTagList().add(treatment);
+        try {
+            List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(
+                                                          getParticipantIi());
+            for (PerformedActivityDto pa : paList) {
+                if (pa.getCategoryCode() != null && pa.getCategoryCode().getCode() != null
+                        && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.TREATMENT_PLAN.getCode())) {
+                    getDisplayTagList().add(new TreatmentWebDto(pa));
+                }
+            }
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -123,13 +141,69 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
             setCurrentAction(CA_CREATE);
             return INPUT;
         }
+        PerformedActivityDto dto = treatment.getPerformedActivityDto(); 
         try {
+            dto = performedActivitySvc.create(dto);
+            putTreatmentPlanInSession(dto.getIdentifier(), dto.getName());
             return super.add();
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String update() {
+        treatment = null;
+        try {
+            loadDisplayList();
+            for (TreatmentWebDto tm : getDisplayTagList()) {
+                if (tm.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                    treatment = tm;
+                }
+            }
+        } catch (Exception e) {
+            treatment = null;
+            LOG.error("Error in TreatmentAction.update().", e);
+        }
+        if (treatment == null) {
+            addActionError("Error retrieving treatment info for update.");
+            return execute();
+        }
+        putTreatmentPlanInSession(treatment.getId(), treatment.getName());
+        return super.update();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String edit() throws RemoteException {
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        PerformedActivityDto dto = treatment.getPerformedActivityDto(); 
+        try {
+            dto = performedActivitySvc.update(dto);
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        putTreatmentPlanInSession(dto.getIdentifier(), dto.getName());
+        return super.edit();
+    }
+    
+    private void putTreatmentPlanInSession(Ii tpIi, St tpName) {
+        ServletActionContext.getRequest().getSession().setAttribute(
+                AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II, tpIi);
+        ServletActionContext.getRequest().getSession().setAttribute(
+                AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_NAME, tpName);
     }
 
     /**

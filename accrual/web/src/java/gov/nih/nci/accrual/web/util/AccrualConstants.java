@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.accrual.web.util;
 
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+
 
 /**
  * @author Hugh Reinhart
@@ -100,7 +102,11 @@ public final class AccrualConstants {
     /** Attribute used to hold Physician key. */
     public static final String SESSION_ATTR_PHYSICIAN_II = "organizationIi";
     /** Attribute used to hold StudyProtocol Ii. */
-    public static final String SESSION_ATTR_STUDYPROTOCOL_II = "studyProtocolIi";
+    public static final String SESSION_ATTR_STUDYPROTOCOL_II = "studyProtocolIi";    
+    /** The Constant SESSION_ATTR_TREATMENT_PLAN_II. */
+    public static final String SESSION_ATTR_TREATMENT_PLAN_II = "treatmentPlanIi";    
+    /** The Constant SESSION_ATTR_COURSE_II. */
+    public static final String SESSION_ATTR_COURSE_II = "courseIi";
 
     /** Attribute used to store the authorized user in session. */
     public static final String SESSION_ATTR_AUTHORIZED_USER_NAME = "authorizedUserName";
@@ -115,7 +121,9 @@ public final class AccrualConstants {
     /** Attribute used to hold Treatment Plan name. */
     public static final String SESSION_ATTR_TREATMENT_PLAN_NAME = "treatmentPlanName";
     /** Attribute used to hold Epoch. */
-    public static final String SESSION_ATTR_EPOCH = "epoch";
+    public static final String SESSION_ATTR_EPOCH = "epoch";    
+    /** The Constant SESSION_ATTR_COURSE_NAME. */
+    public static final String SESSION_ATTR_COURSE_NAME = "courseName";
 
 
     /** Action result for the global log out result. */
@@ -133,4 +141,9 @@ public final class AccrualConstants {
     public static final String CREATE_MESSAGE = "Record Created";
     /** Save Message . */
     public static final String SAVE_MESSAGE = "Record Saved";
+    
+    /** The Constant PERT. */
+    public static final String PERT = ActivityRelationshipTypeCode.PERT.getCode();    
+    /** The Constant COMP. */
+    public static final String COMP = ActivityRelationshipTypeCode.COMP.getCode();
 }

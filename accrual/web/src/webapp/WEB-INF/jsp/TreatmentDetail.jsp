@@ -15,7 +15,13 @@
     function handleCancelAction() {
         document.forms[0].action = "executeTreatment.action";
         document.forms[0].submit();
-    }
+    }   
+	
+	function handleEditAction(){
+	    document.forms[0].action="editTreatment.action";
+	    document.forms[0].submit();
+	}
+    
 
 </script>
 <title>
@@ -40,6 +46,9 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
+	<s:hidden name = "currentAction"/>
+	<s:hidden name = "selectedRowIdentifier"/>
+	<s:hidden name = "treatment.id"/>
 <table class="form">
 <tr>
         <td scope="row" class="label"><label><fmt:message key="treatPlan.name"/>:<span class="required">*</span></label></td>
@@ -69,8 +78,13 @@
 <div class="actionsrow">
    <del class="btnwrapper">
       <ul class="btnrow">
-       <li>        
+       <li>
+        <s:if test="%{currentAction == 'create'}">
             <s:a href="#" cssClass="btn" onclick="handleSaveAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+        </s:if>
+         <s:elseif test="%{currentAction == 'update'}">
+         	<s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+         </s:elseif>
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
         </li>
       </ul>

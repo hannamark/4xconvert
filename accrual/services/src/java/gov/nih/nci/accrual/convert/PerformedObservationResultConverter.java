@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PerformedObservation;
 import gov.nih.nci.pa.domain.PerformedObservationResult;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -133,7 +134,7 @@ public class PerformedObservationResultConverter extends AbstractConverter
                 bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
         dto.setResultIndicator(BlConverter.convertToBl(bo.getResultIndicator()));
         dto.setResultText(StConverter.convertToSt(bo.getResultText()));
-        dto.setTypeCode(CdConverter.convertStringToCd(bo.getTypeCode()));
+        dto.setTypeCode(CdConverter.convertToCd(bo.getTypeCode()));
         dto.setUnitOfMeasureCode(CdConverter.convertStringToCd(bo.getUnitOfMeasureCode()));
         Pq pq = new Pq();
         pq.setValue(bo.getResultQuantityValue());
@@ -171,7 +172,7 @@ public class PerformedObservationResultConverter extends AbstractConverter
             bo.setResultCode(dto.getResultCode().getCode());
         }
         if (!PAUtil.isCdNull(dto.getTypeCode())) {
-            bo.setTypeCode(dto.getTypeCode().getCode());
+            bo.setTypeCode(PerformedObservationResultTypeCode.getByCode(dto.getTypeCode().getCode()));
         }
         if (!PAUtil.isCdNull(dto.getUnitOfMeasureCode())) {
             bo.setUnitOfMeasureCode(dto.getUnitOfMeasureCode().getCode());

@@ -79,21 +79,19 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedImagingDto;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.LesionAssessmentWebDto;
-import gov.nih.nci.accrual.web.dto.util.TreatmentPlanLabelValueWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -104,8 +102,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
-
-import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -121,10 +117,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 public class LesionAssessmentAction extends AbstractListEditAccrualAction<LesionAssessmentWebDto> {
 
     private static final long serialVersionUID = 1L;
-    private LesionAssessmentWebDto lesionAssessment = new LesionAssessmentWebDto();
-    private static final String PERT = "PERT";
-    private static final String COMP = "COMP";
-    private List<TreatmentPlanLabelValueWebDto> treatmentPlans = null;
+    private LesionAssessmentWebDto lesionAssessment = new LesionAssessmentWebDto(); 
 
     /**
      * {@inheritDoc}
@@ -133,42 +126,19 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
     public Epoch getEpoch() {
         return Epoch.TREATMENT;
     }
-
-
-    /**
-     * Load treatment plans.
-     * @return the string
-     * @throws RemoteException the remote exception
-     */
-    public List<TreatmentPlanLabelValueWebDto> loadTreatmentPlans() throws RemoteException {
-        setTreatmentPlans(new ArrayList<TreatmentPlanLabelValueWebDto>());
-        TreatmentPlanLabelValueWebDto webdto = null;
-        List<PerformedActivityDto> dtoList = performedActivitySvc.getByStudySubject(
-                (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
-        for (PerformedActivityDto dto : dtoList) {
-            if (ActivityCategoryCode.TREATMENT_PLAN.getCode().equals(dto.getCategoryCode().getCode())) {
-                webdto = new TreatmentPlanLabelValueWebDto();
-                webdto.setId(dto.getIdentifier().getExtension());
-                webdto.setName(dto.getTextDescription().getValue());
-                getTreatmentPlans().add(webdto);
-            }
-        }
-        return treatmentPlans;
-    }
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public String create() {
+    public String execute() {
         try {
             loadTreatmentPlans();
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
-            return super.create();
-        }
-        return super.create();
+            return super.execute();
+        }        
+        return super.execute();
     }
 
    
@@ -181,17 +151,16 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
         try {
 
             List<PerformedImagingDto> piList = performedActivitySvc.getPerformedImagingByStudySubject(
-                    (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                            AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
+                                                                getParticipantIi());
             for (PerformedImagingDto pi : piList) {
                 if (pi.getNameCode().getCode().equals(ActivityNameCode.LESION_ASSESSMENT.getCode())) {
                     List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            pi.getIdentifier(), CdConverter.convertStringToCd(PERT));
+                            pi.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.PERT));
                     PerformedObservationDto po = performedActivitySvc.getPerformedObservation(
                             arList.get(0).getSourcePerformedActivityIdentifier());
                     if (po.getNameCode().getCode().equals(ActivityNameCode.LESION_ASSESSMENT.getCode())) {
                         arList = activityRelationshipSvc.getByTargetPerformedActivity(po.getIdentifier(), 
-                                CdConverter.convertStringToCd(COMP));
+                                CdConverter.convertStringToCd(AccrualConstants.COMP));
                         PerformedObservationDto treatmentPlan = performedActivitySvc.getPerformedObservation(
                                           arList.get(0).getTargetPerformedActivityIdentifier());
                         Ii sourceTreatmentPlanId = arList.get(0).getSourcePerformedActivityIdentifier();
@@ -218,9 +187,9 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
     @Override
     public String delete() throws RemoteException {
         List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                IiConverter.convertToIi(getSelectedRowIdentifier()), CdConverter.convertStringToCd(COMP));
+        IiConverter.convertToIi(getSelectedRowIdentifier()), CdConverter.convertStringToCd(AccrualConstants.COMP));
         arList = activityRelationshipSvc.getBySourcePerformedActivity(
-                arList.get(0).getTargetPerformedActivityIdentifier(), CdConverter.convertStringToCd(PERT));
+         arList.get(0).getTargetPerformedActivityIdentifier(), CdConverter.convertStringToCd(AccrualConstants.PERT));
         
         performedActivitySvc.delete(arList.get(0).getSourcePerformedActivityIdentifier());
         performedActivitySvc.delete(arList.get(0).getTargetPerformedActivityIdentifier());        
@@ -235,7 +204,6 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
         lesionAssessment = null;
         try {
             loadDisplayList();
-            loadTreatmentPlans();
             for (LesionAssessmentWebDto la : getDisplayTagList()) {
                 if (la.getId().getExtension().equals(getSelectedRowIdentifier())) {
                     lesionAssessment = la;
@@ -269,10 +237,8 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
             List<Cd> cds = new ArrayList<Cd>();
             cds.add(lesionAssessment.getLesionMeasurementMethod());
             dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
-            dto.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
-            dto.setStudySubjectIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
+            dto.setStudyProtocolIdentifier(getSpIi());
+            dto.setStudySubjectIdentifier(getParticipantIi());
 
             dto = performedActivitySvc.createPerformedObservation(dto);
             
@@ -287,8 +253,7 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
             Ivl<Ts> clinicalAssessmentDate = new Ivl<Ts>();
             clinicalAssessmentDate.setLow(lesionAssessment.getClinicalAssessmentDate());
             pldDto1.setResultDateRange(clinicalAssessmentDate);
-            pldDto1.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
+            pldDto1.setStudyProtocolIdentifier(getSpIi());
             performedObservationResultSvc.createPerformedLesionDescription(pldDto1);
             
             PerformedImagingDto dto2 = new PerformedImagingDto();
@@ -298,10 +263,8 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
             } else if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("No")) {
                 dto2.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(false));
             }
-            dto2.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
-            dto2.setStudySubjectIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
+            dto2.setStudyProtocolIdentifier(getSpIi());
+            dto2.setStudySubjectIdentifier(getParticipantIi());
 
             dto2 = performedActivitySvc.createPerformedImaging(dto2);
             
@@ -310,18 +273,17 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
             piDto.setImageIdentifier(lesionAssessment.getImageIdentifier());
             piDto.setSeriesIdentifier(lesionAssessment.getImageSeriesIdentifier());
             piDto.setResultDateRange(clinicalAssessmentDate);
-            piDto.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
+            piDto.setStudyProtocolIdentifier(getSpIi());
             performedObservationResultSvc.createPerformedImage(piDto);
             
             ActivityRelationshipDto arDto = new ActivityRelationshipDto();
-            arDto.setTypeCode(CdConverter.convertStringToCd(PERT));
+            arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.PERT)));
             arDto.setSourcePerformedActivityIdentifier(dto.getIdentifier());
             arDto.setTargetPerformedActivityIdentifier(dto2.getIdentifier());
             activityRelationshipSvc.create(arDto);
             
             ActivityRelationshipDto arDto2 = new ActivityRelationshipDto();
-            arDto2.setTypeCode(CdConverter.convertStringToCd(COMP));
+            arDto2.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
             arDto2.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(lesionAssessment.getTreatmentPlanId()));
             arDto2.setTargetPerformedActivityIdentifier(dto.getIdentifier());
             activityRelationshipSvc.create(arDto2);
@@ -348,9 +310,9 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
         }
         try {                                    
             List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                    IiConverter.convertToIi(getSelectedRowIdentifier()), CdConverter.convertStringToCd(COMP));
+            IiConverter.convertToIi(getSelectedRowIdentifier()), CdConverter.convertStringToCd(AccrualConstants.COMP));
             arList = activityRelationshipSvc.getBySourcePerformedActivity(
-                    arList.get(0).getTargetPerformedActivityIdentifier(), CdConverter.convertStringToCd(PERT));
+            arList.get(0).getTargetPerformedActivityIdentifier(), CdConverter.convertStringToCd(AccrualConstants.PERT));
 
             PerformedObservationDto poDto = performedActivitySvc.getPerformedObservation(
                     arList.get(0).getSourcePerformedActivityIdentifier());
@@ -360,7 +322,7 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
 
             if (piDto.getNameCode().getCode().equals(ActivityNameCode.LESION_ASSESSMENT.getCode())) {
                 arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                        piDto.getIdentifier(), CdConverter.convertStringToCd(PERT));
+                        piDto.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.PERT));
                 if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("Yes")) {
                     piDto.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(true));
                 } else if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("No")) {
@@ -380,7 +342,7 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
                     po = performedActivitySvc.updatePerformedObservation(po);
 
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(po.getIdentifier(), 
-                            CdConverter.convertStringToCd(COMP));
+                            CdConverter.convertStringToCd(AccrualConstants.COMP));
                     PerformedObservationDto treatmentPlan = performedActivitySvc.getPerformedObservation(
                             arList.get(0).getTargetPerformedActivityIdentifier());
                     //Ii sourceTreatmentPlanId = arList.get(0).getSourcePerformedActivityIdentifier();
@@ -412,10 +374,11 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
 
             if (!lesionAssessment.getTreatmentPlanId().equals(lesionAssessment.getOldTreatmentPlanId())) {
                 arList = activityRelationshipSvc.getBySourcePerformedActivity(IiConverter.convertToIi(
-                        lesionAssessment.getOldTreatmentPlanId()), CdConverter.convertStringToCd(COMP));
+                        lesionAssessment.getOldTreatmentPlanId()), 
+                        CdConverter.convertStringToCd(AccrualConstants.COMP));
                 for (ActivityRelationshipDto ar : arList) {
                     if (ar.getTargetPerformedActivityIdentifier().getExtension().equals(poDto.getIdentifier()
-                            .getExtension()) && ar.getTypeCode().getCode().equals(COMP)) {
+                            .getExtension()) && ar.getTypeCode().getCode().equals(AccrualConstants.COMP)) {
                         ar.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(
                                 lesionAssessment.getTreatmentPlanId()));
                         activityRelationshipSvc.update(ar);
@@ -450,21 +413,5 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
     public void setLesionAssessment(LesionAssessmentWebDto lesionAssessment) {
         this.lesionAssessment = lesionAssessment;
     }
-
-    /**
-     * Gets the treatment plans.
-     * @return the treatment plans
-     */
-    public List<TreatmentPlanLabelValueWebDto> getTreatmentPlans() {
-        return treatmentPlans;
-    }
-
-    /**
-     * Sets the treatment plans.
-     * @param treatmentPlans the treatment plans
-     */
-    public void setTreatmentPlans(List<TreatmentPlanLabelValueWebDto> treatmentPlans) {
-        this.treatmentPlans = treatmentPlans;
-    }  
 
 }

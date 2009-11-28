@@ -101,6 +101,8 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     PLANNED_PROCEDURE("Planned Procedure"),
     /** Treatment Plan. */
     TREATMENT_PLAN("Treatment Plan"),
+    /** Course. */
+    COURSE("Course"),
     /** Other. */
     OTHER("Other");
      

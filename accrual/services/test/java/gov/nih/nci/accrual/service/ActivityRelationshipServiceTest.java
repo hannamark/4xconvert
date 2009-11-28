@@ -84,6 +84,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
@@ -130,7 +131,7 @@ public class ActivityRelationshipServiceTest extends AbstractServiceTest<Activit
         } catch (RemoteException e) {
             // expected behavior
         }
-        String newtype = "newType";
+        String newtype = ActivityRelationshipTypeCode.COMP.getCode();
         assertFalse(newtype.equals(dto.getTypeCode()));
         ActivityRelationshipDto dto3 = bean.get(r.getIdentifier());
         dto3.setTypeCode(CdConverter.convertStringToCd(newtype));

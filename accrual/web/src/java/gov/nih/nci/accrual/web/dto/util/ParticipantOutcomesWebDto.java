@@ -79,14 +79,15 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.DiseaseStatusCode;
 import gov.nih.nci.pa.enums.PatientVitalStatus;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -98,6 +99,7 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.TooManyFields" })
 public class ParticipantOutcomesWebDto implements Serializable {
 
     private static final long serialVersionUID = 1839478941711659167L;
@@ -113,9 +115,11 @@ public class ParticipantOutcomesWebDto implements Serializable {
     private Ts recurrenceDate;
     private Ts progressionDate;
     private Ts evaluationDate;
-    private St progressionSite;
+    private Cd progressionSite;
     private Cd bestResponse;
     private Ts bestResponseDate;
+    private Cd diseaseEvidence;
+    private String treatmentPlanId;
 
 
     /**
@@ -123,6 +127,58 @@ public class ParticipantOutcomesWebDto implements Serializable {
      */
     public ParticipantOutcomesWebDto() {
         // default constructor
+    }  
+
+    /**
+     * Instantiates a new participant outcomes web dto.
+     * 
+     * @param participantOutcomesList the participant outcomes list
+     * @param diseaseStatusList the disease status list
+     * @param diseaseProgressionIndicatorList the disease progression indicator list
+     * @param diseaseProgressionDateList the disease progression date list
+     * @param bestResponseList the best response list
+     * @param webdto the webdto
+     */
+    public ParticipantOutcomesWebDto(
+            List<PerformedObservationResultDto> participantOutcomesList,
+            List<PerformedObservationResultDto> diseaseStatusList,
+            List<PerformedObservationResultDto> diseaseProgressionIndicatorList,
+            List<PerformedObservationResultDto> diseaseProgressionDateList,
+            List<PerformedObservationResultDto> bestResponseList,
+            ParticipantOutcomesWebDto webdto) {
+        for (PerformedObservationResultDto por : participantOutcomesList) {
+            if (por.getTypeCode().getCode().equalsIgnoreCase("Vital Status")) {
+                vitalStatus = por.getResultCode();
+            } else  if (por.getTypeCode().getCode().equalsIgnoreCase("Evaluable for Response")) {
+                if (por.getResultIndicator().getValue().equals(true)) {
+                    responseInd = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
+                } else if (por.getResultIndicator().getValue().equals(false)) {
+                    responseInd = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
+                }
+            } else  if (por.getTypeCode().getCode().equalsIgnoreCase("Disease Recurrence Indicator")) {
+                if (por.getResultIndicator().getValue().equals(true)) {
+                    recurrenceInd = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
+                    recurrenceDate = por.getResultDateRange().getLow();
+                } else if (por.getResultIndicator().getValue().equals(false)) {
+                    recurrenceInd = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
+                }
+            }            
+        }
+        diseaseStatus = diseaseStatusList.get(0).getResultCode();
+        bestResponse = bestResponseList.get(0).getResultCode();
+        if (diseaseProgressionIndicatorList.get(0).getResultIndicator().getValue().equals(true)) {
+            progressionInd = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
+        } else if (diseaseProgressionIndicatorList.get(0).getResultIndicator().getValue().equals(false)) {
+            progressionInd = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
+        }
+        progressionDate = diseaseProgressionDateList.get(0).getResultDateRange().getLow();
+        evaluationDate = webdto.getEvaluationDate();
+        diseaseStatusDate = webdto.getDiseaseStatusDate();
+        assessmentType = webdto.getAssessmentType();
+        progressionSite = webdto.getProgressionSite();
+        bestResponseDate = webdto.getBestResponseDate();
+        diseaseEvidence = webdto.getDiseaseEvidence();
+        
     }
 
     /**
@@ -270,16 +326,16 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the progressionSite
      */
-    @FieldExpressionValidator(expression = "progressionSite.value != null && progressionSite.value.length() > 0",
+    @FieldExpressionValidator(expression = "progressionSite.code != null && progressionSite.code.length() > 0",
             message = "Please provide a Disease Progression Anatomic Site")
-    public St getProgressionSite() {
+    public Cd getProgressionSite() {
         return progressionSite;
     }
 
     /**
      * @param progressionSite the progressionSite to set
      */
-    public void setProgressionSite(St progressionSite) {
+    public void setProgressionSite(Cd progressionSite) {
         this.progressionSite = progressionSite;
     }
 
@@ -354,7 +410,7 @@ public class ParticipantOutcomesWebDto implements Serializable {
      * @return bestResponse
      */
     @FieldExpressionValidator(expression = "bestResponse.code != null && bestResponse.code.length() > 0",
-            message = "Please provide a Best Response")
+            message = "Please select Best Response")
     public Cd getBestResponse() {
         return bestResponse;
     }
@@ -380,5 +436,42 @@ public class ParticipantOutcomesWebDto implements Serializable {
      */
     public void setBestResponseDate(Ts bestResponseDate) {
         this.bestResponseDate = bestResponseDate;
+    }
+
+    /**
+     * Gets the disease evidence.
+     * @return the disease evidence
+     */
+    @FieldExpressionValidator(expression = "diseaseEvidence.code != null && diseaseEvidence.code.length() > 0",
+            message = "Please select Evidence of Disease")
+    public Cd getDiseaseEvidence() {
+        return diseaseEvidence;
+    }
+
+    /**
+     * Sets the disease evidence.
+     * @param diseaseEvidence the new disease evidence
+     */
+    public void setDiseaseEvidence(Cd diseaseEvidence) {
+        this.diseaseEvidence = diseaseEvidence;
+    }
+
+    /**
+     * Gets the treatment plan id.
+     * @return the treatment plan id
+     */
+    @FieldExpressionValidator(
+            expression = "treatmentPlanId != null && treatmentPlanId.length() > 0", 
+            message = "Please Select TreatmentPlan")
+    public String getTreatmentPlanId() {
+        return treatmentPlanId;
+    }
+
+    /**
+     * Sets the treatment plan id.
+     * @param treatmentPlanId the new treatment plan id
+     */
+    public void setTreatmentPlanId(String treatmentPlanId) {
+        this.treatmentPlanId = treatmentPlanId;
     }
 }

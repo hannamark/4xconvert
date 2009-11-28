@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
@@ -90,11 +91,17 @@ import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
+
+import java.rmi.RemoteException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -208,6 +215,23 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                 AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II);
     }
+    
+    /**
+     * @return the tp ii of outcomes TreatmentPlan Ii
+     */
+    protected Ii getTpIi() {
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II);
+    }
+    
+    /**
+     * @return the tp ii of outcomes Course Ii
+     */
+    protected Ii getCourseIi() {
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_COURSE_II);
+    }
+    
     /**
      * @return user login name as iso string
      */
@@ -280,5 +304,20 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
             ServletActionContext.getRequest().getSession().setAttribute(
                     AccrualConstants.SESSION_ATTR_EPOCH, epochString);
         }
+    }
+
+    /**
+     * Load treatment plans.
+     * @throws RemoteException the remote exception
+     */
+    public void loadTreatmentPlans() throws RemoteException {
+        List<PerformedActivityDto> dtoList = performedActivitySvc.getByStudySubject(getParticipantIi());
+        Map<String, String> treatmentPlans = new LinkedHashMap<String, String>();
+        for (PerformedActivityDto dto : dtoList) {
+            if (ActivityCategoryCode.TREATMENT_PLAN.getCode().equals(dto.getCategoryCode().getCode())) {
+                treatmentPlans.put(dto.getIdentifier().getExtension(), dto.getName().getValue());
+            }
+        }
+        ServletActionContext.getRequest().getSession().setAttribute("treatmentPlans", treatmentPlans);
     }
 }

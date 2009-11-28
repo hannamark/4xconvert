@@ -90,6 +90,7 @@ import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -220,7 +221,6 @@ public class PerformedObservationResultServiceTest
       //PerformedMedicalHistoryResult
         PerformedMedicalHistoryResultDto pmhrdto = new  PerformedMedicalHistoryResultDto();
         pmhrdto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        pmhrdto.setTypeCode(CdConverter.convertStringToCd("PriorTherapy"));
         pmhrdto.setDescription(StConverter.convertToSt("PriorTherapy Description"));
         resultQuantity.setUnit("Unitary");
         pmhrdto.setResultQuantity(resultQuantity);
@@ -230,7 +230,7 @@ public class PerformedObservationResultServiceTest
         assertNotNull(pmhrr.getIdentifier().getExtension());
    
         PerformedMedicalHistoryResultDto pmhrdto2 = bean.getPerformedMedicalHistoryResult(IiConverter.convertToIi(TestSchema.performedMedicalHistoryResults.get(0).getId()));
-        pmhrdto2.setTypeCode(CdConverter.convertStringToCd("test"));
+        pmhrdto2.setTypeCode(CdConverter.convertStringToCd(PerformedObservationResultTypeCode.VITAL_STATUS.getCode()));
         PerformedMedicalHistoryResultDto pmhrr2 = bean.updatePerformedMedicalHistoryResult(pmhrdto2);
         assertTrue(pmhrdto2.getTypeCode().getCode().equals(pmhrr2.getTypeCode().getCode()));
         assertTrue(pmhrdto2.getDescription().getValue().equals(pmhrr2.getDescription().getValue()));

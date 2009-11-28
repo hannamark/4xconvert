@@ -79,10 +79,16 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.io.Serializable;
+
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -105,6 +111,34 @@ public class TreatmentWebDto implements Serializable {
      */
     public TreatmentWebDto() {
         // default constructor
+    }    
+    
+    /**
+     * Instantiates a new treatment web dto.
+     * @param pa the pa
+     */
+    public TreatmentWebDto(PerformedActivityDto pa) {
+        id = pa.getIdentifier();
+        name = pa.getName();
+        description = pa.getTextDescription();
+    }
+
+
+    /**
+     * Gets the performed activity dto.
+     * @return the performed activity dto
+     */
+    public PerformedActivityDto getPerformedActivityDto() {
+        PerformedActivityDto paDto = new PerformedActivityDto();
+        paDto.setIdentifier(getId());
+        paDto.setTextDescription(getDescription());
+        paDto.setName(getName());
+        paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.getByCode("Treatment Plan"))); 
+        paDto.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
+        paDto.setStudySubjectIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
+        return paDto;
     }
 
     /**

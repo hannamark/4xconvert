@@ -78,10 +78,21 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
+import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -108,8 +119,17 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
     @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<CourseWebDto>());
-        //just to test the functionality
-        getDisplayTagList().add(course);
+        try {
+            List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(getParticipantIi());
+            for (PerformedActivityDto pa : paList) {
+                if (pa.getCategoryCode() != null && pa.getCategoryCode().getCode() != null
+                        && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.COURSE.getCode())) {
+                    getDisplayTagList().add(new CourseWebDto(pa));
+                }
+            }
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -121,13 +141,76 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
             setCurrentAction(CA_CREATE);
             return INPUT;
         }
+        PerformedActivityDto dto = course.getPerformedActivityDto(); 
         try {
+            dto = performedActivitySvc.create(dto);
+            
+            ActivityRelationshipDto arDto = new ActivityRelationshipDto();
+            arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
+            arDto.setSourcePerformedActivityIdentifier(getTpIi());
+            arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
+            activityRelationshipSvc.create(arDto);
+            
+            putCourseInSession(dto.getIdentifier(), dto.getName());
             return super.add();
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String update() {
+        course = null;
+        try {
+            loadDisplayList();
+            for (CourseWebDto c : getDisplayTagList()) {
+                if (c.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
+                    course = c;
+                }
+            }
+        } catch (Exception e) {
+            course = null;
+            LOG.error("Error in CourseAction.update().", e);
+        }
+        if (course == null) {
+            addActionError("Error retrieving course info for update.");
+            return execute();
+        }
+        putCourseInSession(course.getIdentifier(), course.getName());
+        return super.update();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String edit() throws RemoteException {
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        PerformedActivityDto dto = course.getPerformedActivityDto(); 
+        try {
+            dto = performedActivitySvc.update(dto);
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        putCourseInSession(dto.getIdentifier(), dto.getName());
+        return super.edit();
+    }
+    
+    private void putCourseInSession(Ii cIi, St cName) {
+        ServletActionContext.getRequest().getSession().setAttribute(
+                AccrualConstants.SESSION_ATTR_COURSE_II, cIi);
+        ServletActionContext.getRequest().getSession().setAttribute(
+                AccrualConstants.SESSION_ATTR_COURSE_NAME, cName);
     }
 
     /**

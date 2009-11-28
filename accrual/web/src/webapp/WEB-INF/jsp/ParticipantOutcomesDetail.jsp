@@ -64,6 +64,13 @@
 <s:form name="detailForm">
 <s:hidden name="targetOutcomeId"/>
 <table class="form">
+<tr>
+        <td scope="row" class="label"><label><fmt:message key="outcomes.summary.treatmentPlan"/>:<span class="required">*</span></label></td>
+        <td class="value">
+            <s:select  name="targetOutcome.treatmentPlanId" headerKey="" headerValue="--Select--" list="%{#session.treatmentPlans}"/>
+            <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.treatmentPlanId</s:param></s:fielderror>
+        </td>      
+    </tr>
 <tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.evalDate"/><span class="required">*</span></label></td>
 <td><s:textfield id="targetOutcome.evaluationDate" name="targetOutcome.evaluationDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
@@ -90,16 +97,21 @@
 <td><s:textfield readonly="true" size="50" name="targetOutcome.assessmentType" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.assessmentType</s:param></s:fielderror></td></tr>        
-<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.bestResponse"/><span class="required">*</span></label></td>
+<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.bestResponse"/>:<span class="required">*</span></label></td>
 <td><s:set name="bestResponseCodeValues" value="@gov.nih.nci.pa.enums.BestResponseCode@getDisplayNames()" />
 			<s:select id="targetOutcome.bestResponse" name="targetOutcome.bestResponse" headerKey="" headerValue="--Select--"
                     list="#bestResponseCodeValues" value="targetOutcome.bestResponse.code"/>
                     <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.bestResponse</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.bestResponseDate"/><span class="required">*</span></label></td>
+<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.bestResponseDate"/>:<span class="required">*</span></label></td>
 <td><s:textfield id="targetOutcome.bestResponseDate" name="targetOutcome.bestResponseDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal5')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.bestResponseDate</s:param></s:fielderror></td></tr>                              
+                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.bestResponseDate</s:param></s:fielderror></td></tr>                     
+<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.diseaseEvidence"/>:<span class="required">*</span></label></td>
+<td><s:set name="evidenceOfDiseaseCodeValues" value="@gov.nih.nci.pa.enums.EvidenceOfDiseaseCode@getDisplayNames()" />
+			<s:select id="targetOutcome.diseaseEvidence" name="targetOutcome.diseaseEvidence" headerKey="" headerValue="--Select--"
+                    list="#evidenceOfDiseaseCodeValues" value="targetOutcome.diseaseEvidence.code"/>
+                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.diseaseEvidence</s:param></s:fielderror></td></tr>                                                                    
 <tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.recInd"/><span class="required">*</span></label></td>
 <td><s:select id="targetOutcome.recurrenceInd" name="targetOutcome.recurrenceInd" headerKey="" headerValue="--Select--"
                     list="targetOutcome.recurrenceInds" listKey="code" listValue="code" value="targetOutcome.recurrenceInd.code"/>

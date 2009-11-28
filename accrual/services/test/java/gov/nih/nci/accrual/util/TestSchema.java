@@ -117,6 +117,7 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -668,7 +669,6 @@ public class TestSchema {
 
         // PerformedMedicalHistoryResult
         PerformedMedicalHistoryResult pmhr = new PerformedMedicalHistoryResult();
-        pmhr.setTypeCode("PriorTherapy");
         pmhr.setDescription("PriorTherapy Description");
         pmhr.setResultQuantityValue(new BigDecimal(2));
         pmhr.setResultQuantityUnit("Unitary");

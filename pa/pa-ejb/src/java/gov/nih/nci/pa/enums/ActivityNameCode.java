@@ -104,6 +104,10 @@ public enum ActivityNameCode implements CodedEnum<String> {
     DISEASE_PROGRESSION_DATE("Disease Progression Date"),
     /** Lesion Assessment. */
     LESION_ASSESSMENT("Lesion Assessment"),
+    /** Best Response. */
+    BEST_RESPONSE("Best Response"),
+    /** Evidence of Disease. */
+    EVIDENCE_OF_DISEASE("Evidence of Disease"),
     /** Height. */
     HEIGHT("Height"),
     /** Weight. */

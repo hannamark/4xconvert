@@ -12,10 +12,8 @@
         document.forms[0].submit();
     }
 
-    function handleNextAction() {
-        document.getElementsByName("currentAction")[0].value = "next";
-        document.getElementsByName("nextTarget")[0].value = "LesionAssessment";
-        document.forms[0].action = "nextParticipantOutcomes.action";
+    function handleNextAction() {        
+         document.forms[0].action = "executeLesionAssessment.action";
         document.forms[0].submit();
     }
 </script>
@@ -35,6 +33,7 @@
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <accrual:sucessMessage /> 
 <s:form name="detailForm">
 <s:hidden name="currentAction"/>
 <s:hidden name="nextTarget"/>
@@ -66,6 +65,9 @@
         </display:column>
         <display:column titleKey="partOutEdit.label.bestResponseDate" headerClass="left" sortable="true">
             <s:label value="%{#attr.row.bestResponseDate}"/>
+        </display:column>
+        <display:column titleKey="partOutEdit.label.diseaseEvidence" headerClass="left" sortable="true">
+            <s:label value="%{#attr.row.diseaseEvidence}"/>
         </display:column>
         <display:column titleKey="partOut.label.recInd" headerClass="left" sortable="true">
             <s:label value="%{#attr.row.recurrenceInd}"/>

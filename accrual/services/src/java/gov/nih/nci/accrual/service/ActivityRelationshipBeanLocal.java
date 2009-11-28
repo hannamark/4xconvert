@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.ActivityRelationship;
 import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
@@ -131,7 +132,7 @@ public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
                        + "order by ars.id ";
             getLogger().info("query ActivityRelationship = " + hql + ".");
             query = session.createQuery(hql);
-            query.setParameter("typeCode", typeCode.getDisplayName().getValue());
+            query.setParameter("typeCode", ActivityRelationshipTypeCode.getByCode(typeCode.getCode()));
             
             PerformedActivity pa = new PerformedActivity();
             pa.setId(IiConverter.convertToLong(ii));
@@ -169,7 +170,7 @@ public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
                        + "order by ars.id ";
             getLogger().info("query ActivityRelationship = " + hql + ".");
             query = session.createQuery(hql);
-            query.setParameter("typeCode", typeCode.getDisplayName().getValue());
+            query.setParameter("typeCode", ActivityRelationshipTypeCode.getByCode(typeCode.getCode()));
             
             PerformedActivity pa = new PerformedActivity();
             pa.setId(IiConverter.convertToLong(ii));

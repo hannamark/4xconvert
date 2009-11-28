@@ -103,6 +103,7 @@
                     <li><a href="executeTreatment.action">Treatment Plan</a></li>
                 </c:otherwise>
             </c:choose>
+            <c:if test="${(sessionScope.treatmentPlanIi != null)}">
             <c:choose>
                 <c:when test="${(requestScope.topic == 'course_detail') || (requestScope.topic == 'course_adding') || (requestScope.topic == 'course_update')}">
                     <li><a href="executeCourse.action" class="selected">Course</a></li>
@@ -111,7 +112,8 @@
                     <li><a href="executeCourse.action">Course</a></li>
                 </c:otherwise>
             </c:choose>
-            
+            </c:if>
+            <c:if test="${(sessionScope.courseIi != null)}">
             <c:choose>
                 <c:when test="${(requestScope.topic == 'drugBiologics_detail') || (requestScope.topic == 'drugBiologics_adding') || (requestScope.topic == 'drugBiologics_update')}">
                     <li><a href="executeDrugBiologics.action" class="selected">Drug/Biologics</a></li>
@@ -136,6 +138,8 @@
                     <li><a href="executeRadiation.action">Radiation</a></li>
                 </c:otherwise>
             </c:choose>
+            </c:if>
+            <c:if test="${(sessionScope.treatmentPlanIi != null)}">
             <c:choose>
                 <c:when test="${(requestScope.topic == 'offTreatment_detail')}">
                     <li><a href="executeOffTreatment.action" class="selected">Off
@@ -145,6 +149,7 @@
                     <li><a href="executeOffTreatment.action">Off Treatment</a></li>
                 </c:otherwise>
             </c:choose>
+            </c:if>
         </ul>
         </li>
     </c:if>

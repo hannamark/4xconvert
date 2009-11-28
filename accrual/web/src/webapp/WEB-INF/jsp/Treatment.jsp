@@ -36,11 +36,11 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <accrual:sucessMessage /> 
 <s:form name="detailForm">
-    <display:table class="data" name="displayTagList" sort="list" pagesize="10">    
+    <display:table class="data" id="row" name="displayTagList" sort="list" pagesize="10">    
             <display:column titleKey="treatPlan.name" property="name.value" sortable="true" headerClass="sortable"/>
             <display:column titleKey="treatPlan.description" property="description.value" sortable="true" headerClass="sortable"/>
             <display:column title="Edit" class="action">
-    		<s:url id="url" action="updateTreatment"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
+    		<s:url id="url" action="updateTreatment"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>   
     </display:table>
