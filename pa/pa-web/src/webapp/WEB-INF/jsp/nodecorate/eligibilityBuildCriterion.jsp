@@ -37,7 +37,7 @@
                      </label>
                     </td>
                     <td class="value">                        
-                      <s:select name="webDTO.operator" list="#{'=':'=', '<':'<', '<=':'<=', '>':'>', '>=':'>=', 'In':'In'}" cssStyle="width:106px" value="webDTO.operator" onclick="activateMax()"/>
+                      <s:select name="webDTO.operator" list="#{'-select-':'','=':'=', '<':'<', '<=':'<=', '>':'>', '>=':'>=', 'in':'in'}" cssStyle="width:106px" value="webDTO.operator" onclick="activateMax()"/>
                     </td>         
                 </tr> 
                 <s:if test="permValues == null">
@@ -140,7 +140,7 @@
                      
                    </td>
                     <td class="value">
-                    <s:a href="#" cssClass="btn" id="generateTextButton" onclick="handleGenerateCriteriaText()"><span class="btn_img"><span class="save">Generate Criteria Text</span></span></s:a>
+                    <s:a href="#" cssClass="btn" id="generateTextButton" onclick="handleGenerateCriteriaText()"><span class="btn_img"><span class="save">Generate Description  Text</span></span></s:a>
                 </tr> 
             <tr>
                 <th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.description"/></th>              

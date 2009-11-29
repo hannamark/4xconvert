@@ -28,7 +28,7 @@ function handleMailAction(){
                     <td scope="row" class="label"><s:label for="toEmail">To Email:</s:label>                  
                     <td class="value" colspan="2">
                         
-                        <s:textfield id="toEmail" name="webDTO.ToEmail" readonly="true" cssClass="readonly"  cssStyle="height: 25px"/>                                        
+                        <s:textfield id="toEmail" name="webDTO.ToEmail"  cssStyle="height: 25px"/>                                        
                     </td>                   
                 </tr>
                 <tr>

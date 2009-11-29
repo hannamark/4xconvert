@@ -30,22 +30,38 @@ function callOnloadFunctions(){
     activate(selElement);         
 }
 function lookup(){
-    showPopWin('${lookupUrl}', 900, 400, '', 'CaDSR Lookup');
+    showPopWin('${lookupUrl}', 900, 400, '', 'caDSR Lookup');
 } 
 
 function handleAction(){
 var page;
 page=document.forms[0].page.value;
-input_box=confirm("Click OK to save changes or Cancel to Abort.");
-if (input_box==true){
-    if (page == "Edit"){
-        document.forms["eligibilityCriteraiAdd"].action="eligibilityCriteriaupdate.action";
-        document.forms["eligibilityCriteraiAdd"].submit();     
-    } else {
-        document.forms["eligibilityCriteraiAdd"].action="eligibilityCriteriacreate.action";
-        document.forms["eligibilityCriteraiAdd"].submit();   
-    } 
- }
+var UOM = document.forms["eligibilityCriteraiAdd"].elements["webDTO.unit"].value;
+if (UOM == '' || UOM == 'undefined') {
+	input_uom_box = confirm("Criterion does not include UOM.  Do you want to save criterion anyway?");
+	if (input_uom_box==true){
+	   if (page == "Edit"){
+	        document.forms["eligibilityCriteraiAdd"].action="eligibilityCriteriaupdate.action";
+	        document.forms["eligibilityCriteraiAdd"].submit();     
+	    } else {
+	        document.forms["eligibilityCriteraiAdd"].action="eligibilityCriteriacreate.action";
+	        document.forms["eligibilityCriteraiAdd"].submit();   
+	    } 
+	 }
+} else {
+
+	input_box=confirm("Click OK to save changes or Cancel to Abort.");
+	
+	if (input_box==true){
+	   if (page == "Edit"){
+	        document.forms["eligibilityCriteraiAdd"].action="eligibilityCriteriaupdate.action";
+	        document.forms["eligibilityCriteraiAdd"].submit();     
+	    } else {
+	        document.forms["eligibilityCriteraiAdd"].action="eligibilityCriteriacreate.action";
+	        document.forms["eligibilityCriteraiAdd"].submit();   
+	    } 
+	 }
+    }
 } 
 function activate(selected){
    
@@ -162,7 +178,7 @@ function loadDetails(id, divName,className){
      var operateElement = document.forms["eligibilityCriteraiAdd"].elements[operate];
       var intMaxName="webDTO.valueIntegerMax";
       var intMaxElement = document.forms["eligibilityCriteraiAdd"].elements[intMaxName];
-     if(operateElement.value != 'In') {
+     if(operateElement.value != 'in') {
      intMaxElement.disabled = true;
      } else {
       intMaxElement.disabled = false;

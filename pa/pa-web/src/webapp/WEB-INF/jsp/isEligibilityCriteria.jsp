@@ -191,34 +191,34 @@ BubbleTips.activateTipOn("dfn");
                       <s:iterator value="eligibilityList" id="eligibilityList" status="stat" >
                       <tr>
                        <td class="tdBoxed">
-                       <s:textfield  name="eligibilityList[%{#stat.index}].inclusionIndicator" value="%{inclusionIndicator}" cssStyle="width:60px;border: 1px solid #FFFFFF" readonly="true"/>
+                       <s:textfield  name="eligibilityList[%{#stat.index}].inclusionIndicator" value="%{inclusionIndicator}" cssStyle="width:51px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].textDescription" value="%{textDescription}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <s:textfield  name="eligibilityList[%{#stat.index}].textDescription" value="%{textDescription}" cssStyle="width:295px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].criterionName" value="%{criterionName}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <s:textfield  name="eligibilityList[%{#stat.index}].criterionName" value="%{criterionName}" cssStyle="width:280px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].operator" value="%{operator}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <s:textfield  name="eligibilityList[%{#stat.index}].operator" value="%{operator}" cssStyle="width:40px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
                         <s:if test="%{eligibilityList[#stat.index].valueText != null}">
-                       <s:textfield  name="eligibilityList[%{#stat.index}].valueText" value="%{valueText}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                       <s:textfield  name="eligibilityList[%{#stat.index}].valueText" value="%{valueText}" cssStyle="width:40px;border: 1px solid #FFFFFF" readonly="true"/>
                        </s:if>
                        <s:elseif test="%{eligibilityList[#stat.index].valueIntegerMin != null || eligibilityList[#stat.index].valueIntegerMax != null}">
-                        Min:<s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMin" value="%{valueIntegerMin}" cssStyle="width:20px;border: 1px solid #FFFFFF" readonly="true"/> 
+                        <s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMin" value="%{valueIntegerMin}" cssStyle="width:25px;border: 1px solid #FFFFFF" readonly="true"/> 
                         <s:if test="%{eligibilityList[#stat.index].valueIntegerMax != null}">
-                        Max:<s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMax" value="%{valueIntegerMax}" cssStyle="width:20px;border: 1px solid #FFFFFF" readonly="true"/>
+                        -<s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMax" value="%{valueIntegerMax}" cssStyle="width:25px;border: 1px solid #FFFFFF" readonly="true"/>
                         </s:if>
                        </s:elseif>
                        <s:else>
-                        <s:textfield  name="eligibilityList[%{#stat.index}].value" value="%{value}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <s:textfield  name="eligibilityList[%{#stat.index}].value" value="%{value}" cssStyle="width:38px;border: 1px solid #FFFFFF" readonly="true"/>
                        </s:else> 
                        
                        </td>
                        <td class="tdBoxed">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <s:textfield  name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:45px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
                           <s:hidden  name="eligibilityList[%{#stat.index}].id" value="%{id}" />

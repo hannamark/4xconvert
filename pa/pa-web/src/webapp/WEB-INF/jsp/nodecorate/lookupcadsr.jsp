@@ -91,7 +91,7 @@
             <ul class="btnrow">
                <li>
                    <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                   <s:a href="#" cssClass="btn" onclick="openEmail()"><span class="btn_img"><span class="search">CDE Create Request</span></span>
+                   <s:a href="#" cssClass="btn" onclick="openEmail()"><span class="btn_img"><span class="search">Create CDE Request</span></span>
                 </s:a>
                </li>
             </ul>

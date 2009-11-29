@@ -139,7 +139,7 @@ public class PlannedActivityBeanLocal
          + "from PlannedEligibilityCriterion pa "
          + "join pa.studyProtocol sp "
          + "where sp.id = :studyProtocolId "
-         + "order by pa.id ";
+         + "order by pa.displayOrder,pa.id";
 
      // step 2: construct query object
      query = session.createQuery(hql);
