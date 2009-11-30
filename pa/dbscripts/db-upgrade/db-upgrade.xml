@@ -312,4 +312,9 @@
         <comment>execute accrual_dev_23941_6.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_6.sql"/>
     </changeSet>
+    <changeSet id="77" author="Naveen">
+        <comment>execute pa-defect-24500.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/pa_defect_24500.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

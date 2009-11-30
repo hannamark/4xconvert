@@ -667,6 +667,15 @@ public class PlannedActivityBeanLocal
                         && padto.getLeadProductIndicator().getValue()
                                 .equals(dto.getLeadProductIndicator().getValue())))) {
                     duplicate = true;
+                    if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+                        String comp1 = padto.getIdentifier().getExtension();
+                        String comp2 = dto.getIdentifier().getExtension();
+                        if (comp1.equals(comp2)) {
+                            // skip if the id is same, this will happen during update
+                            duplicate = false;
+                        }
+                    }
+                    
                 }
              }
          }    
