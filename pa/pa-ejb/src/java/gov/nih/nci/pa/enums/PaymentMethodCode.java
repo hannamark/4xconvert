@@ -100,15 +100,19 @@ public enum PaymentMethodCode  implements CodedEnum<String> {
     /** Medicaid and Medicare. */
     MEDICAID_AND_MEDICARE("Medicaid and Medicare"),
     /** Military or Veterans Sponsored, Not Otherwise Specified (NOS). */
-    MILITARY_OR_VETERANS("Military or Veterans Sponsored, Not Otherwise Specified (NOS)"),
+    MILITARY_OR_VETERANS("Military or Veterans Sponsored, NOS"),
     /** Military Sponsored (including CHAMPUS or TRICARE). */
-    MILITARY("Military Sponsored (including CHAMPUS or TRICARE)"),
+    MILITARY("Military Sponsored (Including CHAMPUS & TRICARE)"),
     /** Veterans Sponsored. */
     VETERANS("Veterans Sponsored"),
     /** Self pay (no insurance). */
-    SELF("Self pay (no insurance)"),
+    SELF("Self-Pay (No Insurance)"),
+    /** Self pay (no insurance). */
+    MANAGED_CARE_MEDICARE("Managed Care/Medicare"),
+    /** Self pay (no insurance). */
+    STATE_SUPPLEMENTAL("State Supplemental Health Insurance"),
     /** No means of payment (no insurance). */
-    NO_MEANS_OF_PAYMENT("No means of payment (no insurance)"),
+    NO_MEANS_OF_PAYMENT("No Means of Payment (No Insurance)"),
     /** Other. */
     OTHER("Other"),
     /** Unknown. */
@@ -165,7 +169,7 @@ public enum PaymentMethodCode  implements CodedEnum<String> {
         }
         return a;
     }
-    
+
     /**
      * {@inheritDoc}
      */
