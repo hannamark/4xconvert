@@ -25,10 +25,10 @@
         <c:otherwise>
             <c:choose>
                 <c:when test="${requestScope.topic == 'create_account'}">
-                    <li><a href="/outcomes/userAccountupdateAccount.action" class="selected">My Account</a></li> 
+                    <li><a href="/outcomes/outcomes/userAccountupdateAccount.action" class="selected">My Account</a></li> 
                 </c:when>
                 <c:otherwise>
-                    <li><a href="/outcomes/userAccountupdateAccount.action" >My Account</a></li>
+                    <li><a href="/outcomes/outcomes/userAccountupdateAccount.action" >My Account</a></li>
                 </c:otherwise>
             </c:choose>
         </c:otherwise>
