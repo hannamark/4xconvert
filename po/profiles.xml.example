@@ -39,7 +39,8 @@
         <properties>
             <struts.devMode>true</struts.devMode>
             <cobertura.check.haltOnFailure>false</cobertura.check.haltOnFailure>
-            <maven.test.skip>true</maven.test.skip>
+            <skipTests>true</skipTests>
+            <!-- maven.test.skip>true</maven.test.skip-->
             <pmd.skip>true</pmd.skip>
             <checkstyle.skip>true</checkstyle.skip>
             <jboss.home>/Applications/jboss-4.0.5.GA</jboss.home>
