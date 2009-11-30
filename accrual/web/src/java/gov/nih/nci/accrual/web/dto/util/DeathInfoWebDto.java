@@ -82,7 +82,6 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
@@ -108,7 +107,9 @@ public class DeathInfoWebDto implements Serializable {
     private Ts eventDate;
     private Cd autopsyInd;
     private Cd causeByAutopsy;
-    private St autopsySite;
+    private Cd autopsySite;
+    private String treatmentPlanId;
+    private String oldTreatmentPlanId;
 
     /**
      * Instantiates a new death info web dto.
@@ -198,16 +199,16 @@ public class DeathInfoWebDto implements Serializable {
     /**
      * @return the autopsySite
      */
-    @FieldExpressionValidator(expression = "autopsySite.value != null && autopsySite.value.length() > 0",
+    @FieldExpressionValidator(expression = "autopsySite.code != null && autopsySite.code.length() > 0",
             message = "Please provide a Site of Disease Autopsy")
-    public St getAutopsySite() {
+    public Cd getAutopsySite() {
         return autopsySite;
     }
 
     /**
      * @param autopsySite the autopsySite to set
      */
-    public void setAutopsySite(St autopsySite) {
+    public void setAutopsySite(Cd autopsySite) {
         this.autopsySite = autopsySite;
     }
     
@@ -230,5 +231,39 @@ public class DeathInfoWebDto implements Serializable {
      */
     public List<AutopsyDeathCause> getCausesByAutopsy() {
         return Arrays.asList(AutopsyDeathCause.values());
+    }
+
+    /**
+     * Gets the treatment plan id.
+     * @return the treatment plan id
+     */
+    @FieldExpressionValidator(
+            expression = "treatmentPlanId != null && treatmentPlanId.length() > 0", 
+            message = "Please Select TreatmentPlan")
+    public String getTreatmentPlanId() {
+        return treatmentPlanId;
+    }
+
+    /**
+     * Sets the treatment plan id.
+     * @param treatmentPlanId the new treatment plan id
+     */
+    public void setTreatmentPlanId(String treatmentPlanId) {
+        this.treatmentPlanId = treatmentPlanId;
+    }
+    /**
+     * Gets the old treatment plan id.
+     * @return the old treatment plan id
+     */
+    public String getOldTreatmentPlanId() {
+        return oldTreatmentPlanId;
+    }
+
+    /**
+     * Sets the old treatment plan id.
+     * @param oldTreatmentPlanId the new old treatment plan id
+     */
+    public void setOldTreatmentPlanId(String oldTreatmentPlanId) {
+        this.oldTreatmentPlanId = oldTreatmentPlanId;
     }
 }

@@ -47,8 +47,16 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<s:hidden name="selectedSite"/>
+	<s:hidden name = "currentAction"/>
+    <s:hidden name = "deathInfo.oldTreatmentPlanId" />
 <table class="form">
+<tr>
+        <td scope="row" class="label"><label><fmt:message key="outcomes.summary.treatmentPlan"/>:<span class="required">*</span></label></td>
+        <td class="value">
+            <s:select  name="deathInfo.treatmentPlanId" headerKey="" headerValue="--Select--" list="%{#session.treatmentPlans}"/>
+            <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.treatmentPlanId</s:param></s:fielderror>
+        </td>      
+    </tr>
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.cause"/><span class="required">*</span></label></td>
 <td><s:select name="deathInfo.cause" headerKey="" headerValue="--Select--"
               list="deathInfo.causes" listKey="code" listValue="code" value="deathInfo.cause.code"/>

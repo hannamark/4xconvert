@@ -95,7 +95,15 @@ public enum PerformedObservationResultTypeCode implements CodedEnum<String> {
     /** Evaluable for Response. */
     EVALUABLE_FOR_RESPONSE("Evaluable for Response"),
     /** Disease Recurrence Indicator. */
-    DISEASE_RECURRENCE_INDICATOR("Disease Recurrence Indicator");
+    DISEASE_RECURRENCE_INDICATOR("Disease Recurrence Indicator"),
+    /** Death Cause. */
+    DEATH_CAUSE("Death Cause"),
+    /** Death Date. */
+    DEATH_DATE("Death Date"),
+    /** Autopsy Performed Indicator. */
+    AUTOPSY_PERFORMED_INDICATOR("Autopsy Performed Indicator"),
+    /** Cause of Death as Determined by Autopsy. */
+    CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY("Cause of Death as Determined by Autopsy");
      
     private String code;
     /**
