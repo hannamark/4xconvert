@@ -80,6 +80,8 @@ package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -128,5 +130,13 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
      */
     public RegistryUserServiceRemote getRegistryUserService() {
     	return registryUser;
+    }
+    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    public InterventionServiceRemote getInterventionService() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

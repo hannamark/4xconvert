@@ -142,9 +142,14 @@
             <result>/WEB-INF/jsp/nodecorate/lookupForFields.jsp</result>
             <result name="input">/WEB-INF/jsp/nodecorate/lookupDisplayList.jsp</result>
         </action>
+        
+        <action name="popupIntervention*" class="gov.nih.nci.accrual.web.action.PopUpInterventionAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/lookupinterventions{1}.jsp</result>
+        </action>        
     	
         <action name="popup*" class="gov.nih.nci.accrual.web.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
+        
     </package>
 </struts>

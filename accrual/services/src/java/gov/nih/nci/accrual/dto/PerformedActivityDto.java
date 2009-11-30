@@ -98,6 +98,7 @@ public class PerformedActivityDto extends AbstractActivityDto {
     private Pq actualDuration;
     private St name;
     private Cd nameCode;
+    private Ii interventionIdentifier;
 
     /**
      * @return the actualDateRange
@@ -170,5 +171,21 @@ public class PerformedActivityDto extends AbstractActivityDto {
      */
     public void setNameCode(Cd nameCode) {
         this.nameCode = nameCode;
+    }
+    
+    /**
+     * Gets the intervention identifier.
+     * @return the intervention identifier
+     */
+    public Ii getInterventionIdentifier() {
+        return interventionIdentifier;
+    }
+    
+    /**
+     * Sets the intervention identifier.
+     * @param interventionIdentifier the new intervention identifier
+     */
+    public void setInterventionIdentifier(Ii interventionIdentifier) {
+        this.interventionIdentifier = interventionIdentifier;
     }
 }

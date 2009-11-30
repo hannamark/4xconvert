@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -142,6 +143,9 @@ public class PerformedActivityConverter extends AbstractConverter
             actualDuration.setUnit(bo.getActualDurationUnit());
         }
         dto.setActualDuration(actualDuration);
+        if (bo.getIntervention() != null) {
+            dto.setInterventionIdentifier(IiConverter.convertToIi(bo.getIntervention().getId()));
+        }
         return dto;
     }
 
@@ -188,6 +192,12 @@ public class PerformedActivityConverter extends AbstractConverter
                 bo.setActualDurationUnit(dto.getActualDuration().getUnit());
             }
         }
+        Intervention invBo = null;
+        if (!PAUtil.isIiNull(dto.getInterventionIdentifier())) {
+            invBo = new Intervention();
+            invBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
+        }
+        bo.setIntervention(invBo);
         return bo;
     }
 }

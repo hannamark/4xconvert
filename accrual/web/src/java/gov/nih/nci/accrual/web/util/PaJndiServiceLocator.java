@@ -81,6 +81,8 @@ package gov.nih.nci.accrual.web.util;
 import gov.nih.nci.accrual.util.JNDIUtil;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -124,5 +126,20 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      */
     public RegistryUserServiceRemote getRegistryUserService() {
         return (RegistryUserServiceRemote) JNDIUtil.lookupPa("/pa/RegistryUserServiceBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public InterventionServiceRemote getInterventionService() {
+        return (InterventionServiceRemote) JNDIUtil.lookupPa("/pa/InterventionServiceBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+        return (InterventionAlternateNameServiceRemote) 
+        JNDIUtil.lookupPa("/pa/InterventionAlternateNameServiceBean/remote");
     }
 }

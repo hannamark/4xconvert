@@ -78,10 +78,19 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
+import gov.nih.nci.accrual.dto.PerformedProcedureDto;
 import gov.nih.nci.accrual.web.dto.util.SurgeryWebDto;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.service.PAException;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -91,6 +100,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> {
 
     private static final long serialVersionUID = 1L;
@@ -110,8 +120,21 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
     @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<SurgeryWebDto>());
-      //just to test the functionality
-        getDisplayTagList().add(surgery);
+        try {
+            List<PerformedProcedureDto> paList = performedActivitySvc.getPerformedProcedureByStudySubject(
+                                                                            getParticipantIi());
+            for (PerformedProcedureDto pp : paList) {
+                if (pp.getCategoryCode() != null && pp.getCategoryCode().getCode() != null
+                        && pp.getCategoryCode().getCode().equals(ActivityCategoryCode.SURGERY.getCode())) {
+                    InterventionDTO dto = interventionSvc.get(pp.getInterventionIdentifier());
+                    getDisplayTagList().add(new SurgeryWebDto(pp, dto));
+                }
+            }
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+        } catch (PAException e) {
+            addActionError(e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -124,13 +147,74 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
             return INPUT;
         }
         try {
-            return super.add();
+            PerformedProcedureDto dto = surgery.getPerformedProcedureDto();
+            dto = performedActivitySvc.createPerformedProcedure(dto);
+
+            ActivityRelationshipDto arDto = new ActivityRelationshipDto();
+            arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+            arDto.setSourcePerformedActivityIdentifier(getCourseIi());
+            arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
+            activityRelationshipSvc.create(arDto);
+            return super.add();  
         } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        } catch (DataFormatException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String update() {
+        surgery = null;
+        try {
+            loadDisplayList();
+            for (SurgeryWebDto sur : getDisplayTagList()) {
+                if (sur.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                    surgery = sur;
+                }
+            }
+        } catch (Exception e) {
+            surgery = null;
+            LOG.error("Error in SurgeryAction.update().", e);
+        }
+        if (surgery == null) {
+            addActionError("Error retrieving surgery info for update.");
+            return execute();
+        }
+        return super.update();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String edit() throws RemoteException {
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        PerformedProcedureDto dto = surgery.getPerformedProcedureDto();
+        try {
+            dto = performedActivitySvc.updatePerformedProcedure(dto);
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        } catch (DataFormatException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        return super.edit();
+    }
+    
 
     /**
      * Gets the surgery.

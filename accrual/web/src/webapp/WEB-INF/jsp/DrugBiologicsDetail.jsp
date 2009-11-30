@@ -4,7 +4,7 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:url value="/outcomes/lookUpunitOfMeasurement.action?type=drugName" var="drugNamelookupUrl" />
+<c:url value="/outcomes/popupIntervention.action?type=drugName" var="drugNamelookupUrl" />
 <c:url value="/outcomes/lookUpunitOfMeasurement.action?type=doseUom" var="doseUomlookupUrl" />
 <c:url value="/outcomes/lookUprouteOfAdministration.action?type=doseRoa" var="doseRoalookupUrl" />
 <c:url value="/outcomes/lookUpdoseFrequency.action?type=doseFrequency" var="doseFrequencylookupUrl" />
@@ -73,6 +73,7 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
+<s:hidden name="drugBiologic.interventionId" />
 <table class="form">
  	<tr>
 		        <th colspan="3"><fmt:message key="drugBiologic.subHeading1"/></th>

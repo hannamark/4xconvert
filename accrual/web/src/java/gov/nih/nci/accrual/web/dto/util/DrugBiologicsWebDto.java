@@ -111,6 +111,7 @@ public class DrugBiologicsWebDto implements Serializable {
     private Pq bsa;    
     private Pq doseTotal;    
     private Cd doseModType;
+    private Ii interventionId;
 
     /**
      * Instantiates a new drug biologics web dto.
@@ -343,5 +344,21 @@ public class DrugBiologicsWebDto implements Serializable {
      */
     public void setDoseModType(Cd doseModType) {
         this.doseModType = doseModType;
+    }
+
+    /**
+     * Gets the intervention id.
+     * @return the intervention id
+     */
+    public Ii getInterventionId() {
+        return interventionId;
+    }
+
+    /**
+     * Sets the intervention id.
+     * @param interventionId the new intervention id
+     */
+    public void setInterventionId(Ii interventionId) {
+        this.interventionId = interventionId;
     }
 }

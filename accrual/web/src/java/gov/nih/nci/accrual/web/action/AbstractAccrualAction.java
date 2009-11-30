@@ -95,6 +95,8 @@ import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -152,7 +154,11 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     /** Name of the next target when needed. */
     private String nextTarget = null;
     /** ActivityRelationshipService. */
-    protected ActivityRelationshipService activityRelationshipSvc;
+    protected ActivityRelationshipService activityRelationshipSvc;    
+    /** The intervention alternate name svc. */
+    protected InterventionAlternateNameServiceRemote interventionANameSvc;    
+    /** The intervention svc. */
+    protected InterventionServiceRemote interventionSvc;
 
     /** The action result to perform a redirect using "next". */
     public static final String NEXT = "next";
@@ -173,6 +179,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         diseaseParentSvc = PaServiceLocator.getInstance().getDiseaseParentService();
         performedObservationResultSvc = AccrualServiceLocator.getInstance().getPerformedObservationResultService();
         activityRelationshipSvc = AccrualServiceLocator.getInstance().getActivityRelationshipService();
+        interventionANameSvc = PaServiceLocator.getInstance().getInterventionAlternateNameService();
+        interventionSvc = PaServiceLocator.getInstance().getInterventionService();    
     }
     /**
      * Default execute method for action classes.

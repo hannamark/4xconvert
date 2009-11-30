@@ -76,102 +76,206 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.accrual.web.dto.util.InterventionWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 24, 2009
- */
-public final class PaServiceLocator implements ServiceLocatorPaInterface {
+* @author Hugh Reinhart
+* @since 11/31/2008
+* copyright NCI 2008.  All rights reserved.
+* This code may not be used without the express written permission of the
+* copyright holder, NCI.
+*/
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class PopUpInterventionAction extends AbstractAccrualAction {
+    private static final long serialVersionUID = 8987838321L;
 
-    /** Value from PA action class used to indicate a gender criterion. */
-    public static final String ELIG_CRITERION_NAME_GENDER = "GENDER";
+    private static final Logger LOG = Logger.getLogger(PopUpInterventionAction.class);
+    private static final int MAX_SEARCH_RESULT_SIZE = 500;
 
-    private static final PaServiceLocator PA_REGISTRY = new PaServiceLocator();
-    private ServiceLocatorPaInterface serviceLocator;
-
-    /**
-     * Constructor for the singleton instance.
-     */
-    private PaServiceLocator() {
-        serviceLocator = new PaJndiServiceLocator();
-    }
-
-    /**
-     * @return the accrualServiceLocator
-     */
-    public static PaServiceLocator getInstance() {
-        return PA_REGISTRY;
-    }
-
-    /**
-     * @return the serviceLocator
-     */
-    public ServiceLocatorPaInterface getServiceLocator() {
-        return serviceLocator;
-    }
-
-    /**
-     * @param serviceLocator the serviceLocator to set
-     */
-    public void setServiceLocator(ServiceLocatorPaInterface serviceLocator) {
-        this.serviceLocator = serviceLocator;
-    }
+    private String searchName;
+    private String includeSynonym;
+    private String exactMatch;
+    private String type = null;
+    private List<InterventionWebDto> interWebList = new ArrayList<InterventionWebDto>();
 
     /**
      * {@inheritDoc}
      */
-    public DiseaseServiceRemote getDiseaseService() {
-         return serviceLocator.getDiseaseService();
+    @Override
+    public Epoch getEpoch() {
+        return Epoch.NO_CHANGE;
+    }
+
+    private void error(String errMsg, Throwable t) {
+        LOG.error(errMsg, t);
+        addActionError(errMsg);
+        ServletActionContext.getRequest().setAttribute("failureMessage", errMsg);
+    }
+
+    private void error(String errMsg) {
+        error(errMsg, null);
     }
 
     /**
-     * {@inheritDoc}
+     * @return result
      */
-    public PlannedActivityServiceRemote getPlannedActivityService() {
-        return serviceLocator.getPlannedActivityService();
+    public String displayList() {
+        loadInterventionResultList();
+        ServletActionContext.getRequest().setAttribute("interWebList", interWebList);
+        return SUCCESS;
+    }
+
+    private void loadInterventionResultList() {
+        interWebList.clear();
+        String tName = ServletActionContext.getRequest().getParameter("searchName");
+        String includeSyn = ServletActionContext.getRequest().getParameter("includeSynonym");
+        String exactMat = ServletActionContext.getRequest().getParameter("exactMatch");
+
+        if (PAUtil.isEmpty(tName)) {
+            error("Please enter at least one search criteria.");
+            return;
+        }
+
+        InterventionDTO criteria = new InterventionDTO();
+        criteria.setName(StConverter.convertToSt(tName));
+        criteria.setIncludeSynonym(StConverter.convertToSt(includeSyn));
+        criteria.setExactMatch(StConverter.convertToSt(exactMat));
+        List<InterventionDTO> interList = null;
+        try {
+            interList = interventionSvc.search(criteria);
+        } catch (Exception e) {
+            error("Exception thrown while getting intervention list using service.", e);
+            return;
+        }
+        if (interList.size() > MAX_SEARCH_RESULT_SIZE) {
+            error("Too many interventions found.  Please narrow search.");
+            return;
+        }
+        for (InterventionDTO inter : interList) {
+            InterventionWebDto newRec = new InterventionWebDto();
+            newRec.setTypeCode(inter.getTypeCode());
+            newRec.setId(inter.getIdentifier());
+            newRec.setDescription(inter.getDescriptionText());
+            newRec.setName(inter.getName());
+            newRec.setCtGovTypeCode(inter.getCtGovTypeCode());
+            newRec.setType(StConverter.convertToSt(type));
+            interWebList.add(newRec);
+        }
+        loadInterventionAlternateNames();
+    }
+
+    private void loadInterventionAlternateNames() {
+        Ii[] ianIis = new Ii[interWebList.size()];
+        int x = 0;
+        for (InterventionWebDto dto : interWebList) {
+            ianIis[x++] = dto.getId();
+        }
+        List<InterventionAlternateNameDTO> ianList;
+        try {
+            ianList = interventionANameSvc.getByIntervention(ianIis);
+        } catch (Exception e) {
+            error("Exception thrown while getting alternate names.", e);
+            return;
+        }
+        HashMap<String, String> aNames = new HashMap<String, String>();
+        for (InterventionAlternateNameDTO ian : ianList) {
+            String id = IiConverter.convertToString(ian.getInterventionIdentifier());
+            if (aNames.containsKey(id)) {
+                aNames.put(id, aNames.get(id) + ", " + StConverter.convertToString(ian.getName()));
+            } else {
+                aNames.put(id, StConverter.convertToString(ian.getName()));
+            }
+        }
+        for (InterventionWebDto dto : interWebList) {
+            dto.setOtherNames(aNames.get(dto.getId()));
+        }
     }
 
     /**
-     * {@inheritDoc}
+     * @return the searchName
      */
-    public DiseaseParentServiceRemote getDiseaseParentService() {
-         return serviceLocator.getDiseaseParentService();
+    public String getSearchName() {
+        return searchName;
     }
-    
     /**
-     * {@inheritDoc}
+     * @param searchName the searchName to set
      */
-    public LookUpTableServiceRemote getLookUpTableService() {
-        return serviceLocator.getLookUpTableService();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public RegistryUserServiceRemote getRegistryUserService() {
-        return serviceLocator.getRegistryUserService();
+    public void setSearchName(String searchName) {
+        this.searchName = searchName;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the includeSynonym
      */
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
-        return serviceLocator.getInterventionAlternateNameService();
+    public String getIncludeSynonym() {
+        return includeSynonym;
     }
-    
+
     /**
-     * {@inheritDoc}
+     * @param includeSynonym the includeSynonym to set
      */
-    public InterventionServiceRemote getInterventionService() {
-        return serviceLocator.getInterventionService();
+    public void setIncludeSynonym(String includeSynonym) {
+        this.includeSynonym = includeSynonym;
+    }
+
+    /**
+     * @return the exactMatch
+     */
+    public String getExactMatch() {
+        return exactMatch;
+    }
+
+    /**
+     * @param exactMatch the exactMatch to set
+     */
+    public void setExactMatch(String exactMatch) {
+        this.exactMatch = exactMatch;
+    }
+
+    /**
+     * Gets the inter web list.
+     * @return the inter web list
+     */
+    public List<InterventionWebDto> getInterWebList() {
+        return interWebList;
+    }
+
+    /**
+     * Sets the inter web list.
+     * @param interWebList the new inter web list
+     */
+    public void setInterWebList(List<InterventionWebDto> interWebList) {
+        this.interWebList = interWebList;
+    }
+
+    /**
+     * Gets the type.
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the type.
+     * @param type the new type
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 }

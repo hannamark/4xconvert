@@ -114,6 +114,7 @@ public class PerformedActivity extends Activity {
     private String actualDurationUnit;
     private String name;
     private ActivityNameCode nameCode;
+    private Intervention intervention;
     /**
      * @return the actualDateRangeLow
      */
@@ -221,5 +222,23 @@ public class PerformedActivity extends Activity {
      */
     public void setNameCode(ActivityNameCode nameCode) {
         this.nameCode = nameCode;
+    }
+    
+    /**
+     * Gets the intervention.
+     * @return the intervention
+     */
+    @ManyToOne
+    @JoinColumn(name = "INTERVENTION_IDENTIFIER")
+    public Intervention getIntervention() {
+        return intervention;
+    }    
+   
+    /**
+     * Sets the intervention.
+     * @param intervention the new intervention
+     */
+    public void setIntervention(Intervention intervention) {
+        this.intervention = intervention;
     }
 }

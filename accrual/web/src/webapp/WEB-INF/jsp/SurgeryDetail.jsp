@@ -4,7 +4,7 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:url value="/outcomes/lookUpprocedureName.action?type=Surgery" var="lookupUrl" />
+<c:url value="/outcomes/popupIntervention.action?type=Surgery" var="lookupUrl" />
 <head>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
@@ -19,8 +19,14 @@
         document.forms[0].action = "executeSurgery.action";
         document.forms[0].submit();
     }
+    
     function lookup(){
         showPopWin('${lookupUrl}', 900, 400, '', 'Surgery Name');
+	}
+	
+	function handleEditAction(){
+	    document.forms[0].action="editSurgery.action";
+	    document.forms[0].submit();
 	}
 
 </script>
@@ -53,6 +59,10 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
+<s:hidden name = "currentAction"/>
+<s:hidden name = "selectedRowIdentifier"/>
+<s:hidden name = "surgery.id"/>
+<s:hidden name="surgery.interventionId" />
 <table class="form">
 <tr>
         <td scope="row" class="label"><label><fmt:message key="surgery.name"/>:<span class="required">*</span></label></td>
@@ -87,7 +97,12 @@
    <del class="btnwrapper">
       <ul class="btnrow">
        <li>        
-             <s:a href="#" cssClass="btn" onclick="handleSaveAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+         <s:if test="%{currentAction == 'create'}">
+            <s:a href="#" cssClass="btn" onclick="handleSaveAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+        </s:if>
+         <s:elseif test="%{currentAction == 'update'}">
+         	<s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+         </s:elseif>
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
         </li>
       </ul>

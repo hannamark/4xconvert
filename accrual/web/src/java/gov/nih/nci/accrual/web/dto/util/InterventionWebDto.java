@@ -76,102 +76,136 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.web.dto.util;
 
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+
 
 /**
- * @author Hugh Reinhart
- * @since Aug 24, 2009
+ * @author Kalpana Guthikonda
+ * @since 11/30/2009
  */
-public final class PaServiceLocator implements ServiceLocatorPaInterface {
-
-    /** Value from PA action class used to indicate a gender criterion. */
-    public static final String ELIG_CRITERION_NAME_GENDER = "GENDER";
-
-    private static final PaServiceLocator PA_REGISTRY = new PaServiceLocator();
-    private ServiceLocatorPaInterface serviceLocator;
-
+public class InterventionWebDto {
+    private Ii id;
+    private Cd typeCode;
+    private St description;
+    private St name;
+    private Cd ctGovTypeCode;
+    private St type;
+    private String otherNames;
+    
     /**
-     * Constructor for the singleton instance.
+     * Gets the id.
+     * @return the id
      */
-    private PaServiceLocator() {
-        serviceLocator = new PaJndiServiceLocator();
-    }
-
-    /**
-     * @return the accrualServiceLocator
-     */
-    public static PaServiceLocator getInstance() {
-        return PA_REGISTRY;
-    }
-
-    /**
-     * @return the serviceLocator
-     */
-    public ServiceLocatorPaInterface getServiceLocator() {
-        return serviceLocator;
-    }
-
-    /**
-     * @param serviceLocator the serviceLocator to set
-     */
-    public void setServiceLocator(ServiceLocatorPaInterface serviceLocator) {
-        this.serviceLocator = serviceLocator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public DiseaseServiceRemote getDiseaseService() {
-         return serviceLocator.getDiseaseService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PlannedActivityServiceRemote getPlannedActivityService() {
-        return serviceLocator.getPlannedActivityService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public DiseaseParentServiceRemote getDiseaseParentService() {
-         return serviceLocator.getDiseaseParentService();
+    public Ii getId() {
+        return id;
     }
     
     /**
-     * {@inheritDoc}
+     * Sets the id.
+     * @param id the new id
      */
-    public LookUpTableServiceRemote getLookUpTableService() {
-        return serviceLocator.getLookUpTableService();
+    public void setId(Ii id) {
+        this.id = id;
     }
     
     /**
-     * {@inheritDoc}
+     * Gets the type code.
+     * @return the type code
      */
-    public RegistryUserServiceRemote getRegistryUserService() {
-        return serviceLocator.getRegistryUserService();
+    public Cd getTypeCode() {
+        return typeCode;
+    }
+    
+    /**
+     * Sets the type code.
+     * @param typeCode the new type code
+     */
+    public void setTypeCode(Cd typeCode) {
+        this.typeCode = typeCode;
+    }
+    
+    /**
+     * Gets the description.
+     * @return the description
+     */
+    public St getDescription() {
+        return description;
+    }
+    
+    /**
+     * Sets the description.
+     * @param description the new description
+     */
+    public void setDescription(St description) {
+        this.description = description;
+    }
+    
+    /**
+     * Gets the name.
+     * @return the name
+     */
+    public St getName() {
+        return name;
+    }
+    
+    /**
+     * Sets the name.
+     * @param name the new name
+     */
+    public void setName(St name) {
+        this.name = name;
+    }
+    
+    /**
+     * Gets the ct gov type code.
+     * @return the ct gov type code
+     */
+    public Cd getCtGovTypeCode() {
+        return ctGovTypeCode;
+    }
+    
+    /**
+     * Sets the ct gov type code.
+     * @param ctGovTypeCode the new ct gov type code
+     */
+    public void setCtGovTypeCode(Cd ctGovTypeCode) {
+        this.ctGovTypeCode = ctGovTypeCode;
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the other names.
+     * @return the other names
      */
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
-        return serviceLocator.getInterventionAlternateNameService();
+    public String getOtherNames() {
+        return otherNames;
+    }
+
+    /**
+     * Sets the other names.
+     * @param otherNames the new other names
+     */
+    public void setOtherNames(String otherNames) {
+        this.otherNames = otherNames;
+    }
+
+    /**
+     * Gets the type.
+     * @return the type
+     */
+    public St getType() {
+        return type;
+    }
+
+    /**
+     * Sets the type.
+     * @param type the new type
+     */
+    public void setType(St type) {
+        this.type = type;
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    public InterventionServiceRemote getInterventionService() {
-        return serviceLocator.getInterventionService();
-    }
 }

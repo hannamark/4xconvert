@@ -78,6 +78,8 @@ package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -107,4 +109,14 @@ public interface ServiceLocatorPaInterface {
      * @return LookUpTableService
      */
     RegistryUserServiceRemote getRegistryUserService();
+    
+    /**
+     * @return the intervention service
+     */
+    InterventionServiceRemote getInterventionService();
+    
+    /**
+     * @return the intervention alternate name service
+     */
+    InterventionAlternateNameServiceRemote getInterventionAlternateNameService();
 }

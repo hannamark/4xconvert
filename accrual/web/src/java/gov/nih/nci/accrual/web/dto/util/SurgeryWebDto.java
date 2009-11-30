@@ -79,11 +79,19 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.PerformedProcedureDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.io.Serializable;
+
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -101,6 +109,7 @@ public class SurgeryWebDto implements Serializable {
     private St name;
     private Ts createDate;
     private St info;
+    private Ii interventionId;
 
     /**
      * Instantiates a new surgery web dto.
@@ -108,7 +117,43 @@ public class SurgeryWebDto implements Serializable {
     public SurgeryWebDto() {
         // default constructor
     }
+    
+   
+    /**
+     * Instantiates a new surgery web dto.
+     * 
+     * @param pp the pp
+     * @param dto the dto
+     */
+    public SurgeryWebDto(PerformedProcedureDto pp, InterventionDTO dto) {
+        id = pp.getIdentifier();
+        name = dto.getName();
+        interventionId = dto.getIdentifier();
+        createDate = pp.getActualDateRange().getLow();
+        info = pp.getTextDescription();
+    }
 
+    /**
+     * Gets the performed activity dto.
+     * @return the performed activity dto
+     */
+    public PerformedProcedureDto getPerformedProcedureDto() {
+        PerformedProcedureDto ppDto = new PerformedProcedureDto();
+        ppDto.setIdentifier(getId());        
+        if (ppDto.getActualDateRange() == null) {
+            ppDto.setActualDateRange(new Ivl<Ts>());
+        }
+        ppDto.getActualDateRange().setLow(getCreateDate());
+        ppDto.setInterventionIdentifier(getInterventionId());
+        ppDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SURGERY));
+        ppDto.setTextDescription(getInfo());
+        ppDto.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
+        ppDto.setStudySubjectIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
+        return ppDto;
+    }
+    
     /**
      * @return the id
      */
@@ -169,5 +214,21 @@ public class SurgeryWebDto implements Serializable {
      */
     public void setInfo(St info) {
         this.info = info;
+    }
+
+    /**
+     * Gets the intervention id.
+     * @return the intervention id
+     */
+    public Ii getInterventionId() {
+        return interventionId;
+    }
+
+    /**
+     * Sets the intervention id.
+     * @param interventionId the new intervention id
+     */
+    public void setInterventionId(Ii interventionId) {
+        this.interventionId = interventionId;
     }
 }
