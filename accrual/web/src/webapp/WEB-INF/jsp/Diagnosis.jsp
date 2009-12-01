@@ -19,11 +19,6 @@
         document.forms[0].submit();
     }
 
-    function handleNextAction() {
-        document.getElementsByName("nextTarget")[0].value = "Staging";
-        document.forms[0].action = "nextDiagnosis.action";
-        document.forms[0].submit();
-    }
 	function lookup(){
         showPopWin('${lookupUrl}', 900, 400, '', 'Diagnosis');
 	}
@@ -52,7 +47,6 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<s:hidden name="nextTarget"/>
 <s:hidden name="selectedDiagnosis"/>
 <s:hidden name="diagnosis.identifier"/>
 <s:hidden name="diagnosis.resultCode"/>
@@ -76,7 +70,6 @@
        <li>        
             <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="next">Next</span></span></s:a>
         </li>
       </ul>
    </del>

@@ -151,8 +151,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected DiseaseParentServiceRemote diseaseParentSvc;
     /** PerformedObservationResultService. */
     protected PerformedObservationResultService performedObservationResultSvc;
-    /** Name of the next target when needed. */
-    private String nextTarget = null;
     /** ActivityRelationshipService. */
     protected ActivityRelationshipService activityRelationshipSvc;    
     /** The intervention alternate name svc. */
@@ -277,20 +275,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
                 addFieldError(fieldName, errorMessage);
             }
         }
-    }
-
-    /**
-     * @param nextTarget the nextTarget to set
-     */
-    public void setNextTarget(String nextTarget) {
-        this.nextTarget = nextTarget;
-    }
-
-    /**
-     * @return the nextTarget
-     */
-    public String getNextTarget() {
-        return nextTarget;
     }
 
     /**

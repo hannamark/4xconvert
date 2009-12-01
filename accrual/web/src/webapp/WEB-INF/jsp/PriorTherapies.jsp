@@ -34,13 +34,6 @@
         document.forms[0].submit();
     }
 
-    function handleNextAction() {
-        document.getElementsByName("currentAction")[0].value = "next";
-        document.getElementsByName("nextTarget")[0].value = "Treatment";
-        document.forms[0].action = "nextPriorTherapies.action";
-        document.forms[0].submit();
-    }
-
     function handleAddPriorAction() {
         document.getElementsByName("currentAction")[0].value = "addPrior";
         document.forms[0].action = "savePriorTherapies.action";
@@ -83,7 +76,6 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <s:hidden name="currentAction"/>
-<s:hidden name="nextTarget"/>
 <s:hidden name="delItem"/>
 <s:hidden name="priorTherapy.type"/>
 <s:hidden name="priorTherapy.id"/>
@@ -141,7 +133,6 @@
        <li>
             <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="next">Next</span></span></s:a>
         </li>
       </ul>
    </del>

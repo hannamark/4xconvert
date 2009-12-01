@@ -11,12 +11,6 @@
         document.forms[0].action = "createRadiation.action";
         document.forms[0].submit();
     }
-    
-    function handleNextAction() {
-        document.forms[0].action = "executeOffTreatment.action";
-        document.forms[0].submit();
-    }
-    
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
@@ -54,7 +48,6 @@
       <ul class="btnrow">
        <li>        
             <s:a href="#" cssClass="btn" onclick="handleAddAction()"><span class="btn_img"><span class="add">Add</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="next">Next</span></span></s:a>
         </li>
       </ul>
    </del>

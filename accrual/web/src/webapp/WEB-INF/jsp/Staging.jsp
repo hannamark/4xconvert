@@ -15,12 +15,6 @@
         document.forms[0].action = "executeTumorMarker.action";
         document.forms[0].submit();
     }
-    
-    function handleNextAction() {
-        document.getElementsByName("nextTarget")[0].value = "Pathology";
-        document.forms[0].action = "nextStaging.action";
-        document.forms[0].submit();
-    }
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
@@ -39,7 +33,6 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<s:hidden name="nextTarget"/>
 <table class="form">
 
     <!-- Staging Method -->
@@ -117,7 +110,6 @@
        <li>        
             <s:a href="#" cssClass="btn" onclick="handleAddAction()"><span class="btn_img"><span class="add">Add Tumor Marker</span></span></s:a>
             <s:a href="#" cssClass="btn" onclick="handleSaveAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="next">Next</span></span></s:a>
         </li>
       </ul>
    </del>

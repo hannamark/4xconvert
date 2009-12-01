@@ -15,12 +15,6 @@
         document.forms[0].action = "cancelOffTreatment.action";
         document.forms[0].submit();
     }
-
-    function handleNextAction() {
-        document.getElementsByName("nextTarget")[0].value = "ParticipantOutcomes";
-        document.forms[0].action = "nextOffTreatment.action";
-        document.forms[0].submit();
-    }
 </script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
@@ -45,7 +39,6 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<s:hidden name="nextTarget"/>
 <s:hidden name="offTreat.id"/>
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="offtreat.label.date"/><span class="required">*</span></label></td>
@@ -66,7 +59,6 @@
        <li>        
             <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-            <s:a href="#" cssClass="btn" onclick="handleNextAction()"><span class="btn_img"><span class="next">Next</span></span></s:a>
         </li>
       </ul>
    </del>
