@@ -123,7 +123,9 @@ public enum ActivityNameCode implements CodedEnum<String> {
     /** Autopsy Information. */
     AUTOPSY_INFORMATION("Autopsy Information"),
     /** Diagnosis. */
-    DIAGNOSIS("Diagnosis");
+    DIAGNOSIS("Diagnosis"),
+    /** Pathology Grade. */
+    PATHOLOGY_GRADE("Pathology Grade");
 
     private String code;
     /**

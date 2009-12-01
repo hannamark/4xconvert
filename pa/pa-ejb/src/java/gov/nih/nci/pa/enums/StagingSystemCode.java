@@ -89,7 +89,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @author Kalpana Guthikonda
  * @since 11/5/2009
  */
-public enum StatgineSystemCode implements CodedEnum<String> {
+public enum StagingSystemCode implements CodedEnum<String> {
 
     /** AJCC. */
     AJCC("AJCC"),
@@ -101,7 +101,7 @@ public enum StatgineSystemCode implements CodedEnum<String> {
      *
      * @param code
      */
-    private StatgineSystemCode(String code) {
+    private StagingSystemCode(String code) {
         this.code = code;
         register(this);
     }
@@ -132,15 +132,15 @@ public enum StatgineSystemCode implements CodedEnum<String> {
      * @param code code
      * @return PatientGenderCode
      */
-    public static StatgineSystemCode getByCode(String code) {
-        return getByClassAndCode(StatgineSystemCode.class, code);
+    public static StagingSystemCode getByCode(String code) {
+        return getByClassAndCode(StagingSystemCode.class, code);
     }
 
     /**
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNames() {
-        StatgineSystemCode[] l = StatgineSystemCode.values();
+        StagingSystemCode[] l = StagingSystemCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();

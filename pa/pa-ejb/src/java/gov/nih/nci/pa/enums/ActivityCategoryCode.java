@@ -110,7 +110,9 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     /** Drug/Biologic. */
     DRUG_BIOLOGIC("Drug/Biologic"),
     /** Other. */
-    OTHER("Other");
+    OTHER("Other"),
+    /** Tumor Marker. */
+    TUMOR_MARKER("Tumor Marker");
      
     private String code;
     /**

@@ -103,7 +103,15 @@ public enum PerformedObservationResultTypeCode implements CodedEnum<String> {
     /** Autopsy Performed Indicator. */
     AUTOPSY_PERFORMED_INDICATOR("Autopsy Performed Indicator"),
     /** Cause of Death as Determined by Autopsy. */
-    CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY("Cause of Death as Determined by Autopsy");
+    CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY("Cause of Death as Determined by Autopsy"),    
+    /** T. */
+    T("T"),    
+    /**  N. */
+    N("N"),    
+    /**  M. */
+    M("M"),    
+    /**  STAGE. */
+    STAGE("Stage");
      
     private String code;
     /**
