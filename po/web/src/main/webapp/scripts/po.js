@@ -226,8 +226,9 @@ function autotab(original,destination) {
 function switchContactNumberFormats(country) {
 	
 	var countryField = $(country);
-	if (!countryField)
+	if (!countryField) {
 		return;
+	}
     var countryName = countryField.options[countryField.selectedIndex].text;
    
     if ($('no_format_phone')) {
