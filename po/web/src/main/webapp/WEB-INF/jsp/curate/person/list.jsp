@@ -2,7 +2,7 @@
 
 <c:url value="/protected/ajax/curate/search/person/listPersons.action" var="sortUrl"/>
 <s:set name="ctepRoot" value="@gov.nih.nci.po.service.external.CtepOrganizationImporter@CTEP_ROOT"/>
-<ajax:displayTag id="personSearchResults" ajaxFlag="true" tableClass="data">
+<ajax:displayTag id="personSearchResults" tableClass="data">
 	<display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="persons" requestURI="${sortUrl}">
         <po:displayTagProperties/>
 		<display:setProperty name="pagination.sort.param" value="persons.sortCriterion" />

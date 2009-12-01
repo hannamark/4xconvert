@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <c:url value="/protected/ajax/search/person/results/search.action" var="sortUrl"/>
 <s:set name="ctepRoot" value="@gov.nih.nci.po.service.external.CtepOrganizationImporter@CTEP_ROOT"/>
-<ajax:displayTag id="personSearchResults" ajaxFlag="true" tableClass="data">
+<ajax:displayTag id="personSearchResults" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}">
         <po:displayTagProperties/>
         <display:setProperty name="pagination.sort.param" value="results.sortCriterion" />
@@ -50,7 +50,7 @@
         </display:column>
         <display:column title="Change Request(s)" >
             <c:choose>
-            <c:when test="${fn:length(row.changeRequests) > 0}"> 
+            <c:when test="${fn:length(row.changeRequests) > 0}">
                <div class="difference_found">${fn:length(row.changeRequests)}</div>
             </c:when>
             <c:otherwise>NONE</c:otherwise>

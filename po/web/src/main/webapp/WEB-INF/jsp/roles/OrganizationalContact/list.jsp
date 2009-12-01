@@ -2,7 +2,7 @@
 <%@ include file="setOCType.jsp" %>
 
 <c:url value="/protected/ajax/roles/${ocType}/OrganizationalContact/results/list.action" var="sortUrl" />
-<ajax:displayTag id="roleSearchResults" ajaxFlag="true" tableClass="data">
+<ajax:displayTag id="roleSearchResults" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}" >
         <po:displayTagProperties/>
         <display:setProperty name="pagination.sort.param" value="results.sortCriterion" />

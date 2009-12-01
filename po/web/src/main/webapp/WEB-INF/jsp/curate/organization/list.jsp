@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <c:url value="/protected/ajax/curate/search/organization/listOrgs.action" var="sortUrl"/>
-<ajax:displayTag id="organizationSearchResults" ajaxFlag="true" tableClass="data">
+<ajax:displayTag id="organizationSearchResults" tableClass="data">
 	<display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="orgs" requestURI="${sortUrl}">
 	    <po:displayTagProperties/>
 		<display:setProperty name="pagination.sort.param" value="orgs.sortCriterion" />

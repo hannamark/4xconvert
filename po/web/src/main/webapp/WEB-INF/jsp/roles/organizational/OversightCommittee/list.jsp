@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
 <c:url value="/protected/ajax/roles/organizational/OversightCommittee/results/list.action" var="sortUrl" />
-<ajax:displayTag id="oversightCommitteeSearchResults" ajaxFlag="true" tableClass="data">
+<ajax:displayTag id="oversightCommitteeSearchResults" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}" >
         <po:displayTagProperties/>
         <display:setProperty name="pagination.sort.param" value="results.sortCriterion" />
@@ -19,7 +19,7 @@
             </c:when>
             <c:otherwise>${row.status}</c:otherwise>
             </c:choose>
-        </display:column> 
+        </display:column>
         <display:column titleKey="oversightCommittee.statusDate" property="statusDate" sortable="true" sortProperty="STATUS_DATE" format="{0,date,yyyy-MM-dd}" />
         <display:column titleKey="th.action" class="action">
             <c:url var="editUrl" value="/protected/roles/organizational/OversightCommittee/input.action">

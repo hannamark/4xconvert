@@ -1,13 +1,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <c:url value="/protected/ajax/selector/person/results/search.action" var="sortUrl" />
 <s:set name="ctepRoot" value="@gov.nih.nci.po.service.external.CtepOrganizationImporter@CTEP_ROOT"/>
-<ajax:displayTag id="duplicatePersonSearchResults" ajaxFlag="true" tableClass="data">
+<ajax:displayTag id="duplicatePersonSearchResults" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}">
         <po:displayTagProperties/>
         <display:setProperty name="pagination.sort.param" value="results.sortCriterion" />
         <display:setProperty name="pagination.sortdirection.param" value="results.sortDirection" />
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
-        
+
         <display:column titleKey="person.id" sortable="true" sortProperty="PERSON_ID" >
             <c:url var="viewDetailsUrl" value="/protected/ajax/selector/person/detail.action">
                 <c:param name="person.id" value="${row.id}"/>
@@ -69,4 +69,3 @@
         </display:column>
     </display:table>
 </ajax:displayTag>
-  
