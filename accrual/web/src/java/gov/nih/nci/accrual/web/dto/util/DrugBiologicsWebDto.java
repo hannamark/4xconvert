@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
@@ -120,6 +121,28 @@ public class DrugBiologicsWebDto implements Serializable {
         // default constructor
     }
     
+    /**
+     * Instantiates a new drug biologics web dto.
+     * 
+     * @param psaDto the psa dto
+     * @param webDto the web dto
+     */
+    public DrugBiologicsWebDto(PerformedSubstanceAdministrationDto psaDto,
+            DrugBiologicsWebDto webDto) {
+        id = psaDto.getIdentifier();
+        drugName = webDto.getDrugName();
+        dose = psaDto.getDose();
+        doseRoute = psaDto.getRouteOfAdministrationCode();
+        doseFreq = psaDto.getDoseFrequencyCode();
+        doseDur = psaDto.getDoseDuration();
+        height = webDto.getHeight();
+        weight = webDto.getWeight();
+        bsa = webDto.getBsa();
+        doseTotal = psaDto.getDoseTotal();
+        doseModType = psaDto.getDoseModificationType();
+        interventionId = webDto.getInterventionId();        
+    }
+
     /**
      * Validate.
      * 

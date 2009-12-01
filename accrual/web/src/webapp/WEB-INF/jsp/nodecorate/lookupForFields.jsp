@@ -7,10 +7,7 @@
 <script language="JavaScript">
 	function loadDiv() {	
 	var type = document.getElementById("type").value;
-		if(type == 'Surgery') {
-			document.forms[0].action="lookUpprocedureName.action";
-			document.getElementById("type").value = 'Surgery';
-		}else if(type == 'radiationType'){
+		if(type == 'radiationType'){
 			document.forms[0].action="lookUpprocedureName.action";
 			document.getElementById("type").value = 'radiationType';
 		}else if(type == 'radiationTotalDoseUom') {
@@ -19,9 +16,6 @@
 		}else if(type == 'radiationTotalDoseUom') {
 			document.forms[0].action="lookUpunitOfMeasurement.action";
 			document.getElementById("type").value = 'radiationTotalDoseUom';
-		}else if(type == 'drugName'){
-			document.forms[0].action="lookUpunitOfMeasurement.action";
-			document.getElementById("type").value = 'drugName';
 		}else if(type == 'doseUom'){
 			document.forms[0].action="lookUpunitOfMeasurement.action";
 			document.getElementById("type").value = 'doseUom';
@@ -56,16 +50,12 @@
 	    document.forms[0].submit();
 	}
 	function populateFields(name,type) {
-		if(type == 'Surgery') {
-			window.top.document.getElementsByName("surgery.name")[0].value = name;
-		}else if(type == 'radiationType') {
+		if(type == 'radiationType') {
 			window.top.document.getElementsByName("radiation.type")[0].value = name;
 		}else if(type == 'radiationTotalDoseUom') {
 			window.top.document.getElementsByName("radiation.totalDose.unit")[0].value = name;
 		}else if(type == 'radiationDurationUom') {
 			window.top.document.getElementsByName("radiation.duration.unit")[0].value = name;
-		}else if(type == 'drugName'){
-			window.top.document.getElementsByName("drugBiologic.drugName")[0].value = name;
 		}else if(type == 'doseUom'){
 			window.top.document.getElementsByName("drugBiologic.dose.unit")[0].value = name;
 		}else if(type == 'doseRoa') {
@@ -99,16 +89,12 @@
 <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 	<table  class="form">
 		<tr><td scope="row" class="label">
-		<label>
-			<s:if test="type == 'Surgery'">
-			<fmt:message key="surgery.name"/>
-			</s:if>
-			<s:elseif test="(type == 'radiationTotalDoseUom') || (type == 'radiationDurationUom')
+		<label>			
+			<s:if test="(type == 'radiationTotalDoseUom') || (type == 'radiationDurationUom')
 									|| (type == 'doseUom') || (type == 'doseDurationUom')
-									|| (type == 'totalDoseUom')  || (type == 'drugName') 
-									|| (type == 'tumorMarkeruom') ">
+									|| (type == 'totalDoseUom')	|| (type == 'tumorMarkeruom') ">
 			UOM
-			</s:elseif>
+			</s:if>
 			<s:elseif test="type == 'radiationType'">
 			Radiation Type
 			</s:elseif>
