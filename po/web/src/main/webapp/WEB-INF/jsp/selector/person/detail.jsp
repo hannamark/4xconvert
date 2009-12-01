@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <div class="boxouter">
 <h2>Person Details</h2>
-<s:form action="no.action" id="personReadOnlyDetailForm" theme="css_xhtml_readonly">
+<s:form action="no.action" id="personReadOnlyDetailForm">
 <div class="boxouter">
 <h2>Basic Identifying Information</h2>
     <div class="box_white">
@@ -12,18 +12,18 @@
         <po:inputRowElement>&nbsp;</po:inputRowElement>
         <po:inputRowElement><po:field labelKey="person.statusDate"><s:date name="person.statusDate" format="yyyy-MM-dd" /></po:field></po:inputRowElement>
         </po:inputRow>    
-        <s:textfield key="person.prefix" size="10"/>
-        <s:textfield key="person.firstName" required="true" cssClass="required" size="50"/>
-        <s:textfield key="person.middleName" size="50"/>
-        <s:textfield key="person.lastName" required="true" cssClass="required" size="50"/>
-        <s:textfield key="person.suffix" size="10"/>
+        <po:field labelKey="person.prefix">${person.prefix}</po:field>
+        <po:field labelKey="person.firstName" fieldRequired="true">${person.firstName}</po:field>
+        <po:field labelKey="person.middleName">${person.middleName}</po:field>
+        <po:field labelKey="person.lastName" fieldRequired="true">${person.lastName}</po:field>
+        <po:field labelKey="person.suffix">${person.suffix}</po:field>
         <div class="clear"></div>
     </div>
 </div>
 <div class="boxouter">
 <h2>Address Information</h2>
     <div class="box_white">
-        <po:addressForm formNameBase="personReadOnlyDetailForm" addressKeyBase="person.postalAddress" address="${person.postalAddress}" required="false"/>
+        <po:address address="${person.postalAddress}" />
         <div class="clear"></div>
     </div>
 </div>
@@ -98,8 +98,8 @@
 </div>
 <div class="btnwrapper">
 	<po:buttonRow>
-	    <po:button href="javascript://nop/" onclick="$('duplicateSearchResultDetails').hide(); $('findDuplicates').show();" style="continue" text="Back to Search Results" />
+	    <po:button href="javascript://nop/" onclick="$('duplicateSearchResultDetails').hide(); $('findDuplicates').show();" style="continue" text="Back to Search Results" id="selector_person_back_to_search_results"/>
         <c:set var="personFullName">${pofn:escapeJavaScript(person.lastName)}, ${pofn:escapeJavaScript(person.firstName)} ${pofn:escapeJavaScript(person.middleName)}</c:set>
-	    <po:button href="javascript://nop/" onclick="selectAndClose(new IdValue('${person.id}',  '${personFullName}' }));" style="reject" text="Select" />
+	    <po:button href="javascript://nop/" onclick="selectAndClose(new IdValue('${person.id}',  '${personFullName}' ));" style="reject" text="Select" id="selector_select_person"/>
 	</po:buttonRow>
 </div>

@@ -12,12 +12,14 @@
 /*
  Toggles the display of a stateOrProvince textfield or a select-box.
 */
-function loadStateProvince(code, v) {
+function loadStateProvince(formNameBase, addressKeyBase, code, v) {
+    var div_stateOrProvince = '' + formNameBase + '.' + addressKeyBase + '.div_stateOrProvince';
     var url = contextPath + "/protected/ajax/curate/states.action";
-    var div = $('${addressKeyBase}.div_stateOrProvince');
+    var div = $(div_stateOrProvince);
 
+    var stateFieldElem = '' + addressKeyBase +'.stateOrProvince';
     if (v == null) {
-        var stateField = $('${addressKeyBase}.stateOrProvince');
+        var stateField = $(stateFieldElem);
         v = stateField.value;
         if (v == null) {
             v = stateField.options[stateField.selectedIndex].value;
@@ -31,11 +33,11 @@ function loadStateProvince(code, v) {
         parameters: {
             countryId: code,
             value: v,
-            field: '${addressKeyBase}.stateOrProvince'
+            field: stateFieldElem
             }
     });
-   
-    switchContactNumberFormats('${formNameBase}.${addressKeyBase}.country');
+   countryElem = ''+ formNameBase + addressKeyBase + '.country';
+    switchContactNumberFormats(countryElem);
 }
 
 --></script>
@@ -48,8 +50,6 @@ function loadStateProvince(code, v) {
 <s:set name="cssClass" value=""/>
 </s:else>
 
-
-
 <s:select
     name="%{#attr.addressKeyBase + '.country'}"
     label="%{getText(#attr.addressKeyBase + '.country')}"
@@ -57,7 +57,7 @@ function loadStateProvince(code, v) {
     cssClass="%{cssClass}" required="%{#attr.required}"
     headerKey="" headerValue="--Select a Country--"
     value="#attr.address.country.id"
-    onchange="loadStateProvince(this.value);"
+    onchange="loadStateProvince('%{#attr.formNameBase}' , '%{#attr.addressKeyBase}' , this.value);"
     id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
 </s:select>
 <s:textfield name="%{#attr.addressKeyBase + '.streetAddressLine'}" 
@@ -70,11 +70,11 @@ function loadStateProvince(code, v) {
     label="%{getText(#attr.addressKeyBase + '.cityOrMunicipality')}" />
 <po:inputRow>
     <po:inputRowElement>
-	    <div id="${addressKeyBase}.div_stateOrProvince">
+	    <div id="${formNameBase}.${addressKeyBase}.div_stateOrProvince">
             Loading States...
         </div>
         <script type="text/javascript"><!--
-            loadStateProvince($('${formNameBase}.${addressKeyBase}.country').value, '${pofn:escapeJavaScript(address.stateOrProvince)}');
+            loadStateProvince('${formNameBase}', '${addressKeyBase}', $('${formNameBase}.${addressKeyBase}.country').value, '${pofn:escapeJavaScript(address.stateOrProvince)}');
         --></script>
     </po:inputRowElement>
     <po:inputRowElement>
