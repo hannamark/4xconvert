@@ -95,9 +95,9 @@ public enum ActivitySubcategoryCode implements CodedEnum<String> {
     /** Device. */
     DEVICE("Device"),
     /** Biological/Vaccine. */
-    BIOLOGICAL_VACCINE("Biological Vaccine"),
+    BIOLOGICAL_VACCINE("Biological/Vaccine"),
     /** Procedure/Surgery. */
-    PROCEDURE_SURGERY("Procedure Surgery"),
+    PROCEDURE_SURGERY("Procedure/Surgery"),
     /** Radiation. */
     RADIATION("Radiation"),
     /** Behavioral. */
