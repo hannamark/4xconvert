@@ -34,8 +34,8 @@
 <s:hidden name="targetOutcomeId"/>
 <s:set var="displayTagList" value="displayTagList" scope="request"/>
     <display:table class="data" summary="The list of Patient Outcomes.
-            Please use column headers to sort results." length="0" pagesize="0"
-            sort="list" uid="row" name="displayTagList" requestURI="ParticipantOutcomes.action" export="false">
+            Please use column headers to sort results." length="0" pagesize="10"
+            sort="list" uid="row" name="displayTagList" requestURI="executeParticipantOutcomes.action" export="false">
         <display:column titleKey="partOut.label.evalDate" headerClass="left" sortable="true">
             <s:label value="%{#attr.row.evaluationDate}"/>
         </display:column>

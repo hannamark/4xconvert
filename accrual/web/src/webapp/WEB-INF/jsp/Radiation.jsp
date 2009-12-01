@@ -30,7 +30,7 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
     <accrual:sucessMessage /> 
 <s:form name="detailForm">
-    <display:table class="data" name="displayTagList" sort="list" pagesize="10">    
+    <display:table class="data" name="displayTagList" sort="list" pagesize="10" requestURI="executeRadiation.action">    
             <display:column titleKey="radiation.name" property="type.value" sortable="true" headerClass="sortable"/>
             <display:column titleKey="radiation.date" property="radDate.value" sortable="true" headerClass="sortable"/>
             <display:column titleKey="radiation.totalDose" property="totalDose.value" sortable="true" headerClass="sortable"/>
