@@ -83,7 +83,7 @@ import gov.nih.nci.accrual.web.enums.StagingMethods;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.enums.StatgineSystemCode;
+import gov.nih.nci.pa.enums.StagingSystemCode;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -236,7 +236,7 @@ public class StagingWebDto implements Serializable {
     /**
      * @return the list of staging systems
      */
-    public List<StatgineSystemCode> getSystems() {
-        return Arrays.asList(StatgineSystemCode.values());
+    public List<StagingSystemCode> getSystems() {
+        return Arrays.asList(StagingSystemCode.values());
     }
 }
