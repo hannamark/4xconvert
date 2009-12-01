@@ -10,8 +10,8 @@
     <tr>
         <td scope="row" class="label"><s:label>Dose Range:</s:label></td>
         <td class="value" >
-            <s:textfield  name="minDoseValue" maxlength="160" />
-            <s:textfield name="maxDoseValue" maxlength="160"/>         
+            <s:textfield  name="minDoseValue" maxlength="9" />
+            <s:textfield name="maxDoseValue" maxlength="9"/>         
              <span class="formErrorMsg"> 
              <s:fielderror>
                  <s:param>minDoseValue</s:param>
@@ -58,7 +58,7 @@
     <tr>
         <td scope="row" class="label"><s:label>Dose Duration:</s:label></td>
         <td class="value">
-            <s:textfield name="doseDurationValue" maxlength="160"/> 
+            <s:textfield name="doseDurationValue" maxlength="9"/> 
              <span class="formErrorMsg"> 
                      <s:fielderror>
                          <s:param>doseDurationValue</s:param>
@@ -75,7 +75,7 @@
       <tr>
         <td scope="row" class="label"><s:label>Dose Regimen:</s:label></td>
         <td class="value" >
-            <s:textfield name="doseRegimen" maxlength="160"/> 
+            <s:textfield name="doseRegimen" maxlength="9"/> 
             <span class="formErrorMsg"> 
                              <s:fielderror>
                                  <s:param>doseRegimen</s:param>
@@ -87,9 +87,9 @@
    <tr>
         <td scope="row" class="label"><s:label>Total Dose Range:</s:label></td>
         <td class="value" >
-            <s:textfield name="minDoseTotalValue" maxlength="160" 
+            <s:textfield name="minDoseTotalValue" maxlength="9" 
                     /> 
-             <s:textfield name="maxDoseTotalValue" maxlength="160" 
+             <s:textfield name="maxDoseTotalValue" maxlength="9" 
                     />    
              <span class="formErrorMsg"> 
                              <s:fielderror>

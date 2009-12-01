@@ -125,10 +125,10 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     static final String COMMA_SPACE = ", ";
     static final String DASH = "-";
       
-    static final String MESSAGE = "Numeric value between 0.0-100.000";
+    static final String MESSAGE = "Numeric value between 0.0-999999.99";
     static final String KEY = "i18n.key";
     static final String MIN = "0.0";
-    static final String MAX = "100.000";
+    static final String MAX = "999999.99";
     private List<InterventionWebDTO> interventionsList;
     private String interventionIdentifier;
     private String interventionType;
