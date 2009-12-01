@@ -49,7 +49,10 @@
 		}else if(type == 'tumorMarker') {
 			document.forms[0].action="lookUptumorMarker.action";
 			document.getElementById("type").value = 'tumorMarker';
-		}
+		} else if(type == 'tumorMarkeruom') {
+            document.forms[0].action="lookUpunitOfMeasurement.action";
+            document.getElementById("type").value = 'tumorMarkeruom';
+        }
 	    document.forms[0].submit();
 	}
 	function populateFields(name,type) {
@@ -81,7 +84,9 @@
 			window.top.document.getElementsByName("deathInfo.autopsySite")[0].value = name;
 		}else if(type == 'tumorMarker') {
 			window.top.document.getElementsByName("tumorMarker.tumorMarker")[0].value = name;
-		}
+		}else if(type == 'tumorMarkeruom') {
+            window.top.document.getElementsByName("tumorMarker.tmvUom")[0].value = name;
+        }
         window.top.hidePopWin(false); 
 	}
 </script>
@@ -100,7 +105,8 @@
 			</s:if>
 			<s:elseif test="(type == 'radiationTotalDoseUom') || (type == 'radiationDurationUom')
 									|| (type == 'doseUom') || (type == 'doseDurationUom')
-									|| (type == 'totalDoseUom')  || (type == 'drugName')">
+									|| (type == 'totalDoseUom')  || (type == 'drugName') 
+									|| (type == 'tumorMarkeruom') ">
 			UOM
 			</s:elseif>
 			<s:elseif test="type == 'radiationType'">

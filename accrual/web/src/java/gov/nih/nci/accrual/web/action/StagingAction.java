@@ -78,15 +78,23 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.StagingWebDto;
 import gov.nih.nci.accrual.web.dto.util.TumorMarkerWebDto;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.PqConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -118,15 +126,104 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
     @SkipValidation
     @SuppressWarnings("PMD")
     public String execute() {
-        return super.execute();
+    try {
+       List<PerformedObservationDto> psmList = performedActivitySvc.getPerformedObservationByStudySubject(
+                                               getParticipantIi());
+      for (PerformedObservationDto psm : psmList) {
+        if (psm.getNameCode() != null && psm.getNameCode().getCode() != null
+            && psm.getNameCode().getCode().equals(ActivityNameCode.STAGING.getCode())) {
+           staging.setId(psm.getIdentifier());
+           if (psm.getMethodCode() != null) {
+            List<Cd> cds = new ArrayList<Cd>();
+            cds = DSetConverter.convertDsetToCdList(psm.getMethodCode());
+            staging.setMethod(cds.get(0));
+           }
+           List<PerformedClinicalResultDto> pcrList = 
+             performedObservationResultSvc.getPerformedClinicalResultByPerformedActivity(psm.getIdentifier());
+           if (!pcrList.isEmpty()) {
+            for (PerformedClinicalResultDto pcr : pcrList) {
+             if (pcr.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.T.getCode())) {
+               staging.setTt(pcr.getResultText());
+             } 
+             if (pcr.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.N.getCode())) {
+                 staging.setNn(pcr.getResultText());
+             } 
+             if (pcr.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.M.getCode())) {
+                 staging.setMm(pcr.getResultText());
+             } 
+             if (pcr.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.STAGE.getCode())) {
+                 staging.setStage(pcr.getResultText());
+             } 
+             staging.setSystem(pcr.getStageCodingSystem());             
+           }
+          }
+       }
+     }
+    } catch (RemoteException e) {
+       LOG.error("Error in PathologyAction.execute() " + e.getLocalizedMessage());
+       return ERROR;
+    }
+     return super.execute();
     }
 
     /**
      * Save user entries.
      * @return result for next action
      */
+    
     public String save() {
-        return super.execute();
+     try {      
+      PerformedObservationDto dto = new PerformedObservationDto();
+      dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.STAGING));
+      List<Cd> cds = new ArrayList<Cd>();
+      cds.add(staging.getMethod());
+      dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
+      dto.setStudyProtocolIdentifier(getSpIi());
+      dto.setStudySubjectIdentifier(getParticipantIi());
+      dto = performedActivitySvc.createPerformedObservation(dto);
+      
+       //T 
+      PerformedClinicalResultDto pcrDto1 = new PerformedClinicalResultDto();
+      pcrDto1.setPerformedObservationIdentifier(dto.getIdentifier());
+      pcrDto1.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.T));
+      pcrDto1.setResultText(staging.getTt());
+      pcrDto1.setStudyProtocolIdentifier(getSpIi());
+      pcrDto1.setStageCodingSystem(staging.getSystem());
+      performedObservationResultSvc.createPerformedClinicalResult(pcrDto1);
+      //N
+      PerformedClinicalResultDto pcrDto2 = new PerformedClinicalResultDto();
+      pcrDto2.setPerformedObservationIdentifier(dto.getIdentifier());
+      pcrDto2.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.N));
+      pcrDto2.setResultText(staging.getNn());
+      pcrDto2.setStageCodingSystem(staging.getSystem());
+      pcrDto2.setStudyProtocolIdentifier(getSpIi());
+      performedObservationResultSvc.createPerformedClinicalResult(pcrDto2);
+      //M
+      PerformedClinicalResultDto pcrDto3 = new PerformedClinicalResultDto();
+      pcrDto3.setPerformedObservationIdentifier(dto.getIdentifier());
+      pcrDto3.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.M));
+      pcrDto3.setResultText(staging.getMm());
+      pcrDto3.setStudyProtocolIdentifier(getSpIi());
+      pcrDto3.setStageCodingSystem(staging.getSystem());
+      performedObservationResultSvc.createPerformedClinicalResult(pcrDto3);
+      //Stage
+      PerformedClinicalResultDto pcrDto4 = new PerformedClinicalResultDto();
+      pcrDto4.setPerformedObservationIdentifier(dto.getIdentifier());
+      pcrDto4.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.STAGE));
+      pcrDto4.setResultText(staging.getStage());
+      pcrDto4.setStudyProtocolIdentifier(getSpIi());
+      pcrDto4.setStageCodingSystem(staging.getSystem());
+      performedObservationResultSvc.createPerformedClinicalResult(pcrDto4);
+      
+      
+    } catch (RemoteException re) {
+      addActionError("Error saving the  Staging." + re.getLocalizedMessage());
+      return INPUT;
+    } catch (DataFormatException dfe) {
+      addActionError("Error saving the  Staging." + dfe.getLocalizedMessage());
+      return INPUT;
+    }
+    return INPUT;
     }
 
     /**
@@ -156,12 +253,22 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
         item.setTumorMarkerValue(StConverter.convertToSt("Tumor Marker Value 2"));
         item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 2"));
         tumorMarkerList.add(item);
-
         try {
             setDisplayTagList(tumorMarkerList);
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-        }
+        } 
+       /* try {
+            List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(getParticipantIi());
+            for (PerformedActivityDto pa : paList) {
+                if (pa.getCategoryCode() != null && pa.getCategoryCode().getCode() != null
+                        && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.TUMOR_MARKER.getCode())) {
+                   // getDisplayTagList().add(new TumorMarkerWebDto(pa));
+                }
+            }
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+        }*/
     }
 
     /**

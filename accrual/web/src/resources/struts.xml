@@ -140,7 +140,7 @@
         
          <action name="lookUp*" class="gov.nih.nci.accrual.web.action.LookUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupForFields.jsp</result>
-            <result name="input">/WEB-INF/jsp/nodecorate/lookupDisplayList.jsp</result>
+            <result name="input">/WEB-INF/jsp/nodecorate/lookupForFields.jsp</result>
         </action>
         
         <action name="popupIntervention*" class="gov.nih.nci.accrual.web.action.PopUpInterventionAction" method="{1}">

@@ -79,22 +79,34 @@
 
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.PathologyWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.zip.DataFormatException;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
  * The Class PathologyAction.
- *
+ * 
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
 public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> {
 
     private static final long serialVersionUID = 1L;
-
+    
     private PathologyWebDto pathology = new PathologyWebDto();
 
     /**
@@ -112,7 +124,27 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
     @SkipValidation
     @Override
     public String execute() {
-        return super.execute();
+     try {
+       List<PerformedObservationDto> psmList = performedActivitySvc.getPerformedObservationByStudySubject(
+                                                    getParticipantIi());
+        for (PerformedObservationDto psm : psmList) {
+         if (psm.getNameCode() != null && psm.getNameCode().getCode() != null
+                    && psm.getNameCode().getCode().equals(ActivityNameCode.PATHOLOGY_GRADE.getCode())) {
+          List<PerformedHistopathologyDto> phpList = 
+           performedObservationResultSvc.getPerformedHistopathologyByPerformedActivity(psm.getIdentifier());
+           if (!phpList.isEmpty()) {
+              pathology.setId(phpList.get(0).getIdentifier());
+              pathology.setGrade(CdConverter.convertStringToCd(phpList.get(0).getGradeCode().getCode()));
+              pathology.setDescription(phpList.get(0).getDescription());
+              pathology.setGradeSystem(CdConverter.convertStringToCd(phpList.get(0).getGradeCode().getCodeSystem()));
+         } 
+        }  
+       }        
+    } catch (RemoteException e) {
+      LOG.error("Error in PathologyAction.execute() " + e.getLocalizedMessage());
+      return ERROR;
+    }
+    return super.execute();
     }
 
     /**
@@ -129,7 +161,31 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      */
     @Override
     public String save() {
-        return super.execute();
+   
+    try {      
+       PerformedObservationDto dto = new PerformedObservationDto();
+       dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PATHOLOGY_GRADE));
+       dto.setStudyProtocolIdentifier(getSpIi());
+       dto.setStudySubjectIdentifier(getParticipantIi());
+       dto = performedActivitySvc.createPerformedObservation(dto);
+
+       PerformedHistopathologyDto porDto1 = new PerformedHistopathologyDto();
+       porDto1.setPerformedObservationIdentifier(dto.getIdentifier());
+       Cd newValue = new Cd();
+       newValue.setCode(pathology.getGrade().getCode());
+       newValue.setCodeSystem(pathology.getGradeSystem().getCode());
+       porDto1.setGradeCode(newValue);
+       porDto1.setDescription(pathology.getDescription());
+       porDto1.setStudyProtocolIdentifier(getSpIi());
+       performedObservationResultSvc.createPerformedHistopathology(porDto1);
+    } catch (RemoteException re) {
+       addActionError("Error saving the pathology." + re.getLocalizedMessage());
+        return super.save();
+    } catch (DataFormatException dfe) {
+       addActionError("Error saving the pathology." + dfe.getLocalizedMessage());
+       return super.save();
+    }
+        return super.save();
     }
 
     /**
@@ -147,5 +203,19 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      */
     public void setPathology(PathologyWebDto obj) {
         pathology = obj;
+    }
+    /**
+     * @return the Ii of the current participant, null if none selected
+     */
+    protected Ii getParticipantIi() {
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_PARTICIPANT_II);
+    }
+    /**
+     * @return the Ii of the outcomes StudyProtocol Ii
+     */
+    protected Ii getSpIi() {
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II);
     }
 }

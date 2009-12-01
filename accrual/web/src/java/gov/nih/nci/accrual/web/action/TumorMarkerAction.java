@@ -81,12 +81,7 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.web.dto.util.TumorMarkerWebDto;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.PqConverter;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -132,82 +127,6 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
      */
     @Override
     public String save() {
-        return super.execute();
-    }
-
-    /**
-     * Lookup tumor marker data.
-     * @return result for next action
-     */
-    @SkipValidation
-    public String lookup() {
-        if ("tumorMarker".equals(lookupType)) {
-            return lookupTumorMarker();
-        } else if ("tmvUom".equals(lookupType)) {
-            return lookupTmvUom();
-        }
-
-        return super.execute();
-    }
-
-    /**
-     * Lookup a tumor marker.
-     * @return result for next action
-     */
-    public String lookupTumorMarker() {
-        if (searchTumorMarker == null) {
-            searchTumorMarker = new Cd();
-            return SUCCESS;
-        }
-
-        if (searchTumorMarker.getCode() == null || searchTumorMarker.getCode().length() == 0) {
-            addActionError("Please provide some search values.");
-            return INPUT;
-        }
-
-        tumorMarkerList = new ArrayList<TumorMarkerWebDto>();
-
-        TumorMarkerWebDto item = new TumorMarkerWebDto();
-        item.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker 1"));
-        item.setId(IiConverter.convertToIi("1"));
-        tumorMarkerList.add(item);
-
-        item = new TumorMarkerWebDto();
-        item.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker 2"));
-        item.setId(IiConverter.convertToIi("2"));
-        tumorMarkerList.add(item);
-
-        return super.execute();
-    }
-
-    /**
-     * Lookup a tumor marker value UOM.
-     * @return result for next action
-     */
-    @SkipValidation
-    public String lookupTmvUom() {
-        if (searchTmvUom == null) {
-            searchTmvUom = new Pq();
-            return SUCCESS;
-        }
-
-        if (searchTmvUom.getUnit() == null || searchTmvUom.getUnit().length() == 0) {
-            addActionError("Please provide some search values.");
-            return INPUT;
-        }
-
-        tumorMarkerList = new ArrayList<TumorMarkerWebDto>();
-
-        TumorMarkerWebDto item = new TumorMarkerWebDto();
-        item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 1"));
-        item.setId(IiConverter.convertToIi("1"));
-        tumorMarkerList.add(item);
-
-        item = new TumorMarkerWebDto();
-        item.setTmvUom(PqConverter.convertToPq(BigDecimal.ZERO, "Tumor Marker Value UOM 2"));
-        item.setId(IiConverter.convertToIi("2"));
-        tumorMarkerList.add(item);
-
         return super.execute();
     }
 
