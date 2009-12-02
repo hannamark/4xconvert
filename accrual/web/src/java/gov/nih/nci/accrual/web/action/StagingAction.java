@@ -258,15 +258,6 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
     }
 
     /**
-     * Save user entries.
-     * @return result for next action
-     */
-    public String next() {
-        String rc = save();
-        return SUCCESS.equals(rc) ? NEXT : rc;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

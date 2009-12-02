@@ -177,15 +177,6 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
     }
 
     /**
-     * Save user entries.
-     * @return result for next action
-     */
-    public String next() {
-        String rc = save();
-        return SUCCESS.equals(rc) ? NEXT : rc;
-    }
-
-    /**
      * @param offTreat the offTreat to set
      */
     public void setOffTreat(OffTreatmentWebDto offTreat) {

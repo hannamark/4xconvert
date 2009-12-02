@@ -158,9 +158,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     /** The intervention svc. */
     protected InterventionServiceRemote interventionSvc;
 
-    /** The action result to perform a redirect using "next". */
-    public static final String NEXT = "next";
-
     /**
      * {@inheritDoc}
      */

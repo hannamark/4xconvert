@@ -317,15 +317,6 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
     }
 
     /**
-     * Save user entries.
-     * @return result for next action
-     */
-    public String next() {
-        String rc = save();
-        return SUCCESS.equals(rc) ? NEXT : rc;
-    }
-
-    /**
      * @return result for next action
      */
     @SuppressWarnings("PMD")

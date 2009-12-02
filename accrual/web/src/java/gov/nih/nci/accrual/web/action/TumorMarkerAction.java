@@ -176,15 +176,6 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
     }
 
     /**
-     * Save user entries.
-     * @return result for next action
-     */
-    public String next() {
-        String rc = save();
-        return SUCCESS.equals(rc) ? NEXT : rc;
-    }
-
-    /**
      * @return the tumorMarker form data
      */
     @VisitorFieldValidator(message = "> ")

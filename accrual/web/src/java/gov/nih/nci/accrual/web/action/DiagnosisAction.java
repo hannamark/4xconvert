@@ -204,15 +204,6 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     }
 
     /**
-     * Save user entries.
-     * @return result for next action
-     */
-    public String next() {
-        String rc = save();
-        return SUCCESS.equals(rc) ? NEXT : rc;
-    }
-
-    /**
      * @param diagnosis the diagnosis to set
      */
     public void setDiagnosis(DiagnosisWebDto diagnosis) {
