@@ -93,7 +93,7 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      * {@inheritDoc}
      */
     public DiseaseServiceRemote getDiseaseService() {
-        return (DiseaseServiceRemote) JNDIUtil.lookupPa("/pa/DiseaseServiceBean/remote");
+        return (DiseaseServiceRemote) JNDIUtil.lookupPa("/pa/DiseaseBeanLocal/remote");
     }
 
     /**
@@ -107,6 +107,6 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      * {@inheritDoc}
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
-        return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityServiceBean/remote");
+        return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityServiceBeanLocal/remote");
     }
 }
