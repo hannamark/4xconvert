@@ -107,6 +107,6 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      * {@inheritDoc}
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
-        return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityServiceBeanLocal/remote");
+        return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityBeanLocal/remote");
     }
 }
