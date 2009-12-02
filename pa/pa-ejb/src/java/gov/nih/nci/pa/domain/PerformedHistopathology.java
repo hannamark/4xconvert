@@ -93,6 +93,7 @@ public class PerformedHistopathology extends PerformedObservationResult {
     private static final long serialVersionUID = 1L;
     private String description;
     private String gradeCode;
+    private String gradeCodeSystem;
     
     /**
      * Gets the description.
@@ -127,5 +128,20 @@ public class PerformedHistopathology extends PerformedObservationResult {
     public void setGradeCode(String gradeCode) {
         this.gradeCode = gradeCode;
     }
+
+    /**
+     * @return the gradeCodeSystem
+     */
+     @Column(name = "GRADE_CODE_SYSTEM")
+     public String getGradeCodeSystem() {
+      return gradeCodeSystem;
+     }
+
+    /**
+     * @param gradeCodeSystem the gradeCodeSystem to set
+     */
+     public void setGradeCodeSystem(String gradeCodeSystem) {
+       this.gradeCodeSystem = gradeCodeSystem;
+     }
    
 }

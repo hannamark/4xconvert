@@ -84,7 +84,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * The Class StatgineSystemCode.
+ * The Class StagingSystemCode.
  * 
  * @author Kalpana Guthikonda
  * @since 11/5/2009
