@@ -45,7 +45,6 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<s:hidden name="nextTarget"/>
 <table class="form">
 
     <!-- Tumor Marker -->
