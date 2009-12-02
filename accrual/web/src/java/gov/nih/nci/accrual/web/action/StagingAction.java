@@ -118,14 +118,6 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
      * {@inheritDoc}
      */
     @Override
-    public Epoch getEpoch() {
-        return Epoch.PRE_TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @SkipValidation
     @SuppressWarnings("PMD")
     public String execute() {

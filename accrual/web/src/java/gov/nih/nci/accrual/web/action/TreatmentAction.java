@@ -108,14 +108,6 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
      * {@inheritDoc}
      */
     @Override
-    public Epoch getEpoch() {
-        return Epoch.TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<TreatmentWebDto>());
         try {

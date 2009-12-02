@@ -143,14 +143,6 @@ public class PriorTherapiesAction extends AbstractEditAccrualAction<PriorTherapi
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.PRE_TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings("PMD")
     @SkipValidation
     @Override

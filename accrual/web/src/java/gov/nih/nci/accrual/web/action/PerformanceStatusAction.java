@@ -109,14 +109,6 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
     private static final String ECOG = "ECOG";
     private static final String LANSKY = "Lansky";
     private static final String KARNOFSKY = "Karnofsky";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.PRE_TREATMENT;
-    }
     
     /**
      * Had to break logic into small enough pieces to keep PMD happy.

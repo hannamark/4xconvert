@@ -113,14 +113,6 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.PRE_TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings("PMD")
     @SkipValidation
     @Override

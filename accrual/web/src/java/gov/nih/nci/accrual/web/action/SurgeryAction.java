@@ -110,14 +110,6 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
      * {@inheritDoc}
      */
     @Override
-    public Epoch getEpoch() {
-        return Epoch.TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<SurgeryWebDto>());
         try {

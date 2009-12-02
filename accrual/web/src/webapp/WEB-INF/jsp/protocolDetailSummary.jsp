@@ -27,12 +27,6 @@
       </div>
     </div>
     <div class="float33">
-      <div class="row" />
-        <c:if test="${sessionScope.epoch != null}">
-          <span class="label"><fmt:message key="outcomes.summary.epoch"/></span> 
-          <span class="value"> <c:out value="${sessionScope.epoch}"/></span>
-        </c:if>
-      </div>
       <div class="row">
         <c:if test="${sessionScope.treatmentPlanName != null}">
           <span class="label"><fmt:message key="outcomes.summary.treatmentPlan"/></span> 

@@ -119,14 +119,6 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
 
     private static final long serialVersionUID = 1L;
     private LesionAssessmentWebDto lesionAssessment = new LesionAssessmentWebDto(); 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.TREATMENT;
-    }
     
     /**
      * {@inheritDoc}

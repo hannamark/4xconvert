@@ -109,14 +109,6 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
      * {@inheritDoc}
      */
     @Override
-    public Epoch getEpoch() {
-        return Epoch.TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<CourseWebDto>());
         try {

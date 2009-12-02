@@ -120,8 +120,6 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_SUBMITTER_NAME = "submitterName";
     /** Attribute used to hold Treatment Plan name. */
     public static final String SESSION_ATTR_TREATMENT_PLAN_NAME = "treatmentPlanName";
-    /** Attribute used to hold Epoch. */
-    public static final String SESSION_ATTR_EPOCH = "epoch";    
     /** The Constant SESSION_ATTR_COURSE_NAME. */
     public static final String SESSION_ATTR_COURSE_NAME = "courseName";
 

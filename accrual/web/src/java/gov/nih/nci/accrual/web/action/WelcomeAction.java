@@ -91,15 +91,6 @@ public class WelcomeAction extends AbstractAccrualAction {
     private static final long serialVersionUID = -8671171197398815729L;
     static final String AR_OUTCOMES = "outcomesNamespace";
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.NO_CHANGE;
-    }
-
     /**
      * {@inheritDoc}
      */

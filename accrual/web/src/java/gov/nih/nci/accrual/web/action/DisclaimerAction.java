@@ -88,17 +88,9 @@ public class DisclaimerAction extends AbstractAccrualAction {
 
     private static final long serialVersionUID = 5729242514602833613L;
 
-
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.NULL;
-    }
-
-    /**
-     * {@inheritDoc}
+     * 
+     * @return the action result
      */
     public String accept() {
         ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER,

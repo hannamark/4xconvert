@@ -115,14 +115,6 @@ public class LookUpAction extends AbstractAccrualAction {
     private final String seacrhMsg = "Please provide some search values.";
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.NO_CHANGE;
-    }
-
-    /**
      * Lookup for procedureName.
      *
      * @return the string

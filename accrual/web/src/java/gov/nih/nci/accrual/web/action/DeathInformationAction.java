@@ -114,14 +114,6 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @SkipValidation
     @Override
     public String execute() {

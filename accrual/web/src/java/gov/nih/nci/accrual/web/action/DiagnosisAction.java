@@ -117,14 +117,6 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.PRE_TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @SkipValidation
     @Override
     public String execute() {

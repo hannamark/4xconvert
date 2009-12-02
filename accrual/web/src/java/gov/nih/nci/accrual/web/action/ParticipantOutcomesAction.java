@@ -114,14 +114,6 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
     private static final long serialVersionUID = 1L;
     private ParticipantOutcomesWebDto targetOutcome = new ParticipantOutcomesWebDto();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.TREATMENT;
-    }
     
     /**
      * {@inheritDoc}

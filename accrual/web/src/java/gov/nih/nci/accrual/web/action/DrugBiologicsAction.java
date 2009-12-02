@@ -115,14 +115,6 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
      * {@inheritDoc}
      */
     @Override
-    public Epoch getEpoch() {
-        return Epoch.TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<DrugBiologicsWebDto>());
         try {

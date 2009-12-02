@@ -100,14 +100,6 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
      * {@inheritDoc}
      */
     @Override
-    public Epoch getEpoch() {
-        return Epoch.TREATMENT;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<RadiationWebDto>());
         //just to test the functionality

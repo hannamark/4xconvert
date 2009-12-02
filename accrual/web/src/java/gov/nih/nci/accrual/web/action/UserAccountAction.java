@@ -31,14 +31,6 @@ public class UserAccountAction extends AbstractAccrualAction {
     public static final String CREATE = "create";
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.NULL;
-    }
-
-    /**
      * @return success
      */
     @Override

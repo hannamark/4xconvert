@@ -112,14 +112,6 @@ public class PopUpAction extends AbstractAccrualAction {
     private String exactMatch;
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.NO_CHANGE;
-    }
-
     private void loadResultList() {
         disWebList.clear();
         String tName = ServletActionContext.getRequest().getParameter("searchName");

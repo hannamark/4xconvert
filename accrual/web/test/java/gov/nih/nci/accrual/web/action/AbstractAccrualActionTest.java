@@ -111,12 +111,6 @@ public class AbstractAccrualActionTest {
         private static final long serialVersionUID = 8637312133341800224L;
 
         @Override
-        public Epoch getEpoch() {
-            // test method
-            return null;
-        }
-
-        @Override
         public void loadDisplayList() {
             // test method
         }

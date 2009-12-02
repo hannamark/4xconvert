@@ -113,14 +113,6 @@ public class PopUpInterventionAction extends AbstractAccrualAction {
     private String type = null;
     private List<InterventionWebDto> interWebList = new ArrayList<InterventionWebDto>();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Epoch getEpoch() {
-        return Epoch.NO_CHANGE;
-    }
-
     private void error(String errMsg, Throwable t) {
         LOG.error(errMsg, t);
         addActionError(errMsg);
