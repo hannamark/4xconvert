@@ -32,6 +32,7 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
+<s:hidden name="performance.id" />
 <label><fmt:message key="perfStatus.label.onlyOne"/></label>
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.ecog"/><span class="required">*</span></label></td>

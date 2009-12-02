@@ -76,9 +76,23 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.web.action;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.zip.DataFormatException;
+
+import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -91,6 +105,10 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
     private static final long serialVersionUID = -2561560856212211656L;
 
     private PerformanceStatusWebDto performance = new PerformanceStatusWebDto();
+    
+    private static final String ECOG = "ECOG";
+    private static final String LANSKY = "Lansky";
+    private static final String KARNOFSKY = "Karnofsky";
 
     /**
      * {@inheritDoc}
@@ -99,31 +117,324 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
     public Epoch getEpoch() {
         return Epoch.PRE_TREATMENT;
     }
+    
+    /**
+     * Had to break logic into small enough pieces to keep PMD happy.
+     * 
+     * @author lhebel
+     */
+    private class LoadHelper {
+        private List<PerformedObservationDto> pd = null;
+        private PerformedObservationDto po = null;
+        private Cd method = null;
+        private Cd rCode = null;
+        private List<PerformedClinicalResultDto> cr = null;
 
+        /**
+         * Default constructor.
+         */
+        public LoadHelper() {
+            // default constructor
+        }
+
+        /**
+         * Setup the Observation list.
+         * 
+         * @throws ExecutionException determines whether to ask for input or flag success
+         */
+        public void getAllPo() throws ExecutionException {
+            try {
+                pd = performedActivitySvc.getPerformedObservationByStudySubject(getParticipantIi());
+            } catch (RemoteException ex) {
+                LOG.error(ex.getLocalizedMessage(), ex);
+                addActionError("Service error. " + ex.getLocalizedMessage());
+                throw new ExecutionException(INPUT, ex);
+            }
+        }
+
+        /**
+         * Set the Observation object.
+         * 
+         * @throws ExecutionException determines whether to ask for input or flag success
+         */
+        public void setupPo() throws ExecutionException {
+            // Ignore everything that isn't the Performance Status
+            for (PerformedObservationDto item : pd) {
+                if (!item.getNameCode().getCode().equals(ActivityNameCode.PERFORMANCE_STATUS.getCode())) {
+                    continue;
+                }
+                po = item;
+                break;
+            }
+            if (po == null) {
+                throw new ExecutionException("", null);
+            }
+
+            // Remember this Id should we need to update the status.
+            performance.setId(po.getIdentifier());
+        }
+        
+        /**
+         * Get the Performance Status type. Either ECOG, Lansky or Karnofsky.
+         * 
+         * @throws ExecutionException determines whether to ask for input or flag success
+         */
+        public void getStatusType() throws ExecutionException {
+            // Resolve the Status type
+            List<Cd> cds =  DSetConverter.convertDsetToCdList(po.getMethodCode());
+            if (cds != null) {
+                for (Cd cd : cds) {
+                    method = cd;
+                    break;
+                }
+            }
+            if (method == null) {
+                addActionError("The Performance Method is missing.");
+                throw new ExecutionException(INPUT, null);
+            }
+        }
+        
+        /**
+         * Set the Clinical Result.
+         * 
+         * @throws ExecutionException determines whether to ask for input or flag success
+         */
+        public void setupCr() throws ExecutionException {
+            // Get the Status value
+            try {
+                cr = performedObservationResultSvc.getPerformedClinicalResultByPerformedActivity(po.getIdentifier());
+            } catch (RemoteException ex) {
+                addActionError("Failed to retrieve " + method.getCode() + " Performance Status Code.");
+                throw new ExecutionException(INPUT, ex);
+            }
+        }
+        
+        /**
+         * Get the Performance Status value.
+         * 
+         * @throws ExecutionException determines whether to ask for input or flag success
+         */
+        public void getStatusValue() throws ExecutionException {
+            for (PerformedClinicalResultDto result : cr) {
+                rCode = result.getResultCode();
+                break;
+            }
+            if (rCode == null) {
+                addActionError("The Performance Status Code is missing.");
+                throw new ExecutionException(INPUT, null);
+            }
+        }
+        
+        /**
+         * Set the JSP value.
+         * 
+         * @throws ExecutionException determines whether to ask for input or flag success
+         */
+        public void moveDtoToWeb() throws ExecutionException {
+            // Set the display appropriately.
+            if (ECOG.equals(method.getCode())) {
+                performance.setEcogStatus(rCode);
+            } else if (LANSKY.equals(method.getCode())) {
+                performance.setLanskyStatus(rCode);
+            } else if (KARNOFSKY.equals(method.getCode())) {
+                performance.setKarnofskyStatus(rCode);
+            } else {
+                addActionError("A Performance Method other than ECOG, Lansky or Karnofsky has been recorded. "
+                        + "Can not display the current value.");
+                throw new ExecutionException(INPUT, null);
+            }
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public String execute() {
+        // Clear the web object
         performance = new PerformanceStatusWebDto();
+
+        // Had to move logic to keep PMD happy.
+        LoadHelper helper = new LoadHelper();
+        try {
+            helper.getAllPo();
+            helper.setupPo();
+            helper.getStatusType();
+            helper.setupCr();
+            helper.getStatusValue();
+            helper.moveDtoToWeb();
+        } catch (ExecutionException ex) {
+            if (INPUT.equals(ex.getMessage())) {
+                return INPUT;
+            }
+        }
         return super.execute();
     }
 
+    /**
+     * Helper class for save processing.
+     * 
+     * @author lhebel
+     */
+    private class SaveHelper {
+        private PerformedObservationDto po = null;
+        private PerformedClinicalResultDto cr = null;
+        private boolean poUpdFlag = false;
+        private boolean crUpdFlag = false;
+
+        /**
+         * Default constructor.
+         */
+        public SaveHelper() {
+            // Default constructor
+        }
+
+        /**
+         * Setup the Performed Observation object.
+         * 
+         * @throws RemoteException passed up from service
+         */
+        public void setupPo() throws RemoteException {
+            if (PAUtil.isIiNull(performance.getId())) {
+                // The Performance Status didn't exist when we started but time has passed and it may now...
+                List<PerformedObservationDto> pd =
+                    performedActivitySvc.getPerformedObservationByStudySubject(getParticipantIi());
+                for (PerformedObservationDto item : pd) {
+
+                    // Ignore everything that isn't the Performance Status
+                    if (!item.getNameCode().getCode().equals(ActivityNameCode.PERFORMANCE_STATUS.getCode())) {
+                        continue;
+                    }
+
+                    // Found one, someone else is working on this same Participant, sorry last one wins...
+                    po = item;
+                    poUpdFlag = true;
+                    break;
+                }
+            } else {
+                // The Performance Status was found when the JSP was first open
+                po = performedActivitySvc.getPerformedObservation(performance.getId());
+                poUpdFlag = true;
+            }
+            if (po == null) {
+                // Creating new database entries because they don't exist yet
+                po = new PerformedObservationDto();
+                poUpdFlag = false;
+            }
+        }
+
+        /**
+         * Setup the Clinical Result object.
+         * 
+         * @throws RemoteException passed up from the service
+         */
+        public void setupCr() throws RemoteException {
+            if (poUpdFlag) {
+                // There is an existing Performance Status, find the Clinical Result holding the value.
+                List<PerformedClinicalResultDto> pr =
+                    performedObservationResultSvc.getPerformedClinicalResultByPerformedActivity(po.getIdentifier());
+                for (PerformedClinicalResultDto result : pr) {
+                    // There can be only 1.
+                    cr = result;
+                    crUpdFlag = true;
+                    break;
+                }
+            }
+            if (cr == null) {
+                // No existing value so create it.
+                cr = new PerformedClinicalResultDto();
+                crUpdFlag = false;
+            }
+        }
+
+        /**
+         * Persist the Performed Observation object.
+         * @throws RemoteException passed up from the service
+         * @throws DataFormatException passed up from the service
+         */
+        public void persistPo() throws RemoteException, DataFormatException {
+            // Update or create the Observation first.
+            if (poUpdFlag) {
+                performedActivitySvc.updatePerformedObservation(po);
+            } else {
+                po.setStudySubjectIdentifier(getParticipantIi());
+                po.setStudyProtocolIdentifier(getSpIi());
+                po = performedActivitySvc.createPerformedObservation(po);
+            }
+        }
+
+        /**
+         * Persist the Clinical Result object.
+         * @throws RemoteException passed up from the service
+         * @throws DataFormatException passed up from the service
+         */
+        public void persistCr() throws RemoteException, DataFormatException {
+            // Update or create the Clinical Result last.
+            if (crUpdFlag) {
+                performedObservationResultSvc.updatePerformedClinicalResult(cr);
+            } else {
+                cr.setPerformedObservationIdentifier(po.getIdentifier());
+                cr.setStudyProtocolIdentifier(getSpIi());
+                performedObservationResultSvc.createPerformedClinicalResult(cr);
+            }
+        }
+        
+        /**
+         * Always set the values to avoid any possible error in persistence. Persist the
+         * nameCode, methodCode and resultCode.
+         */
+        public void moveWebToDto() {
+            po.setNameCode(CdConverter.convertStringToCd(ActivityNameCode.PERFORMANCE_STATUS.getCode()));
+            List<Cd> cds = new ArrayList<Cd>();
+            String type = null;
+
+            if (!PAUtil.isCdNull(performance.getEcogStatus())) {
+                type = ECOG;
+                cr.setResultCode(performance.getEcogStatus());
+            } else if (!PAUtil.isCdNull(performance.getLanskyStatus())) {
+                type = LANSKY;
+                cr.setResultCode(performance.getLanskyStatus());
+            } else {
+                type = KARNOFSKY;
+                cr.setResultCode(performance.getKarnofskyStatus());
+            }
+            cds.add(CdConverter.convertStringToCd(type));
+            po.setMethodCode(DSetConverter.convertCdListToDSet(cds));
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
     @SuppressWarnings("PMD.UselessOverridingMethod")
     public String save() {
-        return super.save();
-    }
+        SaveHelper helper = new SaveHelper();
 
-    /**
-     * @return result for next action
-     */
-    public String next() {
-        String rc = save();
-        return SUCCESS.equals(rc) ? NEXT : INPUT;
+        try {
+            // Setup the Observation and Result objects as needed
+            helper.setupPo();
+            helper.setupCr();
+
+            // Always set the values to avoid any possible error in persistence. Persist the
+            // nameCode, methodCode and resultCode
+            helper.moveWebToDto();
+
+            // Persist to the database
+            helper.persistPo();
+            helper.persistCr();
+
+        } catch (RemoteException ex) {
+            LOG.error(ex.toString(), ex);
+            addActionError("Error in save().  " + ex.getLocalizedMessage());
+            return INPUT;
+        } catch (DataFormatException ex) {
+            LOG.error(ex.toString(), ex);
+            addActionError("Error in save().  " + ex.getLocalizedMessage());
+            return INPUT;
+        }
+
+        return super.save();
     }
 
     /**
