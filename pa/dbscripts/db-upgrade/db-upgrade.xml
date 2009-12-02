@@ -323,9 +323,13 @@
     <changeSet id="79" author="Naveen">
         <comment>execute accrual_dev_23941_7.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/pa_defect_24500_1.sql"/>
-    </changeSet> 
+    </changeSet>  
     <changeSet id="80" author="Anu">
         <comment>execute accrual_dev_24170.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24170.sql"/>
+    </changeSet>   
+    <changeSet id="81" author="Kalpana">
+        <comment>execute accrual_dev_23941_8.sql</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_8.sql"/>
     </changeSet>   
 </databaseChangeLog>

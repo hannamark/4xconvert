@@ -135,7 +135,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
      * @param participantOutcomesList the participant outcomes list
      * @param diseaseStatusList the disease status list
      * @param diseaseProgressionIndicatorList the disease progression indicator list
-     * @param diseaseProgressionDateList the disease progression date list
      * @param bestResponseList the best response list
      * @param webdto the webdto
      */
@@ -143,7 +142,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
             List<PerformedObservationResultDto> participantOutcomesList,
             List<PerformedObservationResultDto> diseaseStatusList,
             List<PerformedObservationResultDto> diseaseProgressionIndicatorList,
-            List<PerformedObservationResultDto> diseaseProgressionDateList,
             List<PerformedObservationResultDto> bestResponseList,
             ParticipantOutcomesWebDto webdto) {
         for (PerformedObservationResultDto por : participantOutcomesList) {
@@ -156,22 +154,16 @@ public class ParticipantOutcomesWebDto implements Serializable {
                     responseInd = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
                 }
             } else  if (por.getTypeCode().getCode().equalsIgnoreCase("Disease Recurrence Indicator")) {
-                if (por.getResultIndicator().getValue().equals(true)) {
-                    recurrenceInd = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
-                    recurrenceDate = por.getResultDateRange().getLow();
-                } else if (por.getResultIndicator().getValue().equals(false)) {
-                    recurrenceInd = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
+                recurrenceInd = por.getResultCode();
+                if (getRecurrenceInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
+                recurrenceDate = por.getResultDateRange().getLow();
                 }
             }            
         }
         diseaseStatus = diseaseStatusList.get(0).getResultCode();
         bestResponse = bestResponseList.get(0).getResultCode();
-        if (diseaseProgressionIndicatorList.get(0).getResultIndicator().getValue().equals(true)) {
-            progressionInd = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
-        } else if (diseaseProgressionIndicatorList.get(0).getResultIndicator().getValue().equals(false)) {
-            progressionInd = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
-        }
-        progressionDate = diseaseProgressionDateList.get(0).getResultDateRange().getLow();
+        progressionInd = diseaseProgressionIndicatorList.get(0).getResultCode();
+        progressionDate = webdto.getProgressionDate();
         evaluationDate = webdto.getEvaluationDate();
         diseaseStatusDate = webdto.getDiseaseStatusDate();
         assessmentType = webdto.getAssessmentType();

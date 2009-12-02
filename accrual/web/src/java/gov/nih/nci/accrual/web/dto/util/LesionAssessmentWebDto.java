@@ -89,6 +89,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.MeasurableEvaluableDiseaseTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -150,7 +151,19 @@ public class LesionAssessmentWebDto implements Serializable {
         lesionMeasurementMethod = cds.get(0);
         lesionNum = IiConverter.convertToIi(IntConverter.convertToString(pldList.get(0).getLesionNumber()));
         lesionLongestDiameter = pldList.get(0).getLongestDiameter();
-        measurableEvaluableDiseaseType = pldList.get(0).getMeasurableIndicator();
+        if (pldList.get(0).getMeasurableIndicator().getValue().equals(true)
+                && pldList.get(0).getEvaluableIndicator().getValue().equals(false)) {
+            measurableEvaluableDiseaseType = CdConverter.convertStringToCd(
+                    MeasurableEvaluableDiseaseTypeCode.MEASURABLE.getCode());
+        } else if (pldList.get(0).getEvaluableIndicator().getValue().equals(true)
+                && pldList.get(0).getMeasurableIndicator().getValue().equals(false)) {
+            measurableEvaluableDiseaseType = CdConverter.convertStringToCd(
+                    MeasurableEvaluableDiseaseTypeCode.EVALUABLE.getCode());
+        } else if (pldList.get(0).getMeasurableIndicator().getValue().equals(true) 
+                && pldList.get(0).getEvaluableIndicator().getValue().equals(true)) {
+            measurableEvaluableDiseaseType = CdConverter.convertStringToCd(
+                    MeasurableEvaluableDiseaseTypeCode.BOTH.getCode());
+        }
         if (pi.getContrastAgentEnhancementIndicator().getValue().equals(true)) {
             contrastAgentIndicator = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
         } else if (pi.getContrastAgentEnhancementIndicator().getValue().equals(false)) {

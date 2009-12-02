@@ -81,7 +81,7 @@ package gov.nih.nci.accrual.convert;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PerformedLesionDescription;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -104,7 +104,8 @@ public class PerformedLesionDescriptionConverter extends PerformedObservationRes
         PerformedLesionDescriptionDto dto = (PerformedLesionDescriptionDto)
         PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedLesionDescriptionDto());
         dto.setLesionNumber(IntConverter.convertToInt(bo.getLesionNumber()));
-        dto.setMeasurableIndicator(CdConverter.convertStringToCd(bo.getMeasurableIndicator()));
+        dto.setMeasurableIndicator(BlConverter.convertToBl(bo.getMeasurableIndicator()));
+        dto.setEvaluableIndicator(BlConverter.convertToBl(bo.getEvaluableIndicator()));
         Pq pq = new Pq();
         pq.setValue(bo.getLongestDiameterValue());
         if (bo.getLongestDiameterUnit() != null) {
@@ -134,9 +135,8 @@ public class PerformedLesionDescriptionConverter extends PerformedObservationRes
                 bo.setLongestDiameterUnit(dto.getLongestDiameter().getUnit());
             }
         }
-        if (!PAUtil.isCdNull(dto.getMeasurableIndicator())) {
-            bo.setMeasurableIndicator(dto.getMeasurableIndicator().getCode());
-        }
+        bo.setMeasurableIndicator(BlConverter.covertToBoolean(dto.getMeasurableIndicator()));        
+        bo.setEvaluableIndicator(BlConverter.covertToBoolean(dto.getEvaluableIndicator()));
         return bo;
     }
 }

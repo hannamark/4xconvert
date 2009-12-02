@@ -83,14 +83,12 @@ import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.web.dto.util.DeathInfoWebDto;
-import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
@@ -171,11 +169,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                     for (PerformedObservationResultDto dto : autopsyList) {
                         if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
                                 AUTOPSY_PERFORMED_INDICATOR.getCode())) {
-                            if (dto.getResultIndicator().getValue().equals(true)) {
-                                deathInfo.setAutopsyInd(CdConverter.convertStringToCd(ResponseInds.YES.getCode()));
-                            } else if (dto.getResultIndicator().getValue().equals(false)) {
-                                deathInfo.setAutopsyInd(CdConverter.convertStringToCd(ResponseInds.NO.getCode()));
-                            }
+                            deathInfo.setAutopsyInd(dto.getResultCode());
                         } else if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
                                 CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY.getCode())) {
                             deathInfo.setCauseByAutopsy(dto.getResultCode());
@@ -240,11 +234,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                 
                 PerformedObservationResultDto porDto3 = new PerformedObservationResultDto();
                 porDto3.setPerformedObservationIdentifier(dto2.getIdentifier());
-                if (deathInfo.getAutopsyInd().getCode().equalsIgnoreCase("Yes")) {
-                    porDto3.setResultIndicator(BlConverter.convertToBl(true));
-                } else if (deathInfo.getAutopsyInd().getCode().equalsIgnoreCase("No")) {
-                    porDto3.setResultIndicator(BlConverter.convertToBl(false));
-                }
+                porDto3.setResultCode(deathInfo.getAutopsyInd());
                 porDto3.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.
                         AUTOPSY_PERFORMED_INDICATOR));
                 porDto3.setStudyProtocolIdentifier(getSpIi());
@@ -295,11 +285,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                         for (PerformedObservationResultDto dto : autopsyList) {
                             if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
                                     AUTOPSY_PERFORMED_INDICATOR.getCode())) {
-                                if (deathInfo.getAutopsyInd().getCode().equalsIgnoreCase("Yes")) {
-                                    dto.setResultIndicator(BlConverter.convertToBl(true));
-                                } else if (deathInfo.getAutopsyInd().getCode().equalsIgnoreCase("No")) {
-                                    dto.setResultIndicator(BlConverter.convertToBl(false));
-                                }
+                                dto.setResultCode(deathInfo.getAutopsyInd());
                             } else if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
                                     CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY.getCode())) {
                                 dto.setResultCode(deathInfo.getCauseByAutopsy());
