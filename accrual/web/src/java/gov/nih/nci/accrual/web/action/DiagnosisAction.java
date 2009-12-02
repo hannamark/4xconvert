@@ -176,9 +176,6 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
                 }
                 pd.setResultCode(diagnosis.getResultCode());
                 pd.setResultCodeModifiedText(diagnosis.getName());
-                if (pd.getResultDateRange() == null) {
-                    pd.setResultDateRange(new Ivl<Ts>());
-                }
                 obs.getActualDateRange().setLow(diagnosis.getCreateDate());
                 performedActivitySvc.updatePerformedObservation(obs);
                 if (pdUpdate) {
