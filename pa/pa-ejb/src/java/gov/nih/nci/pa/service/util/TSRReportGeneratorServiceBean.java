@@ -465,14 +465,17 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
          html.append(appendData("Facility Name" , orgBo.getName() , true , true));
          html.append(appendData("Location" , getLocation(orgBo), true , true));
          if (isProprietaryTrial(spDTO)) {
-             StudySiteContactDTO criteriaDto = new StudySiteContactDTO();
-             criteriaDto.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR));
-             List<StudySiteContactDTO> spcDTOs =  studySiteContactService.getByStudyProtocol(
-                     spDTO.getIdentifier(), criteriaDto);
-             Person p = correlationUtils.getPAPersonByIi(((StudySiteContactDTO) PAUtil.getFirstObj(
-                     spcDTOs)).getClinicalResearchStaffIi());
-             html.append(appendData("Principal Investigator" , p.getFirstName() + ", " + p.getLastName()  ,
-                     true , true));
+             List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
+             for (StudySiteContactDTO spcDto : spcDTOs) {
+                 if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode().equalsIgnoreCase(
+                         spcDto.getRoleCode().getCode()) 
+                         || StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode().equalsIgnoreCase(
+                                 spcDto.getRoleCode().getCode())) {
+                     Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
+                     html.append(appendData("Principal Investigator" , p.getFirstName() + ", " + p.getLastName()  ,
+                             true , true));
+                 }
+             }
              html.append(appendData("Local Trial Identifier" , sp.getLocalStudyProtocolIdentifier().getValue() ,
                      true , true));
              html.append(appendData("Program Code" , sp.getProgramCodeText().getValue() ,
@@ -779,7 +782,7 @@ private String getInterventionAltNames(InterventionDTO i) throws PAException {
                   && paEC.getEligibleGenderCode() != null) {
               html.append(appendData("Gender", getData(paEC.getEligibleGenderCode(), true), true , true));
           } else if (criterionName != null && criterionName.equalsIgnoreCase("AGE")) {
-             if (pq.getLow() != null) { 
+             if (pq.getLow() != null && pq.getLow().getValue() != null) { 
                if (pq.getLow().getValue().intValue() == 0) {
                   html.append(appendData("Minimum Age", "N/A" , true , true));
                } else {
@@ -787,7 +790,7 @@ private String getInterventionAltNames(InterventionDTO i) throws PAException {
                   + " " + pq.getLow().getUnit(), true , true));
                }
              } 
-             if (pq.getHigh() != null) { 
+             if (pq.getHigh() != null && pq.getHigh().getValue() != null) { 
                if (pq.getHigh().getValue().intValue() == MAX_AGE) {
                   html.append(appendData("Maximum Age", "N/A" , true , true));
                } else {

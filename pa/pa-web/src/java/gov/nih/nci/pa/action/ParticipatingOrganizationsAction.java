@@ -1600,6 +1600,9 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     public String historyPopup()  {
         String studySiteId = ServletActionContext.getRequest().getParameter("studySiteId");
+        if (PAUtil.isEmpty(studySiteId)) {
+            return "historypopup";
+        }
         overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
         List<StudySiteAccrualStatusDTO> isoList;
         try {
