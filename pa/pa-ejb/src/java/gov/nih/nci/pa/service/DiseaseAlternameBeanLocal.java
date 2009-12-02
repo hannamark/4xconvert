@@ -33,7 +33,7 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DiseaseAlternameBeanLocal
 extends AbstractBaseIsoService<DiseaseAlternameDTO, DiseaseAltername, DiseaseAlternameConverter>
-implements DiseaseAlternameServiceLocal {
+implements DiseaseAlternameServiceLocal , DiseaseAlternameServiceRemote {
     /**
      * @param ii index of the disease
      * @return list of alternate names for disease

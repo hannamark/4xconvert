@@ -46,7 +46,7 @@ import org.hibernate.Session;
 @Interceptors(HibernateSessionInterceptor.class)
 public class PlannedActivityBeanLocal 
  extends AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter>
- implements PlannedActivityServiceLocal { 
+ implements PlannedActivityServiceLocal , PlannedActivityServiceRemote { 
  
   private static final String II_NOTFOUND = "Check the Ii value; found null.  ";
  

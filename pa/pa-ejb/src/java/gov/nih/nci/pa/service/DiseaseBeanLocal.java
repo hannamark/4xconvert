@@ -34,7 +34,7 @@ import org.hibernate.Session;
 @SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.NPathComplexity" })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DiseaseBeanLocal extends AbstractBaseIsoService<DiseaseDTO, Disease, DiseaseConverter>
-implements DiseaseServiceLocal { 
+implements DiseaseServiceLocal , DiseaseServiceRemote { 
   
   private static final Logger LOG = Logger.getLogger(DiseaseBeanLocal.class);
   private static final String TRUE = "true";
