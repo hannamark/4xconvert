@@ -722,6 +722,7 @@ function toggledisplay2 (it) {
         <tr>
               <th colspan="2">FDA IND/IDE Information for applicable trials</th>
         </tr>     
+        <s:hidden name="indIdeUpdateDtosLen" id="indIdeUpdateDtosLen"/>
          <tr>
                 <td colspan="2" class="space">&nbsp;</td>
          </tr>

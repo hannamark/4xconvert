@@ -88,8 +88,8 @@
     }
     
     function setControls() {
-     var length = '${fn:length(indIdeUpdateDtos)}';
-     for (i=0; i<=length;i++) {
+     var length = document.getElementById('indIdeUpdateDtosLen').value;
+     for (i=0; i<length;i++) {
        var str = "holderTypeUpdate"+i;
        setProgramCodesUpdate(document.getElementById(str),i);
      }

@@ -171,7 +171,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     /** The regulatory authority. */
     private RegulatoryAuthorityWebDTO regulatoryAuthority;
    
-    
+    private int indIdeUpdateDtosLen = 0; 
     /**
      * Gets the country reg authority dto.
      * 
@@ -641,7 +641,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                 util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
                 synchActionWithDTO();
                 TrialValidator.addSessionAttributesForUpdate(trialDTO);
-
+                setIndIdeUpdateDtosLen(trialDTO.getIndIdeUpdateDtos().size());
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -1333,4 +1333,19 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
       util.convertToStudyOverallStatusDTO(trialDTO, sosDto);
       return sosDto;
   }
+
+/**
+ * @return the indIdeUpdateDtosLen
+ */
+public int getIndIdeUpdateDtosLen() {
+    return indIdeUpdateDtosLen;
+}
+
+/**
+ * @param indIdeUpdateDtosLen the indIdeUpdateDtosLen to set
+ */
+public void setIndIdeUpdateDtosLen(int indIdeUpdateDtosLen) {
+    this.indIdeUpdateDtosLen = indIdeUpdateDtosLen;
+}
+ 
 }
