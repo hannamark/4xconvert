@@ -78,11 +78,18 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.web.dto.util.TumorMarkerWebDto;
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -94,13 +101,11 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Lisa Kelley
  * @since 10/30/2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebDto> {
 
     private static final long serialVersionUID = 1L;
     private TumorMarkerWebDto tumorMarker = new TumorMarkerWebDto();
-    private String lookupType;
-    private Cd searchTumorMarker = null;
-    private Pq searchTmvUom = null;
     private List<TumorMarkerWebDto> tumorMarkerList;
 
     /**
@@ -127,7 +132,47 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
      */
     @Override
     public String save() {
-        return super.execute();
+     TumorMarkerWebDto.validate(tumorMarker, this);
+     if (hasActionErrors() || hasFieldErrors()) {
+        return INPUT;
+     }
+     try {      
+       PerformedObservationDto dto = new PerformedObservationDto();
+       dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.TUMOR_MARKER));
+       dto.setStudyProtocolIdentifier(getSpIi());
+       dto.setStudySubjectIdentifier(getParticipantIi());
+       dto.setName(StConverter.convertToSt(tumorMarker.getTumorMarker().getCode()));
+       dto = performedActivitySvc.createPerformedObservation(dto);
+       if (tumorMarker.getTmvUom() != null 
+           && tumorMarker.getTmvUom().getUnit() != null && !tumorMarker.getTmvUom().getUnit().equals("") 
+           && tumorMarker.getTumorMarkerValue() != null 
+           && tumorMarker.getTumorMarkerValue().getValue() != null 
+           && !tumorMarker.getTumorMarkerValue().getValue().equals("")) {
+        //UOM 
+        PerformedObservationResultDto pcrDto1 = new PerformedObservationResultDto();
+        pcrDto1.setPerformedObservationIdentifier(dto.getIdentifier());
+        pcrDto1.setStudyProtocolIdentifier(getSpIi());
+        Pq pq = new Pq();
+        pq.setUnit(tumorMarker.getTmvUom().getUnit());
+        pq.setValue(BigDecimal.valueOf(Long.parseLong(tumorMarker.getTumorMarkerValue().getValue())));
+        pcrDto1.setResultQuantity(pq);
+        performedObservationResultSvc.create(pcrDto1);
+       } else {
+           //UOM 
+           PerformedObservationResultDto pcrDto1 = new PerformedObservationResultDto();
+           pcrDto1.setPerformedObservationIdentifier(dto.getIdentifier());
+           pcrDto1.setStudyProtocolIdentifier(getSpIi());
+           pcrDto1.setResultText(tumorMarker.getTumorMarkerValue());
+           performedObservationResultSvc.create(pcrDto1);   
+       }
+     } catch (RemoteException re) {
+            addActionError("Error saving the  TumorMarker." + re.getLocalizedMessage());
+            return INPUT;
+          } catch (DataFormatException dfe) {
+          addActionError("Error saving the  TumorMarker." + dfe.getLocalizedMessage());
+          return INPUT;
+       }
+      return "main";
     }
 
     /**
@@ -152,48 +197,6 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
      */
     public void setTumorMarker(TumorMarkerWebDto tumorMarker) {
         this.tumorMarker = tumorMarker;
-    }
-
-    /**
-     * @param lookupType the lookupType to set
-     */
-    public void setLookupType(String lookupType) {
-        this.lookupType = lookupType;
-    }
-
-    /**
-     * @return the lookupType
-     */
-    public String getLookupType() {
-        return lookupType;
-    }
-
-    /**
-     * @param searchTumorMarker the searchTumorMarker to set
-     */
-    public void setSearchTumorMarker(Cd searchTumorMarker) {
-        this.searchTumorMarker = searchTumorMarker;
-    }
-
-    /**
-     * @return the searchTumorMarker
-     */
-    public Cd getSearchTumorMarker() {
-        return searchTumorMarker;
-    }
-
-    /**
-     * @param searchTmvUom the searchTmvUom to set
-     */
-    public void setSearchTmvUom(Pq searchTmvUom) {
-        this.searchTmvUom = searchTmvUom;
-    }
-
-    /**
-     * @return the searchTsearchTmvUomumorUom
-     */
-    public Pq getSearchTmvUom() {
-        return searchTmvUom;
     }
 
     /**

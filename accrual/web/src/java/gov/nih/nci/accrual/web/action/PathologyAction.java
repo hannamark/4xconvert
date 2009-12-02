@@ -103,6 +103,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> {
 
     private static final long serialVersionUID = 1L;
@@ -133,7 +134,7 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
           List<PerformedHistopathologyDto> phpList = 
            performedObservationResultSvc.getPerformedHistopathologyByPerformedActivity(psm.getIdentifier());
            if (!phpList.isEmpty()) {
-              pathology.setId(phpList.get(0).getIdentifier());
+              pathology.setId(psm.getIdentifier());
               pathology.setGrade(CdConverter.convertStringToCd(phpList.get(0).getGradeCode().getCode()));
               pathology.setDescription(phpList.get(0).getDescription());
               pathology.setGradeSystem(CdConverter.convertStringToCd(phpList.get(0).getGradeCode().getCodeSystem()));
@@ -162,22 +163,45 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
     @Override
     public String save() {
    
-    try {      
-       PerformedObservationDto dto = new PerformedObservationDto();
-       dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PATHOLOGY_GRADE));
-       dto.setStudyProtocolIdentifier(getSpIi());
-       dto.setStudySubjectIdentifier(getParticipantIi());
-       dto = performedActivitySvc.createPerformedObservation(dto);
+    try {  
+       if (pathology.getId() != null 
+           && pathology.getId().getExtension() != null 
+           && !pathology.getId().getExtension().equals("")) {
+            //for update
+            PerformedObservationDto dto = performedActivitySvc.getPerformedObservation(pathology.getId());
+            List<PerformedHistopathologyDto> porDtoList = 
+               performedObservationResultSvc.getPerformedHistopathologyByPerformedActivity(dto.getIdentifier());
+            if (!porDtoList.isEmpty()) {
+              porDtoList.get(0).setDescription(pathology.getDescription());
+              Cd newValue = new Cd();
+              newValue.setCode(pathology.getGrade().getCode());
+              if (pathology.getGradeSystem() != null && pathology.getGradeSystem().getCode() != null) {
+               newValue.setCodeSystem(pathology.getGradeSystem().getCode());
+              } 
+              porDtoList.get(0).setGradeCode(newValue); 
+              performedObservationResultSvc.updatePerformedHistopathology(porDtoList.get(0));
+            }
+            
+       } else {
+        //for new insert   
+        PerformedObservationDto dto = new PerformedObservationDto();
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PATHOLOGY_GRADE));
+        dto.setStudyProtocolIdentifier(getSpIi());
+        dto.setStudySubjectIdentifier(getParticipantIi());
+        dto = performedActivitySvc.createPerformedObservation(dto);
 
-       PerformedHistopathologyDto porDto1 = new PerformedHistopathologyDto();
-       porDto1.setPerformedObservationIdentifier(dto.getIdentifier());
-       Cd newValue = new Cd();
-       newValue.setCode(pathology.getGrade().getCode());
-       newValue.setCodeSystem(pathology.getGradeSystem().getCode());
-       porDto1.setGradeCode(newValue);
-       porDto1.setDescription(pathology.getDescription());
-       porDto1.setStudyProtocolIdentifier(getSpIi());
-       performedObservationResultSvc.createPerformedHistopathology(porDto1);
+        PerformedHistopathologyDto porDto1 = new PerformedHistopathologyDto();
+        porDto1.setPerformedObservationIdentifier(dto.getIdentifier());
+        Cd newValue = new Cd();
+        newValue.setCode(pathology.getGrade().getCode());
+        if (pathology.getGradeSystem() != null && pathology.getGradeSystem().getCode() != null) {
+         newValue.setCodeSystem(pathology.getGradeSystem().getCode());
+        } 
+        porDto1.setGradeCode(newValue);
+        porDto1.setDescription(pathology.getDescription());
+        porDto1.setStudyProtocolIdentifier(getSpIi());
+        performedObservationResultSvc.createPerformedHistopathology(porDto1);
+      } 
     } catch (RemoteException re) {
        addActionError("Error saving the pathology." + re.getLocalizedMessage());
         return super.save();

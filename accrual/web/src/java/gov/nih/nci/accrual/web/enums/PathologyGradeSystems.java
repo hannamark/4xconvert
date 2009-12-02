@@ -90,12 +90,25 @@ import gov.nih.nci.pa.enums.CodedEnum;
  * @author lhebel
  */
 public enum PathologyGradeSystems implements CodedEnum<String> {
-    /** system 1. */
-    GRADESYS1("System 1"),
-    /** system 2. */
-    GRADESYS2("System 2"),
-    /** system 3. */
-    GRADESYS3("System 3");
+
+   /** The AJCC. */
+   AJCC("AJCC"),
+   
+   /** The FUHRMAN. */
+   FUHRMAN("Fuhrman"), 
+   
+   /** The BLOO m_ richardson. */
+   BLOOM_RICHARDSON("Bloom-Richardson"),
+   
+   /** The GLEASON. */
+   GLEASON("Gleason"),
+   
+   /** The WHO. */
+   WHO("WHO"),
+   
+   /** The NULL. */
+   NULL ("");
+
     
     private String code;
     

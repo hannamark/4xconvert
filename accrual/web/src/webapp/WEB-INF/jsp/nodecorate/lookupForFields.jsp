@@ -75,7 +75,7 @@
 		}else if(type == 'tumorMarker') {
 			window.top.document.getElementsByName("tumorMarker.tumorMarker")[0].value = name;
 		}else if(type == 'tumorMarkeruom') {
-            window.top.document.getElementsByName("tumorMarker.tmvUom")[0].value = name;
+            window.top.document.getElementsByName("tumorMarker.tmvUom.unit")[0].value = name;
         }
         window.top.hidePopWin(false); 
 	}

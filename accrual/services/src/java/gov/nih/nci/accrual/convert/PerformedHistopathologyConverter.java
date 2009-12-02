@@ -79,8 +79,8 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.domain.PerformedHistopathology;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -103,7 +103,10 @@ public class PerformedHistopathologyConverter extends PerformedObservationResult
         PerformedHistopathologyDto dto = (PerformedHistopathologyDto)
         PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedHistopathologyDto());
         dto.setDescription(StConverter.convertToSt(bo.getDescription()));
-        dto.setGradeCode(CdConverter.convertStringToCd(bo.getGradeCode()));
+        Cd newValue = new Cd();
+        newValue.setCode(bo.getGradeCode());
+        newValue.setCodeSystem(bo.getGradeCodeSystem());
+        dto.setGradeCode(newValue);
         return dto;
     }
 
@@ -120,6 +123,7 @@ public class PerformedHistopathologyConverter extends PerformedObservationResult
         bo.setDescription(StConverter.convertToString(dto.getDescription()));
         if (!PAUtil.isCdNull(dto.getGradeCode())) {
             bo.setGradeCode(dto.getGradeCode().getCode());
+            bo.setGradeCodeSystem(dto.getGradeCode().getCodeSystem());
         }
         return bo;
     }

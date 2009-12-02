@@ -169,7 +169,7 @@ public class PerformedHistopathologyDto extends PerformedObservationResultDto {
     private static final long serialVersionUID = 1L;
     private St description;
     private Cd gradeCode;
-    
+        
     /**
      * Gets the description.
      * @return the description

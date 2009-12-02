@@ -89,10 +89,92 @@ import gov.nih.nci.pa.enums.CodedEnum;
  * @author lhebel
  */
 public enum PathologyGrades implements CodedEnum<String> {
-    /** grade 1. */
-    GRADE1("Grade 1"),
-    /** grade 2. */
-    GRADE2("Grade 2");
+ 
+    /** The ANAPLASTIC. */
+    ANAPLASTIC("Anaplastic"),
+    
+    /** The HIG h_ grade. */
+    HIGH_GRADE("High grade"),
+    
+    /** The INTERMEDIATe_ grade. */
+    INTERMEDIATE_GRADE("Intermediate grade"),
+    
+    /** The LOw_ grade. */
+    LOW_GRADE("Low grade"),
+    
+    /** The MODERATE. */
+    MODERATE("Moderate"),
+    
+    /** The MODERATEL y_ diiferentiated. */
+    MODERATELY_DIIFERENTIATED("Moderately differentiated"),
+    
+    /** The NO t_ assessed. */
+    NOT_ASSESSED("Not assessed"),
+    
+    /** The OTHER. */
+    OTHER("Other"),   
+    
+    /** The POOR. */
+    POOR("Poor"),
+    
+    /** The POORL y_ diffrentiated. */
+    POORLY_DIFFRENTIATED("Poorly differentiated"),
+    
+    /** The UNDIFFERENTIATED. */
+    UNDIFFERENTIATED("Undifferentiated"),
+    
+    /** The WEL l_ differentiated. */
+    WELL_DIFFERENTIATED("Well differentiated"),
+    
+    /** The UNDETERMINE d_ grade. */
+    UNDETERMINED_GRADE("Undetermined grade"),
+    
+    /** The WELL. */
+    WELL("Well"),
+    
+    /** The GX. */
+    GX("GX"), 
+    
+    /** The G1. */
+    G1("G1"), 
+    
+    /** The G2. */
+    G2("G2"), 
+    
+    /** The G3. */
+    G3("G3"), 
+    
+    /** The G4. */
+    G4("G4"),
+    
+    /** The ONE. */
+    ONE("1"),
+    
+    /** The TWO. */
+    TWO("2"),
+    
+    /** The THREE. */
+    THREE("3"),
+    
+    /** The FOUR. */
+    FOUR("4"),
+    
+    /** The FIVE. */
+    FIVE("5"),
+    
+    /** The I. */
+    I("I"),
+    
+    /** The II. */
+    II("II"),
+    
+    /** The III. */
+    III("III"),
+    
+    /** The IV. */
+    IV("IV");
+
+
     
     private String code;
     

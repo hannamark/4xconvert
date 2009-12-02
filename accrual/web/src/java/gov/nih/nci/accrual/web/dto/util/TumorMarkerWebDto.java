@@ -79,10 +79,12 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 
@@ -94,6 +96,7 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author Lisa Kelley
  * @since 10/28/2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class TumorMarkerWebDto implements Serializable {
 
     private static final long serialVersionUID = 1820061539697238678L;
@@ -109,7 +112,26 @@ public class TumorMarkerWebDto implements Serializable {
     public TumorMarkerWebDto() {
         // default constructor
     }
-   
+    
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(TumorMarkerWebDto dto, AbstractAccrualAction action) {
+        if (dto.getTmvUom() != null && dto.getTmvUom().getUnit() != null 
+            && (dto.getTumorMarkerValue() == null || dto.getTumorMarkerValue().getValue().equals(""))) {
+            action.addFieldError("tumorMarker.tumorMarkerValue", "Please enter Tumor Marker Value.");
+        }
+        if (dto.getTmvUom() != null && dto.getTmvUom().getUnit() != null 
+            && !dto.getTmvUom().getUnit().equals("")
+            && dto.getTumorMarkerValue() != null && !dto.getTumorMarkerValue().getValue().equals("")
+            && !PAUtil.isNumber(dto.getTumorMarkerValue().getValue())) {
+            action.addFieldError("tumorMarker.tumorMarkerValue", "Please enter a Numeric Tumor Marker Value.");
+        }
+    }    
+      
     /**
      * @return the tumorMarker
      */
@@ -145,8 +167,6 @@ public class TumorMarkerWebDto implements Serializable {
     /**
      * @return the tmvUom
      */
-    @FieldExpressionValidator(expression = "tmvUom.unit != null && tmvUom.unit.length() > 0", 
-                              message = "Please select a Tumor Marker Value UOM")
     public Pq getTmvUom() {
         return tmvUom;
     }

@@ -112,8 +112,13 @@
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
         </action>
+      
         <!-- ******************************************************* -->
-
+        <action name="saveTumorMarker" class="gov.nih.nci.accrual.web.action.TumorMarkerAction" method="save"> 
+            <result>/WEB-INF/jsp/TumorMarker.jsp</result>
+            <result name="input">/WEB-INF/jsp/TumorMarker.jsp</result>
+            <result name="main">executeStaging.action</result>
+        </action>
         <!-- ******************************************************* -->
         <!--  this applies to the Edit pattern -->
         <!-- ******************************************************* -->
@@ -150,6 +155,8 @@
         <action name="popup*" class="gov.nih.nci.accrual.web.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
+        
+         
         
     </package>
 </struts>

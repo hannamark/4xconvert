@@ -13,10 +13,6 @@
     function handleSaveAction() {
         document.forms[0].action = "saveTumorMarker.action";
         document.forms[0].submit();
-        
-        document.getElementsByName("nextTarget")[0].value = "Staging";
-        document.forms[0].action = "nextTumorMarker.action";
-        document.forms[0].submit();
     }
 
     function handleCancelAction() {
@@ -76,9 +72,9 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="tumor.marker.value.uom.label"/><span class="required">*</span></label></td>
         <td>
-            <s:textfield readonly="true" size="50" name="tumorMarker.tmvUom" cssStyle="width:280px;float:left" cssClass="readonly"/>
+            <s:textfield readonly="true" size="50" name="tumorMarker.tmvUom.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookup('tmvUom');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
-            <s:fielderror cssClass="formErrorMsg"><s:param>tumorMarker.tmvUom</s:param></s:fielderror>
+            <s:fielderror cssClass="formErrorMsg"><s:param>tumorMarker.tmvUom.unit</s:param></s:fielderror>
         </td>
     </tr>
 

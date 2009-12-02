@@ -132,8 +132,6 @@ public class PathologyWebDto implements Serializable {
     /**
      * @return the gradeSystem
      */
-    @FieldExpressionValidator(expression = "gradeSystem.code != null && gradeSystem.code.length() > 0",
-            message = "Please select a Pathology Grade System")
     public Cd getGradeSystem() {
         return gradeSystem;
     }
