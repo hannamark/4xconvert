@@ -53,7 +53,7 @@
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="diagnosis.label.name"/><span class="required">*</span></label></td>
 <td><s:textfield readonly="true" size="50" name="diagnosis.name"
-               cssStyle="width:280px;float:left" cssClass="readonly"/><s:hidden name="diagnosis.identifier"/>
+               cssStyle="width:280px;float:left" cssClass="readonly"/>
                <a href="#" class="btn" onclick="lookup();" /><span class="btn_img"><span class="search">Look Up</span></span></a>
                <s:fielderror cssClass="formErrorMsg"><s:param>diagnosis.name</s:param></s:fielderror></td></tr>
 <tr><td scope="row" class="label"><label><fmt:message key="diagnosis.label.date"/><span class="required">*</span></label></td>

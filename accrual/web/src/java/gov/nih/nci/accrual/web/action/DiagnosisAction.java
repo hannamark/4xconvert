@@ -76,14 +76,13 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
@@ -93,7 +92,6 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -120,10 +118,10 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     @SkipValidation
     @Override
     public String execute() {
+        List<PerformedObservationDto> dtoList;
         try {
-            new LinkedHashMap<Ii, String>();
-            List<PerformedActivityDto> dtoList = performedActivitySvc.getByStudySubject(getParticipantIi());
-            for (PerformedActivityDto dto : dtoList) {
+            dtoList = performedActivitySvc.getPerformedObservationByStudySubject(getParticipantIi());
+            for (PerformedObservationDto dto : dtoList) {
                 if (ActivityNameCode.DIAGNOSIS.getCode().equals(CdConverter.convertCdToString(dto.getNameCode()))) {
                     diagnosis.setIdentifier(dto.getIdentifier());
                     List<PerformedDiagnosisDto> pdList =
@@ -132,7 +130,7 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
                         PerformedDiagnosisDto pd = pdList.get(0);
                         diagnosis.setName(pd.getResultCodeModifiedText());
                         diagnosis.setResultCode(pd.getResultCode());
-                        diagnosis.setCreateDate(pd.getResultDateRange().getLow());
+                        diagnosis.setCreateDate(dto.getActualDateRange().getLow());
                     }
                 }
             }
@@ -181,7 +179,8 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
                 if (pd.getResultDateRange() == null) {
                     pd.setResultDateRange(new Ivl<Ts>());
                 }
-                pd.getResultDateRange().setLow(diagnosis.getCreateDate());
+                obs.getActualDateRange().setLow(diagnosis.getCreateDate());
+                performedActivitySvc.updatePerformedObservation(obs);
                 if (pdUpdate) {
                     performedObservationResultSvc.updatePerformedDiagnosis(pd);
                 } else {
