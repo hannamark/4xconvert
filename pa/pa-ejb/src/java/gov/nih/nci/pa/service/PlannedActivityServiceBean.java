@@ -80,13 +80,13 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
-import javax.annotation.security.RolesAllowed;
+//import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.jboss.annotation.security.SecurityDomain;
+//import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Hugh Reinhart
@@ -97,8 +97,8 @@ import org.jboss.annotation.security.SecurityDomain;
 @Stateless
 @Interceptors({ HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+//@SecurityDomain("pa")
+//@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
 public class PlannedActivityServiceBean extends PlannedActivityBeanLocal implements PlannedActivityServiceRemote {
     
    
