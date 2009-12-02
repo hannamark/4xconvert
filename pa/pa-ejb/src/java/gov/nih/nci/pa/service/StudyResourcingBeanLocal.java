@@ -192,6 +192,7 @@ public class StudyResourcingBeanLocal
     studyResourcing.setActiveIndicator(true);
     session = HibernateUtil.getCurrentSession();
     session.save(studyResourcing);
+    session.flush();
     LOG.debug("Leaving createStudyResourcing ");
     return src.convertFromDomainToDto(studyResourcing);
   }
