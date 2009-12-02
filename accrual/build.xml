@@ -160,6 +160,7 @@
     </target>
     
     <target name="ivy-clean" description="Delete jars.">
+        <ant target="ivy-clean" dir="${accrual-web.dir}"/>
         <ant target="ivy-clean" dir="${web.dir}"/>
         <ant target="ivy-clean" dir="${services.dir}"/>
         <ant target="ivy-clean" dir="${ear.dir}"/>
