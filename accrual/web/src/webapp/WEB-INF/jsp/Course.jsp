@@ -31,12 +31,18 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <accrual:sucessMessage /> 
 <s:form name="detailForm">
-    <display:table class="data" id="row" name="displayTagList" sort="list" pagesize="10" requestURI="executeCourse.action">    
-            <display:column titleKey="course.name" property="name.value" sortable="true" headerClass="sortable"/>
-            <display:column titleKey="course.startDate" property="createDate.value" sortable="true" headerClass="sortable"/>
+    <display:table class="data" uid="row" name="displayTagList" sort="list" pagesize="10" requestURI="executeCourse.action">    
+            <display:column titleKey="course.name" sortable="true" headerClass="sortable">
+            <s:label value="%{#attr.row.name}" cssStyle="font-weight: normal" /></display:column>
+            <display:column titleKey="course.startDate" sortable="true" headerClass="sortable">
+            <s:label value="%{#attr.row.createDate}" cssStyle="font-weight: normal" /></display:column>
             <display:column title="Edit" class="action">
+            <s:if test="%{hasCourses}">
     		<s:url id="url" action="updateCourse"><s:param name="selectedRowIdentifier" value="%{#attr.row.identifier.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+    		</s:if>
+    		<s:else>&nbsp;
+    		</s:else>
     	</display:column>   
     </display:table>
 </s:form>

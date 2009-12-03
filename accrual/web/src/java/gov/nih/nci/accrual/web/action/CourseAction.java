@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -104,6 +105,7 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
 
     private static final long serialVersionUID = -3007738923753747925L;
     private CourseWebDto course = new CourseWebDto();
+    private boolean hasCourses;
 
     /**
      * {@inheritDoc}
@@ -118,6 +120,10 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
                         && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.COURSE.getCode())) {
                     getDisplayTagList().add(new CourseWebDto(pa));
                 }
+            }
+            hasCourses = (getDisplayTagList().size() > 0);
+            if (!hasCourses) {
+                getDisplayTagList().add(new CourseWebDto());
             }
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
@@ -143,7 +149,7 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
             arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
             activityRelationshipSvc.create(arDto);
             
-            putCourseInSession(dto.getIdentifier(), dto.getName());
+            SessionEnvManager.putCourseInSession(dto.getIdentifier(), dto.getName());
             return super.add();
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
@@ -173,7 +179,7 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
             addActionError("Error retrieving course info for update.");
             return execute();
         }
-        putCourseInSession(course.getIdentifier(), course.getName());
+        SessionEnvManager.putCourseInSession(course.getIdentifier(), course.getName());
         return super.update();
     }
 
@@ -194,15 +200,8 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
             setCurrentAction(CA_CREATE);
             return INPUT;
         }
-        putCourseInSession(dto.getIdentifier(), dto.getName());
+        SessionEnvManager.putCourseInSession(dto.getIdentifier(), dto.getName());
         return super.edit();
-    }
-    
-    private void putCourseInSession(Ii cIi, St cName) {
-        ServletActionContext.getRequest().getSession().setAttribute(
-                AccrualConstants.SESSION_ATTR_COURSE_II, cIi);
-        ServletActionContext.getRequest().getSession().setAttribute(
-                AccrualConstants.SESSION_ATTR_COURSE_NAME, cName);
     }
 
     /**
@@ -220,6 +219,20 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
      */
     public void setCourse(CourseWebDto course) {
         this.course = course;
+    }
+
+    /**
+     * @param hasCourses the hasCourses to set
+     */
+    public void setHasCourses(boolean hasCourses) {
+        this.hasCourses = hasCourses;
+    }
+
+    /**
+     * @return the hasCourses
+     */
+    public boolean getHasCourses() {
+        return hasCourses;
     }
 
 }

@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.web.dto.util.ParticipantWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchParticipantCriteriaWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
@@ -143,7 +144,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
     @Override
     public String create() {
         participant = new ParticipantWebDto(getSpIi(), unitedStatesId);
-        putParticipantInSession(null, null);
+        SessionEnvManager.putParticipantInSession(null, null);
         return super.create();
     }
 
@@ -168,7 +169,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
            participant = null;
            LOG.error("Error in ParticipantAction.retrieve().", e);
        }
-       putParticipantInSession(participant.getStudySubjectIi(), participant.getAssignedIdentifier());
+       SessionEnvManager.putParticipantInSession(participant.getStudySubjectIi(), participant.getAssignedIdentifier());
        return super.retrieve();
     }
 
@@ -193,7 +194,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             addActionError("Error retrieving study subject info for update.");
             return execute();
         }
-        putParticipantInSession(participant.getStudySubjectIi(), participant.getAssignedIdentifier());
+        SessionEnvManager.putParticipantInSession(participant.getStudySubjectIi(), participant.getAssignedIdentifier());
         return super.update();
     }
 
@@ -206,7 +207,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         dto.setStatusCode(CdConverter.convertStringToCd(deletedStatusCode));
         dto.getStatusDateRange().setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         studySubjectSvc.update(dto);
-        putParticipantInSession(null, null);
+        SessionEnvManager.putParticipantInSession(null, null);
         return super.delete();
     }
 
@@ -231,7 +232,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         }
         ssub.setPatientIdentifier(pat.getIdentifier());
         ssub = studySubjectSvc.createOutcomes(ssub);
-        putParticipantInSession(ssub.getIdentifier(), ssub.getAssignedIdentifier());
+        SessionEnvManager.putParticipantInSession(ssub.getIdentifier(), ssub.getAssignedIdentifier());
         return super.add();
     }
 
@@ -255,7 +256,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             return super.update();
         }
         ssub = studySubjectSvc.update(ssub);
-        putParticipantInSession(ssub.getIdentifier(), ssub.getAssignedIdentifier());
+        SessionEnvManager.putParticipantInSession(ssub.getIdentifier(), ssub.getAssignedIdentifier());
         return super.edit();
     }
 
@@ -366,12 +367,5 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             result = false;
         }
         return result;
-    }
-
-    private void putParticipantInSession(Ii ssIi, St ssAssignedId) {
-        ServletActionContext.getRequest().getSession().setAttribute(
-                AccrualConstants.SESSION_ATTR_PARTICIPANT_II, ssIi);
-        ServletActionContext.getRequest().getSession().setAttribute(
-                AccrualConstants.SESSION_ATTR_PARTICIPANT_NAME, ssAssignedId);
     }
 }

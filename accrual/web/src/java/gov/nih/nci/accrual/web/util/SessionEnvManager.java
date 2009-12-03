@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,139 +73,97 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.accrual.web.util.AccrualConstants;
-import gov.nih.nci.accrual.web.util.SessionEnvManager;
+package gov.nih.nci.accrual.web.util;
+
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
-
 /**
- * The Class TreatmentAction.
+ * @author lhebel
  *
- *  @author Kalpana Guthikonda
- * @since 10/28/2009
  */
-public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebDto> {
-
-    private static final long serialVersionUID = 1L;
-    private TreatmentWebDto treatment = new TreatmentWebDto();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<TreatmentWebDto>());
-        try {
-            List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(
-                                                          getParticipantIi());
-            for (PerformedActivityDto pa : paList) {
-                if (pa.getCategoryCode() != null && pa.getCategoryCode().getCode() != null
-                        && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.TREATMENT_PLAN.getCode())) {
-                    getDisplayTagList().add(new TreatmentWebDto(pa));
-                }
-            }
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String add() {
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-        PerformedActivityDto dto = treatment.getPerformedActivityDto(); 
-        try {
-            dto = performedActivitySvc.create(dto);
-            SessionEnvManager.putTreatmentPlanInSession(dto.getIdentifier(), dto.getName());
-            return super.add();
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-    }
+public class SessionEnvManager {
     
     /**
-     * {@inheritDoc}
+     * Default constructor.
      */
-    @Override
-    public String update() {
-        treatment = null;
-        try {
-            loadDisplayList();
-            for (TreatmentWebDto tm : getDisplayTagList()) {
-                if (tm.getId().getExtension().equals(getSelectedRowIdentifier())) {
-                    treatment = tm;
-                }
-            }
-        } catch (Exception e) {
-            treatment = null;
-            LOG.error("Error in TreatmentAction.update().", e);
-        }
-        if (treatment == null) {
-            addActionError("Error retrieving treatment info for update.");
-            return execute();
-        }
-        SessionEnvManager.putTreatmentPlanInSession(treatment.getId(), treatment.getName());
-        return super.update();
+    public SessionEnvManager() {
+        // Default constructor.
     }
 
     /**
-     * {@inheritDoc}
+     * @param id participant id
+     * @param name participant name
      */
-    @Override
-    public String edit() throws RemoteException {
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
+    public static void putParticipantInSession(Ii id, St name) {
+        clearTreatmentPlan();
+        
+        if (id == null || name == null) {
+            ServletActionContext.getRequest().getSession().removeAttribute(
+                    AccrualConstants.SESSION_ATTR_PARTICIPANT_II);
+            ServletActionContext.getRequest().getSession().removeAttribute(
+                    AccrualConstants.SESSION_ATTR_PARTICIPANT_NAME);
+        } else {
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_PARTICIPANT_II, id);
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_PARTICIPANT_NAME, name);
         }
-        PerformedActivityDto dto = treatment.getPerformedActivityDto(); 
-        try {
-            dto = performedActivitySvc.update(dto);
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-        SessionEnvManager.putTreatmentPlanInSession(dto.getIdentifier(), dto.getName());
-        return super.edit();
     }
 
     /**
-     * Gets the treatment.
-     * @return the treatment
+     * @param id treatment plan id
+     * @param name treatment plan name
      */
-    @VisitorFieldValidator(message = "> ")
-    public TreatmentWebDto getTreatment() {
-        return treatment;
+    public static void putTreatmentPlanInSession(Ii id, St name) {
+        if (id == null || name == null) {
+            clearTreatmentPlan();
+        } else {
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II, id);
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_NAME, name);
+        }
     }
 
     /**
-     * Sets the treatment.
-     * @param treatment the new treatment
+     * Clear treatment plan values.
      */
-    public void setTreatment(TreatmentWebDto treatment) {
-        this.treatment = treatment;
+    public static void clearTreatmentPlan() {
+        clearCourse();
+
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II);
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_NAME);
+    }
+
+    /**
+     * @param id treatment plan id
+     * @param name treatment plan name
+     */
+    public static void putCourseInSession(Ii id, St name) {
+        if (id == null || name == null) {
+            clearCourse();
+        } else {
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_COURSE_II, id);
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    AccrualConstants.SESSION_ATTR_COURSE_NAME, name);
+        }
+    }
+
+    /**
+     * Clear course values.
+     */
+    public static void clearCourse() {
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                AccrualConstants.SESSION_ATTR_COURSE_II);
+        ServletActionContext.getRequest().getSession().removeAttribute(
+                AccrualConstants.SESSION_ATTR_COURSE_NAME);
     }
 }
