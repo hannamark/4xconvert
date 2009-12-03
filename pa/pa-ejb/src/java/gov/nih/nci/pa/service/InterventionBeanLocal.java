@@ -34,7 +34,7 @@ import org.hibernate.Session;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class InterventionBeanLocal extends AbstractBaseIsoService<InterventionDTO, Intervention, InterventionConverter>
-implements InterventionServiceLocal { 
+implements InterventionServiceLocal, InterventionServiceRemote { 
   private static final Logger LOG = Logger.getLogger(InterventionBeanLocal.class);
   private static final String TRUE = "true";
  /**
