@@ -102,7 +102,7 @@
         <tr>
             <td class="label"><s:label name="statusReasonLabel" for="statusReason">
                 <fmt:message key="trialStatus.current.trial.status.reason"/></s:label></td>
-            <td colspan="2" class="value"><s:textarea id="statusReason" rows="3"
+            <td colspan="2" class="value"><s:textarea name="statusReason" rows="3"
                 cssStyle="width:280px;float:left" /></td>
         </tr>        
         <tr><td>&nbsp</td></tr>
