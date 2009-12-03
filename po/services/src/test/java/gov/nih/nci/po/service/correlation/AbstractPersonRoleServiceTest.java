@@ -1,14 +1,17 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.service.AbstractCuratableServiceBean;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -19,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 
 public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extends AbstractStructrualRoleServiceTest<T>{
@@ -33,6 +38,107 @@ public abstract class AbstractPersonRoleServiceTest<T extends PersonRole> extend
         obj2.setScoper(obj.getScoper());
         getService().create(obj);
         getService().create(obj2);
+    }
+    
+    @Test
+    public void testNestedPlayerSearchOnEmail() throws Exception {
+        //Role -> Player -> Email
+        AbstractCuratableServiceBean<T> service = getService();
+
+        T hcf = getSampleStructuralRole();
+        service.create(hcf);
+
+        AbstractPersonRole example = (AbstractPersonRole) getNewStructuralRole();
+        example.setPlayer(new Person());
+        example.getPlayer().getEmail().add(new Email("abc@example.com"));
+        
+        SearchCriteria<T> sc = new AnnotatedBeanSearchCriteria<T>((T) example);
+        List<T> l = service.search(sc);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        AbstractPersonRole role = (AbstractPersonRole) l.get(0);
+        assertEquals("abc@example.com", role.getPlayer().getEmail().get(0).getValue());
+       
+    }
+    
+    @Test
+    public void testNestedPlayerSearchOnPhone() throws Exception {
+        //Role -> Player -> Email
+        AbstractCuratableServiceBean<T> service = getService();
+
+        T hcf = getSampleStructuralRole();
+        service.create(hcf);
+
+        AbstractPersonRole example = (AbstractPersonRole) getNewStructuralRole();
+        example.setPlayer(new Person());
+        example.getPlayer().getPhone().add(new PhoneNumber("111-111-1111"));
+        
+        SearchCriteria<T> sc = new AnnotatedBeanSearchCriteria<T>((T) example);
+        List<T> l = service.search(sc);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        AbstractPersonRole role = (AbstractPersonRole) l.get(0);
+        assertEquals("111-111-1111", role.getPlayer().getPhone().get(0).getValue());
+    }
+    
+    @Test
+    public void testNestedPlayerSearchOnFax() throws Exception {
+        //Role -> Player -> Email
+        AbstractCuratableServiceBean<T> service = getService();
+
+        T hcf = getSampleStructuralRole();
+        service.create(hcf);
+
+        AbstractPersonRole example = (AbstractPersonRole) getNewStructuralRole();
+        example.setPlayer(new Person());
+        example.getPlayer().getFax().add(new PhoneNumber("222-222-2222"));
+        
+        SearchCriteria<T> sc = new AnnotatedBeanSearchCriteria<T>((T) example);
+        List<T> l = service.search(sc);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        AbstractPersonRole role = (AbstractPersonRole) l.get(0);
+        assertEquals("222-222-2222", role.getPlayer().getFax().get(0).getValue());
+    }
+    
+    @Test
+    public void testNestedPlayerSearchOnTty() throws Exception {
+        //Role -> Player -> Email
+        AbstractCuratableServiceBean<T> service = getService();
+
+        T hcf = getSampleStructuralRole();
+        service.create(hcf);
+
+        AbstractPersonRole example = (AbstractPersonRole) getNewStructuralRole();
+        example.setPlayer(new Person());
+        example.getPlayer().getTty().add(new PhoneNumber("333-333-3333"));
+        
+        SearchCriteria<T> sc = new AnnotatedBeanSearchCriteria<T>((T) example);
+        List<T> l = service.search(sc);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        AbstractPersonRole role = (AbstractPersonRole) l.get(0);
+        assertEquals("333-333-3333", role.getPlayer().getTty().get(0).getValue());
+    }
+    
+    @Test
+    public void testNestedPlayerSearchOnURL() throws Exception {
+        //Role -> Player -> Email
+        AbstractCuratableServiceBean<T> service = getService();
+
+        T hcf = getSampleStructuralRole();
+        service.create(hcf);
+
+        AbstractPersonRole example = (AbstractPersonRole) getNewStructuralRole();
+        example.setPlayer(new Person());
+        example.getPlayer().getUrl().add(new URL("http://www.example.com/abc"));
+        
+        SearchCriteria<T> sc = new AnnotatedBeanSearchCriteria<T>((T) example);
+        List<T> l = service.search(sc);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        AbstractPersonRole role = (AbstractPersonRole) l.get(0);
+        assertEquals("http://www.example.com/abc", role.getPlayer().getUrl().get(0).getValue());
     }
     
     @Test

@@ -3,20 +3,26 @@ package gov.nih.nci.po.service.correlation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
+import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AbstractCuratableServiceBean;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.List;
 
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 public abstract class AbstractOrganizationalRoleServiceTest<T extends Correlation> extends
         AbstractStructrualRoleServiceTest<T> {
@@ -28,6 +34,27 @@ public abstract class AbstractOrganizationalRoleServiceTest<T extends Correlatio
         T r = getSampleCtepOwnedStructuralRole();
         service.create(r);
         return r;
+    }
+    
+    @Test
+    public void testNestedPlayerSearchOnEmail() throws Exception {
+        //Role -> Player -> Email
+        AbstractCuratableServiceBean<T> service = getService();
+
+        T hcf = getSampleStructuralRole();
+        service.create(hcf);
+
+        AbstractOrganizationRole example = (AbstractOrganizationRole) getNewStructuralRole();
+        example.setPlayer(new Organization());
+        example.getPlayer().getEmail().add(new Email("foo@example.com"));
+        
+        SearchCriteria<T> sc = new AnnotatedBeanSearchCriteria<T>((T) example);
+        List<T> l = service.search(sc);
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        AbstractOrganizationRole role = (AbstractOrganizationRole) l.get(0);
+        assertEquals("foo@example.com", role.getPlayer().getEmail().get(0).getValue());
+       
     }
      
     /**
