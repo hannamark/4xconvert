@@ -47,8 +47,8 @@
     function handleAction() {
         input_box=confirm("Click OK to save changes or Cancel to Abort.");
         if (input_box==true){
-          document.studyOverallStatus.action="studyOverallStatusupdate.action";
-          document.studyOverallStatus.submit();
+            document.forms[0].action="studyOverallStatusupdate.action";
+            document.forms[0].submit();
         }
     }    
 </script>
