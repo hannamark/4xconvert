@@ -131,4 +131,9 @@ public class IdentifiedPersonServiceTest extends AbstractStructrualRoleServiceTe
         assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
         assertEquals(expected.getPlayer().getId(), actual.getPlayer().getId());
     }
+
+    @Override
+    IdentifiedPerson getNewStructuralRole() {
+        return new IdentifiedPerson();
+    }
 }

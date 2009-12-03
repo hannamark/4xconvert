@@ -202,8 +202,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_ADDRESS_FK", inverseName = "ADDRESS_HCP_FK")
     @Valid
-    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -224,7 +223,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_EMAIL_FK", inverseName = "EMAIL_HCP_FK")
     @Valid
-    @Searchable(fields = { "value" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -245,7 +244,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_FAX_FK", inverseName = "FAX_HCP_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -266,7 +265,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_PHONE_FK", inverseName = "PHONE_HCP_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -287,7 +286,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_TTY_FK", inverseName = "TTY_HCP_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -308,7 +307,7 @@ public class HealthCareProvider extends AbstractHealthCareProvider implements Co
     @IndexColumn(name = "idx")
     @ForeignKey(name = "HCP_URL_FK", inverseName = "URL_HCP_FK")
     @Valid
-    @Searchable(fields = "value", matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<URL> getUrl() {
         return super.getUrl();
     }

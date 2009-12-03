@@ -143,7 +143,7 @@ public abstract class AbstractIdentifiedEntity<T extends CuratableEntity<?, ?>> 
     @ManyToOne
     @ForeignKey(name = "identifiedentity_scoper_fkey")
     @NotNull
-    @Searchable(fields = {"id" })
+    @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "scoper")
     public Organization getScoper() {
         return this.scoper;
@@ -173,7 +173,8 @@ public abstract class AbstractIdentifiedEntity<T extends CuratableEntity<?, ?>> 
     @ValidIi
     @NotEmptyIiExtension
     @NotEmptyIiRoot
-    @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_CONTAINS,
+            isHibernateComponent = true)
     public Ii getAssignedIdentifier() {
         return this.assignedIdentifier;
     }

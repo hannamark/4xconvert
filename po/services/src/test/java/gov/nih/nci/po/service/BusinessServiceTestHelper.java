@@ -117,6 +117,7 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationService
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
@@ -186,7 +187,7 @@ public class BusinessServiceTestHelper {
         players[0] = cd;
         
         if (local) {
-            clearSession();
+            flushAndClearSession();
         }
         EntityNodeDto entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, players, null);
         
@@ -195,7 +196,7 @@ public class BusinessServiceTestHelper {
         assertEquals(1, playersDto.length);   
         
         if (local) {
-            clearSession();
+            flushAndClearSession();
         }
         
         entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, null, null);        
@@ -203,7 +204,7 @@ public class BusinessServiceTestHelper {
         assertEquals(0, entityNodeDto.getScopers().length);
 
         if (local) {
-            clearSession();
+            flushAndClearSession();
         }
         entityNodeDto = busService.getEntityByIdWithCorrelations(newOrgId, new Cd[0], new Cd[0]);        
         assertEquals(0, entityNodeDto.getPlayers().length);
@@ -234,7 +235,7 @@ public class BusinessServiceTestHelper {
         players[0] = cd;
         
         if (local) {
-            clearSession();
+            flushAndClearSession();
         }
         entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, players, null);
         playersDto = entityNodeDto.getPlayers();
@@ -242,14 +243,14 @@ public class BusinessServiceTestHelper {
         assertEquals(1, playersDto.length);
         
         if (local) {
-            clearSession();
+            flushAndClearSession();
         }
         entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, null, null);        
         assertEquals(0, entityNodeDto.getPlayers().length);
         assertEquals(0, entityNodeDto.getScopers().length);
 
         if (local) {
-            clearSession();
+            flushAndClearSession();
         }
         entityNodeDto = busService.getEntityByIdWithCorrelations(newPersonId, new Cd[0], new Cd[0]);        
         assertEquals(0, entityNodeDto.getPlayers().length);
@@ -257,8 +258,9 @@ public class BusinessServiceTestHelper {
         
     }
 
-    private static void clearSession() {
+    private static void flushAndClearSession() {
         if (PoHibernateUtil.getCurrentSession() != null) {
+            PoHibernateUtil.getCurrentSession().flush();
             PoHibernateUtil.getCurrentSession().clear();
         }
     }
@@ -469,7 +471,7 @@ public class BusinessServiceTestHelper {
 
          return personService.createPerson(p);
      }
-
+    
     public static void testSearchEntitiesWithCorrelations(
             PersonEntityServiceRemote personService,
             OrganizationEntityServiceRemote orgService,
@@ -482,7 +484,7 @@ public class BusinessServiceTestHelper {
             ResearchOrganizationCorrelationServiceRemote researchOrgService,
             OrganizationalContactCorrelationServiceRemote ocService,
             OversightCommitteeCorrelationServiceRemote oversightComService            
-    ) throws URISyntaxException, EntityValidationException, CurationException, TooManyResultsException {    
+    ) throws URISyntaxException, EntityValidationException, CurationException, TooManyResultsException, NullifiedRoleException {    
         // try null things
         try {
             busService.searchEntitiesWithCorrelations(null, null, null, null);
@@ -512,16 +514,16 @@ public class BusinessServiceTestHelper {
         crsDto.setTelecomAddress(telco);
         crsDto.setPlayerIdentifier(personId);
         crsDto.setScoperIdentifier(orgId);
-        crsService.createCorrelation(crsDto);
-
+        Ii crsId = crsService.createCorrelation(crsDto);
+    
         // create extra crs that should not be returned
-        crsDto = new ClinicalResearchStaffDTO();
-        crsDto.setTelecomAddress(telco);
-        crsDto.setPlayerIdentifier(personId);
+        ClinicalResearchStaffDTO crsDto2 = new ClinicalResearchStaffDTO();
+        crsDto2.setTelecomAddress(telco);
+        crsDto2.setPlayerIdentifier(personId);
         Ii org2Id = createOrganization(orgService, "street", "wrong name");
-        crsDto.setScoperIdentifier(org2Id);
-        crsService.createCorrelation(crsDto);
-        
+        crsDto2.setScoperIdentifier(org2Id);
+        Ii crsId2 = crsService.createCorrelation(crsDto2);
+       
         // one Org Contact
         OrganizationalContactDTO ocDto = new OrganizationalContactDTO();
         Cd typeCode = new Cd();
@@ -542,7 +544,7 @@ public class BusinessServiceTestHelper {
         hcpDto.setPlayerIdentifier(personId);
         hcpDto.setScoperIdentifier(orgId);
         hcpService.createCorrelation(hcpDto);
-        
+             
         IdentifiedPersonDTO idpDto = new IdentifiedPersonDTO();
         populateIdentifiedPerson(personId, orgId, idpDto);
         idpDto.setAssignedId(personId);
@@ -578,7 +580,16 @@ public class BusinessServiceTestHelper {
         cd.setCode(RoleList.CLINICAL_RESEARCH_STAFF.name());
         scopersCd[0] = cd;
         
-        clearSession();
+        flushAndClearSession();
+        
+        ClinicalResearchStaffDTO freshCrsDto = crsService.getCorrelation(crsId);
+        assertNotNull(freshCrsDto);
+        assertEquals(crsId.getExtension(), freshCrsDto.getIdentifier().getItem().iterator().next().getExtension());
+        List<ClinicalResearchStaffDTO> crsList = crsService.search(crsDto);
+        assertEquals(1, crsList.size());
+        assertEquals(crsList.get(0).getIdentifier().getItem().iterator().next().getExtension(),
+                freshCrsDto.getIdentifier().getItem().iterator().next().getExtension());
+        
         List<EntityNodeDto> results = busService.searchEntitiesWithCorrelations(query_enDto, null, scopersCd, null);
         assertEquals(1, results.size());
         
@@ -586,7 +597,7 @@ public class BusinessServiceTestHelper {
         assertEquals(1, results.get(0).getScopers().length);
         assertTrue(results.get(0).getScopers()[0] instanceof ClinicalResearchStaffDTO);
     
-        clearSession();
+        flushAndClearSession();
         results = busService.searchEntitiesWithCorrelations(query_enDto, null, null, new LimitOffset(1, 0));
         assertEquals(1, results.size());
 
@@ -613,7 +624,7 @@ public class BusinessServiceTestHelper {
         players[3] = crsDto;
         query_enDto.setPlayers(players);
         
-        clearSession();
+        flushAndClearSession();
         results = busService.searchEntitiesWithCorrelations(query_enDto, playersCd, scopersCd, null);
         assertEquals(1, results.size());
         
@@ -638,7 +649,7 @@ public class BusinessServiceTestHelper {
         cd.setCode(RoleList.HEALTH_CARE_PROVIDER.name());
         playersCd[0] = cd;   
         
-        clearSession();
+        flushAndClearSession();
         results = busService.searchEntitiesWithCorrelations(query_enDto, playersCd, null, null);
         assertEquals(1, results.size());
         
@@ -646,7 +657,7 @@ public class BusinessServiceTestHelper {
         assertEquals(1, results.get(0).getPlayers().length);
         assertTrue(results.get(0).getPlayers()[0] instanceof HealthCareProviderDTO);
 
-        clearSession();
+        flushAndClearSession();
         results = busService.searchEntitiesWithCorrelations(query_enDto, playersCd, null, new LimitOffset(1, 0));
         assertEquals(1, results.size());
                 
@@ -936,7 +947,7 @@ public class BusinessServiceTestHelper {
          idpDto.setPlayerIdentifier(newPersonId);
          idpDto.setScoperIdentifier(newOrgId);
          Cd status = new Cd();
-         status.setCode("active");
+         status.setCode("pending");
          idpDto.setStatus(status);
 
          Ii idpIi = new Ii();
@@ -944,8 +955,8 @@ public class BusinessServiceTestHelper {
          idpIi.setDisplayable(true);
          idpIi.setScope(IdentifierScope.OBJ);
          idpIi.setReliability(IdentifierReliability.ISS);
-         idpIi.setIdentifierName(IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
-         idpIi.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
+         idpIi.setIdentifierName(IdConverter.IDENTIFIED_PERSON_IDENTIFIER_NAME);
+         idpIi.setRoot(IdConverter.IDENTIFIED_PERSON_ROOT);
          idpDto.setAssignedId(idpIi);
          return idpIi;
      }
@@ -954,7 +965,7 @@ public class BusinessServiceTestHelper {
          idoDto.setPlayerIdentifier(newOrgId);
          idoDto.setScoperIdentifier(newOrgId);
          Cd status = new Cd();
-         status.setCode("active");
+         status.setCode("pending");
          idoDto.setStatus(status);
 
          Ii idoIi = new Ii();
@@ -962,8 +973,8 @@ public class BusinessServiceTestHelper {
          idoIi.setDisplayable(true);
          idoIi.setScope(IdentifierScope.OBJ);
          idoIi.setReliability(IdentifierReliability.ISS);
-         idoIi.setIdentifierName(IdConverter.RESEARCH_ORG_IDENTIFIER_NAME);
-         idoIi.setRoot(IdConverter.RESEARCH_ORG_ROOT);
+         idoIi.setIdentifierName(IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
+         idoIi.setRoot(IdConverter.IDENTIFIED_ORG_ROOT);
          idoDto.setAssignedId(idoIi);
          return idoIi;
      }

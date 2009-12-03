@@ -96,6 +96,7 @@ import org.hibernate.validator.Length;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * @author smatyas
@@ -163,6 +164,7 @@ public class AbstractCodeValue implements PersistentObject, Auditable, CodeValue
     @Length(max = CODE_LENGTH)
     @NotEmpty
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "code")
+    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
     public String getCode() {
         return code;
     }

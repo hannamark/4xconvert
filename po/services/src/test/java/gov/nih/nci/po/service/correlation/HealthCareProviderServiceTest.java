@@ -308,10 +308,16 @@ public class HealthCareProviderServiceTest extends AbstractPersonRoleServiceTest
 
     @Test
     public void testHotRoleCount() throws EntityValidationException, JMSException {
-        HealthCareProvider hcf = getSampleStructuralRole();
+        HealthCareProvider hcp = getSampleStructuralRole();
         HealthCareProviderServiceLocal s = (HealthCareProviderServiceLocal) getService();
-        s.create(hcf);
-        int c = s.getHotRoleCount(hcf.getPlayer());
+        s.create(hcp);
+        int c = s.getHotRoleCount(hcp.getPlayer());
         assertEquals(1, c);
     }
+
+    @Override
+    HealthCareProvider getNewStructuralRole() {
+        return new HealthCareProvider();
+    }
+    
 }

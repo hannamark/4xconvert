@@ -104,6 +104,7 @@ import org.hibernate.validator.Length;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 
 /**
@@ -157,6 +158,7 @@ public class Country implements PersistentObject, Auditable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Searchable
     public Long getId() {
         return id;
     }
@@ -175,6 +177,7 @@ public class Country implements PersistentObject, Auditable {
     @Length(max = NAME_LENGTH)
     @NotEmpty
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "name")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getName() {
         return name;
     }
@@ -191,6 +194,7 @@ public class Country implements PersistentObject, Auditable {
     @Length(min = NUMERIC_LENGTH, max = NUMERIC_LENGTH)
     @NotEmpty
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "numeric")
+    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
     public String getNumeric() {
         return numeric;
     }
@@ -207,6 +211,7 @@ public class Country implements PersistentObject, Auditable {
     @Length(min = ALPHA2_LENGTH, max = ALPHA2_LENGTH)
     @NotEmpty
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "alpha2")
+    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
     public String getAlpha2() {
         return alpha2;
     }
@@ -223,6 +228,7 @@ public class Country implements PersistentObject, Auditable {
     @Index(name = "alpha3_idx")
     @Length(min = ALPHA3_LENGTH, max = ALPHA3_LENGTH)
     @NotEmpty
+    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
     public String getAlpha3() {
         return alpha3;
     }

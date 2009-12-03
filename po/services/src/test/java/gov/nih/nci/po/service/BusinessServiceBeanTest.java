@@ -58,9 +58,9 @@ public class BusinessServiceBeanTest extends AbstractBeanTest {
                 crsService, hcpService, idpService, idoService, 
                 hcfService, researchOrgService, ocService, oversightComService);
     }
-
+    
     @Test
-    public void testSearchEntitiesWithCorrelations() throws Exception {
+    public void testSearchEntitiesWithCorrelations() throws Exception {    
         BusinessServiceTestHelper.testSearchEntitiesWithCorrelations
             (personService, orgService, busService,
                 crsService, hcpService, idpService, idoService, 

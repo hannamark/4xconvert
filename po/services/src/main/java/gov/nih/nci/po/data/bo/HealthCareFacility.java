@@ -131,7 +131,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 public class HealthCareFacility extends AbstractEnhancedOrganizationRole implements Correlation {
 
     private static final String HCF_ID = "hcf_id";
-    private static final String VALUE = "value";
     private static final String IDX = "idx";
 
     private static final long serialVersionUID = 2L;
@@ -202,8 +201,7 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     @IndexColumn(name = IDX)
     @ForeignKey(name = "HCF_ADDRESS_FK", inverseName = "ADDRESS_HCF_FK")
     @Valid
-    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public Set<Address> getPostalAddresses() {
         return super.getPostalAddresses();
     }
@@ -224,7 +222,7 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     @IndexColumn(name = IDX)
     @ForeignKey(name = "HCF_EMAIL_FK", inverseName = "EMAIL_HCF_FK")
     @Valid
-    @Searchable(fields = { VALUE }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -245,7 +243,7 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     @IndexColumn(name = IDX)
     @ForeignKey(name = "HCF_FAX_FK", inverseName = "FAX_HCF_FK")
     @Valid
-    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getFax() {
         return super.getFax();
     }
@@ -266,7 +264,7 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     @IndexColumn(name = IDX)
     @ForeignKey(name = "HCF_PHONE_FK", inverseName = "PHONE_HCF_FK")
     @Valid
-    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getPhone() {
         return super.getPhone();
     }
@@ -287,7 +285,7 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     @IndexColumn(name = IDX)
     @ForeignKey(name = "HCF_TTY_FK", inverseName = "TTY_HCF_FK")
     @Valid
-    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<PhoneNumber> getTty() {
         return super.getTty();
     }
@@ -308,7 +306,7 @@ public class HealthCareFacility extends AbstractEnhancedOrganizationRole impleme
     @IndexColumn(name = IDX)
     @ForeignKey(name = "HCF_URL_FK", inverseName = "URL_HCF_FK")
     @Valid
-    @Searchable(fields = VALUE, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     public List<URL> getUrl() {
         return super.getUrl();
     }

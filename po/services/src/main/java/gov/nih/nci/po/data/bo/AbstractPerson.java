@@ -273,8 +273,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     @JoinColumn(name = "postal_address_id")
     @ForeignKey(name = "PER_POSTAL_ADDRESS_FK")
     @Valid
-    @Searchable(fields = { "streetAddressLine", "deliveryAddressLine", "cityOrMunicipality",
-            "stateOrProvince", "postalCode", "country" }, matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "address")
     public Address getPostalAddress() {
         return postalAddress;
@@ -372,28 +371,28 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public void setStatusCode(EntityStatus newStatus) {
         this.statusCode = newStatus;
     }
-    
+
     /**
      * @param newSexCode the sex of this person record
      */
     public void setSexCode(PersonSex newSexCode) {
         this.sexCode = newSexCode;
     }
-    
+
     /**
      * @param newRaceCodes the races of this person record
      */
     public void setRaceCode(Set<PersonRace> newRaceCodes) {
         this.raceCode = newRaceCodes;
     }
-    
+
     /**
      * @param newEthnicCodes the ethnicity of this person record
      */
     public void setEthnicGroupCode(Set<PersonEthnicGroup> newEthnicCodes) {
         this.ethnicGroupCode = newEthnicCodes;
     }
-    
+
     /**
      * @param newBirthDate the birth date of this person record
      */
@@ -415,7 +414,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public EntityStatus getStatusCode() {
         return this.statusCode;
     }
-    
+
     /**
      * @return the sex code
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
@@ -429,7 +428,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public PersonSex getSexCode() {
         return this.sexCode;
     }
-    
+
     /**
      * @return the race code
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.DSet"
@@ -440,7 +439,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public Set<PersonRace> getRaceCode() {
         return this.raceCode;
     }
-    
+
     /**
      * @return the ethnic code
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.DSet"
@@ -451,7 +450,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public Set<PersonEthnicGroup> getEthnicGroupCode() {
         return this.ethnicGroupCode;
     }
-    
+
     /**
      * @return name birthDate
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ts"
@@ -500,7 +499,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
-    
+
     /**
      * Returns boolean if the address is US.
      * @return bool

@@ -205,4 +205,9 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         return r;
     }
 
+    @Override
+    ResearchOrganization getNewStructuralRole() {
+        return new ResearchOrganization();
+    }
+
 }
