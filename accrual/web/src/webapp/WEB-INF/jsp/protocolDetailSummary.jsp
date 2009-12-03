@@ -34,7 +34,7 @@
         </c:if>
       </div><div class="row" />
         <c:if test="${sessionScope.courseName != null}">
-          <span class="label"><fmt:message key="course.name"/></span> 
+          <span class="label"><fmt:message key="outcomes.summary.course"/></span> 
           <span class="value"> <c:out value="${sessionScope.courseName.value}"/></span>
         </c:if>
       </div>
