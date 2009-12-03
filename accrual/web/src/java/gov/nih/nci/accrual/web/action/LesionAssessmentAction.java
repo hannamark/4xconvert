@@ -146,7 +146,8 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
             List<PerformedImagingDto> piList = performedActivitySvc.getPerformedImagingByStudySubject(
                                                                 getParticipantIi());
             for (PerformedImagingDto pi : piList) {
-                if (pi.getNameCode().getCode().equals(ActivityNameCode.LESION_ASSESSMENT.getCode())) {
+                if (pi.getNameCode() != null && pi.getNameCode().getCode() != null
+                        && pi.getNameCode().getCode().equals(ActivityNameCode.LESION_ASSESSMENT.getCode())) {
                     List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             pi.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.PERT));
                     PerformedObservationDto po = performedActivitySvc.getPerformedObservation(

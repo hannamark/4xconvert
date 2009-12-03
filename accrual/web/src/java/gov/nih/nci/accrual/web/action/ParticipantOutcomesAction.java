@@ -146,7 +146,8 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
             List<ActivityRelationshipDto> arList = null;
             ParticipantOutcomesWebDto webdto = new ParticipantOutcomesWebDto();
             for (PerformedObservationDto poBean : poList) {
-                if (poBean.getNameCode().getCode().equals(ActivityNameCode.PARTICIPANT_OUTCOMES.getCode())) {
+                if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
+                        && poBean.getNameCode().getCode().equals(ActivityNameCode.PARTICIPANT_OUTCOMES.getCode())) {
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
                     PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
@@ -154,7 +155,8 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
                     webdto.setEvaluationDate(po.getActualDateRange().getLow());
                     participantOutcomesList = performedObservationResultSvc.
                                       getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                } else if (poBean.getNameCode().getCode().equals(ActivityNameCode.DISEASE_STATUS.getCode())) {
+                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
+                        && poBean.getNameCode().getCode().equals(ActivityNameCode.DISEASE_STATUS.getCode())) {
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
                     PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
@@ -166,7 +168,8 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
                     diseaseStatusList = performedObservationResultSvc.getPerformedObservationResultByPerformedActivity(
                             po.getIdentifier());
 
-                } else if (poBean.getNameCode().getCode().equals(
+                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
+                        && poBean.getNameCode().getCode().equals(
                         ActivityNameCode.DISEASE_PROGRESSION.getCode())) {
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
@@ -176,7 +179,8 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
                     webdto.setProgressionDate(po.getActualDateRange().getLow());
                     diseaseProgressionList = performedObservationResultSvc.
                                    getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                } else if (poBean.getNameCode().getCode().equals(ActivityNameCode.BEST_RESPONSE.getCode())) {
+                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
+                        && poBean.getNameCode().getCode().equals(ActivityNameCode.BEST_RESPONSE.getCode())) {
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
                     PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
@@ -184,7 +188,8 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
                     webdto.setBestResponseDate(po.getActualDateRange().getLow());
                     bestResponseList = performedObservationResultSvc.getPerformedObservationResultByPerformedActivity(
                             po.getIdentifier());
-                } else if (poBean.getNameCode().getCode().equals(ActivityNameCode.EVIDENCE_OF_DISEASE.getCode())) {
+                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
+                        && poBean.getNameCode().getCode().equals(ActivityNameCode.EVIDENCE_OF_DISEASE.getCode())) {
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
                     PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)

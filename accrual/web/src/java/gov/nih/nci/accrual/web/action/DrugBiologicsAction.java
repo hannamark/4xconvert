@@ -125,7 +125,8 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
             DrugBiologicsWebDto webDto = new DrugBiologicsWebDto();
             
             for (PerformedSubstanceAdministrationDto psaDto : psaList) {
-                if (psaDto.getCategoryCode().getCode().equals(ActivityCategoryCode.DRUG_BIOLOGIC.getCode())) {
+                if (psaDto.getCategoryCode() != null && psaDto.getCategoryCode().getCode() != null
+                        && psaDto.getCategoryCode().getCode().equals(ActivityCategoryCode.DRUG_BIOLOGIC.getCode())) {
                     List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             psaDto.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
                     arList = activityRelationshipSvc.getBySourcePerformedActivity(

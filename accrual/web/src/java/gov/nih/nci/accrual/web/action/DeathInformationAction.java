@@ -126,7 +126,8 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
             List<PerformedObservationDto> poList = performedActivitySvc.getPerformedObservationByStudySubject(
                     getParticipantIi());
             for (PerformedObservationDto poBean : poList) {
-                if (poBean.getNameCode().getCode().equals(ActivityNameCode.DEATH_INFORMATION.getCode())) {
+                if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
+                        && poBean.getNameCode().getCode().equals(ActivityNameCode.DEATH_INFORMATION.getCode())) {
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
                     PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
@@ -137,7 +138,8 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                     deathInfo.setOldTreatmentPlanId(arList.get(0).
                             getSourcePerformedActivityIdentifier().getExtension());
                     deathInfo.setTreatmentPlanId(arList.get(0).getSourcePerformedActivityIdentifier().getExtension());
-                } else if (poBean.getNameCode().getCode().equals(ActivityNameCode.AUTOPSY_INFORMATION.getCode())) {
+                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
+                        && poBean.getNameCode().getCode().equals(ActivityNameCode.AUTOPSY_INFORMATION.getCode())) {
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
                     PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
