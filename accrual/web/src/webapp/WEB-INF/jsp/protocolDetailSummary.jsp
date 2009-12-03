@@ -32,11 +32,7 @@
           <span class="label"><fmt:message key="outcomes.summary.treatmentPlan"/></span> 
           <span class="value"> <c:out value="${sessionScope.treatmentPlanName.value}"/></span>
         </c:if>
-      </div>
-    </div>
-    
-    <div class="float33">
-      <div class="row" />
+      </div><div class="row" />
         <c:if test="${sessionScope.courseName != null}">
           <span class="label"><fmt:message key="course.name"/></span> 
           <span class="value"> <c:out value="${sessionScope.courseName.value}"/></span>
