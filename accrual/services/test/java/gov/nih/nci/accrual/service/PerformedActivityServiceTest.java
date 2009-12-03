@@ -93,6 +93,7 @@ import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -251,7 +252,7 @@ public class PerformedActivityServiceTest
         assertNotNull(prar.getIdentifier().getExtension());
         
         PerformedRadiationAdministrationDto pradto2 = bean.getPerformedRadiationAdministration(IiConverter.convertToIi(TestSchema.performedRadiationAdministrations.get(0).getId()));
-        pradto2.setMachineTypeCode(CdConverter.convertStringToCd("machineCode"));
+        pradto2.setMachineTypeCode(CdConverter.convertToCd(RadiationMachineTypeCode.CONVENTIONAL));
         PerformedRadiationAdministrationDto prar2 = bean.updatePerformedRadiationAdministration(pradto2);
         assertTrue(pradto2.getMachineTypeCode().getCode().equals(prar2.getMachineTypeCode().getCode()));
         

@@ -4,9 +4,10 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:url value="/outcomes/lookUpprocedureName.action?type=radiationType" var="lookupUrl" />
 <c:url value="/outcomes/lookUpunitOfMeasurement.action?type=radiationTotalDoseUom" var="totalDoselookupUrl" />
 <c:url value="/outcomes/lookUpunitOfMeasurement.action?type=radiationDurationUom" var="durationlookupUrl" />
+<c:url value="/outcomes/lookUpunitOfMeasurement.action?type=radiationDoseUom" var="doseUomlookupUrl" />
+<c:url value="/outcomes/lookUpdoseFrequency.action?type=radiationFrequency" var="doseFrequencylookupUrl" />
 <head>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
@@ -21,17 +22,26 @@
         document.forms[0].action = "executeRadiation.action";
         document.forms[0].submit();
     }
+	
+	function lookupDoseFrequency(){
+        showPopWin('${doseFrequencylookupUrl}', 900, 400, '', 'DoseFrequency');
+	}    
     
-    function lookup(){
-        showPopWin('${lookupUrl}', 900, 400, '', 'Radiation Type');
+    function lookupDoseUom(){
+        showPopWin('${doseUomlookupUrl}', 900, 400, '', 'Dose UOM');
 	}
-    
+	
     function lookupTotalDoseUom(){
         showPopWin('${totalDoselookupUrl}', 900, 400, '', 'Total Dose Uom');
 	}
 	
 	function lookupDurationUom(){
         showPopWin('${durationlookupUrl}', 900, 400, '', 'Duration UOM');
+	}
+	
+	function handleEditAction(){
+	    document.forms[0].action="editRadiation.action";
+	    document.forms[0].submit();
 	}
 
 </script>
@@ -64,13 +74,16 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<table class="form">
- 
+<s:hidden name = "currentAction"/>
+<s:hidden name = "selectedRowIdentifier"/>
+<s:hidden name = "radiation.id"/>
+<table class="form"> 
  	<tr>
         <td scope="row" class="label"><label><fmt:message key="radiation.name"/>:<span class="required">*</span></label></td>
         <td>
-            <s:textfield readonly="true" size="50" name="radiation.type" cssStyle="width:280px;float:left" cssClass="readonly"/>
-            <a href="#" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+        	<s:set name="radiationProcedureTypeCodeValues" value="@gov.nih.nci.pa.enums.RadiationProcedureTypeCode@getDisplayNames()" />
+            <s:select id ="radiation.type" name="radiation.type" headerKey="" headerValue="--Select--"
+                      list="#radiationProcedureTypeCodeValues" value="radiation.type.code"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>radiation.type</s:param></s:fielderror>
         </td>
     </tr>
@@ -83,6 +96,32 @@
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
              <s:fielderror cssClass="formErrorMsg"><s:param>radiation.radDate</s:param></s:fielderror>
         </td>
+    </tr>
+    
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="drugBiologic.dose"/>:<span class="required">*</span></label></td>
+        <td class="value">
+            <s:textfield name="radiation.dose.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:fielderror cssClass="formErrorMsg"><s:param>radiation.dose.value</s:param></s:fielderror>
+        </td>      
+    </tr>
+    
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="drugBiologic.doseUOM"/>:<span class="required">*</span></label></td>
+        <td class="value">
+        <s:textfield readonly="true" size="50" name="radiation.dose.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
+            <a href="#" class="btn" onclick="lookupDoseUom();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+            <s:fielderror cssClass="formErrorMsg"><s:param>radiation.dose.unit</s:param></s:fielderror>
+        </td>      
+    </tr>
+    
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="drugBiologic.frequency"/>:<span class="required">*</span></label></td>
+        <td class="value">
+        <s:textfield readonly="true" size="50" name="radiation.doseFreq" cssStyle="width:280px;float:left" cssClass="readonly"/>
+            <a href="#" class="btn" onclick="lookupDoseFrequency();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+            <s:fielderror cssClass="formErrorMsg"><s:param>radiation.doseFreq</s:param></s:fielderror>
+        </td>      
     </tr>
     
     <tr>
@@ -122,9 +161,9 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="radiation.machineType"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:set name="radiationProcedureTypeCodeValues" value="@gov.nih.nci.pa.enums.RadiationProcedureTypeCode@getDisplayNames()" />
+            <s:set name="radiationMachineTypeCodeValues" value="@gov.nih.nci.pa.enums.RadiationMachineTypeCode@getDisplayNames()" />
             <s:select id ="radiationCode" name="radiation.machineType" headerKey="" headerValue="--Select--"
-                      list="#radiationProcedureTypeCodeValues" value="radiation.machineType.code"/>
+                      list="#radiationMachineTypeCodeValues" value="radiation.machineType.code"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>radiation.machineType</s:param></s:fielderror>
         </td>      
     </tr>
@@ -136,7 +175,12 @@
    <del class="btnwrapper">
       <ul class="btnrow">
        <li>
+         <s:if test="%{currentAction == 'create'}">
             <s:a href="#" cssClass="btn" onclick="handleSaveAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+        </s:if>
+         <s:elseif test="%{currentAction == 'update'}">
+         	<s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+         </s:elseif>
             <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
         </li>
       </ul>

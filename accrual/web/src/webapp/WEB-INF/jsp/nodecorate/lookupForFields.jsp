@@ -7,15 +7,12 @@
 <script language="JavaScript">
 	function loadDiv() {	
 	var type = document.getElementById("type").value;
-		if(type == 'radiationType'){
-			document.forms[0].action="lookUpprocedureName.action";
-			document.getElementById("type").value = 'radiationType';
-		}else if(type == 'radiationTotalDoseUom') {
+		if(type == 'radiationTotalDoseUom') {
 			document.forms[0].action="lookUpunitOfMeasurement.action";
 			document.getElementById("type").value = 'radiationTotalDoseUom';
-		}else if(type == 'radiationTotalDoseUom') {
+		}else if(type == 'radiationDurationUom') {
 			document.forms[0].action="lookUpunitOfMeasurement.action";
-			document.getElementById("type").value = 'radiationTotalDoseUom';
+			document.getElementById("type").value = 'radiationDurationUom';
 		}else if(type == 'doseUom'){
 			document.forms[0].action="lookUpunitOfMeasurement.action";
 			document.getElementById("type").value = 'doseUom';
@@ -43,16 +40,20 @@
 		}else if(type == 'tumorMarker') {
 			document.forms[0].action="lookUptumorMarker.action";
 			document.getElementById("type").value = 'tumorMarker';
-		} else if(type == 'tumorMarkeruom') {
+		}else if(type == 'tumorMarkeruom') {
             document.forms[0].action="lookUpunitOfMeasurement.action";
             document.getElementById("type").value = 'tumorMarkeruom';
-        }
+        }else if(type == 'radiationDoseUom') {
+			document.forms[0].action="lookUpunitOfMeasurement.action";
+			document.getElementById("type").value = 'radiationDoseUom';
+		}else if(type == 'radiationFrequency') {
+			document.forms[0].action="lookUpdoseFrequency.action";
+			document.getElementById("type").value = 'radiationFrequency';
+		}
 	    document.forms[0].submit();
 	}
 	function populateFields(name,type) {
-		if(type == 'radiationType') {
-			window.top.document.getElementsByName("radiation.type")[0].value = name;
-		}else if(type == 'radiationTotalDoseUom') {
+		if(type == 'radiationTotalDoseUom') {
 			window.top.document.getElementsByName("radiation.totalDose.unit")[0].value = name;
 		}else if(type == 'radiationDurationUom') {
 			window.top.document.getElementsByName("radiation.duration.unit")[0].value = name;
@@ -76,7 +77,11 @@
 			window.top.document.getElementsByName("tumorMarker.tumorMarker")[0].value = name;
 		}else if(type == 'tumorMarkeruom') {
             window.top.document.getElementsByName("tumorMarker.tmvUom.unit")[0].value = name;
-        }
+        }else if(type == 'radiationDoseUom') {
+			window.top.document.getElementsByName("radiation.dose.unit")[0].value = name;
+		}else if(type == 'radiationFrequency') {
+			window.top.document.getElementsByName("radiation.doseFreq")[0].value = name;
+		}
         window.top.hidePopWin(false); 
 	}
 </script>
@@ -92,17 +97,15 @@
 		<label>			
 			<s:if test="(type == 'radiationTotalDoseUom') || (type == 'radiationDurationUom')
 									|| (type == 'doseUom') || (type == 'doseDurationUom')
-									|| (type == 'totalDoseUom')	|| (type == 'tumorMarkeruom') ">
+									|| (type == 'totalDoseUom')	|| (type == 'tumorMarkeruom')
+									|| (type == 'radiationDoseUom') ">
 			UOM
 			</s:if>
-			<s:elseif test="type == 'radiationType'">
-			Radiation Type
-			</s:elseif>
 			<s:elseif test="type == 'doseRoa'">
 			Route Of Administration
 			</s:elseif>
-			<s:elseif test="type == 'doseFrequency'">
-			Dose Frequency
+			<s:elseif test="(type == 'doseFrequency') || (type == 'radiationFrequency')">
+			Frequency
 			</s:elseif>
 			<s:elseif test="type == 'lesionSite'">
 			Lesion Site

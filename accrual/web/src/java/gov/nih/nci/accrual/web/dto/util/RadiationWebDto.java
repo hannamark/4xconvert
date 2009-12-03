@@ -79,14 +79,21 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.io.Serializable;
+
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -96,23 +103,65 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class RadiationWebDto implements Serializable {
 
     private static final long serialVersionUID = -3658357689383961868L;
     
     private Ii id;
-    private St type;
+    private Cd type;
     private Ts radDate;
     private Pq totalDose;
     private Pq duration;
     private Cd machineType;
+    private Pq dose; 
+    private Cd doseFreq;    
 
     /**
      * Instantiates a new radiation web dto.
      */
     public RadiationWebDto() {
         // default constructor
+    } 
+    
+    /**
+     * Instantiates a new radiation web dto.
+     * @param pra the pra
+     */
+    public RadiationWebDto(PerformedRadiationAdministrationDto pra) {
+        id = pra.getIdentifier();
+        type = CdConverter.convertStringToCd(pra.getName().getValue());
+        radDate = pra.getActualDateRange().getLow();
+        totalDose = pra.getDoseTotal();
+        duration = pra.getDoseDuration();
+        machineType = pra.getMachineTypeCode();
+        dose = pra.getDose();
+        doseFreq = pra.getDoseFrequencyCode();
+    }
+    
+    /**
+     * Gets the performed radiation administration dto.
+     * @return the performed radiation administration dto
+     */
+    public PerformedRadiationAdministrationDto getPerformedRadiationAdministrationDto() {
+        PerformedRadiationAdministrationDto praDto = new PerformedRadiationAdministrationDto();
+        praDto.setIdentifier(getId());        
+        if (praDto.getActualDateRange() == null) {
+            praDto.setActualDateRange(new Ivl<Ts>());
+        }
+        praDto.getActualDateRange().setLow(getRadDate());
+        praDto.setName(StConverter.convertToSt(getType().getCode()));
+        praDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.RADIATION));
+        praDto.setDoseDuration(getDuration());
+        praDto.setDoseTotal(getTotalDose());
+        praDto.setMachineTypeCode(getMachineType());
+        praDto.setDose(getDose());
+        praDto.setDoseFrequencyCode(getDoseFreq());
+        praDto.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
+        praDto.setStudySubjectIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
+        return praDto;
     }
     
     /**
@@ -134,6 +183,12 @@ public class RadiationWebDto implements Serializable {
         if (dto.getDuration() == null || dto.getDuration().getUnit().equals("")) {
             action.addFieldError("radiation.duration.unit", "Please select Duration UOM.");
         }
+        if (dto.getDose() == null || dto.getDose().getValue() == null) {
+            action.addFieldError("radiation.dose.value", "Please enter Dose Value.");
+        }
+        if (dto.getDose() == null || dto.getDose().getUnit().equals("")) {
+            action.addFieldError("radiation.dose.unit", "Please select Dose UOM.");
+        }
     }
 
     /**
@@ -153,16 +208,16 @@ public class RadiationWebDto implements Serializable {
     /**
      * @return the type
      */
-    @FieldExpressionValidator(expression = "type.value != null && type.value.length() > 0", 
+    @FieldExpressionValidator(expression = "type.code != null && type.code.length() > 0", 
             message = "Please select a Radiation Type")
-    public St getType() {
+    public Cd getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(St type) {
+    public void setType(Cd type) {
         this.type = type;
     }
 
@@ -224,5 +279,39 @@ public class RadiationWebDto implements Serializable {
      */
     public void setMachineType(Cd machineType) {
         this.machineType = machineType;
+    }
+
+    /**
+     * Gets the dose.
+     * @return the dose
+     */
+    public Pq getDose() {
+        return dose;
+    }
+
+    /**
+     * Sets the dose.
+     * @param dose the new dose
+     */
+    public void setDose(Pq dose) {
+        this.dose = dose;
+    }
+
+    /**
+     * Gets the dose freq.
+     * @return the dose freq
+     */
+    @FieldExpressionValidator(expression = "doseFreq.code != null && doseFreq.code.length() > 0", 
+            message = "Please select a Frequency")
+    public Cd getDoseFreq() {
+        return doseFreq;
+    }
+
+    /**
+     * Sets the dose freq.
+     * @param doseFreq the new dose freq
+     */
+    public void setDoseFreq(Cd doseFreq) {
+        this.doseFreq = doseFreq;
     }
 }

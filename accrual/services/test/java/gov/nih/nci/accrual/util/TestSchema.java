@@ -118,6 +118,7 @@ import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
+import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -616,7 +617,7 @@ public class TestSchema {
         // PerformedRadiationAdministration
         PerformedRadiationAdministration pra = new PerformedRadiationAdministration();
         pra.setStudyProtocol(studyProtocols.get(0));
-        pra.setMachineTypeCode("machineTypeCode");
+        pra.setMachineTypeCode(RadiationMachineTypeCode.ACCELERATOR);
         pra.setStudySubject(studySubjects.get(0)); 
         addUpdObject(pra);
         performedRadiationAdministrations.add(pra);

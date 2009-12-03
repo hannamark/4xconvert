@@ -78,10 +78,17 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
+import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.web.dto.util.RadiationWebDto;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -102,8 +109,18 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
     @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<RadiationWebDto>());
-        //just to test the functionality
-        getDisplayTagList().add(radiation);
+        try {
+            List<PerformedRadiationAdministrationDto> paList = performedActivitySvc.
+            getPerformedRadiationAdministrationByStudySubject(getParticipantIi());
+            for (PerformedRadiationAdministrationDto pra : paList) {
+                if (pra.getCategoryCode() != null && pra.getCategoryCode().getCode() != null
+                        && pra.getCategoryCode().getCode().equals(ActivityCategoryCode.RADIATION.getCode())) {
+                    getDisplayTagList().add(new RadiationWebDto(pra));
+                }
+            }
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+        } 
     }
 
     /**
@@ -117,12 +134,72 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
             return INPUT;
         }
         try {
-            return super.add();
+            PerformedRadiationAdministrationDto dto = radiation.getPerformedRadiationAdministrationDto();
+            dto = performedActivitySvc.createPerformedRadiationAdministration(dto);
+
+            ActivityRelationshipDto arDto = new ActivityRelationshipDto();
+            arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+            arDto.setSourcePerformedActivityIdentifier(getCourseIi());
+            arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
+            activityRelationshipSvc.create(arDto);
+            return super.add();  
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
+        } catch (DataFormatException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String update() {
+        radiation = null;
+        try {
+            loadDisplayList();
+            for (RadiationWebDto rad : getDisplayTagList()) {
+                if (rad.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                    radiation = rad;
+                }
+            }
+        } catch (Exception e) {
+            radiation = null;
+            LOG.error("Error in RadiationAction.update().", e);
+        }
+        if (radiation == null) {
+            addActionError("Error retrieving radiation info for update.");
+            return execute();
+        }
+        return super.update();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String edit() throws RemoteException {
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        try {
+            PerformedRadiationAdministrationDto dto = radiation.getPerformedRadiationAdministrationDto();
+            dto = performedActivitySvc.updatePerformedRadiationAdministration(dto);
+        } catch (RemoteException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        } catch (DataFormatException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
+        return super.edit();
     }
 
     /**

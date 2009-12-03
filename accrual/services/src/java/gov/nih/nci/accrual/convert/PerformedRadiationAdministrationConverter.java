@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.convert;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
+import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -130,7 +131,7 @@ public class PerformedRadiationAdministrationConverter extends PerformedSubstanc
         }
         dto.setDoseDuration(doseDuration);
         dto.setDoseModificationType(CdConverter.convertStringToCd(bo.getDoseModificationType()));
-        dto.setMachineTypeCode(CdConverter.convertStringToCd(bo.getMachineTypeCode()));
+        dto.setMachineTypeCode(CdConverter.convertToCd(bo.getMachineTypeCode()));
         return dto;
     }
 
@@ -187,7 +188,7 @@ public class PerformedRadiationAdministrationConverter extends PerformedSubstanc
             }
         }
         if (!PAUtil.isCdNull(dto.getMachineTypeCode())) {
-            bo.setMachineTypeCode(dto.getMachineTypeCode().getCode());
+            bo.setMachineTypeCode(RadiationMachineTypeCode.getByCode(dto.getMachineTypeCode().getCode()));
         }
         return bo;
     }
