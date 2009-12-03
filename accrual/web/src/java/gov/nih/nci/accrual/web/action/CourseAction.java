@@ -83,8 +83,6 @@ import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.SessionEnvManager;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -93,14 +91,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.struts2.ServletActionContext;
-
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
  * @author Hugh Reinhart
  * @since Nov 5, 2009
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.BooleanGetMethodName" })
 public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
 
     private static final long serialVersionUID = -3007738923753747925L;
