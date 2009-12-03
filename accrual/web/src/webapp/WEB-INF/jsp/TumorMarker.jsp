@@ -11,10 +11,21 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript">
     function handleSaveAction() {
-        document.forms[0].action = "saveTumorMarker.action";
-        document.forms[0].submit();
-    }
-
+     var uomValue = document.getElementById("tumorMarker.tmvUom.unit").value;
+     if (uomValue == '' || uomValue == 'undefined') {
+       input_uom_box = confirm("Tumor Marker UOM not set.  Do you want to save anyway?");
+        if (input_uom_box==true){
+         document.forms[0].action = "saveTumorMarker.action";
+         document.forms[0].submit();
+        }
+        } else {
+         input_box=confirm("Click OK to save changes or Cancel to Abort.");
+         if (input_box==true){
+          document.forms[0].action = "saveTumorMarker.action";
+          document.forms[0].submit();
+         }
+       }  
+   }
     function handleCancelAction() {
         document.forms[0].action = "executeStaging.action";
         document.forms[0].submit();
@@ -71,7 +82,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="tumor.marker.value.uom.label"/><span class="required">*</span></label></td>
         <td>
-            <s:textfield readonly="true" size="50" name="tumorMarker.tmvUom.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
+            <s:textfield readonly="true" size="50" id="tumorMarker.tmvUom.unit" name="tumorMarker.tmvUom.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookup('tmvUom');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>tumorMarker.tmvUom.unit</s:param></s:fielderror>
         </td>

@@ -135,8 +135,6 @@ public class StagingWebDto implements Serializable {
     /**
      * @return the tt
      */
-    @FieldExpressionValidator(expression = "tt.value != null && tt.value.length() > 0", 
-                              message = "Please enter a value for T")
     public St getTt() {
         return tt;
     }
@@ -151,8 +149,6 @@ public class StagingWebDto implements Serializable {
     /**
      * @return the nn
      */
-    @FieldExpressionValidator(expression = "nn.value != null && nn.value.length() > 0", 
-                              message = "Please enter a value for N")
     public St getNn() {
         return nn;
     }
@@ -167,8 +163,6 @@ public class StagingWebDto implements Serializable {
     /**
      * @return the mm
      */
-    @FieldExpressionValidator(expression = "mm.value != null && mm.value.length() > 0", 
-                              message = "Please enter a value for M")
     public St getMm() {
         return mm;
     }

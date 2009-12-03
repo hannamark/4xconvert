@@ -102,6 +102,7 @@ import gov.nih.nci.pa.domain.PerformedProcedure;
 import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -432,6 +433,10 @@ implements PerformedActivityService {
         }
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new RemoteException("StudyProtocol must be set.  ");
+        }
+        if (dto.getCategoryCode() != null && dto.getCategoryCode().getCode() != null
+                        && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.TUMOR_MARKER.getCode())) {
+           validateTumorBusinessRule(dto);
         }
         return createOrUpdatePerformedObservation(dto);
     }
@@ -860,5 +865,26 @@ implements PerformedActivityService {
         }
         getLogger().info("Leaving getPerformedObservationByStudySubject " + resultList.size() + " object(s).  ");
         return resultList;
+    }
+    
+    /**
+     * Validate tumor business rule - checks to see if there exista a tumor with the same name.
+     * 
+     * @param dto the dto
+     * 
+     * @throws RemoteException the remote exception
+     */
+    private void validateTumorBusinessRule(PerformedObservationDto dto) throws RemoteException {
+      List<PerformedObservationDto> performedObservationList = 
+           this.getPerformedObservationByStudySubject(dto.getStudySubjectIdentifier());
+      for (PerformedObservationDto performedObservation : performedObservationList) {
+       if (!PAUtil.isCdNull(performedObservation.getCategoryCode()) 
+           && performedObservation.getCategoryCode().getCode().equals(ActivityCategoryCode.TUMOR_MARKER.getCode())
+           && performedObservation.getName().getValue().equalsIgnoreCase(dto.getName().getValue())) {
+          getLogger().info("Tumor Marker already exists " + dto.getName().getValue());
+          throw new RemoteException("Tumor Marker " + dto.getName().getValue() + " already exists." 
+          + " Please select another Tumor Marker");
+       }
+      }
     }
 }

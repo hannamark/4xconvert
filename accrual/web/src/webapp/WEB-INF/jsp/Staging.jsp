@@ -48,7 +48,7 @@
     
     <!-- T Value -->
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="staging.t.label"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="staging.t.label"/></label></td>
         <td class="value">
             <s:textfield id="tValue" name="staging.tt" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>staging.tt</s:param></s:fielderror>
@@ -57,7 +57,7 @@
     
     <!-- N Value -->
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="staging.n.label"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="staging.n.label"/></label></td>
         <td class="value">
             <s:textfield id="nValue" name="staging.nn" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>staging.nn</s:param></s:fielderror>
@@ -66,7 +66,7 @@
     
     <!-- M Value -->
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="staging.m.label"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="staging.m.label"/></label></td>
         <td class="value">
             <s:textfield id="mValue" name="staging.mm" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>staging.mm</s:param></s:fielderror>
@@ -97,7 +97,7 @@
 
 <s:if test="displayTagList != null">
     <div class="box">
-        <display:table class="data" name="displayTagList" sort="list" pagesize="10">    
+        <display:table class="data" name="displayTagList" sort="list" pagesize="10"  requestURI="executeStaging.action">    
             <display:column titleKey="tumor.marker.title" property="tumorMarker.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="tumor.marker.value.title" property="tumorMarkerValue.value" sortable="true" headerClass="sortable"/>
             <display:column titleKey="tumor.marker.value.uom.title" property="tmvUom.unit" sortable="true" headerClass="sortable"/>

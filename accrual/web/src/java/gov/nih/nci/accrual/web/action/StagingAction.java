@@ -108,7 +108,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Lisa Kelley
  * @since 10/30/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.AvoidDeeplyNestedIfStmts" })
 public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebDto> {
 
     private static final long serialVersionUID = 1L;
@@ -119,7 +119,7 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
      */
     @Override
     @SkipValidation
-    @SuppressWarnings("PMD")
+    @SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
     public String execute() {
     try {
        List<PerformedObservationDto> psmList = performedActivitySvc.getPerformedObservationByStudySubject(
@@ -165,7 +165,7 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
      * Save user entries.
      * @return result for next action
      */
-    @SuppressWarnings({ "PMD" })
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
     public String save() {
      try {  
       if (staging.getId() != null && staging.getId().getExtension() != null 

@@ -113,7 +113,7 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD")
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     @SkipValidation
     @Override
     public String execute() {

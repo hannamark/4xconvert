@@ -113,7 +113,7 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
      */
     @Override
     @SkipValidation
-    @SuppressWarnings("PMD")
+    @SuppressWarnings("PMD.UselessOverridingMethod")
     public String execute() {
         return super.execute();
     }
