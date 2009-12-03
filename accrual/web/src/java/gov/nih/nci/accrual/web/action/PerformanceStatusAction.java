@@ -174,11 +174,8 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
         public void getStatusType() throws ExecutionException {
             // Resolve the Status type
             List<Cd> cds =  DSetConverter.convertDsetToCdList(po.getMethodCode());
-            if (cds != null) {
-                for (Cd cd : cds) {
-                    method = cd;
-                    break;
-                }
+            if (cds != null && !cds.isEmpty()) {
+                method = cds.get(0);
             }
             if (method == null) {
                 addActionError("The Performance Method is missing.");
@@ -351,6 +348,7 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
             } else {
                 po.setStudySubjectIdentifier(getParticipantIi());
                 po.setStudyProtocolIdentifier(getSpIi());
+                po.setNameCode(CdConverter.convertStringToCd(ActivityNameCode.PERFORMANCE_STATUS.getCode()));
                 po = performedActivitySvc.createPerformedObservation(po);
             }
         }

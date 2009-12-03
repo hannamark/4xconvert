@@ -91,6 +91,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -130,6 +131,7 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
                         diagnosis.setResultCode(pd.getResultCode());
                         diagnosis.setCreateDate(dto.getActualDateRange().getLow());
                     }
+                    break;
                 }
             }
         } catch (RemoteException e) {
@@ -147,44 +149,72 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
         return execute();
     }
 
+    private PerformedObservationDto savePod() throws RemoteException, DataFormatException {
+        boolean podUpd;
+        PerformedObservationDto pod = null;
+        if (PAUtil.isIiNull(diagnosis.getIdentifier())) {
+            podUpd = false;
+            pod = new PerformedObservationDto();
+            pod.setStudyProtocolIdentifier(getSpIi());
+            pod.setStudySubjectIdentifier(getParticipantIi());
+            pod.setNameCode(CdConverter.convertToCd(ActivityNameCode.DIAGNOSIS));
+        } else {
+            podUpd = true;
+            pod = performedActivitySvc.getPerformedObservation(diagnosis.getIdentifier());
+        }
+
+        pod.getActualDateRange().setLow(diagnosis.getCreateDate());
+
+        if (podUpd) {
+            performedActivitySvc.updatePerformedObservation(pod);
+        } else {
+            pod = performedActivitySvc.createPerformedObservation(pod);
+        }
+
+        return pod;
+    }
+
+    private PerformedDiagnosisDto savePdd(PerformedObservationDto pod) throws RemoteException, DataFormatException {
+        List<PerformedDiagnosisDto> pdList =
+            performedObservationResultSvc.getPerformedDiagnosisByPerformedActivity(pod.getIdentifier());
+        PerformedDiagnosisDto pdd;
+        boolean pddUpd;
+        if (pdList.isEmpty()) {
+            pddUpd = false;
+            pdd = new PerformedDiagnosisDto();
+            pdd.setPerformedObservationIdentifier(pod.getIdentifier());
+            pdd.setStudyProtocolIdentifier(getSpIi());
+        } else {
+            pddUpd = true;
+            pdd = pdList.get(0);
+        }
+
+        pdd.setResultCode(diagnosis.getResultCode());
+        pdd.setResultCodeModifiedText(diagnosis.getName());
+
+        if (pddUpd) {
+            performedObservationResultSvc.updatePerformedDiagnosis(pdd);
+        } else {
+            pdd = performedObservationResultSvc.createPerformedDiagnosis(pdd);
+        }
+        
+        return pdd;
+    }
+
     /**
      * Save user entries.
+     * 
      * @return result for next action
      */
     @Override
     public String save() {
-        if (PAUtil.isIiNull(diagnosis.getIdentifier())) {
-            PerformedObservationDto obs = new PerformedObservationDto();
-            obs.setStudyProtocolIdentifier(getSpIi());
-            obs.setStudySubjectIdentifier(getParticipantIi());
-            obs.setNameCode(CdConverter.convertToCd(ActivityNameCode.DIAGNOSIS));
-            try {
-                obs = performedActivitySvc.createPerformedObservation(obs);
-                List<PerformedDiagnosisDto> pdList =
-                    performedObservationResultSvc.getPerformedDiagnosisByPerformedActivity(obs.getIdentifier());
-                PerformedDiagnosisDto pd;
-                boolean pdUpdate = false;
-                if (!pdList.isEmpty()) {
-                    pd = pdList.get(0);
-                    pdUpdate = true;
-                } else {
-                    pd = new PerformedDiagnosisDto();
-                    pd.setPerformedObservationIdentifier(obs.getIdentifier());
-                    pd.setStudyProtocolIdentifier(getSpIi());
-                }
-                pd.setResultCode(diagnosis.getResultCode());
-                pd.setResultCodeModifiedText(diagnosis.getName());
-                obs.getActualDateRange().setLow(diagnosis.getCreateDate());
-                performedActivitySvc.updatePerformedObservation(obs);
-                if (pdUpdate) {
-                    performedObservationResultSvc.updatePerformedDiagnosis(pd);
-                } else {
-                    performedObservationResultSvc.createPerformedDiagnosis(pd);
-                }
-            } catch (Exception e) {
-                addActionError("Error in save().  " + e.getLocalizedMessage());
-                return INPUT;
-            }
+        try {
+            PerformedObservationDto pod = savePod();
+            savePdd(pod);
+
+        } catch (Exception e) {
+            addActionError("Error in save().  " + e.getLocalizedMessage());
+            return INPUT;
         }
         return super.execute();
     }
