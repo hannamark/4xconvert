@@ -331,5 +331,9 @@
     <changeSet id="81" author="Kalpana">
         <comment>execute accrual_dev_23941_8.sql</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_8.sql"/>
-    </changeSet>   
+    </changeSet>
+    <changeSet id="82" author="Lisa">
+            <comment>execute accrual_dev_24521.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24521.sql"/>
+    </changeSet>    
 </databaseChangeLog>
