@@ -10,8 +10,10 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript">
     function handleEditAction() {
-        document.forms[0].action = "saveDeathInformation.action";
-        document.forms[0].submit();
+    if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+	        document.forms[0].action = "saveDeathInformation.action";
+	        document.forms[0].submit();
+	        }
     }
 
     function handleCancelAction() {

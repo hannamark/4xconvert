@@ -94,6 +94,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 
 
  /**
@@ -149,6 +150,23 @@ public class BaseLookUpService <BO extends AbstractLookUpEntity> {
         BO bo = (BO) session.get(getTypeArgument(), boId);
         AccrualHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         LOG.info("Leaving getById");
+        return bo;
+    }
+    
+    /**
+     * Gets the by code.
+     * @param code the code
+     * @return the by code
+     * @throws RemoteException the remote exception
+     */
+    public BO getByCode(String code) throws RemoteException {
+        LOG.info("Entering getByCode ");
+        AccrualHibernateUtil.getHibernateHelper().openAndBindSession();
+        Session session = null;
+        session = AccrualHibernateUtil.getCurrentSession();        
+        BO bo = (BO) session.createCriteria(getTypeArgument()).add(Restrictions.eq("code", code)).list().get(0);        
+        AccrualHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+        LOG.info("Leaving getByCode");
         return bo;
     }
 

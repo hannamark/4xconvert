@@ -17,8 +17,10 @@
 <script type="text/javascript">
 
 	function handleSaveAction() {
-        document.forms[0].action = "addDrugBiologics.action";
-        document.forms[0].submit();
+	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+	        document.forms[0].action = "addDrugBiologics.action";
+	        document.forms[0].submit();
+        }
     }
 
     function handleCancelAction() {
@@ -27,8 +29,10 @@
     }
 	
 	function handleEditAction(){
-	    document.forms[0].action="editDrugBiologics.action";
-	    document.forms[0].submit();
+	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+		    document.forms[0].action="editDrugBiologics.action";
+		    document.forms[0].submit();
+	    }
 	}
     
     function lookupDrugName() {
@@ -81,7 +85,8 @@
 <s:hidden name = "currentAction"/>
 <s:hidden name = "selectedRowIdentifier"/>
 <s:hidden name = "drugBiologic.id"/>
-<s:hidden name="drugBiologic.interventionId" />
+<s:hidden name = "drugBiologic.interventionId" />
+<s:hidden name = "drugBiologic.doseFreqId" />
 <table class="form">
  	<tr>
 		        <th colspan="3"><fmt:message key="drugBiologic.subHeading1"/></th>
@@ -138,7 +143,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="drugBiologic.duration"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="drugBiologic.duration"/>:</label></td>
         <td class="value">
             <s:textfield name="drugBiologic.doseDur.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.doseDur.value</s:param></s:fielderror>
@@ -146,7 +151,7 @@
     </tr>
     
      <tr>
-        <td scope="row" class="label"><label><fmt:message key="drugBiologic.durationUOM"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="drugBiologic.durationUOM"/>:</label></td>
         <td class="value">
         <s:textfield readonly="true" size="50" name="drugBiologic.doseDur.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupDurationUom();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
@@ -191,7 +196,7 @@
     </tr>
     
      <tr>
-        <td scope="row" class="label"><label><fmt:message key="drugBiologic.bsa"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="drugBiologic.bsa"/>:</label></td>
         <td class="value">
             <s:textfield name="drugBiologic.bsa.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.bsa.value</s:param></s:fielderror>
@@ -216,7 +221,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="drugBiologic.doseMT"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="drugBiologic.doseMT"/>:</label></td>
         <td class="value">
             <s:set name="doseModificationTypeValues" value="@gov.nih.nci.pa.enums.DoseModificationType@getDisplayNames()" />
             <s:select id ="doseModificationType" name="drugBiologic.doseModType" headerKey="" headerValue="--Select--"

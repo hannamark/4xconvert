@@ -105,7 +105,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
 public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoWebDto> {
 
     private static final long serialVersionUID = 1L;
@@ -188,6 +188,10 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
      */
     @Override
     public String save() {
+        DeathInfoWebDto.validate(deathInfo, this);
+        if (hasActionErrors() || hasFieldErrors()) {
+            return INPUT;
+        }
         try {            
             if (deathInfo.getId() != null && deathInfo.getId().getExtension() == null) {
                 PerformedObservationDto dto = new PerformedObservationDto();

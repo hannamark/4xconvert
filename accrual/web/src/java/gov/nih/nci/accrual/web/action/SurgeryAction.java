@@ -134,6 +134,7 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
      */
     @Override
     public String add() {
+        SurgeryWebDto.validate(surgery, this);
         if (hasActionErrors() || hasFieldErrors()) {
             setCurrentAction(CA_CREATE);
             return INPUT;
@@ -188,6 +189,7 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
      */
     @Override
     public String edit() throws RemoteException {
+        SurgeryWebDto.validate(surgery, this);
         if (hasActionErrors() || hasFieldErrors()) {
             setCurrentAction(CA_CREATE);
             return INPUT;

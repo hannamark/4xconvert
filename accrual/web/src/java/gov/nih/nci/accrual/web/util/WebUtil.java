@@ -86,6 +86,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.util.Date;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 28, 2009
@@ -157,5 +159,18 @@ public class WebUtil {
             return false;
         }
         return value.equals(criteria);
+    }
+    
+    /**
+     * Check valid dates.
+     * @param date the date
+     * @return true, if successful
+     */
+    public static boolean checkValidDate(Date date) {
+        Date curentdate = new Date(); 
+        if (date.after(curentdate)) {
+            return false;
+        }
+        return true;
     }
 }

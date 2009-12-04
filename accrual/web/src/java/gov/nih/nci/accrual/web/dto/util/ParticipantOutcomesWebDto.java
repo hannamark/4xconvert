@@ -80,8 +80,10 @@
 package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
+import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ts;
@@ -99,10 +101,14 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.TooManyFields" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.TooManyFields",
+    "PMD.NPathComplexity" })
 public class ParticipantOutcomesWebDto implements Serializable {
 
     private static final long serialVersionUID = 1839478941711659167L;
+    
+    /** The Constant validDateMessage. */
+    private static final String VALIDDATEMESSAGE = "Please Enter Current or Past Date.";
     
     private Ii id;
     private Cd vitalStatus;
@@ -127,7 +133,46 @@ public class ParticipantOutcomesWebDto implements Serializable {
      */
     public ParticipantOutcomesWebDto() {
         // default constructor
-    }  
+    }
+    
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(ParticipantOutcomesWebDto dto, AbstractAccrualAction action) {  
+        if (dto.getBestResponseDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getBestResponseDate().getValue());
+            if (!validDate) {
+                action.addFieldError("targetOutcome.bestResponseDate", VALIDDATEMESSAGE);
+            }
+        }
+        if (dto.getEvaluationDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getEvaluationDate().getValue());
+            if (!validDate) {
+                action.addFieldError("targetOutcome.evaluationDate", VALIDDATEMESSAGE);
+            }
+        }
+        if (dto.getProgressionDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getProgressionDate().getValue());
+            if (!validDate) {
+                action.addFieldError("targetOutcome.progressionDate", VALIDDATEMESSAGE);
+            }
+        }
+        if (dto.getRecurrenceDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getRecurrenceDate().getValue());
+            if (!validDate) {
+                action.addFieldError("targetOutcome.recurrenceDate", VALIDDATEMESSAGE);
+            }
+        }
+        if (dto.getDiseaseStatusDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getDiseaseStatusDate().getValue());
+            if (!validDate) {
+                action.addFieldError("targetOutcome.diseaseStatusDate", VALIDDATEMESSAGE);
+            }
+        }
+    } 
 
     /**
      * Instantiates a new participant outcomes web dto.

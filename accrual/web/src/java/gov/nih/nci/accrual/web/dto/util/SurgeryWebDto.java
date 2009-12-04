@@ -80,8 +80,10 @@
 package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedProcedureDto;
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.SessionEnvManager;
+import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
@@ -115,6 +117,21 @@ public class SurgeryWebDto implements Serializable {
      */
     public SurgeryWebDto() {
         // default constructor
+    }
+    
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(SurgeryWebDto dto, AbstractAccrualAction action) {  
+        if (dto.getCreateDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getCreateDate().getValue());
+            if (!validDate) {
+                action.addFieldError("surgery.createDate", "Please Enter Current or Past Date.");
+            }
+        }
     }
     
    
@@ -202,8 +219,6 @@ public class SurgeryWebDto implements Serializable {
     /**
      * @return the info
      */
-    @FieldExpressionValidator(expression = "info.value != null && info.value.length() > 0", 
-            message = "Please enter Additional Information")
     public St getInfo() {
         return info;
     }

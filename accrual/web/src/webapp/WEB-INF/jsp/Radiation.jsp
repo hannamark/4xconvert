@@ -32,9 +32,12 @@
 <s:form name="detailForm">
     <display:table class="data" id="row" name="displayTagList" sort="list" pagesize="10" requestURI="executeRadiation.action">    
             <display:column titleKey="radiation.name" property="type.code" sortable="true" headerClass="sortable"/>
-            <display:column titleKey="radiation.date" property="radDate.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="radiation.date" sortable="true" headerClass="sortable">
+            	<s:property value="%{#attr.row.radDate}"/>
+            </display:column>
             <display:column titleKey="drugBiologic.dose" property="dose.value" sortable="true" headerClass="sortable"/>
             <display:column titleKey="drugBiologic.doseUOM" property="dose.unit" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="drugBiologic.frequency" property="doseFreq.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="radiation.machineType" property="machineType.code" sortable="true" headerClass="sortable"/>
             <display:column title="Edit" class="action">
     		<s:url id="url" action="updateRadiation"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>

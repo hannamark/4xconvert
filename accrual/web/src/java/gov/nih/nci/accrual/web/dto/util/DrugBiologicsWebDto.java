@@ -113,6 +113,7 @@ public class DrugBiologicsWebDto implements Serializable {
     private Pq doseTotal;    
     private Cd doseModType;
     private Ii interventionId;
+    private Ii doseFreqId;
 
     /**
      * Instantiates a new drug biologics web dto.
@@ -133,7 +134,9 @@ public class DrugBiologicsWebDto implements Serializable {
         drugName = webDto.getDrugName();
         dose = psaDto.getDose();
         doseRoute = psaDto.getRouteOfAdministrationCode();
-        doseFreq = psaDto.getDoseFrequencyCode();
+        //doseFreq = psaDto.getDoseFrequencyCode();    
+        doseFreq = webDto.getDoseFreq();
+        doseFreqId = webDto.getDoseFreqId();
         doseDur = psaDto.getDoseDuration();
         height = webDto.getHeight();
         weight = webDto.getWeight();
@@ -156,10 +159,10 @@ public class DrugBiologicsWebDto implements Serializable {
         if (dto.getDose() == null || dto.getDose().getUnit().equals("")) {
             action.addFieldError("drugBiologic.dose.unit", "Please select Dose UOM.");
         }
-        if (dto.getDoseDur() == null || dto.getDoseDur().getValue() == null) {
+        if (dto.getDoseDur().getValue() == null &&  !(dto.getDoseDur().getUnit().equals(""))) {
             action.addFieldError("drugBiologic.doseDur.value", "Please enter Duration Value.");
         }
-        if (dto.getDoseDur() == null || dto.getDoseDur().getUnit().equals("")) {
+        if (dto.getDoseDur().getUnit().equals("") && dto.getDoseDur().getValue() != null) {
             action.addFieldError("drugBiologic.doseDur.unit", "Please select Duration UOM.");
         }
         if (dto.getHeight() == null || dto.getHeight().getValue() == null) {
@@ -174,9 +177,9 @@ public class DrugBiologicsWebDto implements Serializable {
         if (dto.getWeight() == null || dto.getWeight().getUnit().equals("")) {
             action.addFieldError("drugBiologic.weight.unit", "Please select Weight UOM.");  
         }
-        if (dto.getBsa() == null || dto.getBsa().getValue() == null) {
+        /*if (dto.getBsa() == null || dto.getBsa().getValue() == null) {
             action.addFieldError("drugBiologic.bsa.value", "Please enter Body Surface Area Value.");  
-        }
+        }*/
         if (dto.getDoseTotal() == null || dto.getDoseTotal().getValue() == null) { 
             action.addFieldError("drugBiologic.doseTotal.value", "Please enter Dose Total Value.");
         }
@@ -355,8 +358,6 @@ public class DrugBiologicsWebDto implements Serializable {
      * Gets the dose mod type.
      * @return the dose mod type
      */
-    @FieldExpressionValidator(expression = "doseModType.code != null && doseModType.code.length() > 0", 
-            message = "Please select a Dose Modification Type")
     public Cd getDoseModType() {
         return doseModType;
     }
@@ -383,5 +384,21 @@ public class DrugBiologicsWebDto implements Serializable {
      */
     public void setInterventionId(Ii interventionId) {
         this.interventionId = interventionId;
+    }
+
+    /**
+     * Gets the dose freq id.
+     * @return the dose freq id
+     */
+    public Ii getDoseFreqId() {
+        return doseFreqId;
+    }
+
+    /**
+     * Sets the dose freq id.
+     * @param doseFreqId the new dose freq id
+     */
+    public void setDoseFreqId(Ii doseFreqId) {
+        this.doseFreqId = doseFreqId;
     }
 }

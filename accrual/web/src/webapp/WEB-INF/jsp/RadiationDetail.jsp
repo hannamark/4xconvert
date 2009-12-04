@@ -14,8 +14,10 @@
 <script type="text/javascript">
 
 	function handleSaveAction() {
-        document.forms[0].action = "addRadiation.action";
-        document.forms[0].submit();
+	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+	        document.forms[0].action = "addRadiation.action";
+	        document.forms[0].submit();
+        }
     }
 
     function handleCancelAction() {
@@ -40,8 +42,10 @@
 	}
 	
 	function handleEditAction(){
-	    document.forms[0].action="editRadiation.action";
-	    document.forms[0].submit();
+	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+		    document.forms[0].action="editRadiation.action";
+		    document.forms[0].submit();
+	    }
 	}
 
 </script>
@@ -77,6 +81,7 @@
 <s:hidden name = "currentAction"/>
 <s:hidden name = "selectedRowIdentifier"/>
 <s:hidden name = "radiation.id"/>
+<s:hidden name = "radiation.doseFreqId" />
 <table class="form"> 
  	<tr>
         <td scope="row" class="label"><label><fmt:message key="radiation.name"/>:<span class="required">*</span></label></td>
@@ -142,7 +147,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.duration"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.duration"/>:</label></td>
         <td class="value">
             <s:textfield name="radiation.duration.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>radiation.duration.value</s:param></s:fielderror>
@@ -150,7 +155,7 @@
     </tr>
     
      <tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.durationUOM"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.durationUOM"/>:</label></td>
         <td class="value">
         <s:textfield readonly="true" size="50" name="radiation.duration.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupDurationUom();"/><span class="btn_img"><span class="search">Look Up</span></span></a>

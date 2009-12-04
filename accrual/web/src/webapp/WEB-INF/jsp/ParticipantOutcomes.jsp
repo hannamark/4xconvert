@@ -37,46 +37,46 @@
             Please use column headers to sort results." length="0" pagesize="10"
             sort="list" uid="row" name="displayTagList" requestURI="executeParticipantOutcomes.action" export="false">
         <display:column titleKey="partOut.label.evalDate" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.evaluationDate}"/>
+            <s:property value="%{#attr.row.evaluationDate}"/>
         </display:column>
         <display:column titleKey="partOut.label.vitalStatus" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.vitalStatus}"/>
+            <s:property value="%{#attr.row.vitalStatus}"/>
         </display:column>
         <display:column titleKey="partOut.label.respInd" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.responseInd}"/>
+            <s:property value="%{#attr.row.responseInd}"/>
         </display:column>
         <display:column titleKey="partOut.label.disStatus" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.diseaseStatus}"/>
+            <s:property value="%{#attr.row.diseaseStatus}"/>
         </display:column>
         <display:column titleKey="partOut.label.disStatusDate" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.diseaseStatusDate}"/>
+            <s:property value="%{#attr.row.diseaseStatusDate}"/>
         </display:column>
         <display:column titleKey="partOut.label.method" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.assessmentType}"/>
+            <s:property value="%{#attr.row.assessmentType}"/>
         </display:column>
         <display:column titleKey="partOutEdit.label.bestResponse" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.bestResponse}"/>
+            <s:property value="%{#attr.row.bestResponse}"/>
         </display:column>
         <display:column titleKey="partOutEdit.label.bestResponseDate" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.bestResponseDate}"/>
+            <s:property value="%{#attr.row.bestResponseDate}"/>
         </display:column>
         <display:column titleKey="partOutEdit.label.diseaseEvidence" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.diseaseEvidence}"/>
+            <s:property value="%{#attr.row.diseaseEvidence}"/>
         </display:column>
         <display:column titleKey="partOut.label.recInd" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.recurrenceInd}"/>
+            <s:property value="%{#attr.row.recurrenceInd}"/>
         </display:column>
         <display:column titleKey="partOut.label.recIndDate" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.recurrenceDate}"/>
+            <s:property value="%{#attr.row.recurrenceDate}"/>
         </display:column>
         <display:column titleKey="partOut.label.progInd" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.progressionInd}"/>
+            <s:property value="%{#attr.row.progressionInd}"/>
         </display:column>
         <display:column titleKey="partOut.label.progIndDate" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.progressionDate}"/>
+            <s:property value="%{#attr.row.progressionDate}"/>
         </display:column>
         <display:column titleKey="partOut.label.site" headerClass="left" sortable="true">
-            <s:label value="%{#attr.row.progressionSite}"/>
+            <s:property value="%{#attr.row.progressionSite}"/>
         </display:column>
     </display:table>
 </s:form>

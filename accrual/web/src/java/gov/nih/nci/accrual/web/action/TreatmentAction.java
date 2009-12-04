@@ -165,6 +165,31 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
         SessionEnvManager.putTreatmentPlanInSession(treatment.getId(), treatment.getName());
         return super.update();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String retrieve() {
+        treatment = null;
+        try {
+            loadDisplayList();
+            for (TreatmentWebDto tm : getDisplayTagList()) {
+                if (tm.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                    treatment = tm;
+                }
+            }
+        } catch (Exception e) {
+            treatment = null;
+            LOG.error("Error in TreatmentAction.retrieve().", e);
+        }
+        if (treatment == null) {
+            addActionError("Error retrieving treatment info for retrieve.");
+            return execute();
+        }
+        SessionEnvManager.putTreatmentPlanInSession(treatment.getId(), treatment.getName());
+        return execute();
+    }
 
     /**
      * {@inheritDoc}

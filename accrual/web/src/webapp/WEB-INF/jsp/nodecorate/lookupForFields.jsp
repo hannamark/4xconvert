@@ -52,7 +52,7 @@
 		}
 	    document.forms[0].submit();
 	}
-	function populateFields(name,type) {
+	function populateFields(name,type,displayName,id) {
 		if(type == 'radiationTotalDoseUom') {
 			window.top.document.getElementsByName("radiation.totalDose.unit")[0].value = name;
 		}else if(type == 'radiationDurationUom') {
@@ -62,7 +62,8 @@
 		}else if(type == 'doseRoa') {
 			window.top.document.getElementsByName("drugBiologic.doseRoute")[0].value = name;
 		}else if(type == 'doseFrequency') {
-			window.top.document.getElementsByName("drugBiologic.doseFreq")[0].value = name;
+			window.top.document.getElementsByName("drugBiologic.doseFreq")[0].value = displayName;
+			window.top.document.getElementsByName("drugBiologic.doseFreqId")[0].value = id;
 		}else if(type == 'doseDurationUom') {
 			window.top.document.getElementsByName("drugBiologic.doseDur.unit")[0].value = name;
 		}else if(type == 'totalDoseUom') {
@@ -80,7 +81,8 @@
         }else if(type == 'radiationDoseUom') {
 			window.top.document.getElementsByName("radiation.dose.unit")[0].value = name;
 		}else if(type == 'radiationFrequency') {
-			window.top.document.getElementsByName("radiation.doseFreq")[0].value = name;
+			window.top.document.getElementsByName("radiation.doseFreq")[0].value = displayName;			
+			window.top.document.getElementsByName("radiation.doseFreqId")[0].value = id;
 		}
         window.top.hidePopWin(false); 
 	}

@@ -97,12 +97,10 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Hugh Reinhart
  * @since Nov 5, 2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.BooleanGetMethodName" })
 public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
 
     private static final long serialVersionUID = -3007738923753747925L;
     private CourseWebDto course = new CourseWebDto();
-    private boolean hasCourses;
 
     /**
      * {@inheritDoc}
@@ -118,10 +116,6 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
                     getDisplayTagList().add(new CourseWebDto(pa));
                 }
             }
-            hasCourses = (getDisplayTagList().size() > 0);
-            if (!hasCourses) {
-                getDisplayTagList().add(new CourseWebDto());
-            }
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
         }
@@ -132,6 +126,7 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
      */
     @Override
     public String add() {
+        CourseWebDto.validate(course, this);
         if (hasActionErrors() || hasFieldErrors()) {
             setCurrentAction(CA_CREATE);
             return INPUT;
@@ -185,6 +180,7 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
      */
     @Override
     public String edit() throws RemoteException {
+        CourseWebDto.validate(course, this);
         if (hasActionErrors() || hasFieldErrors()) {
             setCurrentAction(CA_CREATE);
             return INPUT;
@@ -199,6 +195,31 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
         }
         SessionEnvManager.putCourseInSession(dto.getIdentifier(), dto.getName());
         return super.edit();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String retrieve() {
+        course = null;
+        try {
+            loadDisplayList();
+            for (CourseWebDto c : getDisplayTagList()) {
+                if (c.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
+                    course = c;
+                }
+            }
+        } catch (Exception e) {
+            course = null;
+            LOG.error("Error in CourseAction.retrieve().", e);
+        }
+        if (course == null) {
+            addActionError("Error retrieving course info for retrieve.");
+            return execute();
+        }
+        SessionEnvManager.putCourseInSession(course.getIdentifier(), course.getName());
+        return execute();
     }
 
     /**
@@ -217,19 +238,4 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
     public void setCourse(CourseWebDto course) {
         this.course = course;
     }
-
-    /**
-     * @param hasCourses the hasCourses to set
-     */
-    public void setHasCourses(boolean hasCourses) {
-        this.hasCourses = hasCourses;
-    }
-
-    /**
-     * @return the hasCourses
-     */
-    public boolean getHasCourses() {
-        return hasCourses;
-    }
-
 }

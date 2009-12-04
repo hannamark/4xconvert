@@ -85,6 +85,7 @@ import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
+import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Pq;
@@ -187,6 +188,12 @@ public class LesionAssessmentWebDto implements Serializable {
         if (dto.getLesionLongestDiameter() == null || dto.getLesionLongestDiameter().getValue() == null) {
             action.addFieldError("lesionAssessment.lesionLongestDiameter.value", 
                     "Please enter Lesion Longest Diameter Value.");
+        }
+        if (dto.getClinicalAssessmentDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getClinicalAssessmentDate().getValue());
+            if (!validDate) {
+                action.addFieldError("lesionAssessment.clinicalAssessmentDate", "Please Enter Current or Past Date.");
+            }
         }
     }
 

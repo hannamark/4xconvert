@@ -136,6 +136,10 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
      */
     @Override
     public String save() {
+        OffTreatmentWebDto.validate(offTreat, this);
+        if (hasActionErrors() || hasFieldErrors()) {
+            return INPUT;
+        }
         try {
             PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
             if (offTreat.getId() != null && offTreat.getId().getExtension() != null) {

@@ -227,6 +227,11 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
      * {@inheritDoc}
      */
     public String add() throws RemoteException {
+        ParticipantOutcomesWebDto.validate(targetOutcome, this);
+        if (hasActionErrors() || hasFieldErrors()) {
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        }
         PerformedObservationDto dto = new PerformedObservationDto();
         Ivl<Ts> evalutionDate = new Ivl<Ts>();
         evalutionDate.setLow(targetOutcome.getEvaluationDate());

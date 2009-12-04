@@ -79,7 +79,9 @@
 
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
+import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ts;
@@ -116,6 +118,21 @@ public class DeathInfoWebDto implements Serializable {
      */
     public DeathInfoWebDto() {
         // default constructor
+    }
+    
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(DeathInfoWebDto dto, AbstractAccrualAction action) {  
+        if (dto.getEventDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getEventDate().getValue());
+            if (!validDate) {
+                action.addFieldError("deathInfo.eventDate", "Please Enter Current or Past Date.");
+            }
+        }
     }
 
     /**

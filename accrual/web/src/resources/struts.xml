@@ -96,6 +96,7 @@
             <result name="detail">/WEB-INF/jsp/{1}Detail.jsp</result>
         </action>
         <action name="retrieve*" class="gov.nih.nci.accrual.web.action.{1}Action" method="retrieve"> 
+        	<result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="detail">/WEB-INF/jsp/{1}Detail.jsp</result>
         </action>
         <action name="update*" class="gov.nih.nci.accrual.web.action.{1}Action" method="update"> 

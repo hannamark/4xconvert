@@ -33,16 +33,17 @@
 <s:form name="detailForm">
     <display:table class="data" uid="row" name="displayTagList" sort="list" pagesize="10" requestURI="executeCourse.action">    
             <display:column titleKey="course.name" sortable="true" headerClass="sortable">
-            <s:label value="%{#attr.row.name}" cssStyle="font-weight: normal" /></display:column>
+            	<s:url id="url" action="retrieveCourse"><s:param name="selectedRowIdentifier" value="%{#attr.row.identifier.extension}" /></s:url>
+            	<s:a href="%{url}">
+                   ${row.name.value}
+				</s:a>
+            </display:column>
             <display:column titleKey="course.startDate" sortable="true" headerClass="sortable">
-            <s:label value="%{#attr.row.createDate}" cssStyle="font-weight: normal" /></display:column>
+            	<s:property value="%{#attr.row.createDate}"/>
+            </display:column>
             <display:column title="Edit" class="action">
-            <s:if test="%{hasCourses}">
     		<s:url id="url" action="updateCourse"><s:param name="selectedRowIdentifier" value="%{#attr.row.identifier.extension}" /></s:url>
-    		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
-    		</s:if>
-    		<s:else>&nbsp;
-    		</s:else>
+    		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>    		
     	</display:column>   
     </display:table>
 </s:form>

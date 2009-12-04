@@ -80,6 +80,7 @@ import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.pa.domain.ActivityRelationship;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
+import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
@@ -117,7 +118,6 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
-import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -708,6 +708,12 @@ public class TestSchema {
         ar.setTargetPerformedActivity(performedActivities.get(0));
         addUpdObject(ar);
         activityRelationships.add(ar);*/
+        
+        DoseFrequency df = new DoseFrequency();
+        df.setCode("QIS");
+        df.setDisplayName("Four Times Weekly");
+        df.setDescription("Four Times Weekly");
+        addUpdObject(df);
     }
 
 }

@@ -35,7 +35,9 @@
             <display:column titleKey="lesionAssessment.site" property="lesionSite.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="lesionAssessment.medt" property="measurableEvaluableDiseaseType.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="lesionAssessment.lmmethod" property="lesionMeasurementMethod.code" sortable="true" headerClass="sortable"/>
-            <display:column titleKey="lesionAssessment.clinicalAssessmentDate" property="clinicalAssessmentDate.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="lesionAssessment.clinicalAssessmentDate" sortable="true" headerClass="sortable">
+            	<s:property value="%{#attr.row.clinicalAssessmentDate}"/>
+            </display:column>
             <display:column title="Edit" class="action">
     		<s:url id="url" action="updateLesionAssessment"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>

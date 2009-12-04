@@ -80,10 +80,13 @@ package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
+import gov.nih.nci.accrual.service.BaseLookUpService;
 import gov.nih.nci.accrual.web.dto.util.RadiationWebDto;
+import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -115,7 +118,15 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
             for (PerformedRadiationAdministrationDto pra : paList) {
                 if (pra.getCategoryCode() != null && pra.getCategoryCode().getCode() != null
                         && pra.getCategoryCode().getCode().equals(ActivityCategoryCode.RADIATION.getCode())) {
-                    getDisplayTagList().add(new RadiationWebDto(pra));
+                    
+                    BaseLookUpService<DoseFrequency> lookUpService =
+                        new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
+                    DoseFrequency dfBean = lookUpService.getByCode(pra.getDoseFrequencyCode().getCode());
+                    RadiationWebDto webDto = new RadiationWebDto();
+                    webDto.setDoseFreq(CdConverter.convertStringToCd(dfBean.getDisplayName()));
+                    webDto.setDoseFreqId(IiConverter.convertToIi(dfBean.getId()));
+                    
+                    getDisplayTagList().add(new RadiationWebDto(pra, webDto));
                 }
             }
         } catch (RemoteException e) {
@@ -135,6 +146,11 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
         }
         try {
             PerformedRadiationAdministrationDto dto = radiation.getPerformedRadiationAdministrationDto();
+            
+            BaseLookUpService<DoseFrequency> lookUpService =
+                new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
+            DoseFrequency dfBean = lookUpService.getById(IiConverter.convertToLong(radiation.getDoseFreqId()));
+            dto.setDoseFrequencyCode(CdConverter.convertStringToCd(dfBean.getCode()));            
             dto = performedActivitySvc.createPerformedRadiationAdministration(dto);
 
             ActivityRelationshipDto arDto = new ActivityRelationshipDto();
@@ -183,12 +199,18 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
      */
     @Override
     public String edit() throws RemoteException {
+        RadiationWebDto.validate(radiation, this);
         if (hasActionErrors() || hasFieldErrors()) {
             setCurrentAction(CA_CREATE);
             return INPUT;
         }
         try {
             PerformedRadiationAdministrationDto dto = radiation.getPerformedRadiationAdministrationDto();
+            
+            BaseLookUpService<DoseFrequency> lookUpService =
+                new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
+            DoseFrequency dfBean = lookUpService.getById(IiConverter.convertToLong(radiation.getDoseFreqId()));
+            dto.setDoseFrequencyCode(CdConverter.convertStringToCd(dfBean.getCode()));
             dto = performedActivitySvc.updatePerformedRadiationAdministration(dto);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());

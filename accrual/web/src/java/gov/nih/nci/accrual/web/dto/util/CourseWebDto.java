@@ -80,8 +80,10 @@
 package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.SessionEnvManager;
+import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
@@ -111,7 +113,22 @@ public class CourseWebDto implements Serializable {
      */
     public CourseWebDto() {
         // default constructor
-    }    
+    }  
+    
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(CourseWebDto dto, AbstractAccrualAction action) {  
+        if (dto.getCreateDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getCreateDate().getValue());
+            if (!validDate) {
+                action.addFieldError("course.createDate", "Please Enter Current or Past Date.");
+            }
+        }
+    }
     
     /**
      * Instantiates a new treatment web dto.
@@ -163,7 +180,7 @@ public class CourseWebDto implements Serializable {
      * @return the createDate
      */
     @FieldExpressionValidator(expression = "createDate.value != null",
-            message = "Please provide a Course Date")
+            message = "Please provide a Course Date")          
     public Ts getCreateDate() {
         return createDate;
     }

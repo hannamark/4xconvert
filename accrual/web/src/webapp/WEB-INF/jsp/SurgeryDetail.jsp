@@ -11,8 +11,10 @@
 <script type="text/javascript">
 
 	function handleSaveAction() {
-        document.forms[0].action = "addSurgery.action";
-        document.forms[0].submit();
+	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+	        document.forms[0].action = "addSurgery.action";
+	        document.forms[0].submit();
+        }
     }
 
     function handleCancelAction() {
@@ -25,8 +27,10 @@
 	}
 	
 	function handleEditAction(){
-	    document.forms[0].action="editSurgery.action";
-	    document.forms[0].submit();
+	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+		    document.forms[0].action="editSurgery.action";
+		    document.forms[0].submit();
+	    }
 	}
 
 </script>
@@ -84,7 +88,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="surgery.relatedInfo"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="surgery.relatedInfo"/>:</label></td>
         <td class="value">
             <s:textarea name="surgery.info" cols="4" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>surgery.info</s:param></s:fielderror>

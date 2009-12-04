@@ -7,8 +7,10 @@
 <head>
 <script type="text/javascript">
     function handleEditAction() {
-        document.forms[0].action = "saveOffTreatment.action";
-        document.forms[0].submit();
+    if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+	        document.forms[0].action = "saveOffTreatment.action";
+	        document.forms[0].submit();
+        }
     }
 
     function handleCancelAction() {
