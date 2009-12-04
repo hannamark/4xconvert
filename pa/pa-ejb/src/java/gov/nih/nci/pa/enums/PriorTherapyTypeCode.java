@@ -107,8 +107,6 @@ public enum PriorTherapyTypeCode implements CodedEnum<String> {
     CHEMOTHERAPY_MULTIPLE_AGENTS_SYSTEMIC("Chemotherapy multiple agents systemic"),
     /** Hormonal therapy. */
     HORMONAL_THERAPY("Hormonal therapy"),
-    /**No prior therapy. */
-    NO_PRIOR_THERAPY("No prior therapy"),
     /** Oncolytic virotherapy. */
     ONCOLYTIC_VIROTHERAPY("Oncolytic virotherapy"),
     /** Prior therapy NOS. */

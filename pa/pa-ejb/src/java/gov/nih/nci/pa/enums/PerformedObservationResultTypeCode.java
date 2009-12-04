@@ -111,8 +111,16 @@ public enum PerformedObservationResultTypeCode implements CodedEnum<String> {
     /**  M. */
     M("M"),    
     /**  STAGE. */
-    STAGE("Stage");
-     
+    STAGE("Stage"),
+    /** Had Prior Therapies. */
+    HAD_PRIOR_THERAPIES("Had Prior Therapies"),
+    /** Number of Prior Therapies. */
+    NUMBER_OF_PRIOR_THERAPIES("Number of Prior Therapies"),
+    /**Prior Therapy. */
+    PRIOR_THERAPY("Prior Therapy"),
+    /** Number of Prior Chemotherapy Regimens. */
+    NUMBER_OF_PRIOR_CHEMOTHERAPY_REGIMENS("Number of Prior Chemotherapy Regimens");
+    
     private String code;
     /**
      * 
