@@ -100,9 +100,11 @@ public class PriorTherapiesWebDto implements Serializable {
     private Ii id = new Ii();
     private Pq totalRegimenNum = new Pq();
     private Pq chemoRegimenNum = new Pq();
+    private Ii idTotalRegimenNum = new Ii();
+    private Ii idChemoRegimenNum = new Ii();
     private List<PriorTherapiesItemWebDto> list = new ArrayList<PriorTherapiesItemWebDto>();
     private boolean hasPrior = false;
-    
+    private Ii idHasPrior = new Ii();
     /**
      * Instantiates a new prior therapies web dto.
      */
@@ -198,4 +200,47 @@ public class PriorTherapiesWebDto implements Serializable {
     public boolean getHasPrior() {
         return hasPrior;
     }
+
+    /**
+     * @return the idTotalRegimenNum
+     */
+    public Ii getIdTotalRegimenNum() {
+        return idTotalRegimenNum;
+    }
+
+    /**
+     * @param idTotalRegimenNum the idTotalRegimenNum to set
+     */
+    public void setIdTotalRegimenNum(Ii idTotalRegimenNum) {
+        this.idTotalRegimenNum = idTotalRegimenNum;
+    }
+
+    /**
+     * @return the idChemoRegimenNum
+     */
+    public Ii getIdChemoRegimenNum() {
+        return idChemoRegimenNum;
+    }
+
+    /**
+     * @param idChemoRegimenNum the idChemoRegimenNum to set
+     */
+    public void setIdChemoRegimenNum(Ii idChemoRegimenNum) {
+        this.idChemoRegimenNum = idChemoRegimenNum;
+    }
+
+    /**
+     * @return the idHasPrior
+     */
+    public Ii getIdHasPrior() {
+        return idHasPrior;
+    }
+
+    /**
+     * @param idHasPrior the idHasPrior to set
+     */
+    public void setIdHasPrior(Ii idHasPrior) {
+        this.idHasPrior = idHasPrior;
+    }
+    
 }

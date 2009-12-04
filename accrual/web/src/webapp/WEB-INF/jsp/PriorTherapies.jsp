@@ -81,10 +81,14 @@
 <s:hidden name="priorTherapy.id"/>
 <s:hidden name="newPrior.id"/>
 <s:hidden name="lookupItem"/>
+<s:hidden name="priors.id" id="priors.id"/>
+<s:hidden name="priors.idTotalRegimenNum" id="priors.idTotalRegimenNum"/>
+<s:hidden name="priors.idChemoRegimenNum" id="priors.idChemoRegimenNum"/>
+<s:hidden name="priors.idHasPrior" id="priors.idHasPrior"/>
 <label><fmt:message key="priorTherapy.label.has"/></label> <s:checkbox name="priors.hasPrior" onclick="handleRefreshAction()"/>
 <table class="form">
 <tr><td scope="row" class="label"><label style="${roClass}"><fmt:message key="priorTherapy.label.total"/></label></td>
-<td><s:textfield readonly="%{!priors.hasPrior}" size="10" name="priors.totalRegimenNum" cssStyle="float:left"/>
+<td><s:textfield readonly="true" size="10" name="priors.totalRegimenNum" cssStyle="color: #909090; font-weight: normal; border: 0px solid black"/>
 <s:fielderror cssClass="formErrorMsg"><s:param>priors.totalRegimenNum</s:param></s:fielderror></td></tr>
 <tr><td>&nbsp;</td><td>
     <s:set name="priorsList" scope="request" value="priors.list"/>    
@@ -96,12 +100,12 @@
              <s:if test="%{!priors.hasPrior}">&nbsp;
              </s:if>
              <s:elseif test="%{#attr.row_rowNum == priors.list.size()}">
-			 <s:select id="newPrior.type" name="newPrior.type" headerKey="" headerValue="--Select--"
-                    list="#priorTherapyTypeCodeValues" value="newPrior.type.code"/>
-             </s:elseif>
+			     <s:select id="newPrior.type" name="newPrior.type" headerKey="" headerValue="--Select--"
+                    list="#priorTherapyTypeCodeValues"/>
+                </s:elseif>
              <s:else>
-			 <s:select id="newPrior.type" name="newPrior.type" headerKey="" headerValue="--Select--"
-                    list="#priorTherapyTypeCodeValues" value="newPrior.type.code"/>
+			 <s:select id="type_%{#attr.row.id.extension}" name="type_%{#attr.row.id.extension}" headerKey="" headerValue="--Select--"
+                    list="#priorTherapyTypeCodeValues" value="%{#attr.row.type.code}"/>
              </s:else>
         </display:column>
         <display:column titleKey="priorTherapy.label.list.description" headerClass="left" sortable="true" class="${roClass}">
