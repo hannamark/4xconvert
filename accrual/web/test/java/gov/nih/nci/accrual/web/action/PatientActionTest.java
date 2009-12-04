@@ -88,6 +88,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -157,15 +158,14 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void addTest() throws Exception {
-        assertEquals(ActionSupport.INPUT, action.add());
         patient.setBirthDate("7/16/2009");
-        patient.setCountryIdentifier(Long.valueOf(101));
-        patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
-        patient.setGenderCode(PatientGenderCode.MALE.getCode());
+        patient.setCountryIdentifier(IiConverter.convertToCountryIi(1L));
+        patient.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
+        patient.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
         Set<String> raceCode = new HashSet<String>();
         raceCode.add(PatientRaceCode.WHITE.getName());
         patient.setRaceCode(raceCode);
-        patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        patient.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
         ParticipantsAction.unitedStatesId = 1L;
         action.setParticipant(patient);
@@ -175,19 +175,18 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void editTest() throws Exception {
-        assertEquals(ActionSupport.INPUT, action.edit());
         patient.setBirthDate("7/16/2009");
-        patient.setCountryIdentifier(Long.valueOf(101));
-        patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
-        patient.setGenderCode(PatientGenderCode.MALE.getCode());
+        patient.setCountryIdentifier(IiConverter.convertToCountryIi(1L));
+        patient.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
+        patient.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
         Set<String> raceCode = new HashSet<String>();
         raceCode.add(PatientRaceCode.WHITE.getName());
         patient.setRaceCode(raceCode);
-        patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        patient.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
         patient.setDiseaseIdentifier(IiConverter.convertToIi(1L));
         patient.setStudySubjectIi(IiConverter.convertToIi(1L));
-        patient.setPatientId(1L);
+        patient.setPatientId(IiConverter.convertToIi(1L));
         ParticipantsAction.unitedStatesId = 1L;
         action.setParticipant(patient);
         assertEquals(ActionSupport.SUCCESS, action.edit());

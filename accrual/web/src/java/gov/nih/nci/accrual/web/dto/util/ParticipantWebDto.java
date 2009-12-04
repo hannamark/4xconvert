@@ -81,71 +81,58 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
+import com.opensymphony.xwork2.validator.annotations.RegexFieldValidator;
+
 
 /**
  * @author Hugh Reinhart
  * @since Sep 22, 2009
  */
-public class ParticipantWebDto {
+public class ParticipantWebDto implements Serializable {
+   
+    private static final long serialVersionUID = 1L;
     // from PatientDto
-    private Long patientId;
+    private Ii patientId;
     private Set<String> raceCode = new HashSet<String>();
-    private String genderCode;
-    private String ethnicCode;
+    private Cd genderCode;
+    private Cd ethnicCode;
     private String birthDate;
-    private Long countryIdentifier;
-    private String countryName;
-    private Long poIdentifier;
+    private Ii countryIdentifier;
+    private St countryName;
+    private Ii poIdentifier;
 
     // from StudySubjectDto
     private Ii studySubjectIi;
     private Ii studyProtocolIi;
-    private String identifier;
-    private String paymentMethodCode;
+    private Ii identifier;
+    private Cd paymentMethodCode;
     private St assignedIdentifier;
-    private String statusCode;
+    private Cd statusCode;
     private Ii diseaseIdentifier;
 
 
-    /**
-     * Perform basic validations.
-     * @param dto dto
-     * @param action action to add for errors
-     */
-    public static void validate(ParticipantWebDto dto, AbstractAccrualAction action) {
-        action.clearActionErrors();
-        action.addActionErrorIfEmpty(dto, "Error inputing study subject data.");
-        if (!action.hasActionErrors()) {
-            action.addActionErrorIfEmpty(dto.getAssignedIdentifier(), "Study Subject ID is required.");
-            action.addActionErrorIfEmpty(dto.getBirthDate(), "Birth date is required.");
-            action.addActionErrorIfEmpty(dto.getGenderCode(), "Gender is required.");
-            action.addActionErrorIfEmpty(dto.getRaceCode(), "Race is required.");
-            action.addActionErrorIfEmpty(dto.getEthnicCode(), "Ethnicity is required.");
-            action.addActionErrorIfEmpty(dto.getCountryIdentifier(), "Country is required.");
-        }
-    }
-    /**
+   /**
      * Default constructor.
      */
     public ParticipantWebDto() {
@@ -159,8 +146,8 @@ public class ParticipantWebDto {
      */
     public ParticipantWebDto(Ii studyProtocolIi, Long unitedStatesId) {
         this.studyProtocolIi = studyProtocolIi;
-        countryIdentifier = unitedStatesId;
-        statusCode = FunctionalRoleStatusCode.PENDING.getCode();
+        countryIdentifier = IiConverter.convertToCountryIi(unitedStatesId);
+        statusCode = CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING);
     }
 
     /**
@@ -172,27 +159,27 @@ public class ParticipantWebDto {
     @SuppressWarnings({"PMD.ExcessiveParameterList" })
     public ParticipantWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, List<Country> listOfCountries) {
         if (pIsoDto != null) {
-            patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
+            patientId = pIsoDto.getIdentifier();
             raceCode = DSetEnumConverter.convertDSetToSet(pIsoDto.getRaceCode());
-            genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
-            ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
-            birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
-            countryIdentifier = IiConverter.convertToLong(pIsoDto.getCountryIdentifier());
+            genderCode = pIsoDto.getGenderCode();
+            ethnicCode = pIsoDto.getEthnicCode();
+            birthDate = TsConverter.convertToString(pIsoDto.getBirthDate());
+            countryIdentifier = pIsoDto.getCountryIdentifier();
             for (Country c : listOfCountries) {
-                if (countryIdentifier != null && countryIdentifier.equals(c.getId())) {
-                    countryName = c.getName();
+                if (countryIdentifier != null && countryIdentifier.getExtension().equals(c.getId().toString())) {
+                    countryName = StConverter.convertToSt(c.getName());
                 }
             }
-            poIdentifier = IiConverter.convertToLong(pIsoDto.getAssignedIdentifier());
+            poIdentifier = pIsoDto.getAssignedIdentifier();
         }
 
         if (ssIsoDto != null) {
             studySubjectIi = ssIsoDto.getIdentifier();
             studyProtocolIi = ssIsoDto.getStudyProtocolIdentifier();
-            identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
-            paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
+            identifier = ssIsoDto.getIdentifier();
+            paymentMethodCode = ssIsoDto.getPaymentMethodCode();
             assignedIdentifier = ssIsoDto.getAssignedIdentifier();
-            statusCode = CdConverter.convertCdToString(ssIsoDto.getStatusCode());
+            statusCode = ssIsoDto.getStatusCode();
             diseaseIdentifier = ssIsoDto.getDiseaseIdentifier();
         }
     }
@@ -202,15 +189,15 @@ public class ParticipantWebDto {
      */
     public PatientDto getPatientDto() {
         PatientDto pat = new PatientDto();
-        pat.setIdentifier(IiConverter.convertToIi(getPatientId()));
+        pat.setIdentifier(getPatientId());
         pat.setBirthDate(AccrualUtil.yearMonthStringToTs(getBirthDate()));
-        pat.setCountryIdentifier(IiConverter.convertToCountryIi(getCountryIdentifier()));
-        pat.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.getByCode(getEthnicCode())));
-        pat.setGenderCode(CdConverter.convertToCd(PatientGenderCode.getByCode(getGenderCode())));
+        pat.setCountryIdentifier(getCountryIdentifier());
+        pat.setEthnicCode(getEthnicCode());
+        pat.setGenderCode(getGenderCode());
         pat.setRaceCode(DSetEnumConverter.convertSetToDSet(getRaceCode()));
         pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        pat.setAssignedIdentifier(IiConverter.convertToIi(getPoIdentifier()));
+        pat.setAssignedIdentifier(getPoIdentifier());
         return pat;
     }
 
@@ -222,190 +209,210 @@ public class ParticipantWebDto {
         StudySubjectDto ssub = new StudySubjectDto();
         ssub.setIdentifier(getStudySubjectIi());
         ssub.setStudyProtocolIdentifier(getStudyProtocolIi());
-        ssub.setPatientIdentifier(IiConverter.convertToIi(getPatientId()));
+        ssub.setPatientIdentifier(getPatientId());
         ssub.setAssignedIdentifier(getAssignedIdentifier());
         ssub.setDiseaseIdentifier(getDiseaseIdentifier());
-        ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(getPaymentMethodCode())));
-        ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(getStatusCode())));
+        ssub.setPaymentMethodCode(getPaymentMethodCode());
+        ssub.setStatusCode(getStatusCode());
         ssub.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
         ssub.setOutcomesLoginName(loginName);
         return ssub;
     }
-
+    
     /**
-     * @return the raceCode
+     * @return the patientId
      */
-    public Set<String> getRaceCode() {
-        return raceCode;
-    }
+     public Ii getPatientId() {
+       return patientId;
+     }
     /**
-     * @param raceCode the raceCode to set
+     * @param patientId the patientId to set
      */
-    public void setRaceCode(Set<String> raceCode) {
-        this.raceCode = raceCode;
-    }
+     public void setPatientId(Ii patientId) {
+       this.patientId = patientId;
+     }
     /**
      * @return the genderCode
      */
-    public String getGenderCode() {
-        return genderCode;
+    @FieldExpressionValidator(expression = "genderCode.code != null && genderCode.code.length() > 0", 
+             message = "Gender is required.")
+    public Cd getGenderCode() {
+      return genderCode;
     }
     /**
      * @param genderCode the genderCode to set
      */
-    public void setGenderCode(String genderCode) {
-        this.genderCode = genderCode;
-    }
+     public void setGenderCode(Cd genderCode) {
+      this.genderCode = genderCode;
+     }
     /**
      * @return the ethnicCode
      */
-    public String getEthnicCode() {
-        return ethnicCode;
-    }
+     @FieldExpressionValidator(expression = "ethnicCode.code != null && ethnicCode.code.length() > 0", 
+             message = "Ethnicity is required.")
+     public Cd getEthnicCode() {
+       return ethnicCode;
+     }
     /**
      * @param ethnicCode the ethnicCode to set
      */
-    public void setEthnicCode(String ethnicCode) {
+     public void setEthnicCode(Cd ethnicCode) {
         this.ethnicCode = ethnicCode;
-    }
+     }
     /**
      * @return the birthDate
      */
-    public String getBirthDate() {
-        return birthDate;
-    }
+     @FieldExpressionValidator(expression = "birthDate != null && birthDate.length() > 0 ", 
+             message = "Birth date is required.")
+     @RegexFieldValidator(expression = "(0[1-9]|1[012])[/]((19|20)\\d\\d)" ,
+            message = "Birth date should be in the format MM/YYYY .\n")        
+             
+     public String getBirthDate() {
+       return birthDate;
+     }
     /**
      * @param birthDate the birthDate to set
      */
     public void setBirthDate(String birthDate) {
-        this.birthDate = AccrualUtil.normalizeYearMonthString(birthDate);
+      this.birthDate = birthDate;
     }
-    /**
-     * @return the statusCode
-     */
-    public String getStatusCode() {
-        return statusCode;
-    }
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-    /**
-     * @return the paymentMethodCode
-     */
-    public String getPaymentMethodCode() {
-        return paymentMethodCode;
-    }
-    /**
-     * @param paymentMethodCode the paymentMethodCode to set
-     */
-    public void setPaymentMethodCode(String paymentMethodCode) {
-        this.paymentMethodCode = paymentMethodCode;
-    }
-   /**
-     * @return the assignedIdentifier
-     */
-    public St getAssignedIdentifier() {
-        return assignedIdentifier;
-    }
-    /**
-     * @param assignedIdentifier the assignedIdentifier to set
-     */
-    public void setAssignedIdentifier(St assignedIdentifier) {
-        this.assignedIdentifier = assignedIdentifier;
-    }
-    /**
-     * @return the identifier
-     */
-    public String getIdentifier() {
-       return identifier;
-     }
-    /**
-     * @param identifier the identifier to set
-     */
-     public void setIdentifier(String identifier) {
-       this.identifier = identifier;
-     }
     /**
      * @return the countryIdentifier
      */
-    public Long getCountryIdentifier() {
-        return countryIdentifier;
+    @FieldExpressionValidator(
+            expression = "countryIdentifier.extension != null && countryIdentifier.extension.length() > 0", 
+            message = "Country is required.")
+    public Ii getCountryIdentifier() {
+     return countryIdentifier;
     }
-    /**
-     * @param countryIdentifier the countryIdentifier to set
-     */
-    public void setCountryIdentifier(Long countryIdentifier) {
-        this.countryIdentifier = countryIdentifier;
+   /**
+    * @param countryIdentifier the countryIdentifier to set
+    */
+    public void setCountryIdentifier(Ii countryIdentifier) {
+      this.countryIdentifier = countryIdentifier;
     }
     /**
      * @return the countryName
      */
-    public String getCountryName() {
-        return countryName;
+     public St getCountryName() {
+      return countryName;
+     }
+   /**
+    * @param countryName the countryName to set
+    */
+    public void setCountryName(St countryName) {
+     this.countryName = countryName;
+  }
+ /**
+  * @return the poIdentifier
+  */
+  public Ii getPoIdentifier() {
+    return poIdentifier;
+  }
+  /**
+   * @param poIdentifier the poIdentifier to set
+   */
+   public void setPoIdentifier(Ii poIdentifier) {
+     this.poIdentifier = poIdentifier;
+   }
+  /**
+   * @return the studySubjectIi
+   */
+  public Ii getStudySubjectIi() {
+     return studySubjectIi;
+  }
+  /**
+   * @param studySubjectIi the studySubjectIi to set
+   */
+   public void setStudySubjectIi(Ii studySubjectIi) {
+     this.studySubjectIi = studySubjectIi;
+   }
+  /**
+   * @return the studyProtocolIi
+   */
+   public Ii getStudyProtocolIi() {
+     return studyProtocolIi;
+   }
+  /**
+   * @param studyProtocolIi the studyProtocolIi to set
+   */
+   public void setStudyProtocolIi(Ii studyProtocolIi) {
+     this.studyProtocolIi = studyProtocolIi;
+   }
+  /**
+   * @return the identifier
+   */
+   public Ii getIdentifier() {
+     return identifier;
+   }
+   /**
+    * @param identifier the identifier to set
+    */
+    public void setIdentifier(Ii identifier) {
+      this.identifier = identifier;
     }
     /**
-     * @return the patientId
+     * @return the paymentMethodCode
      */
-    public Long getPatientId() {
-        return patientId;
+    public Cd getPaymentMethodCode() {
+       return paymentMethodCode;
     }
     /**
-     * @param patientId the patientId to set
+     * @param paymentMethodCode the paymentMethodCode to set
      */
-    public void setPatientId(Long patientId) {
-        this.patientId = patientId;
+    public void setPaymentMethodCode(Cd paymentMethodCode) {
+      this.paymentMethodCode = paymentMethodCode;
     }
     /**
-     * @return the studySubjectIi
+     * @return the assignedIdentifier
      */
-    public Ii getStudySubjectIi() {
-        return studySubjectIi;
+    @FieldExpressionValidator(expression = "assignedIdentifier.value != null && assignedIdentifier.value.length() > 0", 
+            message = "Study Subject ID is required.")
+    public St getAssignedIdentifier() {
+      return assignedIdentifier;
     }
     /**
-     * @param studySubjectIi the studySubjectIi to set
+     * @param assignedIdentifier the assignedIdentifier to set
      */
-    public void setStudySubjectIi(Ii studySubjectIi) {
-        this.studySubjectIi = studySubjectIi;
+     public void setAssignedIdentifier(St assignedIdentifier) {
+       this.assignedIdentifier = assignedIdentifier;
     }
     /**
-     * @return the studyProtocolIi
+     * @return the statusCode
      */
-    public Ii getStudyProtocolIi() {
-        return studyProtocolIi;
-    }
+     public Cd getStatusCode() {
+       return statusCode;
+     }
     /**
-     * @param studyProtocolIi the studyProtocolIi to set
+     * @param statusCode the statusCode to set
      */
-    public void setStudyProtocolIi(Ii studyProtocolIi) {
-        this.studyProtocolIi = studyProtocolIi;
-    }
-    /**
-     * Gets the po identifier.
-     * @return the po identifier
-     */
-    public Long getPoIdentifier() {
-        return poIdentifier;
-    }
-    /**
-     * Sets the po identifier.
-     * @param poIdentifier the new po identifier
-     */
-    public void setPoIdentifier(Long poIdentifier) {
-        this.poIdentifier = poIdentifier;
+    public void setStatusCode(Cd statusCode) {
+        this.statusCode = statusCode;
     }
     /**
      * @return the diseaseIdentifier
      */
     public Ii getDiseaseIdentifier() {
-        return diseaseIdentifier;
+      return diseaseIdentifier;
     }
     /**
-     * @param diseaseIdentifier the diseaseIdentifier to set
-     */
-    public void setDiseaseIdentifier(Ii diseaseIdentifier) {
-        this.diseaseIdentifier = diseaseIdentifier;
+    * @param diseaseIdentifier the diseaseIdentifier to set
+    */
+   public void setDiseaseIdentifier(Ii diseaseIdentifier) {
+      this.diseaseIdentifier = diseaseIdentifier;
+   }
+   /**
+    * @return the raceCode
+    */ 
+   public Set<String> getRaceCode() {
+     return raceCode;
+   }
+   /**
+    * @param raceCode the raceCode to set
+    */
+    public void setRaceCode(Set<String> raceCode) {
+      this.raceCode = raceCode;
     }
+
+ 
 }

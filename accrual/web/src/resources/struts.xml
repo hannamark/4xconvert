@@ -112,7 +112,10 @@
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
         </action>
-      
+      <action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action" method="execute"> 
+            <result>/WEB-INF/jsp/{1}.jsp</result>
+            <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
+        </action>
         <!-- ******************************************************* -->
         <action name="saveTumorMarker" class="gov.nih.nci.accrual.web.action.TumorMarkerAction" method="save"> 
             <result>/WEB-INF/jsp/TumorMarker.jsp</result>

@@ -103,6 +103,8 @@ import java.util.TreeMap;
 
 import org.apache.struts2.ServletActionContext;
 
+import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 21, 2009
@@ -156,7 +158,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             participant = null;
             loadDisplayList();
             for (ParticipantWebDto pat : getDisplayTagList()) {
-                if (pat.getIdentifier().equals(getSelectedRowIdentifier())) {
+                if (pat.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
                     participant = pat;
                 }
             }
@@ -181,7 +183,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         try {
             loadDisplayList();
             for (ParticipantWebDto pat : getDisplayTagList()) {
-                if (pat.getIdentifier().equals(getSelectedRowIdentifier())) {
+                if (pat.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
                     participant = pat;
                 }
             }
@@ -191,7 +193,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         }
         if (participant == null) {
             addActionError("Error retrieving study subject info for update.");
-            return execute();
+            return super.update();
         }
         SessionEnvManager.putParticipantInSession(participant.getStudySubjectIi(), participant.getAssignedIdentifier());
         return super.update();
@@ -299,6 +301,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
     /**
      * @return the participant
      */
+    @VisitorFieldValidator(message = "> ")
     public ParticipantWebDto getParticipant() {
         return participant;
     }
@@ -327,15 +330,14 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
     }
 
     private void businessRules() {
-        ParticipantWebDto.validate(participant, this);
         if (!hasActionErrors()) {
             validateUnitedStatesRules();
         }
     }
 
     private void validateUnitedStatesRules() {
-        if (!unitedStatesId.equals(participant.getCountryIdentifier())
-                && !PAUtil.isEmpty(participant.getPaymentMethodCode())) {
+        if (!unitedStatesId.equals(Long.parseLong(participant.getCountryIdentifier().getExtension()))
+                && !PAUtil.isEmpty(participant.getPaymentMethodCode().getCode())) {
             addActionError("Method of payment should only be entered if country is United States.");
         }
     }

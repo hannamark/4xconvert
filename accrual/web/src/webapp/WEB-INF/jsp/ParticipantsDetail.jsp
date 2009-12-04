@@ -78,6 +78,7 @@ function handleEditAction(){
           <s:elseif test="%{currentAction == 'retrieve'}">
             <s:label name="participant.assignedIdentifier" cssStyle="font-weight:normal"/>
           </s:elseif>
+           <s:fielderror cssClass="formErrorMsg"><s:param>participant.assignedIdentifier</s:param></s:fielderror>
         </td>
     </tr> 
     <tr>
@@ -95,6 +96,7 @@ function handleEditAction(){
           <s:elseif test="%{currentAction == 'retrieve'}">
             <s:label name="participant.birthDate" cssStyle="font-weight:normal"/>
           </s:elseif>
+           <s:fielderror cssClass="formErrorMsg"><s:param>participant.birthDate</s:param></s:fielderror>
         </td>
     </tr>
     <tr>
@@ -107,12 +109,13 @@ function handleEditAction(){
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
             <s:set name="genderCodeValues" value="@gov.nih.nci.pa.enums.PatientGenderCode@getDisplayNames()" />
-            <s:select id ="genderCode" name="participant.genderCode" headerKey="" headerValue="--Select--"
+            <s:select id ="genderCode" name="participant.genderCode.code" headerKey="" headerValue="--Select--"
                       list="#genderCodeValues"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:label name="participant.genderCode" cssStyle="font-weight:normal"/>
+            <s:label name="participant.genderCode.code" cssStyle="font-weight:normal"/>
           </s:elseif>
+          <s:fielderror cssClass="formErrorMsg"><s:param>participant.genderCode</s:param></s:fielderror>
         </td>
     </tr>
 
@@ -126,14 +129,14 @@ function handleEditAction(){
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
             <s:set name="raceCodeValues" value="@gov.nih.nci.pa.enums.PatientRaceCode@getDisplayMap()" />
-            <s:select id ="raceCode" name="participant.raceCode" multiple="true" size="7" list="#raceCodeValues" />
+            <s:select id ="raceCode" name="participant.raceCode" value="%{participant.raceCode}" multiple="true" size="7" list="#raceCodeValues" />
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:iterator id="races" value="participant.raceCode" >
+            <s:iterator id="races" value="participant.raceCode" status="stat" >
                 <s:set name="racerx" value="%{code}"/>
                 <s:label name="races" cssStyle="font-weight:normal"/><br>
             </s:iterator>
-          </s:elseif>
+          </s:elseif>          
         </td>
     </tr>
 
@@ -147,12 +150,13 @@ function handleEditAction(){
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
             <s:set name="ethnicCodeValues" value="@gov.nih.nci.pa.enums.PatientEthnicityCode@getDisplayMap()" />
-            <s:select id ="ethnicCode" name="participant.ethnicCode" headerKey="" headerValue="--Select--"
+            <s:select id ="ethnicCode" name="participant.ethnicCode.code" headerKey="" headerValue="--Select--"
                       list="#ethnicCodeValues"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:label name="participant.ethnicCode" cssStyle="font-weight:normal"/>
+            <s:label name="participant.ethnicCode.code" cssStyle="font-weight:normal"/>
           </s:elseif>
+          <s:fielderror cssClass="formErrorMsg"><s:param>participant.ethnicCode</s:param></s:fielderror>
         </td>
     </tr>
 
@@ -166,12 +170,13 @@ function handleEditAction(){
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
             <s:select id ="countryIdentifier" name="participant.countryIdentifier" headerValue="-Select-" headerKey=""
-                     list="listOfCountries"
+                     list="listOfCountries"  value="participant.countryIdentifier.extension"
                      listKey="id" listValue="name"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
             <s:label name="participant.countryName" cssStyle="font-weight:normal"/>
           </s:elseif>
+          <s:fielderror cssClass="formErrorMsg"><s:param>participant.countryIdentifier</s:param></s:fielderror>
         </td>
     </tr>
 
@@ -184,11 +189,11 @@ function handleEditAction(){
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
             <s:set name="paymentCodeValues" value="@gov.nih.nci.pa.enums.PaymentMethodCode@getDisplayNames()" />
-            <s:select id ="paymentMethodCode" name="participant.paymentMethodCode" headerKey="" headerValue="--Select--"
+            <s:select id ="paymentMethodCode" name="participant.paymentMethodCode.code" headerKey="" headerValue="--Select--"
                list="#paymentCodeValues"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:label name="participant.paymentMethodCode" cssStyle="font-weight:normal"/>
+            <s:label name="participant.paymentMethodCode.code" cssStyle="font-weight:normal"/>
           </s:elseif>
         </td>
     </tr>
