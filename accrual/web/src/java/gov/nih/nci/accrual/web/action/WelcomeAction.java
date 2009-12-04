@@ -77,6 +77,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
@@ -97,18 +98,14 @@ public class WelcomeAction extends AbstractAccrualAction {
     @Override
     public String execute() {
         if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_OUTCOMES)) {
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_OUTCOMES);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_SUBMITTER_NAME, "Smith, Jane");
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, "Doe, John");
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, IiConverter.convertToPoOrganizationIi("63607"));
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, "CBIIT");
+            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_OUTCOMES);
+            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME, "Smith, Jane");
+            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, "Doe, John");
+            SessionEnvManager.setAttr(
+                    AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, IiConverter.convertToPoOrganizationIi("501"));
+            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, "CBIIT");
             try {
-                ServletActionContext.getRequest().getSession().setAttribute(
+                SessionEnvManager.setAttr(
                         AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II, searchTrialSvc.getOutcomesStudyProtocolIi());
             } catch (RemoteException e) {
                 return ERROR;

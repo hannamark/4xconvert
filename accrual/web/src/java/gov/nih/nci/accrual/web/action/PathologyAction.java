@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.PathologyWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.ActivityNameCode;
@@ -92,7 +93,6 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
@@ -224,14 +224,12 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      * @return the Ii of the current participant, null if none selected
      */
     protected Ii getParticipantIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_PARTICIPANT_II);
+        return (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II);
     }
     /**
      * @return the Ii of the outcomes StudyProtocol Ii
      */
     protected Ii getSpIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II);
+        return (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II);
     }
 }

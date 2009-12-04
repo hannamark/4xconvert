@@ -76,7 +76,11 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
@@ -86,12 +90,19 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceRemote;
@@ -101,6 +112,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,8 +189,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
             return AccrualConstants.AR_LOGOUT;
         }
         //check if users accepted the disclaimer if not show one
-        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_DISCLAIMER);
+        String strDesclaimer = (String) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_DISCLAIMER);
         if (strDesclaimer == null || !strDesclaimer.equals(AccrualConstants.DISCLAIMER_ACCEPTED)) {
             return AccrualConstants.AR_DISCLAIMER;
         }
@@ -188,38 +199,33 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @return the role from the session
      */
     protected String getUserRole() {
-        return (String) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_ROLE);
+        return (String) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_ROLE);
     }
     /**
      * @return the Ii of the current participant, null if none selected
      */
     protected Ii getParticipantIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_PARTICIPANT_II);
+        return (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II);
     }
     /**
      * @return the Ii of the outcomes StudyProtocol Ii
      */
     protected Ii getSpIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II);
+        return (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II);
     }
     
     /**
      * @return the tp ii of outcomes TreatmentPlan Ii
      */
     protected Ii getTpIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II);
+        return (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II);
     }
     
     /**
      * @return the tp ii of outcomes Course Ii
      */
     protected Ii getCourseIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_COURSE_II);
+        return (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_COURSE_II);
     }
     
     /**
@@ -273,6 +279,163 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
                 treatmentPlans.put(dto.getIdentifier().getExtension(), dto.getName().getValue());
             }
         }
-        ServletActionContext.getRequest().getSession().setAttribute("treatmentPlans", treatmentPlans);
+        SessionEnvManager.setAttr(SessionEnvManager.TREATMENT_PLANS, treatmentPlans);
+    }
+
+    /*
+     * Get the Create Date. Done to make PMD happy.
+     */
+    private Date getPaCreateDate(PerformedActivityDto pa) {
+        if (pa.getCategoryCode() != null
+                && pa.getCategoryCode().getCode() != null
+                && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.COURSE.getCode())) {
+            Ts created = new CourseWebDto(pa).getCreateDate();
+            if (created != null) {
+                return created.getValue();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the earliest recorded course date.
+     * 
+     * @return today's date or earlier as reported by the activity
+     * @throws RemoteException pass to caller
+     */
+    private Date getEarliestCourseDate() throws RemoteException {
+        Date earliest = new Date();
+        List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(getParticipantIi());
+        for (PerformedActivityDto pa : paList) {
+            Date temp = getPaCreateDate(pa);
+            if (temp != null && earliest.getTime() > temp.getTime()) {
+                earliest = temp;
+            }
+        }
+        
+        return earliest;
+    }
+
+    private Date getAdrLowDate(PerformedSubjectMilestoneDto psm) {
+        if (psm.getNameCode() != null
+                && psm.getNameCode().getCode() != null
+                && psm.getNameCode().getCode().equals(ActivityNameCode.OFF_TREATMENT.getCode())) {
+            Ivl<Ts> adr = psm.getActualDateRange();
+            if (adr != null) {
+                Ts low = adr.getLow();
+                if (low != null) {
+                    return low.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the earliest Off Treatment date.
+     * 
+     * @return today's date or earlier as reported by the activity
+     * @throws RemoteException pass to caller
+     */
+    private Date getEarliestOffTreatmentDate() throws RemoteException {
+        Date earliest = new Date();
+        List<PerformedSubjectMilestoneDto> psmList =
+            performedActivitySvc.getPerformedSubjectMilestoneByStudySubject(getParticipantIi());
+        for (PerformedSubjectMilestoneDto psm : psmList) {
+            Date temp = getAdrLowDate(psm);
+            if (temp != null && earliest.getTime() > temp.getTime()) {
+                earliest = temp;
+            }
+        }
+
+        return earliest;
+    }
+
+    private Date getRdrResultDate(PerformedObservationResultDto dto) throws RemoteException {
+        if (dto.getTypeCode() != null
+                && dto.getTypeCode().getCode() != null
+                && dto.getTypeCode().getCode().
+                       equals(PerformedObservationResultTypeCode.DEATH_DATE.getCode())) {
+            Ivl<Ts> rdr = dto.getResultDateRange();
+            if (rdr != null) {
+                Ts low = rdr.getLow();
+                if (low != null) {
+                    return low.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
+    private Date getEarliestRdrResultDate(PerformedObservationDto po) throws RemoteException {
+        Date earliest = new Date();
+        List<PerformedObservationResultDto> deathCauseList =
+            performedObservationResultSvc.getPerformedObservationResultByPerformedActivity(po.getIdentifier());
+        for (PerformedObservationResultDto dto : deathCauseList) {
+            Date temp = getRdrResultDate(dto);
+            if (temp != null && earliest.getTime() > temp.getTime()) {
+                earliest = temp;
+            }
+        }
+        return earliest;
+    }
+
+    private Date getDeathDate(PerformedObservationDto poBean) throws RemoteException {
+        if (poBean.getNameCode() != null
+                && poBean.getNameCode().getCode() != null
+                && poBean.getNameCode().getCode().equals(ActivityNameCode.DEATH_INFORMATION.getCode())) {
+            List<ActivityRelationshipDto> arList =
+                activityRelationshipSvc.getByTargetPerformedActivity(poBean.getIdentifier(),
+                        CdConverter.convertStringToCd(AccrualConstants.COMP));
+            PerformedObservationDto po =
+                performedActivitySvc.getPerformedObservation(arList.get(0).getTargetPerformedActivityIdentifier());
+            return getEarliestRdrResultDate(po);
+        }
+        return null;
+    }
+    /**
+     * Get the earliest Death date.
+     * 
+     * @return today's date or earlier as reported by the activity
+     * @throws RemoteException pass to caller
+     */
+    private Date getEarliestDeathDate() throws RemoteException {
+        Date earliest = new Date();
+        List<PerformedObservationDto> poList = performedActivitySvc.getPerformedObservationByStudySubject(
+                getParticipantIi());
+        for (PerformedObservationDto poBean : poList) {
+            Date temp = getDeathDate(poBean);
+            if (temp != null && earliest.getTime() > temp.getTime()) {
+                earliest = temp;
+            }
+        }
+        return earliest;
+    }
+    
+    /**
+     * Get the earliest known treatment date.
+     * 
+     * @return the earliest date
+     */
+    protected Date getEarliestTreatmentsDate() {
+        Date earliest = null;
+        Date temp;
+        try {
+            earliest = getEarliestCourseDate();
+
+            temp = getEarliestOffTreatmentDate();
+            if (earliest.getTime() > temp.getTime()) {
+                earliest = temp;
+            }
+
+            temp = getEarliestDeathDate();
+            if (earliest.getTime() > temp.getTime()) {
+                earliest = temp;
+            }
+        } catch (RemoteException ex) {
+            LOG.error(ex.getLocalizedMessage(), ex);
+            addActionError("Service error. " + ex.getLocalizedMessage());
+        }
+        return earliest;
     }
 }

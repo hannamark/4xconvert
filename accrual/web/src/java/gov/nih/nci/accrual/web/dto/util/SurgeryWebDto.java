@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedProcedureDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
@@ -90,8 +91,6 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.io.Serializable;
-
-import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -147,10 +146,10 @@ public class SurgeryWebDto implements Serializable {
         ppDto.setInterventionIdentifier(getInterventionId());
         ppDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SURGERY));
         ppDto.setTextDescription(getInfo());
-        ppDto.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
-        ppDto.setStudySubjectIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
+        ppDto.setStudyProtocolIdentifier(
+                (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
+        ppDto.setStudySubjectIdentifier(
+                (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
         return ppDto;
     }
     

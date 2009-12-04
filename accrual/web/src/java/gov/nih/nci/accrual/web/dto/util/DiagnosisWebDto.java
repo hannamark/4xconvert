@@ -85,6 +85,7 @@ import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -140,12 +141,25 @@ public class DiagnosisWebDto implements Serializable {
     public void setName(St name) {
         this.name = name;
     }
+    
+    /**
+     * Validate the date is current or past.
+     * 
+     * @return true when valid
+     */
+    public boolean validateDate() {
+        Date value = createDate.getValue(); 
+        if (value != null && value.getTime() <= System.currentTimeMillis()) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @return the createDate
      */
-    @FieldExpressionValidator(expression = "createDate.value != null",
-            message = "Please provide a Diagnosis Date")
+    @FieldExpressionValidator(expression = "validateDate()",
+            message = "Please provide a valid Diagnosis Date. Post-dates are not permitted.")
     public Ts getCreateDate() {
         return createDate;
     }

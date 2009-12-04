@@ -88,6 +88,9 @@ import org.apache.struts2.ServletActionContext;
  */
 public class SessionEnvManager {
     
+    /** Session Data attribute name for Treatment Plans. */
+    public static final String TREATMENT_PLANS = "treatmentPlans";
+    
     /**
      * Default constructor.
      */
@@ -103,15 +106,11 @@ public class SessionEnvManager {
         clearTreatmentPlan();
         
         if (id == null || name == null) {
-            ServletActionContext.getRequest().getSession().removeAttribute(
-                    AccrualConstants.SESSION_ATTR_PARTICIPANT_II);
-            ServletActionContext.getRequest().getSession().removeAttribute(
-                    AccrualConstants.SESSION_ATTR_PARTICIPANT_NAME);
+            setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II, null);
+            setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_NAME, null);
         } else {
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_PARTICIPANT_II, id);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_PARTICIPANT_NAME, name);
+            setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II, id);
+            setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_NAME, name);
         }
     }
 
@@ -123,10 +122,8 @@ public class SessionEnvManager {
         if (id == null || name == null) {
             clearTreatmentPlan();
         } else {
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II, id);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_NAME, name);
+            setAttr(AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II, id);
+            setAttr(AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_NAME, name);
         }
     }
 
@@ -136,10 +133,8 @@ public class SessionEnvManager {
     public static void clearTreatmentPlan() {
         clearCourse();
 
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II);
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_NAME);
+        setAttr(AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II, null);
+        setAttr(AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_NAME, null);
     }
 
     /**
@@ -150,10 +145,8 @@ public class SessionEnvManager {
         if (id == null || name == null) {
             clearCourse();
         } else {
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_COURSE_II, id);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    AccrualConstants.SESSION_ATTR_COURSE_NAME, name);
+            setAttr(AccrualConstants.SESSION_ATTR_COURSE_II, id);
+            setAttr(AccrualConstants.SESSION_ATTR_COURSE_NAME, name);
         }
     }
 
@@ -161,9 +154,29 @@ public class SessionEnvManager {
      * Clear course values.
      */
     public static void clearCourse() {
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                AccrualConstants.SESSION_ATTR_COURSE_II);
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                AccrualConstants.SESSION_ATTR_COURSE_NAME);
+        setAttr(AccrualConstants.SESSION_ATTR_COURSE_II, null);
+        setAttr(AccrualConstants.SESSION_ATTR_COURSE_NAME, null);
+    }
+
+    /**
+     * Set a session attribute.
+     * @param attr the attribute name
+     * @param obj the data to put in the session
+     */
+    public static void setAttr(String attr, Object obj) {
+        if (obj == null) {
+            ServletActionContext.getRequest().getSession().removeAttribute(attr);
+        } else {
+            ServletActionContext.getRequest().getSession().setAttribute(attr, obj);
+        }
+    }
+
+    /**
+     * Get session data.
+     * @param attr the session attribute name
+     * @return the session data
+     */
+    public static Object getAttr(String attr) {
+        return ServletActionContext.getRequest().getSession().getAttribute(attr);
     }
 }

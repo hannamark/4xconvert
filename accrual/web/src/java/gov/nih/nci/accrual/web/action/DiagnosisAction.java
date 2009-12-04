@@ -81,15 +81,19 @@ package gov.nih.nci.accrual.web.action;
 
 import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
+import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -149,6 +153,9 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
         return execute();
     }
 
+    /*
+     * Save the Performed Observation.
+     */
     private PerformedObservationDto savePod() throws RemoteException, DataFormatException {
         boolean podUpd;
         PerformedObservationDto pod = null;
@@ -163,6 +170,7 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
             pod = performedActivitySvc.getPerformedObservation(diagnosis.getIdentifier());
         }
 
+        pod.setActualDateRange(new Ivl<Ts>());
         pod.getActualDateRange().setLow(diagnosis.getCreateDate());
 
         if (podUpd) {
@@ -174,6 +182,9 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
         return pod;
     }
 
+    /*
+     * Save the Performed Diagnosis.
+     */
     private PerformedDiagnosisDto savePdd(PerformedObservationDto pod) throws RemoteException, DataFormatException {
         List<PerformedDiagnosisDto> pdList =
             performedObservationResultSvc.getPerformedDiagnosisByPerformedActivity(pod.getIdentifier());
@@ -209,9 +220,18 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     @Override
     public String save() {
         try {
-            PerformedObservationDto pod = savePod();
-            savePdd(pod);
+            // Check all the other dates first.
+            Date earliest = getEarliestTreatmentsDate();
+            if (earliest != null) {
+                if (earliest.getTime() >= diagnosis.getCreateDate().getValue().getTime()) {
 
+                    // Date is good so save changes.
+                    savePdd(savePod());
+                } else {
+                    addFieldError("diagnosis.createDate",
+                            "The Diagnosis Date must be on or before " + AccrualUtil.dateToMDY(earliest));
+                }
+            }
         } catch (Exception e) {
             addActionError("Error in save().  " + e.getLocalizedMessage());
             return INPUT;

@@ -205,4 +205,16 @@ public class AccrualUtil {
     public static Timestamp yearMonthStringToTimestamp(String dateString) {
         return new Timestamp(yearMonthStringToDate(dateString).getTime());
     }
+    
+    /**
+     * Convert a Date to a standard display format.
+     * 
+     * @param day the java.util.date
+     * @return the string form mm/dd/yyyy
+     */
+    public static String dateToMDY(Date day) {
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("MM/dd/yyyy");
+        return sdf.format(day);
+    }
 }

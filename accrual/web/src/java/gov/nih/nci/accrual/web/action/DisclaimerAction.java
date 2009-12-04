@@ -77,8 +77,7 @@
 
 package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
-
-import org.apache.struts2.ServletActionContext;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
 
 /**
  * @author Rajani Kumar
@@ -93,8 +92,7 @@ public class DisclaimerAction extends AbstractAccrualAction {
      * @return the action result
      */
     public String accept() {
-        ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER,
-                AccrualConstants.DISCLAIMER_ACCEPTED);
+        SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_DISCLAIMER, AccrualConstants.DISCLAIMER_ACCEPTED);
         return super.execute();
     }
 }

@@ -101,8 +101,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.apache.struts2.ServletActionContext;
-
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
 /**
@@ -222,8 +220,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             return INPUT;
         }
         PatientDto pat = participant.getPatientDto();
-        pat.setOrganizationIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II));
+        pat.setOrganizationIdentifier((Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II));
         StudySubjectDto ssub = participant.getStudySubjectDto(getAuthorizedUser());
         try {
             pat = patientSvc.create(pat);
@@ -247,8 +244,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             return INPUT;
         }
         PatientDto pat = participant.getPatientDto();
-        pat.setOrganizationIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II));
+        pat.setOrganizationIdentifier((Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II));
         StudySubjectDto ssub = participant.getStudySubjectDto(getAuthorizedUser());
         try {
             pat = patientSvc.update(pat);
