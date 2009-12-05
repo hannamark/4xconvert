@@ -85,6 +85,7 @@ import gov.nih.nci.accrual.web.dto.util.SearchParticipantCriteriaWebDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.accrual.web.util.WebUtil;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -98,7 +99,9 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
@@ -158,6 +161,11 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             for (ParticipantWebDto pat : getDisplayTagList()) {
                 if (pat.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
                     participant = pat;
+                    Set<String> raceCodes = removeUnderTabs(participant.getRaceCode());
+                    participant.setRaceCode(raceCodes);
+                    Cd ethniccd = removeUnderTabs(participant.getEthnicCode());
+                    participant.setEthnicCode(ethniccd);
+                    break;
                 }
             }
             if (participant == null) {
@@ -215,10 +223,11 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String add() throws RemoteException {
+        ParticipantWebDto.validate(participant, this);
         businessRules();
-        if (hasActionErrors()) {
+        if (hasActionErrors() || hasFieldErrors()) {
             return INPUT;
-        }
+         }
         PatientDto pat = participant.getPatientDto();
         pat.setOrganizationIdentifier((Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II));
         StudySubjectDto ssub = participant.getStudySubjectDto(getAuthorizedUser());
@@ -239,8 +248,9 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String edit() throws RemoteException {
+        ParticipantWebDto.validate(participant, this);
         businessRules();
-        if (hasActionErrors()) {
+        if (hasActionErrors() || hasFieldErrors()) {
             return INPUT;
         }
         PatientDto pat = participant.getPatientDto();
@@ -365,4 +375,19 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         }
         return result;
     }
+    private Set<String> removeUnderTabs(Set<String> codes) {
+        Set<String> newCodes = new HashSet<String>();
+        for (String rc : codes) {
+          newCodes.add(rc.replace('_', ' '));
+        }
+        return newCodes;
+       }
+       
+       private Cd removeUnderTabs(Cd code) {
+         Cd newCode = new Cd();
+          newCode.setCode(code.getCode().replace('_', ' '));
+          newCode.setDisplayName(code.getDisplayName());
+         return newCode;
+       }
+    
 }

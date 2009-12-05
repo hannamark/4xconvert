@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.dto.util;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
@@ -160,10 +161,10 @@ public class ParticipantWebDto implements Serializable {
     public ParticipantWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, List<Country> listOfCountries) {
         if (pIsoDto != null) {
             patientId = pIsoDto.getIdentifier();
-            raceCode = DSetEnumConverter.convertDSetToSet(pIsoDto.getRaceCode());
+            raceCode =  DSetEnumConverter.convertDSetToSet(pIsoDto.getRaceCode());
             genderCode = pIsoDto.getGenderCode();
             ethnicCode = pIsoDto.getEthnicCode();
-            birthDate = TsConverter.convertToString(pIsoDto.getBirthDate());
+            birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
             countryIdentifier = pIsoDto.getCountryIdentifier();
             for (Country c : listOfCountries) {
                 if (countryIdentifier != null && countryIdentifier.getExtension().equals(c.getId().toString())) {
@@ -266,7 +267,6 @@ public class ParticipantWebDto implements Serializable {
              message = "Birth date is required.")
      @RegexFieldValidator(expression = "(0[1-9]|1[012])[/]((19|20)\\d\\d)" ,
             message = "Birth date should be in the format MM/YYYY .\n")        
-             
      public String getBirthDate() {
        return birthDate;
      }
@@ -412,7 +412,21 @@ public class ParticipantWebDto implements Serializable {
     */
     public void setRaceCode(Set<String> raceCode) {
       this.raceCode = raceCode;
-    }
-
+    }   
  
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(ParticipantWebDto dto, AbstractAccrualAction action) {
+        if (dto.getBirthDate() != null) {
+         Date birthDateEntered = new Date(AccrualUtil.yearMonthStringToTimestamp(dto.getBirthDate()).getTime());
+         Date currentDate = new Date();
+         if (currentDate.getTime() < birthDateEntered.getTime()) {
+           action.addFieldError("participant.birthDate", "BirthDate cannot be in future.");
+        }        
+      } 
+    } 
 }
