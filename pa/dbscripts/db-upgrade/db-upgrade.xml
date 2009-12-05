@@ -333,7 +333,11 @@
         <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_23941_8.sql"/>
     </changeSet>
     <changeSet id="82" author="Lisa">
-            <comment>execute accrual_dev_24521.sql</comment>
-            <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24521.sql"/>
-    </changeSet>    
+            <comment>execute accrual_dev_24521_1.sql</comment>
+            <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24521_1.sql"/>
+    </changeSet>
+    <changeSet id="83" author="Lisa">
+                <comment>execute accrual_dev_24521_2.sql</comment>
+                <sqlFile path="@db-upgrade.run.dir@/3.1/accrual_dev_24521_2.sql"/>
+    </changeSet>
 </databaseChangeLog>
