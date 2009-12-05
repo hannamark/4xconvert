@@ -825,7 +825,7 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         } else {
             age = b.intValue();
         }
-        return Integer.valueOf(age).toString();
+        return Integer.valueOf(age).toString() + " years";
     }
     private void createArmGroup(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<ArmDTO> arms = armService.getByStudyProtocol(spDTO.getIdentifier());

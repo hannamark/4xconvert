@@ -786,7 +786,7 @@ private String getInterventionAltNames(InterventionDTO i) throws PAException {
                if (pq.getLow().getValue().intValue() == 0) {
                   html.append(appendData("Minimum Age", "N/A" , true , true));
                } else {
-                  html.append(appendData("Minimum Age", pq.getLow().getValue()  
+                  html.append(appendData("Minimum Age", pq.getLow().getValue().intValue()  
                   + " " + pq.getLow().getUnit(), true , true));
                }
              } 
@@ -794,7 +794,7 @@ private String getInterventionAltNames(InterventionDTO i) throws PAException {
                if (pq.getHigh().getValue().intValue() == MAX_AGE) {
                   html.append(appendData("Maximum Age", "N/A" , true , true));
                } else {
-                  html.append(appendData("Maximum Age", pq.getHigh().getValue()  
+                  html.append(appendData("Maximum Age", pq.getHigh().getValue().intValue()  
                   + " " + pq.getHigh().getUnit(), true , true));
                }
              }  
