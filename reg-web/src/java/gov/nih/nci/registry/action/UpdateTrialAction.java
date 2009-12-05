@@ -850,6 +850,9 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             StudySiteDTO ssDto = util.getStudySite(studyProtocolIi, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
             if (ssDto != null) {
                 util.convertToNCTStudySiteDTO(trialDTO, ssDto);
+            } else {
+                ssDto = new StudySiteDTO();
+                ssDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getNctIdentifier()));
             }
             //set the overall status
             StudyOverallStatusDTO sosDto = null;
