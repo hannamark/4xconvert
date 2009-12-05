@@ -73,52 +73,97 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
+
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.web.util.AccrualConstants;
-import gov.nih.nci.accrual.web.util.PaServiceLocator;
-import gov.nih.nci.accrual.web.util.SessionEnvManager;
-import gov.nih.nci.pa.domain.RegistryUser;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.web.dto.util.ParticipantWebDto;
+import gov.nih.nci.accrual.web.dto.util.SearchParticipantCriteriaWebDto;
+import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
-import org.apache.struts2.ServletActionContext;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Hugh Reinhart
- * @since 4/14/2009
+ * @since Sep 26, 2009
  */
-public class WelcomeAction extends AbstractAccrualAction {
-    private static final long serialVersionUID = -8671171197398815729L;
-    static final String AR_OUTCOMES = "outcomesNamespace";
+public class TreatmentActionTest extends AbstractAccrualActionTest {
+	TreatmentAction action;
+	TreatmentWebDto treatment;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Before
+    public void initAction() throws Exception {
+        action = new TreatmentAction();
+        action.prepare();
+        treatment = new TreatmentWebDto();
+    }
+
     @Override
-    public String execute() {
-        if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_OUTCOMES)) {
-            String loginName = ServletActionContext.getRequest().getRemoteUser();
-            try {
-                RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(loginName);
-                if (user != null) {
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_OUTCOMES);
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME, 
-                        user.getLastName() + ", " + user.getFirstName());            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, 
-                        UserAccountAction.getPhysician(user.getPoPersonId()));            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, 
-                        IiConverter.convertToPoOrganizationIi(String.valueOf(user.getPoOrganizationId())));            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, 
-                        UserAccountAction.getTreatmentSite(user.getPoOrganizationId()));
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II, 
-                        searchTrialSvc.getOutcomesStudyProtocolIi());
-                }
-            } catch (Exception e) {
-                return ERROR;
-            }
-            return AR_OUTCOMES;
-        }
-        return super.execute();
+    @Test(expected = NullPointerException.class)
+    public void executeTest() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+    }
+
+    @Override
+    @Test
+    public void createTest() {
+       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
+    }
+
+    @Override
+    @Test(expected = NullPointerException.class)
+    public void retrieveTest() {
+        action.retrieve();
+        assertTrue(action.hasActionErrors());
+    }
+
+    @Override
+    @Test(expected = NullPointerException.class)
+     public void updateTest() {
+        action.update();
+        assertTrue(action.hasActionErrors());
+    }
+
+    @Override
+    @Test(expected = NullPointerException.class)
+    public void deleteTest() throws Exception {
+        action.delete();
+    }
+
+    @Override
+    @Test(expected = NullPointerException.class)
+    public void addTest() throws Exception {
+        treatment.setName(StConverter.convertToSt("TP1"));
+        treatment.setDescription(StConverter.convertToSt("TP1description"));
+        action.setTreatment(treatment);
+        assertEquals(ActionSupport.SUCCESS, action.add());
+    }
+
+    @Override
+    @Test(expected = NullPointerException.class)
+    public void editTest() throws Exception {
+    	treatment.setName(StConverter.convertToSt("TP1"));
+        treatment.setDescription(StConverter.convertToSt("TP1description"));
+        action.setTreatment(treatment);
+        assertEquals(ActionSupport.SUCCESS, action.edit());
     }
 }

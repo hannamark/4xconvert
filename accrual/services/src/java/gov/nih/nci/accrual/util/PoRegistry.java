@@ -1,6 +1,7 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.rmi.RemoteException;
@@ -62,5 +63,14 @@ public final class PoRegistry {
      */
     public static PatientCorrelationServiceRemote getPatientCorrelationService() throws RemoteException {
         return getInstance().getPoServiceLocator().getPatientCorrelationService();
+    }
+    
+    /**
+     * 
+     * @return OrganizationEntityServiceRemote
+     * @throws RemoteException e
+     */
+    public static OrganizationEntityServiceRemote getOrganizationEntityService() throws RemoteException {
+        return getInstance().getPoServiceLocator().getOrganizationEntityService();
     }
 }

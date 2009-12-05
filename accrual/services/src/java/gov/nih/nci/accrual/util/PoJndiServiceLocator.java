@@ -2,6 +2,7 @@ package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.pa.util.PoJNDIUtil;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.rmi.RemoteException;
@@ -33,6 +34,14 @@ public class PoJndiServiceLocator implements PoServiceLocator {
         String serverInfo = JNP + PoPropertyReader.getLookUpServerInfo()
         + "/po/PatientCorrelationServiceBean/remote";
         return (PatientCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    } 
-
+    }
+    
+    /**
+     * @return OrganizationEntityServiceRemote
+     * @throws RemoteException  on error
+     */
+    public OrganizationEntityServiceRemote getOrganizationEntityService() throws RemoteException {
+        String serverInfo = JNP + PoPropertyReader.getLookUpServerInfo() + "/po/OrganizationEntityServiceBean/remote";
+        return (OrganizationEntityServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
+    }
 }

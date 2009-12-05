@@ -4,11 +4,24 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<c:url value="/userAccountinitTreatmentSiteLookup.action" var="treatmentSiteLookupUrl" />
+<c:url value="/userAccountinitPhysicianLookup.action" var="physicianLookupUrl" />
 <head>
+    <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+
     <script type="text/javascript">
         function handleAction(){
             document.forms[0].action="userAccountcreate.action";
             document.forms[0].submit();
+        }
+        
+        function lookupTreatmentSite(){
+            showPopWin('${treatmentSiteLookupUrl}', 900, 400, '', 'Select Treatment Site');
+        }
+        
+        function lookupPhysician(){
+            showPopWin('${physicianLookupUrl}', 900, 400, '', 'Select Physician');
         }
     </script>
     
@@ -145,7 +158,25 @@
                         <s:textfield name="userAccount.prsOrganization" maxlength="200" size="100" cssStyle="width:200px"/>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.prsOrganization</s:param></s:fielderror>
                     </td>               
-                </tr>  
+                </tr>                
+                <tr>
+                    <td scope="row" class="label"><label><fmt:message key="user.account.treatmentSite.label"/><span class="required">*</span></label></td>
+                    <td>
+                        <s:textfield readonly="true" size="30" name="userAccount.treatmentSite" cssStyle="float:left; width:200px" cssClass="readonly"/>                       
+                        <s:hidden name="userAccount.treatmentSiteId"/>                        
+                        <a href="#" class="btn" onclick="lookupTreatmentSite();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.treatmentSite</s:param></s:fielderror>
+                    </td>
+                </tr>                
+                <tr>
+                    <td scope="row" class="label"><label><fmt:message key="user.account.physician.label"/><span class="required">*</span></label></td>
+                    <td>
+                        <s:textfield readonly="true" size="30" name="userAccount.physician" cssStyle="float:left; width:200px" cssClass="readonly"/>
+                        <s:hidden name="userAccount.physicianId"/>
+                        <a href="#" class="btn" onclick="lookupPhysician();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.physician</s:param></s:fielderror>
+                    </td>
+                </tr>                               
                 <tr>
                     <td colspan="2" align="left">
                         <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>

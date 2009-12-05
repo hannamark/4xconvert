@@ -1,6 +1,7 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.rmi.RemoteException;
@@ -25,4 +26,11 @@ public interface PoServiceLocator {
      * @throws RemoteException e
      */
     PatientCorrelationServiceRemote getPatientCorrelationService() throws RemoteException;
+    
+    /**
+     * 
+     * @return OrganizationEntityServiceRemote
+     * @throws RemoteException err
+     */
+    OrganizationEntityServiceRemote getOrganizationEntityService() throws RemoteException;
 }

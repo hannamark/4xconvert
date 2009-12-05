@@ -37,6 +37,10 @@ public class UserAccountWebDTO {
     private String  phoneNumber;
     private String  organization;
     private String  prsOrganization;
+    private String  treatmentSiteId;
+    private String  treatmentSite;
+    private String  physicianId;
+    private String  physician;
     private static final String USER_ACCOUNT = "userAccount";
     private static final int MIN_PASSWORD_LENGTH = 6;
     
@@ -52,8 +56,11 @@ public class UserAccountWebDTO {
      * @param user user
      * @param loginName loginName
      * @param password password
+     * @param treatmentSite treatmentSite
+     * @param physician physician
      */
-    public UserAccountWebDTO(RegistryUser user, String loginName, String password) {
+    public UserAccountWebDTO(RegistryUser user, String loginName, String password, 
+                             String treatmentSite, String physician) {
         if (user.getId() != null) {
             this.id = String.valueOf(user.getId());
         }
@@ -74,6 +81,8 @@ public class UserAccountWebDTO {
         this.phoneNumber     = user.getPhone();
         this.organization    = user.getAffiliateOrg();
         this.prsOrganization = user.getPrsOrgName();
+        this.treatmentSite   = treatmentSite;
+        this.physician       = physician;
     }
     
     /**
@@ -115,6 +124,16 @@ public class UserAccountWebDTO {
             action.addFieldErrorIfEmpty(userAccount.getOrganization(), 
                                         USER_ACCOUNT + ".organization", 
                                         "> Please enter an Organization Affiliation");
+            
+            // validate treatment site
+            action.addFieldErrorIfEmpty(userAccount.getTreatmentSite(), 
+                                        USER_ACCOUNT + ".treatmentSite", 
+                                        "> Please select a Treatment Site");
+            
+            // validate physician
+            action.addFieldErrorIfEmpty(userAccount.getPhysician(), 
+                                        USER_ACCOUNT + ".physician", 
+                                        "> Please select a Physician");
         }
     }
     
@@ -405,6 +424,62 @@ public class UserAccountWebDTO {
      */
     public void setPrsOrganization(String prsOrganization) {
         this.prsOrganization = prsOrganization;
+    }
+    
+    /**
+     * @return the treatmentSiteId
+     */
+    public String getTreatmentSiteId() {
+        return treatmentSiteId;
+    }
+
+    /**
+     * @param treatmentSiteId the treatmentSiteId to set
+     */
+    public void setTreatmentSiteId(String treatmentSiteId) {
+        this.treatmentSiteId = treatmentSiteId;
+    }
+    
+    /**
+     * @return the treatmentSite
+     */
+    public String getTreatmentSite() {
+        return treatmentSite;
+    }
+
+    /**
+     * @param treatmentSite the treatmentSite to set
+     */
+    public void setTreatmentSite(String treatmentSite) {
+        this.treatmentSite = treatmentSite;
+    }
+    
+    /**
+     * @return the physicianId
+     */
+    public String getPhysicianId() {
+        return physicianId;
+    }
+
+    /**
+     * @param physicianId the physicianId to set
+     */
+    public void setPhysicianId(String physicianId) {
+        this.physicianId = physicianId;
+    }
+    
+    /**
+     * @return the physician
+     */
+    public String getPhysician() {
+        return physician;
+    }
+
+    /**
+     * @param physician the physician to set
+     */
+    public void setPhysician(String physician) {
+        this.physician = physician;
     }
     
     /**
