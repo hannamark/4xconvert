@@ -7,5 +7,11 @@
             <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
         </loader-repository>
     </class-loading>
+    <class-loading java2ClassLoadingCompliance="false">
+        <loader-repository>
+            outcomes:loader=outcomes.war
+            <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
+        </loader-repository>
+    </class-loading>
 </jboss-web>
  
