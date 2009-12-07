@@ -406,6 +406,8 @@ public class ParticipantWebDto implements Serializable {
    /**
     * @return the raceCode
     */ 
+   @FieldExpressionValidator(expression = "raceCode != null && raceCode.size() > 0", 
+           message = "Race Code is required.")
    public Set<String> getRaceCode() {
      return raceCode;
    }
