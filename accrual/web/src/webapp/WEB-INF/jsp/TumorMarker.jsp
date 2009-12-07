@@ -54,6 +54,7 @@
     Add Tumor Marker
 </h1>
 <div class="box">
+    <accrual:sucessMessage />
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <table class="form">
@@ -80,7 +81,7 @@
     
     <!-- Tumor Marker Value UOM -->
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="tumor.marker.value.uom.label"/><span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="tumor.marker.value.uom.label"/></label></td>
         <td>
             <s:textfield readonly="true" size="50" id="tumorMarker.tmvUom.unit" name="tumorMarker.tmvUom.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookup('tmvUom');"/><span class="btn_img"><span class="search">Look Up</span></span></a>

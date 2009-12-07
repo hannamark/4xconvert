@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
@@ -110,6 +111,7 @@ import com.opensymphony.xwork2.validator.annotations.RegexFieldValidator;
  * @author Hugh Reinhart
  * @since Sep 22, 2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AvoidDeeplyNestedIfStmts" })
 public class ParticipantWebDto implements Serializable {
    
     private static final long serialVersionUID = 1L;
@@ -420,13 +422,26 @@ public class ParticipantWebDto implements Serializable {
      * @param dto the dto
      * @param action the action
      */
-    public static void validate(ParticipantWebDto dto, AbstractAccrualAction action) {
+   public static void validate(ParticipantWebDto dto, AbstractAccrualAction action) {
         if (dto.getBirthDate() != null) {
          Date birthDateEntered = new Date(AccrualUtil.yearMonthStringToTimestamp(dto.getBirthDate()).getTime());
          Date currentDate = new Date();
          if (currentDate.getTime() < birthDateEntered.getTime()) {
            action.addFieldError("participant.birthDate", "BirthDate cannot be in future.");
         }        
-      } 
-    } 
+      }
+      if (dto.getRaceCode() != null && !dto.getRaceCode().isEmpty() && dto.getRaceCode().size() > 1) {
+       boolean containsUnique = false;  
+        for (String raceCode : dto.getRaceCode()) {
+              if (PatientRaceCode.getByCode(raceCode).isUnique()) {
+                  containsUnique = true;
+              }
+          }
+          if (containsUnique) {
+            action.addFieldError("participant.raceCode", "No multiple selection"
+                  + " when race code is Not Reported or Unknown.");
+          }          
+      }        
+   }   
+   
 }

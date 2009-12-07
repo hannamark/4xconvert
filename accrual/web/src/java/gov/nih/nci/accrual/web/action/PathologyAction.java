@@ -93,6 +93,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
@@ -103,7 +104,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity",  "PMD.ExcessiveMethodLength" })
 public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> {
 
     private static final long serialVersionUID = 1L;
@@ -194,6 +195,8 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
         porDto1.setStudyProtocolIdentifier(getSpIi());
         performedObservationResultSvc.createPerformedHistopathology(porDto1);
       } 
+       ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+            "Successfully saved Pathology information.");
     } catch (RemoteException re) {
        addActionError("Error saving the pathology." + re.getLocalizedMessage());
         return super.save();

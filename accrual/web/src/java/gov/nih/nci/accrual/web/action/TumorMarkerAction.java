@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.web.dto.util.TumorMarkerWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -91,6 +92,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
@@ -157,6 +159,8 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
            pcrDto1.setResultText(tumorMarker.getTumorMarkerValue());
            performedObservationResultSvc.create(pcrDto1);   
        }
+       ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+         "Successfully saved Tumor Marker information."); 
      } catch (RemoteException re) {
             addActionError("Error saving the  TumorMarker." + re.getLocalizedMessage());
             return INPUT;

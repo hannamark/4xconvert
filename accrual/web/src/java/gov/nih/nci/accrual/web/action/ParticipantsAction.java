@@ -260,7 +260,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             pat = patientSvc.update(pat);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
-            return super.update();
+            return super.edit();
         }
         ssub = studySubjectSvc.update(ssub);
         SessionEnvManager.putParticipantInSession(ssub.getIdentifier(), ssub.getAssignedIdentifier());

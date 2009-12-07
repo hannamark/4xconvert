@@ -20,6 +20,9 @@
     <s:if test="%{currentAction== 'detail'}">
         <c:set var="topic" scope="request" value="pathology"/> 
      </s:if>
+        <s:else>
+        <c:set var="topic" scope="request" value="pathology"/> 
+     </s:else>
      Pathology
 </title>        
     <s:head/>
@@ -31,6 +34,7 @@
     Pathology
 </h1>
 <div class="box">
+    <accrual:sucessMessage />
     <s:if test="hasActionErrors() && !hasFieldErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <s:hidden name="pathology.id"/>

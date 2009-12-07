@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.web.dto.util.StagingWebDto;
 import gov.nih.nci.accrual.web.dto.util.TumorMarkerWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityNameCode;
@@ -98,6 +99,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
@@ -238,7 +240,8 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
         pcrDto4.setStageCodingSystem(staging.getSystem());
         performedObservationResultSvc.createPerformedClinicalResult(pcrDto4);
       }
-      
+      ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+         "Successfully saved Staging information.");
     } catch (RemoteException re) {
       addActionError("Error saving the  Staging." + re.getLocalizedMessage());
       return INPUT;

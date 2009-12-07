@@ -136,7 +136,8 @@ function handleEditAction(){
                 <s:set name="racerx" value="%{code}"/>
                 <s:label name="races" cssStyle="font-weight:normal"/><br>
             </s:iterator>
-          </s:elseif>          
+          </s:elseif>  
+           <s:fielderror cssClass="formErrorMsg"><s:param>participant.raceCode</s:param></s:fielderror>        
         </td>
     </tr>
 
