@@ -127,6 +127,9 @@ public class UserAccountAction extends AbstractAccrualAction {
      * @throws Exception exception
      */
     public static String getTreatmentSite(Long poOrganizationId) throws Exception {
+        if (poOrganizationId == null) {
+            return null;
+        }
         OrganizationDTO organization = PoRegistry.getOrganizationEntityService().
             getOrganization(IiConverter.convertToPoOrganizationIi(String.valueOf(poOrganizationId)));
         return organization.getName().getPart().get(0).getValue();
@@ -139,6 +142,9 @@ public class UserAccountAction extends AbstractAccrualAction {
      * @throws Exception exception
      */
     public static String getPhysician(Long poPersonId) throws Exception {
+        if (poPersonId == null) {
+            return null;
+        }
         PersonDTO person = PoRegistry.getPersonEntityService().
             getPerson(IiConverter.convertToPoPersonIi(String.valueOf(poPersonId)));
     

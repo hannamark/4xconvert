@@ -138,10 +138,9 @@ public class AccrualCsmUtil implements CsmUtil {
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
             upManager.createUser(csmUser);
             // assign the created user to the appropriate group
-            // read the CSM group name from the properties
-// temporary            
+            // read the CSM group name from the properties            
             //String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
-            String submitterGroup = "Outcomes";
+            String submitterGroup = "Outcomes"; // hardcoded temporary
             upManager.assignUserToGroup(loginName, submitterGroup);
             createdCSMUser = upManager.getUser(loginName);
         } catch (CSException cse) {
@@ -177,8 +176,9 @@ public class AccrualCsmUtil implements CsmUtil {
             upManager.modifyUser(csmUser);
             // assign the updated user to the appropriate group
             // read the CSM group name from the properties
-            /*String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
-            upManager.assignUserToGroup(loginName, submitterGroup);*/
+            //String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
+            String submitterGroup = "Outcomes"; // hardcoded temporary
+            upManager.assignUserToGroup(loginName, submitterGroup);
             createdCSMUser = upManager.getUser(loginName);
         } catch (CSException cse) {
             LOG.error(" CSM Exception while updating CSM user : " + loginName, cse);
