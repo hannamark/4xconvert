@@ -1,11 +1,11 @@
 var Help = {
-	url : "/accrual/helpDocs/coppaOutcomes/index.html?context=coppaOutcomes&topic=",
+	url : "/outcomes/helpDocs/coppaOutcomes/index.html?context=coppaOutcomes&topic=",
 	popHelp: function(topic) {
 		if(topic.length < 1){
 			topic=null;
 		}
 		//window.open (Help.url+topic, "Help", "status,scrollbars,resizable,width=800,height=500");
-		WWHAPI_Object("/accrual/helpDocs/coppaOutcomes", null);
+		WWHAPI_Object("/outcomes/helpDocs/coppaOutcomes", null);
 		WWHAPI_DisplayHelpWithNavigation("coppaOutcomes", topic);
 		//alert(Help.url+topic);
 	},
@@ -18,7 +18,7 @@ var Help = {
 	popHelpMain: function() {
 		var topic = "Welcome";
 		//window.open (Help.url+topic, "Help", "status,scrollbars,resizable,width=800,height=500");
-		WWHAPI_Object("/accrual/helpDocs/coppaOutcomes", null);
+		WWHAPI_Object("/outcomes/helpDocs/coppaOutcomes", null);
 		WWHAPI_DisplayHelpWithNavigation("coppaOutcomes", topic);
 		//alert(Help.url+topic);
 	}
