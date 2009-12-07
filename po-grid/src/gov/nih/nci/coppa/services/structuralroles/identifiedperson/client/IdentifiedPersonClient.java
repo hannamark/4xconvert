@@ -37,7 +37,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     /**
      * The ii root value for Identified person.
      */
-    public static final String IDENTIFIED_PERSON_ROOT = "2.16.840.1.113883.3.26.4.4.6";
+    public static final String IDENTIFIED_PERSON_ROOT = "2.16.840.1.113883.3.26.4.4.7";
 
     public IdentifiedPersonClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
@@ -99,11 +99,11 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         IdentifiedPerson[] results = client.search(criteria);
         ClientUtils.handleSearchResults(results);
     }
-    
+
     private static void queryIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);
-        limitOffset.setOffset(0);        
+        limitOffset.setOffset(0);
         IdentifiedPerson criteria = createCriteria();
         IdentifiedPerson[] results = client.query(criteria, limitOffset);
         ClientUtils.handleSearchResults(results);
@@ -119,18 +119,18 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         criteria.setStatus(statusCode);
         return criteria;
     }
-    
+
     private static void getIdentifiedPersonsByPlayerIds(IdentifiedPersonClient client) {
         Id id1 = new Id();
         id1.setRoot(PersonClient.PERSON_ROOT);
         id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
         id1.setExtension("501");
-        
+
         Id id2 = new Id();
         id2.setRoot(PersonClient.PERSON_ROOT);
         id2.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
         id2.setExtension("2153");
-        
+
         try {
             IdentifiedPerson[] results = client.getByPlayerIds(new Id[] {id1, id2});
             ClientUtils.handleSearchResults(results);
