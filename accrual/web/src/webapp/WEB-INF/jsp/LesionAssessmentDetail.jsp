@@ -43,10 +43,10 @@
 </script>
 <title>
     <s:if test="%{currentAction == 'create'}">
-        <c:set var="topic" scope="request" value="lesionAssessment_adding"/> 
+        <c:set var="topic" scope="request" value="add_lesion"/> 
         <fmt:message key="lesionAssessment.addPage" /></s:if>
     <s:elseif test="%{currentAction == 'update'}">
-        <c:set var="topic" scope="request" value="lesionAssessment_update"/> 
+        <c:set var="topic" scope="request" value="update_lesion"/> 
         <fmt:message key="lesionAssessment.updatePage" /></s:elseif>
 </title>        
     <s:head/>

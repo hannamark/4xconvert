@@ -26,7 +26,7 @@
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="offTreatment_detail"/> 
+        <c:set var="topic" scope="request" value="off_treatment"/> 
     </s:if>
     Off Treatment/Off Study
 </title>        

@@ -62,10 +62,10 @@
 </script>
 <title>
     <s:if test="%{currentAction == 'create'}">
-        <c:set var="topic" scope="request" value="drugBiologics_adding"/> 
+        <c:set var="topic" scope="request" value="add_biologics"/> 
         <fmt:message key="drugBiologic.addPage" /></s:if>
     <s:elseif test="%{currentAction == 'update'}">
-        <c:set var="topic" scope="request" value="drugBiologics_update"/> 
+        <c:set var="topic" scope="request" value="update_biologics"/> 
         <fmt:message key="drugBiologic.updatePage" /></s:elseif>
 </title>        
     <s:head/>

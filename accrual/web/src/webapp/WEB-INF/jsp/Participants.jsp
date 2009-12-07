@@ -4,7 +4,7 @@
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:set var="topic" scope="request" value="subjects_intro"/> 
+<c:set var="topic" scope="request" value="search_patient"/> 
 <head>
     <title><fmt:message key="participant.search.title"/></title>   
     <s:head/>

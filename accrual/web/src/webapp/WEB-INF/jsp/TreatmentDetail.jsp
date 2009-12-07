@@ -30,10 +30,10 @@
 </script>
 <title>
     <s:if test="%{currentAction == 'create'}">
-        <c:set var="topic" scope="request" value="treatment_adding"/> 
+        <c:set var="topic" scope="request" value="add_treatment"/> 
         <fmt:message key="treatPlan.addPage" /></s:if>
     <s:elseif test="%{currentAction == 'update'}">
-        <c:set var="topic" scope="request" value="treatment_update"/> 
+        <c:set var="topic" scope="request" value="update_treatment"/> 
         <fmt:message key="treatPlan.updatePage" /></s:elseif>
 </title>        
     <s:head/>

@@ -15,7 +15,7 @@
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="course_detail"/> 
+        <c:set var="topic" scope="request" value="course"/> 
      </s:if>
      <fmt:message key="course.mainPage"/>
 </title>        

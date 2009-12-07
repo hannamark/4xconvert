@@ -47,7 +47,7 @@
 </script>
 <title>
 	<s:if test="%{currentAction == 'create'}">
-        <c:set var="topic" scope="request" value="diseaseEvaluation_adding"/> 
+        <c:set var="topic" scope="request" value="add_evaluation"/> 
     </s:if>    
      Disease Evaluation
 </title>        

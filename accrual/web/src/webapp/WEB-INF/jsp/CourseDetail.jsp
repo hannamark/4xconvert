@@ -36,10 +36,10 @@
 </script>
 <title>
     <s:if test="%{currentAction == 'create'}">
-        <c:set var="topic" scope="request" value="course_adding"/> 
+        <c:set var="topic" scope="request" value="add_course"/> 
         <fmt:message key="course.addPage" /></s:if>
     <s:elseif test="%{currentAction == 'update'}">
-        <c:set var="topic" scope="request" value="course_update"/> 
+        <c:set var="topic" scope="request" value="update_course"/> 
         <fmt:message key="course.updatePage" /></s:elseif>
 </title>        
     <s:head/>

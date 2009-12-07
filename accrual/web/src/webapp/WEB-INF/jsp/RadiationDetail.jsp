@@ -58,10 +58,10 @@
 </script>
 <title>
     <s:if test="%{currentAction == 'create'}">
-        <c:set var="topic" scope="request" value="radiation_adding"/> 
+        <c:set var="topic" scope="request" value="add_radiation"/> 
         <fmt:message key="radiation.addPage" /></s:if>
     <s:elseif test="%{currentAction == 'update'}">
-        <c:set var="topic" scope="request" value="radiation_update"/> 
+        <c:set var="topic" scope="request" value="update_radiation"/> 
         <fmt:message key="radiation.updatePage" /></s:elseif>
 </title>        
     <s:head/>

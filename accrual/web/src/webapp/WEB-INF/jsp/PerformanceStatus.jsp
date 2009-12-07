@@ -19,6 +19,9 @@
     }
 </script>
 <title>
+    <s:if test="%{currentAction== 'detail'}">
+        <c:set var="topic" scope="request" value="performance"/> 
+     </s:if>
      Performance Status
 </title>        
     <s:head/>

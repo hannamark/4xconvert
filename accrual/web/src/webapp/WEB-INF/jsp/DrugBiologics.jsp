@@ -14,7 +14,7 @@
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="drugBiologics_detail"/> 
+        <c:set var="topic" scope="request" value="biologics"/> 
      </s:if>
      Drug/Biologics
 </title>        

@@ -41,7 +41,7 @@
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="staging_detail"/> 
+        <c:set var="topic" scope="request" value="add_tumor"/> 
      </s:if>
      Add Tumor Marker
 </title>        

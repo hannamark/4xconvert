@@ -54,7 +54,7 @@
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="priorTherapies_detail"/>
+        <c:set var="topic" scope="request" value="prior_therapies"/>
       </s:if>
      Prior Therapies
 </title>

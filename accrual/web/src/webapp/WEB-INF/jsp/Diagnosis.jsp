@@ -32,7 +32,7 @@
 </script>
 <title>
     <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="diagnosis_detail"/> 
+        <c:set var="topic" scope="request" value="diagnosis"/> 
      </s:if>
      Diagnosis
 </title>        

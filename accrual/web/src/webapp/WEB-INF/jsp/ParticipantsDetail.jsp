@@ -30,13 +30,13 @@ function handleEditAction(){
 </script>
 <title>
     <s:if test="%{currentAction == 'create'}">
-        <c:set var="topic" scope="request" value="subjects_adding"/> 
+        <c:set var="topic" scope="request" value="add_patient"/> 
         <fmt:message key="participant.create.title" /></s:if>
     <s:elseif test="%{currentAction == 'update'}">
-        <c:set var="topic" scope="request" value="subjects_update"/> 
+        <c:set var="topic" scope="request" value="update_patient"/> 
         <fmt:message key="participant.retrieve.title" /></s:elseif>
     <s:elseif test="%{currentAction == 'retrieve'}">
-        <c:set var="topic" scope="request" value="subjects_intro"/> 
+        <c:set var="topic" scope="request" value="view_patient"/> 
         <fmt:message key="participant.update.title" /></s:elseif>
 </title>        
     <s:head/>
