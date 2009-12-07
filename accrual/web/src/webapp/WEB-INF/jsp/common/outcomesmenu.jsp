@@ -56,7 +56,7 @@
                 </c:otherwise>
             </c:choose>
             <c:choose>
-                <c:when test="${(requestScope.topic == 'staging')}">
+                <c:when test="${(requestScope.topic == 'staging') || (requestScope.topic == 'add_tumor')}">
                     <li><a href="executeStaging.action" class="selected">Staging</a></li>
                 </c:when>
                 <c:otherwise>
