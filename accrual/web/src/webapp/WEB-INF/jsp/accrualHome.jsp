@@ -23,18 +23,19 @@
     <h1>Outcomes Home
     </h1>
     <p class="padme2">
-        This Site enables you to report outcomes information on patient outcomes. You can:
+        This Site enables you to submit and manage clinical outcomes data for your patients. You can:
     </p>
     <ul class="padme10">
-        <li><a href="/outcomes/userAccount.action">Create an account</a> to report outcomes information</li>
+        <li><a href="/outcomes/userAccount.action">Create an account</a> in order to submit data on your patients</li>
         <li><a href="/outcomes/common/welcome.action">Log In</a> to your account and</li> 
         <menu> 
-            <li>Register clinical trials</li>
-            <li>Search registered trials by Title, Phase, Trial Identifiers and Organizations</li>
+            <li>Create a patient</li>
+            <li>Update and/or add data to an existing patient</li>
         </menu>                                               
     </ul>
     <p class="padme2">
-        <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance
+        Want to learn more about NCI's Patient Outcomes Reporting? Visit the <a href="https://wiki.nci.nih.gov/display/CTMS/Patient+Outcomes">Outcomes Reporting</a> website.
+        <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance.
     </p>
 </div>
 </body>
