@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
@@ -236,7 +237,7 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
             addActionError("Error in save().  " + e.getLocalizedMessage());
             return INPUT;
         }
-        return super.execute();
+        return super.save();
     }
 
     /**

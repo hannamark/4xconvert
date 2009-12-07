@@ -45,7 +45,7 @@
     Diagnosis
 </h1>
 <div class="box">
-    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if><s:else><accrual:sucessMessage /></s:else>
 <s:form name="detailForm">
 <s:hidden name="selectedDiagnosis"/>
 <s:hidden name="diagnosis.identifier"/>
