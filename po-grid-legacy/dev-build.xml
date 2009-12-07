@@ -73,10 +73,6 @@
                           regexp="[:|;]"
                           replace="&#10;      "
                           casesensitive="false" />
-        <echo level="info">
-            base.extended.classpath is:
-            ${base.extended.classpath.prop}
-          </echo>
         <path id="service.build.extended.classpath">
         </path>
         <path id="service.run.extended.classpath">
@@ -93,10 +89,6 @@
                           regexp="[:|;]"
                           replace="&#10;      "
                           casesensitive="false" />
-        <echo level="info">
-            test.build.extended.classpath is:
-            ${test.build.extended.classpath.prop}
-          </echo>
 
         <path id="test.run.extended.classpath">
         </path>
@@ -115,10 +107,6 @@
                           regexp="[:|;]"
                           replace="&#10;      "
                           casesensitive="false" />
-        <echo level="info">
-            tasks.run.extended.classpath is:
-            ${tasks.run.extended.classpath.prop}
-          </echo>
     </target>
 
 
@@ -299,7 +287,7 @@
     <!-- Post Jar Tests Build Target                                    -->
     <!-- ============================================================== -->
     <target name="postJarTests">
-        <antcall target="test-quick" inheritRefs="true" />
+
     </target>
 
     <!-- ============================================================== -->
