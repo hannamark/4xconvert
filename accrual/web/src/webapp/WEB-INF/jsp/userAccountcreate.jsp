@@ -17,11 +17,11 @@
         }
         
         function lookupTreatmentSite(){
-            showPopWin('${treatmentSiteLookupUrl}', 900, 400, '', 'Select Treatment Site');
+            showPopWinOutsideContext('${treatmentSiteLookupUrl}', 900, 400, '', 'Select Treatment Site');
         }
         
         function lookupPhysician(){
-            showPopWin('${physicianLookupUrl}', 900, 400, '', 'Select Physician');
+            showPopWinOutsideContext('${physicianLookupUrl}', 900, 400, '', 'Select Physician');
         }
     </script>
     

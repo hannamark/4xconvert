@@ -23,6 +23,7 @@ var gPopFrame = null;
 var gReturnFunc;
 var gPopupIsShown = false;
 var gDefaultPage = "../images/loading.gif";
+var gCloseGif    = "../images/close.gif";
 var gHideSelects = false;
 var gReturnVal = null;
 
@@ -52,7 +53,7 @@ function initPopUp() {
 			'<div id="popupTitleBar">' +
 				'<div id="popupTitle"></div>' +
 				'<div id="popupControls">' +
-					'<img src="../images/close.gif" onclick="hidePopWin(false);" id="popCloseBox" />' +
+					'<img src="'+ gCloseGif +'" onclick="hidePopWin(false);" id="popCloseBox" />' +
 				'</div>' +
 			'</div>' +
 			'<iframe src="'+ gDefaultPage +'" style="width:100%;height:100%;background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="popupFrame" name="popupFrame" width="100%" height="100%"></iframe>' +
@@ -92,7 +93,13 @@ function initPopUp() {
 		}
 	}
 }
-addEvent(window, "load", initPopUp);
+//addEvent(window, "load", initPopUp);
+
+function showPopWinOutsideContext(url, width, height, returnFunc, title) {
+	gDefaultPage = "./images/loading.gif";
+	gCloseGif    = "./images/close.gif";
+	showPopWin(url, width, height, returnFunc, title);
+}
 
  /**
 	* @argument width - int in pixels
@@ -103,7 +110,7 @@ addEvent(window, "load", initPopUp);
 	*/
 
 function showPopWin(url, width, height, returnFunc, title) {
-	
+	initPopUp();
 	gPopupIsShown = true;
 	disableTabIndexes();
 	gPopupMask.style.display = "block";
