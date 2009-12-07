@@ -3,7 +3,7 @@
 <div>NCI Outcomes</div>
 <ul>
     <c:choose>
-        <c:when test="${requestScope.topic == 'home'}">
+        <c:when test="${(requestScope.topic == 'home') || (requestScope.topic == '')}">
             <li><a href="home.action" class="selected">Home</a></li>
         </c:when>
         <c:otherwise>
@@ -36,7 +36,7 @@
     
     <c:if test="${(pageContext.request.remoteUser != null) && (sessionScope.accrualRole == 'Outcomes')}">
         <c:choose>
-            <c:when test="${(requestScope.topic == 'subjects_intro') || (requestScope.topic == 'subjects_adding') || (requestScope.topic == 'subjects_update')}">
+            <c:when test="${(requestScope.topic == 'search_patient') || (requestScope.topic == 'add_patient') || (requestScope.topic == 'update_patient')}">
                 <li><a href="executeParticipants.action" class="selected">Patient Search</a></li>
             </c:when>
             <c:otherwise>
@@ -48,7 +48,7 @@
         <li class="hassubmenu">Baseline Data
         <ul id="part_sites">
             <c:choose>
-                <c:when test="${(requestScope.topic == 'diagnosis_detail')}">
+                <c:when test="${(requestScope.topic == 'diagnosis')}">
                     <li><a href="executeDiagnosis.action" class="selected">Diagnosis</a></li>
                 </c:when>
                 <c:otherwise>
@@ -56,7 +56,7 @@
                 </c:otherwise>
             </c:choose>
             <c:choose>
-                <c:when test="${(requestScope.topic == 'staging_detail')}">
+                <c:when test="${(requestScope.topic == 'staging')}">
                     <li><a href="executeStaging.action" class="selected">Staging</a></li>
                 </c:when>
                 <c:otherwise>
@@ -64,7 +64,7 @@
                 </c:otherwise>
             </c:choose>
             <c:choose>
-                <c:when test="${(requestScope.topic == 'pathology_detail')}">
+                <c:when test="${(requestScope.topic == 'pathology')}">
                     <li><a href="executePathology.action" class="selected">Pathology</a></li>
                 </c:when>
                 <c:otherwise>
@@ -72,7 +72,7 @@
                 </c:otherwise>
             </c:choose>
             <c:choose>
-                <c:when test="${(requestScope.topic == 'priorTherapies_detail')}">
+                <c:when test="${(requestScope.topic == 'prior_therapies')}">
                     <li><a href="executePriorTherapies.action" class="selected">Prior
                     Therapies</a></li>
                 </c:when>
@@ -82,7 +82,7 @@
                 </c:otherwise>
             </c:choose>
             <c:choose>
-                <c:when test="${(requestScope.topic == 'performanceStatus_detail')}">
+                <c:when test="${(requestScope.topic == 'performance')}">
                     <li><a href="executePerformanceStatus.action" class="selected">Performance Status</a></li>
                 </c:when>
                 <c:otherwise>
@@ -96,7 +96,7 @@
         <li class="hassubmenu">Treatment
         <ul id="part_sites">
         <c:choose>
-                <c:when test="${(requestScope.topic == 'treatment_detail') || (requestScope.topic == 'treatment_adding') || (requestScope.topic == 'treatment_update')}">
+                <c:when test="${(requestScope.topic == 'treatment_plan') || (requestScope.topic == 'add_treatment') || (requestScope.topic == 'update_treatment')}">
                     <li><a href="executeTreatment.action" class="selected">Treatment Plan</a></li>
                 </c:when>
                 <c:otherwise>
@@ -105,7 +105,7 @@
             </c:choose>
             <c:if test="${(sessionScope.treatmentPlanIi != null)}">
             <c:choose>
-                <c:when test="${(requestScope.topic == 'course_detail') || (requestScope.topic == 'course_adding') || (requestScope.topic == 'course_update')}">
+                <c:when test="${(requestScope.topic == 'course') || (requestScope.topic == 'add_course') || (requestScope.topic == 'update_course')}">
                     <li><a href="executeCourse.action" class="selected">Course</a></li>
                 </c:when>
                 <c:otherwise>
@@ -115,7 +115,7 @@
             </c:if>
             <c:if test="${(sessionScope.courseIi != null)}">
             <c:choose>
-                <c:when test="${(requestScope.topic == 'drugBiologics_detail') || (requestScope.topic == 'drugBiologics_adding') || (requestScope.topic == 'drugBiologics_update')}">
+                <c:when test="${(requestScope.topic == 'biologics') || (requestScope.topic == 'add_biologics') || (requestScope.topic == 'update_biologics')}">
                     <li><a href="executeDrugBiologics.action" class="selected">Drug/Biologics</a></li>
                 </c:when>
                 <c:otherwise>
@@ -123,7 +123,7 @@
                 </c:otherwise>
             </c:choose>
             <c:choose>
-                <c:when test="${(requestScope.topic == 'surgery_detail') || (requestScope.topic == 'surgery_adding') || (requestScope.topic == 'surgery_update')}">
+                <c:when test="${(requestScope.topic == 'surgery') || (requestScope.topic == 'add_surgery') || (requestScope.topic == 'update_surgery')}">
                     <li><a href="executeSurgery.action" class="selected">Surgery</a></li>
                 </c:when>
                 <c:otherwise>
@@ -131,7 +131,7 @@
                 </c:otherwise>
             </c:choose>
             <c:choose>
-                <c:when test="${(requestScope.topic == 'radiation_detail') || (requestScope.topic == 'radiation_adding') || (requestScope.topic == 'radiation_update')}">
+                <c:when test="${(requestScope.topic == 'radiation') || (requestScope.topic == 'add_radiation') || (requestScope.topic == 'update_radiation')}">
                     <li><a href="executeRadiation.action" class="selected">Radiation</a></li>
                 </c:when>
                 <c:otherwise>
@@ -141,7 +141,7 @@
             </c:if>
             <c:if test="${(sessionScope.treatmentPlanIi != null)}">
             <c:choose>
-                <c:when test="${(requestScope.topic == 'offTreatment_detail')}">
+                <c:when test="${(requestScope.topic == 'off_treatment')}">
                     <li><a href="executeOffTreatment.action" class="selected">Off
                     Treatment</a></li>
                 </c:when>
@@ -157,7 +157,7 @@
         <li class="hassubmenu">Patient Outcomes
          <ul id="part_sites">
         <c:choose>
-            <c:when test="${(requestScope.topic == 'diseaseEvaluation_detail') || (requestScope.topic == 'diseaseEvaluation_adding') }">
+            <c:when test="${(requestScope.topic == 'evaluation') || (requestScope.topic == 'add_evaluation') }">
                 <a href="executeParticipantOutcomes.action" class="selected">Disease Evaluation</a>
             </c:when>
             <c:otherwise>
@@ -165,7 +165,7 @@
             </c:otherwise>
         </c:choose>
         <c:choose>
-                <c:when test="${(requestScope.topic == 'lesionAssessment_detail') || (requestScope.topic == 'lesionAssessment_adding') || (requestScope.topic == 'lesionAssessment_update')}">
+                <c:when test="${(requestScope.topic == 'lesion') || (requestScope.topic == 'add_lesion') || (requestScope.topic == 'update_lesion')}">
                     <li><a href="executeLesionAssessment.action" class="selected">Lesion Assessment</a></li>
                 </c:when>
                 <c:otherwise>
@@ -173,7 +173,7 @@
                 </c:otherwise>
          </c:choose>
          <c:choose>
-                <c:when test="${(requestScope.topic == 'deathInformation_detail')}">
+                <c:when test="${(requestScope.topic == 'death')}">
                     <li><a href="executeDeathInformation.action" class="selected">Death Information</a></li>
                 </c:when>
                 <c:otherwise>
