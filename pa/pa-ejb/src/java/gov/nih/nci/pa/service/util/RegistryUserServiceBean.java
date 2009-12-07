@@ -182,7 +182,7 @@ public class RegistryUserServiceBean implements RegistryUserServiceRemote {
                 query.setParameter("csmuserId", csmUser.getUserId());
                 queryList = query.list();
                 // there should only one user with the login name
-                if (queryList != null) {
+                if (queryList != null && !queryList.isEmpty()) {
                     registryUser = queryList.get(0);
                 }
             }
