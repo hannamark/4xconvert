@@ -126,11 +126,6 @@ public class RemoteServiceHelper {
     private static InitialContext ctx;
     private static InitialContext jmxCtx;
 
-    static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService()
-            throws NamingException {
-        return (ResearchOrganizationCorrelationServiceRemote) lookup(RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE);
-    }
-
     private static Object lookup(String resource) throws NamingException {
         if (ctx == null) {
             Properties env = new Properties();
@@ -166,6 +161,16 @@ public class RemoteServiceHelper {
      */
     public static PersonEntityServiceRemote getPersonEntityService() throws NamingException {
         return (PersonEntityServiceRemote) lookup(PERSON_SERVICE_BEAN_REMOTE);
+    }
+    
+    /**
+     * Get the research organization service.
+     * @return the service.
+     * @throws NamingException on error.
+     */
+    public static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService()
+    throws NamingException {
+        return (ResearchOrganizationCorrelationServiceRemote) lookup(RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE);
     }
 
     /**

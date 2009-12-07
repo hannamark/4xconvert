@@ -82,11 +82,13 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
+import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.net.URISyntaxException;
@@ -97,17 +99,12 @@ import javax.naming.NamingException;
  * @author mshestopalov
  *
  */
-public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
+public class ManageResearchOrganizationWithCRTest extends AbstractPoWebTest {
     public String ORG_FOR_TEST = "org_for_test";
     public String AFFILIATE_ORG_FOR_IO = "affiliate_org_for_io";
 
-    public void testCreateActiveOrganizationWithActiveIO() throws Exception {
+    public void testCreateActiveOrganizationWithPendingRO() throws Exception {
         loginAsCurator();
-        // create an ACTIVE ORG for later
-        createOrganization("ACTIVE", AFFILIATE_ORG_FOR_IO, getAddress(), "sample@example.com", "703-111-2345",
-                "703-111-1234", "703-111-1234", "http://www.example.com");
-        String ioAffOrgId = selenium.getText("wwctrl_organization.id");
-        assertNotEquals("null", ioAffOrgId.trim());
         
         // create ACTIVE org we are using now.
         createOrganization("ACTIVE", ORG_FOR_TEST, getAddress(), "sample@example.com", "703-111-2345",
@@ -115,68 +112,79 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         String activeOrgId = selenium.getText("wwctrl_organization.id");
         assertNotEquals("null", activeOrgId.trim());
   
-        // Goto Manage IO Page
-        accessManageIdentifiedOrganizationScreen();
-        // add IO
+        // Goto Manage RO Page
+        accessManageResearchOrganizationScreen();
+        // add RO
         clickAndWaitButton("add_button");
-        assertTrue(selenium.isTextPresent("Identified Organization Role Information"));
+        assertTrue(selenium.isTextPresent("Research Organization Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
-        // select a ACTIVE Scoper
-        selectOrganizationScoper(ioAffOrgId.trim(), AFFILIATE_ORG_FOR_IO);
-        selenium.select("curateRoleForm.role.status", "label=ACTIVE"); 
-        selenium.type("curateRoleForm.role.assignedIdentifier.extension", "1234");
-        selenium.type("curateRoleForm.role.assignedIdentifier.root", "1.2.3.4");
+        
+        selenium.select("curateRoleForm.role.status", "label=PENDING"); 
+        selenium.type("curateRoleForm.role.name", "original RO name");
+        selenium.select("curateRoleForm_role_typeCode", "label=Cancer Center");
+        waitForElementById("curateRoleForm.role._selectFundingMechanism", 30);
+        selenium.select("curateRoleForm.role._selectFundingMechanism", "label=P30 - Center Core Grants");
         clickAndWaitButton("save_button");
         
-        assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully created!"));
-        String ioId = selenium.getTable("row.1.0");
-        assertNotEquals("null", ioId.trim());
+        assertTrue(selenium.isTextPresent("exact:Research Organization was successfully created!"));
+        String roId = selenium.getTable("row.1.0");
+        assertNotEquals("null", roId.trim());
 
         clickAndWaitButton("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
         clickAndWaitButton("save_button");
         
-        updateRemoteIoOrg(ioId.trim());
+        updateRemoteRoOrg(roId.trim());
 
-        // Goto Manage IO Page.... should see CR
-        openAndWait("/po-web/protected/roles/organizational/IdentifiedOrganization/start.action?organization=" + activeOrgId);
-        clickAndWaitButton("edit_identifiedOrganization_id_" + ioId.trim());
-        assertTrue(selenium.isTextPresent("exact:Edit Identified Organization - Comparison"));
+        // Goto Manage RO Page.... should see CR
+        openAndWait("/po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + activeOrgId);
+        clickAndWaitButton("edit_researchOrganization_id_" + roId.trim());
+        assertTrue(selenium.isTextPresent("exact:Edit Research Organization - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
-        // scoper
-        assertEquals(AFFILIATE_ORG_FOR_IO + " (" + ioAffOrgId.trim() + ")", selenium
-                .getText("wwctrl_curateRoleForm_role_scoper_id"));
-        // old values
-        assertEquals("1234", selenium.getValue("curateRoleForm.role.assignedIdentifier.extension").trim());
-        assertEquals("1.2.3.4", selenium.getValue("curateRoleForm.role.assignedIdentifier.root").trim());
         
-        // copy over new ext
-        selenium.click("copy_curateCrForm_role_assignedIdentifier");
-        // new values
-        waitForElementById("curateRoleForm.role.assignedIdentifier.extension", 5);
-        waitForElementById("curateRoleForm.role.assignedIdentifier.root", 5);
-        assertEquals("9999", selenium.getValue("curateRoleForm.role.assignedIdentifier.extension").trim());
-        assertEquals("9.9.9.9", selenium.getValue("curateRoleForm.role.assignedIdentifier.root").trim());
+        assertEquals("original RO name", selenium.getValue("curateRoleForm.role.name").trim());
+        assertEquals("1", selenium.getValue("curateRoleForm_role_typeCode").trim());
+        assertEquals("367", selenium.getValue("curateRoleForm.role._selectFundingMechanism").trim());
+        
+        // copy over new name
+        selenium.click("copy_curateCrForm_role_name");
+        waitForElementById("curateRoleForm.role.name", 5);
+        assertEquals("new RO name", selenium.getValue("curateRoleForm.role.name").trim());
+       
+        // copy over new type code
+        selenium.click("copy_curateCrForm_role_typeCode");
+        waitForElementById("curateRoleForm_role_typeCode", 5);
+        assertEquals("6", selenium.getValue("curateRoleForm_role_typeCode").trim());
+        
+        // copy over new funding Mechanism
+        selenium.click("copy_curateCrForm_role_fundingMechanism");
+        waitForElementById("curateRoleForm.role._selectFundingMechanism", 5);
+        assertEquals("307", selenium.getValue("curateRoleForm.role._selectFundingMechanism").trim());
         
         clickAndWaitButton("save_button");
-        assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully updated!".trim()));
+        assertTrue(selenium.isTextPresent("exact:Research Organization was successfully updated!".trim()));
     }
 
-    private void updateRemoteIoOrg(String ext) throws EntityValidationException, NamingException, URISyntaxException,
+    private void updateRemoteRoOrg(String ext) throws EntityValidationException, NamingException, URISyntaxException,
             NullifiedEntityException, NullifiedRoleException {
         Ii id = new Ii();
         id.setExtension(ext);
-        id.setRoot("2.16.840.1.113883.3.26.4.4.6");
-        id.setIdentifierName("Identified org identifier");
-        IdentifiedOrganizationDTO dto = RemoteServiceHelper.getIdentifiedOrganizationCorrelationServiceRemote().getCorrelation(id);
-        Ii assignedIdentifier = new Ii();
-        assignedIdentifier.setExtension("9999");
-        assignedIdentifier.setRoot("9.9.9.9");
-        dto.setAssignedId(assignedIdentifier);
+        id.setRoot("2.16.840.1.113883.3.26.4.4.5");
+        id.setIdentifierName("NCI Research Organization identifier");
+        ResearchOrganizationDTO dto = RemoteServiceHelper.getResearchOrganizationCorrelationService().getCorrelation(id);
+        
+        dto.setName(StringConverter.convertToEnOn("new RO name"));
+        Cd type = new Cd();
+        type.setCode("NWK");
+        dto.setTypeCode(type);
 
-        RemoteServiceHelper.getIdentifiedOrganizationCorrelationServiceRemote().updateCorrelation(dto);
+        Cd fm = new Cd();
+        fm.setCode("B09");
+        dto.setFundingMechanism(fm);
+
+        RemoteServiceHelper.getResearchOrganizationCorrelationService().updateCorrelation(dto);
     }
 }

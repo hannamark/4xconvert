@@ -472,6 +472,11 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         clickAndWait("link=Manage Identified Organization(s)");
         assertTrue(selenium.isTextPresent("Identified Organization Information"));
     }
+    
+    protected void accessManageResearchOrganizationScreen() {
+        clickAndWait("link=Manage Research Organization(s)");
+        assertTrue(selenium.isTextPresent("Research Organization Information"));
+    }
 
     protected void accessManageHealthCareProviderScreen() {
         clickAndWait("link=Manage Health Care Provider(s)");

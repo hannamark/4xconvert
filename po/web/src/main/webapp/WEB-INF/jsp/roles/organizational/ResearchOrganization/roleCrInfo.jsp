@@ -20,7 +20,7 @@
             </po:copyButton>
             <po:copyButton
              id="copy_curateCrForm_role_fundingMechanism"
-             onclick="copyValueToTextField('${pofn:escapeJavaScript(cr.fundingMechanism.code)}', 'curateRoleForm.role.fundingMechanism'); selectValueInSelectField('${cr.fundingMechanism.code}', 'curateRoleForm.role._selectFundingMechanism');" 
+             onclick="copyValueToTextField('${cr.fundingMechanism.id}', 'curateRoleForm.role.fundingMechanism'); selectValueInSelectField('${cr.fundingMechanism.id}', 'curateRoleForm.role._selectFundingMechanism');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield label="%{getText('researchOrganization.fundingMechanism')}" name="cr.fundingMechanism.description" required="true" cssClass="required" />
             </po:copyButton>
