@@ -28,6 +28,8 @@ public class RegistryUserWebDTO {
     private String password;
     private String retypePassword;
     private String prsOrgName;
+    private String treatmentSiteId;
+    private String physicianId;
     
     /**
      * 
@@ -57,6 +59,12 @@ public class RegistryUserWebDTO {
         this.password = password;
         this.retypePassword = password;
         this.prsOrgName = registryUser.getPrsOrgName();
+        if (registryUser.getPoOrganizationId() == null) {
+            this.treatmentSiteId = String.valueOf(registryUser.getPoOrganizationId());
+        }
+        if (registryUser.getPoPersonId() == null) {
+            this.physicianId = String.valueOf(registryUser.getPoPersonId());
+        }        
     }
 
     /** .
@@ -271,5 +279,31 @@ public class RegistryUserWebDTO {
         this.prsOrgName = prsOrgName;
     }
 
+    /**
+     * @return the treatmentSiteId
+     */
+    public String getTreatmentSiteId() {
+        return treatmentSiteId;
+    }
 
+    /**
+     * @param treatmentSiteId the treatmentSiteId to set
+     */
+    public void setTreatmentSiteId(String treatmentSiteId) {
+        this.treatmentSiteId = treatmentSiteId;
+    }
+    
+    /**
+     * @return the physicianId
+     */
+    public String getPhysicianId() {
+        return physicianId;
+    }
+
+    /**
+     * @param physicianId the physicianId to set
+     */
+    public void setPhysicianId(String physicianId) {
+        this.physicianId = physicianId;
+    }
 }

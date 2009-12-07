@@ -26,6 +26,8 @@ function handleAction(){
     <s:form name="myAccount" method="POST" ><s:actionerror/>
         <s:hidden name="registryUserWebDTO.id" />
         <s:hidden name="registryUserWebDTO.csmUserId" />
+        <s:hidden name="registryUserWebDTO.treatmentSiteId" />
+        <s:hidden name="registryUserWebDTO.physicianId" />
         <s:hidden name="page" />
         <c:choose>
             <c:when test="${requestScope.isNewUser  == true}">

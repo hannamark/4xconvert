@@ -181,7 +181,15 @@ public class RegisterUserAction extends ActionSupport {
             registryUser.setPostalCode(registryUserWebDTO.getPostalCode());
             registryUser.setCountry(registryUserWebDTO.getCountry());
             registryUser.setPhone(registryUserWebDTO.getPhone());
-            registryUser.setAffiliateOrg(registryUserWebDTO.getAffiliateOrg());    
+            registryUser.setAffiliateOrg(registryUserWebDTO.getAffiliateOrg());
+            if (registryUserWebDTO.getTreatmentSiteId() != null 
+                    && registryUserWebDTO.getTreatmentSiteId().length() > 0) {
+                registryUser.setPoOrganizationId(Long.valueOf(registryUserWebDTO.getTreatmentSiteId()));
+            }
+            if (registryUserWebDTO.getPhysicianId() != null 
+                    && registryUserWebDTO.getPhysicianId().length() > 0) {
+                registryUser.setPoPersonId(Long.valueOf(registryUserWebDTO.getPhysicianId()));
+            }            
             if (registryUserWebDTO.getPrsOrgName() != null) {
                 registryUser.setPrsOrgName(registryUserWebDTO.getPrsOrgName());
             }
