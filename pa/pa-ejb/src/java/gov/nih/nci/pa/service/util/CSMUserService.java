@@ -181,8 +181,8 @@ public class CSMUserService {
             upManager.modifyUser(csmUser);
             // assign the updated user to the appropriate group
             // read the CSM group name from the properties
-            /*String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
-            upManager.assignUserToGroup(loginName, submitterGroup);*/
+            String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
+            upManager.assignUserToGroup(loginName, submitterGroup);
             createdCSMUser = upManager.getUser(loginName);
 
         } catch (CSException cse) {
