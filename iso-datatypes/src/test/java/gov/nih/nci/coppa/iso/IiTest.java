@@ -33,10 +33,10 @@ public class IiTest {
          assertTrue(first.equals(second));
 
          second.setExtension("200");
-         second.setIdentifierName("not name");
-
          assertFalse(first.equals(second));
-
+         second.setIdentifierName("not name");
+         assertFalse(first.equals(second));
+         
         }
 
         @Test

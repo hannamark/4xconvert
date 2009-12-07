@@ -91,7 +91,7 @@ public enum IdentifierReliability {
     /** issued by system. */
     ISS,
     /** verified by system. */
-    VER,
+    VRF,
     /** unverified by system. */
     UNV;
 
