@@ -119,6 +119,15 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
             addActionError(e.getLocalizedMessage());
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String create() {
+        SessionEnvManager.clearTreatmentPlan();
+        return super.create();
+    }
 
     /**
      * {@inheritDoc}
@@ -188,6 +197,7 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
             return execute();
         }
         SessionEnvManager.putTreatmentPlanInSession(treatment.getId(), treatment.getName());
+        SessionEnvManager.clearCourse();
         return execute();
     }
 
@@ -197,7 +207,7 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
     @Override
     public String edit() throws RemoteException {
         if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         }
         PerformedActivityDto dto = treatment.getPerformedActivityDto(); 
@@ -205,7 +215,7 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
             dto = performedActivitySvc.update(dto);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         }
         SessionEnvManager.putTreatmentPlanInSession(dto.getIdentifier(), dto.getName());

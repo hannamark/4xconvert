@@ -85,6 +85,7 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 
@@ -96,10 +97,12 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.TooManyFields", "PMD.NPathComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.TooManyFields", 
+    "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class DrugBiologicsWebDto implements Serializable {
 
     private static final long serialVersionUID = -1395879742701837870L;
+    private static final String NUMERICMESSAGE = "Please Enter Numeric Value";
 
     private Ii id; 
     private St drugName;
@@ -156,11 +159,18 @@ public class DrugBiologicsWebDto implements Serializable {
         if (dto.getDose() == null || dto.getDose().getValue() == null) {
             action.addFieldError("drugBiologic.dose.value", "Please enter Dose Value.");
         }
+        if (dto.getDose().getValue() != null && !PAUtil.isNumber(dto.getDose().getValue().toString())) {
+            action.addFieldError("drugBiologic.dose.value", NUMERICMESSAGE);
+        }
         if (dto.getDose() == null || dto.getDose().getUnit().equals("")) {
             action.addFieldError("drugBiologic.dose.unit", "Please select Dose UOM.");
         }
         if (dto.getDoseDur().getValue() == null &&  !(dto.getDoseDur().getUnit().equals(""))) {
             action.addFieldError("drugBiologic.doseDur.value", "Please enter Duration Value.");
+        }
+        if (dto.getDoseDur() != null && dto.getDoseDur().getValue() != null 
+                && !PAUtil.isNumber(dto.getDoseDur().getValue().toString())) {
+            action.addFieldError("drugBiologic.doseDur.value", NUMERICMESSAGE);
         }
         if (dto.getDoseDur().getUnit().equals("") && dto.getDoseDur().getValue() != null) {
             action.addFieldError("drugBiologic.doseDur.unit", "Please select Duration UOM.");
@@ -168,20 +178,30 @@ public class DrugBiologicsWebDto implements Serializable {
         if (dto.getHeight() == null || dto.getHeight().getValue() == null) {
             action.addFieldError("drugBiologic.height.value", "Please enter Height Value.");
         }
+        if (dto.getHeight().getValue() != null && !PAUtil.isNumber(dto.getHeight().getValue().toString())) {
+            action.addFieldError("drugBiologic.height.value", NUMERICMESSAGE);
+        }
         if (dto.getHeight() == null || dto.getHeight().getUnit().equals("")) {
             action.addFieldError("drugBiologic.height.unit", "Please select Height UOM.");
         }
         if (dto.getWeight() == null || dto.getWeight().getValue() == null) {
             action.addFieldError("drugBiologic.weight.value", "Please enter Weight Value.");
         }
+        if (dto.getWeight().getValue() != null && !PAUtil.isNumber(dto.getWeight().getValue().toString())) {
+            action.addFieldError("drugBiologic.weight.value", NUMERICMESSAGE);
+        }
         if (dto.getWeight() == null || dto.getWeight().getUnit().equals("")) {
             action.addFieldError("drugBiologic.weight.unit", "Please select Weight UOM.");  
         }
-        /*if (dto.getBsa() == null || dto.getBsa().getValue() == null) {
-            action.addFieldError("drugBiologic.bsa.value", "Please enter Body Surface Area Value.");  
-        }*/
+        if (dto.getBsa() != null && dto.getBsa().getValue() != null 
+                && !PAUtil.isNumber(dto.getBsa().getValue().toString())) {
+            action.addFieldError("drugBiologic.bsa.value", NUMERICMESSAGE);  
+        }
         if (dto.getDoseTotal() == null || dto.getDoseTotal().getValue() == null) { 
             action.addFieldError("drugBiologic.doseTotal.value", "Please enter Dose Total Value.");
+        }
+        if (dto.getDoseTotal().getValue() != null && !PAUtil.isNumber(dto.getDoseTotal().getValue().toString())) {
+            action.addFieldError("drugBiologic.doseTotal.value", NUMERICMESSAGE);
         }
         if (dto.getDoseTotal() == null || dto.getDoseTotal().getUnit().equals("")) {
             action.addFieldError("drugBiologic.doseTotal.unit", "Please select Dose Total UOM.");

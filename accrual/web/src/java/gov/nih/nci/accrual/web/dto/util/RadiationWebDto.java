@@ -91,6 +91,7 @@ import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 
@@ -108,6 +109,7 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 public class RadiationWebDto implements Serializable {
 
     private static final long serialVersionUID = -3658357689383961868L;
+    private static final String NUMERICMESSAGE = "Please Enter Numeric Value";
     
     private Ii id;
     private Cd type;
@@ -180,17 +182,27 @@ public class RadiationWebDto implements Serializable {
         if (dto.getTotalDose() == null || dto.getTotalDose().getValue() == null) {
             action.addFieldError("radiation.totalDose.value", "Please enter Total Dose Value.");
         }
+        if (dto.getTotalDose().getValue() != null && !PAUtil.isNumber(dto.getTotalDose().getValue().toString())) {
+            action.addFieldError("radiation.totalDose.value", NUMERICMESSAGE);
+        }
         if (dto.getTotalDose() == null || dto.getTotalDose().getUnit().equals("")) {
             action.addFieldError("radiation.totalDose.unit", "Please select Total Dose UOM.");
         }
         if (dto.getDuration().getValue() == null &&  !(dto.getDuration().getUnit().equals(""))) {
             action.addFieldError("radiation.duration.value", "Please enter Duration Value.");
         }
+        if (dto.getDuration() != null && dto.getDuration().getValue() != null 
+                && !PAUtil.isNumber(dto.getDuration().getValue().toString())) {
+            action.addFieldError("radiation.duration.value", NUMERICMESSAGE);
+        }
         if (dto.getDuration().getUnit().equals("") && dto.getDuration().getValue() != null) {
             action.addFieldError("radiation.duration.unit", "Please select Duration UOM.");
         }
         if (dto.getDose() == null || dto.getDose().getValue() == null) {
             action.addFieldError("radiation.dose.value", "Please enter Dose Value.");
+        }
+        if (dto.getDose().getValue() != null && !PAUtil.isNumber(dto.getDose().getValue().toString())) {
+            action.addFieldError("radiation.dose.value", NUMERICMESSAGE);
         }
         if (dto.getDose() == null || dto.getDose().getUnit().equals("")) {
             action.addFieldError("radiation.dose.unit", "Please select Dose UOM.");

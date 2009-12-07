@@ -120,27 +120,37 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
             addActionError(e.getLocalizedMessage());
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String create() {
+        SessionEnvManager.clearCourse();
+        return super.create();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String add() {
-        CourseWebDto.validate(course, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-        PerformedActivityDto dto = course.getPerformedActivityDto(); 
         try {
+            CourseWebDto.validate(course, this);
+            if (hasActionErrors() || hasFieldErrors()) {
+                setCurrentAction(CA_CREATE);
+                return INPUT;
+            }
+            PerformedActivityDto dto = course.getPerformedActivityDto(); 
+
             dto = performedActivitySvc.create(dto);
-            
+
             ActivityRelationshipDto arDto = new ActivityRelationshipDto();
             arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
             arDto.setSourcePerformedActivityIdentifier(getTpIi());
             arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
             activityRelationshipSvc.create(arDto);
-            
+
             SessionEnvManager.putCourseInSession(dto.getIdentifier(), dto.getName());
             return super.add();
         } catch (RemoteException e) {
@@ -179,22 +189,23 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
      * {@inheritDoc}
      */
     @Override
-    public String edit() throws RemoteException {
-        CourseWebDto.validate(course, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-        PerformedActivityDto dto = course.getPerformedActivityDto(); 
+    public String edit() {
         try {
+            CourseWebDto.validate(course, this);
+            if (hasActionErrors() || hasFieldErrors()) {
+                setCurrentAction(CA_UPDATE);
+                return INPUT;
+            }
+            PerformedActivityDto dto = course.getPerformedActivityDto(); 
             dto = performedActivitySvc.update(dto);
+
+            SessionEnvManager.putCourseInSession(dto.getIdentifier(), dto.getName());
+            return super.edit();
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         }
-        SessionEnvManager.putCourseInSession(dto.getIdentifier(), dto.getName());
-        return super.edit();
     }
     
     /**

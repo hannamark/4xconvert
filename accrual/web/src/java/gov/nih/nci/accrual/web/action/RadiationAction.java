@@ -201,7 +201,7 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
     public String edit() throws RemoteException {
         RadiationWebDto.validate(radiation, this);
         if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         }
         try {
@@ -214,11 +214,11 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
             dto = performedActivitySvc.updatePerformedRadiationAdministration(dto);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         } catch (DataFormatException e) {
             addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         }
         return super.edit();

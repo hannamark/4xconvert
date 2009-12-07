@@ -219,12 +219,12 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
      */
     @Override
     public String add() {
-        LesionAssessmentWebDto.validate(lesionAssessment, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
         try {
+            LesionAssessmentWebDto.validate(lesionAssessment, this);
+            if (hasActionErrors() || hasFieldErrors()) {
+                setCurrentAction(CA_CREATE);
+                return INPUT;
+            }
             PerformedObservationDto dto = new PerformedObservationDto();
             dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.getByCode("Lesion Assessment")));
             dto.setTargetSiteCode(lesionAssessment.getLesionSite()); 
@@ -308,13 +308,13 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
      * {@inheritDoc}
      */
     @Override
-    public String edit() throws RemoteException {
-        LesionAssessmentWebDto.validate(lesionAssessment, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-        try {                                    
+    public String edit() {
+        try {   
+            LesionAssessmentWebDto.validate(lesionAssessment, this);
+            if (hasActionErrors() || hasFieldErrors()) {
+                setCurrentAction(CA_UPDATE);
+                return INPUT;
+            }                                 
             List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
             IiConverter.convertToIi(getSelectedRowIdentifier()), CdConverter.convertStringToCd(AccrualConstants.COMP));
             arList = activityRelationshipSvc.getBySourcePerformedActivity(
@@ -402,16 +402,16 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
                     }
                 }
             }
-
-
+            return super.edit();
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         } catch (DataFormatException e) {
             addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         }
-        return super.edit();
     }
 
     /**

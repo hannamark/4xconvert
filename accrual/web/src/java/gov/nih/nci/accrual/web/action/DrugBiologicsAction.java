@@ -304,7 +304,7 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
     @Override
     public String edit() throws RemoteException {
         if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         }
         try {
@@ -358,11 +358,11 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
             
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         } catch (DataFormatException e) {
             addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
+            setCurrentAction(CA_UPDATE);
             return INPUT;
         }
         return super.edit();

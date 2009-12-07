@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.SessionEnvManager;
@@ -92,6 +93,8 @@ import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Date;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -101,6 +104,7 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author Kalpana Guthikonda
  * @since 11/17/2009
  */
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.CyclomaticComplexity" })
 public class CourseWebDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -120,13 +124,29 @@ public class CourseWebDto implements Serializable {
      * 
      * @param dto the dto
      * @param action the action
+     * @throws RemoteException remote exception
      */
-    public static void validate(CourseWebDto dto, AbstractAccrualAction action) {  
+    public static void validate(CourseWebDto dto, AbstractAccrualAction action) throws RemoteException {  
         if (dto.getCreateDate() != null) {
             boolean validDate = WebUtil.checkValidDate(dto.getCreateDate().getValue());
             if (!validDate) {
                 action.addFieldError("course.createDate", "Please Enter Current or Past Date.");
             }
+        }
+        Date offTreatDate = action.getEarliestOffTreatmentDate();
+        Date diagnosisDate = action.getDiagnosisDate();
+        Date deathDate = action.getEarliestDeathDate();
+        if (diagnosisDate != null && dto.getCreateDate().getValue().before(diagnosisDate)) {
+            action.addFieldError("course.createDate", "Date can't be less than Diagnosis Date" 
+                    + AccrualUtil.dateToMDY(diagnosisDate));
+        } 
+        if (deathDate != null && dto.getCreateDate().getValue().after(deathDate)) {
+            action.addFieldError("course.createDate", "Date can't be greater than Death Date" 
+                    + AccrualUtil.dateToMDY(deathDate));
+        } 
+        if (offTreatDate != null && dto.getCreateDate().getValue().after(offTreatDate)) {
+            action.addFieldError("course.createDate", "Date can't be greater than Offtreatment Date" 
+                    + AccrualUtil.dateToMDY(offTreatDate));
         }
     }
     

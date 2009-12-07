@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedImagingDto;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.accrual.web.util.WebUtil;
@@ -95,10 +96,13 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
@@ -109,10 +113,11 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author Kalpana Guthikonda
  * @since 11/20/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class LesionAssessmentWebDto implements Serializable {
 
     private static final long serialVersionUID = -3658357689383961868L;
+    private static final String NUMERICMESSAGE = "Please Enter Numeric Value";
     
     private Ii id;
     private Ii lesionNum;
@@ -183,17 +188,38 @@ public class LesionAssessmentWebDto implements Serializable {
      * 
      * @param dto the dto
      * @param action the action
+     * @throws RemoteException remote exception
      */
-    public static void validate(LesionAssessmentWebDto dto, AbstractAccrualAction action) {       
+    public static void validate(LesionAssessmentWebDto dto, AbstractAccrualAction action) throws RemoteException {
         if (dto.getLesionLongestDiameter() == null || dto.getLesionLongestDiameter().getValue() == null) {
             action.addFieldError("lesionAssessment.lesionLongestDiameter.value", 
                     "Please enter Lesion Longest Diameter Value.");
+        }
+        if (dto.getLesionLongestDiameter().getValue() != null 
+                && !PAUtil.isNumber(dto.getLesionLongestDiameter().getValue().toString())) {
+            action.addFieldError("lesionAssessment.lesionLongestDiameter.value", NUMERICMESSAGE);
+        }
+        if (dto.getLesionNum().getExtension() != null && !PAUtil.isNumber(dto.getLesionNum().getExtension())) {
+            action.addFieldError("lesionAssessment.lesionNum", NUMERICMESSAGE);
+        }
+        if (dto.getImageIdentifier().getExtension() != null 
+                && !PAUtil.isNumber(dto.getImageIdentifier().getExtension())) {
+            action.addFieldError("lesionAssessment.imageIdentifier", NUMERICMESSAGE);
+        }
+        if (dto.getImageSeriesIdentifier().getExtension() != null 
+                && !PAUtil.isNumber(dto.getImageSeriesIdentifier().getExtension())) {
+            action.addFieldError("lesionAssessment.imageSeriesIdentifier", NUMERICMESSAGE);
         }
         if (dto.getClinicalAssessmentDate() != null) {
             boolean validDate = WebUtil.checkValidDate(dto.getClinicalAssessmentDate().getValue());
             if (!validDate) {
                 action.addFieldError("lesionAssessment.clinicalAssessmentDate", "Please Enter Current or Past Date.");
             }
+        }
+        Date earliest = action.getEarliestDeathDate();
+        if (earliest != null && dto.getClinicalAssessmentDate().getValue().after(earliest)) {
+            action.addFieldError("lesionAssessment.clinicalAssessmentDate", "Date must be on or before " 
+                    + AccrualUtil.dateToMDY(earliest));
         }
     }
 

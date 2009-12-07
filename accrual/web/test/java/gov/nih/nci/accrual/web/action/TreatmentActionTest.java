@@ -81,21 +81,8 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.web.dto.util.ParticipantWebDto;
-import gov.nih.nci.accrual.web.dto.util.SearchParticipantCriteriaWebDto;
-import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -103,8 +90,8 @@ import org.junit.Test;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * @author Hugh Reinhart
- * @since Sep 26, 2009
+ * @author Kalpana Guthikonda
+ * @since 12/04/2009
  */
 public class TreatmentActionTest extends AbstractAccrualActionTest {
 	TreatmentAction action;
@@ -161,7 +148,7 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     @Override
     @Test(expected = NullPointerException.class)
     public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1"));
+    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
         treatment.setDescription(StConverter.convertToSt("TP1description"));
         action.setTreatment(treatment);
         assertEquals(ActionSupport.SUCCESS, action.edit());

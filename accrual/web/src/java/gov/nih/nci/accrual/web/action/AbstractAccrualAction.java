@@ -126,6 +126,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 4/16/2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
 
@@ -303,7 +304,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @return today's date or earlier as reported by the activity
      * @throws RemoteException pass to caller
      */
-    private Date getEarliestCourseDate() throws RemoteException {
+    public Date getEarliestCourseDate() throws RemoteException {
         Date earliest = new Date();
         List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(getParticipantIi());
         for (PerformedActivityDto pa : paList) {
@@ -337,7 +338,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @return today's date or earlier as reported by the activity
      * @throws RemoteException pass to caller
      */
-    private Date getEarliestOffTreatmentDate() throws RemoteException {
+    public Date getEarliestOffTreatmentDate() throws RemoteException {
         Date earliest = new Date();
         List<PerformedSubjectMilestoneDto> psmList =
             performedActivitySvc.getPerformedSubjectMilestoneByStudySubject(getParticipantIi());
@@ -399,7 +400,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @return today's date or earlier as reported by the activity
      * @throws RemoteException pass to caller
      */
-    private Date getEarliestDeathDate() throws RemoteException {
+    public Date getEarliestDeathDate() throws RemoteException {
         Date earliest = new Date();
         List<PerformedObservationDto> poList = performedActivitySvc.getPerformedObservationByStudySubject(
                 getParticipantIi());
@@ -435,6 +436,31 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         } catch (RemoteException ex) {
             LOG.error(ex.getLocalizedMessage(), ex);
             addActionError("Service error. " + ex.getLocalizedMessage());
+        }
+        return earliest;
+    }
+    
+    /**
+     * Gets the diagnosis date.
+     * @return the diagnosis date
+     * @throws RemoteException the remote exception
+     */
+    public Date getDiagnosisDate() throws RemoteException {
+        Date earliest = null;
+        List<PerformedObservationDto> poList = performedActivitySvc.getPerformedObservationByStudySubject(
+                getParticipantIi());
+        for (PerformedObservationDto poBean : poList) {
+            if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
+                    && ActivityNameCode.DIAGNOSIS.getCode().equals(
+                            CdConverter.convertCdToString(poBean.getNameCode()))) {
+                Ivl<Ts> dignosisDate = poBean.getActualDateRange();
+                if (dignosisDate != null) {
+                    Ts low = dignosisDate.getLow();
+                    if (low != null) {
+                        earliest = low.getValue();
+                    }
+                }
+            }
         }
         return earliest;
     }

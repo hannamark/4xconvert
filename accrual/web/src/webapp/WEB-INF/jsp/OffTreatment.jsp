@@ -28,7 +28,7 @@
     <s:if test="%{currentAction== 'detail'}">
         <c:set var="topic" scope="request" value="off_treatment"/> 
     </s:if>
-    Off Treatment/Off Study
+    Off Treatment
 </title>        
     <s:head/>
 </head>
@@ -36,7 +36,7 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>
-    Off Treatment/Off Study
+    Off Treatment
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>

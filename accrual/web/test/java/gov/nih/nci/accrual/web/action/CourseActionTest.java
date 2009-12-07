@@ -76,154 +76,85 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedProcedureDto;
-import gov.nih.nci.accrual.web.dto.util.SurgeryWebDto;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
-import gov.nih.nci.pa.iso.dto.InterventionDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.service.PAException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.DataFormatException;
+import java.sql.Timestamp;
+import java.util.Date;
 
-import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * The Class SurgeryAction.
- *
  * @author Kalpana Guthikonda
- * @since 10/28/2009
+ * @since 12/07/2009
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> {
+public class CourseActionTest extends AbstractAccrualActionTest {
+    CourseAction action;
+    CourseWebDto course;
 
-    private static final long serialVersionUID = 1L;
-    private SurgeryWebDto surgery = new SurgeryWebDto();
+    @Before
+    public void initAction() throws Exception {
+        action = new CourseAction();
+        action.prepare();
+        course = new CourseWebDto();
+    }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<SurgeryWebDto>());
-        try {
-            List<PerformedProcedureDto> paList = performedActivitySvc.getPerformedProcedureByStudySubject(
-                                                                            getParticipantIi());
-            for (PerformedProcedureDto pp : paList) {
-                if (pp.getCategoryCode() != null && pp.getCategoryCode().getCode() != null
-                        && pp.getCategoryCode().getCode().equals(ActivityCategoryCode.SURGERY.getCode())) {
-                    InterventionDTO dto = interventionSvc.get(pp.getInterventionIdentifier());
-                    getDisplayTagList().add(new SurgeryWebDto(pp, dto));
-                }
-            }
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-        } catch (PAException e) {
-            addActionError(e.getLocalizedMessage());
-        }
+    @Test(expected = NullPointerException.class)
+    public void executeTest() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String add() {
-        SurgeryWebDto.validate(surgery, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
-        try {
-            PerformedProcedureDto dto = surgery.getPerformedProcedureDto();
-            dto = performedActivitySvc.createPerformedProcedure(dto);
-
-            ActivityRelationshipDto arDto = new ActivityRelationshipDto();
-            arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-            arDto.setSourcePerformedActivityIdentifier(getCourseIi());
-            arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
-            activityRelationshipSvc.create(arDto);
-            return super.add();  
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        } catch (DataFormatException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
+    @Test
+    public void createTest() {
+       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
-    public String update() {
-        surgery = null;
-        try {
-            loadDisplayList();
-            for (SurgeryWebDto sur : getDisplayTagList()) {
-                if (sur.getId().getExtension().equals(getSelectedRowIdentifier())) {
-                    surgery = sur;
-                }
-            }
-        } catch (Exception e) {
-            surgery = null;
-            LOG.error("Error in SurgeryAction.update().", e);
-        }
-        if (surgery == null) {
-            addActionError("Error retrieving surgery info for update.");
-            return execute();
-        }
-        return super.update();
+    @Test(expected = NullPointerException.class)
+    public void retrieveTest() {
+        action.retrieve();
+        assertTrue(action.hasActionErrors());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String edit() throws RemoteException {
-        SurgeryWebDto.validate(surgery, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_UPDATE);
-            return INPUT;
-        }
-        PerformedProcedureDto dto = surgery.getPerformedProcedureDto();
-        try {
-            dto = performedActivitySvc.updatePerformedProcedure(dto);
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_UPDATE);
-            return INPUT;
-        } catch (DataFormatException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_UPDATE);
-            return INPUT;
-        }
-        return super.edit();
-    }
-    
-
-    /**
-     * Gets the surgery.
-     * @return the surgery
-     */
-    @VisitorFieldValidator(message = "> ")
-    public SurgeryWebDto getSurgery() {
-        return surgery;
+    @Test(expected = NullPointerException.class)
+     public void updateTest() {
+        action.update();
+        assertTrue(action.hasActionErrors());
     }
 
-    /**
-     * Sets the surgery.
-     * @param surgery the new surgery
-     */
-    public void setSurgery(SurgeryWebDto surgery) {
-        this.surgery = surgery;
+    @Override
+    @Test(expected = NullPointerException.class)
+    public void deleteTest() throws Exception {
+        action.delete();
+    }
+
+    @Override
+    @Test(expected = NullPointerException.class)
+    public void addTest() throws Exception {
+        course.setName(StConverter.convertToSt("Course1"));
+        course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        action.setCourse(course);
+        assertEquals(ActionSupport.SUCCESS, action.add());
+    }
+
+    @Override
+    @Test(expected = NullPointerException.class)
+    public void editTest() throws Exception {
+        course.setName(StConverter.convertToSt("Course1 Edited"));
+        course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        action.setCourse(course);
+        assertEquals(ActionSupport.SUCCESS, action.edit());
     }
 }
