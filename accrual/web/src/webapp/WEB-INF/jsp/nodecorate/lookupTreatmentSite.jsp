@@ -65,7 +65,7 @@
             <div align="center">
                 <s:if test="treatmentSites != null">
                     <s:set name="treatmentSites" value="treatmentSites" scope="request"/>
-                    <display:table class="data" name="treatmentSites" pagesize="10" sort="list" uid="row" export="false">
+                    <display:table class="data" name="treatmentSites" pagesize="10" sort="list" uid="row" export="false" requestURI="lookupTreatmentSite.action">
                         <display:column title="PO-ID" property="id" headerClass="sortable"/>
                         <display:column title="Organization Name" property="name" headerClass="sortable"/> 
                         <display:column title="City" property="city" headerClass="sortable"/> 

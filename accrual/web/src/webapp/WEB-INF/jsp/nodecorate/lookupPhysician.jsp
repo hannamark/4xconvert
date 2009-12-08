@@ -68,7 +68,7 @@
             <div align="center">
                 <s:if test="physicians != null">
                     <s:set name="physicians" value="physicians" scope="request"/>
-                    <display:table class="data" name="physicians" pagesize="10" sort="list" uid="row" export="false">
+                    <display:table class="data" name="physicians" pagesize="10" sort="list" uid="row" export="false" requestURI="lookupPhysician.action">
                         <display:column title="PO-ID" property="id" headerClass="sortable"/>
                         <display:column title="First Name" property="firstName" headerClass="sortable"/> 
                         <display:column title="Middle Name" property="middleName" headerClass="sortable"/>
