@@ -82,7 +82,9 @@
  */
 package gov.nih.nci.po.web.roles;
 
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 import gov.nih.nci.po.data.bo.Organization;
@@ -93,9 +95,11 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.validator.Addressable;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.collections.set.ListOrderedSet;
 import org.displaytag.properties.SortOrderEnum;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
@@ -334,5 +338,16 @@ public class IdentifiedOrganizationAction
     public boolean isUsOrCanadaFormat() {
         //IdentifiedOrganization doesn't have an address, so this property isn't relevant
         return false;
+    }
+    
+    /**
+     * @return the allowable IdentifierReliability values
+     */
+    @SuppressWarnings("unchecked")
+    public Set<IdentifierReliability> getAvailableReliability() {
+        ListOrderedSet set = new ListOrderedSet();
+        set.add(IdentifierReliability.UNV);
+        set.add(IdentifierReliability.VRF);
+        return set;
     }
 }

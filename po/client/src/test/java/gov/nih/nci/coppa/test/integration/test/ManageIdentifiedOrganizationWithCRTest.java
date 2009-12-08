@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.iso.IdentifierReliability;
+import gov.nih.nci.coppa.iso.IdentifierScope;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -127,6 +129,23 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         selenium.select("curateRoleForm.role.status", "label=ACTIVE"); 
         selenium.type("curateRoleForm.role.assignedIdentifier.extension", "1234");
         selenium.type("curateRoleForm.role.assignedIdentifier.root", "1.2.3.4");
+
+        //handle pressing cancel on confirmation for changing reliability
+        //press cancel to abort the value change
+        selenium.chooseCancelOnNextConfirmation();
+        selenium.select("curateRoleForm.role.assignedIdentifier.reliability", "label=VRF");
+        assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
+        assertEquals("", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
+        //press OK to accept the change
+        selenium.select("curateRoleForm.role.assignedIdentifier.reliability", "label=VRF");
+        assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
+        assertEquals("VRF", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
+
+        
+        selenium.select("curateRoleForm.role.assignedIdentifier.displayable", "label=TRUE");
+        selenium.type("curateRoleForm.role.assignedIdentifier.identifierName", "identifierNameValue");
+        selenium.select("curateRoleForm.role.assignedIdentifier.scope", "label=BUSN");
+
         clickAndWaitButton("save_button");
         
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully created!"));
@@ -152,15 +171,26 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         // old values
         assertEquals("1234", selenium.getValue("curateRoleForm.role.assignedIdentifier.extension").trim());
         assertEquals("1.2.3.4", selenium.getValue("curateRoleForm.role.assignedIdentifier.root").trim());
+        assertEquals("true", selenium.getValue("curateRoleForm.role.assignedIdentifier.displayable").trim());
+        assertEquals("identifierNameValue", selenium.getValue("curateRoleForm.role.assignedIdentifier.identifierName").trim());
+        assertEquals("BUSN", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
+        assertEquals("VRF", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
         
         // copy over new ext
         selenium.click("copy_curateCrForm_role_assignedIdentifier");
+        assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
         // new values
         waitForElementById("curateRoleForm.role.assignedIdentifier.extension", 5);
         waitForElementById("curateRoleForm.role.assignedIdentifier.root", 5);
+        waitForElementById("curateRoleForm.role.assignedIdentifier.displayable", 5);
+        waitForElementById("curateRoleForm.role.assignedIdentifier.identifierName", 5);
+        waitForElementById("curateRoleForm.role.assignedIdentifier.scope", 5);
         assertEquals("9999", selenium.getValue("curateRoleForm.role.assignedIdentifier.extension").trim());
         assertEquals("9.9.9.9", selenium.getValue("curateRoleForm.role.assignedIdentifier.root").trim());
-        
+        assertEquals("false", selenium.getValue("curateRoleForm.role.assignedIdentifier.displayable").trim());
+        assertEquals("newIdentifierNameValue", selenium.getValue("curateRoleForm.role.assignedIdentifier.identifierName").trim());
+        assertEquals("VER", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
+        assertEquals("UNV", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully updated!".trim()));
     }
@@ -175,6 +205,10 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         Ii assignedIdentifier = new Ii();
         assignedIdentifier.setExtension("9999");
         assignedIdentifier.setRoot("9.9.9.9");
+        assignedIdentifier.setDisplayable(Boolean.FALSE);
+        assignedIdentifier.setScope(IdentifierScope.VER);
+        assignedIdentifier.setReliability(IdentifierReliability.UNV);
+        assignedIdentifier.setIdentifierName("newIdentifierNameValue");
         dto.setAssignedId(assignedIdentifier);
 
         RemoteServiceHelper.getIdentifiedOrganizationCorrelationServiceRemote().updateCorrelation(dto);
