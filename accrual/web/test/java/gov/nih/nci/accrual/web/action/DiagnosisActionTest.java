@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -73,16 +73,20 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
 
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.pa.iso.util.StConverter;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Date;
+
+import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -90,67 +94,55 @@ import org.junit.Test;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * @author Kalpana Guthikonda
- * @since 12/04/2009
+ * @author lhebel
+ *
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
-
+public class DiagnosisActionTest extends AbstractAccrualActionTest {
+    private DiagnosisAction dAction;
+    
+    /**
+     * initialize the class.
+     * @throws Exception report problems
+     */
     @Before
     public void initAction() throws Exception {
-        action = new TreatmentAction();
-        action.prepare();
-        treatment = new TreatmentWebDto();
+        dAction = new DiagnosisAction();
+        dAction.prepare();
+        dAction.setSearchDiagnosis(new St());
+        dAction.getSearchDiagnosis().setValue("Disease");
+        dAction.setDiagnosis(new DiagnosisWebDto());
+        DiagnosisWebDto temp = dAction.getDiagnosis();
+        temp.setCreateDate(new Ts());
+        temp.getCreateDate().setValue(new Date());
+        temp.setIdentifier(IiConverter.convertToActivityIi(new Long(123)));
+        temp.setName(new St());
+        temp.getName().setValue("Revesz syndrome");
+        temp.setResultCode(CdConverter.convertStringToCd("CDR0000285985"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @Test
     public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(ActionSupport.SUCCESS, dAction.execute());
+        
+        assertNotNull(dAction.getDisWebList());
     }
 
-    @Override
+    /**
+     * Test cancel.
+     */
     @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
+    public void cancelTest() {
+        assertEquals(ActionSupport.SUCCESS, dAction.cancel());
     }
 
-    @Override
+    /**
+     * Test save.
+     */
     @Test
-    public void retrieveTest() {
-        action.retrieve();
-        assertTrue(action.hasActionErrors());
-    }
-
-    @Override
-    @Test
-     public void updateTest() {
-        action.update();
-        assertTrue(action.hasActionErrors());
-    }
-
-    @Override
-    @Test
-    public void deleteTest() throws Exception {
-        action.delete();
-    }
-
-    @Override
-    @Test
-    public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.add());
-    }
-
-    @Override
-    @Test
-    public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
+    public void saveTest() {
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
     }
 }

@@ -90,6 +90,7 @@ import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.coppa.iso.Ii;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -102,182 +103,152 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
     public PerformedClinicalResultDto createPerformedClinicalResult(
             PerformedClinicalResultDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedClinicalResultDto();
     }
 
     public PerformedDiagnosisDto createPerformedDiagnosis(
             PerformedDiagnosisDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedDiagnosisDto();
     }
 
     public PerformedHistopathologyDto createPerformedHistopathology(
             PerformedHistopathologyDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedHistopathologyDto();
     }
 
     public PerformedImageDto createPerformedImage(PerformedImageDto dto)
             throws RemoteException, DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedImageDto();
     }
 
     public PerformedLesionDescriptionDto createPerformedLesionDescription(
             PerformedLesionDescriptionDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedLesionDescriptionDto();
     }
 
     public PerformedMedicalHistoryResultDto createPerformedMedicalHistoryResult(
             PerformedMedicalHistoryResultDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedMedicalHistoryResultDto();
     }
 
     public PerformedClinicalResultDto getPerformedClinicalResult(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedClinicalResultDto();
     }
 
     public List<PerformedClinicalResultDto> getPerformedClinicalResultByPerformedActivity(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedClinicalResultDto>();
     }
 
     public PerformedDiagnosisDto getPerformedDiagnosis(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedDiagnosisDto();
     }
 
     public List<PerformedDiagnosisDto> getPerformedDiagnosisByPerformedActivity(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedDiagnosisDto>();
     }
 
     public PerformedHistopathologyDto getPerformedHistopathology(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedHistopathologyDto();
     }
 
     public List<PerformedHistopathologyDto> getPerformedHistopathologyByPerformedActivity(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedHistopathologyDto>();
     }
 
     public PerformedImageDto getPerformedImage(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedImageDto();
     }
 
     public List<PerformedImageDto> getPerformedImageByPerformedActivity(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedImageDto>();
     }
 
     public PerformedLesionDescriptionDto getPerformedLesionDescription(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedLesionDescriptionDto();
     }
 
     public List<PerformedLesionDescriptionDto> getPerformedLesionDescriptionByPerformedActivity(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedLesionDescriptionDto>();
     }
 
     public PerformedMedicalHistoryResultDto getPerformedMedicalHistoryResult(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedMedicalHistoryResultDto();
     }
 
     public List<PerformedMedicalHistoryResultDto> getPerformedMedicalHistoryResultByPerformedActivity(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedMedicalHistoryResultDto>();
     }
 
     public PerformedClinicalResultDto updatePerformedClinicalResult(
             PerformedClinicalResultDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedClinicalResultDto();
     }
 
     public PerformedDiagnosisDto updatePerformedDiagnosis(
             PerformedDiagnosisDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedDiagnosisDto();
     }
 
     public PerformedHistopathologyDto updatePerformedHistopathology(
             PerformedHistopathologyDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedHistopathologyDto();
     }
 
     public PerformedImageDto updatePerformedImage(PerformedImageDto dto)
             throws RemoteException, DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedImageDto();
     }
 
     public PerformedLesionDescriptionDto updatePerformedLesionDescription(
             PerformedLesionDescriptionDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedLesionDescriptionDto();
     }
 
     public PerformedMedicalHistoryResultDto updatePerformedMedicalHistoryResult(
             PerformedMedicalHistoryResultDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedMedicalHistoryResultDto();
     }
 
     public PerformedObservationResultDto create(
             PerformedObservationResultDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedObservationResultDto();
     }
 
     public void delete(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        
     }
 
     public PerformedObservationResultDto get(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedObservationResultDto();
     }
 
     public PerformedObservationResultDto update(
             PerformedObservationResultDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedObservationResultDto();
     }
 
     public List<PerformedObservationResultDto> getPerformedObservationResultByPerformedActivity(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedObservationResultDto>();
     }
     
 }

@@ -88,10 +88,12 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -105,19 +107,17 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedSubjectMilestoneDto createPerformedSubjectMilestone(
             PerformedSubjectMilestoneDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedSubjectMilestoneDto();
     }
 
     public List<PerformedActivityDto> getByStudySubject(Ii ii)
             throws RemoteException {
-         return null;
+         return new ArrayList<PerformedActivityDto>();
     }
 
     public PerformedSubjectMilestoneDto getPerformedSubjectMilestone(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedSubjectMilestoneDto();
     }
 
     public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(
@@ -127,164 +127,144 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(
             PerformedSubjectMilestoneDto dto) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedSubjectMilestoneDto();
     }
 
     public List<PerformedActivityDto> getByStudyProtocol(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedActivityDto>();
     }
 
     public PerformedActivityDto create(PerformedActivityDto dto)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedActivityDto();
     }
 
     public void delete(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        
     }
 
     public PerformedActivityDto get(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedActivityDto();
     }
 
     public PerformedActivityDto update(PerformedActivityDto dto)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedActivityDto();
     }
 
     public PerformedImagingDto createPerformedImaging(PerformedImagingDto dto)
             throws RemoteException, DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedImagingDto();
     }
 
     public PerformedObservationDto createPerformedObservation(
             PerformedObservationDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedObservationDto();
     }
 
     public PerformedProcedureDto createPerformedProcedure(
             PerformedProcedureDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedProcedureDto();
     }
 
     public PerformedRadiationAdministrationDto createPerformedRadiationAdministration(
             PerformedRadiationAdministrationDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedRadiationAdministrationDto();
     }
 
     public PerformedSubstanceAdministrationDto createPerformedSubstanceAdministration(
             PerformedSubstanceAdministrationDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedSubstanceAdministrationDto();
     }
 
     public PerformedImagingDto getPerformedImaging(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedImagingDto();
     }
 
     public List<PerformedImagingDto> getPerformedImagingByStudySubject(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedImagingDto>();
     }
 
     public PerformedObservationDto getPerformedObservation(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedObservationDto();
     }
 
     public PerformedProcedureDto getPerformedProcedure(Ii ii)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedProcedureDto();
     }
 
     public List<PerformedProcedureDto> getPerformedProcedureByStudySubject(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedProcedureDto>();
     }
 
     public PerformedRadiationAdministrationDto getPerformedRadiationAdministration(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedRadiationAdministrationDto();
     }
 
     public List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudySubject(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedRadiationAdministrationDto>();
     }
 
     public PerformedSubstanceAdministrationDto getPerformedSubstanceAdministration(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedSubstanceAdministrationDto();
     }
 
     public List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudySubject(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<PerformedSubstanceAdministrationDto>();
     }
 
     public PerformedImagingDto updatePerformedImaging(PerformedImagingDto dto)
             throws RemoteException, DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedImagingDto();
     }
 
     public PerformedObservationDto updatePerformedObservation(
             PerformedObservationDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedObservationDto();
     }
 
     public PerformedProcedureDto updatePerformedProcedure(
             PerformedProcedureDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedProcedureDto();
     }
 
     public PerformedRadiationAdministrationDto updatePerformedRadiationAdministration(
             PerformedRadiationAdministrationDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedRadiationAdministrationDto();
     }
 
     public PerformedSubstanceAdministrationDto updatePerformedSubstanceAdministration(
             PerformedSubstanceAdministrationDto dto) throws RemoteException,
             DataFormatException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformedSubstanceAdministrationDto();
     }
 
     public List<PerformedObservationDto> getPerformedObservationByStudySubject(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+        PerformedObservationDto dto = new PerformedObservationDto();
+        dto.setActualDateRange(new Ivl<Ts>());
+        dto.getActualDateRange().setLow(new Ts());
+        dto.getActualDateRange().getLow().setValue(new Date());
+        
+        List<PerformedObservationDto> list = new ArrayList<PerformedObservationDto>();
+        list.add(dto);
+        return list;
     }
     
 
