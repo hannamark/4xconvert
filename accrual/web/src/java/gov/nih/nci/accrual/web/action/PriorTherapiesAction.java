@@ -231,6 +231,11 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
             ServletActionContext.getRequest().getSession().getAttribute(SESSION_PRIOR_THERAPIES_ITEM_LIST);
         validateForm(sessionListOfPriorTherapies);
         if (hasErrors()) {
+            List<PriorTherapiesItemWebDto> tempList = new ArrayList<PriorTherapiesItemWebDto>();
+            tempList.addAll(sessionListOfPriorTherapies);
+            newPrior = new PriorTherapiesItemWebDto();
+            tempList.add(newPrior);
+            priors.setList(tempList);
             return SUCCESS;
         }
         try {
@@ -290,9 +295,6 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     public String add() {
         if (getCurrentAction().equalsIgnoreCase("addPrior")) {
             validateAddPrior(newPrior);
-            if (hasErrors()) {
-                return SUCCESS;
-            }
             List<PriorTherapiesItemWebDto> sessionListOfPriorTherapies = (List<PriorTherapiesItemWebDto>)
             ServletActionContext.getRequest().getSession().getAttribute(SESSION_PRIOR_THERAPIES_ITEM_LIST);
             if (sessionListOfPriorTherapies == null) {
@@ -301,7 +303,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
             PriorTherapiesItemWebDto webDto;
             List<PriorTherapiesItemWebDto>  tempList = new ArrayList<PriorTherapiesItemWebDto>();
             tempList.addAll(sessionListOfPriorTherapies);
-            if (newPrior.getType() != null && newPrior.getType().getCode() != null 
+            if (!hasErrors() && newPrior.getType() != null && newPrior.getType().getCode() != null 
                     && !"".equals(newPrior.getType().getCode()) && newPrior.getDescription() != null 
                     && newPrior.getDescription().getValue() != null 
                     && !"".equals(newPrior.getDescription().getValue())) {
@@ -686,14 +688,23 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     /**
      * @param toValidateDto
      */
+    @SuppressWarnings({"PMD.NPathComplexity" })
     private void validateAddPrior(PriorTherapiesItemWebDto toValidateDto) {
-        if ((toValidateDto.getType() == null || toValidateDto.getType().getCode() == null)
+        if (toValidateDto.getType() == null || toValidateDto.getType().getCode() == null
+                || toValidateDto.getDescription() == null || toValidateDto.getDescription().getValue() == null 
+                || toValidateDto.getDescription().getValue().equals("")
+                || toValidateDto.getType().getCode().equals("")) {
+            addActionError("Prior Therapy Type and Description is required.\n");
+        }
+        if ((toValidateDto.getType() == null || toValidateDto.getType().getCode() == null 
+                || toValidateDto.getType().getCode().equals(""))
                 && toValidateDto.getDescription() != null && toValidateDto.getDescription().getValue() != null 
                 && !toValidateDto.getDescription().getValue().equals("")) {
             addActionError("Prior Therapy Type is required.\n");
         }
         if (toValidateDto.getType() != null && toValidateDto.getType().getCode() != null
-                && (toValidateDto.getDescription() == null || toValidateDto.getDescription().getValue() == null 
+                && !toValidateDto.getType().getCode().equals("") && (toValidateDto.getDescription() == null 
+                || toValidateDto.getDescription().getValue() == null 
                 || toValidateDto.getDescription().getValue().equals(""))) {
             addActionError("Prior Therapy Description is required.\n");
         }
