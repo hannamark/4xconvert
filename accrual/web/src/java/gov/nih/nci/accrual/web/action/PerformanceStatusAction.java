@@ -152,7 +152,9 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
         public void setupPo() throws ExecutionException {
             // Ignore everything that isn't the Performance Status
             for (PerformedObservationDto item : pd) {
-                if (!item.getNameCode().getCode().equals(ActivityNameCode.PERFORMANCE_STATUS.getCode())) {
+                if (item.getNameCode() == null
+                        || item.getNameCode().getCode() == null
+                        || !item.getNameCode().getCode().equals(ActivityNameCode.PERFORMANCE_STATUS.getCode())) {
                     continue;
                 }
                 po = item;
