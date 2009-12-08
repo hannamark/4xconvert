@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.PriorTherapiesItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.PriorTherapiesWebDto;
 import gov.nih.nci.accrual.web.dto.util.PriorTherapyTypesWebDto;
+import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
@@ -109,10 +110,14 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength" })
 public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorTherapiesWebDto> {
 
+    private static final String SESSION_PRIOR_THERAPIES_ITEM_LIST = "priorTherapiesItemWebDto";
+
     private static final long serialVersionUID = 1L;
+
+    private static final String DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST = "deleteList";
 
     private PriorTherapiesWebDto priors = new PriorTherapiesWebDto();
     private PriorTherapiesItemWebDto newPrior = new PriorTherapiesItemWebDto();
@@ -171,7 +176,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
      * @param db the memory buffer containing the persisted data
      */
     private void resetData() {
-        if ("reset".equals(getCurrentAction())) {
+      if ("reset".equals(getCurrentAction())) {
             if (priors.getId() != null && priors.getId().getExtension() != null) {
                 try {
                     performedActivitySvc.delete(priors.getId());
@@ -181,7 +186,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
             }   
             priors.clear();
             newPrior = priors.getList().get(0);
-        }
+      }
     }
 
     /**
@@ -220,8 +225,14 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
      * Save user entries.
      * @return result for next action
      */
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     public String save() {
+        List<PriorTherapiesItemWebDto> sessionListOfPriorTherapies = (List<PriorTherapiesItemWebDto>)
+            ServletActionContext.getRequest().getSession().getAttribute(SESSION_PRIOR_THERAPIES_ITEM_LIST);
+        validateForm(sessionListOfPriorTherapies);
+        if (hasErrors()) {
+            return SUCCESS;
+        }
         try {
             PerformedObservationDto dto = new PerformedObservationDto();
             dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PRIOR_THERAPIES));
@@ -236,9 +247,8 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
             }
             createOrUpdateHasPrior(priors, dbPerformedObservationDTO.getIdentifier());
             //this is update/create or delete for List
-            deletesPriorTherapyType(getData());
-            updatePriorTherapyType(getData(), dbPerformedObservationDTO.getIdentifier());
-            saveNewPriorTherapyType(newPrior, dbPerformedObservationDTO.getIdentifier());
+            deletesPriorTherapyType();
+            createOrUpdatePriorTherapyType(sessionListOfPriorTherapies, dbPerformedObservationDTO.getIdentifier());
             calcTotals(getData());
             PerformedMedicalHistoryResultDto perMedicalHistoryDTO = new PerformedMedicalHistoryResultDto();
             perMedicalHistoryDTO.setPerformedObservationIdentifier(dbPerformedObservationDTO.getIdentifier());
@@ -269,9 +279,46 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
         } catch (DataFormatException e) {
             addActionError(e.getMessage());
         }
+        ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                AccrualConstants.SAVE_MESSAGE);
         return execute();
     }
-
+    /**
+     * @return s
+     */
+    @Override
+    public String add() {
+        if (getCurrentAction().equalsIgnoreCase("addPrior")) {
+            validateAddPrior(newPrior);
+            if (hasErrors()) {
+                return SUCCESS;
+            }
+            List<PriorTherapiesItemWebDto> sessionListOfPriorTherapies = (List<PriorTherapiesItemWebDto>)
+            ServletActionContext.getRequest().getSession().getAttribute(SESSION_PRIOR_THERAPIES_ITEM_LIST);
+            if (sessionListOfPriorTherapies == null) {
+                sessionListOfPriorTherapies = new ArrayList<PriorTherapiesItemWebDto>();
+            } 
+            PriorTherapiesItemWebDto webDto;
+            List<PriorTherapiesItemWebDto>  tempList = new ArrayList<PriorTherapiesItemWebDto>();
+            tempList.addAll(sessionListOfPriorTherapies);
+            if (newPrior.getType() != null && newPrior.getType().getCode() != null 
+                    && !"".equals(newPrior.getType().getCode()) && newPrior.getDescription() != null 
+                    && newPrior.getDescription().getValue() != null 
+                    && !"".equals(newPrior.getDescription().getValue())) {
+                webDto = new PriorTherapiesItemWebDto();
+                webDto.setType(newPrior.getType());
+                webDto.setDescription(newPrior.getDescription());
+                sessionListOfPriorTherapies.add(webDto);
+                tempList.add(webDto);
+            }
+            ServletActionContext.getRequest().getSession().setAttribute(SESSION_PRIOR_THERAPIES_ITEM_LIST,
+                    sessionListOfPriorTherapies);
+            newPrior = new PriorTherapiesItemWebDto();
+            tempList.add(newPrior);
+            priors.setList(tempList);
+        }
+        return SUCCESS;       
+    }
     /**
      * @param newPriorsRec insertDto
      * @param performedObservId ii
@@ -297,12 +344,13 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
         return perMedicalHistoryDTO;
     }
 
-    private void updatePriorTherapyType(PriorTherapiesWebDto dbTherapiesDto,
+    @SuppressWarnings("unchecked")
+    private void createOrUpdatePriorTherapyType(List<PriorTherapiesItemWebDto> therapiesDto ,
             Ii performedObserId) throws RemoteException, DataFormatException {
-        getUpdatedDesc(dbTherapiesDto);
+        getUpdatedDesc(therapiesDto);
         PerformedMedicalHistoryResultDto perMedicalHistoryDTO; 
-        if (dbTherapiesDto.getList() != null && !dbTherapiesDto.getList().isEmpty()) {
-                for (PriorTherapiesItemWebDto exitingPriorWebDto : dbTherapiesDto.getList()) {
+        if (therapiesDto != null && !therapiesDto.isEmpty()) {
+                for (PriorTherapiesItemWebDto exitingPriorWebDto : therapiesDto) {
                     perMedicalHistoryDTO = new PerformedMedicalHistoryResultDto();
                     perMedicalHistoryDTO.setPerformedObservationIdentifier(performedObserId);
                     perMedicalHistoryDTO.setStudyProtocolIdentifier(getSpIi());
@@ -310,12 +358,16 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
                             PerformedObservationResultTypeCode.PRIOR_THERAPY));
                     perMedicalHistoryDTO.setResultCode(exitingPriorWebDto.getType());
                     perMedicalHistoryDTO.setDescription(exitingPriorWebDto.getDescription());
-                    perMedicalHistoryDTO.setIdentifier(exitingPriorWebDto.getId());
-                        performedObservationResultSvc.updatePerformedMedicalHistoryResult(perMedicalHistoryDTO);
+                    if (exitingPriorWebDto.getId() != null && exitingPriorWebDto.getId().getExtension() != null 
+                          && exitingPriorWebDto.getId().getIdentifierName() == null) {
+                        performedObservationResultSvc.createPerformedMedicalHistoryResult(perMedicalHistoryDTO);  
+                    } else {
+                         perMedicalHistoryDTO.setIdentifier(exitingPriorWebDto.getId());
+                         performedObservationResultSvc.updatePerformedMedicalHistoryResult(perMedicalHistoryDTO);
+                    } 
+                    
                 }
         }
-
-        
     }
 
     /**
@@ -345,15 +397,17 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
      * @param db the memory buffer containing the persisted data
      * @throws RemoteException e 
      */
-    private void deletesPriorTherapyType(PriorTherapiesWebDto db) throws RemoteException {
-        if (delItem != null && delItem.length() > 0) {
-            for (PriorTherapiesItemWebDto item : db.getList()) {
-                if (delItem.equals(item.getId().getExtension())) {
-                    performedObservationResultSvc.delete(item.getId());
-                    break;
+    private void deletesPriorTherapyType() throws RemoteException {
+        List<PriorTherapiesItemWebDto> deleteSsessionListOfPriorTherapies = (List<PriorTherapiesItemWebDto>)
+            ServletActionContext.getRequest().getSession().getAttribute(DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST);
+            if (deleteSsessionListOfPriorTherapies != null) {
+                for (PriorTherapiesItemWebDto item : deleteSsessionListOfPriorTherapies) {
+                    if (item.getId() != null && item.getId().getExtension() != null 
+                            && item.getId().getIdentifierName() != null) {
+                        performedObservationResultSvc.delete(item.getId());
+                    }
                 }
             }
-        }
     }
 
     /**
@@ -361,39 +415,18 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
      *
      * @param db the memory buffer containing the persisted data
      */
-    private void getUpdatedDesc(PriorTherapiesWebDto db) {
-        for (PriorTherapiesItemWebDto item : db.getList()) {
-            String desc = ServletActionContext.getRequest().getParameter("desc_" + item.getId().getExtension());
-            String type = ServletActionContext.getRequest().getParameter("type_" + item.getId().getExtension());
-            St descrip = StConverter.convertToSt(desc);
-            Cd typeCd =  CdConverter.convertStringToCd(type);
-            item.setDescription(descrip);
-            item.setType(typeCd);
+    private void getUpdatedDesc(List<PriorTherapiesItemWebDto> toUpdateList) {
+        if (toUpdateList != null && !toUpdateList.isEmpty()) {
+            for (PriorTherapiesItemWebDto item : toUpdateList) {
+                String desc = ServletActionContext.getRequest().getParameter("desc_" + item.getId().getExtension());
+                String type = ServletActionContext.getRequest().getParameter("type_" + item.getId().getExtension());
+                St descrip = StConverter.convertToSt(desc);
+                Cd typeCd =  CdConverter.convertStringToCd(type);
+                item.setDescription(descrip);
+                item.setType(typeCd);
+            }
         }
     }
-
-    /**
-     * Save the new prior therapy information.
-     *
-     * @param db the memory buffer containing the persisted data
-     * @throws DataFormatException 
-     * @throws RemoteException 
-     */
-    private void saveNewPriorTherapyType(PriorTherapiesItemWebDto db, Ii performedObserId) 
-        throws RemoteException, DataFormatException {
-        if (db.getType() != null && db.getType().getCode() != null) {
-            PerformedMedicalHistoryResultDto perMedicalHistoryDTO = new PerformedMedicalHistoryResultDto();
-            perMedicalHistoryDTO.setPerformedObservationIdentifier(performedObserId);
-            perMedicalHistoryDTO.setStudyProtocolIdentifier(getSpIi());
-            perMedicalHistoryDTO.setTypeCode(CdConverter.convertToCd(
-                    PerformedObservationResultTypeCode.PRIOR_THERAPY));
-            perMedicalHistoryDTO.setResultCode(newPrior.getType());
-            perMedicalHistoryDTO.setDescription(newPrior.getDescription());
-            performedObservationResultSvc.createPerformedMedicalHistoryResult(perMedicalHistoryDTO);
-        }
-
-    }
-
     /**
      * @return result for next action
      */
@@ -540,6 +573,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     public String getLookupItem() {
         return lookupItem;
     }
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     private PriorTherapiesWebDto getData() {
         PriorTherapiesWebDto dbPriors = new PriorTherapiesWebDto();      
         dbPriors.setId(null);
@@ -583,6 +617,10 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
                         }
                     }
                     dbPriors.setList(priorTherapiesItemWebList);
+                    ServletActionContext.getRequest().getSession().setAttribute(
+                                SESSION_PRIOR_THERAPIES_ITEM_LIST, priorTherapiesItemWebList);
+                    ServletActionContext.getRequest().getSession().setAttribute(
+                            DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST, new ArrayList<PriorTherapiesItemWebDto>());
                 }
             }
         } catch (RemoteException e) {
@@ -597,5 +635,67 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<PriorTherapiesWebDto>());
         getDisplayTagList().add(getData());
+    }
+    /**
+     * remove values from sessionList.
+     * @return s
+     */
+    @SuppressWarnings("unchecked")
+    public String delete() {
+        if (delItem != null && delItem.length() > 0) {
+            List<PriorTherapiesItemWebDto> sessionList = (List<PriorTherapiesItemWebDto>)
+                ServletActionContext.getRequest().getSession().getAttribute(SESSION_PRIOR_THERAPIES_ITEM_LIST);
+            
+            List<PriorTherapiesItemWebDto> deleteSessionList = (List<PriorTherapiesItemWebDto>)
+            ServletActionContext.getRequest().getSession().getAttribute(DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST);
+            if (deleteSessionList == null) {
+                deleteSessionList = new ArrayList<PriorTherapiesItemWebDto>();
+            }
+            List<PriorTherapiesItemWebDto>  tempList = new ArrayList<PriorTherapiesItemWebDto>();
+            for (int i = 0; i < sessionList.size(); i++) {
+                PriorTherapiesItemWebDto item = sessionList.get(i);
+                if (delItem.equals(item.getId().getExtension())) {
+                    sessionList.remove(i);
+                    deleteSessionList.add(item);
+                    break;
+                }
+            }
+            
+            ServletActionContext.getRequest().getSession().setAttribute(SESSION_PRIOR_THERAPIES_ITEM_LIST,
+                    sessionList);
+            ServletActionContext.getRequest().getSession().setAttribute(DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST,
+                    deleteSessionList);
+            
+            newPrior = new PriorTherapiesItemWebDto();
+            tempList.addAll(sessionList);
+            tempList.add(newPrior);
+            priors.setList(tempList);
+        }
+        return SUCCESS;
+    }
+    /**
+     * 
+     */
+    private void validateForm(List<PriorTherapiesItemWebDto> toValidateDtoList) {
+        getUpdatedDesc(toValidateDtoList);
+        for (PriorTherapiesItemWebDto toValidateDto : toValidateDtoList) {
+            validateAddPrior(toValidateDto);
+        }
+    }
+
+    /**
+     * @param toValidateDto
+     */
+    private void validateAddPrior(PriorTherapiesItemWebDto toValidateDto) {
+        if ((toValidateDto.getType() == null || toValidateDto.getType().getCode() == null)
+                && toValidateDto.getDescription() != null && toValidateDto.getDescription().getValue() != null 
+                && !toValidateDto.getDescription().getValue().equals("")) {
+            addActionError("Prior Therapy Type is required.\n");
+        }
+        if (toValidateDto.getType() != null && toValidateDto.getType().getCode() != null
+                && (toValidateDto.getDescription() == null || toValidateDto.getDescription().getValue() == null 
+                || toValidateDto.getDescription().getValue().equals(""))) {
+            addActionError("Prior Therapy Description is required.\n");
+        }
     }
 }

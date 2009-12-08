@@ -36,14 +36,14 @@
 
     function handleAddPriorAction() {
         document.getElementsByName("currentAction")[0].value = "addPrior";
-        document.forms[0].action = "savePriorTherapies.action";
+        document.forms[0].action = "addPriorTherapies.action";
         document.forms[0].submit();
     }
 
     function handleDelPriorAction(obj) {
     	document.getElementsByName("delItem")[0].value = obj;
         document.getElementsByName("currentAction")[0].value = "delPrior";
-        document.forms[0].action = "savePriorTherapies.action";
+        document.forms[0].action = "deletePriorTherapies.action";
         document.forms[0].submit();
     }
 
@@ -74,6 +74,7 @@
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <accrual:sucessMessage />
 <s:form name="detailForm">
 <s:hidden name="currentAction"/>
 <s:hidden name="delItem"/>
