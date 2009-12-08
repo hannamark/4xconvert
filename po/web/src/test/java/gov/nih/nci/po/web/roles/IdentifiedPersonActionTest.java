@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Correlation;
@@ -24,6 +25,7 @@ import gov.nih.nci.po.web.util.PrivateAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -264,5 +266,15 @@ public class IdentifiedPersonActionTest extends AbstractPoTest {
             assertEquals("CR-ID-" + i, value);
             i++;
         }
+    }
+    
+    @Test
+    public void testGetAvailableReliability() {
+        assertEquals(2, action.getAvailableReliability().size());
+        Collection<IdentifierReliability> c = new HashSet<IdentifierReliability>();
+        c.add(IdentifierReliability.UNV);
+        c.add(IdentifierReliability.VRF);
+        assertFalse(action.getAvailableReliability().retainAll(c));
+        assertEquals(2, action.getAvailableReliability().size());
     }
 }
