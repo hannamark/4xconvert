@@ -87,13 +87,18 @@ import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.web.action.AbstractAccrualActionTest;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -104,6 +109,55 @@ import java.util.zip.DataFormatException;
 public class MockPerformedActivityBean implements PerformedActivityService {
 
     private static List<PerformedSubjectMilestoneDto> psmList = new ArrayList<PerformedSubjectMilestoneDto>();
+    private static int key = 1000;
+    private static HashMap<String, PerformedObservationDto> hmPo = new HashMap<String, PerformedObservationDto>();
+    private static List<PoSs> listPo = new ArrayList<PoSs>();
+    
+    private class PoSs {
+        public String ss;
+        public PerformedObservationDto dto;
+        public PoSs(String ss, PerformedObservationDto dto) {
+            this.ss = ss;
+            this.dto = dto;
+        }
+    }
+    
+    {
+        if (hmPo.size() == 0) {
+            PerformedObservationDto dto;
+            String id;
+
+            dto = new PerformedObservationDto();
+            dto.setActualDateRange(new Ivl<Ts>());
+            dto.getActualDateRange().setLow(new Ts());
+            dto.getActualDateRange().getLow().setValue(new Date());
+            dto.setNameCode(CdConverter.convertStringToCd(ActivityNameCode.DIAGNOSIS.getCode()));
+            dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+            id = MockPerformedActivityBean.class.getName() + ".hmPo " + String.valueOf(getKey());
+            dto.setIdentifier(IiConverter.convertToIi(id));
+            hmPo.put(id, dto);
+            listPo.add(new PoSs(AbstractAccrualActionTest.PARTICIPANT1, dto));
+
+            dto = new PerformedObservationDto();
+            dto.setActualDateRange(new Ivl<Ts>());
+            dto.getActualDateRange().setLow(new Ts());
+            dto.getActualDateRange().getLow().setValue(new Date());
+            dto.setNameCode(CdConverter.convertStringToCd(ActivityNameCode.PERFORMANCE_STATUS.getCode()));
+            dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+            id = MockPerformedActivityBean.class.getName() + ".hmPo " + String.valueOf(getKey());
+            dto.setIdentifier(IiConverter.convertToIi(id));
+            hmPo.put(id, dto);
+            listPo.add(new PoSs(AbstractAccrualActionTest.PARTICIPANT1, dto));
+        }
+    }
+    
+    private synchronized int getKey() {
+        return ++key;
+    }
+    
+    public static PerformedObservationDto getPo() {
+        return listPo.get(0).dto;
+    }
 
     public PerformedSubjectMilestoneDto createPerformedSubjectMilestone(
             PerformedSubjectMilestoneDto dto) throws RemoteException {
@@ -160,7 +214,16 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public PerformedObservationDto createPerformedObservation(
             PerformedObservationDto dto) throws RemoteException,
             DataFormatException {
-        return new PerformedObservationDto();
+        
+        PerformedObservationDto pod = (dto == null) ? new PerformedObservationDto() : dto;
+        String id = String.valueOf(getKey());
+        pod.setIdentifier(IiConverter.convertToIi(id));
+        hmPo.put(id, pod);
+        if (pod.getStudySubjectIdentifier() != null
+                && pod.getStudySubjectIdentifier().getExtension() != null) {
+            hmPo.put(pod.getStudySubjectIdentifier().getExtension(), dto);
+        }
+        return pod;
     }
 
     public PerformedProcedureDto createPerformedProcedure(
@@ -193,7 +256,11 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedObservationDto getPerformedObservation(Ii ii)
             throws RemoteException {
-        return new PerformedObservationDto();
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedObservation");
+        }
+        PerformedObservationDto dto = hmPo.get(ii.getExtension());
+        return (dto == null) ? new PerformedObservationDto() : dto;
     }
 
     public PerformedProcedureDto getPerformedProcedure(Ii ii)
@@ -257,15 +324,15 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedObservationDto> getPerformedObservationByStudySubject(
             Ii ii) throws RemoteException {
-        PerformedObservationDto dto = new PerformedObservationDto();
-        dto.setActualDateRange(new Ivl<Ts>());
-        dto.getActualDateRange().setLow(new Ts());
-        dto.getActualDateRange().getLow().setValue(new Date());
-        
         List<PerformedObservationDto> list = new ArrayList<PerformedObservationDto>();
-        list.add(dto);
+
+        if (ii != null) {
+            for (PoSs item : listPo) {
+                if (item.ss.equals(ii.getExtension())) {
+                    list.add(item.dto);
+                }
+            }
+        }
         return list;
     }
-    
-
 }

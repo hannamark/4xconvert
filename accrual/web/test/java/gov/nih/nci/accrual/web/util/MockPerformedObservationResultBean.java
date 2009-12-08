@@ -88,9 +88,13 @@ import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -100,6 +104,37 @@ import java.util.zip.DataFormatException;
  */
 public class MockPerformedObservationResultBean implements PerformedObservationResultService {
 
+    private static HashMap<String, PerformedDiagnosisDto> hmPd = new HashMap<String, PerformedDiagnosisDto>();
+    private static List<PdPa> listPa = new ArrayList<PdPa>();
+    private static int key = 2000;
+
+    private class PdPa {
+        public String pa;
+        public PerformedDiagnosisDto dto;
+        public PdPa(String pa, PerformedDiagnosisDto dto) {
+            this.pa = pa;
+            this.dto = dto;
+        }
+    }
+    
+    {
+        if (hmPd.size() == 0) {
+            PerformedDiagnosisDto dto = new PerformedDiagnosisDto();
+            dto.setResultCodeModifiedText(StConverter.convertToSt("Disease"));
+            dto.setResultCode(CdConverter.convertStringToCd("PD 1"));
+            Ii poId = MockPerformedActivityBean.getPo().getIdentifier();
+            dto.setPerformedObservationIdentifier(poId);
+            String id = MockPerformedObservationResultBean.class.getName() + ".hmPd " + String.valueOf(getKey());
+            dto.setIdentifier(IiConverter.convertToIi(id));
+            hmPd.put(id, dto);
+            listPa.add(new PdPa(poId.getExtension(), dto));
+        }
+    }
+    
+    private synchronized int getKey() {
+        return ++key;
+    }
+    
     public PerformedClinicalResultDto createPerformedClinicalResult(
             PerformedClinicalResultDto dto) throws RemoteException,
             DataFormatException {
@@ -109,7 +144,12 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
     public PerformedDiagnosisDto createPerformedDiagnosis(
             PerformedDiagnosisDto dto) throws RemoteException,
             DataFormatException {
-        return new PerformedDiagnosisDto();
+        PerformedDiagnosisDto pdd = (dto == null) ? new PerformedDiagnosisDto() : dto;
+        String id = String.valueOf(getKey());
+        pdd.setIdentifier(IiConverter.convertToIi(id));
+        hmPd.put(id, pdd);
+        listPa.add(new PdPa(pdd.getPerformedObservationIdentifier().getExtension(), pdd));
+        return pdd;
     }
 
     public PerformedHistopathologyDto createPerformedHistopathology(
@@ -152,7 +192,17 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public List<PerformedDiagnosisDto> getPerformedDiagnosisByPerformedActivity(
             Ii ii) throws RemoteException {
-        return new ArrayList<PerformedDiagnosisDto>();
+        ArrayList<PerformedDiagnosisDto> list = new ArrayList<PerformedDiagnosisDto>();
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedDiagnosisByPerformedActivity");
+        }
+        for (PdPa item : listPa) {
+            if (item.pa.equals(ii.getExtension())) {
+                list.add(item.dto);
+            }
+        }
+
+        return list;
     }
 
     public PerformedHistopathologyDto getPerformedHistopathology(Ii ii)

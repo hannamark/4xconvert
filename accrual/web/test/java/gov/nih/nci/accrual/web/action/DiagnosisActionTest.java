@@ -106,6 +106,7 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
      */
     @Before
     public void initAction() throws Exception {
+        setParticipantIi(PARTICIPANT1);
         dAction = new DiagnosisAction();
         dAction.prepare();
         dAction.setSearchDiagnosis(new St());
@@ -114,7 +115,6 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
         DiagnosisWebDto temp = dAction.getDiagnosis();
         temp.setCreateDate(new Ts());
         temp.getCreateDate().setValue(new Date());
-        temp.setIdentifier(IiConverter.convertToActivityIi(new Long(123)));
         temp.setName(new St());
         temp.getName().setValue("Revesz syndrome");
         temp.setResultCode(CdConverter.convertStringToCd("CDR0000285985"));
@@ -125,6 +125,15 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
      */
     @Override
     public void executeTest() {
+        setParticipantIi(PARTICIPANT1);
+        assertEquals(ActionSupport.SUCCESS, dAction.execute());
+        
+        assertNotNull(dAction.getDisWebList());
+    }
+    
+    @Test
+    public void execute2ndTest() {
+        setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
         
         assertNotNull(dAction.getDisWebList());
@@ -143,6 +152,9 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
      */
     @Test
     public void saveTest() {
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
+        
+        executeTest();
         assertEquals(ActionSupport.SUCCESS, dAction.save());
     }
 }

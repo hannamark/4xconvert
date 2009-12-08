@@ -83,6 +83,8 @@ import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.web.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.web.util.MockServiceLocator;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
@@ -105,6 +107,9 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  * @since 7/7/2009
  */
 public class AbstractAccrualActionTest {
+    public static final String PARTICIPANT1 = "John";
+    public static final String PARTICIPANT2 = "Mary";
+    
     protected static final String TEST_USER = "joe@barngrill.com";
 
     private class TestAction extends AbstractListEditAccrualAction<Object>{
@@ -235,5 +240,9 @@ public class AbstractAccrualActionTest {
         } else {
             ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
         }
+    }
+    
+    public void setParticipantIi(String participant) {
+        SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II, IiConverter.convertToIi(participant));
     }
 }
