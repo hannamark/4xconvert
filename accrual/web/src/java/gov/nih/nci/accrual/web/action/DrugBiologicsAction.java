@@ -303,6 +303,7 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
      */
     @Override
     public String edit() throws RemoteException {
+        DrugBiologicsWebDto.validate(drugBiologic, this);
         if (hasActionErrors() || hasFieldErrors()) {
             setCurrentAction(CA_UPDATE);
             return INPUT;
