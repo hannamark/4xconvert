@@ -87,18 +87,21 @@ import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.web.action.AbstractAccrualActionTest;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -108,70 +111,93 @@ import java.util.zip.DataFormatException;
  */
 public class MockPerformedActivityBean implements PerformedActivityService {
 
-    private static List<PerformedSubjectMilestoneDto> psmList = new ArrayList<PerformedSubjectMilestoneDto>();
-    private static int key = 1000;
-    private static HashMap<String, PerformedObservationDto> hmPo = new HashMap<String, PerformedObservationDto>();
-    private static List<PoSs> listPo = new ArrayList<PoSs>();
-    
-    private class PoSs {
-        public String ss;
-        public PerformedObservationDto dto;
-        public PoSs(String ss, PerformedObservationDto dto) {
-            this.ss = ss;
-            this.dto = dto;
-        }
-    }
-    
+    Long seq = 1L;
+    List<PerformedActivityDto> paList;
     {
-        if (hmPo.size() == 0) {
-            PerformedObservationDto dto;
-            String id;
-
-            dto = new PerformedObservationDto();
-            dto.setActualDateRange(new Ivl<Ts>());
-            dto.getActualDateRange().setLow(new Ts());
-            dto.getActualDateRange().getLow().setValue(new Date());
-            dto.setNameCode(CdConverter.convertStringToCd(ActivityNameCode.DIAGNOSIS.getCode()));
-            dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
-            id = MockPerformedActivityBean.class.getName() + ".hmPo " + String.valueOf(getKey());
-            dto.setIdentifier(IiConverter.convertToIi(id));
-            hmPo.put(id, dto);
-            listPo.add(new PoSs(AbstractAccrualActionTest.PARTICIPANT1, dto));
-
-            dto = new PerformedObservationDto();
-            dto.setActualDateRange(new Ivl<Ts>());
-            dto.getActualDateRange().setLow(new Ts());
-            dto.getActualDateRange().getLow().setValue(new Date());
-            dto.setNameCode(CdConverter.convertStringToCd(ActivityNameCode.PERFORMANCE_STATUS.getCode()));
-            dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
-            id = MockPerformedActivityBean.class.getName() + ".hmPo " + String.valueOf(getKey());
-            dto.setIdentifier(IiConverter.convertToIi(id));
-            hmPo.put(id, dto);
-            listPo.add(new PoSs(AbstractAccrualActionTest.PARTICIPANT1, dto));
-        }
+        paList = new ArrayList<PerformedActivityDto>();
+        PerformedActivityDto dto = new PerformedActivityDto();
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.TREATMENT_PLAN));
+        dto.setName(StConverter.convertToSt("TreatmentPlan1"));
+        dto.setTextDescription(StConverter.convertToSt("TP description")); 
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        paList.add(dto);
+        dto = new PerformedActivityDto();
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.COURSE));
+        dto.setName(StConverter.convertToSt("Course1"));
+        Ivl<Ts> courseDate = new Ivl<Ts>();
+        courseDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setActualDateRange(courseDate);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(2L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(2L));
+        paList.add(dto);
+    }
+    List<PerformedObservationDto> poList;
+    {
+        poList = new ArrayList<PerformedObservationDto>();
+        PerformedObservationDto dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.DIAGNOSIS));
+        Ivl<Ts> diagnosisDate = new Ivl<Ts>();
+        diagnosisDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setActualDateRange(diagnosisDate);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        poList.add(dto);
     }
     
-    private synchronized int getKey() {
-        return ++key;
+    List<PerformedSubjectMilestoneDto> psmList;   
+    {
+        psmList = new ArrayList<PerformedSubjectMilestoneDto>();
+        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.OFF_TREATMENT));
+        dto.setReasonCode(CdConverter.convertToCd(OffTreatmentReasonCode.THREE));
+        Ivl<Ts> offTreatmentDate = new Ivl<Ts>();
+        offTreatmentDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setActualDateRange(offTreatmentDate);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        psmList.add(dto);
+    }
+    List<PerformedProcedureDto> ppList;
+    {
+        ppList = new ArrayList<PerformedProcedureDto>();                
+        PerformedProcedureDto dto = new PerformedProcedureDto();
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SURGERY));
+        dto.setTextDescription(StConverter.convertToSt("Surgery Info"));
+        Ivl<Ts> surgeryDate = new Ivl<Ts>();
+        surgeryDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setActualDateRange(surgeryDate);
+        dto.setInterventionIdentifier(IiConverter.convertToIi(1L));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        ppList.add(dto);
     }
     
-    public static PerformedObservationDto getPo() {
-        return listPo.get(0).dto;
-    }
-
     public PerformedSubjectMilestoneDto createPerformedSubjectMilestone(
             PerformedSubjectMilestoneDto dto) throws RemoteException {
-        return new PerformedSubjectMilestoneDto();
+        return psmList.get(0);
     }
 
     public List<PerformedActivityDto> getByStudySubject(Ii ii)
             throws RemoteException {
-         return new ArrayList<PerformedActivityDto>();
+         return paList;
     }
 
     public PerformedSubjectMilestoneDto getPerformedSubjectMilestone(Ii ii)
             throws RemoteException {
-        return new PerformedSubjectMilestoneDto();
+        Long id = IiConverter.convertToLong(ii);
+        PerformedSubjectMilestoneDto result = null;
+        for (PerformedSubjectMilestoneDto dto : psmList) {
+            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
+                result = dto;
+            }
+        }
+        return result;
     }
 
     public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(
@@ -181,7 +207,13 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(
             PerformedSubjectMilestoneDto dto) throws RemoteException {
-        return new PerformedSubjectMilestoneDto();
+        Long id = IiConverter.convertToLong(dto.getIdentifier());
+        for (PerformedSubjectMilestoneDto psm : psmList) {
+            if (id.equals(IiConverter.convertToLong(psm.getIdentifier()))) {
+                psm = dto;
+            }
+        }
+        return dto;
     }
 
     public List<PerformedActivityDto> getByStudyProtocol(Ii ii)
@@ -191,7 +223,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedActivityDto create(PerformedActivityDto dto)
             throws RemoteException {
-        return new PerformedActivityDto();
+        return paList.get(0);
     }
 
     public void delete(Ii ii) throws RemoteException {
@@ -203,7 +235,13 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedActivityDto update(PerformedActivityDto dto)
             throws RemoteException {
-        return new PerformedActivityDto();
+        Long id = IiConverter.convertToLong(dto.getIdentifier());
+        for (PerformedActivityDto pa : paList) {
+            if (id.equals(IiConverter.convertToLong(pa.getIdentifier()))) {
+                pa = dto;
+            }
+        }
+        return dto;
     }
 
     public PerformedImagingDto createPerformedImaging(PerformedImagingDto dto)
@@ -214,22 +252,13 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public PerformedObservationDto createPerformedObservation(
             PerformedObservationDto dto) throws RemoteException,
             DataFormatException {
-        
-        PerformedObservationDto pod = (dto == null) ? new PerformedObservationDto() : dto;
-        String id = String.valueOf(getKey());
-        pod.setIdentifier(IiConverter.convertToIi(id));
-        hmPo.put(id, pod);
-        if (pod.getStudySubjectIdentifier() != null
-                && pod.getStudySubjectIdentifier().getExtension() != null) {
-            hmPo.put(pod.getStudySubjectIdentifier().getExtension(), dto);
-        }
-        return pod;
+        return new PerformedObservationDto();
     }
 
     public PerformedProcedureDto createPerformedProcedure(
             PerformedProcedureDto dto) throws RemoteException,
             DataFormatException {
-        return new PerformedProcedureDto();
+        return ppList.get(0);
     }
 
     public PerformedRadiationAdministrationDto createPerformedRadiationAdministration(
@@ -256,11 +285,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedObservationDto getPerformedObservation(Ii ii)
             throws RemoteException {
-        if (ii == null) {
-            throw new RemoteException("NULL argument getPerformedObservation");
-        }
-        PerformedObservationDto dto = hmPo.get(ii.getExtension());
-        return (dto == null) ? new PerformedObservationDto() : dto;
+        return new PerformedObservationDto();
     }
 
     public PerformedProcedureDto getPerformedProcedure(Ii ii)
@@ -270,7 +295,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedProcedureDto> getPerformedProcedureByStudySubject(
             Ii ii) throws RemoteException {
-        return new ArrayList<PerformedProcedureDto>();
+        return ppList;
     }
 
     public PerformedRadiationAdministrationDto getPerformedRadiationAdministration(
@@ -324,15 +349,8 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedObservationDto> getPerformedObservationByStudySubject(
             Ii ii) throws RemoteException {
-        List<PerformedObservationDto> list = new ArrayList<PerformedObservationDto>();
-
-        if (ii != null) {
-            for (PoSs item : listPo) {
-                if (item.ss.equals(ii.getExtension())) {
-                    list.add(item.dto);
-                }
-            }
-        }
-        return list;
+        return poList;
     }
+    
+
 }

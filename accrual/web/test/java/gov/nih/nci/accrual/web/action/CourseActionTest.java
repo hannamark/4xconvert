@@ -80,8 +80,8 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -109,7 +109,7 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     }
 
     @Override
-    @Test(expected = NullPointerException.class)
+    @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
@@ -121,27 +121,29 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     }
 
     @Override
-    @Test(expected = NullPointerException.class)
+    @Test
     public void retrieveTest() {
-        action.retrieve();
-        assertTrue(action.hasActionErrors());
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
+        action.setSelectedRowIdentifier("2");
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
     }
 
     @Override
-    @Test(expected = NullPointerException.class)
+    @Test
      public void updateTest() {
-        action.update();
-        assertTrue(action.hasActionErrors());
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
+        action.setSelectedRowIdentifier("2");
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
     }
 
     @Override
-    @Test(expected = NullPointerException.class)
+    @Test
     public void deleteTest() throws Exception {
         action.delete();
     }
 
     @Override
-    @Test(expected = NullPointerException.class)
+    @Test
     public void addTest() throws Exception {
         course.setName(StConverter.convertToSt("Course1"));
         course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
@@ -150,11 +152,22 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     }
 
     @Override
-    @Test(expected = NullPointerException.class)
-    public void editTest() throws Exception {
+    @Test
+    public void editTest() throws Exception {        
         course.setName(StConverter.convertToSt("Course1 Edited"));
         course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        course.setIdentifier(IiConverter.convertToIi(2L));
         action.setCourse(course);
         assertEquals(ActionSupport.SUCCESS, action.edit());
+    }
+    
+    @Test
+    public void editExceptionTest() throws Exception {
+        course.setName(StConverter.convertToSt("Course1 Edited"));
+        int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+        Date test = new Date();
+        course.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        action.setCourse(course);
+        assertEquals(ActionSupport.INPUT, action.edit());
     }
 }

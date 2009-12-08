@@ -80,10 +80,11 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
@@ -117,21 +118,23 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.SUCCESS, action.save());
+       assertEquals(AbstractListEditAccrualAction.INPUT, action.save());
     }
 
     @Override
     public void addTest() throws Exception {
-        offTreatment.setOffTreatmentReason(CdConverter.convertStringToCd("offTreatment"));
+        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.ELEVEN));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        offTreatment.setId(new Ii());
         action.setOffTreat(offTreatment);
         assertEquals(ActionSupport.SUCCESS, action.save());
     }
 
     @Override
     public void editTest() throws Exception {
-        offTreatment.setOffTreatmentReason(CdConverter.convertStringToCd("offTreatment edited"));
+        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.EIGHT));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        offTreatment.setId(IiConverter.convertToIi(4L));
         action.setOffTreat(offTreatment);
         assertEquals(ActionSupport.SUCCESS, action.save());
     }

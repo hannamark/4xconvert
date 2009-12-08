@@ -76,64 +76,96 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceRemote;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+package gov.nih.nci.accrual.web.action;
+
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.web.dto.util.SurgeryWebDto;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 27, 2009
+ * @author Kalpana Guthikonda
+ * @since 12/08/2009
  */
-public class MockPaServiceLocator implements ServiceLocatorPaInterface {
+public class SurgeryActionTest extends AbstractAccrualActionTest {
+    SurgeryAction action;
+    SurgeryWebDto surgery;
 
-    private final DiseaseServiceRemote disease = new MockPaDiseaseBean();
-    private final PlannedActivityServiceRemote pActivity = new MockPaPlannedActivityServiceBean();
-    private final DiseaseParentServiceRemote diseaseParent = new MockPaDiseaseParentServiceBean();
-    private final LookUpTableServiceRemote lookUpTable = new MockPaLookUpTableServiceBean();
-    private final RegistryUserServiceRemote registryUser = new MockPaRegistryUserServiceBean();
-    private final InterventionServiceRemote intervention = new MockPaInterventionBean();
-    private final InterventionAlternateNameServiceRemote interventionAlternateName = new MockPaInterventionAlternateNameBean();
+    @Before
+    public void initAction() throws Exception {
+        action = new SurgeryAction();
+        action.prepare();
+        surgery = new SurgeryWebDto();
+    }
+
+    @Override
+    @Test
+    public void executeTest() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+    }
+
+    @Override
+    @Test
+    public void createTest() {
+       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
+    }
+
+    @Override
+    @Test
+    public void retrieveTest() {
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
+    }
+
+    @Override
+    @Test
+     public void updateTest() {
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
+        action.setSelectedRowIdentifier("5");
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
+    }
+
+    @Override
+    @Test
+    public void deleteTest() throws Exception {
+        action.delete();
+    }
+
+    @Override
+    @Test
+    public void addTest() throws Exception {
+        surgery.setName(StConverter.convertToSt("Surgery1"));
+        surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        action.setSurgery(surgery);
+        assertEquals(ActionSupport.SUCCESS, action.add());
+    }
+
+    @Override
+    @Test
+    public void editTest() throws Exception {        
+        surgery.setName(StConverter.convertToSt("Surgery1 Edited"));
+        surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        surgery.setId(IiConverter.convertToIi(2L));
+        action.setSurgery(surgery);
+        assertEquals(ActionSupport.SUCCESS, action.edit());
+    }
     
-    /**
-     * {@inheritDoc}
-     */
-    public DiseaseServiceRemote getDiseaseService() {
-        return disease;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PlannedActivityServiceRemote getPlannedActivityService() {
-        return pActivity;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public DiseaseParentServiceRemote getDiseaseParentService() {
-        return diseaseParent;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public LookUpTableServiceRemote getLookUpTableService() {
-    	return lookUpTable;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public RegistryUserServiceRemote getRegistryUserService() {
-    	return registryUser;
-    }
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
-        return interventionAlternateName;
-    }
-    public InterventionServiceRemote getInterventionService() {
-        return intervention;
+    @Test
+    public void editExceptionTest() throws Exception {
+        surgery.setName(StConverter.convertToSt("Surgery1 Edited"));
+        int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+        Date test = new Date();
+        surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        action.setSurgery(surgery);
+        assertEquals(ActionSupport.INPUT, action.edit());
     }
 }
