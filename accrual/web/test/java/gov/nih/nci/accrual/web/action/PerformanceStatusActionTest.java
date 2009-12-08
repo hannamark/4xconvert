@@ -1,7 +1,7 @@
 /*
 * caBIG Open Source Software License
 *
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
+* Copyright Notice.  Copyright 2009, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 *
@@ -74,179 +74,108 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.util.AccrualConstants;
-import gov.nih.nci.accrual.web.util.AccrualServiceLocator;
-import gov.nih.nci.accrual.web.util.MockPaServiceLocator;
-import gov.nih.nci.accrual.web.util.MockServiceLocator;
-import gov.nih.nci.accrual.web.util.PaServiceLocator;
-import gov.nih.nci.accrual.web.util.SessionEnvManager;
-import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
+import gov.nih.nci.pa.iso.util.CdConverter;
 
-import org.apache.struts2.ServletActionContext;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
-import com.mockrunner.mock.web.MockServletContext;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.config.Configuration;
-import com.opensymphony.xwork2.config.ConfigurationManager;
-import com.opensymphony.xwork2.config.providers.XWorkConfigurationProvider;
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.util.ValueStack;
-import com.opensymphony.xwork2.util.ValueStackFactory;
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * @author Hugh Reinhart
- * @since 7/7/2009
+ * @author lhebel
+ *
  */
-public class AbstractAccrualActionTest {
-    public static final String PARTICIPANT1 = "John";
-    public static final String PARTICIPANT2 = "Mary";
+public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
+    private PerformanceStatusAction dAction;
     
-    protected static final String TEST_USER = "joe@barngrill.com";
-
-    private class TestAction extends AbstractListEditAccrualAction<Object>{
-        private static final long serialVersionUID = 8637312133341800224L;
-
-        @Override
-        public void loadDisplayList() {
-            // test method
-        }
-    };
-
-    private final TestAction action = new TestAction();
-
-
+    /**
+     * initialize the class.
+     * @throws Exception report problems
+     */
     @Before
-    public void initMockServiceLocator() {
-        AccrualServiceLocator.getInstance().setServiceLocator(new MockServiceLocator());
-        PaServiceLocator.getInstance().setServiceLocator(new MockPaServiceLocator());
+    public void initAction() throws Exception {
+        setParticipantIi(PARTICIPANT1);
+        dAction = new PerformanceStatusAction();
+        dAction.prepare();
+        dAction.setPerformance(new PerformanceStatusWebDto());
+        PerformanceStatusWebDto temp = dAction.getPerformance();
+        temp.setKarnofskyStatus(CdConverter.convertStringToCd("100"));
     }
 
     /**
-     * Initialize the mock request.
+     * {@inheritDoc}
      */
-    @Before
-    public void initMockRequest() {
-        ConfigurationManager configurationManager = new ConfigurationManager();
-        configurationManager.addContainerProvider(new XWorkConfigurationProvider());
-        Configuration config = configurationManager.getConfiguration();
-        Container container = config.getContainer();
-
-        ValueStack stack = container.getInstance(ValueStackFactory.class).createValueStack();
-        stack.getContext().put(ActionContext.CONTAINER, container);
-        ActionContext.setContext(new ActionContext(stack.getContext()));
-
-        assertNotNull(ActionContext.getContext());
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser(TEST_USER);
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-
-        setRole(AccrualConstants.ROLE_OUTCOMES);
-        setDisclaimer(true);
+    @Override
+    public void executeTest() {
+        setParticipantIi(PARTICIPANT1);
+        assertEquals(ActionSupport.SUCCESS, dAction.execute());
     }
-
-
+    
     @Test
-    public void sessionTimeoutExecuteTest() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser(TEST_USER);
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-
-        assertEquals(AccrualConstants.AR_LOGOUT, action.execute());
-    }
-
-    @Test
-    public void executeTest() throws Exception {
-      ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_OUTCOMES, true);
-      assertEquals(AccrualConstants.ROLE_OUTCOMES, ServletActionContext.getRequest().getSession(). getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
-    }
-
-
-    @Test
-     public void createTest() throws Exception {
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
-     }
-
-    @Test
-    public void retrieveTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
-    }
-
-    @Test
-    public void updateTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
-    }
-
-    @Test
-    public void addTest() throws Exception {
-       assertEquals(action.execute(), action.add());
-    }
-
-    @Test
-    public void editTest() throws Exception {
-       assertEquals(action.execute(), action.edit());
-    }
-
-    @Test
-    public void deleteTest() throws Exception {
-       assertEquals(action.execute(), action.delete());
-    }
-
-    @Test
-    public void currentActionPropertyTest() {
-       action.setCurrentAction("currentAction");
-       assertNotNull(action.getCurrentAction());
-    }
-
-    @Test
-    public void selectedRowIdentifierPropertyTest() {
-       action.setSelectedRowIdentifier("1");
-       assertNotNull(action.getSelectedRowIdentifier());
+    public void execute2ndTest() {
+        setParticipantIi(PARTICIPANT2);
+        assertEquals(ActionSupport.SUCCESS, dAction.execute());
     }
 
     /**
-     * Clean out the action context to ensure one test does not impact another.
+     * Test cancel.
      */
-    @After
-    public void cleanUpActionContext() {
-        ActionContext.setContext(null);
+    @Test
+    public void cancelTest() {
+        assertEquals(ActionSupport.SUCCESS, dAction.cancel());
     }
 
-    public void setRole(String role) {
-        if (role != null) {
-            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_ROLE, role);
-        } else {
-            ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_ROLE);
-        }
+    /**
+     * Test save.
+     */
+    @Test
+    public void saveTest() {
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
     }
 
-    public void setDisclaimer(boolean value) {
-        if (value) {
-            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER,
-                    AccrualConstants.DISCLAIMER_ACCEPTED);
-        } else {
-            ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
-        }
+    /**
+     * Test save.
+     */
+    @Test
+    public void save2Test() {
+        setParticipantIi(PARTICIPANT2);
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
+    }
+
+    /**
+     * Test save.
+     */
+    @Test
+    public void nullIiSaveTest() {
+        setParticipantIi(null);
+        assertEquals(ActionSupport.INPUT, dAction.save());
+    }
+
+    /**
+     * Test save.
+     */
+    @Test
+    public void emptyPerformanceSaveTest() {
+        dAction.setPerformance(new PerformanceStatusWebDto());
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
     }
     
-    public void setParticipantIi(String participant) {
-        if (participant == null) {
-            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II, null);
-        } else {
-            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II, IiConverter.convertToIi(participant));
-        }
+    @Test
+    public void lanskyTest() {
+        PerformanceStatusWebDto temp = dAction.getPerformance();
+        temp.setLanskyStatus(CdConverter.convertStringToCd("0"));
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
+    }
+    
+    @Test
+    public void ecogTest() {
+        PerformanceStatusWebDto temp = dAction.getPerformance();
+        temp.setEcogStatus(CdConverter.convertStringToCd("2"));
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
     }
 }

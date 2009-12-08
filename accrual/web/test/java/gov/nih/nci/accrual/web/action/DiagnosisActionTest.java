@@ -86,7 +86,6 @@ import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -153,8 +152,23 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
     @Test
     public void saveTest() {
         assertEquals(ActionSupport.SUCCESS, dAction.save());
-        
-        executeTest();
+    }
+
+    /**
+     * Test save.
+     */
+    @Test
+    public void save2Test() {
+        setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, dAction.save());
+    }
+
+    /**
+     * Test save.
+     */
+    @Test
+    public void nullSaveTest() {
+        setParticipantIi(null);
+        assertEquals(ActionSupport.INPUT, dAction.save());
     }
 }

@@ -106,6 +106,8 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     private static HashMap<String, PerformedDiagnosisDto> hmPd = new HashMap<String, PerformedDiagnosisDto>();
     private static List<PdPa> listPa = new ArrayList<PdPa>();
+    private static HashMap<String, PerformedClinicalResultDto> hmCr = new HashMap<String, PerformedClinicalResultDto>();
+    private static List<CrPa> listCr = new ArrayList<CrPa>();
     private static int key = 2000;
 
     private class PdPa {
@@ -116,36 +118,66 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
             this.dto = dto;
         }
     }
-    
-    {
-        if (hmPd.size() == 0) {
-            PerformedDiagnosisDto dto = new PerformedDiagnosisDto();
-            dto.setResultCodeModifiedText(StConverter.convertToSt("Disease"));
-            dto.setResultCode(CdConverter.convertStringToCd("PD 1"));
-            Ii poId = MockPerformedActivityBean.getPo().getIdentifier();
-            dto.setPerformedObservationIdentifier(poId);
-            String id = MockPerformedObservationResultBean.class.getName() + ".hmPd " + String.valueOf(getKey());
-            dto.setIdentifier(IiConverter.convertToIi(id));
-            hmPd.put(id, dto);
-            listPa.add(new PdPa(poId.getExtension(), dto));
+
+    private class CrPa {
+        public String pa;
+        public PerformedClinicalResultDto dto;
+        public CrPa(String pa, PerformedClinicalResultDto dto) {
+            this.pa = pa;
+            this.dto = dto;
         }
     }
     
-    private synchronized int getKey() {
-        return ++key;
+    {
+        if (hmPd.size() > 0) {
+            hmPd = new HashMap<String, PerformedDiagnosisDto>();
+            listPa = new ArrayList<PdPa>();
+            hmCr = new HashMap<String, PerformedClinicalResultDto>();
+            listCr = new ArrayList<CrPa>();
+        }
+        Ii paId;
+        String id;
+
+        PerformedDiagnosisDto pd = new PerformedDiagnosisDto();
+        pd.setResultCodeModifiedText(StConverter.convertToSt("Disease"));
+        pd.setResultCode(CdConverter.convertStringToCd("PD 1"));
+        paId = MockPerformedActivityBean.getDiagnosisPo().getIdentifier();
+        pd.setPerformedObservationIdentifier(paId);
+        id = MockPerformedObservationResultBean.class.getName() + ".hmPd " + getKey();
+        pd.setIdentifier(IiConverter.convertToIi(id));
+        hmPd.put(id, pd);
+        listPa.add(new PdPa(paId.getExtension(), pd));
+        
+        PerformedClinicalResultDto cr = new PerformedClinicalResultDto();
+        cr.setResultCode(CdConverter.convertStringToCd("50"));
+        paId = MockPerformedActivityBean.getPerformanceStatusPo().getIdentifier();
+        cr.setPerformedObservationIdentifier(paId);
+        id = MockPerformedObservationResultBean.class.getName() + ".hmCr " + getKey();
+        cr.setIdentifier(IiConverter.convertToIi(id));
+        hmCr.put(id, cr);
+        listCr.add(new CrPa(paId.getExtension(), cr));
+    }
+    
+    private synchronized String getKey() {
+        return String.valueOf(++key);
     }
     
     public PerformedClinicalResultDto createPerformedClinicalResult(
             PerformedClinicalResultDto dto) throws RemoteException,
             DataFormatException {
-        return new PerformedClinicalResultDto();
+        PerformedClinicalResultDto cr = (dto == null) ? new PerformedClinicalResultDto() : dto;
+        String id = getKey();
+        cr.setIdentifier(IiConverter.convertToIi(id));
+        hmCr.put(id, cr);
+        listCr.add(new CrPa(cr.getPerformedObservationIdentifier().getExtension(), cr));
+        return cr;
     }
 
     public PerformedDiagnosisDto createPerformedDiagnosis(
             PerformedDiagnosisDto dto) throws RemoteException,
             DataFormatException {
         PerformedDiagnosisDto pdd = (dto == null) ? new PerformedDiagnosisDto() : dto;
-        String id = String.valueOf(getKey());
+        String id = getKey();
         pdd.setIdentifier(IiConverter.convertToIi(id));
         hmPd.put(id, pdd);
         listPa.add(new PdPa(pdd.getPerformedObservationIdentifier().getExtension(), pdd));
@@ -177,17 +209,34 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public PerformedClinicalResultDto getPerformedClinicalResult(Ii ii)
             throws RemoteException {
-        return new PerformedClinicalResultDto();
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedDiagnosis");
+        }
+        PerformedClinicalResultDto dto = hmCr.get(ii.getExtension());
+        return (dto == null) ? new PerformedClinicalResultDto() : dto;
     }
 
     public List<PerformedClinicalResultDto> getPerformedClinicalResultByPerformedActivity(
             Ii ii) throws RemoteException {
-        return new ArrayList<PerformedClinicalResultDto>();
+        ArrayList<PerformedClinicalResultDto> list = new ArrayList<PerformedClinicalResultDto>();
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedDiagnosisByPerformedActivity");
+        }
+        for (CrPa item : listCr) {
+            if (item.pa.equals(ii.getExtension())) {
+                list.add(item.dto);
+            }
+        }
+        return list;
     }
 
     public PerformedDiagnosisDto getPerformedDiagnosis(Ii ii)
             throws RemoteException {
-        return new PerformedDiagnosisDto();
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedDiagnosis");
+        }
+        PerformedDiagnosisDto dto = hmPd.get(ii.getExtension());
+        return (dto == null) ? new PerformedDiagnosisDto() : dto;
     }
 
     public List<PerformedDiagnosisDto> getPerformedDiagnosisByPerformedActivity(
@@ -201,7 +250,6 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
                 list.add(item.dto);
             }
         }
-
         return list;
     }
 
