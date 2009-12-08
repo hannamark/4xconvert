@@ -115,11 +115,14 @@ import java.util.zip.DataFormatException;
  */
 public class MockPerformedActivityBean implements PerformedActivityService {
 
+    public static String courseId;
+    public static String tpId;
     private List<PerformedActivityDto> paList;
     {
         paList = new ArrayList<PerformedActivityDto>();
         PerformedActivityDto dto = new PerformedActivityDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        tpId = dto.getIdentifier().getExtension();
         dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.TREATMENT_PLAN));
         dto.setName(StConverter.convertToSt("TreatmentPlan1"));
         dto.setTextDescription(StConverter.convertToSt("TP description")); 
@@ -128,6 +131,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         paList.add(dto);
         dto = new PerformedActivityDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        courseId = dto.getIdentifier().getExtension();
         dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.COURSE));
         dto.setName(StConverter.convertToSt("Course1"));
         Ivl<Ts> courseDate = new Ivl<Ts>();
