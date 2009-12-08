@@ -122,7 +122,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
             List<PerformedObservationResultDto> deathCauseList = null;
             List<PerformedObservationResultDto> autopsyList = null;
             List<ActivityRelationshipDto> arList = null;
-            
+
             List<PerformedObservationDto> poList = performedActivitySvc.getPerformedObservationByStudySubject(
                     getParticipantIi());
             for (PerformedObservationDto poBean : poList) {
@@ -149,7 +149,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                             po.getIdentifier());
 
                 }
-                if (deathCauseList != null && !deathCauseList.isEmpty() 
+                if (deathCauseList != null && !deathCauseList.isEmpty()
                         && autopsyList != null && !autopsyList.isEmpty()) {
                     for (PerformedObservationResultDto dto : deathCauseList) {
                         if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
@@ -169,7 +169,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                             deathInfo.setCauseByAutopsy(dto.getResultCode());
                         }
                     }
-                    
+
                     deathCauseList = null;
                     autopsyList = null;
                 }
@@ -178,7 +178,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             return super.execute();
-        }        
+        }
         return super.execute();
     }
 
@@ -192,7 +192,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
         if (hasActionErrors() || hasFieldErrors()) {
             return INPUT;
         }
-        try {            
+        try {
             if (deathInfo.getId() != null && deathInfo.getId().getExtension() == null) {
                 PerformedObservationDto dto = new PerformedObservationDto();
                 dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.DEATH_INFORMATION));
@@ -206,7 +206,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                 porDto1.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.DEATH_CAUSE));
                 porDto1.setStudyProtocolIdentifier(getSpIi());
                 performedObservationResultSvc.create(porDto1);
-                
+
                 PerformedObservationResultDto porDto2 = new PerformedObservationResultDto();
                 porDto2.setPerformedObservationIdentifier(dto.getIdentifier());
                 if (porDto2.getResultDateRange() == null) {
@@ -216,20 +216,20 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                 porDto2.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.DEATH_DATE));
                 porDto2.setStudyProtocolIdentifier(getSpIi());
                 performedObservationResultSvc.create(porDto2);
-                
+
                 ActivityRelationshipDto arDto = new ActivityRelationshipDto();
                 arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
                 arDto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(deathInfo.getTreatmentPlanId()));
                 arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
                 activityRelationshipSvc.create(arDto);
-                
+
                 PerformedObservationDto dto2 = new PerformedObservationDto();
                 dto2.setNameCode(CdConverter.convertToCd(ActivityNameCode.AUTOPSY_INFORMATION));
                 dto2.setTargetSiteCode(deathInfo.getAutopsySite());
                 dto2.setStudyProtocolIdentifier(getSpIi());
                 dto2.setStudySubjectIdentifier(getParticipantIi());
                 dto2 = performedActivitySvc.createPerformedObservation(dto2);
-                
+
                 PerformedObservationResultDto porDto3 = new PerformedObservationResultDto();
                 porDto3.setPerformedObservationIdentifier(dto2.getIdentifier());
                 porDto3.setResultCode(deathInfo.getAutopsyInd());
@@ -237,7 +237,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                         AUTOPSY_PERFORMED_INDICATOR));
                 porDto3.setStudyProtocolIdentifier(getSpIi());
                 performedObservationResultSvc.create(porDto3);
-                
+
                 PerformedObservationResultDto porDto4 = new PerformedObservationResultDto();
                 porDto4.setPerformedObservationIdentifier(dto2.getIdentifier());
                 porDto4.setResultCode(deathInfo.getCauseByAutopsy());
@@ -245,13 +245,13 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                         CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY));
                 porDto4.setStudyProtocolIdentifier(getSpIi());
                 performedObservationResultSvc.create(porDto4);
-                
+
                 ActivityRelationshipDto arDto2 = new ActivityRelationshipDto();
                 arDto2.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
                 arDto2.setSourcePerformedActivityIdentifier(dto.getIdentifier());
                 arDto2.setTargetPerformedActivityIdentifier(dto2.getIdentifier());
                 activityRelationshipSvc.create(arDto2);
-                
+
             } else {
                 List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
                         deathInfo.getId(), CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
@@ -262,14 +262,14 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                         PerformedObservationDto deathDto = performedActivitySvc.getPerformedObservation(
                                 arList.get(0).getSourcePerformedActivityIdentifier());
                         PerformedObservationDto autopsyDto = performedActivitySvc.getPerformedObservation(
-                                arList.get(0).getTargetPerformedActivityIdentifier());  
-                        
+                                arList.get(0).getTargetPerformedActivityIdentifier());
+
                         List<PerformedObservationResultDto> deathCauseList = performedObservationResultSvc.
                         getPerformedObservationResultByPerformedActivity(deathDto.getIdentifier());
-                        
+
                         List<PerformedObservationResultDto> autopsyList = performedObservationResultSvc.
                         getPerformedObservationResultByPerformedActivity(autopsyDto.getIdentifier());
-                        
+
                         for (PerformedObservationResultDto dto : deathCauseList) {
                             if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
                                                           DEATH_CAUSE.getCode())) {
@@ -292,10 +292,10 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
                         }
                         autopsyDto.setTargetSiteCode(deathInfo.getAutopsySite());
                         performedActivitySvc.updatePerformedObservation(autopsyDto);
-                        
+
                         if (!deathInfo.getTreatmentPlanId().equals(deathInfo.getOldTreatmentPlanId())) {
                             arList = activityRelationshipSvc.getBySourcePerformedActivity(IiConverter.convertToIi(
-                                    deathInfo.getOldTreatmentPlanId()), 
+                                    deathInfo.getOldTreatmentPlanId()),
                                     CdConverter.convertStringToCd(AccrualConstants.COMP));
                             for (ActivityRelationshipDto ar : arList) {
                                 if (ar.getTargetPerformedActivityIdentifier().getExtension().equals(
@@ -313,7 +313,7 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
             addActionError("Error in DeathInformationAction save().  " + e.getLocalizedMessage());
             return INPUT;
         }
-        return super.execute();    
+        return super.save();
     }
 
     /**
