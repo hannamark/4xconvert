@@ -138,6 +138,7 @@ import org.apache.commons.lang.StringEscapeUtils;
       "PMD.AvoidDeeplyNestedIfStmts" })
 public class EligibilityCriteriaAction extends ActionSupport {
 
+    private static final String STRUCTURED = "Structured";
     private static final long serialVersionUID = -5307419735675359757L;
     private static final String ELIGIBILITY = "eligibility";
     private static final String ELIGIBILITYADD = "eligibilityAdd";
@@ -175,7 +176,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static String cdeRequestToEmail;
     private static String cdeRequestSubject;
     private static String cdeRequestText;
-    
+    private static final int TOTAL_COUNT = 3;    
   
     /**
      * 
@@ -531,6 +532,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
     }
     if (ruleError.length() > 0) {
       addFieldError("reOrder", ruleError.toString());
+      populateList();
+      return ELIGIBILITY;
     } 
     if (!order.isEmpty()) {
       StringBuffer orderStr =  new StringBuffer("Display Order(s) exist: ");
@@ -549,6 +552,22 @@ public class EligibilityCriteriaAction extends ActionSupport {
   }
   return ELIGIBILITY;
   }
+
+/**
+ * @throws PAException
+ */
+private void populateList() throws PAException {
+    Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+      .getAttribute(Constants.STUDY_PROTOCOL_II);
+      List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
+      .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+      if (pecList != null && !pecList.isEmpty()) {
+          list = new ArrayList<ISDesignDetailsWebDTO>();
+          for (PlannedEligibilityCriterionDTO dto : pecList) {
+              list.add(setEligibilityDetailsDTO(dto));
+          }
+      }
+}
   
   
   /**
@@ -704,7 +723,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
       pecDTO.setTextValue(StConverter.convertToSt(dtoWeb.getValueText()));
       if (dtoWeb.getStructuredType() == null) {
           pecDTO.setStructuredIndicator(BlConverter.convertToBl(null));
-      } else  if (dtoWeb.getStructuredType().equalsIgnoreCase("Structured")) {
+      } else  if (dtoWeb.getStructuredType().equalsIgnoreCase(STRUCTURED)) {
           pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.TRUE));
       } else {
            pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.FALSE));
@@ -725,11 +744,11 @@ public class EligibilityCriteriaAction extends ActionSupport {
       if (dto.getCriterionName().getValue() != null
           && dto.getCriterionName().getValue().equals("AGE")) {
         if (dto.getValue().getHigh().getValue() != null) {  
-          maximumValue = dto.getValue().getHigh().getValue().toString();
+          maximumValue = String.valueOf(dto.getValue().getHigh().getValue().intValue());
         }
         valueUnit = dto.getValue().getLow().getUnit();
         if (dto.getValue().getLow().getValue() != null) { 
-          minimumValue = dto.getValue().getLow().getValue().toString();
+          minimumValue = String.valueOf(dto.getValue().getLow().getValue().intValue());
         }
         valueId = dto.getIdentifier().getExtension();
       }
@@ -769,7 +788,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
       }
       if (dto.getStructuredIndicator().getValue() != null) {
           if (BlConverter.covertToBool(dto.getStructuredIndicator())) {
-            webdto.setStructuredType("Structured");
+            webdto.setStructuredType(STRUCTURED);
           } else {
             webdto.setStructuredType("Unstructured");
           } 
@@ -842,27 +861,22 @@ public class EligibilityCriteriaAction extends ActionSupport {
         && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
       addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));        
     }
-    if (PAUtil.isEmpty(webDTO.getTextDescription())) {
-      if (PAUtil.isEmpty(webDTO.getCriterionName())  
-          && PAUtil.isEmpty(webDTO.getOperator())
-          && PAUtil.isEmpty(webDTO.getValueIntegerMin())
-          && PAUtil.isEmpty(webDTO.getUnit())) {
-
-        addFieldError("webDTO.mandatory",  getText("error.mandatory"));
-        return;
-      } else if (PAUtil.isEmpty(webDTO.getCriterionName())
-          || PAUtil.isEmpty(webDTO.getOperator())
-          || PAUtil.isEmpty(webDTO.getValueIntegerMin())
-          || PAUtil.isEmpty(webDTO.getValueText())
-          || PAUtil.isEmpty(webDTO.getUnit()))  {
-
-        addFieldError("webDTO.buldcriterion", getText("error.buldcriterion"));
-
-      }
-      if (PAUtil.isNotEmpty(webDTO.getValueIntegerMax()) && PAUtil.isEmpty(webDTO.getValueIntegerMin())) {
-         addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
-      }
-     }
+    if (PAUtil.isNotEmpty(webDTO.getStructuredType())) {
+        if (STRUCTURED.equalsIgnoreCase(webDTO.getStructuredType())) {
+           if (PAUtil.isEmpty(webDTO.getTextDescription()) && isBuildCriterionEmpty()) {
+               addFieldError("webDTO.buldcriterion", getText("error.mandatory"));
+            }
+           if (!isBuildCriterionEmpty()) {
+               addFieldError("webDTO.buldcriterion", getText("error.buldcriterion"));
+            }
+           if (PAUtil.isNotEmpty(webDTO.getValueIntegerMax()) && PAUtil.isEmpty(webDTO.getValueIntegerMin())) {
+               addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
+            }
+        } else if (PAUtil.isEmpty(webDTO.getTextDescription())) {
+            addFieldError("webDTO.buldcriterion",  getText("error.buldcriterion"));
+        }     
+    }
+     
     HashSet<String> order =  new HashSet<String>();
     String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
     if (dispOrder != null && !dispOrder.equals("")) {
@@ -870,7 +884,24 @@ public class EligibilityCriteriaAction extends ActionSupport {
       addFieldError("webDTO.displayOrder", mesg + dispOrder);
     }
   }
-  
+  private boolean isBuildCriterionEmpty() {
+
+      int emptyCount = 0;
+      boolean retVal = false;
+      if (PAUtil.isEmpty(webDTO.getCriterionName())) {
+          emptyCount++;
+      }
+      if (PAUtil.isEmpty(webDTO.getOperator())) {
+          emptyCount++;
+      }
+      if (PAUtil.isEmpty(webDTO.getValueIntegerMin()) && PAUtil.isEmpty(webDTO.getValueText())) {
+          emptyCount++;
+      }
+      if (emptyCount == TOTAL_COUNT || emptyCount == 0) {
+          retVal = true;
+      }
+      return retVal;
+  }
   private String rulesForDisplayOrder(String displayOrder) throws PAException {
     StringBuffer err = new StringBuffer();
     if (PAUtil.isEmpty(displayOrder)) {
