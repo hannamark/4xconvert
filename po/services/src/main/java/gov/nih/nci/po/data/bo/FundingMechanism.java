@@ -14,6 +14,8 @@ import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * Lookup class for types of Funding Mechanism.
  * @author smatyas
@@ -64,6 +66,7 @@ public class FundingMechanism extends AbstractCodeValue implements Comparable<Fu
     @Length(max = DESC_LENGTH)
     @NotEmpty
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "desc")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getDescription() {
         return description;
     }
@@ -74,6 +77,7 @@ public class FundingMechanism extends AbstractCodeValue implements Comparable<Fu
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "status")
+    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
     public FundingMechanismStatus getStatus() {
         return status;
     }
@@ -91,6 +95,7 @@ public class FundingMechanism extends AbstractCodeValue implements Comparable<Fu
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "category")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     public String getCategory() {
         return category;
     }

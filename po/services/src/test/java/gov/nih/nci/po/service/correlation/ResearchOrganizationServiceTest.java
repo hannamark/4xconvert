@@ -231,6 +231,49 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         assertNotNull(resultRo.getFundingMechanism());
         assertEquals("BXX", resultRo.getFundingMechanism().getCode());    
     }
+
+    @Test
+    public void testByFundingMechanism() throws Exception {
+        ResearchOrganization ro = super.createSample();
+       
+        ResearchOrganization searchRo = new ResearchOrganization();
+        FundingMechanism fm = new FundingMechanism("BXX", null, null, null);
+        searchRo.setFundingMechanism(fm);
+        SearchCriteria<ResearchOrganization> sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(searchRo);
+        List<ResearchOrganization> result = EjbTestHelper.getResearchOrganizationServiceBean().search(sc);     
+        assertEquals(1, result.size());
+        
+        fm = new FundingMechanism(null, "Mental", null, null);
+        searchRo.setFundingMechanism(fm);
+        sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(searchRo);
+        result = EjbTestHelper.getResearchOrganizationServiceBean().search(sc);     
+        assertEquals(1, result.size());
+        
+        fm = new FundingMechanism(null, null, "Block", null);
+        searchRo.setFundingMechanism(fm);
+        sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(searchRo);
+        result = EjbTestHelper.getResearchOrganizationServiceBean().search(sc);     
+        assertEquals(1, result.size());
+
+        fm = new FundingMechanism(null, null, null, FundingMechanismStatus.ACTIVE);
+        searchRo.setFundingMechanism(fm);
+        sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(searchRo);
+        result = EjbTestHelper.getResearchOrganizationServiceBean().search(sc);     
+        assertEquals(1, result.size());
+        
+        fm = new FundingMechanism(null, null, "Block", FundingMechanismStatus.INACTIVE);
+        searchRo.setFundingMechanism(fm);
+        sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(searchRo);
+        result = EjbTestHelper.getResearchOrganizationServiceBean().search(sc);     
+        assertEquals(0, result.size());
+        
+        fm = new FundingMechanism("BX", null, null, null);
+        searchRo.setFundingMechanism(fm);
+        sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(searchRo);
+        result = EjbTestHelper.getResearchOrganizationServiceBean().search(sc);     
+        assertEquals(0, result.size());
+        
+    }
     
     @Override
     protected ResearchOrganization getSampleCtepOwnedStructuralRole() {

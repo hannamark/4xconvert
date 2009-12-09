@@ -136,7 +136,7 @@ public abstract class AbstractResearchOrganization extends AbstractEnhancedOrgan
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Searchable(nested = true)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "fundingMech")
     @ManyToOne
     @ForeignKey(name = "research_org_funding_mech_fk")
