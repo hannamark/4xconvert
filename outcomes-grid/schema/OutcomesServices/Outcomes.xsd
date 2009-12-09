@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>http://enterpriseservices.nci.nih.gov/OutcomesServices/types
+<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ISO="uri:iso.org:21090" xmlns:OUTCOMES="http://outcomes.coppa.nci.nih.gov"
     targetNamespace="http://outcomes.coppa.nci.nih.gov" elementFormDefault="qualified" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
     jxb:version="1.0">
@@ -52,7 +52,7 @@
         <xs:complexContent>
             <xs:extension base="OUTCOMES:ActivityType">
                 <xs:sequence>
-                    <xs:element name="actualDateRange" type="ISO:IVLTS" />
+                    <xs:element name="actualDateRange" type="ISO:IVL_TS" />
                     <xs:element name="studySubjectIdentifier" type="ISO:II" />
                     <xs:element name="actualDuration" type="ISO:PQ" />
                     <xs:element name="name" type="ISO:ST" />
@@ -74,7 +74,7 @@
                     <xs:element name="resultText" type="ISO:ST" />
                     <xs:element name="typeCode" type="ISO:CD" />
                     <xs:element name="unitOfMeasureCode" type="ISO:CD" />
-                    <xs:element name="resultDateRange" type="ISO:IVLTS" />
+                    <xs:element name="resultDateRange" type="ISO:IVL_TS" />
                     <xs:element name="performedObservationIdentifier" type="ISO:II" />
                 </xs:sequence>
             </xs:extension>
@@ -99,9 +99,9 @@
     <xs:element name="Patient">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="OUTCOMES:ActivityRelationshipType">
+                <xs:extension base="OUTCOMES:BaseType">
                     <xs:sequence>
-                        <xs:element name="raceCode" type="ISO:DSETCD" />
+                        <xs:element name="raceCode" type="ISO:DSET_CD" />
                         <xs:element name="genderCode" type="ISO:CD" />
                         <xs:element name="ethnicCode" type="ISO:CD" />
                         <xs:element name="birthDate" type="ISO:TS" />
@@ -162,7 +162,7 @@
                         <xs:element name="diseaseIdentifier" type="ISO:II" />
                         <xs:element name="paymentMethodCode" type="ISO:CD" />
                         <xs:element name="statusCode" type="ISO:CD" />
-                        <xs:element name="statusDateRange" type="ISO:IVLTS" />
+                        <xs:element name="statusDateRange" type="ISO:IVL_TS" />
                         <xs:element name="outcomesLoginName" type="ISO:ST" />
                     </xs:sequence>
                 </xs:extension>
@@ -180,7 +180,7 @@
                         <xs:element name="description" type="ISO:ST" />
                         <xs:element name="label" type="ISO:ST" />
                         <xs:element name="statusCode" type="ISO:CD" />
-                        <xs:element name="statusDateRange" type="ISO:IVLTS" />
+                        <xs:element name="statusDateRange" type="ISO:IVL_TS" />
                         <xs:element name="createUser" type="ISO:ST" />
                         <xs:element name="submitUser" type="ISO:ST" />
                     </xs:sequence>
