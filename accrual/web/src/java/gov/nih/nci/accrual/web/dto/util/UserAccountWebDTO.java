@@ -81,11 +81,11 @@ public class UserAccountWebDTO {
         this.phoneNumber     = user.getPhone();
         this.organization    = user.getAffiliateOrg();
         this.prsOrganization = user.getPrsOrgName();
-        if (user.getPoOrganizationId() == null) {
+        if (user.getPoOrganizationId() != null) {
             this.treatmentSiteId = String.valueOf(user.getPoOrganizationId());
         }        
         this.treatmentSite = treatmentSite;
-        if (user.getPoPersonId() == null) {
+        if (user.getPoPersonId() != null) {
             this.physicianId = String.valueOf(user.getPoPersonId());
         }        
         this.physician = physician;

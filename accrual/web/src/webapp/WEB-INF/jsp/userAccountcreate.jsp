@@ -16,12 +16,20 @@
             document.forms[0].submit();
         }
         
-        function lookupTreatmentSite(){
-            showPopWinOutsideContext('${treatmentSiteLookupUrl}', 900, 400, '', 'Select Treatment Site');
+        function lookupTreatmentSite(action){
+            if (action == 'activateAccount') {
+                showPopWinOutsideContext('${treatmentSiteLookupUrl}', 900, 400, '', 'Select Treatment Site');
+            } else {
+                showPopWin('${treatmentSiteLookupUrl}', 900, 400, '', 'Select Treatment Site');
+            }
         }
         
-        function lookupPhysician(){
-            showPopWinOutsideContext('${physicianLookupUrl}', 900, 400, '', 'Select Physician');
+        function lookupPhysician(action){
+            if (action == 'activateAccount') {
+                showPopWinOutsideContext('${physicianLookupUrl}', 900, 400, '', 'Select Physician');
+            } else {
+                showPopWin('${physicianLookupUrl}', 900, 400, '', 'Select Physician');
+            }
         }
     </script>
     
@@ -163,8 +171,8 @@
                     <td scope="row" class="label"><label><fmt:message key="user.account.treatmentSite.label"/><span class="required">*</span></label></td>
                     <td>
                         <s:textfield readonly="true" size="30" name="userAccount.treatmentSite" cssStyle="float:left; width:200px" cssClass="readonly"/>                       
-                        <s:hidden name="userAccount.treatmentSiteId"/>                        
-                        <a href="#" class="btn" onclick="lookupTreatmentSite();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        <s:hidden name="userAccount.treatmentSiteId"/>
+                        <a href="#" class="btn" onclick="lookupTreatmentSite('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.treatmentSite</s:param></s:fielderror>
                     </td>
                 </tr>                
@@ -173,7 +181,7 @@
                     <td>
                         <s:textfield readonly="true" size="30" name="userAccount.physician" cssStyle="float:left; width:200px" cssClass="readonly"/>
                         <s:hidden name="userAccount.physicianId"/>
-                        <a href="#" class="btn" onclick="lookupPhysician();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        <a href="#" class="btn" onclick="lookupPhysician('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.physician</s:param></s:fielderror>
                     </td>
                 </tr>                               

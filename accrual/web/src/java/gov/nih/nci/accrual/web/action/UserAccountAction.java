@@ -12,6 +12,7 @@ import gov.nih.nci.accrual.web.mail.MailManager;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.EncoderDecoder;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
+import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -117,6 +118,7 @@ public class UserAccountAction extends AbstractAccrualAction {
             return ERROR;
         }
 
+        userAction = "activateAccount";
         return CREATE;
     }
     
@@ -226,6 +228,15 @@ public class UserAccountAction extends AbstractAccrualAction {
                     userAction = "resetPassword";
                     actionResult = "redirectToLogin";
                 } else {
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME, 
+                        user.getLastName() + ", " + user.getFirstName());            
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, 
+                        getPhysician(user.getPoPersonId()));            
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, 
+                        IiConverter.convertToPoOrganizationIi(String.valueOf(user.getPoOrganizationId())));            
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, 
+                        getTreatmentSite(user.getPoOrganizationId()));
+                        
                     userAction = "updateAccount";
                     actionResult = CREATE;
                 }
