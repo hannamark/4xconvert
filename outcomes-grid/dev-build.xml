@@ -439,7 +439,7 @@
     <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY" />
 
     <macrodef name="run-client">
-        <attribute name="class" default="gov.nih.nci.coppa.services.pa.client.PaServicesClient" />
+        <attribute name="class" default="gov.nih.nci.coppa.services.outcomes.client.OutcomesServicesClient" />
         <attribute name="serviceendpointname" default="PaServices" />
         <attribute name="protocol" default="${service.protocol}" />
         <attribute name="hostname" default="${service.hostname}" />
