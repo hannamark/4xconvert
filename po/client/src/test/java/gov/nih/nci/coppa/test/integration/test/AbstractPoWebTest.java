@@ -68,6 +68,10 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         clickAndWait("//a[@id='" + buttonId + "']/span/span");
     }
 
+    protected void clickAnchor(String anchorId) {
+        selenium.click("//a[@id='" + anchorId + "']");
+    }
+
     protected void openCreateOrganization() {
         goHome();
         selenium.click("CreateOrganization");
@@ -428,7 +432,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         }
     }
 
-    private void inputForTel(String[]tel, String type) {
+    protected void inputForTel(String[]tel, String type) {
         if (tel.length >= 3) {
             selenium.type(type + "Entry_part1", tel[0]);
             selenium.type(type + "Entry_part2", tel[1]);
@@ -439,6 +443,12 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
             selenium.click("//div[@id='us_format_"+type+"']//a[@id='" + type + "-add']");
             waitForElementById(type +"-entry-0", 5);
         }
+    }
+
+    protected void inputNonUSFormatTel(String tel, String type) {
+        selenium.type(type + "Entry_value", tel);
+        selenium.click("//div[@id='no_format_"+type+"']//a[@id='" + type + "-add']");
+         waitForElementById(type +"-entry-0", 5);
     }
 
     public Address getAddress() {
@@ -467,12 +477,12 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         clickAndWait("link=Manage Clinical Research Staff(s)");
         assertTrue(selenium.isTextPresent("Clinical Research Staff Information"));
     }
-    
+
     protected void accessManageIdentifiedOrganizationScreen() {
         clickAndWait("link=Manage Identified Organization(s)");
         assertTrue(selenium.isTextPresent("Identified Organization Information"));
     }
-    
+
     protected void accessManageResearchOrganizationScreen() {
         clickAndWait("link=Manage Research Organization(s)");
         assertTrue(selenium.isTextPresent("Research Organization Information"));
@@ -571,7 +581,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         assertEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
-    
+
     protected void saveOrganizationAsActive(Ii id) {
         selenium.select("curateEntityForm.organization.statusCode", "label=ACTIVE");
         clickAndWaitSaveButton();
