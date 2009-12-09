@@ -120,10 +120,7 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
         SubmissionDto dto = bean.get(IiConverter.convertToIi(TestSchema.submissions.get(0).getId()));
         Ts cdate = new Ts();
         cdate.setValue(new Date());
-        dto.setCreatedDate(cdate);
         assertNotNull(dto);
-        cdate = dto.getCreatedDate();
-        assertNotNull(cdate);
         try {
             dto = bean.get(BII);
         } catch (RemoteException e) {
@@ -152,7 +149,6 @@ public class SubmissionServiceTest extends AbstractServiceTest<SubmissionService
         dto.setLabel(StConverter.convertToSt(newLabel));
         Ts cdate = new Ts();
         cdate.setValue(new Date());
-        dto.setCreatedDate(cdate);
         SubmissionDto r = bean.update(dto);
         assertTrue(newLabel.equals(StConverter.convertToString(r.getLabel())));
     }

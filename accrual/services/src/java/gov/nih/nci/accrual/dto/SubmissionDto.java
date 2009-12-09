@@ -83,7 +83,6 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 
 
 /**
@@ -94,14 +93,12 @@ public class SubmissionDto extends AbstractStudyDto {
     private static final long serialVersionUID = 5221603553357385670L;
 
     private Ts cutOffDate;
-    private Ts createdDate;
     private St description;
     private St label;
     private Cd statusCode;
     private Ivl<Ts> statusDateRange;
     private St createUser;
     private St submitUser;
-    private String submittedDate;
 
 
     /**
@@ -140,18 +137,7 @@ public class SubmissionDto extends AbstractStudyDto {
     public void setCutOffDate(Ts cutOffDate) {
         this.cutOffDate = cutOffDate;
     }
-   /**
-     * @return the createdDate
-     */
-    public Ts getCreatedDate() {
-      return createdDate;
-    }
-    /**
-     * @param createdDate the createdDate to set
-     */
-    public void setCreatedDate(Ts createdDate) {
-       this.createdDate = createdDate;
-     }
+
     /**
      * @return the description
      */
@@ -199,23 +185,5 @@ public class SubmissionDto extends AbstractStudyDto {
      */
     public void setStatusDateRange(Ivl<Ts> statusDateRange) {
         this.statusDateRange = statusDateRange;
-        this.submittedDate = IvlConverter.convertTs().convertHighToString(statusDateRange);
-        if (this.submittedDate == null) {
-            this.submittedDate = "";
-        }
-    }
-    
-    /**
-     * @return the submitted date
-     */
-    public String getSubmittedDate() {
-        return submittedDate;
-    }
-    
-    /**
-     * @param val the new submitted date - ignored - see setStatusDateRange()
-     */
-    public void setSubmittedDate(String val) {
-        // ignore supplied value, see setStatusDateRange()
     }
 }

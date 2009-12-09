@@ -110,7 +110,6 @@ public class SubmissionDecoratorTest extends AbstractDecoratorTest<SubmissionDec
         SubmissionDto dto = new SubmissionDto();
         Ts created = new Ts();
         created.setValue(new Date());
-        dto.setCreatedDate(created);
         St user = new St();
         user.setValue("user 1");
         dto.setCreateUser(user);
