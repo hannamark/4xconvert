@@ -107,4 +107,11 @@ public interface ResearchOrganizationServiceLocal extends GenericStructrualRoleS
      * @return the count of roles that need attention.
      */
     int getHotRoleCount(Organization org);
+    
+    /**
+     * Migrates all Research Organization funding mechanisms from a bytea to a foreign key reference in the DB.
+     * @deprecated
+     */
+    void migrateFundingMechanism();
+    
 }

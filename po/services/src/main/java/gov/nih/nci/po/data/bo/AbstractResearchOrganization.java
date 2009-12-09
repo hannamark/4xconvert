@@ -107,9 +107,29 @@ public abstract class AbstractResearchOrganization extends AbstractEnhancedOrgan
 
     private static final long serialVersionUID = 1L;
 
+    private FundingMechanism fundingMechanismEmbedded;
     private FundingMechanism fundingMechanism;
     private ResearchOrganizationType typeCode;
 
+    /**
+     * @return the fundingMechanism
+     * @deprecated this method was refactored. It is only used by LiquiBase Updater, should
+     *  not be used otherwise, and will be removed in a future version.
+     */
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public FundingMechanism getFundingMechanismEmbedded() {
+        return fundingMechanismEmbedded;
+    }
+
+    /**
+     * @param fundingMechanismEmbedded funding mechanism
+     * @deprecated this method was refactored. It is only used by LiquiBase Updater, should
+     *  not be used otherwise, and will be removed in a future version.   
+    */
+    public void setFundingMechanismEmbedded(FundingMechanism fundingMechanismEmbedded) {
+        this.fundingMechanismEmbedded = fundingMechanismEmbedded;
+    }
+    
     /**
      * @return the fundingMechanism
      * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
@@ -118,6 +138,8 @@ public abstract class AbstractResearchOrganization extends AbstractEnhancedOrgan
      */
     @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "fundingMech")
+    @ManyToOne
+    @ForeignKey(name = "research_org_funding_mech_fk")
     public FundingMechanism getFundingMechanism() {
         return fundingMechanism;
     }
@@ -127,7 +149,7 @@ public abstract class AbstractResearchOrganization extends AbstractEnhancedOrgan
      */
     public void setFundingMechanism(FundingMechanism fundingMechanism) {
         this.fundingMechanism = fundingMechanism;
-    }
+    }    
 
     /**
      * @return the type

@@ -83,23 +83,37 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import gov.nih.nci.coppa.iso.EnOn;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.FundingMechanism;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
+import gov.nih.nci.po.data.convert.CdConverter;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.StringConverter;
+import gov.nih.nci.po.service.AbstractCuratableServiceBean;
+import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.hibernate.validator.InvalidStateException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * Service test.
@@ -193,6 +207,31 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         assertEquals(1, errors.size());
     }
 
+    @Test
+    public void testMigrateFunding() throws Exception {
+        ResearchOrganization ro = super.createSample();
+        ro.setFundingMechanismEmbedded(ro.getFundingMechanism());
+        ro.setFundingMechanism(null);
+        ro.setName("RO Name");
+        EjbTestHelper.getResearchOrganizationServiceBean().update(ro);
+                    
+        PoHibernateUtil.getCurrentSession().flush();
+        
+        EjbTestHelper.getResearchOrganizationServiceBean().migrateFundingMechanism();
+        
+        ResearchOrganization searchRo = new ResearchOrganization();
+        searchRo.setName("RO Name");
+        SearchCriteria<ResearchOrganization> sc = new AnnotatedBeanSearchCriteria<ResearchOrganization>(searchRo);
+        List<ResearchOrganization> result = EjbTestHelper.getResearchOrganizationServiceBean().search(sc);
+        
+        assertEquals(1, result.size());
+        
+        ResearchOrganization resultRo = result.get(0);
+        assertNull(resultRo.getFundingMechanismEmbedded());
+        assertNotNull(resultRo.getFundingMechanism());
+        assertEquals("BXX", resultRo.getFundingMechanism().getCode());    
+    }
+    
     @Override
     protected ResearchOrganization getSampleCtepOwnedStructuralRole() {
         ResearchOrganization r = getSampleStructuralRole();

@@ -7,6 +7,14 @@
 
     <display-name>PO</display-name>
 
+    
+    <!--  This Servlet used in lieu of a LiquiBase Update because of difficulty in 
+            using custom task with BDA -->
+    <listener>
+        <listener-class>gov.nih.nci.po.web.util.PO1129UpdaterListener</listener-class>
+    </listener>
+
+
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
