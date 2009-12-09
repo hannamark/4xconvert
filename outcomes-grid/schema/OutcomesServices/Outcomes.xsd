@@ -81,6 +81,44 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="PerformedObservationType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="OUTCOMES:PerformedActivityType">
+                <xs:sequence>
+                    <xs:element name="methodCode" type="ISO:DSET_CD" />
+                    <xs:element name="targetSiteCode" type="ISO:CD" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PerformedImagingType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="OUTCOMES:PerformedObservationType">
+                <xs:sequence>
+                    <xs:element name="contrastAgentEnhancementIndicator" type="ISO:BL" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PerformedSubstanceAdministrationType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="OUTCOMES:PerformedActivityType">
+                <xs:sequence>
+                    <xs:element name="dose" type="ISO:PQ" />
+                    <xs:element name="doseDescription" type="ISO:ST" />
+                    <xs:element name="doseFormCode" type="ISO:CD" />
+                    <xs:element name="doseFrequencyCode" type="ISO:CD" />
+                    <xs:element name="doseRegimen" type="ISO:ST" />
+                    <xs:element name="doseTotal" type="ISO:PQ" />
+                    <xs:element name="routeOfAdministrationCode" type="ISO:CD" />
+                    <xs:element name="doseDuration" type="ISO:PQ" />
+                    <xs:element name="doseModificationType" type="ISO:CD" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
     <xs:element name="ActivityRelationship">
         <xs:complexType>
@@ -126,10 +164,141 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="PerformedClinicalResult">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedObservationResultType" >
+                    <xs:sequence>
+                        <xs:element name="stageCodingSystem" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedDiagnosis">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedObservationResultType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedHistopathology">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedObservationResultType" >
+                    <xs:sequence>
+                        <xs:element name="description" type="ISO:ST" />
+                        <xs:element name="gradeCode" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedImage">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedObservationResultType" >
+                    <xs:sequence>
+                        <xs:element name="imageIdentifier" type="ISO:II" />
+                        <xs:element name="seriesIdentifier" type="ISO:II" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedImaging">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedImagingType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedLesionDescription">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedObservationResultType" >
+                    <xs:sequence>
+                        <xs:element name="lesionNumber" type="ISO:INT" />
+                        <xs:element name="longestDiameter" type="ISO:PQ" />
+                        <xs:element name="measurableIndicator" type="ISO:BL" />
+                        <xs:element name="evaluableIndicator" type="ISO:BL" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedMedicalHistoryResult">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedObservationResultType" >
+                    <xs:sequence>
+                        <xs:element name="description" type="ISO:ST" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="PerformedObservationResult">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="OUTCOMES:PerformedObservationResultType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedObservation">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedObservationType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedProcedure">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedActivityType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedRadiationAdministration">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedSubstanceAdministrationType">
+                    <xs:sequence>
+                        <xs:element name="machineTypeCode" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedSubjectMilestone">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedActivityType">
+                    <xs:sequence>
+                        <xs:element name="informedConsentDate" type="ISO:TS" />
+                        <xs:element name="registrationDate" type="ISO:TS" />
+                        <xs:element name="reasonCode" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedSubstanceAdministration">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedSubstanceAdministrationType" />
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
@@ -189,492 +358,4 @@
         </xs:complexType>
     </xs:element>
 
-
-
-
-<!--
-
-    <xs:complexType name="FunctionalRoleType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="COPPA-PA:StudyType">
-                <xs:sequence>
-                    <xs:element name="statusCode" type="ISO:CD" />
-                    <xs:element name="statusDateRange" type="ISO:IVL_TS" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="OrganizationFunctionalRoleType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="COPPA-PA:FunctionalRoleType">
-                <xs:sequence>
-                    <xs:element name="functionalCode" type="ISO:CD" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="PersonFunctionalRoleType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="COPPA-PA:FunctionalRoleType">
-                <xs:sequence>
-                    <xs:element name="healthCareProvider" type="ISO:II" />
-                    <xs:element name="clinicalResearchStaff" type="ISO:II" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="PlannedActivityType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="COPPA-PA:StudyType">
-                <xs:sequence>
-                    <xs:element name="categoryCode" type="ISO:CD" />
-                    <xs:element name="interventionIdentifier" type="ISO:II" />
-                    <xs:element name="leadProductIndicator" type="ISO:BL" />
-                    <xs:element name="subcategoryCode" type="ISO:CD" />
-                    <xs:element name="textDescription" type="ISO:ST" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="SiteType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="COPPA-PA:BaseType">
-                <xs:sequence>
-                    <xs:element name="studySiteIdentifier" type="ISO:II" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="StudyType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="COPPA-PA:BaseType">
-                <xs:sequence>
-                    <xs:element name="studyProtocolIdentifier" type="ISO:II" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="StudyProtocolType" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="COPPA-PA:BaseType">
-                <xs:sequence>
-                    <xs:element name="acronym" type="ISO:ST" />
-                    <xs:element name="accrualReportingMethodCode" type="ISO:CD" />
-                    <xs:element name="assignedIdentifier" type="ISO:II" />
-                    <xs:element name="dataMonitoringCommitteeAppointedIndicator" type="ISO:BL" />
-                    <xs:element name="delayedpostingIndicator" type="ISO:BL" />
-                    <xs:element name="expandedAccessIndicator" type="ISO:BL" />
-                    <xs:element name="fdaRegulatedIndicator" type="ISO:BL" />
-                    <xs:element name="reviewBoardApprovalRequiredIndicator" type="ISO:BL" />
-                    <xs:element name="officialTitle" type="ISO:ST" />
-                    <xs:element name="targetAccrualNumber" type="ISO:IVL_INT" />
-                    <xs:element name="phaseCode" type="ISO:CD" />
-                    <xs:element name="phaseOtherText" type="ISO:ST" />
-                    <xs:element name="primaryCompletionDate" type="ISO:TS" />
-                    <xs:element name="primaryCompletionDateTypeCode" type="ISO:CD" />
-                    <xs:element name="primaryPurposeCode" type="ISO:CD" />
-                    <xs:element name="primaryPurposeOtherText" type="ISO:ST" />
-                    <xs:element name="programCodeText" type="ISO:ST" />
-                    <xs:element name="publicDescription" type="ISO:ST" />
-                    <xs:element name="publicTitle" type="ISO:ST" />
-                    <xs:element name="recordVerificationDate" type="ISO:TS" />
-                    <xs:element name="scientificDescription" type="ISO:ST" />
-                    <xs:element name="section801Indicator" type="ISO:BL" />
-                    <xs:element name="startDate" type="ISO:TS" />
-                    <xs:element name="startDateTypeCode" type="ISO:CD" />
-                    <xs:element name="keywordText" type="ISO:ST" />
-                    <xs:element name="acceptHealthyVolunteersIndicator" type="ISO:BL" />
-                    <xs:element name="studyProtocolType" type="ISO:ST" />
-                    <xs:element name="userLastCreated" type="ISO:ST" />
-                    <xs:element name="statusCode" type="ISO:CD" />
-                    <xs:element name="statusDate" type="ISO:TS" />
-                    <xs:element name="amendmentNumber" type="ISO:ST" />
-                    <xs:element name="amendmentDate" type="ISO:TS" />
-                    <xs:element name="amendmentReasonCode" type="ISO:CD" />
-                    <xs:element name="submissionNumber" type="ISO:INT" />
-                    <xs:element name="proprietaryTrialIndicator" type="ISO:BL" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:element name="Arm">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="name" type="ISO:ST" />
-                        <xs:element name="typeCode" type="ISO:CD" />
-                        <xs:element name="descriptionText" type="ISO:ST" />
-                        <xs:element name="interventions" type="ISO:DSET_II" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Document">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="typeCode" type="ISO:CD" />
-                        <xs:element name="activeIndicator" type="ISO:BL" />
-                        <xs:element name="fileName" type="ISO:ST" />
-                        <xs:element name="inactiveCommentText" type="ISO:ST" />
-                        <xs:element name="text" type="ISO:ED" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="DocumentWorkflowStatus">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="commentText" type="ISO:ST" />
-                        <xs:element name="statusCode" type="ISO:CD" />
-                        <xs:element name="statusDateRange" type="ISO:IVL_TS" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="FunctionalRole">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:FunctionalRoleType" />
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="InterventionalStudyProtocol">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyProtocolType">
-                    <xs:sequence>
-                        <xs:element name="allocationCode" type="ISO:CD" />
-                        <xs:element name="blindedRoleCode" type="ISO:DSET_CD" />
-                        <xs:element name="blindingSchemaCode" type="ISO:CD" />
-                        <xs:element name="designConfigurationCode" type="ISO:CD" />
-                        <xs:element name="numberOfInterventionGroups" type="ISO:INT" />
-                        <xs:element name="studyClassificationCode" type="ISO:CD" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="OrganizationFunctionalRole">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:OrganizationFunctionalRoleType" />
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="PersonFunctionalRole">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:PersonFunctionalRoleType"/>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="PlannedActivity">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:PlannedActivityType"/>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="PlannedEligibilityCriterion">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:PlannedActivityType">
-                    <xs:sequence>
-                        <xs:element name="inclusionIndicator" type="ISO:BL" />
-                        <xs:element name="criterionName" type="ISO:ST" />
-                        <xs:element name="operator" type="ISO:ST" />
-                        <xs:element name="value" type="ISO:IVL_PQ" />
-                        <xs:element name="eligibleGenderCode" type="ISO:CD" />
-                        <xs:element name="displayOrder" type="ISO:INT" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StratumGroup">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="description" type="ISO:ST" />
-                        <xs:element name="groupNumberText" type="ISO:ST" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Study">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType" />
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyContact">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:PersonFunctionalRoleType">
-                    <xs:sequence>
-                        <xs:element name="primaryIndicator" type="ISO:BL" />
-                        <xs:element name="roleCode" type="ISO:CD" />
-                        <xs:element name="postalAddress" type="ISO:AD" />
-                        <xs:element name="telecomAddresses" type="ISO:DSET_TEL" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyDisease">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="diseaseIdentifier" type="ISO:II" />
-                        <xs:element name="leadDiseaseIndicator" type="ISO:BL" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyIndlde">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="expandedAccessStatusCode" type="ISO:CD" />
-                        <xs:element name="expandedAccessIndicator" type="ISO:BL" />
-                        <xs:element name="grantorCode" type="ISO:CD" />
-                        <xs:element name="holderTypeCode" type="ISO:CD" />
-                        <xs:element name="nihInstHolderCode" type="ISO:CD" />
-                        <xs:element name="nciDivProgHolderCode" type="ISO:CD" />
-                        <xs:element name="indldeNumber" type="ISO:ST" />
-                        <xs:element name="indldeTypeCode" type="ISO:CD" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyMilestone">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="commentText" type="ISO:ST" />
-                        <xs:element name="milestoneCode" type="ISO:CD" />
-                        <xs:element name="milestoneDate" type="ISO:TS" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyOnhold">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="onholdReasonText" type="ISO:ST" />
-                        <xs:element name="onholdReasonCode" type="ISO:CD" />
-                        <xs:element name="onholdDate" type="ISO:IVL_TS" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyOutcomeMeasure">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="name" type="ISO:ST" />
-                        <xs:element name="timeFrame" type="ISO:ST" />
-                        <xs:element name="primaryIndicator" type="ISO:BL" />
-                        <xs:element name="safetyIndicator" type="ISO:BL" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyOverallStatus">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:BaseType">
-                    <xs:sequence>
-                        <xs:element name="statusCode" type="ISO:CD" />
-                        <xs:element name="statusDate" type="ISO:TS" />
-                        <xs:element name="studyProtocol" type="ISO:II" />
-                        <xs:element name="reasonText" type="ISO:ST" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudySite">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:OrganizationFunctionalRoleType">
-                    <xs:sequence>
-                        <xs:element name="healthcareFacility" type="ISO:II" />
-                        <xs:element name="researchOrganization" type="ISO:II" />
-                        <xs:element name="oversightCommittee" type="ISO:II" />
-                        <xs:element name="localStudyProtocolIdentifier" type="ISO:ST" />
-                        <xs:element name="reviewBoardApprovalStatusCode" type="ISO:CD" />
-                        <xs:element name="reviewBoardOrganizationalAffiliation" type="ISO:ST" />
-                        <xs:element name="reviewBoardApprovalNumber" type="ISO:ST" />
-                        <xs:element name="reviewBoardApprovalDate" type="ISO:TS" />
-                        <xs:element name="targetAccrualNumber" type="ISO:INT" />
-                        <xs:element name="programCodeText" type="ISO:ST" />
-                        <xs:element name="accrualDateRange" type="ISO:IVL_TS" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudySiteContact">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:PersonFunctionalRoleType">
-                    <xs:sequence>
-                        <xs:element name="postalAddress" type="ISO:AD" />
-                        <xs:element name="primaryIndicator" type="ISO:BL" />
-                        <xs:element name="roleCode" type="ISO:CD" />
-                        <xs:element name="telecomAddresses" type="ISO:DSET_TEL" />
-                        <xs:element name="studySite" type="ISO:II" />
-                        <xs:element name="organizationalContact" type="ISO:II" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudySiteOverallStatus">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:SiteType">
-                    <xs:sequence>
-                        <xs:element name="statusCode" type="ISO:CD" />
-                        <xs:element name="statusDate" type="ISO:TS" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyProtocol">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyProtocolType" />
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyRecruitmentStatus">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:BaseType">
-                    <xs:sequence>
-                        <xs:element name="statusCode" type="ISO:CD" />
-                        <xs:element name="statusDate" type="ISO:TS" />
-                        <xs:element name="studyProtocol" type="ISO:II" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyRegulatoryAuthority">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="regulatoryAuthorityIdentifier" type="ISO:II" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyResourcing">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:StudyType">
-                    <xs:sequence>
-                        <xs:element name="typeCode" type="ISO:CD" />
-                        <xs:element name="summary4ReportedResourceIndicator" type="ISO:BL" />
-                        <xs:element name="organizationIdentifier" type="ISO:II" />
-                        <xs:element name="fundingMechanismCode" type="ISO:CD" />
-                        <xs:element name="nciDivisionProgramCode" type="ISO:CD" />
-                        <xs:element name="nihInstitutionCode" type="ISO:CD" />
-                        <xs:element name="serialNumber" type="ISO:ST" />
-                        <xs:element name="inactiveCommentText" type="ISO:ST" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudySiteAccrualStatus">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:BaseType">
-                    <xs:sequence>
-                        <xs:element name="statusCode" type="ISO:CD" />
-                        <xs:element name="statusDate" type="ISO:TS" />
-                        <xs:element name="studySite" type="ISO:II" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="StudyRelationship">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="COPPA-PA:BaseType">
-                    <xs:sequence>
-                        <xs:element name="typeCode" type="ISO:CD" />
-                        <xs:element name="descriptionText" type="ISO:ST" />
-                        <xs:element name="commentText" type="ISO:ST" />
-                        <xs:element name="sequenceNumber" type="ISO:INT" />
-                        <xs:element name="sourceStudyProtocolIdentifier" type="ISO:II" />
-                        <xs:element name="targetStudyProtocolIdentifier" type="ISO:II" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
- -->
 </xs:schema>
