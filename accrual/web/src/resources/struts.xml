@@ -92,6 +92,7 @@
         <action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action">
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
+            <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
         </action>
     
         <!-- ******************************************************* -->
@@ -115,10 +116,6 @@
             <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
         </action>
         <action name="edit*" class="gov.nih.nci.accrual.web.action.{1}Action" method="edit"> 
-            <result>/WEB-INF/jsp/{1}.jsp</result>
-            <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
-        </action>
-      <action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action" method="execute"> 
             <result>/WEB-INF/jsp/{1}.jsp</result>
             <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
         </action>

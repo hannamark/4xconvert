@@ -17,9 +17,7 @@
     }
 </script>
 <title>
-    <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="staging"/> 
-     </s:if>
+     <c:set var="topic" scope="request" value="staging"/> 
      Staging
 </title>        
     <s:head/>

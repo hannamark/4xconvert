@@ -115,14 +115,15 @@ import java.util.zip.DataFormatException;
  */
 public class MockPerformedActivityBean implements PerformedActivityService {
 
-    public static String courseId;
-    public static String tpId;
+    public static final String COURSEID = "Course 1";
+    public static final String TPID = "Treatment Plan 1";
+    public static final String OFFTREATMENTID = "Off Treatment 1";
+    public static final String SURGERYID = "Srugery 1";
     private List<PerformedActivityDto> paList;
     {
         paList = new ArrayList<PerformedActivityDto>();
         PerformedActivityDto dto = new PerformedActivityDto();
-        dto.setIdentifier(IiConverter.convertToIi(getKey()));
-        tpId = dto.getIdentifier().getExtension();
+        dto.setIdentifier(IiConverter.convertToIi(TPID));
         dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.TREATMENT_PLAN));
         dto.setName(StConverter.convertToSt("TreatmentPlan1"));
         dto.setTextDescription(StConverter.convertToSt("TP description")); 
@@ -130,8 +131,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
         paList.add(dto);
         dto = new PerformedActivityDto();
-        dto.setIdentifier(IiConverter.convertToIi(getKey()));
-        courseId = dto.getIdentifier().getExtension();
+        dto.setIdentifier(IiConverter.convertToIi(COURSEID));
         dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.COURSE));
         dto.setName(StConverter.convertToSt("Course1"));
         Ivl<Ts> courseDate = new Ivl<Ts>();
@@ -159,7 +159,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     {
         psmList = new ArrayList<PerformedSubjectMilestoneDto>();
         PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
-        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setIdentifier(IiConverter.convertToIi(OFFTREATMENTID));
         dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.OFF_TREATMENT));
         dto.setReasonCode(CdConverter.convertToCd(OffTreatmentReasonCode.THREE));
         Ivl<Ts> offTreatmentDate = new Ivl<Ts>();
@@ -173,7 +173,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     {
         ppList = new ArrayList<PerformedProcedureDto>();                
         PerformedProcedureDto dto = new PerformedProcedureDto();
-        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setIdentifier(IiConverter.convertToIi(SURGERYID));
         dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SURGERY));
         dto.setTextDescription(StConverter.convertToSt("Surgery Info"));
         Ivl<Ts> surgeryDate = new Ivl<Ts>();
@@ -253,10 +253,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedSubjectMilestoneDto getPerformedSubjectMilestone(Ii ii)
             throws RemoteException {
-        Long id = IiConverter.convertToLong(ii);
         PerformedSubjectMilestoneDto result = null;
         for (PerformedSubjectMilestoneDto dto : psmList) {
-            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
+            if (ii.getExtension().equals(dto.getIdentifier().getExtension())) {
                 result = dto;
             }
         }
@@ -270,9 +269,8 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(
             PerformedSubjectMilestoneDto dto) throws RemoteException {
-        Long id = IiConverter.convertToLong(dto.getIdentifier());
         for (PerformedSubjectMilestoneDto psm : psmList) {
-            if (id.equals(IiConverter.convertToLong(psm.getIdentifier()))) {
+            if (dto.getIdentifier().getExtension().equals(psm.getIdentifier().getExtension())) {
                 psm = dto;
             }
         }
@@ -298,9 +296,8 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedActivityDto update(PerformedActivityDto dto)
             throws RemoteException {
-        Long id = IiConverter.convertToLong(dto.getIdentifier());
         for (PerformedActivityDto pa : paList) {
-            if (id.equals(IiConverter.convertToLong(pa.getIdentifier()))) {
+            if (dto.getIdentifier().getExtension().equals(pa.getIdentifier().getExtension())) {
                 pa = dto;
             }
         }

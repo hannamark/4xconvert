@@ -91,6 +91,7 @@ import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.DiseaseStatusCode;
 import gov.nih.nci.pa.enums.PatientVitalStatus;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -158,13 +159,13 @@ public class ParticipantOutcomesWebDto implements Serializable {
                 action.addFieldError("targetOutcome.evaluationDate", VALIDDATEMESSAGE);
             }
         }
-        if (dto.getProgressionDate() != null) {
+        if (!PAUtil.isTsNull(dto.getProgressionDate())) {
             boolean validDate = WebUtil.checkValidDate(dto.getProgressionDate().getValue());
             if (!validDate) {
                 action.addFieldError("targetOutcome.progressionDate", VALIDDATEMESSAGE);
             }
         }
-        if (dto.getRecurrenceDate() != null) {
+        if (!PAUtil.isTsNull(dto.getRecurrenceDate())) {
             boolean validDate = WebUtil.checkValidDate(dto.getRecurrenceDate().getValue());
             if (!validDate) {
                 action.addFieldError("targetOutcome.recurrenceDate", VALIDDATEMESSAGE);
@@ -204,33 +205,36 @@ public class ParticipantOutcomesWebDto implements Serializable {
             action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Course Date" 
                     + AccrualUtil.dateToMDY(courseDate));
         }
-        
-        if (diagnosisDate != null && dto.getProgressionDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("targetOutcome.progressionDate", "Date can't be less than Diagnosis Date" 
-                    + AccrualUtil.dateToMDY(diagnosisDate));
-        } 
-        if (deathDate != null && dto.getProgressionDate().getValue().after(deathDate)) {
-            action.addFieldError("targetOutcome.progressionDate", "Date can't be greater than Death Date" 
-                    + AccrualUtil.dateToMDY(deathDate));
-        } 
-        if (courseDate != null && dto.getProgressionDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.progressionDate", "Date can't be less than Course Date" 
-                    + AccrualUtil.dateToMDY(courseDate));
+      
+        if (!PAUtil.isTsNull(dto.getProgressionDate())) {
+            if (diagnosisDate != null && dto.getProgressionDate().getValue().before(diagnosisDate)) {
+                action.addFieldError("targetOutcome.progressionDate", "Date can't be less than Diagnosis Date" 
+                        + AccrualUtil.dateToMDY(diagnosisDate));
+            } 
+            if (deathDate != null && dto.getProgressionDate().getValue().after(deathDate)) {
+                action.addFieldError("targetOutcome.progressionDate", "Date can't be greater than Death Date" 
+                        + AccrualUtil.dateToMDY(deathDate));
+            } 
+            if (courseDate != null && dto.getProgressionDate().getValue().before(courseDate)) {
+                action.addFieldError("targetOutcome.progressionDate", "Date can't be less than Course Date" 
+                        + AccrualUtil.dateToMDY(courseDate));
+            }
         }
         
-        if (diagnosisDate != null && dto.getRecurrenceDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("targetOutcome.recurrenceDate", "Date can't be less than Diagnosis Date" 
-                    + AccrualUtil.dateToMDY(diagnosisDate));
-        } 
-        if (deathDate != null && dto.getRecurrenceDate().getValue().after(deathDate)) {
-            action.addFieldError("targetOutcome.recurrenceDate", "Date can't be greater than Death Date" 
-                    + AccrualUtil.dateToMDY(deathDate));
-        } 
-        if (courseDate != null && dto.getRecurrenceDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.recurrenceDate", "Date can't be less than Course Date" 
-                    + AccrualUtil.dateToMDY(courseDate));
+        if (!PAUtil.isTsNull(dto.getRecurrenceDate())) {
+            if (diagnosisDate != null && dto.getRecurrenceDate().getValue().before(diagnosisDate)) {
+                action.addFieldError("targetOutcome.recurrenceDate", "Date can't be less than Diagnosis Date" 
+                        + AccrualUtil.dateToMDY(diagnosisDate));
+            } 
+            if (deathDate != null && dto.getRecurrenceDate().getValue().after(deathDate)) {
+                action.addFieldError("targetOutcome.recurrenceDate", "Date can't be greater than Death Date" 
+                        + AccrualUtil.dateToMDY(deathDate));
+            } 
+            if (courseDate != null && dto.getRecurrenceDate().getValue().before(courseDate)) {
+                action.addFieldError("targetOutcome.recurrenceDate", "Date can't be less than Course Date" 
+                        + AccrualUtil.dateToMDY(courseDate));
+            }
         }
-        
         if (diagnosisDate != null && dto.getDiseaseStatusDate().getValue().before(diagnosisDate)) {
             action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Diagnosis Date" 
                     + AccrualUtil.dateToMDY(diagnosisDate));
@@ -242,6 +246,20 @@ public class ParticipantOutcomesWebDto implements Serializable {
         if (courseDate != null && dto.getDiseaseStatusDate().getValue().before(courseDate)) {
             action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Course Date" 
                     + AccrualUtil.dateToMDY(courseDate));
+        }
+        if (dto.getRecurrenceInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())
+                && PAUtil.isTsNull(dto.getRecurrenceDate())) {
+                action.addFieldError("targetOutcome.recurrenceDate", "Please provide a Recurrence Date");            
+        }
+        if (dto.getProgressionInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())
+                && PAUtil.isCdNull(dto.getProgressionSite())) {
+                action.addFieldError("targetOutcome.progressionSite", 
+                        "Please provide a Disease Progression Anatomic Site");
+            }
+            if (dto.getProgressionInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())
+                   && PAUtil.isTsNull(dto.getProgressionDate())) {
+                action.addFieldError("targetOutcome.progressionDate", "Please provide a Disease Progression Date");
+            
         }
     } 
 
@@ -402,8 +420,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the recurrenceDate
      */
-    @FieldExpressionValidator(expression = "recurrenceDate.value != null",
-            message = "Please provide a Recurrence Date")
     public Ts getRecurrenceDate() {
         return recurrenceDate;
     }
@@ -434,8 +450,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the progressionSite
      */
-    @FieldExpressionValidator(expression = "progressionSite.code != null && progressionSite.code.length() > 0",
-            message = "Please provide a Disease Progression Anatomic Site")
     public Cd getProgressionSite() {
         return progressionSite;
     }
@@ -450,8 +464,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return the progressionDate
      */
-    @FieldExpressionValidator(expression = "progressionDate.value != null",
-            message = "Please provide a Disease Progression Date")
     public Ts getProgressionDate() {
         return progressionDate;
     }

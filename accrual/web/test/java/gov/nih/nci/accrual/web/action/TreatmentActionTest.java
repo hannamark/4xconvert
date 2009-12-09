@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -126,10 +127,10 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
 
     @Override
     @Test
-     public void updateTest() { /*
+     public void updateTest() { 
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier("1");
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); */
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
     }
 
     @Override
@@ -152,7 +153,7 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     public void editTest() throws Exception {
     	treatment.setName(StConverter.convertToSt("TP1 Edited"));
         treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(1L));
+        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
         action.setTreatment(treatment);
         assertEquals(ActionSupport.SUCCESS, action.edit());
     }

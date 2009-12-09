@@ -248,10 +248,12 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
             
             PerformedObservationDto dto3 = new PerformedObservationDto();
             dto3.setNameCode(CdConverter.convertToCd(ActivityNameCode.getByCode("Disease Progression")));
-            dto3.setTargetSiteCode(targetOutcome.getProgressionSite());
-            Ivl<Ts> diseaseProgressionDate = new Ivl<Ts>();
-            diseaseProgressionDate.setLow(targetOutcome.getProgressionDate());
-            dto3.setActualDateRange(diseaseProgressionDate);
+            if (targetOutcome.getProgressionInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
+                dto3.setTargetSiteCode(targetOutcome.getProgressionSite());
+                Ivl<Ts> diseaseProgressionDate = new Ivl<Ts>();
+                diseaseProgressionDate.setLow(targetOutcome.getProgressionDate());
+                dto3.setActualDateRange(diseaseProgressionDate);
+            }            
             dto3.setStudyProtocolIdentifier(getSpIi());
             dto3.setStudySubjectIdentifier(getParticipantIi());
 

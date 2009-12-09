@@ -32,10 +32,8 @@
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
 </script>
-<title>
-    <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="death"/> 
-     </s:if>
+<title>    
+    <c:set var="topic" scope="request" value="death"/> 
      Death Information
 </title>        
     <s:head/>
@@ -49,7 +47,6 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if><accrual:sucessMessage />
 <s:form name="detailForm">
-	<s:hidden name = "currentAction"/>
     <s:hidden name = "deathInfo.oldTreatmentPlanId" />
 <table class="form">
 <tr>
@@ -72,11 +69,11 @@
 <td><s:select name="deathInfo.autopsyInd" headerKey="" headerValue="--Select--"
               list="deathInfo.autopsyInds" listKey="code" listValue="code" value="deathInfo.autopsyInd.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.autopsyInd</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.causeByAutopsy"/><span class="required">*</span></label></td>
+<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.causeByAutopsy"/></label></td>
 <td><s:select name="deathInfo.causeByAutopsy" headerKey="" headerValue="--Select--"
               list="deathInfo.causesByAutopsy" listKey="code" listValue="code" value="deathInfo.causeByAutopsy.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.causeByAutopsy</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.autopsySite"/><span class="required">*</span></label></td>
+<tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.autopsySite"/></label></td>
 <td><s:textfield readonly="true" size="50" name="deathInfo.autopsySite"
                cssStyle="width:280px;float:left" cssClass="readonly"/><s:hidden name="deathInfo.id"/>
                <a href="#" class="btn" onclick="lookup();" /><span class="btn_img"><span class="search">Look Up</span></span></a>

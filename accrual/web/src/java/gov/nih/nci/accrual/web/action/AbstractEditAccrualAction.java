@@ -81,7 +81,6 @@ package gov.nih.nci.accrual.web.action;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
  * The Class AbstractEditAccrualAction.
@@ -94,23 +93,6 @@ public abstract class AbstractEditAccrualAction<DTO> extends AbstractAccrualActi
 
     /** Serialized version marker. */
     private static final long serialVersionUID = 1051062078457176080L;
-
-    /** Action result returned to display the detail page. */
-    private static final String AR_DETAIL = "detail";
-
-    /** Bean to store current action. */
-    private String currentAction;    
-
-    /**
-     * Default execute method for action classes.
-     * @return action result
-     */
-    @Override
-    @SkipValidation
-    public String execute() {
-        setCurrentAction(AR_DETAIL);
-        return super.execute();
-    }
 
     /**
      * Cancel and ignore input.
@@ -128,21 +110,8 @@ public abstract class AbstractEditAccrualAction<DTO> extends AbstractAccrualActi
         if (!hasErrors()) {
             ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                     AccrualConstants.SAVE_MESSAGE);
-            return SUCCESS;
+            return execute();
         }
         return INPUT;
-    }
-
-    /**
-     * @return the currentAction
-     */
-    public String getCurrentAction() {
-        return currentAction;
-    }
-    /**
-     * @param currentAction the currentAction to set
-     */
-    public void setCurrentAction(String currentAction) {
-        this.currentAction = currentAction;
     }
 }

@@ -25,9 +25,7 @@
         setFormat("mm/dd/yyyy");
 </script>
 <title>
-    <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="off_treatment"/> 
-    </s:if>
+   <c:set var="topic" scope="request" value="off_treatment"/> 
     Off Treatment
 </title>        
     <s:head/>

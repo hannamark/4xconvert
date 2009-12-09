@@ -31,9 +31,7 @@
         setFormat("mm/dd/yyyy");
 </script>
 <title>
-    <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="diagnosis"/> 
-     </s:if>
+     <c:set var="topic" scope="request" value="diagnosis"/> 
      Diagnosis
 </title>        
     <s:head/>

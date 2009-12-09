@@ -85,6 +85,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.DataFormatException;
 
+import org.apache.struts2.interceptor.validation.SkipValidation;
+
 import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
@@ -240,6 +242,7 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
     /**
      * {@inheritDoc}
      */
+    @SkipValidation
     @Override
     public String execute() {
         // Clear the web object

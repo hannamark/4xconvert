@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.accrual.web.dto.util.SurgeryWebDto;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -128,10 +129,10 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
 
     @Override
     @Test
-     public void updateTest() { /*
+     public void updateTest() { 
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier("5");
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); */
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.SURGERYID);
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
     }
 
     @Override
@@ -154,7 +155,7 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
     public void editTest() throws Exception {        
         surgery.setName(StConverter.convertToSt("Surgery1 Edited"));
         surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        surgery.setId(IiConverter.convertToIi(2L));
+        surgery.setId(IiConverter.convertToIi(MockPerformedActivityBean.SURGERYID));
         action.setSurgery(surgery);
         assertEquals(ActionSupport.SUCCESS, action.edit());
     }

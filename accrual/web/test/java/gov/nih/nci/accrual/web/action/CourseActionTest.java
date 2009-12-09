@@ -101,6 +101,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class CourseActionTest extends AbstractAccrualActionTest {
     CourseAction action;
     CourseWebDto course;
+    int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
 
     @Before
     public void initAction() throws Exception {
@@ -125,7 +126,7 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     @Test
     public void retrieveTest() {
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.courseId);
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.COURSEID);
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
     }
 
@@ -133,7 +134,7 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     @Test
      public void updateTest() {
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.courseId);
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.COURSEID);
         assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
     }
 
@@ -145,27 +146,28 @@ public class CourseActionTest extends AbstractAccrualActionTest {
 
     @Override
     @Test
-    public void addTest() throws Exception { /*
+    public void addTest() throws Exception { 
+        setParticipantIi(PARTICIPANT2);
         course.setName(StConverter.convertToSt("Course1"));
-        course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
         action.setCourse(course);
-        assertEquals(ActionSupport.SUCCESS, action.add()); */
+        assertEquals(ActionSupport.SUCCESS, action.add()); 
     }
 
     @Override
     @Test
-    public void editTest() throws Exception { /*
+    public void editTest() throws Exception { 
+        setParticipantIi(PARTICIPANT2);
         course.setName(StConverter.convertToSt("Course1 Edited"));
-        course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        course.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.courseId));
+        course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
+        course.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.COURSEID));
         action.setCourse(course);
-        assertEquals(ActionSupport.SUCCESS, action.edit()); */
+        assertEquals(ActionSupport.SUCCESS, action.edit()); 
     }
     
     @Test
     public void editExceptionTest() throws Exception {
         course.setName(StConverter.convertToSt("Course1 Edited"));
-        int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
         Date test = new Date();
         course.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
         action.setCourse(course);

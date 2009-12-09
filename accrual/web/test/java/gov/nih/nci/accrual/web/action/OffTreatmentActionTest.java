@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
@@ -131,11 +132,11 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
     }
 
     @Override
-    public void editTest() throws Exception { /*
+    public void editTest() throws Exception { 
         offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.EIGHT));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        offTreatment.setId(IiConverter.convertToIi(4L));
+        offTreatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.OFFTREATMENTID));
         action.setOffTreat(offTreatment);
-        assertEquals(ActionSupport.SUCCESS, action.save()); */
+        assertEquals(ActionSupport.SUCCESS, action.save()); 
     }
 }

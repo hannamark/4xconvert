@@ -162,7 +162,7 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
     @Test
     public void emptyPerformanceSaveTest() {
         dAction.setPerformance(new PerformanceStatusWebDto());
-        assertEquals(ActionSupport.SUCCESS, dAction.save());
+        assertEquals(ActionSupport.INPUT, dAction.save());
     }
     
     @Test

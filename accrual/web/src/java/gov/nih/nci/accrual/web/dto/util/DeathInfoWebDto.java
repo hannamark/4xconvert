@@ -81,12 +81,14 @@ package gov.nih.nci.accrual.web.dto.util;
 
 import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
+import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.accrual.web.util.WebUtil;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -100,6 +102,7 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class DeathInfoWebDto implements Serializable {
 
     private static final long serialVersionUID = 7839457372215390511L;
@@ -131,6 +134,15 @@ public class DeathInfoWebDto implements Serializable {
             boolean validDate = WebUtil.checkValidDate(dto.getEventDate().getValue());
             if (!validDate) {
                 action.addFieldError("deathInfo.eventDate", "Please Enter Current or Past Date.");
+            }
+        }
+        if (dto.getAutopsyInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
+            if (PAUtil.isCdNull(dto.getAutopsySite())) {
+                action.addFieldError("deathInfo.autopsySite", "Please provide a Site of Disease Autopsy");
+            }
+            if (PAUtil.isCdNull(dto.getCauseByAutopsy())) {
+                action.addFieldError("deathInfo.causeByAutopsy", 
+                        "Please provide a Death Cause As Determined By Autopsy");
             }
         }
     }
@@ -200,8 +212,6 @@ public class DeathInfoWebDto implements Serializable {
     /**
      * @return the causeByAutopsy
      */
-    @FieldExpressionValidator(expression = "causeByAutopsy.code != null && causeByAutopsy.code.length() > 0",
-            message = "Please provide a Death Cause As Determined By Autopsy")
     public Cd getCauseByAutopsy() {
         return causeByAutopsy;
     }
@@ -216,8 +226,6 @@ public class DeathInfoWebDto implements Serializable {
     /**
      * @return the autopsySite
      */
-    @FieldExpressionValidator(expression = "autopsySite.code != null && autopsySite.code.length() > 0",
-            message = "Please provide a Site of Disease Autopsy")
     public Cd getAutopsySite() {
         return autopsySite;
     }
