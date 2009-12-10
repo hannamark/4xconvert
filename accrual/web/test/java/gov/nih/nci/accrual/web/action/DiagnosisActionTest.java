@@ -79,13 +79,13 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import java.util.Date;
-
 import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -98,6 +98,7 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class DiagnosisActionTest extends AbstractAccrualActionTest {
     private DiagnosisAction dAction;
+    int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
     
     /**
      * initialize the class.
@@ -112,8 +113,7 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
         dAction.getSearchDiagnosis().setValue("Disease");
         dAction.setDiagnosis(new DiagnosisWebDto());
         DiagnosisWebDto temp = dAction.getDiagnosis();
-        temp.setCreateDate(new Ts());
-        temp.getCreateDate().setValue(new Date());
+        temp.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
         temp.setName(new St());
         temp.getName().setValue("Revesz syndrome");
         temp.setResultCode(CdConverter.convertStringToCd("CDR0000285985"));
