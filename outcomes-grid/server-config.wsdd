@@ -14,5 +14,47 @@
     <parameter name="outcomesservices-serviceName" value="OutcomesServices" />
   </service>
   <typeMapping name="AggregatorContent" qname="aggr:AggregatorContent" type="java:org.globus.mds.aggregator.types.AggregatorContent" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" />
-</deployment>
+<!-- START INTRODUCE TYPEMAPPINGS -->
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.ActivityRelationship" qname="ns2:ActivityRelationship" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.CD" qname="ns2:CD" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.Id" qname="ns2:Id" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.Patient" qname="ns2:Patient" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedActivity" qname="ns2:PerformedActivity" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedClinicalResult" qname="ns2:PerformedClinicalResult" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedDiagnosis" qname="ns2:PerformedDiagnosis" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedHistopathology" qname="ns2:PerformedHistopathology" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedImage" qname="ns2:PerformedImage" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedImaging" qname="ns2:PerformedImaging" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedLesionDescription" qname="ns2:PerformedLesionDescription" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedMedicalHistoryResult" qname="ns2:PerformedMedicalHistoryResult" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedObservation" qname="ns2:PerformedObservation" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedObservationResult" qname="ns2:PerformedObservationResult" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedProcedure" qname="ns2:PerformedProcedure" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedRadiationAdministration" qname="ns2:PerformedRadiationAdministration" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedSubjectMilestone" qname="ns2:PerformedSubjectMilestone" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.PerformedSubstanceAdministration" qname="ns2:PerformedSubstanceAdministration" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.StudySubject" qname="ns2:StudySubject" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.Submission" qname="ns2:Submission" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+
+<!-- END INTRODUCE TYPEMAPPINGS --></deployment>
 

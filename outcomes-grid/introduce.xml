@@ -1,5 +1,51 @@
 <ns1:ServiceDescription introduceVersion="1.3" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns2:Namespace generateStubs="false" location="./Outcomes.xsd" namespace="http://outcomes.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.outcomes" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="ActivityRelationship" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ActivityRelationship" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="CD" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="CD" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Patient" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Patient" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedActivity" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedActivity" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedClinicalResult" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedClinicalResult" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedDiagnosis" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedDiagnosis" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedHistopathology" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedHistopathology" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedImage" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedImage" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedImaging" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedImaging" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedLesionDescription" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedLesionDescription" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedMedicalHistoryResult" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedMedicalHistoryResult" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedObservation" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedObservation" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedObservationResult" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedObservationResult" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedProcedure" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedProcedure" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedRadiationAdministration" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedRadiationAdministration" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedSubjectMilestone" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedSubjectMilestone" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="PerformedSubstanceAdministration" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="PerformedSubstanceAdministration" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudySubject" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudySubject" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Submission" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Submission" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="br" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="caption" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="col" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="colgroup" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="content" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="footnote" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="footnoteRef" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="item" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="linkHtml" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="list" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="paragraph" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="renderMultiMedia" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="sub" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="sup" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="table" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tbody" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="td" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="text" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tfoot" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="th" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="thead" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tr" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
   <ns2:Namespace generateStubs="false" namespace="http://www.w3.org/2001/XMLSchema" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="anySimpleType" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="anyType" xsi:type="ns2:SchemaElementType"/>
