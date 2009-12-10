@@ -245,18 +245,18 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="PerformedObservationResult">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="OUTCOMES:PerformedObservationResultType" />
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
     <xs:element name="PerformedObservation">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="OUTCOMES:PerformedObservationType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PerformedObservationResult">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:PerformedObservationResultType" />
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
@@ -303,23 +303,6 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="SearchTrialResult">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="OUTCOMES:StudyType" >
-                    <xs:sequence>
-                        <xs:element name="assignedIdentifier" type="ISO:ST" />
-                        <xs:element name="leadOrgTrialIdentifier" type="ISO:ST" />
-                        <xs:element name="officialTitle" type="ISO:ST" />
-                        <xs:element name="leadOrgName" type="ISO:ST" />
-                        <xs:element name="principalInvestigator" type="ISO:ST" />
-                        <xs:element name="studyStatusCode" type="ISO:CD" />
-                    </xs:sequence>
-                </xs:extension>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
     <xs:element name="StudySubject">
         <xs:complexType>
             <xs:complexContent>
@@ -345,7 +328,6 @@
                 <xs:extension base="OUTCOMES:StudyType" >
                     <xs:sequence>
                         <xs:element name="cutOffDate" type="ISO:TS" />
-                        <xs:element name="createdDate" type="ISO:TS" />
                         <xs:element name="description" type="ISO:ST" />
                         <xs:element name="label" type="ISO:ST" />
                         <xs:element name="statusCode" type="ISO:CD" />
