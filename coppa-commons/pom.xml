@@ -5,7 +5,7 @@
     <artifactId>coppa-commons</artifactId>
     <packaging>jar</packaging>
     <name>coppa-commons</name>
-    <version>1.2.5-SNAPSHOT</version>
+    <version>1.2.5</version>
 
     <properties>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
@@ -27,9 +27,9 @@
         </notifiers>
     </ciManagement>
     <scm>
-        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/coppa-commons</connection>
-        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/coppa-commons</developerConnection>
-        <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/coppa-commons</url>
+        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/coppa-commons-1.2.5</connection>
+        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/tags/coppa-commons-1.2.5</developerConnection>
+        <url>http://gforge.nci.nih.gov/svnroot/coppa/tags/coppa-commons-1.2.5</url>
     </scm>
 
     <issueManagement>
