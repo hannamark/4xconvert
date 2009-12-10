@@ -50,6 +50,11 @@ public abstract class OutcomesServicesImplBase {
 		return (gov.nih.nci.coppa.services.outcomes.activityrelationship.service.globus.resource.ActivityRelationshipResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.outcomes.performedactivity.service.globus.resource.PerformedActivityResourceHome getPerformedActivityResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("performedActivityHome");
+		return (gov.nih.nci.coppa.services.outcomes.performedactivity.service.globus.resource.PerformedActivityResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

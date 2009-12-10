@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jndiConfig xmlns="http://wsrf.globus.org/jndi/config">
+  <service name="SERVICE-INSTANCE-PREFIX/PerformedActivity">
+    <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.performedactivity.service.globus.resource.PerformedActivityResourceConfiguration">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>performRegistration</name>
+          <!-- Set this to false to skip ServiceGroup registration -->
+          <value>PERFORM_REGISTRATION</value>
+        </parameter>
+        <parameter>
+          <name>registrationTemplateFile</name>
+          <!-- Set this to the relative path (from the container root, e.g GLOBUS_LOCATION for globus container) of the registration parameters template file (ignored if performRegistration is false) -->
+          <value>ETC-PATH/PerformedActivity_registration.xml</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resource name="home" type="gov.nih.nci.coppa.services.outcomes.performedactivity.service.globus.resource.PerformedActivityResourceHome">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OutcomesServices/serviceconfiguration" />
+    <resourceLink name="outcomesServicesHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OutcomesServices/home" />
+    <resourceLink name="activityRelationshipHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ActivityRelationship/home" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/ActivityRelationship">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.activityrelationship.service.globus.resource.ActivityRelationshipResourceConfiguration">
       <resourceParams>
@@ -29,6 +60,7 @@
     </resource>
     <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OutcomesServices/serviceconfiguration" />
     <resourceLink name="outcomesServicesHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OutcomesServices/home" />
+    <resourceLink name="performedActivityHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PerformedActivity/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/OutcomesServices">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.service.globus.resource.OutcomesServicesResourceConfiguration">
@@ -75,6 +107,7 @@
       </resourceParams>
     </resource>
     <resourceLink name="activityRelationshipHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ActivityRelationship/home" />
+    <resourceLink name="performedActivityHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PerformedActivity/home" />
   </service>
 </jndiConfig>
 

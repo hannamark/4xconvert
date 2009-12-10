@@ -9,12 +9,17 @@ http\://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship=gov
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/bindings=gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.bindings
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/service=gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity=gov.nih.nci.coppa.services.outcomes.performedactivity.stubs
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/bindings=gov.nih.nci.coppa.services.outcomes.performedactivity.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/service=gov.nih.nci.coppa.services.outcomes.performedactivity.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
 http\://outcomes.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.outcomes
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 uri\:iso.org\:21090=org.iso._21090
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/types=gov.nih.nci.coppa.services.outcomes.stubs.types
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types=gov.nih.nci.coppa.services.outcomes.performedactivity.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types=gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common

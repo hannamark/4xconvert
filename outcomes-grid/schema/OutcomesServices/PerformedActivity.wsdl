@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns0="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns2="http://enterpriseservices.nci.nih.gov/OutcomesServices/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns7="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" name="PerformedActivity" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity">
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
+  <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" schemaLocation="./xsd/cagrid/types/service/servicemodel.xsd" />
+      <import namespace="http://outcomes.services.coppa.nci.nih.gov" schemaLocation="./Outcomes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
+      <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/types" schemaLocation="./OutcomesServicesTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types" schemaLocation="./PerformedActivityTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" schemaLocation="./ActivityRelationshipTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
+      <element name="GetRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedActivity" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateRequest">
+        <complexType>
+          <sequence>
+            <element name="performedActivity">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedActivity" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedActivity" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateRequest">
+        <complexType>
+          <sequence>
+            <element name="performedActivity">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedActivity" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedActivity" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedActivity" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudySubjectRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudySubjectResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedActivity" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedObservationByStudySubjectRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedObservationByStudySubjectResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedObservation" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedSubjectMilestoneByStudySubjectRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedSubjectMilestoneByStudySubjectResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedSubjectMilestone" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedSubjectMilestoneRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedSubjectMilestoneResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedSubjectMilestone" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedSubjectMilestoneRequest">
+        <complexType>
+          <sequence>
+            <element name="performedSubjectMilestone">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedSubjectMilestone" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedSubjectMilestoneResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedSubjectMilestone" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedSubjectMilestoneRequest">
+        <complexType>
+          <sequence>
+            <element name="performedSubjectMilestone">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedSubjectMilestone" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedSubjectMilestoneResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedSubjectMilestone" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedObservationRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedObservationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedObservation" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedObservationRequest">
+        <complexType>
+          <sequence>
+            <element name="performedObservation">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedObservation" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedObservationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedObservation" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedObservationRequest">
+        <complexType>
+          <sequence>
+            <element name="performedObservation">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedObservation" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedObservationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedObservation" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedImagingByStudySubjectRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedImagingByStudySubjectResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedImaging" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedImagingRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedImagingResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedImaging" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedImagingRequest">
+        <complexType>
+          <sequence>
+            <element name="performedImaging">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedImaging" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedImagingResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedImaging" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedImagingRequest">
+        <complexType>
+          <sequence>
+            <element name="performedImaging">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedImaging" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedImagingResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedImaging" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedProcedureByStudySubjectRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedProcedureByStudySubjectResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedProcedure" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedProcedureRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedProcedureResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedProcedure" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedProcedureRequest">
+        <complexType>
+          <sequence>
+            <element name="performedProcedure">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedProcedure" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedProcedureResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedProcedure" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedProcedureRequest">
+        <complexType>
+          <sequence>
+            <element name="performedProcedure">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedProcedure" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedProcedureResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedProcedure" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedSubstanceAdministrationByStudySubjectRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedSubstanceAdministrationByStudySubjectResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedSubstanceAdministration" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedSubstanceAdministrationRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedSubstanceAdministrationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedSubstanceAdministration" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedSubstanceAdministrationRequest">
+        <complexType>
+          <sequence>
+            <element name="performedSubstanceAdministration">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedSubstanceAdministration" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedSubstanceAdministrationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedSubstanceAdministration" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedSubstanceAdministrationRequest">
+        <complexType>
+          <sequence>
+            <element name="performedSubstanceAdministration">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedSubstanceAdministration" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedSubstanceAdministrationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedSubstanceAdministration" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedRadiationAdministrationByStudySubjectRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedRadiationAdministrationByStudySubjectResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedRadiationAdministration" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedRadiationAdministrationRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedRadiationAdministrationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedRadiationAdministration" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedRadiationAdministrationRequest">
+        <complexType>
+          <sequence>
+            <element name="performedRadiationAdministration">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedRadiationAdministration" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedRadiationAdministrationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedRadiationAdministration" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedRadiationAdministrationRequest">
+        <complexType>
+          <sequence>
+            <element name="performedRadiationAdministration">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedRadiationAdministration" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedRadiationAdministrationResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedRadiationAdministration" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="PerformedActivityResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="GetRequest">
+    <part name="parameters" element="tns:GetRequest" />
+  </message>
+  <message name="GetResponse">
+    <part name="parameters" element="tns:GetResponse" />
+  </message>
+  <message name="CreateRequest">
+    <part name="parameters" element="tns:CreateRequest" />
+  </message>
+  <message name="CreateResponse">
+    <part name="parameters" element="tns:CreateResponse" />
+  </message>
+  <message name="UpdateRequest">
+    <part name="parameters" element="tns:UpdateRequest" />
+  </message>
+  <message name="UpdateResponse">
+    <part name="parameters" element="tns:UpdateResponse" />
+  </message>
+  <message name="DeleteRequest">
+    <part name="parameters" element="tns:DeleteRequest" />
+  </message>
+  <message name="DeleteResponse">
+    <part name="parameters" element="tns:DeleteResponse" />
+  </message>
+  <message name="GetByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetByStudyProtocolRequest" />
+  </message>
+  <message name="GetByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetByStudyProtocolResponse" />
+  </message>
+  <message name="GetByStudySubjectRequest">
+    <part name="parameters" element="tns:GetByStudySubjectRequest" />
+  </message>
+  <message name="GetByStudySubjectResponse">
+    <part name="parameters" element="tns:GetByStudySubjectResponse" />
+  </message>
+  <message name="GetPerformedObservationByStudySubjectRequest">
+    <part name="parameters" element="tns:GetPerformedObservationByStudySubjectRequest" />
+  </message>
+  <message name="GetPerformedObservationByStudySubjectResponse">
+    <part name="parameters" element="tns:GetPerformedObservationByStudySubjectResponse" />
+  </message>
+  <message name="GetPerformedSubjectMilestoneByStudySubjectRequest">
+    <part name="parameters" element="tns:GetPerformedSubjectMilestoneByStudySubjectRequest" />
+  </message>
+  <message name="GetPerformedSubjectMilestoneByStudySubjectResponse">
+    <part name="parameters" element="tns:GetPerformedSubjectMilestoneByStudySubjectResponse" />
+  </message>
+  <message name="GetPerformedSubjectMilestoneRequest">
+    <part name="parameters" element="tns:GetPerformedSubjectMilestoneRequest" />
+  </message>
+  <message name="GetPerformedSubjectMilestoneResponse">
+    <part name="parameters" element="tns:GetPerformedSubjectMilestoneResponse" />
+  </message>
+  <message name="CreatePerformedSubjectMilestoneRequest">
+    <part name="parameters" element="tns:CreatePerformedSubjectMilestoneRequest" />
+  </message>
+  <message name="CreatePerformedSubjectMilestoneResponse">
+    <part name="parameters" element="tns:CreatePerformedSubjectMilestoneResponse" />
+  </message>
+  <message name="UpdatePerformedSubjectMilestoneRequest">
+    <part name="parameters" element="tns:UpdatePerformedSubjectMilestoneRequest" />
+  </message>
+  <message name="UpdatePerformedSubjectMilestoneResponse">
+    <part name="parameters" element="tns:UpdatePerformedSubjectMilestoneResponse" />
+  </message>
+  <message name="GetPerformedObservationRequest">
+    <part name="parameters" element="tns:GetPerformedObservationRequest" />
+  </message>
+  <message name="GetPerformedObservationResponse">
+    <part name="parameters" element="tns:GetPerformedObservationResponse" />
+  </message>
+  <message name="CreatePerformedObservationRequest">
+    <part name="parameters" element="tns:CreatePerformedObservationRequest" />
+  </message>
+  <message name="CreatePerformedObservationResponse">
+    <part name="parameters" element="tns:CreatePerformedObservationResponse" />
+  </message>
+  <message name="UpdatePerformedObservationRequest">
+    <part name="parameters" element="tns:UpdatePerformedObservationRequest" />
+  </message>
+  <message name="UpdatePerformedObservationResponse">
+    <part name="parameters" element="tns:UpdatePerformedObservationResponse" />
+  </message>
+  <message name="GetPerformedImagingByStudySubjectRequest">
+    <part name="parameters" element="tns:GetPerformedImagingByStudySubjectRequest" />
+  </message>
+  <message name="GetPerformedImagingByStudySubjectResponse">
+    <part name="parameters" element="tns:GetPerformedImagingByStudySubjectResponse" />
+  </message>
+  <message name="GetPerformedImagingRequest">
+    <part name="parameters" element="tns:GetPerformedImagingRequest" />
+  </message>
+  <message name="GetPerformedImagingResponse">
+    <part name="parameters" element="tns:GetPerformedImagingResponse" />
+  </message>
+  <message name="CreatePerformedImagingRequest">
+    <part name="parameters" element="tns:CreatePerformedImagingRequest" />
+  </message>
+  <message name="CreatePerformedImagingResponse">
+    <part name="parameters" element="tns:CreatePerformedImagingResponse" />
+  </message>
+  <message name="UpdatePerformedImagingRequest">
+    <part name="parameters" element="tns:UpdatePerformedImagingRequest" />
+  </message>
+  <message name="UpdatePerformedImagingResponse">
+    <part name="parameters" element="tns:UpdatePerformedImagingResponse" />
+  </message>
+  <message name="GetPerformedProcedureByStudySubjectRequest">
+    <part name="parameters" element="tns:GetPerformedProcedureByStudySubjectRequest" />
+  </message>
+  <message name="GetPerformedProcedureByStudySubjectResponse">
+    <part name="parameters" element="tns:GetPerformedProcedureByStudySubjectResponse" />
+  </message>
+  <message name="GetPerformedProcedureRequest">
+    <part name="parameters" element="tns:GetPerformedProcedureRequest" />
+  </message>
+  <message name="GetPerformedProcedureResponse">
+    <part name="parameters" element="tns:GetPerformedProcedureResponse" />
+  </message>
+  <message name="CreatePerformedProcedureRequest">
+    <part name="parameters" element="tns:CreatePerformedProcedureRequest" />
+  </message>
+  <message name="CreatePerformedProcedureResponse">
+    <part name="parameters" element="tns:CreatePerformedProcedureResponse" />
+  </message>
+  <message name="UpdatePerformedProcedureRequest">
+    <part name="parameters" element="tns:UpdatePerformedProcedureRequest" />
+  </message>
+  <message name="UpdatePerformedProcedureResponse">
+    <part name="parameters" element="tns:UpdatePerformedProcedureResponse" />
+  </message>
+  <message name="GetPerformedSubstanceAdministrationByStudySubjectRequest">
+    <part name="parameters" element="tns:GetPerformedSubstanceAdministrationByStudySubjectRequest" />
+  </message>
+  <message name="GetPerformedSubstanceAdministrationByStudySubjectResponse">
+    <part name="parameters" element="tns:GetPerformedSubstanceAdministrationByStudySubjectResponse" />
+  </message>
+  <message name="GetPerformedSubstanceAdministrationRequest">
+    <part name="parameters" element="tns:GetPerformedSubstanceAdministrationRequest" />
+  </message>
+  <message name="GetPerformedSubstanceAdministrationResponse">
+    <part name="parameters" element="tns:GetPerformedSubstanceAdministrationResponse" />
+  </message>
+  <message name="CreatePerformedSubstanceAdministrationRequest">
+    <part name="parameters" element="tns:CreatePerformedSubstanceAdministrationRequest" />
+  </message>
+  <message name="CreatePerformedSubstanceAdministrationResponse">
+    <part name="parameters" element="tns:CreatePerformedSubstanceAdministrationResponse" />
+  </message>
+  <message name="UpdatePerformedSubstanceAdministrationRequest">
+    <part name="parameters" element="tns:UpdatePerformedSubstanceAdministrationRequest" />
+  </message>
+  <message name="UpdatePerformedSubstanceAdministrationResponse">
+    <part name="parameters" element="tns:UpdatePerformedSubstanceAdministrationResponse" />
+  </message>
+  <message name="GetPerformedRadiationAdministrationByStudySubjectRequest">
+    <part name="parameters" element="tns:GetPerformedRadiationAdministrationByStudySubjectRequest" />
+  </message>
+  <message name="GetPerformedRadiationAdministrationByStudySubjectResponse">
+    <part name="parameters" element="tns:GetPerformedRadiationAdministrationByStudySubjectResponse" />
+  </message>
+  <message name="GetPerformedRadiationAdministrationRequest">
+    <part name="parameters" element="tns:GetPerformedRadiationAdministrationRequest" />
+  </message>
+  <message name="GetPerformedRadiationAdministrationResponse">
+    <part name="parameters" element="tns:GetPerformedRadiationAdministrationResponse" />
+  </message>
+  <message name="CreatePerformedRadiationAdministrationRequest">
+    <part name="parameters" element="tns:CreatePerformedRadiationAdministrationRequest" />
+  </message>
+  <message name="CreatePerformedRadiationAdministrationResponse">
+    <part name="parameters" element="tns:CreatePerformedRadiationAdministrationResponse" />
+  </message>
+  <message name="UpdatePerformedRadiationAdministrationRequest">
+    <part name="parameters" element="tns:UpdatePerformedRadiationAdministrationRequest" />
+  </message>
+  <message name="UpdatePerformedRadiationAdministrationResponse">
+    <part name="parameters" element="tns:UpdatePerformedRadiationAdministrationResponse" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="PerformedActivityPortType" wsrp:ResourceProperties="tns:PerformedActivityResourceProperties">
+    <operation name="get">
+      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetRequest" />
+      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetResponse" />
+    </operation>
+    <operation name="create">
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreateResponse" />
+    </operation>
+    <operation name="update">
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdateResponse" />
+    </operation>
+    <operation name="delete">
+      <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/DeleteRequest" />
+      <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/DeleteResponse" />
+    </operation>
+    <operation name="getByStudyProtocol">
+      <input message="tns:GetByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetByStudyProtocolRequest" />
+      <output message="tns:GetByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetByStudyProtocolResponse" />
+    </operation>
+    <operation name="getByStudySubject">
+      <input message="tns:GetByStudySubjectRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetByStudySubjectRequest" />
+      <output message="tns:GetByStudySubjectResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetByStudySubjectResponse" />
+    </operation>
+    <operation name="getPerformedObservationByStudySubject">
+      <input message="tns:GetPerformedObservationByStudySubjectRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedObservationByStudySubjectRequest" />
+      <output message="tns:GetPerformedObservationByStudySubjectResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedObservationByStudySubjectResponse" />
+    </operation>
+    <operation name="getPerformedSubjectMilestoneByStudySubject">
+      <input message="tns:GetPerformedSubjectMilestoneByStudySubjectRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedSubjectMilestoneByStudySubjectRequest" />
+      <output message="tns:GetPerformedSubjectMilestoneByStudySubjectResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedSubjectMilestoneByStudySubjectResponse" />
+    </operation>
+    <operation name="getPerformedSubjectMilestone">
+      <input message="tns:GetPerformedSubjectMilestoneRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedSubjectMilestoneRequest" />
+      <output message="tns:GetPerformedSubjectMilestoneResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedSubjectMilestoneResponse" />
+    </operation>
+    <operation name="createPerformedSubjectMilestone">
+      <input message="tns:CreatePerformedSubjectMilestoneRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedSubjectMilestoneRequest" />
+      <output message="tns:CreatePerformedSubjectMilestoneResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedSubjectMilestoneResponse" />
+    </operation>
+    <operation name="updatePerformedSubjectMilestone">
+      <input message="tns:UpdatePerformedSubjectMilestoneRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedSubjectMilestoneRequest" />
+      <output message="tns:UpdatePerformedSubjectMilestoneResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedSubjectMilestoneResponse" />
+    </operation>
+    <operation name="getPerformedObservation">
+      <input message="tns:GetPerformedObservationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedObservationRequest" />
+      <output message="tns:GetPerformedObservationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedObservationResponse" />
+    </operation>
+    <operation name="createPerformedObservation">
+      <input message="tns:CreatePerformedObservationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedObservationRequest" />
+      <output message="tns:CreatePerformedObservationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedObservationResponse" />
+    </operation>
+    <operation name="updatePerformedObservation">
+      <input message="tns:UpdatePerformedObservationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedObservationRequest" />
+      <output message="tns:UpdatePerformedObservationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedObservationResponse" />
+    </operation>
+    <operation name="getPerformedImagingByStudySubject">
+      <input message="tns:GetPerformedImagingByStudySubjectRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedImagingByStudySubjectRequest" />
+      <output message="tns:GetPerformedImagingByStudySubjectResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedImagingByStudySubjectResponse" />
+    </operation>
+    <operation name="getPerformedImaging">
+      <input message="tns:GetPerformedImagingRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedImagingRequest" />
+      <output message="tns:GetPerformedImagingResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedImagingResponse" />
+    </operation>
+    <operation name="createPerformedImaging">
+      <input message="tns:CreatePerformedImagingRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedImagingRequest" />
+      <output message="tns:CreatePerformedImagingResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedImagingResponse" />
+    </operation>
+    <operation name="updatePerformedImaging">
+      <input message="tns:UpdatePerformedImagingRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedImagingRequest" />
+      <output message="tns:UpdatePerformedImagingResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedImagingResponse" />
+    </operation>
+    <operation name="getPerformedProcedureByStudySubject">
+      <input message="tns:GetPerformedProcedureByStudySubjectRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedProcedureByStudySubjectRequest" />
+      <output message="tns:GetPerformedProcedureByStudySubjectResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedProcedureByStudySubjectResponse" />
+    </operation>
+    <operation name="getPerformedProcedure">
+      <input message="tns:GetPerformedProcedureRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedProcedureRequest" />
+      <output message="tns:GetPerformedProcedureResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedProcedureResponse" />
+    </operation>
+    <operation name="createPerformedProcedure">
+      <input message="tns:CreatePerformedProcedureRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedProcedureRequest" />
+      <output message="tns:CreatePerformedProcedureResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedProcedureResponse" />
+    </operation>
+    <operation name="updatePerformedProcedure">
+      <input message="tns:UpdatePerformedProcedureRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedProcedureRequest" />
+      <output message="tns:UpdatePerformedProcedureResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedProcedureResponse" />
+    </operation>
+    <operation name="getPerformedSubstanceAdministrationByStudySubject">
+      <input message="tns:GetPerformedSubstanceAdministrationByStudySubjectRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedSubstanceAdministrationByStudySubjectRequest" />
+      <output message="tns:GetPerformedSubstanceAdministrationByStudySubjectResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedSubstanceAdministrationByStudySubjectResponse" />
+    </operation>
+    <operation name="getPerformedSubstanceAdministration">
+      <input message="tns:GetPerformedSubstanceAdministrationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedSubstanceAdministrationRequest" />
+      <output message="tns:GetPerformedSubstanceAdministrationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedSubstanceAdministrationResponse" />
+    </operation>
+    <operation name="createPerformedSubstanceAdministration">
+      <input message="tns:CreatePerformedSubstanceAdministrationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedSubstanceAdministrationRequest" />
+      <output message="tns:CreatePerformedSubstanceAdministrationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedSubstanceAdministrationResponse" />
+    </operation>
+    <operation name="updatePerformedSubstanceAdministration">
+      <input message="tns:UpdatePerformedSubstanceAdministrationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedSubstanceAdministrationRequest" />
+      <output message="tns:UpdatePerformedSubstanceAdministrationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedSubstanceAdministrationResponse" />
+    </operation>
+    <operation name="getPerformedRadiationAdministrationByStudySubject">
+      <input message="tns:GetPerformedRadiationAdministrationByStudySubjectRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedRadiationAdministrationByStudySubjectRequest" />
+      <output message="tns:GetPerformedRadiationAdministrationByStudySubjectResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedRadiationAdministrationByStudySubjectResponse" />
+    </operation>
+    <operation name="getPerformedRadiationAdministration">
+      <input message="tns:GetPerformedRadiationAdministrationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedRadiationAdministrationRequest" />
+      <output message="tns:GetPerformedRadiationAdministrationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/GetPerformedRadiationAdministrationResponse" />
+    </operation>
+    <operation name="createPerformedRadiationAdministration">
+      <input message="tns:CreatePerformedRadiationAdministrationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedRadiationAdministrationRequest" />
+      <output message="tns:CreatePerformedRadiationAdministrationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/CreatePerformedRadiationAdministrationResponse" />
+    </operation>
+    <operation name="updatePerformedRadiationAdministration">
+      <input message="tns:UpdatePerformedRadiationAdministrationRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedRadiationAdministrationRequest" />
+      <output message="tns:UpdatePerformedRadiationAdministrationResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/UpdatePerformedRadiationAdministrationResponse" />
+    </operation>
+    <operation name="getServiceSecurityMetadata">
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+    </operation>
+  </portType>
+</definitions>
+
