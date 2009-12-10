@@ -40,7 +40,11 @@ public final class IITransformer extends AbstractTransformer<II, Ii>
         target.setIdentifierName(source.getIdentifierName());
         target.setRoot(source.getRoot());
         if (source.getReliability() != null) {
-            target.setReliability(org.iso._21090.IdentifierReliability.valueOf(source.getReliability().name()));
+            String reliabilityName = source.getReliability().name();
+            if (IdentifierReliability.UNV.name().equals(reliabilityName)) {
+                reliabilityName = org.iso._21090.IdentifierReliability.USE.name();
+            }
+            target.setReliability(org.iso._21090.IdentifierReliability.valueOf(reliabilityName));
         }
         if (source.getScope() != null) {
             target.setScope(org.iso._21090.IdentifierScope.valueOf(source.getScope().name()));
@@ -66,7 +70,11 @@ public final class IITransformer extends AbstractTransformer<II, Ii>
         target.setIdentifierName(source.getIdentifierName());
         target.setRoot(source.getRoot());
         if (source.getReliability() != null) {
-            target.setReliability(IdentifierReliability.valueOf(source.getReliability().name()));
+            String reliabilityName = source.getReliability().name();
+            if (org.iso._21090.IdentifierReliability.USE.name().equals(reliabilityName)) {
+                reliabilityName = IdentifierReliability.UNV.name();
+            }
+            target.setReliability(IdentifierReliability.valueOf(reliabilityName));
         }
         if (source.getScope() != null) {
             target.setScope(IdentifierScope.valueOf(source.getScope().name()));
