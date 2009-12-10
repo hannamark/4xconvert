@@ -7,7 +7,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     xmlns:ivy="antlib:org.apache.ivy.ant"
     >
     <description>
-        TBD
+        Used to install and configure the pre-built distributions for the various applications subsystems or components
     </description>
 
     <!-- Properties file related properties and tasks -->
@@ -107,6 +107,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="pa-grid-legacy.dir.target" value="wsrf.war" />
     <property name="pa-grid-legacy.introduce.skeleton.service.name" value="PAServices"/>
 
+    <property name="outcomes-grid.dir.dist" value="${basedir}/${outcomes-grid.dist.relative.dir}" />
+    <property name="outcomes-grid.dir.src" value="${basedir}/${outcomes-grid.dist.relative.dir}" />
+    <property name="outcomes-grid.dir.target" value="wsrf.war" />
+    <property name="outcomes-grid.introduce.skeleton.service.name" value="OutcomesServices"/>
+
     <!-- Paths -->
     <path id="bda-utils.classpath">
         <fileset dir="${bda-utils.dir}">
@@ -171,6 +176,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <basename file="${pagrid.grid.secure.cert.location}" property="pagrid.grid.secure.cert.file"/>
     <dirname file="${pagrid.grid.secure.cert.location}" property="pagrid.grid.secure.dir"/>
     <basename file="${pagrid.grid.secure.key.location}" property="pagrid.grid.secure.key.file"/>
+    
+    <basename file="${outcomes-grid.grid.secure.cert.location}" property="outcomes-grid.grid.secure.cert.file"/>
+    <dirname file="${outcomes-grid.grid.secure.cert.location}" property="outcomes-grid.grid.secure.dir"/>
+    <basename file="${outcomes-grid.grid.secure.key.location}" property="outcomes-grid.grid.secure.key.file"/>
     
     <!-- figure out whether to use install-properties.template or upgrade-proprties.template based on the name of the properties file -->
     <propertyregex property="properties.file.type"
@@ -359,6 +368,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <antcall target="install:jboss:binaries:pa-ear"/>
         <antcall target="install:jboss:binaries:pa-grid"/>
         <antcall target="install:jboss:binaries:pa-grid-legacy"/>
+        <antcall target="install:jboss:binaries:outcomes-grid"/>
     </target>
 
     <macrodef name="jboss-install-binaries2" description="Added params to support different types of installations, should be pulled up into BDA-utils">
@@ -433,6 +443,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <jboss-install-binaries2
           jems.install.option="default"
         jboss.server.name="${pa-grid-legacy.jboss.server.name}"
+              />
+    </target>
+    <target name="install:jboss:binaries:outcomes-grid" unless="exclude.outcomes-grid">
+      <jboss-install-binaries2
+          jems.install.option="default"
+        jboss.server.name="${outcomes-grid.jboss.server.name}"
               />
     </target>
 
@@ -544,6 +560,49 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
         <zip basedir="${temp.dir}/${pa-grid.dist.relative.dir}" compress="true" file="${pa-grid.dir.dist}/${pa-grid.artifact.file}" update="false"/>
     </target>
+    
+    <target name="install:jboss:outcomes-grid:pre-configure" unless="exclude.outcomes-grid">
+        <mkdir dir="${temp.dir}/${outcomes-grid.dist.relative.dir}"/>
+        <delete dir="${temp.dir}/${outcomes-grid.dist.relative.dir}"/>
+        <mkdir dir="${temp.dir}/${outcomes-grid.dist.relative.dir}"/>
+        <unzip src="${outcomes-grid.dir.dist}/${outcomes-grid.artifact.file}" dest="${temp.dir}/${outcomes-grid.dist.relative.dir}"/>
+        <unzip src="${temp.dir}/${outcomes-grid.dist.relative.dir}/WEB-INF/lib/${outcomes-grid.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${outcomes-grid.introduce.skeleton.service.name}-common"/>
+        <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+        <var name="file.list"
+            value="${outcomes-grid.introduce.skeleton.service.name}-common/jndi.properties"/>
+
+        <for list="${file.list}" param="file.relative.name">
+            <sequential>
+                <propertyregex property="file.name"
+                    input="@{file.relative.name}"
+                    regexp="^.*\/(.*)"
+                    select="\1"
+                    override="true"
+                    />
+                <propertyregex property="relative.dir"
+                    input="@{file.relative.name}"
+                    regexp="^(.*)\/.*"
+                    select="\1"
+                    override="true"
+                    />
+                <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+                <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+                <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+                    <filterset>
+                        <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+                        <filter token="outcomes-grid.jndi.principal" value="${outcomes-grid.jndi.principal}"/>
+                        <filter token="outcomes-grid.jndi.credentials" value="${outcomes-grid.jndi.credentials}"/>
+                    </filterset>
+                </copy>
+                <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+            </sequential>
+        </for>
+        <move file="${outcomes-grid.dir.dist}/${outcomes-grid.artifact.file}" tofile="${outcomes-grid.dir.dist}/${outcomes-grid.artifact.file}.orig"/>
+        <jar destfile="${temp.dir}/${outcomes-grid.dist.relative.dir}/WEB-INF/lib/${outcomes-grid.introduce.skeleton.service.name}-common.jar"
+                    basedir="${temp.dir}/${outcomes-grid.introduce.skeleton.service.name}-common" compress="false"/>
+
+        <zip basedir="${temp.dir}/${outcomes-grid.dist.relative.dir}" compress="true" file="${outcomes-grid.dir.dist}/${outcomes-grid.artifact.file}" update="false"/>
+    </target>
 
     <!-- Installs the pa-grid application to JBOSS -->
     <target name="install:pa-grid:application" description="Deploy Coppa PO Grid application to JBOSS" unless="exclude.pa-grid">
@@ -566,6 +625,17 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <unzip dest="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/${pa-grid-legacy.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
 
         <unzip dest="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/${pa-grid-legacy.dir.target}" src="${pa-grid-legacy.dir.src}/${pa-grid-legacy.artifact.file}" />
+    </target>
+    <!-- Installs the outcomes-grid application to JBOSS -->
+    <target name="install:outcomes-grid:application" description="Deploy Coppa Outcomes Grid application to JBOSS" unless="exclude.outcomes-grid">
+        <echo message="Entirely removing existing wsrf.war deployment"/>
+        <delete dir="${jboss.home}/server/${outcomes-grid.jboss.server.name}/deploy/${outcomes-grid.dir.target}"/>
+        <mkdir dir="${jboss.home}/server/${outcomes-grid.jboss.server.name}/deploy/${outcomes-grid.dir.target}"/>
+
+        <unzip dest="${jboss.home}/server/${outcomes-grid.jboss.server.name}/lib" src="${grid.resource.dir.src}/${resource.file.jboss-globus-lib}" />
+        <unzip dest="${jboss.home}/server/${outcomes-grid.jboss.server.name}/deploy/${outcomes-grid.dir.target}" src="${grid.resource.dir.src}/${resource.file.jboss-globus-war}" />
+
+        <unzip dest="${jboss.home}/server/${outcomes-grid.jboss.server.name}/deploy/${outcomes-grid.dir.target}" src="${outcomes-grid.dir.src}/${outcomes-grid.artifact.file}" />
     </target>
     
     <!-- Configures installed pa-grid application -->
@@ -618,6 +688,39 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           grid.application.relative.dir="${pa-grid-legacy.dir.target}"
           grid.secure.enable="false"
           appserver.external.http.host="${pa-grid-legacy.jboss.external.http.host}"
+        />
+    </target>
+    <!-- Configures installed outcomes-grid application -->
+    <target name="install:outcomes-grid:configure" description="Configure outcomes-grid service based on properties" unless="exclude.outcomes-grid">
+        <!--
+        NOTE: During an upgrade, the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) copies over 
+        the -cert.pem and -key.pem host cert file to the ${jboss.home}/server/${outcomes-grid.jboss.server.name}/conf directory.  
+        Therefore, we're changing the appserver.conf.dir property to point to outcomes-grid.grid.secure.dir instead.
+        
+        This is required whenever the host certs are not installed within the ${jboss.home}/server/${outcomes-grid.jboss.server.name}/conf directory   
+        -->
+        <grid-appserver-configure
+            appserver.home="${jboss.home}"
+            appserver.server.name="${outcomes-grid.jboss.server.name}"
+            appserver.conf.dir="${outcomes-grid.grid.secure.dir}"
+            appserver.webapp.dir="${jboss.home}/server/${outcomes-grid.jboss.server.name}/deploy"
+            appserver.server-xml.file="${jboss.home}/server/${outcomes-grid.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+            appserver.server-xml.service.name="jboss.web"
+            appserver.port.http="${outcomes-grid.jboss.server.port}"
+            appserver.port.ssl=""
+            appserver.hostname="${jboss.server.hostname}"
+            search.host="localhost"
+            search.port="8080"
+            grid.application.name="${outcomes-grid.introduce.skeleton.service.name}"
+            grid.application.relative.dir="${outcomes-grid.dir.target}"
+            grid.secure.dir="${outcomes-grid.grid.secure.dir}"
+            grid.secure.enable="${outcomes-grid.grid.secure.enable}"
+            grid.secure.port="${outcomes-grid.grid.secure.port}"
+            grid.secure.key.file="${outcomes-grid.grid.secure.key.file}"
+            grid.secure.cert.file="${outcomes-grid.grid.secure.cert.file}"
+            grid.external.secure.host="${outcomes-grid.grid.external.secure.host}"
+            grid.external.secure.port="${outcomes-grid.grid.external.secure.port}"
+        	appserver.external.http.host="${outcomes-grid.jboss.external.http.host}"
         />
     </target>
 
@@ -675,6 +778,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <runtarget target="install:jboss:configure:pa-ear"/>
         <runtarget target="install:jboss:configure:pa-grid"/>
         <runtarget target="install:jboss:configure:pa-grid-legacy"/>
+        <runtarget target="install:jboss:configure:outcomes-grid"/>
     </target>
     <target name="install:jboss:configure:pa-ear" unless="exclude.pa-ear">
         <runtarget target="install:jboss:configure:log4j"/>
@@ -700,152 +804,228 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
     <target name="install:jboss:configure:pa-grid" unless="exclude.pa-grid">
           <!-- create a new template bindings file from template (using ports for pa-grid -->
-                <copy file="${bda-utils.resource.dir}/template-binding.xml"
-                    tofile="${bda-utils.resource.dir}/template-binding2.xml"
-                    filtering="true"
-                    overwrite="true">
-                    <filterset begintoken="@" endtoken="@">
-                        <filter token="jboss.server.port" value="@pagrid.grid.secure.port@"/>
-                        <filter token="jboss.ejbinvoker.port" value="@pagrid.jboss.ejbinvoker.port@"/>
-                        <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
-                        <filter token="jboss.server.jndi.port" value="@pagrid.jboss.server.jndi.port@"/>
-                        <filter token="jboss.cobraorb.port" value="@pagrid.jboss.cobraorb.port@"/>
-                        <filter token="jboss.ejbinvoker.port" value="@pagrid.jboss.ejbinvoker.port@"/>
-                        <filter token="jboss.hajndi.port" value="@pagrid.jboss.hajndi.port@"/>
-                        <filter token="jboss.hajrmi.port" value="@pagrid.jboss.hajrmi.port@"/>
-                        <filter token="jboss.jms.port" value="@pagrid.jboss.jms.port@"/>
-                        <filter token="jboss.jmx-rmi.port" value="@pagrid.jboss.jmx-rmi.port@"/>
-                        <filter token="jboss.messaging.port" value="@pagrid.jboss.messaging.port@"/>
-                        <filter token="jboss.pooledha.port" value="@pagrid.jboss.pooledha.port@"/>
-                        <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
-                        <filter token="jboss.server.bind.port" value="@pagrid.jboss.server.bind.port@"/>
-                        <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
-                        <filter token="jboss.service.rmiobject.port" value="@pagrid.jboss.service.rmiobject.port@"/>
-                        <filter token="jboss.snmp.port" value="@pagrid.jboss.snmp.port@"/>
-                        <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
-                        <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
-                    </filterset>
-                </copy>
+            <copy file="${bda-utils.resource.dir}/template-binding.xml"
+                tofile="${bda-utils.resource.dir}/template-binding2.xml"
+                filtering="true"
+                overwrite="true">
+                <filterset begintoken="@" endtoken="@">
+                    <filter token="jboss.server.port" value="@pagrid.grid.secure.port@"/>
+                    <filter token="jboss.ejbinvoker.port" value="@pagrid.jboss.ejbinvoker.port@"/>
+                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+                    <filter token="jboss.server.jndi.port" value="@pagrid.jboss.server.jndi.port@"/>
+                    <filter token="jboss.cobraorb.port" value="@pagrid.jboss.cobraorb.port@"/>
+                    <filter token="jboss.ejbinvoker.port" value="@pagrid.jboss.ejbinvoker.port@"/>
+                    <filter token="jboss.hajndi.port" value="@pagrid.jboss.hajndi.port@"/>
+                    <filter token="jboss.hajrmi.port" value="@pagrid.jboss.hajrmi.port@"/>
+                    <filter token="jboss.jms.port" value="@pagrid.jboss.jms.port@"/>
+                    <filter token="jboss.jmx-rmi.port" value="@pagrid.jboss.jmx-rmi.port@"/>
+                    <filter token="jboss.messaging.port" value="@pagrid.jboss.messaging.port@"/>
+                    <filter token="jboss.pooledha.port" value="@pagrid.jboss.pooledha.port@"/>
+                    <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
+                    <filter token="jboss.server.bind.port" value="@pagrid.jboss.server.bind.port@"/>
+                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+                    <filter token="jboss.service.rmiobject.port" value="@pagrid.jboss.service.rmiobject.port@"/>
+                    <filter token="jboss.snmp.port" value="@pagrid.jboss.snmp.port@"/>
+                    <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
+                    <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
+                </filterset>
+            </copy>
 
-               <!-- configure the pa-grid instance -->
-                <jboss-configure
-                    jboss.home="${jboss.home}"
-                    jboss.server.name="${pagrid.jboss.server.name}"
-                    jboss.server.ports.name="bda-ports"
-                    jboss.server.bindingfile.location="${jboss.home}/server/${pagrid.jboss.server.name}/conf/bindings.xml"
-                    jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding2.xml"
-                    jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
-                    authentication.type="${authentication.type}"
-                    login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
-                    login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
-                    jboss.web.user="${jboss.web.user}"
-                    jboss.web.password="${jboss.web.password}"
-                    jboss.server.jndi.port="${pagrid.jboss.server.jndi.port}"
-                    jboss.conf.dir="${jboss.home}/server/${pagrid.jboss.server.name}/conf"
-                    jboss.server-xml.file="${jboss.home}/server/${pagrid.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
-                    jboss.server-xml.service.name="jboss.web"
-                    jboss.ssl.enable="false"
-                    jboss.ssl.port="8443"
-                    jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
-                    jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
-                    jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
-                    jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
-                    jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
-                    jboss.external.ssl.host="${jboss.external.ssl.host}"
-                    jboss.external.ssl.port="${jboss.external.ssl.port}"
-                    proxy.update.connector.port.ssl="8443"
-                    jboss.external.http.host="${pagrid.jboss.external.http.host}"
-                    jboss.external.http.port="${pagrid.jboss.external.http.port}"
-                    proxy.update.connector.port.http="8080"
-                    grid.external.secure.host="${pagrid.grid.external.secure.host}"
-                    grid.external.secure.port="${pagrid.grid.external.secure.port}"
-                    jboss.server.hostname="${jboss.server.hostname}"
-                    jboss.grid.configure="true"
-                    grid.secure.dir="${pagrid.grid.secure.dir}"
-                    grid.secure.enable="${pagrid.grid.secure.enable}"
-                    grid.secure.port="${pagrid.grid.secure.port}"
-                    grid.secure.key.file="${pagrid.grid.secure.key.file}"
-                    grid.secure.cert.file="${pagrid.grid.secure.cert.file}"
-                    jboss.java.opts="${jboss.java.opts}"
-                    jboss.http-connector.remove="true"
-                    />
+           <!-- configure the pa-grid instance -->
+            <jboss-configure
+                jboss.home="${jboss.home}"
+                jboss.server.name="${pagrid.jboss.server.name}"
+                jboss.server.ports.name="bda-ports"
+                jboss.server.bindingfile.location="${jboss.home}/server/${pagrid.jboss.server.name}/conf/bindings.xml"
+                jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding2.xml"
+                jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
+                authentication.type="${authentication.type}"
+                login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
+                login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
+                jboss.web.user="${jboss.web.user}"
+                jboss.web.password="${jboss.web.password}"
+                jboss.server.jndi.port="${pagrid.jboss.server.jndi.port}"
+                jboss.conf.dir="${jboss.home}/server/${pagrid.jboss.server.name}/conf"
+                jboss.server-xml.file="${jboss.home}/server/${pagrid.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+                jboss.server-xml.service.name="jboss.web"
+                jboss.ssl.enable="false"
+                jboss.ssl.port="8443"
+                jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
+                jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
+                jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
+                jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
+                jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
+                jboss.external.ssl.host="${jboss.external.ssl.host}"
+                jboss.external.ssl.port="${jboss.external.ssl.port}"
+                proxy.update.connector.port.ssl="8443"
+                jboss.external.http.host="${pagrid.jboss.external.http.host}"
+                jboss.external.http.port="${pagrid.jboss.external.http.port}"
+                proxy.update.connector.port.http="8080"
+                grid.external.secure.host="${pagrid.grid.external.secure.host}"
+                grid.external.secure.port="${pagrid.grid.external.secure.port}"
+                jboss.server.hostname="${jboss.server.hostname}"
+                jboss.grid.configure="true"
+                grid.secure.dir="${pagrid.grid.secure.dir}"
+                grid.secure.enable="${pagrid.grid.secure.enable}"
+                grid.secure.port="${pagrid.grid.secure.port}"
+                grid.secure.key.file="${pagrid.grid.secure.key.file}"
+                grid.secure.cert.file="${pagrid.grid.secure.cert.file}"
+                jboss.java.opts="${jboss.java.opts}"
+                jboss.http-connector.remove="true"
+                />
     </target>
 
 
     <target name="install:jboss:configure:pa-grid-legacy" unless="exclude.pa-grid-legacy">
           <!-- create a new template bindings file from template (using ports for pa-grid -->
-                <copy file="${bda-utils.resource.dir}/template-binding.xml"
-                    tofile="${bda-utils.resource.dir}/template-binding3.xml"
-                    filtering="true"
-                    overwrite="true">
-                    <filterset begintoken="@" endtoken="@">
-                        <filter token="jboss.server.port" value="@pa-grid-legacy.jboss.server.port@"/>
-                        <filter token="jboss.ejbinvoker.port" value="@pa-grid-legacy.jboss.ejbinvoker.port@"/>
-                        <filter token="jboss.server.rmi.port" value="@pa-grid-legacy.jboss.server.rmi.port@"/>
-                        <filter token="jboss.server.jndi.port" value="@pa-grid-legacy.jboss.server.jndi.port@"/>
-                        <filter token="jboss.cobraorb.port" value="@pa-grid-legacy.jboss.cobraorb.port@"/>
-                        <filter token="jboss.ejbinvoker.port" value="@pa-grid-legacy.jboss.ejbinvoker.port@"/>
-                        <filter token="jboss.hajndi.port" value="@pa-grid-legacy.jboss.hajndi.port@"/>
-                        <filter token="jboss.hajrmi.port" value="@pa-grid-legacy.jboss.hajrmi.port@"/>
-                        <filter token="jboss.jms.port" value="@pa-grid-legacy.jboss.jms.port@"/>
-                        <filter token="jboss.jmx-rmi.port" value="@pa-grid-legacy.jboss.jmx-rmi.port@"/>
-                        <filter token="jboss.messaging.port" value="@pa-grid-legacy.jboss.messaging.port@"/>
-                        <filter token="jboss.pooledha.port" value="@pa-grid-legacy.jboss.pooledha.port@"/>
-                        <filter token="jboss.remoting.port" value="@pa-grid-legacy.jboss.remoting.port@"/>
-                        <filter token="jboss.server.bind.port" value="@pa-grid-legacy.jboss.server.bind.port@"/>
-                        <filter token="jboss.server.rmi.port" value="@pa-grid-legacy.jboss.server.rmi.port@"/>
-                        <filter token="jboss.service.rmiobject.port" value="@pa-grid-legacy.jboss.service.rmiobject.port@"/>
-                        <filter token="jboss.snmp.port" value="@pa-grid-legacy.jboss.snmp.port@"/>
-                        <filter token="jboss.snmp-trapd.port" value="@pa-grid-legacy.jboss.snmp-trapd.port@"/>
-                        <filter token="jboss.web.service.port" value="@pa-grid-legacy.jboss.web.service.port@"/>
-                    </filterset>
-                </copy>
+            <copy file="${bda-utils.resource.dir}/template-binding.xml"
+                tofile="${bda-utils.resource.dir}/template-binding3.xml"
+                filtering="true"
+                overwrite="true">
+                <filterset begintoken="@" endtoken="@">
+                    <filter token="jboss.server.port" value="@pa-grid-legacy.jboss.server.port@"/>
+                    <filter token="jboss.ejbinvoker.port" value="@pa-grid-legacy.jboss.ejbinvoker.port@"/>
+                    <filter token="jboss.server.rmi.port" value="@pa-grid-legacy.jboss.server.rmi.port@"/>
+                    <filter token="jboss.server.jndi.port" value="@pa-grid-legacy.jboss.server.jndi.port@"/>
+                    <filter token="jboss.cobraorb.port" value="@pa-grid-legacy.jboss.cobraorb.port@"/>
+                    <filter token="jboss.ejbinvoker.port" value="@pa-grid-legacy.jboss.ejbinvoker.port@"/>
+                    <filter token="jboss.hajndi.port" value="@pa-grid-legacy.jboss.hajndi.port@"/>
+                    <filter token="jboss.hajrmi.port" value="@pa-grid-legacy.jboss.hajrmi.port@"/>
+                    <filter token="jboss.jms.port" value="@pa-grid-legacy.jboss.jms.port@"/>
+                    <filter token="jboss.jmx-rmi.port" value="@pa-grid-legacy.jboss.jmx-rmi.port@"/>
+                    <filter token="jboss.messaging.port" value="@pa-grid-legacy.jboss.messaging.port@"/>
+                    <filter token="jboss.pooledha.port" value="@pa-grid-legacy.jboss.pooledha.port@"/>
+                    <filter token="jboss.remoting.port" value="@pa-grid-legacy.jboss.remoting.port@"/>
+                    <filter token="jboss.server.bind.port" value="@pa-grid-legacy.jboss.server.bind.port@"/>
+                    <filter token="jboss.server.rmi.port" value="@pa-grid-legacy.jboss.server.rmi.port@"/>
+                    <filter token="jboss.service.rmiobject.port" value="@pa-grid-legacy.jboss.service.rmiobject.port@"/>
+                    <filter token="jboss.snmp.port" value="@pa-grid-legacy.jboss.snmp.port@"/>
+                    <filter token="jboss.snmp-trapd.port" value="@pa-grid-legacy.jboss.snmp-trapd.port@"/>
+                    <filter token="jboss.web.service.port" value="@pa-grid-legacy.jboss.web.service.port@"/>
+                </filterset>
+            </copy>
 
-               <!-- configure the pa-grid instance -->
-                <jboss-configure
-                    jboss.home="${jboss.home}"
-                    jboss.server.name="${pa-grid-legacy.jboss.server.name}"
-                    jboss.server.ports.name="bda-ports"
-                    jboss.server.bindingfile.location="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf/bindings.xml"
-                    jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding3.xml"
-                    jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
-                    authentication.type="${authentication.type}"
-                    login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
-                    login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
-                    jboss.web.user="${jboss.web.user}"
-                    jboss.web.password="${jboss.web.password}"
-                    jboss.server.jndi.port="${pa-grid-legacy.jboss.server.jndi.port}"
-                    jboss.conf.dir="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf"
-                    jboss.server-xml.file="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
-                    jboss.server-xml.service.name="jboss.web"
-                    jboss.ssl.enable="${jboss.ssl.enable}"
-                    jboss.ssl.port="8443"
-                    jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
-                    jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
-                    jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
-                    jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
-                    jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
-                    jboss.external.ssl.host="${jboss.external.ssl.host}"
-                    jboss.external.ssl.port="${jboss.external.ssl.port}"
-                    proxy.update.connector.port.ssl="8443"
-                    jboss.external.http.host="${pa-grid-legacy.jboss.external.http.host}"
-                    jboss.external.http.port="${pa-grid-legacy.jboss.external.http.port}"
-                    proxy.update.connector.port.http="8080"
-                    grid.external.secure.host="${grid.external.secure.host}"
-                    grid.external.secure.port="${grid.external.secure.port}"
-                    jboss.server.hostname="${jboss.server.hostname}"
-                    jboss.grid.configure="false"
-                    grid.secure.dir="${grid.secure.dir}"
-                    grid.secure.enable="${grid.secure.enable}"
-                    grid.secure.port="${grid.secure.port}"
-                    grid.secure.key.file="${grid.secure.key.file}"
-                    grid.secure.cert.file="${grid.secure.cert.file}"
-                    jboss.java.opts="${jboss.java.opts}"
-                    jboss.http-connector.remove="false"
-                    />
+           <!-- configure the pa-grid instance -->
+            <jboss-configure
+                jboss.home="${jboss.home}"
+                jboss.server.name="${pa-grid-legacy.jboss.server.name}"
+                jboss.server.ports.name="bda-ports"
+                jboss.server.bindingfile.location="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf/bindings.xml"
+                jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding3.xml"
+                jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
+                authentication.type="${authentication.type}"
+                login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
+                login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
+                jboss.web.user="${jboss.web.user}"
+                jboss.web.password="${jboss.web.password}"
+                jboss.server.jndi.port="${pa-grid-legacy.jboss.server.jndi.port}"
+                jboss.conf.dir="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/conf"
+                jboss.server-xml.file="${jboss.home}/server/${pa-grid-legacy.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+                jboss.server-xml.service.name="jboss.web"
+                jboss.ssl.enable="${jboss.ssl.enable}"
+                jboss.ssl.port="8443"
+                jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
+                jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
+                jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
+                jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
+                jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
+                jboss.external.ssl.host="${jboss.external.ssl.host}"
+                jboss.external.ssl.port="${jboss.external.ssl.port}"
+                proxy.update.connector.port.ssl="8443"
+                jboss.external.http.host="${pa-grid-legacy.jboss.external.http.host}"
+                jboss.external.http.port="${pa-grid-legacy.jboss.external.http.port}"
+                proxy.update.connector.port.http="8080"
+                grid.external.secure.host="${grid.external.secure.host}"
+                grid.external.secure.port="${grid.external.secure.port}"
+                jboss.server.hostname="${jboss.server.hostname}"
+                jboss.grid.configure="false"
+                grid.secure.dir="${grid.secure.dir}"
+                grid.secure.enable="${grid.secure.enable}"
+                grid.secure.port="${grid.secure.port}"
+                grid.secure.key.file="${grid.secure.key.file}"
+                grid.secure.cert.file="${grid.secure.cert.file}"
+                jboss.java.opts="${jboss.java.opts}"
+                jboss.http-connector.remove="false"
+                />
     </target>
+    
+    <target name="install:jboss:configure:outcomes-grid" unless="exclude.outcomes-grid">
+          <!-- create a new template bindings file from template (using ports for outcomes-grid -->
+            <copy file="${bda-utils.resource.dir}/template-binding.xml"
+                tofile="${bda-utils.resource.dir}/template-binding4.xml"
+                filtering="true"
+                overwrite="true">
+                <filterset begintoken="@" endtoken="@">
+                    <filter token="jboss.server.port" value="@outcomes-grid.grid.secure.port@"/>
+                    <filter token="jboss.ejbinvoker.port" value="@outcomes-grid.jboss.ejbinvoker.port@"/>
+                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+                    <filter token="jboss.server.jndi.port" value="@outcomes-grid.jboss.server.jndi.port@"/>
+                    <filter token="jboss.cobraorb.port" value="@outcomes-grid.jboss.cobraorb.port@"/>
+                    <filter token="jboss.ejbinvoker.port" value="@outcomes-grid.jboss.ejbinvoker.port@"/>
+                    <filter token="jboss.hajndi.port" value="@outcomes-grid.jboss.hajndi.port@"/>
+                    <filter token="jboss.hajrmi.port" value="@outcomes-grid.jboss.hajrmi.port@"/>
+                    <filter token="jboss.jms.port" value="@outcomes-grid.jboss.jms.port@"/>
+                    <filter token="jboss.jmx-rmi.port" value="@outcomes-grid.jboss.jmx-rmi.port@"/>
+                    <filter token="jboss.messaging.port" value="@outcomes-grid.jboss.messaging.port@"/>
+                    <filter token="jboss.pooledha.port" value="@outcomes-grid.jboss.pooledha.port@"/>
+                    <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
+                    <filter token="jboss.server.bind.port" value="@outcomes-grid.jboss.server.bind.port@"/>
+                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+                    <filter token="jboss.service.rmiobject.port" value="@outcomes-grid.jboss.service.rmiobject.port@"/>
+                    <filter token="jboss.snmp.port" value="@outcomes-grid.jboss.snmp.port@"/>
+                    <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
+                    <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
+                </filterset>
+            </copy>
+
+           <!-- configure the outcomes-grid instance -->
+            <jboss-configure
+                jboss.home="${jboss.home}"
+                jboss.server.name="${outcomes-grid.jboss.server.name}"
+                jboss.server.ports.name="bda-ports"
+                jboss.server.bindingfile.location="${jboss.home}/server/${outcomes-grid.jboss.server.name}/conf/bindings.xml"
+                jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding4.xml"
+                jboss.server.service.template.location="${bda-utils.resource.dir}/template-jboss-service.xml"
+                authentication.type="${authentication.type}"
+                login-config.ldap.file="${jboss-conf.dir.dest}/login-config.ldap-block.xml"
+                login-config.db.file="${jboss-conf.dir.dest}/login-config.db-block.xml"
+                jboss.web.user="${jboss.web.user}"
+                jboss.web.password="${jboss.web.password}"
+                jboss.server.jndi.port="${outcomes-grid.jboss.server.jndi.port}"
+                jboss.conf.dir="${jboss.home}/server/${outcomes-grid.jboss.server.name}/conf"
+                jboss.server-xml.file="${jboss.home}/server/${outcomes-grid.jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+                jboss.server-xml.service.name="jboss.web"
+                jboss.ssl.enable="false"
+                jboss.ssl.port="8443"
+                jboss.ssl.keystore.file="${jboss.ssl.keystore.file}"
+                jboss.ssl.keystore.dir="${jboss.ssl.keystore.dir}"
+                jboss.ssl.keystore.pass="${jboss.ssl.keystore.pass}"
+                jboss.ssl.keystore.alias="${jboss.ssl.keystore.alias}"
+                jboss.ssl.fullyqualified.hostname="${jboss.ssl.fullyqualified.hostname}"
+                jboss.external.ssl.host="${jboss.external.ssl.host}"
+                jboss.external.ssl.port="${jboss.external.ssl.port}"
+                proxy.update.connector.port.ssl="8443"
+                jboss.external.http.host="${outcomes-grid.jboss.external.http.host}"
+                jboss.external.http.port="${outcomes-grid.jboss.external.http.port}"
+                proxy.update.connector.port.http="8080"
+                grid.external.secure.host="${outcomes-grid.grid.external.secure.host}"
+                grid.external.secure.port="${outcomes-grid.grid.external.secure.port}"
+                jboss.server.hostname="${jboss.server.hostname}"
+                jboss.grid.configure="true"
+                grid.secure.dir="${outcomes-grid.grid.secure.dir}"
+                grid.secure.enable="${outcomes-grid.grid.secure.enable}"
+                grid.secure.port="${outcomes-grid.grid.secure.port}"
+                grid.secure.key.file="${outcomes-grid.grid.secure.key.file}"
+                grid.secure.cert.file="${outcomes-grid.grid.secure.cert.file}"
+                jboss.java.opts="${jboss.java.opts}"
+                jboss.http-connector.remove="true"
+                />
+    </target>
+
+    
     <!-- Calls to bda macros for basic functionality -->
     <target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
+        <antcall target="install:jboss:stop:outcomes-grid"/>
         <antcall target="install:jboss:stop:pa-grid-legacy"/>
         <antcall target="install:jboss:stop:pa-grid"/>
         <antcall target="install:jboss:stop:pa-ear"/>
@@ -860,6 +1040,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <target name="install:jboss:stop:pa-grid-legacy" unless="exclude.pa-grid-legacy">
       <jboss-stop-jboss jboss.server.jndi.port="${pa-grid-legacy.jboss.server.jndi.port}" jboss.server.name="${pa-grid-legacy.jboss.server.name}"/>
     </target>
+    <target name="install:jboss:stop:outcomes-grid" unless="exclude.outcomes-grid">
+      <jboss-stop-jboss jboss.server.jndi.port="${outcomes-grid.jboss.server.jndi.port}" jboss.server.name="${outcomes-grid.jboss.server.name}"/>
+    </target>
 
     <target name="install:jboss:start" if="jboss.exists" unless="exclude.jboss">
         <if>
@@ -870,6 +1053,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 <antcall target="install:jboss:start:pa-ear"/>
                 <antcall target="install:jboss:start:pa-grid"/>
                 <antcall target="install:jboss:start:pa-grid-legacy"/>
+                <antcall target="install:jboss:start:outcomes-grid"/>
                 <sleep seconds="15"/>
             </then>
         </if>
@@ -919,7 +1103,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <jboss-start-jboss2 jboss.server.name="${pagrid.jboss.server.name}"/>
     </target>
     <target name="install:jboss:start:pa-grid-legacy" unless="exclude.pa-grid-legacy">
-    <jboss-start-jboss2 jboss.server.name="${pa-grid-legacy.jboss.server.name}"/>
+        <jboss-start-jboss2 jboss.server.name="${pa-grid-legacy.jboss.server.name}"/>
+    </target>
+    <target name="install:jboss:start:outcomes-grid" unless="exclude.outcomes-grid">
+        <jboss-start-jboss2 jboss.server.name="${outcomes-grid.jboss.server.name}"/>
     </target>
 
     <target name="install:validation:pre-install">
@@ -934,6 +1121,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <runtarget target="install:validation:pre-install:ports:paear"/>
           <runtarget target="install:validation:pre-install:ports:pagrid"/>
           <runtarget target="install:validation:pre-install:ports:pagrid-legacy"/>
+          <runtarget target="install:validation:pre-install:ports:outcomes-grid"/>
       </target>
       <target name="install:validation:pre-install:ports:paear" unless="exclude.pa-ear">
         <validate-ports-preinstall />
@@ -944,10 +1132,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <target name="install:validation:pre-install:ports:pagrid-legacy" unless="exclude.pa-grid-legacy">
       <validate-ports-preinstall validation.pre.port.list="${pa-grid-legacy.validation.pre.port.list}" />
     </target>
+    <target name="install:validation:pre-install:ports:outcomes-grid" unless="exclude.outcomes-grid">
+      <validate-ports-preinstall validation.pre.port.list="${outcomes-grid.validation.pre.port.list}" />
+    </target>
       <target name="install:validation:post-install">
          <runtarget target="install:validation:post-install:paear"/>
          <runtarget target="install:validation:post-install:pagrid"/>
          <runtarget target="install:validation:post-install:pagrid-legacy"/>
+         <runtarget target="install:validation:post-install:outcomes-grid"/>
       </target>
       <target name="install:validation:post-install:paear" unless="exclude.pa-ear">
         <if>
@@ -991,6 +1183,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         </then>
       </if>
     </target>
+    <target name="install:validation:post-install:outcomes-grid" unless="exclude.outcomes-grid">
+      <if>
+        <not>
+          <isset property="exclude.start.servers"/>
+        </not>
+        <then>
+          <validate-post-install
+              validation.post.socket.list="${outcomes-grid.validation.post.socket.list}"
+              validation.post.http.list="${outcomes-grid.validation.post.http.list}"
+              propertyfile.backup.location="${user.home}"
+              jboss.server.name="${outcomes-grid.jboss.server.name}"
+              application.url="${outcomes-grid.application.url}"
+              />
+        </then>
+      </if>
+    </target>
     <!-- Wrapper target to deploy JBOSS container -->
     <target name="install:jboss" unless="exclude.jboss"
         depends="
@@ -1011,6 +1219,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:jboss:pa-grid-legacy:pre-configure,
         install:pa-grid-legacy:application,
         install:pa-grid-legacy:configure,
+        install:jboss:outcomes-grid:pre-configure,
+        install:outcomes-grid:application,
+        install:outcomes-grid:configure,
         install:jboss:configure,
         install:post,
         install:jboss:start
@@ -1150,6 +1361,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:jboss:pa-grid-legacy:pre-configure,
         install:pa-grid-legacy:application,
         install:pa-grid-legacy:configure,
+        install:jboss:outcomes-grid:pre-configure,
+        install:outcomes-grid:application,
+        install:outcomes-grid:configure,
         install:jboss:start
         " />
 
