@@ -106,8 +106,22 @@ import javax.naming.NamingException;
  */
 public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWithCRTest {
     public void testHealthCareFacility() throws Exception {
-        createOrganization("ACTIVE", "Organization 1 Name", getAddress(), "sample@example.com", "703-111-2345",
-                "703-111-1234", "703-111-1234", "http://www.example.com");
+        // Setup
+        setOrgRoleTitleText("Health Care Facility Information");
+        setOrgRoleLinkText("link=Manage Health Care Facility");
+        setOrgRoleCreateMessage("The health care facility was successfully created!");
+        setOrgRoleUpdateMessage("The health care facility role was successfully updated!");
+        setOrgRoleName("Facility 1");
+
+        // Create a new organization.
+        createAndAssertNewOrganization();
+
+        // Test create/update HCF functionality.
+        createHCF();
+        updateHCF();
+
+        // Test the CR
+        checkCR();
     }
 
     private void createHCF() throws Exception {

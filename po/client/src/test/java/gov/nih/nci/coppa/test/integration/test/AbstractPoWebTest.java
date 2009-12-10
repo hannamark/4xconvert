@@ -35,6 +35,39 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     protected static final String STATUS_MUST_BE_SET = "Status must be set";
 
+    private static boolean initLoginHasRun = false;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        if (!initLoginHasRun) {
+            initLogin();
+        }
+    }
+
+    private void initLogin() {
+        loginAsCurator();
+        openCreateOrganization();
+        selenium.select("curateEntityForm.organization.statusCode", "label=ACTIVE");
+        selenium.type("curateEntityForm_organization_name", "Test Organization");
+
+        // add postal address info
+        inputAddressInfo(getAddress(), "curateEntityForm", "organization");
+        // add contact info
+        inputContactInfo("sample@example.com", "703-111-2345", "703-111-1234", "703-111-1234", "http://www.example.com");
+
+        // save the organization
+        clickAndWaitSaveButton();
+        if (!isLoggedIn()) {
+            selenium.type("j_username", "curator");
+            selenium.type("j_password", "pass");
+            clickAndWait("id=enableEnterSubmit");
+            assertTrue(selenium.isElementPresent("link=Logout"));
+        }
+        clickAndWait("link=Logout");
+        initLoginHasRun = true;
+    }
+
     protected void login(String username, String password) {
         selenium.open("/po-web");
         assertTrue(selenium.isTextPresent("Login"));
