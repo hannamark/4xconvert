@@ -163,7 +163,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
                 "Some email id",
                 "exact:Email Address is not a well-formed email address",
                 "example1@example.com",
-                "email-entry-0",
+                "//div[@id='email-list']/ul/li[@id='email-entry-0']",
                 "email-remove-0");
     }
 

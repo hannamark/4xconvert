@@ -99,7 +99,7 @@ import javax.naming.NamingException;
  * @author mshestopalov
  *
  */
-public class ManageResearchOrganizationWithCRTest extends AbstractPoWebTest {
+public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRolesWithCRTest {
     public String ORG_FOR_TEST = "org_for_test";
     public String AFFILIATE_ORG_FOR_IO = "affiliate_org_for_io";
 
@@ -125,6 +125,15 @@ public class ManageResearchOrganizationWithCRTest extends AbstractPoWebTest {
         selenium.select("curateRoleForm_role_typeCode", "label=Cancer Center");
         waitForElementById("curateRoleForm.role._selectFundingMechanism", 30);
         selenium.select("curateRoleForm.role._selectFundingMechanism", "label=P30 - Center Core Grants");
+        
+        //add Contact Information
+        waitForTelecomFormsToLoad();
+        checkContactInformation();
+
+        addUSPostalAddress();
+        waitForTelecomFormsToLoad();
+        addContactInformation();
+        
         clickAndWaitButton("save_button");
         
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully created!"));
@@ -166,6 +175,16 @@ public class ManageResearchOrganizationWithCRTest extends AbstractPoWebTest {
         
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully updated!".trim()));
+    }
+    
+    private void checkContactInformation() throws Exception {
+        // Check contact information functionality - add/remove, eror messages etc.
+        checkPostalAddress();
+        checkEmail();
+        checkUrl();
+        checkPhone();
+        checkFax();
+        checkTty();
     }
 
     private void updateRemoteRoOrg(String ext) throws EntityValidationException, NamingException, URISyntaxException,
