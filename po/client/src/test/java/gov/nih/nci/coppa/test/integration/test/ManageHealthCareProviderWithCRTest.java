@@ -218,24 +218,27 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         waitForElementById("curateRoleForm.role.certificateLicenseText", 5);
         assertEquals("CR cert license change", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
 
-        /*
-         * // removing items that are breaking the selenium test. need to move on.
-         * selenium.click("copy_emailEntry_value0"); //waitForElementById("email-remove-1", 5); pause(5000);
-         * assertEquals("cr@cr.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
-         *
-         * selenium.click("copy_phoneEntry_value0"); //waitForElementById("phone-remove-1", 5); pause(5000);
-         * assertEquals("1122334455 | Remove", selenium.getText("//div[@id='phone-list']/ul/li[@id='phone-entry-1']"));
-         *
-         * selenium.click("copy_faxEntry_value0"); //waitForElementById("fax-remove-1", 5); pause(5000);
-         * assertEquals("1122334455 | Remove", selenium.getText("//div[@id='fax-list']/ul/li[@id='fax-entry-1']"));
-         *
-         * selenium.click("copy_ttyEntry_value0"); //waitForElementById("tty-remove-1", 5); pause(5000);
-         * assertEquals("1122334455 | Remove", selenium.getText("//div[@id='tty-list']/ul/li[@id='tty-entry-1']"));
-         *
-         * selenium.click("copy_urlEntry_value0"); //waitForElementById("url-remove-1", 5); pause(5000);
-         * assertEquals("http://www.cr.com | Remove",
-         * selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-1']"));
-         */
+        selenium.click("copy_emailEntry_value0"); 
+        waitForElementById("email-remove-1", 5);
+        assertEquals("cr@example.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
+         
+        selenium.click("copy_phoneEntry_value0"); 
+        waitForElementById("phone-remove-1", 5);
+        assertEquals("112-233-4455 | Remove", selenium.getText("//div[@id='phone-list']/div[@id='no_format_phone']/ul/li[@id='phone-entry-1']"));
+         
+        selenium.click("copy_faxEntry_value0"); 
+        waitForElementById("fax-remove-1", 5);
+        assertEquals("112-233-4455 | Remove", selenium.getText("//div[@id='fax-list']/div[@id='no_format_fax']/ul/li[@id='fax-entry-1']"));
+         
+        selenium.click("copy_ttyEntry_value0"); 
+        waitForElementById("tty-remove-1", 5);
+        assertEquals("112-233-4455 | Remove", selenium.getText("//div[@id='tty-list']/div[@id='no_format_tty']/ul/li[@id='tty-entry-1']"));
+         
+        selenium.click("copy_urlEntry_value0"); 
+        waitForElementById("url-remove-1", 5);
+        assertEquals("http://www.cr.com | Remove",
+        selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-1']"));
+         
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully updated!".trim()));
     }
@@ -254,15 +257,15 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         dto.setTelecomAddress(telco);
 
         TelPhone phone = new TelPhone();
-        phone.setValue(new URI("tel:1122334455"));
+        phone.setValue(new URI("tel:112-233-4455"));
         dto.getTelecomAddress().getItem().add(phone);
 
         TelPhone fax = new TelPhone();
-        fax.setValue(new URI("x-text-fax:1122334455"));
+        fax.setValue(new URI("x-text-fax:112-233-4455"));
         dto.getTelecomAddress().getItem().add(fax);
 
         TelPhone tty = new TelPhone();
-        tty.setValue(new URI("x-text-tel:1122334455"));
+        tty.setValue(new URI("x-text-tel:112-233-4455"));
         dto.getTelecomAddress().getItem().add(tty);
 
         TelEmail email = new TelEmail();
@@ -270,7 +273,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         dto.getTelecomAddress().getItem().add(email);
 
         TelUrl url = new TelUrl();
-        url.setValue(new URI("http://www.example.com"));
+        url.setValue(new URI("http://www.cr.com"));
         dto.getTelecomAddress().getItem().add(url);
 
         RemoteServiceHelper.getHealthCareProviderCorrelationService().updateCorrelation(dto);
