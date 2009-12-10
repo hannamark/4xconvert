@@ -486,6 +486,9 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                                     .toString()) + ").");
                 }
             }
+            if (PAUtil.isEmpty(patient.getRegistrationDate())) {
+                addActionError("Registration Date is required.");
+            }
         }
     }
 

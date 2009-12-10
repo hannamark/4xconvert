@@ -208,6 +208,7 @@ function loadDiv(intid){
         <td class="label">
          <label>
             <fmt:message key="patient.registrationDate"/>
+            <span class="required">*</span>
         </label>
         </td>
         <td class="value">

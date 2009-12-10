@@ -172,6 +172,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setAssignedIdentifier("PO PATIENT ID 01");
         patient.setStudySiteId(Long.valueOf("01"));
         patient.setDiseaseIdentifier(Long.valueOf("1"));
+        patient.setRegistrationDate("12/10/2009");
         PatientAction.unitedStatesId = 1L;
         action.setPatient(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
@@ -194,6 +195,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setDiseaseIdentifier(Long.valueOf("1"));
         patient.setStudySubjectId(1L);
         patient.setPatientId(1L);
+        patient.setRegistrationDate("12/10/2009");
         PatientAction.unitedStatesId = 1L;
         action.setPatient(patient);
         assertEquals("success", action.edit());
