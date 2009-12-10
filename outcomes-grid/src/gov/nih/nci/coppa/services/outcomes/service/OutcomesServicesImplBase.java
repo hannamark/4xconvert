@@ -55,6 +55,26 @@ public abstract class OutcomesServicesImplBase {
 		return (gov.nih.nci.coppa.services.outcomes.performedactivity.service.globus.resource.PerformedActivityResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.outcomes.performedobservationresult.service.globus.resource.PerformedObservationResultResourceHome getPerformedObservationResultResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("performedObservationResultHome");
+		return (gov.nih.nci.coppa.services.outcomes.performedobservationresult.service.globus.resource.PerformedObservationResultResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.outcomes.studysubject.service.globus.resource.StudySubjectResourceHome getStudySubjectResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("studySubjectHome");
+		return (gov.nih.nci.coppa.services.outcomes.studysubject.service.globus.resource.StudySubjectResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.outcomes.submission.service.globus.resource.SubmissionResourceHome getSubmissionResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("submissionHome");
+		return (gov.nih.nci.coppa.services.outcomes.submission.service.globus.resource.SubmissionResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.outcomes.patient.service.globus.resource.PatientResourceHome getPatientResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("patientHome");
+		return (gov.nih.nci.coppa.services.outcomes.patient.service.globus.resource.PatientResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

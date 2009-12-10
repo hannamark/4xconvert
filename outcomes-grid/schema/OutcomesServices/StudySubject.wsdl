@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns12="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types" xmlns:ns0="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns2="http://enterpriseservices.nci.nih.gov/OutcomesServices/types" xmlns:ns10="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types" xmlns:ns7="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types" xmlns:ns11="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types" name="StudySubject" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject">
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
+  <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types" schemaLocation="./PatientTypes.xsd" />
+      <import namespace="http://outcomes.services.coppa.nci.nih.gov" schemaLocation="./Outcomes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
+      <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" schemaLocation="./xsd/cagrid/types/service/servicemodel.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/types" schemaLocation="./OutcomesServicesTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/types" schemaLocation="./StudySubjectTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types" schemaLocation="./PerformedActivityTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" schemaLocation="./ActivityRelationshipTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types" schemaLocation="./PerformedObservationResultTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types" schemaLocation="./SubmissionTypes.xsd" />
+      <element name="GetByStudySiteRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudySiteResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetOutcomesRequest">
+        <complexType>
+          <sequence>
+            <element name="outcomesLoginName">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:ST" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetOutcomesResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateOutcomesRequest">
+        <complexType>
+          <sequence>
+            <element name="studySubject">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateOutcomesResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateRequest">
+        <complexType>
+          <sequence>
+            <element name="studySubject">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateRequest">
+        <complexType>
+          <sequence>
+            <element name="studySubject">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="StudySubjectResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="GetByStudySiteRequest">
+    <part name="parameters" element="tns:GetByStudySiteRequest" />
+  </message>
+  <message name="GetByStudySiteResponse">
+    <part name="parameters" element="tns:GetByStudySiteResponse" />
+  </message>
+  <message name="GetOutcomesRequest">
+    <part name="parameters" element="tns:GetOutcomesRequest" />
+  </message>
+  <message name="GetOutcomesResponse">
+    <part name="parameters" element="tns:GetOutcomesResponse" />
+  </message>
+  <message name="CreateOutcomesRequest">
+    <part name="parameters" element="tns:CreateOutcomesRequest" />
+  </message>
+  <message name="CreateOutcomesResponse">
+    <part name="parameters" element="tns:CreateOutcomesResponse" />
+  </message>
+  <message name="GetByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetByStudyProtocolRequest" />
+  </message>
+  <message name="GetByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetByStudyProtocolResponse" />
+  </message>
+  <message name="GetRequest">
+    <part name="parameters" element="tns:GetRequest" />
+  </message>
+  <message name="GetResponse">
+    <part name="parameters" element="tns:GetResponse" />
+  </message>
+  <message name="CreateRequest">
+    <part name="parameters" element="tns:CreateRequest" />
+  </message>
+  <message name="CreateResponse">
+    <part name="parameters" element="tns:CreateResponse" />
+  </message>
+  <message name="UpdateRequest">
+    <part name="parameters" element="tns:UpdateRequest" />
+  </message>
+  <message name="UpdateResponse">
+    <part name="parameters" element="tns:UpdateResponse" />
+  </message>
+  <message name="DeleteRequest">
+    <part name="parameters" element="tns:DeleteRequest" />
+  </message>
+  <message name="DeleteResponse">
+    <part name="parameters" element="tns:DeleteResponse" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="StudySubjectPortType" wsrp:ResourceProperties="tns:StudySubjectResourceProperties">
+    <operation name="getByStudySite">
+      <input message="tns:GetByStudySiteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/GetByStudySiteRequest" />
+      <output message="tns:GetByStudySiteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/GetByStudySiteResponse" />
+    </operation>
+    <operation name="getOutcomes">
+      <input message="tns:GetOutcomesRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/GetOutcomesRequest" />
+      <output message="tns:GetOutcomesResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/GetOutcomesResponse" />
+    </operation>
+    <operation name="createOutcomes">
+      <input message="tns:CreateOutcomesRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/CreateOutcomesRequest" />
+      <output message="tns:CreateOutcomesResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/CreateOutcomesResponse" />
+    </operation>
+    <operation name="getByStudyProtocol">
+      <input message="tns:GetByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/GetByStudyProtocolRequest" />
+      <output message="tns:GetByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/GetByStudyProtocolResponse" />
+    </operation>
+    <operation name="get">
+      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/GetRequest" />
+      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/GetResponse" />
+    </operation>
+    <operation name="create">
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/CreateResponse" />
+    </operation>
+    <operation name="update">
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/UpdateResponse" />
+    </operation>
+    <operation name="delete">
+      <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/DeleteRequest" />
+      <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/DeleteResponse" />
+    </operation>
+    <operation name="getServiceSecurityMetadata">
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+    </operation>
+  </portType>
+</definitions>
+

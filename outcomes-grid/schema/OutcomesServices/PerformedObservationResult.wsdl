@@ -1,0 +1,916 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns12="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types" xmlns:ns0="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns2="http://enterpriseservices.nci.nih.gov/OutcomesServices/types" xmlns:ns10="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types" xmlns:ns7="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types" xmlns:ns11="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types" name="PerformedObservationResult" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult">
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
+  <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types" schemaLocation="./PatientTypes.xsd" />
+      <import namespace="http://outcomes.services.coppa.nci.nih.gov" schemaLocation="./Outcomes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
+      <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" schemaLocation="./xsd/cagrid/types/service/servicemodel.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/types" schemaLocation="./OutcomesServicesTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/types" schemaLocation="./StudySubjectTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types" schemaLocation="./PerformedActivityTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" schemaLocation="./ActivityRelationshipTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types" schemaLocation="./PerformedObservationResultTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types" schemaLocation="./SubmissionTypes.xsd" />
+      <element name="GetRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedObservationResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateRequest">
+        <complexType>
+          <sequence>
+            <element name="performedObservationResult">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedObservationResult" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedObservationResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateRequest">
+        <complexType>
+          <sequence>
+            <element name="performedObservationResult">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedObservationResult" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedObservationResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="GetPerformedObservationResultByPerformedActivityRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedObservationResultByPerformedActivityResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedObservationResult" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedHistopathologyByPerformedActivityRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedHistopathologyByPerformedActivityResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedHistopathology" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedHistopathologyRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedHistopathologyResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedHistopathology" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedHistopathologyRequest">
+        <complexType>
+          <sequence>
+            <element name="performedHistopathology">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedHistopathology" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedHistopathologyResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedHistopathology" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedHistopathologyRequest">
+        <complexType>
+          <sequence>
+            <element name="performedHistopathology">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedHistopathology" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedHistopathologyResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedHistopathology" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedDiagnosisByPerformedActivityRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedDiagnosisByPerformedActivityResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedDiagnosis" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedDiagnosisRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedDiagnosisResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedDiagnosis" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedDiagnosisRequest">
+        <complexType>
+          <sequence>
+            <element name="performedDiagnosis">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedDiagnosis" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedDiagnosisResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedDiagnosis" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedDiagnosisRequest">
+        <complexType>
+          <sequence>
+            <element name="performedDiagnosis">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedDiagnosis" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedDiagnosisResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedDiagnosis" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedImageByPerformedActivityRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedImageByPerformedActivityResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedImage" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedImageRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedImageResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedImage" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedImageRequest">
+        <complexType>
+          <sequence>
+            <element name="performedImage">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedImage" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedImageResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedImage" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedImageRequest">
+        <complexType>
+          <sequence>
+            <element name="performedImage">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedImage" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedImageResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedImage" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedClinicalResultByPerformedActivityRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedClinicalResultByPerformedActivityResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedClinicalResult" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedClinicalResultRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedClinicalResultResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedClinicalResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedClinicalResultRequest">
+        <complexType>
+          <sequence>
+            <element name="performedClinicalResult">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedClinicalResult" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedClinicalResultResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedClinicalResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedClinicalResultRequest">
+        <complexType>
+          <sequence>
+            <element name="performedClinicalResult">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedClinicalResult" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedClinicalResultResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedClinicalResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedMedicalHistoryResultByPerformedActivityRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedMedicalHistoryResultByPerformedActivityResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedMedicalHistoryResult" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedMedicalHistoryResultRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedMedicalHistoryResultResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedMedicalHistoryResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedMedicalHistoryResultRequest">
+        <complexType>
+          <sequence>
+            <element name="performedMedicalHistoryResult">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedMedicalHistoryResult" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedMedicalHistoryResultResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedMedicalHistoryResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedMedicalHistoryResultRequest">
+        <complexType>
+          <sequence>
+            <element name="performedMedicalHistoryResult">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedMedicalHistoryResult" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedMedicalHistoryResultResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedMedicalHistoryResult" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedLesionDescriptionByPerformedActivityRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedLesionDescriptionByPerformedActivityResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedLesionDescription" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedLesionDescriptionRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetPerformedLesionDescriptionResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedLesionDescription" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedLesionDescriptionRequest">
+        <complexType>
+          <sequence>
+            <element name="performedLesionDescription">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedLesionDescription" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreatePerformedLesionDescriptionResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedLesionDescription" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedLesionDescriptionRequest">
+        <complexType>
+          <sequence>
+            <element name="performedLesionDescription">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:PerformedLesionDescription" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdatePerformedLesionDescriptionResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:PerformedLesionDescription" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="PerformedObservationResultResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="GetRequest">
+    <part name="parameters" element="tns:GetRequest" />
+  </message>
+  <message name="GetResponse">
+    <part name="parameters" element="tns:GetResponse" />
+  </message>
+  <message name="CreateRequest">
+    <part name="parameters" element="tns:CreateRequest" />
+  </message>
+  <message name="CreateResponse">
+    <part name="parameters" element="tns:CreateResponse" />
+  </message>
+  <message name="UpdateRequest">
+    <part name="parameters" element="tns:UpdateRequest" />
+  </message>
+  <message name="UpdateResponse">
+    <part name="parameters" element="tns:UpdateResponse" />
+  </message>
+  <message name="DeleteRequest">
+    <part name="parameters" element="tns:DeleteRequest" />
+  </message>
+  <message name="DeleteResponse">
+    <part name="parameters" element="tns:DeleteResponse" />
+  </message>
+  <message name="GetPerformedObservationResultByPerformedActivityRequest">
+    <part name="parameters" element="tns:GetPerformedObservationResultByPerformedActivityRequest" />
+  </message>
+  <message name="GetPerformedObservationResultByPerformedActivityResponse">
+    <part name="parameters" element="tns:GetPerformedObservationResultByPerformedActivityResponse" />
+  </message>
+  <message name="GetPerformedHistopathologyByPerformedActivityRequest">
+    <part name="parameters" element="tns:GetPerformedHistopathologyByPerformedActivityRequest" />
+  </message>
+  <message name="GetPerformedHistopathologyByPerformedActivityResponse">
+    <part name="parameters" element="tns:GetPerformedHistopathologyByPerformedActivityResponse" />
+  </message>
+  <message name="GetPerformedHistopathologyRequest">
+    <part name="parameters" element="tns:GetPerformedHistopathologyRequest" />
+  </message>
+  <message name="GetPerformedHistopathologyResponse">
+    <part name="parameters" element="tns:GetPerformedHistopathologyResponse" />
+  </message>
+  <message name="CreatePerformedHistopathologyRequest">
+    <part name="parameters" element="tns:CreatePerformedHistopathologyRequest" />
+  </message>
+  <message name="CreatePerformedHistopathologyResponse">
+    <part name="parameters" element="tns:CreatePerformedHistopathologyResponse" />
+  </message>
+  <message name="UpdatePerformedHistopathologyRequest">
+    <part name="parameters" element="tns:UpdatePerformedHistopathologyRequest" />
+  </message>
+  <message name="UpdatePerformedHistopathologyResponse">
+    <part name="parameters" element="tns:UpdatePerformedHistopathologyResponse" />
+  </message>
+  <message name="GetPerformedDiagnosisByPerformedActivityRequest">
+    <part name="parameters" element="tns:GetPerformedDiagnosisByPerformedActivityRequest" />
+  </message>
+  <message name="GetPerformedDiagnosisByPerformedActivityResponse">
+    <part name="parameters" element="tns:GetPerformedDiagnosisByPerformedActivityResponse" />
+  </message>
+  <message name="GetPerformedDiagnosisRequest">
+    <part name="parameters" element="tns:GetPerformedDiagnosisRequest" />
+  </message>
+  <message name="GetPerformedDiagnosisResponse">
+    <part name="parameters" element="tns:GetPerformedDiagnosisResponse" />
+  </message>
+  <message name="CreatePerformedDiagnosisRequest">
+    <part name="parameters" element="tns:CreatePerformedDiagnosisRequest" />
+  </message>
+  <message name="CreatePerformedDiagnosisResponse">
+    <part name="parameters" element="tns:CreatePerformedDiagnosisResponse" />
+  </message>
+  <message name="UpdatePerformedDiagnosisRequest">
+    <part name="parameters" element="tns:UpdatePerformedDiagnosisRequest" />
+  </message>
+  <message name="UpdatePerformedDiagnosisResponse">
+    <part name="parameters" element="tns:UpdatePerformedDiagnosisResponse" />
+  </message>
+  <message name="GetPerformedImageByPerformedActivityRequest">
+    <part name="parameters" element="tns:GetPerformedImageByPerformedActivityRequest" />
+  </message>
+  <message name="GetPerformedImageByPerformedActivityResponse">
+    <part name="parameters" element="tns:GetPerformedImageByPerformedActivityResponse" />
+  </message>
+  <message name="GetPerformedImageRequest">
+    <part name="parameters" element="tns:GetPerformedImageRequest" />
+  </message>
+  <message name="GetPerformedImageResponse">
+    <part name="parameters" element="tns:GetPerformedImageResponse" />
+  </message>
+  <message name="CreatePerformedImageRequest">
+    <part name="parameters" element="tns:CreatePerformedImageRequest" />
+  </message>
+  <message name="CreatePerformedImageResponse">
+    <part name="parameters" element="tns:CreatePerformedImageResponse" />
+  </message>
+  <message name="UpdatePerformedImageRequest">
+    <part name="parameters" element="tns:UpdatePerformedImageRequest" />
+  </message>
+  <message name="UpdatePerformedImageResponse">
+    <part name="parameters" element="tns:UpdatePerformedImageResponse" />
+  </message>
+  <message name="GetPerformedClinicalResultByPerformedActivityRequest">
+    <part name="parameters" element="tns:GetPerformedClinicalResultByPerformedActivityRequest" />
+  </message>
+  <message name="GetPerformedClinicalResultByPerformedActivityResponse">
+    <part name="parameters" element="tns:GetPerformedClinicalResultByPerformedActivityResponse" />
+  </message>
+  <message name="GetPerformedClinicalResultRequest">
+    <part name="parameters" element="tns:GetPerformedClinicalResultRequest" />
+  </message>
+  <message name="GetPerformedClinicalResultResponse">
+    <part name="parameters" element="tns:GetPerformedClinicalResultResponse" />
+  </message>
+  <message name="CreatePerformedClinicalResultRequest">
+    <part name="parameters" element="tns:CreatePerformedClinicalResultRequest" />
+  </message>
+  <message name="CreatePerformedClinicalResultResponse">
+    <part name="parameters" element="tns:CreatePerformedClinicalResultResponse" />
+  </message>
+  <message name="UpdatePerformedClinicalResultRequest">
+    <part name="parameters" element="tns:UpdatePerformedClinicalResultRequest" />
+  </message>
+  <message name="UpdatePerformedClinicalResultResponse">
+    <part name="parameters" element="tns:UpdatePerformedClinicalResultResponse" />
+  </message>
+  <message name="GetPerformedMedicalHistoryResultByPerformedActivityRequest">
+    <part name="parameters" element="tns:GetPerformedMedicalHistoryResultByPerformedActivityRequest" />
+  </message>
+  <message name="GetPerformedMedicalHistoryResultByPerformedActivityResponse">
+    <part name="parameters" element="tns:GetPerformedMedicalHistoryResultByPerformedActivityResponse" />
+  </message>
+  <message name="GetPerformedMedicalHistoryResultRequest">
+    <part name="parameters" element="tns:GetPerformedMedicalHistoryResultRequest" />
+  </message>
+  <message name="GetPerformedMedicalHistoryResultResponse">
+    <part name="parameters" element="tns:GetPerformedMedicalHistoryResultResponse" />
+  </message>
+  <message name="CreatePerformedMedicalHistoryResultRequest">
+    <part name="parameters" element="tns:CreatePerformedMedicalHistoryResultRequest" />
+  </message>
+  <message name="CreatePerformedMedicalHistoryResultResponse">
+    <part name="parameters" element="tns:CreatePerformedMedicalHistoryResultResponse" />
+  </message>
+  <message name="UpdatePerformedMedicalHistoryResultRequest">
+    <part name="parameters" element="tns:UpdatePerformedMedicalHistoryResultRequest" />
+  </message>
+  <message name="UpdatePerformedMedicalHistoryResultResponse">
+    <part name="parameters" element="tns:UpdatePerformedMedicalHistoryResultResponse" />
+  </message>
+  <message name="GetPerformedLesionDescriptionByPerformedActivityRequest">
+    <part name="parameters" element="tns:GetPerformedLesionDescriptionByPerformedActivityRequest" />
+  </message>
+  <message name="GetPerformedLesionDescriptionByPerformedActivityResponse">
+    <part name="parameters" element="tns:GetPerformedLesionDescriptionByPerformedActivityResponse" />
+  </message>
+  <message name="GetPerformedLesionDescriptionRequest">
+    <part name="parameters" element="tns:GetPerformedLesionDescriptionRequest" />
+  </message>
+  <message name="GetPerformedLesionDescriptionResponse">
+    <part name="parameters" element="tns:GetPerformedLesionDescriptionResponse" />
+  </message>
+  <message name="CreatePerformedLesionDescriptionRequest">
+    <part name="parameters" element="tns:CreatePerformedLesionDescriptionRequest" />
+  </message>
+  <message name="CreatePerformedLesionDescriptionResponse">
+    <part name="parameters" element="tns:CreatePerformedLesionDescriptionResponse" />
+  </message>
+  <message name="UpdatePerformedLesionDescriptionRequest">
+    <part name="parameters" element="tns:UpdatePerformedLesionDescriptionRequest" />
+  </message>
+  <message name="UpdatePerformedLesionDescriptionResponse">
+    <part name="parameters" element="tns:UpdatePerformedLesionDescriptionResponse" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="PerformedObservationResultPortType" wsrp:ResourceProperties="tns:PerformedObservationResultResourceProperties">
+    <operation name="get">
+      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetRequest" />
+      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetResponse" />
+    </operation>
+    <operation name="create">
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreateResponse" />
+    </operation>
+    <operation name="update">
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdateResponse" />
+    </operation>
+    <operation name="delete">
+      <input message="tns:DeleteRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/DeleteRequest" />
+      <output message="tns:DeleteResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/DeleteResponse" />
+    </operation>
+    <operation name="getPerformedObservationResultByPerformedActivity">
+      <input message="tns:GetPerformedObservationResultByPerformedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedObservationResultByPerformedActivityRequest" />
+      <output message="tns:GetPerformedObservationResultByPerformedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedObservationResultByPerformedActivityResponse" />
+    </operation>
+    <operation name="getPerformedHistopathologyByPerformedActivity">
+      <input message="tns:GetPerformedHistopathologyByPerformedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedHistopathologyByPerformedActivityRequest" />
+      <output message="tns:GetPerformedHistopathologyByPerformedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedHistopathologyByPerformedActivityResponse" />
+    </operation>
+    <operation name="getPerformedHistopathology">
+      <input message="tns:GetPerformedHistopathologyRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedHistopathologyRequest" />
+      <output message="tns:GetPerformedHistopathologyResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedHistopathologyResponse" />
+    </operation>
+    <operation name="createPerformedHistopathology">
+      <input message="tns:CreatePerformedHistopathologyRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedHistopathologyRequest" />
+      <output message="tns:CreatePerformedHistopathologyResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedHistopathologyResponse" />
+    </operation>
+    <operation name="updatePerformedHistopathology">
+      <input message="tns:UpdatePerformedHistopathologyRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedHistopathologyRequest" />
+      <output message="tns:UpdatePerformedHistopathologyResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedHistopathologyResponse" />
+    </operation>
+    <operation name="getPerformedDiagnosisByPerformedActivity">
+      <input message="tns:GetPerformedDiagnosisByPerformedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedDiagnosisByPerformedActivityRequest" />
+      <output message="tns:GetPerformedDiagnosisByPerformedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedDiagnosisByPerformedActivityResponse" />
+    </operation>
+    <operation name="getPerformedDiagnosis">
+      <input message="tns:GetPerformedDiagnosisRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedDiagnosisRequest" />
+      <output message="tns:GetPerformedDiagnosisResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedDiagnosisResponse" />
+    </operation>
+    <operation name="createPerformedDiagnosis">
+      <input message="tns:CreatePerformedDiagnosisRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedDiagnosisRequest" />
+      <output message="tns:CreatePerformedDiagnosisResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedDiagnosisResponse" />
+    </operation>
+    <operation name="updatePerformedDiagnosis">
+      <input message="tns:UpdatePerformedDiagnosisRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedDiagnosisRequest" />
+      <output message="tns:UpdatePerformedDiagnosisResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedDiagnosisResponse" />
+    </operation>
+    <operation name="getPerformedImageByPerformedActivity">
+      <input message="tns:GetPerformedImageByPerformedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedImageByPerformedActivityRequest" />
+      <output message="tns:GetPerformedImageByPerformedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedImageByPerformedActivityResponse" />
+    </operation>
+    <operation name="getPerformedImage">
+      <input message="tns:GetPerformedImageRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedImageRequest" />
+      <output message="tns:GetPerformedImageResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedImageResponse" />
+    </operation>
+    <operation name="createPerformedImage">
+      <input message="tns:CreatePerformedImageRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedImageRequest" />
+      <output message="tns:CreatePerformedImageResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedImageResponse" />
+    </operation>
+    <operation name="updatePerformedImage">
+      <input message="tns:UpdatePerformedImageRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedImageRequest" />
+      <output message="tns:UpdatePerformedImageResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedImageResponse" />
+    </operation>
+    <operation name="getPerformedClinicalResultByPerformedActivity">
+      <input message="tns:GetPerformedClinicalResultByPerformedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedClinicalResultByPerformedActivityRequest" />
+      <output message="tns:GetPerformedClinicalResultByPerformedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedClinicalResultByPerformedActivityResponse" />
+    </operation>
+    <operation name="getPerformedClinicalResult">
+      <input message="tns:GetPerformedClinicalResultRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedClinicalResultRequest" />
+      <output message="tns:GetPerformedClinicalResultResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedClinicalResultResponse" />
+    </operation>
+    <operation name="createPerformedClinicalResult">
+      <input message="tns:CreatePerformedClinicalResultRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedClinicalResultRequest" />
+      <output message="tns:CreatePerformedClinicalResultResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedClinicalResultResponse" />
+    </operation>
+    <operation name="updatePerformedClinicalResult">
+      <input message="tns:UpdatePerformedClinicalResultRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedClinicalResultRequest" />
+      <output message="tns:UpdatePerformedClinicalResultResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedClinicalResultResponse" />
+    </operation>
+    <operation name="getPerformedMedicalHistoryResultByPerformedActivity">
+      <input message="tns:GetPerformedMedicalHistoryResultByPerformedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedMedicalHistoryResultByPerformedActivityRequest" />
+      <output message="tns:GetPerformedMedicalHistoryResultByPerformedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedMedicalHistoryResultByPerformedActivityResponse" />
+    </operation>
+    <operation name="getPerformedMedicalHistoryResult">
+      <input message="tns:GetPerformedMedicalHistoryResultRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedMedicalHistoryResultRequest" />
+      <output message="tns:GetPerformedMedicalHistoryResultResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedMedicalHistoryResultResponse" />
+    </operation>
+    <operation name="createPerformedMedicalHistoryResult">
+      <input message="tns:CreatePerformedMedicalHistoryResultRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedMedicalHistoryResultRequest" />
+      <output message="tns:CreatePerformedMedicalHistoryResultResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedMedicalHistoryResultResponse" />
+    </operation>
+    <operation name="updatePerformedMedicalHistoryResult">
+      <input message="tns:UpdatePerformedMedicalHistoryResultRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedMedicalHistoryResultRequest" />
+      <output message="tns:UpdatePerformedMedicalHistoryResultResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedMedicalHistoryResultResponse" />
+    </operation>
+    <operation name="getPerformedLesionDescriptionByPerformedActivity">
+      <input message="tns:GetPerformedLesionDescriptionByPerformedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedLesionDescriptionByPerformedActivityRequest" />
+      <output message="tns:GetPerformedLesionDescriptionByPerformedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedLesionDescriptionByPerformedActivityResponse" />
+    </operation>
+    <operation name="getPerformedLesionDescription">
+      <input message="tns:GetPerformedLesionDescriptionRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedLesionDescriptionRequest" />
+      <output message="tns:GetPerformedLesionDescriptionResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/GetPerformedLesionDescriptionResponse" />
+    </operation>
+    <operation name="createPerformedLesionDescription">
+      <input message="tns:CreatePerformedLesionDescriptionRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedLesionDescriptionRequest" />
+      <output message="tns:CreatePerformedLesionDescriptionResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/CreatePerformedLesionDescriptionResponse" />
+    </operation>
+    <operation name="updatePerformedLesionDescription">
+      <input message="tns:UpdatePerformedLesionDescriptionRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedLesionDescriptionRequest" />
+      <output message="tns:UpdatePerformedLesionDescriptionResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/UpdatePerformedLesionDescriptionResponse" />
+    </operation>
+    <operation name="getServiceSecurityMetadata">
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+    </operation>
+  </portType>
+</definitions>
+
