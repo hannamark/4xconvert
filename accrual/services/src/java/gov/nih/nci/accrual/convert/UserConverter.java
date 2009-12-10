@@ -76,89 +76,96 @@
 *
 *
 */
+
 package gov.nih.nci.accrual.convert;
 
-/**
- * @author Hugh Reinhart
- * @since Aug 13, 2009
- */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
-"PMD.TooManyFields" })
-public class Converters {
+import gov.nih.nci.accrual.dto.UserDto;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
-    private static PerformedSubjectMilestoneConverter
-            performedSubjectMilestoneConverter = new PerformedSubjectMilestoneConverter();
-    private static StudySubjectConverter studySubjectConverter = new StudySubjectConverter();
-    private static PatientConverter patientConverter = new PatientConverter();
-    private static SubmissionConverter submissionConverter = new SubmissionConverter();
-    private static PerformedClinicalResultConverter pClinicalResultConverter = new PerformedClinicalResultConverter();
-    private static PerformedDiagnosisConverter pDiagnosisConverter = new PerformedDiagnosisConverter();
-    private static PerformedHistopathologyConverter pHistopathologyConverter = new PerformedHistopathologyConverter();
-    private static PerformedMedicalHistoryResultConverter pMedicalHistoryResultConverter = new 
-    PerformedMedicalHistoryResultConverter();
-    private static PerformedImageConverter pImageConverter = new PerformedImageConverter();
-    private static PerformedLesionDescriptionConverter pLesionDescriptionConverter = new 
-    PerformedLesionDescriptionConverter();
-    private static PerformedObservationResultConverter pObservationResultConverter = new 
-    PerformedObservationResultConverter();
-    private static PerformedActivityConverter performedActivityConverter = new PerformedActivityConverter();
-    private static PerformedObservationConverter pObservationConverter = new PerformedObservationConverter();
-    private static PerformedImagingConverter pImagingConverter = new PerformedImagingConverter();
-    private static PerformedProcedureConverter pProcedureConverter = new PerformedProcedureConverter();
-    private static PerformedSubjectMilestoneConverter pSubjectMilestoneConverter = new 
-    PerformedSubjectMilestoneConverter();
-    private static PerformedRadiationAdministrationConverter pRadiationAdministrationConverter = new
-    PerformedRadiationAdministrationConverter();
-    private static ActivityRelationshipConverter activityRelationshipConverter = new ActivityRelationshipConverter();
-    private static UserConverter userConverter = new UserConverter();
+import java.util.zip.DataFormatException;
+
+/**
+ * @author Lisa Kelley
+ * @since Dec 9, 2009
+ */
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public class UserConverter extends AbstractConverter<UserDto, RegistryUser> {
 
     /**
-     * @param clazz class
-     * @param <CONV> the converter type to get
-     * @return converter
+     * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public static <CONV extends AbstractConverter> CONV get(Class<CONV> clazz) {
-        if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
-            return (CONV) performedSubjectMilestoneConverter;
-        } else if (clazz.equals(StudySubjectConverter.class)) {
-            return (CONV) studySubjectConverter;
-        } else if (clazz.equals(PatientConverter.class)) {
-            return (CONV) patientConverter;
-        } else if (clazz.equals(SubmissionConverter.class)) {
-            return (CONV) submissionConverter;
-        } else if (clazz.equals(PerformedClinicalResultConverter.class)) {
-            return (CONV) pClinicalResultConverter;
-        } else if (clazz.equals(PerformedDiagnosisConverter.class)) {
-            return (CONV) pDiagnosisConverter;
-        } else if (clazz.equals(PerformedHistopathologyConverter.class)) {
-            return (CONV) pHistopathologyConverter;
-        } else if (clazz.equals(PerformedMedicalHistoryResultConverter.class)) {
-            return (CONV) pMedicalHistoryResultConverter;
-        } else if (clazz.equals(PerformedImageConverter.class)) {
-            return (CONV) pImageConverter;
-        } else if (clazz.equals(PerformedLesionDescriptionConverter.class)) {
-            return (CONV) pLesionDescriptionConverter;
-        } else if (clazz.equals(PerformedObservationResultConverter.class)) {
-            return (CONV) pObservationResultConverter;
-        } else if (clazz.equals(PerformedActivityConverter.class)) {
-            return (CONV) performedActivityConverter;
-        } else if (clazz.equals(PerformedObservationConverter.class)) {
-            return (CONV) pObservationConverter;
-        } else if (clazz.equals(PerformedImagingConverter.class)) {
-            return (CONV) pImagingConverter;
-        } else if (clazz.equals(PerformedProcedureConverter.class)) {
-            return (CONV) pProcedureConverter;
-        } else if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
-            return (CONV) pSubjectMilestoneConverter;
-        } else if (clazz.equals(PerformedRadiationAdministrationConverter.class)) {
-            return (CONV) pRadiationAdministrationConverter;
-        } else if (clazz.equals(ActivityRelationshipConverter.class)) {
-            return (CONV) activityRelationshipConverter;
-        } else if (clazz.equals(UserConverter.class)) {
-            return (CONV) userConverter;
+    @Override
+    public UserDto convertFromDomainToDto(RegistryUser bo) throws DataFormatException {
+        UserDto dto = new UserDto();
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));        
+        dto.setFirstName(StConverter.convertToSt(bo.getFirstName()));
+        if (bo.getMiddleName() != null) {
+            dto.setMiddleName(StConverter.convertToSt(bo.getMiddleName()));
         }
-        return null;
+        dto.setLastName(StConverter.convertToSt(bo.getLastName()));
+        if (bo.getAddressLine() != null) {
+            dto.setAddress(StConverter.convertToSt(bo.getAddressLine()));
+        }
+        if (bo.getCity() != null) {
+            dto.setCity(StConverter.convertToSt(bo.getCity()));
+        }
+        dto.setState(StConverter.convertToSt(bo.getState()));
+        if (bo.getPostalCode() != null) {
+            dto.setPostalCode(StConverter.convertToSt(bo.getPostalCode()));
+        }
+        dto.setCountry(StConverter.convertToSt(bo.getCountry()));
+        dto.setPhone(StConverter.convertToSt(bo.getPhone()));        
+        dto.setAffiliateOrg(StConverter.convertToSt(bo.getAffiliateOrg()));
+        if (bo.getPrsOrgName() != null) {
+            dto.setPrsOrg(StConverter.convertToSt(bo.getPrsOrgName()));
+        }
+        if (bo.getPoOrganizationId() != null) {
+            dto.setPoOrganizationIdentifier(IiConverter.convertToIi(bo.getPoOrganizationId()));
+        }
+        if (bo.getPoPersonId() != null) {
+            dto.setPoPersonIdentifier(IiConverter.convertToIi(bo.getPoPersonId()));
+        }
+        return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RegistryUser convertFromDtoToDomain(UserDto dto) throws DataFormatException {
+        RegistryUser bo = new RegistryUser();
+        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        }
+        bo.setFirstName(StConverter.convertToString(dto.getFirstName()));
+        if (!PAUtil.isStNull(dto.getMiddleName())) {
+            bo.setMiddleName(StConverter.convertToString(dto.getMiddleName()));
+        }
+        bo.setLastName(StConverter.convertToString(dto.getLastName()));
+        if (!PAUtil.isStNull(dto.getAddress())) {
+            bo.setAddressLine(StConverter.convertToString(dto.getAddress()));
+        }
+        if (!PAUtil.isStNull(dto.getAddress())) {
+            bo.setAddressLine(StConverter.convertToString(dto.getAddress()));
+        }
+        if (!PAUtil.isStNull(dto.getCity())) {
+            bo.setCity(StConverter.convertToString(dto.getCity()));
+        }
+        bo.setState(StConverter.convertToString(dto.getState()));
+        if (!PAUtil.isStNull(dto.getPostalCode())) {
+            bo.setPostalCode(StConverter.convertToString(dto.getPostalCode()));
+        }
+        bo.setCountry(StConverter.convertToString(dto.getCountry()));
+        bo.setPhone(StConverter.convertToString(dto.getPhone()));
+        bo.setAffiliateOrg(StConverter.convertToString(dto.getAffiliateOrg()));
+        if (!PAUtil.isStNull(dto.getPrsOrg())) {
+            bo.setPrsOrgName(StConverter.convertToString(dto.getPrsOrg()));
+        }
+        bo.setPoOrganizationId(IiConverter.convertToLong(dto.getPoOrganizationIdentifier()));
+        bo.setPoPersonId(IiConverter.convertToLong(dto.getPoPersonIdentifier()));
+        return bo;
     }
 }
-

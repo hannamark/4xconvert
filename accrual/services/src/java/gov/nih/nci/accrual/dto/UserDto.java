@@ -76,89 +76,213 @@
 *
 *
 */
-package gov.nih.nci.accrual.convert;
+
+package gov.nih.nci.accrual.dto;
+
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @author Lisa Kelley
+ * @since Dec 9, 2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
-"PMD.TooManyFields" })
-public class Converters {
+public class UserDto extends BaseDTO {
+    private static final long serialVersionUID = 2286849965392968341L;
 
-    private static PerformedSubjectMilestoneConverter
-            performedSubjectMilestoneConverter = new PerformedSubjectMilestoneConverter();
-    private static StudySubjectConverter studySubjectConverter = new StudySubjectConverter();
-    private static PatientConverter patientConverter = new PatientConverter();
-    private static SubmissionConverter submissionConverter = new SubmissionConverter();
-    private static PerformedClinicalResultConverter pClinicalResultConverter = new PerformedClinicalResultConverter();
-    private static PerformedDiagnosisConverter pDiagnosisConverter = new PerformedDiagnosisConverter();
-    private static PerformedHistopathologyConverter pHistopathologyConverter = new PerformedHistopathologyConverter();
-    private static PerformedMedicalHistoryResultConverter pMedicalHistoryResultConverter = new 
-    PerformedMedicalHistoryResultConverter();
-    private static PerformedImageConverter pImageConverter = new PerformedImageConverter();
-    private static PerformedLesionDescriptionConverter pLesionDescriptionConverter = new 
-    PerformedLesionDescriptionConverter();
-    private static PerformedObservationResultConverter pObservationResultConverter = new 
-    PerformedObservationResultConverter();
-    private static PerformedActivityConverter performedActivityConverter = new PerformedActivityConverter();
-    private static PerformedObservationConverter pObservationConverter = new PerformedObservationConverter();
-    private static PerformedImagingConverter pImagingConverter = new PerformedImagingConverter();
-    private static PerformedProcedureConverter pProcedureConverter = new PerformedProcedureConverter();
-    private static PerformedSubjectMilestoneConverter pSubjectMilestoneConverter = new 
-    PerformedSubjectMilestoneConverter();
-    private static PerformedRadiationAdministrationConverter pRadiationAdministrationConverter = new
-    PerformedRadiationAdministrationConverter();
-    private static ActivityRelationshipConverter activityRelationshipConverter = new ActivityRelationshipConverter();
-    private static UserConverter userConverter = new UserConverter();
-
+    private St loginName;
+    private St password;
+    private St firstName;
+    private St middleName;
+    private St lastName;
+    private St address;
+    private St city;
+    private St state;
+    private St postalCode;
+    private St country;
+    private St phone;
+    private St affiliateOrg;
+    private St prsOrg;    
+    private Ii poOrganizationIdentifier;
+    private Ii poPersonIdentifier;
     /**
-     * @param clazz class
-     * @param <CONV> the converter type to get
-     * @return converter
+     * @return the loginName
      */
-    @SuppressWarnings("unchecked")
-    public static <CONV extends AbstractConverter> CONV get(Class<CONV> clazz) {
-        if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
-            return (CONV) performedSubjectMilestoneConverter;
-        } else if (clazz.equals(StudySubjectConverter.class)) {
-            return (CONV) studySubjectConverter;
-        } else if (clazz.equals(PatientConverter.class)) {
-            return (CONV) patientConverter;
-        } else if (clazz.equals(SubmissionConverter.class)) {
-            return (CONV) submissionConverter;
-        } else if (clazz.equals(PerformedClinicalResultConverter.class)) {
-            return (CONV) pClinicalResultConverter;
-        } else if (clazz.equals(PerformedDiagnosisConverter.class)) {
-            return (CONV) pDiagnosisConverter;
-        } else if (clazz.equals(PerformedHistopathologyConverter.class)) {
-            return (CONV) pHistopathologyConverter;
-        } else if (clazz.equals(PerformedMedicalHistoryResultConverter.class)) {
-            return (CONV) pMedicalHistoryResultConverter;
-        } else if (clazz.equals(PerformedImageConverter.class)) {
-            return (CONV) pImageConverter;
-        } else if (clazz.equals(PerformedLesionDescriptionConverter.class)) {
-            return (CONV) pLesionDescriptionConverter;
-        } else if (clazz.equals(PerformedObservationResultConverter.class)) {
-            return (CONV) pObservationResultConverter;
-        } else if (clazz.equals(PerformedActivityConverter.class)) {
-            return (CONV) performedActivityConverter;
-        } else if (clazz.equals(PerformedObservationConverter.class)) {
-            return (CONV) pObservationConverter;
-        } else if (clazz.equals(PerformedImagingConverter.class)) {
-            return (CONV) pImagingConverter;
-        } else if (clazz.equals(PerformedProcedureConverter.class)) {
-            return (CONV) pProcedureConverter;
-        } else if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
-            return (CONV) pSubjectMilestoneConverter;
-        } else if (clazz.equals(PerformedRadiationAdministrationConverter.class)) {
-            return (CONV) pRadiationAdministrationConverter;
-        } else if (clazz.equals(ActivityRelationshipConverter.class)) {
-            return (CONV) activityRelationshipConverter;
-        } else if (clazz.equals(UserConverter.class)) {
-            return (CONV) userConverter;
-        }
-        return null;
+    public St getLoginName() {
+        return loginName;
+    }
+    /**
+     * @param loginName the loginName to set
+     */
+    public void setLoginName(St loginName) {
+        this.loginName = loginName;
+    }
+    /**
+     * @return the password
+     */
+    public St getPassword() {
+        return password;
+    }
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(St password) {
+        this.password = password;
+    }
+    /**
+     * @return the firstName
+     */
+    public St getFirstName() {
+        return firstName;
+    }
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(St firstName) {
+        this.firstName = firstName;
+    }
+    /**
+     * @return the middleName
+     */
+    public St getMiddleName() {
+        return middleName;
+    }
+    /**
+     * @param middleName the middleName to set
+     */
+    public void setMiddleName(St middleName) {
+        this.middleName = middleName;
+    }
+    /**
+     * @return the lastName
+     */
+    public St getLastName() {
+        return lastName;
+    }
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(St lastName) {
+        this.lastName = lastName;
+    }
+    /**
+     * @return the address
+     */
+    public St getAddress() {
+        return address;
+    }
+    /**
+     * @param address the address to set
+     */
+    public void setAddress(St address) {
+        this.address = address;
+    }
+    /**
+     * @return the city
+     */
+    public St getCity() {
+        return city;
+    }
+    /**
+     * @param city the city to set
+     */
+    public void setCity(St city) {
+        this.city = city;
+    }
+    /**
+     * @return the firstName
+     */
+    public St getState() {
+        return state;
+    }
+    /**
+     * @param state the state to set
+     */
+    public void setState(St state) {
+        this.state = state;
+    }
+    /**
+     * @return the postalCode
+     */
+    public St getPostalCode() {
+        return postalCode;
+    }
+    /**
+     * @param postalCode the postalCode to set
+     */
+    public void setPostalCode(St postalCode) {
+        this.postalCode = postalCode;
+    }
+    /**
+     * @return the country
+     */
+    public St getCountry() {
+        return country;
+    }
+    /**
+     * @param country the country to set
+     */
+    public void setCountry(St country) {
+        this.country = country;
+    }
+    /**
+     * @return the phone
+     */
+    public St getPhone() {
+        return phone;
+    }
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(St phone) {
+        this.phone = phone;
+    }
+    /**
+     * @return the affiliateOrg
+     */
+    public St getAffiliateOrg() {
+        return affiliateOrg;
+    }
+    /**
+     * @param affiliateOrg the affiliateOrg to set
+     */
+    public void setAffiliateOrg(St affiliateOrg) {
+        this.affiliateOrg = affiliateOrg;
+    }
+    /**
+     * @return the prsOrg
+     */
+    public St getPrsOrg() {
+        return prsOrg;
+    }
+    /**
+     * @param prsOrg the prsOrg to set
+     */
+    public void setPrsOrg(St prsOrg) {
+        this.prsOrg = prsOrg;
+    }
+    /**
+     * @return the poOrganizationIdentifier
+     */
+    public Ii getPoOrganizationIdentifier() {
+        return poOrganizationIdentifier;
+    }
+    /**
+     * @param poOrganizationIdentifier the poOrganizationIdentifier to set
+     */
+    public void setPoOrganizationIdentifier(Ii poOrganizationIdentifier) {
+        this.poOrganizationIdentifier = poOrganizationIdentifier;
+    }
+    /**
+     * @return the poPersonIdentifier
+     */
+    public Ii getPoPersonIdentifier() {
+        return poPersonIdentifier;
+    }
+    /**
+     * @param poPersonIdentifier the poPersonIdentifier to set
+     */
+    public void setPoPersonIdentifier(Ii poPersonIdentifier) {
+        this.poPersonIdentifier = poPersonIdentifier;
     }
 }
-
