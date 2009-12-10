@@ -247,7 +247,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
             NullifiedEntityException, NullifiedRoleException {
         Ii id = new Ii();
         id.setExtension(ext);
-        id.setRoot("2.16.840.1.113883.3.26.4.5.3");
+        id.setRoot("2.16.840.1.113883.3.26.4.4.2");
         id.setIdentifierName("NCI health care provider identifier");
         HealthCareProviderDTO dto = RemoteServiceHelper.getHealthCareProviderCorrelationService().getCorrelation(id);
         dto.setCertificateLicenseText(TestConvertHelper.convertToSt("CR cert license change"));

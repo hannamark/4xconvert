@@ -201,7 +201,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         
         // create the ACTIVE Person
         openCreatePerson();
-        createPerson("ACTIVE", "Dr", "po-1177", "L", "po-1177", "III", getAddress(), "sample@example.com",
+        createPerson("ACTIVE", "Dr", "po-1175", "L", "po-1175", "III", getAddress(), "sample@example.com",
                 "703-111-2345", "http://www.example.com", "703-111-1234");
         String personIdExt = selenium.getText("wwctrl_person.id");
         Ii personId = new Ii();
