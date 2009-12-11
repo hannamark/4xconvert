@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The OutcomesServices
+ * source code form and machine readable, binary, object code form. The PA Grid
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This OutcomesServices Software License (the License) is between NCI and You. You (or
+ * This PA Grid Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the OutcomesServices Software to (i) use, install, access, operate,
+ * its rights in the PA Grid Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the OutcomesServices Software; (ii) distribute and
- * have distributed to and by third parties the OutcomesServices Software and any
+ * and prepare derivative works of the PA Grid Software; (ii) distribute and
+ * have distributed to and by third parties the PA Grid Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,43 +80,81 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
-package gov.nih.nci.coppa.outcomes.grid.dto.transform.faults;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformerTest;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
+import gov.nih.nci.coppa.services.outcomes.StudySubject;
+import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.StudySubjectTransformer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.services.outcomes.grid.dto.faults.FaultUtil;
+public class StudySubjectTransformerTest extends
+        AbstractTransformerTestBase<StudySubjectTransformer, StudySubject, StudySubjectDto> {
 
-import java.rmi.RemoteException;
-import java.util.zip.DataFormatException;
+    @Override
+    public StudySubjectDto makeDtoSimple() {
+        StudySubjectDto result = new StudySubjectDto();
+        result.setIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
 
-import org.junit.Test;
+        result.setAssignedIdentifier(new STTransformerTest().makeDtoSimple());
+        result.setDiseaseIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setOutcomesLoginName(new STTransformerTest().makeDtoSimple());
+        result.setPatientIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setPaymentMethodCode(new CDTransformerTest().makeDtoSimple());
+        result.setStatusCode(new CDTransformerTest().makeDtoSimple());
+        result.setStatusDateRange(new IVLTSTransformerTest().makeDtoSimple());
+        result.setStudySiteIdentifier(new IITransformerTest().makeDtoSimple());
 
-public class FaultUtilTest {
-
-    @Test
-    public void testRethrowRemoteException() {
-        RemoteException cause = new RemoteException();
-        RemoteException result = FaultUtil.reThrowRemote(cause);
-        assertTrue(result instanceof RemoteException);
-        assertSame(cause, result);
+        return result;
     }
 
-    @Test
-    public void testRethrowUnknown() {
-        RuntimeException cause = new RuntimeException("123");
-        RemoteException result = FaultUtil.reThrowRemote(cause);
-        assertTrue(result instanceof RemoteException);
-        assertEquals(cause, result.getCause());
+    @Override
+    public StudySubject makeXmlSimple() {
+        StudySubject result = new StudySubject();
+        result.setIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
+
+        result.setAssignedIdentifier(new STTransformerTest().makeXmlSimple());
+        result.setDiseaseIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setOutcomesLoginName(new STTransformerTest().makeXmlSimple());
+        result.setPatientIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setPaymentMethodCode(new CDTransformerTest().makeXmlSimple());
+        result.setStatusCode(new CDTransformerTest().makeXmlSimple());
+        result.setStatusDateRange(new IVLTSTransformerTest().makeXmlSimple());
+        result.setStudySiteIdentifier(new IITransformerTest().makeXmlSimple());
+        return result;
     }
 
-    @Test
-    public void testRethrowDataFormatException() {
-        DataFormatException cause = new DataFormatException("123");
-        RemoteException result = FaultUtil.reThrowRemote(cause);
-        assertTrue(result instanceof RemoteException);
-        assertSame(cause, result.getCause());
+    @Override
+    public void verifyDtoSimple(StudySubjectDto x) {
+        new IITransformerTest().verifyDtoSimple(x.getIdentifier());
+        new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
+
+        new STTransformerTest().verifyDtoSimple(x.getAssignedIdentifier());
+        new IITransformerTest().verifyDtoSimple(x.getDiseaseIdentifier());
+        new STTransformerTest().verifyDtoSimple(x.getOutcomesLoginName());
+        new IITransformerTest().verifyDtoSimple(x.getPatientIdentifier());
+        new CDTransformerTest().verifyDtoSimple(x.getPaymentMethodCode());
+        new IVLTSTransformerTest().verifyDtoSimple(x.getStatusDateRange());
+        new IITransformerTest().verifyDtoSimple(x.getStudySiteIdentifier());
+
     }
 
+    @Override
+    public void verifyXmlSimple(StudySubject x) {
+        new IITransformerTest().verifyXmlSimple(x.getIdentifier());
+        new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
+
+        new STTransformerTest().verifyXmlSimple(x.getAssignedIdentifier());
+        new IITransformerTest().verifyXmlSimple(x.getDiseaseIdentifier());
+        new STTransformerTest().verifyXmlSimple(x.getOutcomesLoginName());
+        new IITransformerTest().verifyXmlSimple(x.getPatientIdentifier());
+        new CDTransformerTest().verifyXmlSimple(x.getPaymentMethodCode());
+        new IVLTSTransformerTest().verifyXmlSimple(x.getStatusDateRange());
+        new IITransformerTest().verifyXmlSimple(x.getStudySiteIdentifier());
+    }
 }

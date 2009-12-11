@@ -80,12 +80,15 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.outcomes.grid.dto.transform;
+package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-import gov.nih.nci.coppa.services.outcomes.grid.dto.TransformerRegistry;
+import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.StudySubjectTransformer;
+import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.TransformerRegistry;
 
 import java.util.Map;
 
@@ -97,7 +100,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(0, tMap.size());
+        assertEquals(1, tMap.size());
         tMap.clear();
     }
 
@@ -105,8 +108,8 @@ public class TransformerRegistryTest {
     @SuppressWarnings("unchecked")
     public void testGetTransformer() {
         //#1
-//        Transformer trans = TransformerRegistry.INSTANCE.getTransformer(StudySubjectDto.class);
-//        assertTrue(trans instanceof StudySubjectTransformer);
+        Transformer trans = TransformerRegistry.INSTANCE.getTransformer(StudySubjectDto.class);
+        assertTrue(trans instanceof StudySubjectTransformer);
 
     }
 

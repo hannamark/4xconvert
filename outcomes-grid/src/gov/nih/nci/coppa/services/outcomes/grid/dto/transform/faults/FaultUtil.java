@@ -80,52 +80,31 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.outcomes.grid.dto;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+package gov.nih.nci.coppa.services.outcomes.grid.dto.transform.faults;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.rmi.RemoteException;
+import java.util.zip.DataFormatException;
 
 /**
- * A registry of Transformer(s).
- *
- * @author smatyas
- *
+ * Transforms exceptions into types that can be transmitted via grid services.
  */
-public final class TransformerRegistry {
+public final class FaultUtil {
 
-    private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
-
-    static {
-//        values.put(StudySubjectDto.class, StudySubjectTransformer.INSTANCE);
+    private FaultUtil() {
     }
 
     /**
-     * Public singleton.
+     * @param cause the underlying throwable to handle
+     * @return the cause translated to a type of RemoteException
      */
-    public static final TransformerRegistry INSTANCE = new TransformerRegistry();
-
-    private TransformerRegistry() {
-    }
-
-    /**
-     * @param type DTO type to translate
-     * @return transformer for the type requested
-     */
-    public Transformer<?, ?> getTransformer(Class<?> type) {
-        Transformer<?, ?> transformer = values.get(type);
-        if (transformer == null) {
-            throw new RuntimeException("Unable to find Transformer for type " + type);
+    public static RemoteException reThrowRemote(Throwable cause) {
+        if (cause instanceof DataFormatException) {
+            return new RemoteException("Caught DataFormatException", cause);
+        } else if (cause instanceof RemoteException) { /* default */
+            return (RemoteException) cause;
+        } else {
+            return new RemoteException("Unsupported exception, skipping fault transformation", cause);
         }
-        return transformer;
-    }
-
-    /**
-     * @return an unmodifiable version of the registry
-     */
-    public static Map<Class<?>, Transformer<?, ?>> getRegistry() {
-        return Collections.unmodifiableMap(values);
     }
 }
