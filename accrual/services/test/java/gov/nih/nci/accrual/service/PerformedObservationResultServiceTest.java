@@ -184,6 +184,30 @@ public class PerformedObservationResultServiceTest
         assertTrue(pddto2.getResultCode().getCode().equals(r2.getResultCode().getCode()));
         assertTrue(newValue.equals(IvlConverter.convertTs().convertLow(r2.getResultDateRange())));
         
+      //PerformedImage
+        PerformedImageDto pidto = new  PerformedImageDto();
+        pidto.setResultDateRange(IvlConverter.convertTs().convertToIvl(PAUtil.dateStringToTimestamp("11/12/2009"),null));
+        pidto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        pidto.setImageIdentifier(IiConverter.convertToIi(1L));
+        pidto.setSeriesIdentifier(IiConverter.convertToIi(1L));
+        
+        PerformedImageDto pi = bean.createPerformedImage(pidto);
+        assertNotNull(pi);
+        assertNotNull(pi.getIdentifier().getExtension());
+   
+        Timestamp pinewValue = PAUtil.dateStringToTimestamp("11/13/2009");
+        assertFalse(pinewValue.equals(TestSchema.performedImages.get(0).getResultDateRangeLow()));
+        PerformedImageDto pidto2 = bean.getPerformedImage(IiConverter.convertToIi(TestSchema.performedImages.get(0).getId()));
+        pidto2.setResultDateRange(IvlConverter.convertTs().convertToIvl(newValue,null));
+        pidto2.setResultCode(CdConverter.convertStringToCd("test"));
+        pidto2.setImageIdentifier(IiConverter.convertToIi(1L));
+        pidto2.setSeriesIdentifier(IiConverter.convertToIi(1L));
+        PerformedImageDto ri2 = bean.updatePerformedImage(pidto2);
+        assertTrue(pidto2.getResultCode().getCode().equals(ri2.getResultCode().getCode()));
+        assertTrue(pidto2.getImageIdentifier().getExtension().equals(ri2.getImageIdentifier().getExtension()));
+        assertTrue(pidto2.getSeriesIdentifier().getExtension().equals(ri2.getSeriesIdentifier().getExtension()));
+        assertTrue(newValue.equals(IvlConverter.convertTs().convertLow(r2.getResultDateRange())));
+        
         //PerformedClinicalResult
         PerformedClinicalResultDto pcrdto = new  PerformedClinicalResultDto();
         pcrdto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));

@@ -80,8 +80,8 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;

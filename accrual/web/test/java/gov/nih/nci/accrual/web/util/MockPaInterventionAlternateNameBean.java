@@ -131,8 +131,7 @@ public class MockPaInterventionAlternateNameBean implements
      */
     public List<InterventionAlternateNameDTO> getByIntervention(
             Ii[] interventionsIi) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        return list;
     }
 
     /**

@@ -130,7 +130,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setName(StConverter.convertToSt("TreatmentPlan1"));
         dto.setTextDescription(StConverter.convertToSt("TP description")); 
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         paList.add(dto);
         dto = new PerformedActivityDto();
         dto.setIdentifier(IiConverter.convertToIi(COURSEID));
@@ -140,7 +140,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         courseDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dto.setActualDateRange(courseDate);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(2L));
-        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(2L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         paList.add(dto);
     }
     private List<PerformedObservationDto> poList;
@@ -160,7 +160,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setIdentifier(IiConverter.convertToIi(DEATH_INFORMATIONID));
         dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.DEATH_INFORMATION));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         poList.add(dto);
         
         dto = new PerformedObservationDto();
@@ -168,7 +168,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.AUTOPSY_INFORMATION));
         dto.setTargetSiteCode(CdConverter.convertStringToCd("targetSite"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         poList.add(dto);
     }
     
@@ -183,7 +183,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         offTreatmentDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dto.setActualDateRange(offTreatmentDate);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         psmList.add(dto);
     }
     private List<PerformedProcedureDto> ppList;
@@ -198,7 +198,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setActualDateRange(surgeryDate);
         dto.setInterventionIdentifier(IiConverter.convertToIi(1L));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         ppList.add(dto);
     }
 
@@ -452,6 +452,11 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         for (PoSs item : listPo) {
             if (item.ss.equals(ii.getExtension())) {
                 list.add(item.dto);
+            }
+        }
+        for (PerformedObservationDto item : poList) {
+            if (ii.getExtension().equals(item.getStudySubjectIdentifier().getExtension())) {
+                list.add(item);
             }
         }
         return list;

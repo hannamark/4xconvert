@@ -86,7 +86,6 @@ import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
-import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -112,6 +111,7 @@ public class DeathInformationActionTest extends AbstractAccrualActionTest {
         action = new DeathInformationAction();
         action.prepare();
         deathInformation = new DeathInfoWebDto();
+        setParticipantIi(PARTICIPANT1);
     }
 
     @Override
