@@ -20,6 +20,7 @@
     <property name="services.build.domainDir" value="${services.build.srcDir}/gov/nih/nci/pa"/>
     <property name="services.build.resourceDir" value="${basedir}/src/resources"/>
     <property name="services.jar" value="accrual-services.jar"/>
+	<property name="services-client.jar" value="accrual-services-client.jar"/>
     <property name="services.build.testSrcDir" value="${basedir}/test/java"/>
     <property name="services.build.testOutputDir" value="${services.build.dir}/test-classes"/>
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
@@ -327,6 +328,28 @@
              compress="true" 
              index="false" 
              basedir="${services.build.outputDir}"/>
+    	
+    	<jar jarfile="${services.build.dir}/${services-client.jar}" 
+    	             compress="true" 
+    	             index="false" 
+    	             basedir="${services.build.outputDir}"
+    	             includes="**/*.class"
+    	             excludes="**/pa/**/*.class
+            						**/convert/*
+									**/dto/util/PO*.class
+									**/dto/util/S*.class
+    								**/service/*Bean.class
+    		                        **/service/*BeanLocal.class
+    		                        **/service/Abstract*.class
+    		                        **/service/BaseLookUpService.class
+    							    **/service/util/A*.class
+								    **/service/util/C*.class
+								    **/service/util/S*.class
+								    **/service/util/PatientBean.class
+								    **/service/util/PatientServiceBean.class
+								    **/service/util/PatientServiceRemote.class
+    								**/util/AccrualHibernate*
+    		"/>
     </target>
     
     <target name="jar" depends="ivy-get, create-jar, test-dynamic-analysis" 
