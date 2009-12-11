@@ -59,10 +59,10 @@ public class RegistryUserWebDTO {
         this.password = password;
         this.retypePassword = password;
         this.prsOrgName = registryUser.getPrsOrgName();
-        if (registryUser.getPoOrganizationId() == null) {
+        if (registryUser.getPoOrganizationId() != null) {
             this.treatmentSiteId = String.valueOf(registryUser.getPoOrganizationId());
         }
-        if (registryUser.getPoPersonId() == null) {
+        if (registryUser.getPoPersonId() != null) {
             this.physicianId = String.valueOf(registryUser.getPoPersonId());
         }        
     }
