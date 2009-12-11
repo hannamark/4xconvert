@@ -1,6 +1,6 @@
-package gov.nih.nci.coppa.services.outcomes.activityrelationship.service;
+package gov.nih.nci.coppa.services.outcomes.user.service;
 
-import gov.nih.nci.coppa.services.outcomes.activityrelationship.service.globus.resource.ActivityRelationshipResource;
+import gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResource;
 import  gov.nih.nci.coppa.services.outcomes.service.OutcomesServicesConfiguration;
 
 import java.rmi.RemoteException;
@@ -26,9 +26,9 @@ import org.globus.wsrf.ResourcePropertySet;
  * @created by Introduce Toolkit version 1.3
  * 
  */
-public abstract class ActivityRelationshipImplBase {
+public abstract class UserImplBase {
 	
-	public ActivityRelationshipImplBase() throws RemoteException {
+	public UserImplBase() throws RemoteException {
 	
 	}
 	
@@ -37,9 +37,9 @@ public abstract class ActivityRelationshipImplBase {
 	}
 	
 	
-	public gov.nih.nci.coppa.services.outcomes.activityrelationship.service.globus.resource.ActivityRelationshipResourceHome getResourceHome() throws Exception {
+	public gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResourceHome getResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("home");
-		return (gov.nih.nci.coppa.services.outcomes.activityrelationship.service.globus.resource.ActivityRelationshipResourceHome)resource;
+		return (gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResourceHome)resource;
 	}
 
 	
@@ -48,6 +48,11 @@ public abstract class ActivityRelationshipImplBase {
 	public gov.nih.nci.coppa.services.outcomes.service.globus.resource.OutcomesServicesResourceHome getOutcomesServicesResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("outcomesServicesHome");
 		return (gov.nih.nci.coppa.services.outcomes.service.globus.resource.OutcomesServicesResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.outcomes.activityrelationship.service.globus.resource.ActivityRelationshipResourceHome getActivityRelationshipResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("activityRelationshipHome");
+		return (gov.nih.nci.coppa.services.outcomes.activityrelationship.service.globus.resource.ActivityRelationshipResourceHome)resource;
 	}
 	
 	public gov.nih.nci.coppa.services.outcomes.performedactivity.service.globus.resource.PerformedActivityResourceHome getPerformedActivityResourceHome() throws Exception {
@@ -73,11 +78,6 @@ public abstract class ActivityRelationshipImplBase {
 	public gov.nih.nci.coppa.services.outcomes.patient.service.globus.resource.PatientResourceHome getPatientResourceHome() throws Exception {
 		ResourceHome resource = getResourceHome("patientHome");
 		return (gov.nih.nci.coppa.services.outcomes.patient.service.globus.resource.PatientResourceHome)resource;
-	}
-	
-	public gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResourceHome getUserResourceHome() throws Exception {
-		ResourceHome resource = getResourceHome("userHome");
-		return (gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResourceHome)resource;
 	}
 	
 	

@@ -348,4 +348,29 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="User">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="OUTCOMES:BaseType" >
+                    <xs:sequence>
+                        <xs:element name="loginName" type="ISO:ST" />
+                        <xs:element name="password" type="ISO:ST" />
+                        <xs:element name="firstName" type="ISO:ST" />
+                        <xs:element name="middleName" type="ISO:ST" />
+                        <xs:element name="lastName" type="ISO:ST" />
+                        <xs:element name="address" type="ISO:ST" />
+                        <xs:element name="city" type="ISO:ST" />
+                        <xs:element name="state" type="ISO:ST" />
+                        <xs:element name="postalCode" type="ISO:ST" />
+                        <xs:element name="country" type="ISO:ST" />
+                        <xs:element name="phone" type="ISO:ST" />
+                        <xs:element name="affiliateOrg" type="ISO:ST" />
+                        <xs:element name="prsOrg" type="ISO:ST" />
+                        <xs:element name="poOrganizationIdentifier" type="ISO:II" />
+                        <xs:element name="poPersonIdentifier" type="ISO:II" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns12="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types" xmlns:ns0="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns13="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/types" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns2="http://enterpriseservices.nci.nih.gov/OutcomesServices/types" xmlns:ns10="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types" xmlns:ns7="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types" xmlns:ns11="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types" name="Patient" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/OutcomesServices/User" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns12="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types" xmlns:ns0="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns1="uri:iso.org:21090" xmlns:ns13="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/types" xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns2="http://enterpriseservices.nci.nih.gov/OutcomesServices/types" xmlns:ns10="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types" xmlns:ns7="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types" xmlns:ns11="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types" name="User" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/User">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -10,7 +10,7 @@
                       
   ============================================================-->
   <types>
-    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/User" elementFormDefault="qualified" attributeFormDefault="unqualified">
       <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types" schemaLocation="./PatientTypes.xsd" />
       <import namespace="http://outcomes.services.coppa.nci.nih.gov" schemaLocation="./Outcomes.xsd" />
@@ -26,67 +26,67 @@
       <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types" schemaLocation="./ActivityRelationshipTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types" schemaLocation="./PerformedObservationResultTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types" schemaLocation="./SubmissionTypes.xsd" />
-      <element name="GetRequest">
+      <element name="GetUserRequest">
         <complexType>
           <sequence>
-            <element name="id">
+            <element name="loginName">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:ST" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
           </sequence>
         </complexType>
       </element>
-      <element name="GetResponse">
+      <element name="GetUserResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:Patient" minOccurs="1" maxOccurs="1" />
+            <element ref="ns0:User" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
-      <element name="CreateRequest">
+      <element name="CreateUserRequest">
         <complexType>
           <sequence>
-            <element name="patient">
+            <element name="user">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Patient" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:User" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
           </sequence>
         </complexType>
       </element>
-      <element name="CreateResponse">
+      <element name="CreateUserResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:Patient" minOccurs="1" maxOccurs="1" />
+            <element ref="ns0:User" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
-      <element name="UpdateRequest">
+      <element name="UpdateUserRequest">
         <complexType>
           <sequence>
-            <element name="patient">
+            <element name="user">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Patient" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:User" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
           </sequence>
         </complexType>
       </element>
-      <element name="UpdateResponse">
+      <element name="UpdateUserResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:Patient" minOccurs="1" maxOccurs="1" />
+            <element ref="ns0:User" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
-      <element name="PatientResourceProperties">
+      <element name="UserResourceProperties">
         <complexType>
           <sequence />
         </complexType>
@@ -94,41 +94,41 @@
     </schema>
   </types>
   <!--  place service messages here -->
-  <message name="GetRequest">
-    <part name="parameters" element="tns:GetRequest" />
+  <message name="GetUserRequest">
+    <part name="parameters" element="tns:GetUserRequest" />
   </message>
-  <message name="GetResponse">
-    <part name="parameters" element="tns:GetResponse" />
+  <message name="GetUserResponse">
+    <part name="parameters" element="tns:GetUserResponse" />
   </message>
-  <message name="CreateRequest">
-    <part name="parameters" element="tns:CreateRequest" />
+  <message name="CreateUserRequest">
+    <part name="parameters" element="tns:CreateUserRequest" />
   </message>
-  <message name="CreateResponse">
-    <part name="parameters" element="tns:CreateResponse" />
+  <message name="CreateUserResponse">
+    <part name="parameters" element="tns:CreateUserResponse" />
   </message>
-  <message name="UpdateRequest">
-    <part name="parameters" element="tns:UpdateRequest" />
+  <message name="UpdateUserRequest">
+    <part name="parameters" element="tns:UpdateUserRequest" />
   </message>
-  <message name="UpdateResponse">
-    <part name="parameters" element="tns:UpdateResponse" />
+  <message name="UpdateUserResponse">
+    <part name="parameters" element="tns:UpdateUserResponse" />
   </message>
   <!--============================================================
 
                        P O R T T Y P E
                       
   ============================================================-->
-  <portType name="PatientPortType" wsrp:ResourceProperties="tns:PatientResourceProperties">
-    <operation name="get">
-      <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/GetRequest" />
-      <output message="tns:GetResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/GetResponse" />
+  <portType name="UserPortType" wsrp:ResourceProperties="tns:UserResourceProperties">
+    <operation name="getUser">
+      <input message="tns:GetUserRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/GetUserRequest" />
+      <output message="tns:GetUserResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/GetUserResponse" />
     </operation>
-    <operation name="create">
-      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/CreateRequest" />
-      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/CreateResponse" />
+    <operation name="createUser">
+      <input message="tns:CreateUserRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/CreateUserRequest" />
+      <output message="tns:CreateUserResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/CreateUserResponse" />
     </operation>
-    <operation name="update">
-      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/UpdateRequest" />
-      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/UpdateResponse" />
+    <operation name="updateUser">
+      <input message="tns:UpdateUserRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/UpdateUserRequest" />
+      <output message="tns:UpdateUserResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/UpdateUserResponse" />
     </operation>
     <operation name="getServiceSecurityMetadata">
       <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />

@@ -29,11 +29,16 @@ http\://enterpriseservices.nci.nih.gov/OutcomesServices/Patient=gov.nih.nci.copp
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/bindings=gov.nih.nci.coppa.services.outcomes.patient.stubs.bindings
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/service=gov.nih.nci.coppa.services.outcomes.patient.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/User=gov.nih.nci.coppa.services.outcomes.user.stubs
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/User/bindings=gov.nih.nci.coppa.services.outcomes.user.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/User/service=gov.nih.nci.coppa.services.outcomes.user.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types=gov.nih.nci.coppa.services.outcomes.patient.stubs.types
 http\://outcomes.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.outcomes
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 uri\:iso.org\:21090=org.iso._21090
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/User/types=gov.nih.nci.coppa.services.outcomes.user.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service

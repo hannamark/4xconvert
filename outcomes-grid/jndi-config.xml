@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jndiConfig xmlns="http://wsrf.globus.org/jndi/config">
+  <service name="SERVICE-INSTANCE-PREFIX/User">
+    <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResourceConfiguration">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+        <parameter>
+          <name>performRegistration</name>
+          <!-- Set this to false to skip ServiceGroup registration -->
+          <value>PERFORM_REGISTRATION</value>
+        </parameter>
+        <parameter>
+          <name>registrationTemplateFile</name>
+          <!-- Set this to the relative path (from the container root, e.g GLOBUS_LOCATION for globus container) of the registration parameters template file (ignored if performRegistration is false) -->
+          <value>ETC-PATH/User_registration.xml</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resource name="home" type="gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResourceHome">
+      <resourceParams>
+        <parameter>
+          <name>factory</name>
+          <value>org.globus.wsrf.jndi.BeanFactory</value>
+        </parameter>
+      </resourceParams>
+    </resource>
+    <resourceLink name="serviceconfiguration" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OutcomesServices/serviceconfiguration" />
+    <resourceLink name="outcomesServicesHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/OutcomesServices/home" />
+    <resourceLink name="activityRelationshipHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/ActivityRelationship/home" />
+    <resourceLink name="performedActivityHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PerformedActivity/home" />
+    <resourceLink name="performedObservationResultHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PerformedObservationResult/home" />
+    <resourceLink name="studySubjectHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySubject/home" />
+    <resourceLink name="submissionHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Submission/home" />
+    <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/Patient">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.patient.service.globus.resource.PatientResourceConfiguration">
       <resourceParams>
@@ -34,6 +70,7 @@
     <resourceLink name="performedObservationResultHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/PerformedObservationResult/home" />
     <resourceLink name="studySubjectHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySubject/home" />
     <resourceLink name="submissionHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Submission/home" />
+    <resourceLink name="userHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/User/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/Submission">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.submission.service.globus.resource.SubmissionResourceConfiguration">
@@ -70,6 +107,7 @@
     <resourceLink name="studySubjectHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySubject/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="userHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/User/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/StudySubject">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.studysubject.service.globus.resource.StudySubjectResourceConfiguration">
@@ -107,6 +145,7 @@
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
     <resourceLink name="submissionHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Submission/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="userHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/User/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/PerformedObservationResult">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.performedobservationresult.service.globus.resource.PerformedObservationResultResourceConfiguration">
@@ -142,6 +181,7 @@
     <resourceLink name="studySubjectHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySubject/home" />
     <resourceLink name="submissionHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Submission/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="userHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/User/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/PerformedActivity">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.performedactivity.service.globus.resource.PerformedActivityResourceConfiguration">
@@ -177,6 +217,7 @@
     <resourceLink name="studySubjectHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySubject/home" />
     <resourceLink name="submissionHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Submission/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="userHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/User/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/ActivityRelationship">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.activityrelationship.service.globus.resource.ActivityRelationshipResourceConfiguration">
@@ -212,6 +253,7 @@
     <resourceLink name="studySubjectHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySubject/home" />
     <resourceLink name="submissionHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Submission/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="userHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/User/home" />
   </service>
   <service name="SERVICE-INSTANCE-PREFIX/OutcomesServices">
     <resource name="configuration" type="gov.nih.nci.coppa.services.outcomes.service.globus.resource.OutcomesServicesResourceConfiguration">
@@ -263,6 +305,7 @@
     <resourceLink name="studySubjectHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/StudySubject/home" />
     <resourceLink name="submissionHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Submission/home" />
     <resourceLink name="patientHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/Patient/home" />
+    <resourceLink name="userHome" target="java:comp/env/services/SERVICE-INSTANCE-PREFIX/User/home" />
   </service>
 </jndiConfig>
 

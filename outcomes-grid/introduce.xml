@@ -22,6 +22,7 @@
    <ns2:SchemaElement type="ST" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="StudySubject" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudySubject" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Submission" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Submission" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="User" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="br" xsi:type="ns2:SchemaElementType"/>
@@ -149,6 +150,9 @@
   </ns2:Namespace>
   <ns2:Namespace location="./PatientTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types" packageName="gov.nih.nci.coppa.services.outcomes.patient.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="PatientReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./UserTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/types" packageName="gov.nih.nci.coppa.services.outcomes.user.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="UserReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
  </ns2:Namespaces>
  <ns3:Services xsi:type="ns3:ServicesType" xmlns:ns3="gme://gov.nih.nci.cagrid.introduce/1/Services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -902,8 +906,50 @@
     <ns3:Identifiable xsi:type="ns3:Identifiable"/>
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
+  <ns3:Service name="User" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/User" packageName="gov.nih.nci.coppa.services.outcomes.user" xsi:type="ns3:ServiceType">
+   <ns200:Methods xsi:type="ns200:MethodsType" xmlns:ns200="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns200:Method description="" isImported="false" isProvided="false" name="getUser" xsi:type="ns200:MethodType">
+     <ns200:Inputs>
+      <ns200:Input qName="ns201:ST" description="" isArray="false" name="loginName" xmlns:ns201="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns200:Inputs>
+     <ns200:Output qName="ns202:User" description="" isArray="false" xmlns:ns202="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns200:Exceptions/>
+    </ns200:Method>
+    <ns200:Method description="" isImported="false" isProvided="false" name="createUser" xsi:type="ns200:MethodType">
+     <ns200:Inputs>
+      <ns200:Input qName="ns203:User" description="" isArray="false" name="user" xmlns:ns203="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns200:Inputs>
+     <ns200:Output qName="ns204:User" description="" isArray="false" xmlns:ns204="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns200:Exceptions/>
+    </ns200:Method>
+    <ns200:Method description="" isImported="false" isProvided="false" name="updateUser" xsi:type="ns200:MethodType">
+     <ns200:Inputs>
+      <ns200:Input qName="ns205:User" description="" isArray="false" name="user" xmlns:ns205="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns200:Inputs>
+     <ns200:Output qName="ns206:User" description="" isArray="false" xmlns:ns206="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns200:Exceptions/>
+    </ns200:Method>
+    <ns200:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns200:MethodType">
+     <ns200:Output qName="ns207:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns207="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns208:MethodSecurity xsi:type="ns208:MethodSecurity" xmlns:ns208="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns208:SecuritySetting xsi:type="ns208:SecuritySetting">None</ns208:SecuritySetting>
+      <ns208:MethodAuthorization xsi:type="ns208:MethodAuthorization">
+       <ns208:NoAuthorization xsi:type="ns208:NoAuthorization"/>
+      </ns208:MethodAuthorization>
+     </ns208:MethodSecurity>
+     <ns200:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns200:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns200:Method>
+   </ns200:Methods>
+   <ns209:ResourcePropertiesList xsi:type="ns209:ResourcePropertiesListType" xmlns:ns209="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Singleton xsi:type="ns3:Singleton"/>
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
  </ns3:Services>
- <ns200:Extensions xsi:type="ns200:ExtensionsType" xmlns:ns200="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns200:Extension name="cagrid_metadata" version="1.3" xsi:type="ns200:ExtensionType"/>
- </ns200:Extensions>
+ <ns210:Extensions xsi:type="ns210:ExtensionsType" xmlns:ns210="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns210:Extension name="cagrid_metadata" version="1.3" xsi:type="ns210:ExtensionType"/>
+ </ns210:Extensions>
 </ns1:ServiceDescription>

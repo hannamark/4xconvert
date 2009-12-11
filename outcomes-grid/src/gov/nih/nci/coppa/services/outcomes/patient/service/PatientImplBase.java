@@ -75,6 +75,11 @@ public abstract class PatientImplBase {
 		return (gov.nih.nci.coppa.services.outcomes.submission.service.globus.resource.SubmissionResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResourceHome getUserResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("userHome");
+		return (gov.nih.nci.coppa.services.outcomes.user.service.globus.resource.UserResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();
