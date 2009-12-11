@@ -94,7 +94,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface ActivityRelationshipService
-        extends BaseAccrualStudyService<ActivityRelationshipDto> {
+        extends BaseAccrualService<ActivityRelationshipDto> {
     
    
     /**
