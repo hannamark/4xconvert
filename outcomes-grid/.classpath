@@ -79,10 +79,11 @@
 	<classpathentry kind="lib" path="lib/caGrid-metadatautils-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/caGrid-metadata-data-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/caGrid-metadata-common-1.3.jar"/>
+	<classpathentry kind="lib" path="build/lib/accrual-services-client-3.1.0.jar"/>
 	<classpathentry kind="lib" path="build/lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="build/lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.4.jar"/>
+	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.5.jar"/>
 	<classpathentry kind="lib" path="build/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/icu4j-2.6.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.4.jar"/>
@@ -90,11 +91,7 @@
 	<classpathentry kind="lib" path="build/lib/jaxb-impl-2.1.4.jar"/>
 	<classpathentry kind="lib" path="build/lib/jaxen-1.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/jdom-1.0.jar"/>
-	<classpathentry kind="lib" path="build/lib/OutcomesServices-client.jar"/>
-	<classpathentry kind="lib" path="build/lib/OutcomesServices-common.jar"/>
-	<classpathentry kind="lib" path="build/lib/OutcomesServices-service.jar"/>
-	<classpathentry kind="lib" path="build/lib/OutcomesServices-stubs.jar"/>
-	<classpathentry kind="lib" path="build/lib/OutcomesServices-tests.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.1m2.jar"/>
 	<classpathentry kind="lib" path="build/lib/relaxngDatatype-20020414.jar"/>
 	<classpathentry kind="lib" path="build/lib/stax-api-1.0-2.jar"/>
 	<classpathentry kind="lib" path="build/lib/xalan-2.6.0.jar"/>
@@ -102,7 +99,7 @@
 	<classpathentry kind="lib" path="build/lib/xml-apis-1.3.02.jar"/>
 	<classpathentry kind="lib" path="build/lib/xmlParserAPIs-2.6.2.jar"/>
 	<classpathentry kind="lib" path="build/lib/xom-1.0.jar"/>
-	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.4-tests.jar"/>
+	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.5-tests.jar"/>
 	<classpathentry kind="lib" path="build/test/lib/junit-4.4.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
