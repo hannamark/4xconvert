@@ -101,7 +101,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class CourseActionTest extends AbstractAccrualActionTest {
     CourseAction action;
     CourseWebDto course;
-    int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+    private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
 
     @Before
     public void initAction() throws Exception {
@@ -146,25 +146,25 @@ public class CourseActionTest extends AbstractAccrualActionTest {
 
     @Override
     @Test
-    public void addTest() throws Exception { 
+    public void addTest() throws Exception {
         setParticipantIi(PARTICIPANT2);
         course.setName(StConverter.convertToSt("Course1"));
         course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
         action.setCourse(course);
-        assertEquals(ActionSupport.SUCCESS, action.add()); 
+        assertEquals(ActionSupport.SUCCESS, action.add());
     }
 
     @Override
     @Test
-    public void editTest() throws Exception { 
+    public void editTest() throws Exception {
         setParticipantIi(PARTICIPANT2);
         course.setName(StConverter.convertToSt("Course1 Edited"));
         course.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
         course.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.COURSEID));
         action.setCourse(course);
-        assertEquals(ActionSupport.SUCCESS, action.edit()); 
+        assertEquals(ActionSupport.SUCCESS, action.edit());
     }
-    
+
     @Test
     public void editExceptionTest() throws Exception {
         course.setName(StConverter.convertToSt("Course1 Edited"));

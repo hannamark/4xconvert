@@ -485,7 +485,7 @@ public class TestSchema {
         // Patient
         Patient p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("7/11/1963"));
-        p.setCountryIdentifier(new Long(100));
+        p.setCountryIdentifier(100L);
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
         p.setIdentifier("PO PATIENT ID 01");
         p.setPersonIdentifier("PO PERSON ID 01");
@@ -499,7 +499,7 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("5/10/1963"));
-        p.setCountryIdentifier(new Long(100));
+        p.setCountryIdentifier(100L);
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("PO PATIENT ID 02");
         p.setPersonIdentifier("PO PERSON ID 02");
@@ -513,7 +513,7 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("8/11/1963"));
-        p.setCountryIdentifier(new Long(100));
+        p.setCountryIdentifier(100L);
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("PO PATIENT ID 03");
         p.setPersonIdentifier("PO PERSON ID 03");
@@ -527,7 +527,7 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("1/3/1960"));
-        p.setCountryIdentifier(new Long(100));
+        p.setCountryIdentifier(100L);
         p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
         p.setIdentifier("PO PATIENT ID 04");
         p.setPersonIdentifier("PO PERSON ID 04");
@@ -541,7 +541,7 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("9/7/1968"));
-        p.setCountryIdentifier(new Long(100));
+        p.setCountryIdentifier(100L);
         p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
         p.setIdentifier("PO PATIENT ID 05");
         p.setPersonIdentifier("PO PERSON ID 05");
@@ -592,7 +592,7 @@ public class TestSchema {
         // PerformedImaging
         PerformedImaging pimaging = new PerformedImaging();
         pimaging.setStudyProtocol(studyProtocols.get(0));
-        pimaging.setStudySubject(studySubjects.get(0));        
+        pimaging.setStudySubject(studySubjects.get(0));
         pimaging.setContrastAgentEnhancementIndicator(true);
         addUpdObject(pimaging);
         performedImagings.add(pimaging);
@@ -610,7 +610,7 @@ public class TestSchema {
         psa.setDoseTotalValue(new BigDecimal("5"));
         psa.setRouteOfAdministrationCode("Oral");
         psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
-        psa.setStudySubject(studySubjects.get(0)); 
+        psa.setStudySubject(studySubjects.get(0));
         addUpdObject(psa);
         performedSubstanceAdministrations.add(psa);
 
@@ -618,7 +618,7 @@ public class TestSchema {
         PerformedRadiationAdministration pra = new PerformedRadiationAdministration();
         pra.setStudyProtocol(studyProtocols.get(0));
         pra.setMachineTypeCode(RadiationMachineTypeCode.ACCELERATOR);
-        pra.setStudySubject(studySubjects.get(0)); 
+        pra.setStudySubject(studySubjects.get(0));
         addUpdObject(pra);
         performedRadiationAdministrations.add(pra);
 
@@ -627,7 +627,7 @@ public class TestSchema {
         pp.setStudyProtocol(studyProtocols.get(0));
         pp.setCategoryCode(ActivityCategoryCode.OTHER);
         pp.setTextDescription("SurgeryDescription");
-        pp.setStudySubject(studySubjects.get(0)); 
+        pp.setStudySubject(studySubjects.get(0));
         addUpdObject(pp);
         performedProcedures.add(pp);
 
@@ -681,7 +681,7 @@ public class TestSchema {
         // PerformedLesionDescription
         PerformedLesionDescription pld = new PerformedLesionDescription();
         pld.setResultCode("PerformedLesionDescription");
-        pld.setLesionNumber(new Integer(1));
+        pld.setLesionNumber(1);
         pld.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
         pld.setStudyProtocol(studyProtocols.get(0));
         pld.setPerformedObservation(performedObservation);
@@ -708,7 +708,7 @@ public class TestSchema {
         ar.setTargetPerformedActivity(performedActivities.get(0));
         addUpdObject(ar);
         activityRelationships.add(ar);*/
-        
+
         DoseFrequency df = new DoseFrequency();
         df.setCode("QIS");
         df.setDisplayName("Four Times Weekly");

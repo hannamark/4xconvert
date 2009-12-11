@@ -98,8 +98,8 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class DiagnosisActionTest extends AbstractAccrualActionTest {
     private DiagnosisAction dAction;
-    int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
-    
+    private static final int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+
     /**
      * initialize the class.
      * @throws Exception report problems
@@ -126,15 +126,15 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
     public void executeTest() {
         setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
-        
+
         assertNotNull(dAction.getDisWebList());
     }
-    
+
     @Test
     public void execute2ndTest() {
         setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
-        
+
         assertNotNull(dAction.getDisWebList());
     }
 
