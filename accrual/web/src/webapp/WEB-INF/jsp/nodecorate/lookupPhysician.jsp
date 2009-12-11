@@ -20,7 +20,7 @@
     
     function populatePhysicianField(id, name) {
         window.top.document.getElementsByName("userAccount.physicianId")[0].value = id;
-        window.top.document.getElementsByName("userAccount.physician")[0].value = name;       
+        window.top.document.getElementsByName("userAccount.physician")[0].value = name.replace(/&apos;/g,"'");       
         window.top.hidePopWin(false); 
     }
 </SCRIPT>
@@ -75,7 +75,7 @@
                         <display:column title="Last Name" property="lastName" headerClass="sortable"/>
                         <display:column title="Address" property="address" headerClass="sortable"/> 
                         <display:column title="Action" class="action" sortable="false">
-                            <a href="#" class="btn" onclick="populatePhysicianField('${row.id}', '${fn:replace(row.lastName,'\'','')}'+', '+'${fn:replace(row.firstName,'\'','')}')">
+                            <a href="#" class="btn" onclick="populatePhysicianField('${row.id}', '${fn:replace(row.lastName,'\'','&apos;')}'+', '+'${fn:replace(row.firstName,'\'','&apos;')}')">
                                 <span class="btn_img"><span class="add">Select</span></span>
                             </a>  
                         </display:column>

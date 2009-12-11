@@ -19,7 +19,7 @@
     
     function populateTreatmentSiteField(id, name) {
         window.top.document.getElementsByName("userAccount.treatmentSiteId")[0].value = id;
-        window.top.document.getElementsByName("userAccount.treatmentSite")[0].value = name;       
+        window.top.document.getElementsByName("userAccount.treatmentSite")[0].value = name.replace(/&apos;/g,"'");       
         window.top.hidePopWin(false); 
     }
 </SCRIPT>
@@ -73,7 +73,7 @@
                         <display:column title="Country" property="country" headerClass="sortable"/> 
                         <display:column title="Zip" property="zipCode" headerClass="sortable"/> 
                         <display:column title="Action" class="action" sortable="false">
-                            <a href="#" class="btn" onclick="populateTreatmentSiteField('${row.id}', '${row.name}')">
+                            <a href="#" class="btn" onclick="populateTreatmentSiteField('${row.id}', '${fn:replace(row.name,'\'','&apos;')}')">
                                 <span class="btn_img"><span class="add">Select</span></span>
                             </a>  
                         </display:column>
