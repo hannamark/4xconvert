@@ -82,21 +82,14 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
-import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelPhone;
-import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
 
 import javax.naming.NamingException;
 
@@ -104,159 +97,148 @@ import javax.naming.NamingException;
  * @author kkanchinadam
  *
  */
-public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWithCRTest {
-    public void testHealthCareFacility() throws Exception {
-     // Setup
-        setOrgRoleTitleText("Health Care Facility Information");
-        setOrgRoleLinkText("link=Manage Health Care Facility");
-        setOrgRoleCreateMessage("The health care facility was successfully created!");
-        setOrgRoleUpdateMessage("The health care facility role was successfully updated!");
-        setOrgRoleName("Facility 1");
-        setOrgRoleSearchResultsMessage("One item found.");
+public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWithCRTest {
+    private final String TYPE_IRB = "Institutional Review Board (IRB)";
+    private final String TYPE_EC = "Ethics Committee";
+    private final String TYPE_REB = "Research Ethics Board";
+    private final String ROLE_STATUS_ACTIVE = "ACTIVE";
+    private final String ROLE_STATUS_PENDING = "PENDING";
 
-        // Login.
-        loginAsCurator();
+    public void testOversightCommittee() throws Exception {
+        // Setup
+        setOrgRoleTitleText("Oversight Committee Information");
+        setOrgRoleLinkText("link=Manage Oversight Committee(s)");
+        setOrgRoleCreateMessage("Oversight Committee was successfully created!");
+        setOrgRoleUpdateMessage("Oversight Committee was successfully updated!");
 
-        // Create a new active organization.
+        // Create a new organization.
         createActiveOrganization();
 
-        // Test create/update HCF functionality.
-        createHCF();
-        updateHCF();
+        // Check Required fields for Oversight Committee.
+        checkRequiredFields();
 
+        // Create
+        setOrgRoleSearchResultsMessage("One item found");
+        createOversightCommittee(TYPE_IRB, ROLE_STATUS_ACTIVE);
+        createDuplicateOversightCommittee(TYPE_IRB, ROLE_STATUS_ACTIVE);
+
+        setOrgRoleSearchResultsMessage("2 items found, displaying all items");
+        setOrgRoleSearchResultsRowNumber("row.2.0");
+        createOversightCommittee(TYPE_EC, ROLE_STATUS_PENDING);
+        createDuplicateOversightCommittee(TYPE_EC, ROLE_STATUS_PENDING);
+
+        // Test update.
+        openOrgRoleScreen(false);
+        waitForElementById("curateRoleForm_role_typeCode", 10);
+        assertEquals(TYPE_EC, selenium.getSelectedLabel("id=curateRoleForm_role_typeCode"));
+        // Update Type to TYPE_REB, and save.
+        selenium.select("curateRoleForm_role_typeCode", TYPE_REB);
+        updateOrganizationalRole();
+
+        // Ensure that you can now add TYPE_EC again, since the previous one was updated to TYPE_REB.
+        setOrgRoleSearchResultsMessage("3 items found, displaying all items");
+        setOrgRoleSearchResultsRowNumber("row.3.0");
+        createOversightCommittee(TYPE_EC, ROLE_STATUS_PENDING);
+        createDuplicateOversightCommittee(TYPE_EC, ROLE_STATUS_PENDING);
+
+        // Check the duplicate error message when attempting to add TYPE_REB again.
+        createDuplicateOversightCommittee(TYPE_REB, ROLE_STATUS_PENDING);
+
+        // Create another organization with status = PENDING. Create PENDING OC.
+        // Attempt to create ACTIVE OC. Check Error Message.
+        // Then test the CR.
+        createPendingOrganization();
+        setOrgRoleSearchResultsMessage("One item found");
+        setOrgRoleSearchResultsRowNumber("row.1.0");
+        createOversightCommittee(TYPE_IRB, ROLE_STATUS_PENDING);
+
+        openOrgRoleScreen(true);
+        selenium.select("curateRoleForm_role_typeCode", TYPE_EC);
+        selenium.select("curateRoleForm.role.status", ROLE_STATUS_ACTIVE);
+        clickAndWaitButton("save_button");
+        assertTrue(selenium.isTextPresent("exact:Role status not compatible with associated entity's status"));
         // Test the CR
         checkCR();
     }
 
-    private void createHCF() throws Exception {
-        //curate org
+    private void openOrgRoleScreen(boolean addMode) {
         openOrganizationCuratePage();
-        // Go to the Manage HCF Screen
         accessOrgRoleScreen();
+        if (addMode) {
+            clickAndWait("add_button");
+        } else {
+            clickAnchor("edit_oversightCommittee_id_" + getOrganizationalRoleId());
+        }
+    }
 
-        clickAndWait("add_button");
-        // check Status
-        checkStatus();
-        // Check contact information functionality - add/remove, eror messages etc.
-        checkContactInformation();
+    private void checkRequiredFields() {
+        openOrgRoleScreen(true);
 
-        // Save the HCF
-        selenium.type("curateRoleForm.role.name", "Facility 1");
-        selenium.select("curateRoleForm.role.status", "label=PENDING");
-        addUSPostalAddress();
-        waitForTelecomFormsToLoad();
-        addContactInformation();
+        this.waitForElementById("curateRoleForm_role_typeCode", 10);
+        this.waitForElementById("curateRoleForm.role.status", 10);
+        // Attempt to save
+        selenium.select("curateRoleForm_role_typeCode", "label=--Select a Type--");
+        selenium.select("curateRoleForm.role.status", "label=--Select a Role Status--");
+        clickAndWaitButton("save_button");
+        assertTrue(selenium.isTextPresent("exact:Oversight Committee Type must be set"));
+        assertTrue(selenium.isTextPresent("exact:Role Status must be set"));
+    }
+
+    private void createOversightCommittee(String oversightCommitteeType, String roleStatus)  {
+        openOrgRoleScreen(true);
+
+        selenium.select("curateRoleForm_role_typeCode", oversightCommitteeType);
+        selenium.select("curateRoleForm.role.status", roleStatus);
         saveOrganizationalRole();
     }
 
-    private void updateHCF() throws Exception {
-        //curate org
-        openOrganizationCuratePage();
-        // Go to the Manage HCF Screen
-        accessOrgRoleScreen();
-
-        clickAnchor("edit_healthCareFacility_id_" + getOrganizationalRoleId());
-        // check Status
-        checkStatus();
-
-        // Check contact information functionality - add/remove, eror messages etc. in Update mode.
-        // But first, remove the existing contact info.
-        removeAddressAndContactInformationFromRole();
-        checkContactInformation();
-
-        // Update the HCF
-        selenium.type("curateRoleForm.role.name", "Facility 1 Updated");
-        selenium.select("curateRoleForm.role.status", "label=PENDING");
-        addUSPostalAddress();
-        waitForTelecomFormsToLoad();
-        addContactInformation();
-        updateOrganizationalRole();
-    }
-
-    private void removeAddressAndContactInformationFromRole() {
-        removePostalAddress();
-        clickAnchor("email-remove-0");
-        clickAnchor("url-remove-0");
-        clickAnchor("phone-remove-0");
-        clickAnchor("fax-remove-0");
-        clickAnchor("tty-remove-0");
-    }
-
-    private void checkContactInformation() throws Exception {
-        // Check contact information functionality - add/remove, eror messages etc.
-        checkPostalAddress();
-        checkEmail();
-        checkUrl();
-        checkPhone();
-        checkFax();
-        checkTty();
-    }
-
-    private void checkStatus() {
-        this.waitForElementById("curateRoleForm.role.status", 10);
-        // Attempt to save with no status
-        selenium.select("curateRoleForm.role.status", "label=--Select a Role Status--");
+    private void createDuplicateOversightCommittee(String oversightCommitteeType, String roleStatus) {
+        // Attempt saving the same type again. Check for error message.
+        openOrgRoleScreen(true);
+        selenium.select("curateRoleForm_role_typeCode", oversightCommitteeType);
+        selenium.select("curateRoleForm.role.status", roleStatus);
         clickAndWaitButton("save_button");
-        assertTrue(selenium.isTextPresent("exact:Role Status must be set"));
+        assertTrue(selenium.isTextPresent("exact:Organization already has an Oversight Committee of this type"));
     }
 
     private void checkCR() throws Exception {
         //create a cr remotely
-        updateRemoteHealthCareFacility(getOrganizationalRoleId());
+        updateRemoteOversightCommittee(getOrganizationalRoleId());
 
         //curate org
         openOrganizationCuratePage();
         // Go to the Manage HCF Screen
         accessOrgRoleScreen();
 
-        clickAnchor("edit_healthCareFacility_id_" + getOrganizationalRoleId());
+        clickAnchor("edit_oversightCommittee_id_" + getOrganizationalRoleId());
         waitForPageToLoad();
-        assertTrue(selenium.isTextPresent("exact:Edit Health Care Facility - Comparison"));
+        assertTrue(selenium.isTextPresent("exact:Edit Oversight Committee - Comparison"));
 
         // Check Status
-        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
+        assertEquals("PENDING", selenium.getText("wwctrl_organization.statusCode"));
 
-        // Check address, email, phone, fax, tty and url info.
-        checkOrgRoleContactInfomation();
-        // Copy CR EMail
-        copyCRInfo("copy_emailEntry_value0", "cr@example.com", "email-entry-1");
+        // Confirm that current type = IRB.
+        assertEquals(TYPE_IRB, selenium.getSelectedLabel("id=curateRoleForm_role_typeCode"));
+        //Confirm change request type = Research Ethics Board.
+        assertEquals(TYPE_REB, selenium.getText("wwctrl_curateCrForm_cr_typeCode_code").trim());
+        // Copy over the new Type Code.
+        selenium.click("copy_curateCrForm_role_typeCode");
+        assertEquals(TYPE_REB, selenium.getSelectedLabel("id=curateRoleForm_role_typeCode"));
 
         // update org role and check for success message.
         updateOrganizationalRole();
     }
 
-    private void updateRemoteHealthCareFacility(String ext) throws EntityValidationException, NamingException, URISyntaxException,
+    private void updateRemoteOversightCommittee(String ext) throws EntityValidationException, NamingException, URISyntaxException,
             NullifiedEntityException, NullifiedRoleException {
         Ii id = new Ii();
         id.setExtension(ext);
-        id.setRoot("2.16.840.1.113883.3.26.4.4.3");
-        id.setIdentifierName("NCI health care facility identifier");
-        HealthCareFacilityDTO dto = RemoteServiceHelper.getHealthCareFacilityCorrelationService().getCorrelation(id);
+        id.setRoot("2.16.840.1.113883.3.26.4.4.4");
+        id.setIdentifierName("NCI oversight committee identifier");
 
-        DSet<Tel> telco = new DSet<Tel>();
-        telco.setItem(new HashSet<Tel>());
-        dto.setTelecomAddress(telco);
+        OversightCommitteeDTO dto = RemoteServiceHelper.getOversightCommitteeCorrelationService().getCorrelation(id);
 
-        TelPhone phone = new TelPhone();
-        phone.setValue(new URI("tel:1122334455"));
-        dto.getTelecomAddress().getItem().add(phone);
-
-        TelPhone fax = new TelPhone();
-        fax.setValue(new URI("x-text-fax:1122334455"));
-        dto.getTelecomAddress().getItem().add(fax);
-
-        TelPhone tty = new TelPhone();
-        tty.setValue(new URI("x-text-tel:1122334455"));
-        dto.getTelecomAddress().getItem().add(tty);
-
-        TelEmail email = new TelEmail();
-        email.setValue(new URI("mailto:cr@example.com"));
-        dto.getTelecomAddress().getItem().add(email);
-
-        TelUrl url = new TelUrl();
-        url.setValue(new URI("http://www.example.com"));
-        dto.getTelecomAddress().getItem().add(url);
-
-        RemoteServiceHelper.getHealthCareFacilityCorrelationService().updateCorrelation(dto);
+        dto.getTypeCode().setCode(TYPE_REB);
+        RemoteServiceHelper.getOversightCommitteeCorrelationService().updateCorrelation(dto);
     }
 }

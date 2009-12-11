@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * @author kkanchinadam
@@ -97,10 +99,22 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     private String orgRoleCreateMessage;
     private String orgRoleUpdateMessage;
     private String orgRoleName;
+    private String orgRoleSearchResultsMessage;
+    private String orgRoleSearchResultsRowNumber = "row.1.0";
+    private String organizationStatus;
 
-    protected void createAndAssertNewOrganization() {
-        loginAsCurator();
-        createOrganization("ACTIVE", "ORGANIZATION 1", getAddress(), "sample@example.com", "703-111-2345",
+    protected void createActiveOrganization() {
+        organizationStatus = "ACTIVE";
+        createActiveOrPendingOrganization();
+    }
+
+    protected void createPendingOrganization() {
+        organizationStatus = "PENDING";
+        createActiveOrPendingOrganization();
+    }
+
+    private void createActiveOrPendingOrganization() {
+        createOrganization(organizationStatus, "ORGANIZATION - PENDING", getAddress(), "sample@example.com", "703-111-2345",
                 "703-111-1234", "703-111-1234", "http://www.example.com");
         organizationId = selenium.getText("wwctrl_organization.id");
         assertNotEquals("null", organizationId);
@@ -117,7 +131,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         clickAndWait(orgRoleLinkText);
         assertTrue(selenium.isTextPresent(orgRoleTitleText));
         // check organization status = ACTIVE
-        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
+        assertEquals(organizationStatus, selenium.getText("wwctrl_organization.statusCode"));
     }
 
     protected void openOrganizationCuratePage() {
@@ -264,10 +278,12 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     protected void saveOrganizationalRole() {
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:" + orgRoleCreateMessage));
-        assertTrue(selenium.isTextPresent("exact:" + orgRoleName));
-        assertTrue(selenium.isTextPresent("exact:One item found."));
+        if (StringUtils.isNotEmpty(orgRoleName)) { // Some org roles do not have a name - eg: oversight committee.
+            assertTrue(selenium.isTextPresent("exact:" + orgRoleName));
+        }
+        assertTrue(selenium.isTextPresent("exact:" + orgRoleSearchResultsMessage));
 
-        organizationalRoleId = selenium.getTable("row.1.0");
+        organizationalRoleId = selenium.getTable(orgRoleSearchResultsRowNumber);
         assertNotEquals("null", getOrganizationalRoleId());
         assertNotNull(getOrganizationalRoleId());
 
@@ -281,8 +297,10 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     protected void updateOrganizationalRole() {
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:" + orgRoleUpdateMessage));
-        assertTrue(selenium.isTextPresent("exact:" + orgRoleName + " Updated"));
-        assertTrue(selenium.isTextPresent("exact:One item found."));
+        if (StringUtils.isNotEmpty(orgRoleName)) { // Some org roles do not have a name - eg: oversight committee.
+            assertTrue(selenium.isTextPresent("exact:" + orgRoleName + " Updated"));
+        }
+        assertTrue(selenium.isTextPresent("exact:" +  orgRoleSearchResultsMessage));
     }
 
     protected void checkOrgRoleContactInfomation() {
@@ -368,4 +386,19 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     protected void setOrgRoleUpdateMessage(String orgRoleUpdateMessage) {
         this.orgRoleUpdateMessage = orgRoleUpdateMessage;
     }
+
+    /**
+     * @param orgRoleSearchResultsMessage the orgRoleSearchResultsMessage to set
+     */
+    protected void setOrgRoleSearchResultsMessage(String orgRoleSearchResultsMessage) {
+        this.orgRoleSearchResultsMessage = orgRoleSearchResultsMessage;
+    }
+
+    /**
+     * @param orgRoleSearchResultsRowNumber the orgRoleSearchResultsRowNumber to set
+     */
+    protected void setOrgRoleSearchResultsRowNumber(String orgRoleSearchResultsRowNumber) {
+        this.orgRoleSearchResultsRowNumber = orgRoleSearchResultsRowNumber;
+    }
+
 }
