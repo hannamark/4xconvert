@@ -76,92 +76,80 @@
 *
 *
 */
-package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.coppa.iso.Cd;
+package gov.nih.nci.accrual.web.action;
+
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.web.dto.util.DeathInfoWebDto;
+import gov.nih.nci.accrual.web.enums.ResponseInds;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+import gov.nih.nci.pa.enums.AutopsyDeathCause;
+import gov.nih.nci.pa.enums.DeathCause;
+import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.Date;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Kalpana Guthikonda
- * @since 11/13/2009
- *
+ * @since 12/08/2009
  */
-public class MockActivityRelationshipBean implements ActivityRelationshipService {
+public class DeathInformationActionTest extends AbstractAccrualActionTest {
+    DeathInformationAction action;
+    DeathInfoWebDto deathInformation;
 
-    private static int key = 3000;
-    private List<ActivityRelationshipDto> arsList;
-    {
-        arsList = new ArrayList<ActivityRelationshipDto>();
-        ActivityRelationshipDto dto = new ActivityRelationshipDto();
-        dto.setIdentifier(IiConverter.convertToIi(getKey()));
-        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
-        arsList.add(dto);
-        
-        dto = new ActivityRelationshipDto();
-        dto.setIdentifier(IiConverter.convertToIi(getKey()));
-        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
-        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
-        arsList.add(dto);
-    }
-    
-    private synchronized String getKey() {
-        return String.valueOf(++key);
+    @Before
+    public void initAction() throws Exception {
+        action = new DeathInformationAction();
+        action.prepare();
+        deathInformation = new DeathInfoWebDto();
     }
 
-    public ActivityRelationshipDto create(ActivityRelationshipDto dto)
-            throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    @Override
+    public void executeTest() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
-    public void delete(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        
+    @Override
+    @Test
+    public void createTest() {
+        deathInformation.setAutopsyInd(CdConverter.convertToCd(ResponseInds.YES));
+        action.setDeathInfo(deathInformation);
+       assertEquals(AbstractListEditAccrualAction.INPUT, action.save());
     }
 
-    public ActivityRelationshipDto get(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    @Override
+    public void addTest() throws Exception {
+        deathInformation.setId(new Ii());
+        deathInformation.setCause(CdConverter.convertToCd(DeathCause.DRUG_RELATED));
+        deathInformation.setEventDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        deathInformation.setAutopsyInd(CdConverter.convertToCd(ResponseInds.YES));
+        deathInformation.setAutopsySite(CdConverter.convertStringToCd("Liver and intrahepatic duct"));
+        deathInformation.setCauseByAutopsy(CdConverter.convertToCd(AutopsyDeathCause.CURRENT_DISEASE));
+        action.setDeathInfo(deathInformation);
+        assertEquals(ActionSupport.SUCCESS, action.save());
     }
 
-    public ActivityRelationshipDto update(ActivityRelationshipDto dto)
-            throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    @Override
+    public void editTest() throws Exception {
+        deathInformation.setCause(CdConverter.convertToCd(DeathCause.INFECTION));
+        deathInformation.setEventDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        deathInformation.setAutopsyInd(CdConverter.convertToCd(ResponseInds.YES));
+        deathInformation.setAutopsySite(CdConverter.convertStringToCd("Liver and intrahepatic duct2"));
+        deathInformation.setCauseByAutopsy(CdConverter.convertToCd(AutopsyDeathCause.PROTOCOL_TREATMENT));
+        deathInformation.setId(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
+        deathInformation.setOldTreatmentPlanId(MockPerformedActivityBean.TPID);
+        deathInformation.setTreatmentPlanId("TestTP2");
+        action.setDeathInfo(deathInformation);
+        assertEquals(ActionSupport.SUCCESS, action.save());
     }
-
-    public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii ii,
-            Cd typeCode) throws RemoteException {
-        List<ActivityRelationshipDto> result = new ArrayList<ActivityRelationshipDto>();
-        for (ActivityRelationshipDto dto : arsList) {
-            if (ii.getExtension().equals(dto.getTargetPerformedActivityIdentifier().getExtension())) {
-                result.add(dto);
-            }
-        }
-        return result;
-    }
-
-    public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii ii,
-            Cd typeCode) throws RemoteException {
-        List<ActivityRelationshipDto> result = new ArrayList<ActivityRelationshipDto>();
-        for (ActivityRelationshipDto dto : arsList) {
-            if (ii.getExtension().equals(dto.getSourcePerformedActivityIdentifier().getExtension())) {
-                result.add(dto);
-            }
-        }
-        return result;
-    }
-    
 }

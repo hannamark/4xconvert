@@ -87,13 +87,22 @@ import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
+import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.enums.AutopsyDeathCause;
+import gov.nih.nci.pa.enums.DeathCause;
+import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -110,6 +119,44 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
     private static List<CrPa> listCr = new ArrayList<CrPa>();
     private static int key = 2000;
 
+    private List<PerformedObservationResultDto> porList;
+    {
+        porList = new ArrayList<PerformedObservationResultDto>();
+        PerformedObservationResultDto dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.DEATH_CAUSE));
+        dto.setResultCode(CdConverter.convertToCd(DeathCause.NEW_PRIMARY));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.DEATH_DATE));
+        if (dto.getResultDateRange() == null) {
+            dto.setResultDateRange(new Ivl<Ts>());
+        }
+        dto.getResultDateRange().setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.AUTOPSY_PERFORMED_INDICATOR));
+        dto.setResultCode(CdConverter.convertToCd(ResponseInds.YES));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY));
+        dto.setResultCode(CdConverter.convertToCd(AutopsyDeathCause.PROTOCOL_TREATMENT));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);        
+    }
     private class PdPa {
         public String pa;
         public PerformedDiagnosisDto dto;
@@ -346,7 +393,13 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public List<PerformedObservationResultDto> getPerformedObservationResultByPerformedActivity(
             Ii ii) throws RemoteException {
-        return new ArrayList<PerformedObservationResultDto>();
+        List<PerformedObservationResultDto> result = new ArrayList<PerformedObservationResultDto>();
+        for (PerformedObservationResultDto dto : porList) {
+            if (ii.getExtension().equals(dto.getPerformedObservationIdentifier().getExtension())) {
+                result.add(dto);
+            }
+        }
+        return result;
     }
     
 }

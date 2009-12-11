@@ -119,6 +119,8 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public static final String TPID = "Treatment Plan 1";
     public static final String OFFTREATMENTID = "Off Treatment 1";
     public static final String SURGERYID = "Srugery 1";
+    public static final String DEATH_INFORMATIONID = "DeathInformation 1";
+    public static final String AUTOPSY_INFORMATIONID = "AutopsyInformation 1";
     private List<PerformedActivityDto> paList;
     {
         paList = new ArrayList<PerformedActivityDto>();
@@ -150,6 +152,21 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         Ivl<Ts> diagnosisDate = new Ivl<Ts>();
         diagnosisDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dto.setActualDateRange(diagnosisDate);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(DEATH_INFORMATIONID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.DEATH_INFORMATION));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(AUTOPSY_INFORMATIONID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.AUTOPSY_INFORMATION));
+        dto.setTargetSiteCode(CdConverter.convertStringToCd("targetSite"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
         poList.add(dto);
@@ -358,7 +375,12 @@ public class MockPerformedActivityBean implements PerformedActivityService {
             throw new RemoteException("NULL argument getPerformedObservation");
         }
         PerformedObservationDto dto = hmPo.get(ii.getExtension());
-        return (dto == null) ? new PerformedObservationDto() : dto;
+        for (PerformedObservationDto po : poList) {
+            if (ii.getExtension().equals(po.getIdentifier().getExtension())) {
+                dto = po;
+            }
+        }        
+        return (dto == null) ? new PerformedObservationDto() : dto;        
     }
 
     public PerformedProcedureDto getPerformedProcedure(Ii ii)
