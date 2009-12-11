@@ -82,48 +82,97 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.accrual.service.BaseAccrualService;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 /**
+ * Invokes the generic accrual service.
  * @author Steve Lustbader
+ * @param <DTO> base dto
  */
-public class InvokeActivityRelationshipEjb extends InvokeAccrualStudyServiceEjb<ActivityRelationshipDto> implements
-        ActivityRelationshipService {
-
+public class InvokeAccrualServiceEjb<DTO extends BaseDTO> implements BaseAccrualService<DTO> {
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private final Class<DTO> type;
 
     /**
-     * Const.
+     * Constructor.
+     * @param type correlation DTO class
      */
-    public InvokeActivityRelationshipEjb() {
-        super(ActivityRelationshipDto.class);
+    public InvokeAccrualServiceEjb(Class<DTO> type) {
+        this.type = type;
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
+    @SuppressWarnings("unchecked")
+    public DTO create(DTO dto) throws RemoteException {
+        try {
+            return (DTO) getLocator().getBaseAccrualService(type).create(dto);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
+    public void delete(Ii ii) throws RemoteException {
+        try {
+            getLocator().getBaseAccrualService(type).delete(ii);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
+
     /**
      * {@inheritDoc}
      */
-    @Override
-    public ActivityRelationshipDto update(ActivityRelationshipDto arg0) throws RemoteException {
-        return null;
+    @SuppressWarnings("unchecked")
+    public DTO get(Ii ii) throws RemoteException {
+        try {
+            return (DTO) getLocator().getBaseAccrualService(type).get(ii);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public DTO update(DTO dto) throws RemoteException {
+        try {
+            return (DTO) getLocator().getBaseAccrualService(type).update(dto);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ServiceLocator getLocator() {
+        return locator;
+    }
+
+    /**
+     * Get type.
+     * @return type.
+     */
+    protected Class<DTO> getType() {
+        return type;
+    }
 }

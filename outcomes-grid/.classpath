@@ -79,7 +79,7 @@
 	<classpathentry kind="lib" path="lib/caGrid-metadatautils-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/caGrid-metadata-data-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/caGrid-metadata-common-1.3.jar"/>
-	<classpathentry kind="lib" path="build/lib/accrual-services-client-3.1.0.jar"/>
+	<classpathentry kind="lib" path="build/lib/accrual-services-client-3.1.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="build/lib/commons-lang-2.4.jar"/>

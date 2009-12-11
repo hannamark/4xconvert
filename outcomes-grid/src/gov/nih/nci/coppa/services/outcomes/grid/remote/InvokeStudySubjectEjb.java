@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -93,36 +93,75 @@ import java.util.List;
 /**
  * @author Steve Lustbader
  */
-public class InvokeActivityRelationshipEjb extends InvokeAccrualStudyServiceEjb<ActivityRelationshipDto> implements
-        ActivityRelationshipService {
+public class InvokeStudySubjectEjb extends InvokeAccrualStudyServiceEjb<StudySubjectDto>
+        implements StudySubjectService {
 
     private final ServiceLocator locator = JNDIServiceLocator.getInstance();
 
     /**
      * Const.
      */
-    public InvokeActivityRelationshipEjb() {
-        super(ActivityRelationshipDto.class);
+    public InvokeStudySubjectEjb() {
+        super(StudySubjectDto.class);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
+    public StudySubjectDto createOutcomes(StudySubjectDto arg0) throws RemoteException {
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
+    public List<StudySubjectDto> getByStudySite(Ii arg0) throws RemoteException {
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudySubjectDto> getOutcomes(St arg0) throws RemoteException {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public ActivityRelationshipDto update(ActivityRelationshipDto arg0) throws RemoteException {
+    public List<StudySubjectDto> getByStudyProtocol(Ii arg0) throws RemoteException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySubjectDto create(StudySubjectDto arg0) throws RemoteException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(Ii arg0) throws RemoteException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySubjectDto get(Ii arg0) throws RemoteException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySubjectDto update(StudySubjectDto arg0) throws RemoteException {
         return null;
     }
 

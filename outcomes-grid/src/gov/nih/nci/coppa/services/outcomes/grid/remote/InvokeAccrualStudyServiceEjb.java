@@ -82,48 +82,44 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.accrual.service.BaseAccrualStudyService;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 import java.rmi.RemoteException;
 import java.util.List;
 
 /**
+ * Generic Invoke service for Study services.
+ *
+ * @param <DTO> pa DTO type
  * @author Steve Lustbader
  */
-public class InvokeActivityRelationshipEjb extends InvokeAccrualStudyServiceEjb<ActivityRelationshipDto> implements
-        ActivityRelationshipService {
-
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+public class InvokeAccrualStudyServiceEjb<DTO extends BaseDTO> extends InvokeAccrualServiceEjb<DTO>
+        implements BaseAccrualStudyService<DTO> {
 
     /**
      * Const.
+     *
+     * @param type DTO class
      */
-    public InvokeActivityRelationshipEjb() {
-        super(ActivityRelationshipDto.class);
+    public InvokeAccrualStudyServiceEjb(Class<DTO> type) {
+        super(type);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ActivityRelationshipDto update(ActivityRelationshipDto arg0) throws RemoteException {
-        return null;
+    @SuppressWarnings("unchecked")
+    public List<DTO> getByStudyProtocol(Ii ii) throws RemoteException {
+        try {
+            return getLocator().getBaseAccrualStudyService(getType()).getByStudyProtocol(ii);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
 }

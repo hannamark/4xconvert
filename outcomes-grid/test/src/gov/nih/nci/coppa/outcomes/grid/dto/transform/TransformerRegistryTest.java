@@ -80,50 +80,45 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.outcomes.grid.remote;
+package gov.nih.nci.coppa.outcomes.grid.dto.transform;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.coppa.services.outcomes.grid.dto.TransformerRegistry;
 
-import java.rmi.RemoteException;
-import java.util.List;
+import java.util.Map;
 
-/**
- * @author Steve Lustbader
- */
-public class InvokeActivityRelationshipEjb extends InvokeAccrualStudyServiceEjb<ActivityRelationshipDto> implements
-        ActivityRelationshipService {
+import org.junit.Test;
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+public class TransformerRegistryTest {
 
-    /**
-     * Const.
-     */
-    public InvokeActivityRelationshipEjb() {
-        super(ActivityRelationshipDto.class);
+    @Test (expected=UnsupportedOperationException.class)
+    public void testGetRegistry() {
+        Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
+        assertNotNull(tMap);
+        assertEquals(0, tMap.size());
+        tMap.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetTransformer() {
+        //#1
+//        Transformer trans = TransformerRegistry.INSTANCE.getTransformer(StudySubjectDto.class);
+//        assertTrue(trans instanceof StudySubjectTransformer);
+
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
+    @Test (expected=RuntimeException.class)
+    public void testGetTranspormerWithNull() {
+        TransformerRegistry.INSTANCE.getTransformer(null);
     }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ActivityRelationshipDto update(ActivityRelationshipDto arg0) throws RemoteException {
-        return null;
+
+    @Test (expected=RuntimeException.class)
+    public void testGetTranspormerWithUnknown() {
+        TransformerRegistry.INSTANCE.getTransformer(String.class);
     }
+
 
 }

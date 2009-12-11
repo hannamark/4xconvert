@@ -80,50 +80,52 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.outcomes.grid.remote;
+package gov.nih.nci.coppa.services.outcomes.grid.dto;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
-import java.rmi.RemoteException;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * @author Steve Lustbader
+ * A registry of Transformer(s).
+ *
+ * @author smatyas
+ *
  */
-public class InvokeActivityRelationshipEjb extends InvokeAccrualStudyServiceEjb<ActivityRelationshipDto> implements
-        ActivityRelationshipService {
+public final class TransformerRegistry {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
+    private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
 
-    /**
-     * Const.
-     */
-    public InvokeActivityRelationshipEjb() {
-        super(ActivityRelationshipDto.class);
+    static {
+//        values.put(StudySubjectDto.class, StudySubjectTransformer.INSTANCE);
     }
 
     /**
-     * {@inheritDoc}
+     * Public singleton.
      */
-    public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
+    public static final TransformerRegistry INSTANCE = new TransformerRegistry();
+
+    private TransformerRegistry() {
     }
 
     /**
-     * {@inheritDoc}
+     * @param type DTO type to translate
+     * @return transformer for the type requested
      */
-    public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ActivityRelationshipDto update(ActivityRelationshipDto arg0) throws RemoteException {
-        return null;
+    public Transformer<?, ?> getTransformer(Class<?> type) {
+        Transformer<?, ?> transformer = values.get(type);
+        if (transformer == null) {
+            throw new RuntimeException("Unable to find Transformer for type " + type);
+        }
+        return transformer;
     }
 
+    /**
+     * @return an unmodifiable version of the registry
+     */
+    public static Map<Class<?>, Transformer<?, ?>> getRegistry() {
+        return Collections.unmodifiableMap(values);
+    }
 }
