@@ -213,12 +213,12 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The ii root value.
      */
     public static final String PATIENT_ROOT = BASE_ROOT + STRUCTURAL_ROLE_SFX + ".9";
-    
+
     /**
      * The Patient to Person prefix string.
      */
     public static final String PATIENT_PREFIX = "PT";
-     
+
     /**
      * {@inheritDoc}
      */
@@ -420,7 +420,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
             return iso;
         }
     }
-    
+
     /**
      * convert the id of an patient.
      * @author mshestopalov

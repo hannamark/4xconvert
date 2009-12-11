@@ -107,6 +107,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  * @author gax
  */
 public class IiConverter extends AbstractXSnapshotConverter<Ii> {
+    private static final String ROOT_NOT_ALLOWED_ERR_MSG = "The ii.root value '%s' is not allowed.";
+    private static final String IDENT_NAME_NOT_ALLOWED_ERR_MSG = "The ii.identifierName value '%s' is not allowed.";
 
     /**
      * {@inheritDoc}
@@ -163,10 +165,11 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
 
             Long id = Long.valueOf(value.getExtension());
             if (!rtIName.keySet().contains(value.getRoot())) {
-                throw new PoIsoConstraintException("The ii.root value is not allowed.");
+                throw new PoIsoConstraintException(String.format(ROOT_NOT_ALLOWED_ERR_MSG, value.getRoot()));
             }
             if (!rtIName.get(value.getRoot()).equals(value.getIdentifierName())) {
-                throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
+                throw new PoIsoConstraintException(String.format(IDENT_NAME_NOT_ALLOWED_ERR_MSG,
+                        value.getIdentifierName()));
             }
             return (TO) PoRegistry.getGenericService().getPersistentObject((Class<PersistentObject>) returnClass, id);
         }
@@ -232,10 +235,11 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
 
         Long id = Long.valueOf(value.getExtension());
         if (!IdConverter.PERSON_ROOT.equals(value.getRoot())) {
-            throw new PoIsoConstraintException("The ii.root value is not allowed.");
+            throw new PoIsoConstraintException(String.format(ROOT_NOT_ALLOWED_ERR_MSG, value.getRoot()));
         }
         if (!IdConverter.PERSON_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
-            throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
+            throw new PoIsoConstraintException(String.format(IDENT_NAME_NOT_ALLOWED_ERR_MSG,
+                    value.getIdentifierName()));
         }
         return PoRegistry.getPersonService().getById(id);
     }
@@ -254,10 +258,11 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
 
         Long id = Long.valueOf(value.getExtension());
         if (!IdConverter.ORG_ROOT.equals(value.getRoot())) {
-            throw new PoIsoConstraintException("The ii.root value is not allowed.");
+            throw new PoIsoConstraintException(String.format(ROOT_NOT_ALLOWED_ERR_MSG, value.getRoot()));
         }
         if (!IdConverter.ORG_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
-            throw new PoIsoConstraintException("The ii.identifierName value is not allowed.");
+            throw new PoIsoConstraintException(String.format(IDENT_NAME_NOT_ALLOWED_ERR_MSG,
+                    value.getIdentifierName()));
         }
         return PoRegistry.getOrganizationService().getById(id);
     }
