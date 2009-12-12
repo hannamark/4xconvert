@@ -76,11 +76,10 @@
 */
 package gov.nih.nci.accrual.web.action;
 
+import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
-import gov.nih.nci.accrual.web.util.PaServiceLocator;
 import gov.nih.nci.accrual.web.util.SessionEnvManager;
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -100,17 +99,18 @@ public class WelcomeAction extends AbstractAccrualAction {
         if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_OUTCOMES)) {
             String loginName = ServletActionContext.getRequest().getRemoteUser();
             try {
-                RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(loginName);
+                UserDto user = userSvc.getUser(StConverter.convertToSt(loginName));
                 if (user != null) {
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_OUTCOMES);
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME, 
-                        user.getLastName() + ", " + user.getFirstName());            
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME,
+                        StConverter.convertToString(user.getLastName()) + ", " 
+                        + StConverter.convertToString(user.getFirstName()));            
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, 
-                        UserAccountAction.getPhysician(user.getPoPersonId()));            
+                        UserAccountAction.getPhysician(user.getPoPersonIdentifier()));            
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, 
-                        IiConverter.convertToPoOrganizationIi(String.valueOf(user.getPoOrganizationId())));            
+                        user.getPoOrganizationIdentifier());            
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, 
-                        UserAccountAction.getTreatmentSite(user.getPoOrganizationId()));
+                        UserAccountAction.getTreatmentSite(user.getPoOrganizationIdentifier()));
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II, 
                         searchTrialSvc.getOutcomesStudyProtocolIi());
                 }

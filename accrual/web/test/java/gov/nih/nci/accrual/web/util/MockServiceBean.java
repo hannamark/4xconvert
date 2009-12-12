@@ -76,93 +76,87 @@
 *
 *
 */
+package gov.nih.nci.accrual.web.util;
 
-package gov.nih.nci.accrual.convert;
-
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.UserDto;
-import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.accrual.service.UserService;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
-import java.util.zip.DataFormatException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author Lisa Kelley
- * @since Dec 9, 2009
+ * @author Kalpana Guthikonda
+ * @since 11/13/2009
+ *
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
-public class UserConverter extends AbstractConverter<UserDto, RegistryUser> {
-
+public class MockServiceBean implements UserService {
+	
+	private static Long seq = 1L;
+    private static List<UserDto> userList;
+    static {
+    	userList = new ArrayList<UserDto>();
+    }
+    
     /**
      * {@inheritDoc}
      */
-    @Override
-    public UserDto convertFromDomainToDto(RegistryUser bo) throws DataFormatException {
-        UserDto dto = new UserDto();
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));        
-        dto.setFirstName(StConverter.convertToSt(bo.getFirstName()));
-        if (bo.getMiddleName() != null) {
-            dto.setMiddleName(StConverter.convertToSt(bo.getMiddleName()));
-        }
-        dto.setLastName(StConverter.convertToSt(bo.getLastName()));
-        if (bo.getAddressLine() != null) {
-            dto.setAddress(StConverter.convertToSt(bo.getAddressLine()));
-        }
-        if (bo.getCity() != null) {
-            dto.setCity(StConverter.convertToSt(bo.getCity()));
-        }
-        dto.setState(StConverter.convertToSt(bo.getState()));
-        if (bo.getPostalCode() != null) {
-            dto.setPostalCode(StConverter.convertToSt(bo.getPostalCode()));
-        }
-        dto.setCountry(StConverter.convertToSt(bo.getCountry()));
-        dto.setPhone(StConverter.convertToSt(bo.getPhone()));        
-        dto.setAffiliateOrg(StConverter.convertToSt(bo.getAffiliateOrg()));
-        if (bo.getPrsOrgName() != null) {
-            dto.setPrsOrg(StConverter.convertToSt(bo.getPrsOrgName()));
-        }
-        if (bo.getPoOrganizationId() != null) {
-            dto.setPoOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(bo.getPoOrganizationId().toString()));
-        }
-        if (bo.getPoPersonId() != null) {
-            dto.setPoPersonIdentifier(IiConverter.convertToPoOrganizationIi(bo.getPoPersonId().toString()));
+    public UserDto createUser(UserDto dto) throws RemoteException {
+    	dto.setIdentifier(IiConverter.convertToIi(seq++));
+    	userList.add(dto);
+        return dto;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public UserDto getUser(St isoLoginName) throws RemoteException {
+    	String loginName = StConverter.convertToString(isoLoginName);
+    	UserDto dto = null;
+        for (UserDto user : userList) {
+            if (loginName.equals(StConverter.convertToString(user.getLoginName()))) {
+            	dto = user;
+            }
         }
         return dto;
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    @Override
-    public RegistryUser convertFromDtoToDomain(UserDto dto) throws DataFormatException {
-        RegistryUser bo = new RegistryUser();
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
-            bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+    public UserDto updateUser(UserDto dto) throws RemoteException {
+    	Long id = IiConverter.convertToLong(dto.getIdentifier());
+    	UserDto result = null;
+        for (UserDto user : userList) {
+            if (id.equals(IiConverter.convertToLong(user.getIdentifier()))) {
+            	result = user;
+            }
         }
-        bo.setFirstName(StConverter.convertToString(dto.getFirstName()));
-        if (!PAUtil.isStNull(dto.getMiddleName())) {
-            bo.setMiddleName(StConverter.convertToString(dto.getMiddleName()));
-        }
-        bo.setLastName(StConverter.convertToString(dto.getLastName()));
-        if (!PAUtil.isStNull(dto.getAddress())) {
-            bo.setAddressLine(StConverter.convertToString(dto.getAddress()));
-        }
-        if (!PAUtil.isStNull(dto.getCity())) {
-            bo.setCity(StConverter.convertToString(dto.getCity()));
-        }
-        bo.setState(StConverter.convertToString(dto.getState()));
-        if (!PAUtil.isStNull(dto.getPostalCode())) {
-            bo.setPostalCode(StConverter.convertToString(dto.getPostalCode()));
-        }
-        bo.setCountry(StConverter.convertToString(dto.getCountry()));
-        bo.setPhone(StConverter.convertToString(dto.getPhone()));
-        bo.setAffiliateOrg(StConverter.convertToString(dto.getAffiliateOrg()));
-        if (!PAUtil.isStNull(dto.getPrsOrg())) {
-            bo.setPrsOrgName(StConverter.convertToString(dto.getPrsOrg()));
-        }
-        bo.setPoOrganizationId(IiConverter.convertToLong(dto.getPoOrganizationIdentifier()));
-        bo.setPoPersonId(IiConverter.convertToLong(dto.getPoPersonIdentifier()));
-        return bo;
+        return result;
     }
+
+    public UserDto create(UserDto dto) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void delete(Ii ii) throws RemoteException {
+        // TODO Auto-generated method stub        
+    }
+
+    public UserDto get(Ii ii) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public UserDto update(UserDto dto) throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
 }

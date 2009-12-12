@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.PatientServiceRemote;
@@ -166,5 +167,12 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     public ActivityRelationshipService getActivityRelationshipService() {
         return (ActivityRelationshipService) JNDIUtil.lookup(
                 "accrual/ActivityRelationshipBeanLocal/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public UserService getUserService() {
+        return (UserService) JNDIUtil.lookup("accrual/UserBeanLocal/remote");
     }
 }

@@ -49,7 +49,6 @@
         <s:form name="myAccount" method="POST">
             <s:actionerror/>
             <s:hidden name="userAccount.id" />
-            <s:hidden name="userAccount.csmUserId" />
             <s:if test="userAccount.id == null">
                 <p>To activate your account for NCI Outcomes, please begin by creating your login information. <br>
                    Please note: asterisks (<span class="required">*</span>) indicate required fields. <br>
@@ -127,7 +126,7 @@
                     <td scope="row" class="label"><label><fmt:message key="user.account.state.label"/><span class="required">*</span></label></td>
                     <td>
                         <s:select name="userAccount.state" headerKey="" headerValue="--Select--" 
-                                  list="userAccount.states" listKey="code" listValue="code" value="userAccount.state" cssStyle="width:206px"/>
+                                  list="userAccount.states" listKey="name" listValue="code" value="userAccount.state" cssStyle="width:206px"/>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.state</s:param></s:fielderror>
                     </td>                
                 </tr>
@@ -141,8 +140,8 @@
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.country.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:select name="userAccount.country" headerKey="United States" headerValue="United States" 
-                                  list="userAccount.countries" listKey="name" listValue="name" value="userAccount.country" cssStyle="width:206px"/>
+                        <s:select name="userAccount.country" headerKey="USA" headerValue="United States" 
+                                  list="userAccount.countries" listKey="alpha3" listValue="name" value="userAccount.country" cssStyle="width:206px"/>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.country</s:param></s:fielderror>
                     </td>               
                 </tr>

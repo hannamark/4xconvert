@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
@@ -158,6 +159,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected InterventionAlternateNameServiceRemote interventionANameSvc;    
     /** The intervention svc. */
     protected InterventionServiceRemote interventionSvc;
+    /** UserService. */
+    protected UserService userSvc;
 
     /**
      * {@inheritDoc}
@@ -177,6 +180,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         activityRelationshipSvc = AccrualServiceLocator.getInstance().getActivityRelationshipService();
         interventionANameSvc = PaServiceLocator.getInstance().getInterventionAlternateNameService();
         interventionSvc = PaServiceLocator.getInstance().getInterventionService();    
+        userSvc = AccrualServiceLocator.getInstance().getUserService();
     }
     /**
      * Default execute method for action classes.

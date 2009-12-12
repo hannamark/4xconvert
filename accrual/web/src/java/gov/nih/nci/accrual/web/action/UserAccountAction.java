@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.web.dto.util.PhysicianWebDTO;
 import gov.nih.nci.accrual.web.dto.util.TreatmentSiteWebDTO;
@@ -11,20 +11,19 @@ import gov.nih.nci.accrual.web.dto.util.UserAccountWebDTO;
 import gov.nih.nci.accrual.web.mail.MailManager;
 import gov.nih.nci.accrual.web.util.AccrualConstants;
 import gov.nih.nci.accrual.web.util.EncoderDecoder;
-import gov.nih.nci.accrual.web.util.PaServiceLocator;
 import gov.nih.nci.accrual.web.util.SessionEnvManager;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -100,24 +99,23 @@ public class UserAccountAction extends AbstractAccrualAction {
         if (encodedPassword != null) {
             password = EncoderDecoder.decodeString(encodedPassword);
         }
-
-        RegistryUser user = null;
+        
         try {
-            user = PaServiceLocator.getInstance().getRegistryUserService().getUser(loginName);
-
+            UserDto user = userSvc.getUser(StConverter.convertToSt(loginName));
+            
             if (user == null) { // new user
                 userAccount.setLoginName(loginName);
                 userAccount.setPassword(password);
             } else { // user already exists
-                String treatmentSite = getTreatmentSite(user.getPoOrganizationId());
-                String physician = getPhysician(user.getPoPersonId());
-                userAccount = new UserAccountWebDTO(user, loginName, password, treatmentSite, physician);
+                String treatmentSite = getTreatmentSite(user.getPoOrganizationIdentifier());
+                String physician = getPhysician(user.getPoPersonIdentifier());
+                userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
             }
         } catch (Exception e) {
-            LOG.error("error while activating user :" + loginName);
+            LOG.error("error while activating user :" + loginName, e);
             return ERROR;
         }
-
+        
         userAction = "activateAccount";
         return CREATE;
     }
@@ -128,12 +126,11 @@ public class UserAccountAction extends AbstractAccrualAction {
      * @return String
      * @throws Exception exception
      */
-    public static String getTreatmentSite(Long poOrganizationId) throws Exception {
+    public static String getTreatmentSite(Ii poOrganizationId) throws Exception {
         if (poOrganizationId == null) {
             return null;
         }
-        OrganizationDTO organization = PoRegistry.getOrganizationEntityService().
-            getOrganization(IiConverter.convertToPoOrganizationIi(String.valueOf(poOrganizationId)));
+        OrganizationDTO organization = PoRegistry.getOrganizationEntityService().getOrganization(poOrganizationId);
         return organization.getName().getPart().get(0).getValue();
     }
     
@@ -143,12 +140,11 @@ public class UserAccountAction extends AbstractAccrualAction {
      * @return String
      * @throws Exception exception
      */
-    public static String getPhysician(Long poPersonId) throws Exception {
+    public static String getPhysician(Ii poPersonId) throws Exception {
         if (poPersonId == null) {
             return null;
         }
-        PersonDTO person = PoRegistry.getPersonEntityService().
-            getPerson(IiConverter.convertToPoPersonIi(String.valueOf(poPersonId)));
+        PersonDTO person = PoRegistry.getPersonEntityService().getPerson(poPersonId);
     
         String lastName = null;
         String firstName = null;                
@@ -181,68 +177,56 @@ public class UserAccountAction extends AbstractAccrualAction {
         }
 
         String actionResult =  null;
+        UserDto user = new UserDto();
+        if (PAUtil.isNotEmpty(userAccount.getId())) {
+            user.setIdentifier(IiConverter.convertToIi(userAccount.getId()));
+        }
+        user.setLoginName(StConverter.convertToSt(userAccount.getLoginName()));
+        user.setPassword(StConverter.convertToSt(userAccount.getPassword()));
+        user.setFirstName(StConverter.convertToSt(userAccount.getFirstName()));
+        user.setLastName(StConverter.convertToSt(userAccount.getLastName()));
+        user.setMiddleName(StConverter.convertToSt(userAccount.getMiddleName()));
+        user.setAddress(StConverter.convertToSt(userAccount.getAddress()));
+        user.setCity(StConverter.convertToSt(userAccount.getCity()));
+        user.setState(StConverter.convertToSt(userAccount.getState()));
+        user.setPostalCode(StConverter.convertToSt(userAccount.getZipCode()));
+        user.setCountry(StConverter.convertToSt(userAccount.getCountry()));
+        user.setPhone(StConverter.convertToSt(userAccount.getPhoneNumber()));
+        user.setAffiliateOrg(StConverter.convertToSt(userAccount.getOrganization()));
+        user.setPrsOrg(StConverter.convertToSt(userAccount.getPrsOrganization()));
+        user.setPoOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(userAccount.getTreatmentSiteId()));
+        user.setPoPersonIdentifier(IiConverter.convertToPoPersonIi(userAccount.getPhysicianId()));
+        
         try {
-            RegistryUser user = new RegistryUser();
-            if (PAUtil.isNotEmpty(userAccount.getId())) {
-                user.setId(Long.valueOf(userAccount.getId()));
-            }
-            if (PAUtil.isNotEmpty(userAccount.getCsmUserId())) {
-                user.setCsmUserId(Long.valueOf(userAccount.getCsmUserId()));
-            }
-            user.setFirstName(userAccount.getFirstName());
-            user.setLastName(userAccount.getLastName());
-            user.setMiddleName(userAccount.getMiddleName());
-            user.setAddressLine(userAccount.getAddress());
-            user.setCity(userAccount.getCity());
-            user.setState(userAccount.getState());
-            user.setPostalCode(userAccount.getZipCode());
-            user.setCountry(userAccount.getCountry());
-            user.setPhone(userAccount.getPhoneNumber());
-            user.setAffiliateOrg(userAccount.getOrganization());
-            user.setPrsOrgName(userAccount.getPrsOrganization());
-            user.setPoOrganizationId(Long.valueOf(userAccount.getTreatmentSiteId()));
-            user.setPoPersonId(Long.valueOf(userAccount.getPhysicianId()));
-
             if (PAUtil.isEmpty(userAccount.getId())) {
-                // create the CSM user
-                User csmUser = AccrualCsmUtil.getInstance().
-                    createCSMUser(user, userAccount.getLoginName(), userAccount.getPassword());
-
-                if (csmUser != null) {
-                    user.setCsmUserId(csmUser.getUserId());
-                }
-
                 // create the user
-                PaServiceLocator.getInstance().getRegistryUserService().createUser(user);
+                userSvc.createUser(user);
 
                 userAction = "createAccount";
                 actionResult = "redirectToLogin";
             } else {
-                // update the CSM user
-                AccrualCsmUtil.getInstance().updateCSMUser(user, userAccount.getLoginName(), userAccount.getPassword());
-
                 // update the user
-                PaServiceLocator.getInstance().getRegistryUserService().updateUser(user);
+                userSvc.updateUser(user);
 
                 if (ServletActionContext.getRequest().getRemoteUser() == null) {
                     userAction = "resetPassword";
                     actionResult = "redirectToLogin";
                 } else {
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME, 
-                        user.getLastName() + ", " + user.getFirstName());            
+                        userAccount.getLastName() + ", " + userAccount.getFirstName());            
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, 
-                        getPhysician(user.getPoPersonId()));            
+                        getPhysician(user.getPoPersonIdentifier()));            
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, 
-                        IiConverter.convertToPoOrganizationIi(String.valueOf(user.getPoOrganizationId())));            
+                        user.getPoOrganizationIdentifier());            
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, 
-                        getTreatmentSite(user.getPoOrganizationId()));
+                        getTreatmentSite(user.getPoOrganizationIdentifier()));
                         
                     userAction = "updateAccount";
                     actionResult = CREATE;
                 }
             }
         } catch (Exception e) {
-            LOG.error("error while updating user info");
+            LOG.error("error while updating user info", e);
             actionResult = ERROR;
         }
 
@@ -263,16 +247,15 @@ public class UserAccountAction extends AbstractAccrualAction {
 
         String loginName = ServletActionContext.getRequest().getRemoteUser();
         try {
-            // retrieve user info
-            RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(loginName);
-            User csmUser = AccrualCsmUtil.getInstance().getCSMUser(loginName);
-            if (user != null && csmUser != null) {
-                String treatmentSite = getTreatmentSite(user.getPoOrganizationId());               
-                String physician = getPhysician(user.getPoPersonId());                
-                userAccount = new UserAccountWebDTO(user, loginName, csmUser.getPassword(), treatmentSite, physician);
+            UserDto user = userSvc.getUser(StConverter.convertToSt(loginName));
+            
+            if (user != null) {
+                String treatmentSite = getTreatmentSite(user.getPoOrganizationIdentifier());
+                String physician = getPhysician(user.getPoPersonIdentifier());
+                userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
             }
         } catch (Exception e) {
-            LOG.error("error while displaying My Account page for user :" + loginName);
+            LOG.error("error while displaying My Account page for user :" + loginName, e);
             return ERROR;
         }
 
@@ -352,7 +335,7 @@ public class UserAccountAction extends AbstractAccrualAction {
         List<Country> countries = treatmentSiteSearchCriteria.getCountries();
         for (int i = 0; i < countries.size(); i++) {
             Country country = (Country) countries.get(i);
-            if (country.getAlpha3().toString().equals(code)) {
+            if (country.getAlpha3().equals(code)) {
                 return country.getName();
             }
         }

@@ -3,11 +3,13 @@
  */
 package gov.nih.nci.accrual.web.dto.util;
 
+import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.web.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.web.util.PaServiceLocator;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.USStateCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -22,7 +24,6 @@ import java.util.List;
 public class UserAccountWebDTO {
 
     private String  id;
-    private String  csmUserId;
     private String  loginName;
     private String  password;
     private String  retypePassword;
@@ -54,39 +55,31 @@ public class UserAccountWebDTO {
     /**
      * 
      * @param user user
-     * @param loginName loginName
-     * @param password password
      * @param treatmentSite treatmentSite
      * @param physician physician
      */
-    public UserAccountWebDTO(RegistryUser user, String loginName, String password, 
-                             String treatmentSite, String physician) {
-        if (user.getId() != null) {
-            this.id = String.valueOf(user.getId());
-        }
-        if (user.getCsmUserId() != null) {
-            this.csmUserId = String.valueOf(user.getCsmUserId());
-        }
-        this.loginName       = loginName;
-        this.password        = password;
+    public UserAccountWebDTO(UserDto user, String treatmentSite, String physician) {
+        this.id              = IiConverter.convertToString(user.getIdentifier());
+        this.loginName       = StConverter.convertToString(user.getLoginName());
+        this.password        = StConverter.convertToString(user.getPassword());
         this.retypePassword  = password;
-        this.firstName       = user.getFirstName();
-        this.middleName      = user.getMiddleName();
-        this.lastName        = user.getLastName();        
-        this.address         = user.getAddressLine();
-        this.city            = user.getCity();
-        this.state           = user.getState();
-        this.zipCode         = user.getPostalCode();
-        this.country         = user.getCountry();
-        this.phoneNumber     = user.getPhone();
-        this.organization    = user.getAffiliateOrg();
-        this.prsOrganization = user.getPrsOrgName();
-        if (user.getPoOrganizationId() != null) {
-            this.treatmentSiteId = String.valueOf(user.getPoOrganizationId());
+        this.firstName       = StConverter.convertToString(user.getFirstName());
+        this.middleName      = StConverter.convertToString(user.getMiddleName());
+        this.lastName        = StConverter.convertToString(user.getLastName());
+        this.address         = StConverter.convertToString(user.getAddress());
+        this.city            = StConverter.convertToString(user.getCity());
+        this.state           = StConverter.convertToString(user.getState());
+        this.zipCode         = StConverter.convertToString(user.getPostalCode());
+        this.country         = StConverter.convertToString(user.getCountry());
+        this.phoneNumber     = StConverter.convertToString(user.getPhone());
+        this.organization    = StConverter.convertToString(user.getAffiliateOrg());
+        this.prsOrganization = StConverter.convertToString(user.getPrsOrg());
+        if (user.getPoOrganizationIdentifier() != null) {
+            this.treatmentSiteId = user.getPoOrganizationIdentifier().getExtension();
         }        
         this.treatmentSite = treatmentSite;
-        if (user.getPoPersonId() != null) {
-            this.physicianId = String.valueOf(user.getPoPersonId());
+        if (user.getPoPersonIdentifier() != null) {
+            this.physicianId = user.getPoPersonIdentifier().getExtension();
         }        
         this.physician = physician;
     }
@@ -194,12 +187,12 @@ public class UserAccountWebDTO {
             action.addFieldError(USER_ACCOUNT + ".state", 
                                  "> Please select a State (select 'None' for non-US countries)");
         } else if (PAUtil.isNotEmpty(country)) {
-            if (country.equalsIgnoreCase("United States")) {
-                if (state.startsWith("None")) {
+            if ("USA".equals(country)) {
+                if ("INTERNATIONAL".equals(state)) {
                     action.addFieldError(USER_ACCOUNT + ".state", "> Please select a State of the United States");
                 }
             } else {
-                if (!state.startsWith("None")) {
+                if (!"INTERNATIONAL".equals(state)) {
                     action.addFieldError(USER_ACCOUNT + ".state", "> Please select 'None' for non-US countries");
                 }
             }
@@ -218,20 +211,6 @@ public class UserAccountWebDTO {
      */
     public void setId(String id) {
         this.id = id;
-    }
-    
-    /**
-     * @return the csmUserId
-     */
-    public String getCsmUserId() {
-        return csmUserId;
-    }
-    
-    /**
-     * @param csmUserId the csmUserId to set
-     */
-    public void setCsmUserId(String csmUserId) {
-        this.csmUserId = csmUserId;
     }
     
     /**

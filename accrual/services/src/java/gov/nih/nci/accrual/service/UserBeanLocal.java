@@ -88,12 +88,10 @@ import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.USStateCode;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.rmi.RemoteException;
@@ -102,7 +100,6 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -114,37 +111,34 @@ import javax.interceptor.Interceptors;
  */
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class UserBeanLocal
         extends AbstractBaseAccrualBean<UserDto, RegistryUser, UserConverter>
         implements UserService {
 
     private static final String DEFAULT_CONTEXT_NAME = "ejbclient";
-    private static final int MIN_PASSWORD_LENGTH = 6;
-
-    @EJB
-    RegistryUserServiceRemote registryUserService;
-    @EJB
-    LookUpTableServiceRemote lookUpTableService;
+    private static final int MIN_PASSWORD_LENGTH = 6;    
     
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
     public UserDto getUser(St isoLoginName) throws RemoteException {
         getLogger().info("Entering getUser().");
         String loginName = StConverter.convertToString(isoLoginName);
         validateLoginName(loginName);
         RegistryUser registryUser;
         try {
-            registryUser = registryUserService.getUser(loginName);
+            registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving user.", e);
         }
         
         UserDto resultDto = null;
         if (registryUser != null) { // user exists
+            registryUser.setCountry(getCountryCode(registryUser.getCountry()));
+            registryUser.setState(USStateCode.getByCode(registryUser.getState()).getName());
+        
             try {
                 resultDto = Converters.get(UserConverter.class).convertFromDomainToDto(registryUser);
             } catch (DataFormatException e) {
@@ -170,7 +164,7 @@ public class UserBeanLocal
         
         RegistryUser registryUser;
         try {
-            registryUser = registryUserService.getUser(loginName);
+            registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving user.", e);
         }
@@ -187,6 +181,9 @@ public class UserBeanLocal
             throw new RemoteException("Iso conversion exception in createUser().", e);
         }
         
+        registryUser.setCountry(getCountryName(registryUser.getCountry()));
+        registryUser.setState(USStateCode.valueOf(registryUser.getState()).getCode());        
+        
         // create the CSM user
         User csmUser = AccrualCsmUtil.getInstance().createCSMUser(registryUser, 
             loginName, StConverter.convertToString(dto.getPassword()));
@@ -194,10 +191,13 @@ public class UserBeanLocal
 
         // create the user
         try {
-            registryUser = registryUserService.createUser(registryUser);
+            registryUser = PaRegistry.getRegisterUserService().createUser(registryUser);
         } catch (PAException e) {
             throw new RemoteException("Exception while creating user.", e);
         }
+        
+        registryUser.setCountry(getCountryCode(registryUser.getCountry()));
+        registryUser.setState(USStateCode.getByCode(registryUser.getState()).getName());
         
         UserDto resultDto;
         try {
@@ -222,7 +222,7 @@ public class UserBeanLocal
         
         RegistryUser registryUser;
         try {
-            registryUser = registryUserService.getUser(loginName);
+            registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving user.", e);
         }
@@ -231,6 +231,7 @@ public class UserBeanLocal
             throw new RemoteException("User does not exist.");
         }
         
+        Long csmUserId = registryUser.getCsmUserId();
         validateData(dto);
         
         try {
@@ -239,17 +240,23 @@ public class UserBeanLocal
             throw new RemoteException("Iso conversion exception in updateUser().", e);
         }
         
+        registryUser.setCsmUserId(csmUserId);
+        registryUser.setCountry(getCountryName(registryUser.getCountry()));
+        registryUser.setState(USStateCode.valueOf(registryUser.getState()).getCode());
+        
         // update the CSM user
         User csmUser = AccrualCsmUtil.getInstance().updateCSMUser(registryUser, 
             loginName, StConverter.convertToString(dto.getPassword()));
-        registryUser.setCsmUserId(csmUser.getUserId());
         
         // update the user
         try {
-            registryUser = registryUserService.updateUser(registryUser);
+            registryUser = PaRegistry.getRegisterUserService().updateUser(registryUser);
         } catch (PAException e) {
             throw new RemoteException("Exception while updating user.", e);
         }
+        
+        registryUser.setCountry(getCountryCode(registryUser.getCountry()));
+        registryUser.setState(USStateCode.getByCode(registryUser.getState()).getName());
         
         UserDto resultDto;
         try {
@@ -267,8 +274,13 @@ public class UserBeanLocal
         if (PAUtil.isEmpty(loginName)) {
             throw new RemoteException("LoginName must be set.");
         }
-        String contextName = 
-            getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : DEFAULT_CONTEXT_NAME;
+        
+        String contextName;
+        try {
+            contextName = getEjbContext().getCallerPrincipal().getName();
+        } catch (Exception e) {
+            contextName = DEFAULT_CONTEXT_NAME;
+        }
         if (!DEFAULT_CONTEXT_NAME.equals(contextName) && !loginName.equals(contextName)) {
             throw new RemoteException("LoginName does not match context.");
         }
@@ -311,12 +323,12 @@ public class UserBeanLocal
         }
         
         // validate PO organization identifier
-        if (IiConverter.convertToLong(dto.getPoOrganizationIdentifier()) == null) {
+        if (PAUtil.isIiNull(dto.getPoOrganizationIdentifier())) {
             throw new RemoteException("PO Organization Identifier must be set.");
         }
         
         // validate PO person identifier
-        if (IiConverter.convertToLong(dto.getPoPersonIdentifier()) == null) {
+        if (PAUtil.isIiNull(dto.getPoPersonIdentifier())) {
             throw new RemoteException("PO Person Identifier must be set.");
         }
     }
@@ -328,7 +340,7 @@ public class UserBeanLocal
         
         List<Country> countries;
         try {
-            countries = lookUpTableService.getCountries();
+            countries = PaRegistry.getLookUpTableService().getCountries();
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving countries.", e);
         }
@@ -354,7 +366,7 @@ public class UserBeanLocal
         List<USStateCode> states = Arrays.asList(USStateCode.values());
         boolean stateFound = false;
         for (USStateCode stateIterator : states) {
-           if (stateIterator.getCode().equals(state)) {
+           if (stateIterator.getName().equals(state)) {
                stateFound = true;
                break; // since match has been found
            }
@@ -364,14 +376,50 @@ public class UserBeanLocal
             throw new RemoteException("Invalid state specified.");
         }
         
-        if (country.equalsIgnoreCase("USA")) {
-            if (state.startsWith("None")) {
+        if ("USA".equals(country)) {
+            if ("INTERNATIONAL".equals(state)) {
                 throw new RemoteException("State must be a State of the United States.");
             }
         } else {
-            if (!state.startsWith("None")) {
+            if (!"INTERNATIONAL".equals(state)) {
                 throw new RemoteException("State must be 'None' for non-US countries");
             }
         }
+    }
+    
+    private String getCountryCode(String countryName) throws RemoteException {
+        List<Country> countries;
+        try {
+            countries = PaRegistry.getLookUpTableService().getCountries();
+        } catch (PAException e) {
+            throw new RemoteException("Exception while retrieving countries.", e);
+        }
+        
+        for (int i = 0; i < countries.size(); i++) {
+            Country country = (Country) countries.get(i);
+            if (country.getName().equals(countryName)) {
+                return country.getAlpha3();
+            }
+        }
+        
+        throw new RemoteException("Error while retrieving country code");
+    }
+    
+    private String getCountryName(String countryCode) throws RemoteException {
+        List<Country> countries;
+        try {
+            countries = PaRegistry.getLookUpTableService().getCountries();
+        } catch (PAException e) {
+            throw new RemoteException("Exception while retrieving countries.", e);
+        }
+        
+        for (int i = 0; i < countries.size(); i++) {
+            Country country = (Country) countries.get(i);
+            if (country.getAlpha3().equals(countryCode)) {
+                return country.getName();
+            }
+        }
+        
+        throw new RemoteException("Error while retrieving country name");
     }
 }
