@@ -90,6 +90,8 @@
                 <filter token="accrual.jdbc.url" value="${database.url}"/>
                 <filter token="accrual.db.username" value="${database.user}"/>
                 <filter token="accrual.db.password" value="${database.password}"/>
+            	<filter token="gridServicePrincipal" value="${gridServicePrincipal}"/>
+            	<filter token="gridServiceCredential" value="${gridServiceCredential}"/>
             </filterset>
             <fileset dir="${ear.resource.dir}" 
                      includes="**/*" 
