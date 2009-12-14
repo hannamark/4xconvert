@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -95,9 +96,7 @@ import java.util.List;
  */
 public class InvokeActivityRelationshipEjb extends InvokeAccrualStudyServiceEjb<ActivityRelationshipDto> implements
         ActivityRelationshipService {
-
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
+    
     /**
      * Const.
      */
@@ -109,21 +108,25 @@ public class InvokeActivityRelationshipEjb extends InvokeAccrualStudyServiceEjb<
      * {@inheritDoc}
      */
     public List<ActivityRelationshipDto> getBySourcePerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
+        try {
+            return getLocator().getActivityRelationshipService().getBySourcePerformedActivity(arg0, arg1);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public List<ActivityRelationshipDto> getByTargetPerformedActivity(Ii arg0, Cd arg1) throws RemoteException {
-        return null;
+        try {
+            return getLocator().getActivityRelationshipService().getByTargetPerformedActivity(arg0, arg1);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ActivityRelationshipDto update(ActivityRelationshipDto arg0) throws RemoteException {
-        return null;
-    }
-
 }

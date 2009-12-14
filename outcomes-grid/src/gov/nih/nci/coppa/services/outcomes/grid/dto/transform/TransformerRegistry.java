@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
@@ -101,6 +102,7 @@ public final class TransformerRegistry {
 
     static {
         values.put(StudySubjectDto.class, StudySubjectTransformer.INSTANCE);
+        values.put(ActivityRelationshipDto.class, ActivityRelationshipTransformer.INSTANCE);
     }
 
     /**

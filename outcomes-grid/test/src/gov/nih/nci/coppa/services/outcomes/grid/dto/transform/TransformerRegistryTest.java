@@ -85,6 +85,7 @@ package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.StudySubjectTransformer;
@@ -100,7 +101,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(1, tMap.size());
+        assertEquals(2, tMap.size());
         tMap.clear();
     }
 
@@ -110,7 +111,9 @@ public class TransformerRegistryTest {
         //#1
         Transformer trans = TransformerRegistry.INSTANCE.getTransformer(StudySubjectDto.class);
         assertTrue(trans instanceof StudySubjectTransformer);
-
+        //#2
+        trans = TransformerRegistry.INSTANCE.getTransformer(ActivityRelationshipDto.class);
+        assertTrue(trans instanceof ActivityRelationshipTransformer);
     }
 
     @Test (expected=RuntimeException.class)
