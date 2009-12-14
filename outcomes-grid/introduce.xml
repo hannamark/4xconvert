@@ -222,54 +222,47 @@
      <ns15:Output qName="ns21:ActivityRelationship" description="" isArray="true" xmlns:ns21="http://outcomes.services.coppa.nci.nih.gov"/>
      <ns15:Exceptions/>
     </ns15:Method>
-    <ns15:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns15:MethodType">
+    <ns15:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns15:MethodType">
      <ns15:Inputs>
       <ns15:Input qName="ns22:Id" description="" isArray="false" name="id" xmlns:ns22="http://outcomes.services.coppa.nci.nih.gov"/>
      </ns15:Inputs>
-     <ns15:Output qName="ns23:ActivityRelationship" description="" isArray="true" xmlns:ns23="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns15:Output qName="ns23:ActivityRelationship" description="" isArray="false" xmlns:ns23="http://outcomes.services.coppa.nci.nih.gov"/>
      <ns15:Exceptions/>
     </ns15:Method>
-    <ns15:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns15:MethodType">
+    <ns15:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns15:MethodType">
      <ns15:Inputs>
-      <ns15:Input qName="ns24:Id" description="" isArray="false" name="id" xmlns:ns24="http://outcomes.services.coppa.nci.nih.gov"/>
+      <ns15:Input qName="ns24:ActivityRelationship" description="" isArray="false" name="activityRelationship" xmlns:ns24="http://outcomes.services.coppa.nci.nih.gov"/>
      </ns15:Inputs>
      <ns15:Output qName="ns25:ActivityRelationship" description="" isArray="false" xmlns:ns25="http://outcomes.services.coppa.nci.nih.gov"/>
      <ns15:Exceptions/>
     </ns15:Method>
-    <ns15:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns15:MethodType">
+    <ns15:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns15:MethodType">
      <ns15:Inputs>
       <ns15:Input qName="ns26:ActivityRelationship" description="" isArray="false" name="activityRelationship" xmlns:ns26="http://outcomes.services.coppa.nci.nih.gov"/>
      </ns15:Inputs>
      <ns15:Output qName="ns27:ActivityRelationship" description="" isArray="false" xmlns:ns27="http://outcomes.services.coppa.nci.nih.gov"/>
      <ns15:Exceptions/>
     </ns15:Method>
-    <ns15:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns15:MethodType">
-     <ns15:Inputs>
-      <ns15:Input qName="ns28:ActivityRelationship" description="" isArray="false" name="activityRelationship" xmlns:ns28="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns15:Inputs>
-     <ns15:Output qName="ns29:ActivityRelationship" description="" isArray="false" xmlns:ns29="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns15:Exceptions/>
-    </ns15:Method>
     <ns15:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns15:MethodType">
      <ns15:Inputs>
-      <ns15:Input qName="ns30:Id" description="" isArray="false" name="id" xmlns:ns30="http://outcomes.services.coppa.nci.nih.gov"/>
+      <ns15:Input qName="ns28:Id" description="" isArray="false" name="id" xmlns:ns28="http://outcomes.services.coppa.nci.nih.gov"/>
      </ns15:Inputs>
      <ns15:Output qName="void" description="" isArray="false"/>
      <ns15:Exceptions/>
     </ns15:Method>
     <ns15:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns15:MethodType">
-     <ns15:Output qName="ns31:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns31="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns32:MethodSecurity xsi:type="ns32:MethodSecurity" xmlns:ns32="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns32:SecuritySetting xsi:type="ns32:SecuritySetting">None</ns32:SecuritySetting>
-      <ns32:MethodAuthorization xsi:type="ns32:MethodAuthorization">
-       <ns32:NoAuthorization xsi:type="ns32:NoAuthorization"/>
-      </ns32:MethodAuthorization>
-     </ns32:MethodSecurity>
+     <ns15:Output qName="ns29:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns29="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns30:MethodSecurity xsi:type="ns30:MethodSecurity" xmlns:ns30="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns30:SecuritySetting xsi:type="ns30:SecuritySetting">None</ns30:SecuritySetting>
+      <ns30:MethodAuthorization xsi:type="ns30:MethodAuthorization">
+       <ns30:NoAuthorization xsi:type="ns30:NoAuthorization"/>
+      </ns30:MethodAuthorization>
+     </ns30:MethodSecurity>
      <ns15:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
      <ns15:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
     </ns15:Method>
    </ns15:Methods>
-   <ns33:ResourcePropertiesList xsi:type="ns33:ResourcePropertiesListType" xmlns:ns33="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns31:ResourcePropertiesList xsi:type="ns31:ResourcePropertiesListType" xmlns:ns31="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -277,230 +270,230 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="PerformedActivity" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity" packageName="gov.nih.nci.coppa.services.outcomes.performedactivity" xsi:type="ns3:ServiceType">
-   <ns34:Methods xsi:type="ns34:MethodsType" xmlns:ns34="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns34:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns35:Id" description="" isArray="false" name="id" xmlns:ns35="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns36:PerformedActivity" description="" isArray="false" xmlns:ns36="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns37:PerformedActivity" description="" isArray="false" name="performedActivity" xmlns:ns37="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns38:PerformedActivity" description="" isArray="false" xmlns:ns38="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns39:PerformedActivity" description="" isArray="false" name="performedActivity" xmlns:ns39="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns40:PerformedActivity" description="" isArray="false" xmlns:ns40="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns41:Id" description="" isArray="false" name="id" xmlns:ns41="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="void" description="" isArray="false"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns42:Id" description="" isArray="false" name="id" xmlns:ns42="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns43:PerformedActivity" description="" isArray="true" xmlns:ns43="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getByStudySubject" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns44:Id" description="" isArray="false" name="id" xmlns:ns44="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns45:PerformedActivity" description="" isArray="true" xmlns:ns45="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedObservationByStudySubject" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns46:Id" description="" isArray="false" name="id" xmlns:ns46="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns47:PerformedObservation" description="" isArray="true" xmlns:ns47="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedSubjectMilestoneByStudySubject" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns48:Id" description="" isArray="false" name="id" xmlns:ns48="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns49:PerformedSubjectMilestone" description="" isArray="true" xmlns:ns49="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedSubjectMilestone" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns50:Id" description="" isArray="false" name="id" xmlns:ns50="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns51:PerformedSubjectMilestone" description="" isArray="false" xmlns:ns51="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="createPerformedSubjectMilestone" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns52:PerformedSubjectMilestone" description="" isArray="false" name="performedSubjectMilestone" xmlns:ns52="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns53:PerformedSubjectMilestone" description="" isArray="false" xmlns:ns53="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="updatePerformedSubjectMilestone" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns54:PerformedSubjectMilestone" description="" isArray="false" name="performedSubjectMilestone" xmlns:ns54="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns55:PerformedSubjectMilestone" description="" isArray="false" xmlns:ns55="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedObservation" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns56:Id" description="" isArray="false" name="id" xmlns:ns56="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns57:PerformedObservation" description="" isArray="false" xmlns:ns57="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="createPerformedObservation" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns58:PerformedObservation" description="" isArray="false" name="performedObservation" xmlns:ns58="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns59:PerformedObservation" description="" isArray="false" xmlns:ns59="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="updatePerformedObservation" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns60:PerformedObservation" description="" isArray="false" name="performedObservation" xmlns:ns60="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns61:PerformedObservation" description="" isArray="false" xmlns:ns61="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedImagingByStudySubject" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns62:Id" description="" isArray="false" name="id" xmlns:ns62="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns63:PerformedImaging" description="" isArray="true" xmlns:ns63="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedImaging" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns64:Id" description="" isArray="false" name="id" xmlns:ns64="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns65:PerformedImaging" description="" isArray="false" xmlns:ns65="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="createPerformedImaging" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns66:PerformedImaging" description="" isArray="false" name="performedImaging" xmlns:ns66="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns67:PerformedImaging" description="" isArray="false" xmlns:ns67="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="updatePerformedImaging" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns68:PerformedImaging" description="" isArray="false" name="performedImaging" xmlns:ns68="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns69:PerformedImaging" description="" isArray="false" xmlns:ns69="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedProcedureByStudySubject" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns70:Id" description="" isArray="false" name="id" xmlns:ns70="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns71:PerformedProcedure" description="" isArray="true" xmlns:ns71="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedProcedure" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns72:Id" description="" isArray="false" name="id" xmlns:ns72="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns73:PerformedProcedure" description="" isArray="false" xmlns:ns73="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="createPerformedProcedure" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns74:PerformedProcedure" description="" isArray="false" name="performedProcedure" xmlns:ns74="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns75:PerformedProcedure" description="" isArray="false" xmlns:ns75="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="updatePerformedProcedure" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns76:PerformedProcedure" description="" isArray="false" name="performedProcedure" xmlns:ns76="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns77:PerformedProcedure" description="" isArray="false" xmlns:ns77="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedSubstanceAdministrationByStudySubject" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns78:Id" description="" isArray="false" name="id" xmlns:ns78="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns79:PerformedSubstanceAdministration" description="" isArray="true" xmlns:ns79="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedSubstanceAdministration" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns80:Id" description="" isArray="false" name="id" xmlns:ns80="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns81:PerformedSubstanceAdministration" description="" isArray="false" xmlns:ns81="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="createPerformedSubstanceAdministration" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns82:PerformedSubstanceAdministration" description="" isArray="false" name="performedSubstanceAdministration" xmlns:ns82="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns83:PerformedSubstanceAdministration" description="" isArray="false" xmlns:ns83="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="updatePerformedSubstanceAdministration" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns84:PerformedSubstanceAdministration" description="" isArray="false" name="performedSubstanceAdministration" xmlns:ns84="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns85:PerformedSubstanceAdministration" description="" isArray="false" xmlns:ns85="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedRadiationAdministrationByStudySubject" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns86:Id" description="" isArray="false" name="id" xmlns:ns86="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns87:PerformedRadiationAdministration" description="" isArray="true" xmlns:ns87="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="getPerformedRadiationAdministration" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns88:Id" description="" isArray="false" name="id" xmlns:ns88="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns89:PerformedRadiationAdministration" description="" isArray="false" xmlns:ns89="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="createPerformedRadiationAdministration" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns90:PerformedRadiationAdministration" description="" isArray="false" name="performedRadiationAdministration" xmlns:ns90="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns91:PerformedRadiationAdministration" description="" isArray="false" xmlns:ns91="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method description="" isImported="false" isProvided="false" name="updatePerformedRadiationAdministration" xsi:type="ns34:MethodType">
-     <ns34:Inputs>
-      <ns34:Input qName="ns92:PerformedRadiationAdministration" description="" isArray="false" name="performedRadiationAdministration" xmlns:ns92="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns34:Inputs>
-     <ns34:Output qName="ns93:PerformedRadiationAdministration" description="" isArray="false" xmlns:ns93="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns34:Exceptions/>
-    </ns34:Method>
-    <ns34:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns34:MethodType">
-     <ns34:Output qName="ns94:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns94="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns95:MethodSecurity xsi:type="ns95:MethodSecurity" xmlns:ns95="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns95:SecuritySetting xsi:type="ns95:SecuritySetting">None</ns95:SecuritySetting>
-      <ns95:MethodAuthorization xsi:type="ns95:MethodAuthorization">
-       <ns95:NoAuthorization xsi:type="ns95:NoAuthorization"/>
-      </ns95:MethodAuthorization>
-     </ns95:MethodSecurity>
-     <ns34:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns34:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns34:Method>
-   </ns34:Methods>
-   <ns96:ResourcePropertiesList xsi:type="ns96:ResourcePropertiesListType" xmlns:ns96="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns32:Methods xsi:type="ns32:MethodsType" xmlns:ns32="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns32:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns33:Id" description="" isArray="false" name="id" xmlns:ns33="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns34:PerformedActivity" description="" isArray="false" xmlns:ns34="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns35:PerformedActivity" description="" isArray="false" name="performedActivity" xmlns:ns35="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns36:PerformedActivity" description="" isArray="false" xmlns:ns36="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns37:PerformedActivity" description="" isArray="false" name="performedActivity" xmlns:ns37="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns38:PerformedActivity" description="" isArray="false" xmlns:ns38="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns39:Id" description="" isArray="false" name="id" xmlns:ns39="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="void" description="" isArray="false"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns40:Id" description="" isArray="false" name="id" xmlns:ns40="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns41:PerformedActivity" description="" isArray="true" xmlns:ns41="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getByStudySubject" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns42:Id" description="" isArray="false" name="id" xmlns:ns42="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns43:PerformedActivity" description="" isArray="true" xmlns:ns43="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedObservationByStudySubject" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns44:Id" description="" isArray="false" name="id" xmlns:ns44="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns45:PerformedObservation" description="" isArray="true" xmlns:ns45="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedSubjectMilestoneByStudySubject" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns46:Id" description="" isArray="false" name="id" xmlns:ns46="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns47:PerformedSubjectMilestone" description="" isArray="true" xmlns:ns47="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedSubjectMilestone" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns48:Id" description="" isArray="false" name="id" xmlns:ns48="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns49:PerformedSubjectMilestone" description="" isArray="false" xmlns:ns49="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="createPerformedSubjectMilestone" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns50:PerformedSubjectMilestone" description="" isArray="false" name="performedSubjectMilestone" xmlns:ns50="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns51:PerformedSubjectMilestone" description="" isArray="false" xmlns:ns51="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="updatePerformedSubjectMilestone" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns52:PerformedSubjectMilestone" description="" isArray="false" name="performedSubjectMilestone" xmlns:ns52="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns53:PerformedSubjectMilestone" description="" isArray="false" xmlns:ns53="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedObservation" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns54:Id" description="" isArray="false" name="id" xmlns:ns54="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns55:PerformedObservation" description="" isArray="false" xmlns:ns55="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="createPerformedObservation" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns56:PerformedObservation" description="" isArray="false" name="performedObservation" xmlns:ns56="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns57:PerformedObservation" description="" isArray="false" xmlns:ns57="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="updatePerformedObservation" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns58:PerformedObservation" description="" isArray="false" name="performedObservation" xmlns:ns58="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns59:PerformedObservation" description="" isArray="false" xmlns:ns59="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedImagingByStudySubject" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns60:Id" description="" isArray="false" name="id" xmlns:ns60="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns61:PerformedImaging" description="" isArray="true" xmlns:ns61="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedImaging" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns62:Id" description="" isArray="false" name="id" xmlns:ns62="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns63:PerformedImaging" description="" isArray="false" xmlns:ns63="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="createPerformedImaging" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns64:PerformedImaging" description="" isArray="false" name="performedImaging" xmlns:ns64="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns65:PerformedImaging" description="" isArray="false" xmlns:ns65="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="updatePerformedImaging" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns66:PerformedImaging" description="" isArray="false" name="performedImaging" xmlns:ns66="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns67:PerformedImaging" description="" isArray="false" xmlns:ns67="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedProcedureByStudySubject" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns68:Id" description="" isArray="false" name="id" xmlns:ns68="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns69:PerformedProcedure" description="" isArray="true" xmlns:ns69="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedProcedure" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns70:Id" description="" isArray="false" name="id" xmlns:ns70="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns71:PerformedProcedure" description="" isArray="false" xmlns:ns71="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="createPerformedProcedure" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns72:PerformedProcedure" description="" isArray="false" name="performedProcedure" xmlns:ns72="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns73:PerformedProcedure" description="" isArray="false" xmlns:ns73="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="updatePerformedProcedure" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns74:PerformedProcedure" description="" isArray="false" name="performedProcedure" xmlns:ns74="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns75:PerformedProcedure" description="" isArray="false" xmlns:ns75="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedSubstanceAdministrationByStudySubject" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns76:Id" description="" isArray="false" name="id" xmlns:ns76="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns77:PerformedSubstanceAdministration" description="" isArray="true" xmlns:ns77="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedSubstanceAdministration" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns78:Id" description="" isArray="false" name="id" xmlns:ns78="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns79:PerformedSubstanceAdministration" description="" isArray="false" xmlns:ns79="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="createPerformedSubstanceAdministration" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns80:PerformedSubstanceAdministration" description="" isArray="false" name="performedSubstanceAdministration" xmlns:ns80="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns81:PerformedSubstanceAdministration" description="" isArray="false" xmlns:ns81="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="updatePerformedSubstanceAdministration" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns82:PerformedSubstanceAdministration" description="" isArray="false" name="performedSubstanceAdministration" xmlns:ns82="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns83:PerformedSubstanceAdministration" description="" isArray="false" xmlns:ns83="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedRadiationAdministrationByStudySubject" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns84:Id" description="" isArray="false" name="id" xmlns:ns84="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns85:PerformedRadiationAdministration" description="" isArray="true" xmlns:ns85="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="getPerformedRadiationAdministration" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns86:Id" description="" isArray="false" name="id" xmlns:ns86="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns87:PerformedRadiationAdministration" description="" isArray="false" xmlns:ns87="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="createPerformedRadiationAdministration" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns88:PerformedRadiationAdministration" description="" isArray="false" name="performedRadiationAdministration" xmlns:ns88="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns89:PerformedRadiationAdministration" description="" isArray="false" xmlns:ns89="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method description="" isImported="false" isProvided="false" name="updatePerformedRadiationAdministration" xsi:type="ns32:MethodType">
+     <ns32:Inputs>
+      <ns32:Input qName="ns90:PerformedRadiationAdministration" description="" isArray="false" name="performedRadiationAdministration" xmlns:ns90="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns32:Inputs>
+     <ns32:Output qName="ns91:PerformedRadiationAdministration" description="" isArray="false" xmlns:ns91="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns32:Exceptions/>
+    </ns32:Method>
+    <ns32:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns32:MethodType">
+     <ns32:Output qName="ns92:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns92="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns93:MethodSecurity xsi:type="ns93:MethodSecurity" xmlns:ns93="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns93:SecuritySetting xsi:type="ns93:SecuritySetting">None</ns93:SecuritySetting>
+      <ns93:MethodAuthorization xsi:type="ns93:MethodAuthorization">
+       <ns93:NoAuthorization xsi:type="ns93:NoAuthorization"/>
+      </ns93:MethodAuthorization>
+     </ns93:MethodSecurity>
+     <ns32:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns32:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns32:Method>
+   </ns32:Methods>
+   <ns94:ResourcePropertiesList xsi:type="ns94:ResourcePropertiesListType" xmlns:ns94="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -508,223 +501,223 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="PerformedObservationResult" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult" packageName="gov.nih.nci.coppa.services.outcomes.performedobservationresult" xsi:type="ns3:ServiceType">
-   <ns97:Methods xsi:type="ns97:MethodsType" xmlns:ns97="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns97:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns98:Id" description="" isArray="false" name="id" xmlns:ns98="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns99:PerformedObservationResult" description="" isArray="false" xmlns:ns99="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns100:PerformedObservationResult" description="" isArray="false" name="performedObservationResult" xmlns:ns100="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns101:PerformedObservationResult" description="" isArray="false" xmlns:ns101="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns102:PerformedObservationResult" description="" isArray="false" name="performedObservationResult" xmlns:ns102="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns103:PerformedObservationResult" description="" isArray="false" xmlns:ns103="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns104:Id" description="" isArray="false" name="id" xmlns:ns104="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="void" description="" isArray="false"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedObservationResultByPerformedActivity" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns105:Id" description="" isArray="false" name="id" xmlns:ns105="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns106:PerformedObservationResult" description="" isArray="true" xmlns:ns106="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedHistopathologyByPerformedActivity" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns107:Id" description="" isArray="false" name="id" xmlns:ns107="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns108:PerformedHistopathology" description="" isArray="true" xmlns:ns108="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedHistopathology" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns109:Id" description="" isArray="false" name="id" xmlns:ns109="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns110:PerformedHistopathology" description="" isArray="false" xmlns:ns110="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="createPerformedHistopathology" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns111:PerformedHistopathology" description="" isArray="false" name="performedHistopathology" xmlns:ns111="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns112:PerformedHistopathology" description="" isArray="false" xmlns:ns112="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="updatePerformedHistopathology" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns113:PerformedHistopathology" description="" isArray="false" name="performedHistopathology" xmlns:ns113="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns114:PerformedHistopathology" description="" isArray="false" xmlns:ns114="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedDiagnosisByPerformedActivity" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns115:Id" description="" isArray="false" name="id" xmlns:ns115="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns116:PerformedDiagnosis" description="" isArray="true" xmlns:ns116="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedDiagnosis" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns117:Id" description="" isArray="false" name="id" xmlns:ns117="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns118:PerformedDiagnosis" description="" isArray="false" xmlns:ns118="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="createPerformedDiagnosis" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns119:PerformedDiagnosis" description="" isArray="false" name="performedDiagnosis" xmlns:ns119="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns120:PerformedDiagnosis" description="" isArray="false" xmlns:ns120="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="updatePerformedDiagnosis" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns121:PerformedDiagnosis" description="" isArray="false" name="performedDiagnosis" xmlns:ns121="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns122:PerformedDiagnosis" description="" isArray="false" xmlns:ns122="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedImageByPerformedActivity" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns123:Id" description="" isArray="false" name="id" xmlns:ns123="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns124:PerformedImage" description="" isArray="true" xmlns:ns124="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedImage" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns125:Id" description="" isArray="false" name="id" xmlns:ns125="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns126:PerformedImage" description="" isArray="false" xmlns:ns126="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="createPerformedImage" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns127:PerformedImage" description="" isArray="false" name="performedImage" xmlns:ns127="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns128:PerformedImage" description="" isArray="false" xmlns:ns128="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="updatePerformedImage" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns129:PerformedImage" description="" isArray="false" name="performedImage" xmlns:ns129="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns130:PerformedImage" description="" isArray="false" xmlns:ns130="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedClinicalResultByPerformedActivity" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns131:Id" description="" isArray="false" name="id" xmlns:ns131="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns132:PerformedClinicalResult" description="" isArray="true" xmlns:ns132="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedClinicalResult" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns133:Id" description="" isArray="false" name="id" xmlns:ns133="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns134:PerformedClinicalResult" description="" isArray="false" xmlns:ns134="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="createPerformedClinicalResult" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns135:PerformedClinicalResult" description="" isArray="false" name="performedClinicalResult" xmlns:ns135="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns136:PerformedClinicalResult" description="" isArray="false" xmlns:ns136="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="updatePerformedClinicalResult" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns137:PerformedClinicalResult" description="" isArray="false" name="performedClinicalResult" xmlns:ns137="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns138:PerformedClinicalResult" description="" isArray="false" xmlns:ns138="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedMedicalHistoryResultByPerformedActivity" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns139:Id" description="" isArray="false" name="id" xmlns:ns139="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns140:PerformedMedicalHistoryResult" description="" isArray="true" xmlns:ns140="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedMedicalHistoryResult" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns141:Id" description="" isArray="false" name="id" xmlns:ns141="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns142:PerformedMedicalHistoryResult" description="" isArray="false" xmlns:ns142="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="createPerformedMedicalHistoryResult" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns143:PerformedMedicalHistoryResult" description="" isArray="false" name="performedMedicalHistoryResult" xmlns:ns143="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns144:PerformedMedicalHistoryResult" description="" isArray="false" xmlns:ns144="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="updatePerformedMedicalHistoryResult" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns145:PerformedMedicalHistoryResult" description="" isArray="false" name="performedMedicalHistoryResult" xmlns:ns145="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns146:PerformedMedicalHistoryResult" description="" isArray="false" xmlns:ns146="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedLesionDescriptionByPerformedActivity" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns147:Id" description="" isArray="false" name="id" xmlns:ns147="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns148:PerformedLesionDescription" description="" isArray="true" xmlns:ns148="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="getPerformedLesionDescription" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns149:Id" description="" isArray="false" name="id" xmlns:ns149="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns150:PerformedLesionDescription" description="" isArray="false" xmlns:ns150="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="createPerformedLesionDescription" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns151:PerformedLesionDescription" description="" isArray="false" name="performedLesionDescription" xmlns:ns151="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns152:PerformedLesionDescription" description="" isArray="false" xmlns:ns152="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method description="" isImported="false" isProvided="false" name="updatePerformedLesionDescription" xsi:type="ns97:MethodType">
-     <ns97:Inputs>
-      <ns97:Input qName="ns153:PerformedLesionDescription" description="" isArray="false" name="performedLesionDescription" xmlns:ns153="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns97:Inputs>
-     <ns97:Output qName="ns154:PerformedLesionDescription" description="" isArray="false" xmlns:ns154="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns97:Exceptions/>
-    </ns97:Method>
-    <ns97:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns97:MethodType">
-     <ns97:Output qName="ns155:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns155="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns156:MethodSecurity xsi:type="ns156:MethodSecurity" xmlns:ns156="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns156:SecuritySetting xsi:type="ns156:SecuritySetting">None</ns156:SecuritySetting>
-      <ns156:MethodAuthorization xsi:type="ns156:MethodAuthorization">
-       <ns156:NoAuthorization xsi:type="ns156:NoAuthorization"/>
-      </ns156:MethodAuthorization>
-     </ns156:MethodSecurity>
-     <ns97:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns97:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns97:Method>
-   </ns97:Methods>
-   <ns157:ResourcePropertiesList xsi:type="ns157:ResourcePropertiesListType" xmlns:ns157="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns95:Methods xsi:type="ns95:MethodsType" xmlns:ns95="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns95:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns96:Id" description="" isArray="false" name="id" xmlns:ns96="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns97:PerformedObservationResult" description="" isArray="false" xmlns:ns97="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns98:PerformedObservationResult" description="" isArray="false" name="performedObservationResult" xmlns:ns98="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns99:PerformedObservationResult" description="" isArray="false" xmlns:ns99="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns100:PerformedObservationResult" description="" isArray="false" name="performedObservationResult" xmlns:ns100="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns101:PerformedObservationResult" description="" isArray="false" xmlns:ns101="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns102:Id" description="" isArray="false" name="id" xmlns:ns102="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="void" description="" isArray="false"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedObservationResultByPerformedActivity" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns103:Id" description="" isArray="false" name="id" xmlns:ns103="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns104:PerformedObservationResult" description="" isArray="true" xmlns:ns104="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedHistopathologyByPerformedActivity" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns105:Id" description="" isArray="false" name="id" xmlns:ns105="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns106:PerformedHistopathology" description="" isArray="true" xmlns:ns106="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedHistopathology" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns107:Id" description="" isArray="false" name="id" xmlns:ns107="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns108:PerformedHistopathology" description="" isArray="false" xmlns:ns108="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="createPerformedHistopathology" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns109:PerformedHistopathology" description="" isArray="false" name="performedHistopathology" xmlns:ns109="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns110:PerformedHistopathology" description="" isArray="false" xmlns:ns110="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="updatePerformedHistopathology" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns111:PerformedHistopathology" description="" isArray="false" name="performedHistopathology" xmlns:ns111="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns112:PerformedHistopathology" description="" isArray="false" xmlns:ns112="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedDiagnosisByPerformedActivity" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns113:Id" description="" isArray="false" name="id" xmlns:ns113="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns114:PerformedDiagnosis" description="" isArray="true" xmlns:ns114="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedDiagnosis" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns115:Id" description="" isArray="false" name="id" xmlns:ns115="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns116:PerformedDiagnosis" description="" isArray="false" xmlns:ns116="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="createPerformedDiagnosis" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns117:PerformedDiagnosis" description="" isArray="false" name="performedDiagnosis" xmlns:ns117="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns118:PerformedDiagnosis" description="" isArray="false" xmlns:ns118="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="updatePerformedDiagnosis" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns119:PerformedDiagnosis" description="" isArray="false" name="performedDiagnosis" xmlns:ns119="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns120:PerformedDiagnosis" description="" isArray="false" xmlns:ns120="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedImageByPerformedActivity" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns121:Id" description="" isArray="false" name="id" xmlns:ns121="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns122:PerformedImage" description="" isArray="true" xmlns:ns122="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedImage" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns123:Id" description="" isArray="false" name="id" xmlns:ns123="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns124:PerformedImage" description="" isArray="false" xmlns:ns124="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="createPerformedImage" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns125:PerformedImage" description="" isArray="false" name="performedImage" xmlns:ns125="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns126:PerformedImage" description="" isArray="false" xmlns:ns126="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="updatePerformedImage" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns127:PerformedImage" description="" isArray="false" name="performedImage" xmlns:ns127="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns128:PerformedImage" description="" isArray="false" xmlns:ns128="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedClinicalResultByPerformedActivity" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns129:Id" description="" isArray="false" name="id" xmlns:ns129="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns130:PerformedClinicalResult" description="" isArray="true" xmlns:ns130="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedClinicalResult" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns131:Id" description="" isArray="false" name="id" xmlns:ns131="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns132:PerformedClinicalResult" description="" isArray="false" xmlns:ns132="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="createPerformedClinicalResult" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns133:PerformedClinicalResult" description="" isArray="false" name="performedClinicalResult" xmlns:ns133="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns134:PerformedClinicalResult" description="" isArray="false" xmlns:ns134="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="updatePerformedClinicalResult" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns135:PerformedClinicalResult" description="" isArray="false" name="performedClinicalResult" xmlns:ns135="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns136:PerformedClinicalResult" description="" isArray="false" xmlns:ns136="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedMedicalHistoryResultByPerformedActivity" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns137:Id" description="" isArray="false" name="id" xmlns:ns137="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns138:PerformedMedicalHistoryResult" description="" isArray="true" xmlns:ns138="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedMedicalHistoryResult" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns139:Id" description="" isArray="false" name="id" xmlns:ns139="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns140:PerformedMedicalHistoryResult" description="" isArray="false" xmlns:ns140="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="createPerformedMedicalHistoryResult" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns141:PerformedMedicalHistoryResult" description="" isArray="false" name="performedMedicalHistoryResult" xmlns:ns141="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns142:PerformedMedicalHistoryResult" description="" isArray="false" xmlns:ns142="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="updatePerformedMedicalHistoryResult" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns143:PerformedMedicalHistoryResult" description="" isArray="false" name="performedMedicalHistoryResult" xmlns:ns143="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns144:PerformedMedicalHistoryResult" description="" isArray="false" xmlns:ns144="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedLesionDescriptionByPerformedActivity" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns145:Id" description="" isArray="false" name="id" xmlns:ns145="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns146:PerformedLesionDescription" description="" isArray="true" xmlns:ns146="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="getPerformedLesionDescription" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns147:Id" description="" isArray="false" name="id" xmlns:ns147="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns148:PerformedLesionDescription" description="" isArray="false" xmlns:ns148="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="createPerformedLesionDescription" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns149:PerformedLesionDescription" description="" isArray="false" name="performedLesionDescription" xmlns:ns149="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns150:PerformedLesionDescription" description="" isArray="false" xmlns:ns150="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method description="" isImported="false" isProvided="false" name="updatePerformedLesionDescription" xsi:type="ns95:MethodType">
+     <ns95:Inputs>
+      <ns95:Input qName="ns151:PerformedLesionDescription" description="" isArray="false" name="performedLesionDescription" xmlns:ns151="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns95:Inputs>
+     <ns95:Output qName="ns152:PerformedLesionDescription" description="" isArray="false" xmlns:ns152="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns95:Exceptions/>
+    </ns95:Method>
+    <ns95:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns95:MethodType">
+     <ns95:Output qName="ns153:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns153="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns154:MethodSecurity xsi:type="ns154:MethodSecurity" xmlns:ns154="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns154:SecuritySetting xsi:type="ns154:SecuritySetting">None</ns154:SecuritySetting>
+      <ns154:MethodAuthorization xsi:type="ns154:MethodAuthorization">
+       <ns154:NoAuthorization xsi:type="ns154:NoAuthorization"/>
+      </ns154:MethodAuthorization>
+     </ns154:MethodSecurity>
+     <ns95:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns95:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns95:Method>
+   </ns95:Methods>
+   <ns155:ResourcePropertiesList xsi:type="ns155:ResourcePropertiesListType" xmlns:ns155="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -732,76 +725,76 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="StudySubject" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject" packageName="gov.nih.nci.coppa.services.outcomes.studysubject" xsi:type="ns3:ServiceType">
-   <ns158:Methods xsi:type="ns158:MethodsType" xmlns:ns158="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns158:Method description="" isImported="false" isProvided="false" name="getByStudySite" xsi:type="ns158:MethodType">
-     <ns158:Inputs>
-      <ns158:Input qName="ns159:Id" description="" isArray="false" name="id" xmlns:ns159="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns158:Inputs>
-     <ns158:Output qName="ns160:StudySubject" description="" isArray="true" xmlns:ns160="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns158:Exceptions/>
-    </ns158:Method>
-    <ns158:Method description="" isImported="false" isProvided="false" name="getOutcomes" xsi:type="ns158:MethodType">
-     <ns158:Inputs>
-      <ns158:Input qName="ns161:ST" description="" isArray="false" name="outcomesLoginName" xmlns:ns161="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns158:Inputs>
-     <ns158:Output qName="ns162:StudySubject" description="" isArray="true" xmlns:ns162="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns158:Exceptions/>
-    </ns158:Method>
-    <ns158:Method description="" isImported="false" isProvided="false" name="createOutcomes" xsi:type="ns158:MethodType">
-     <ns158:Inputs>
-      <ns158:Input qName="ns163:StudySubject" description="" isArray="false" name="studySubject" xmlns:ns163="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns158:Inputs>
-     <ns158:Output qName="ns164:StudySubject" description="" isArray="false" xmlns:ns164="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns158:Exceptions/>
-    </ns158:Method>
-    <ns158:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns158:MethodType">
-     <ns158:Inputs>
-      <ns158:Input qName="ns165:Id" description="" isArray="false" name="id" xmlns:ns165="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns158:Inputs>
-     <ns158:Output qName="ns166:StudySubject" description="" isArray="true" xmlns:ns166="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns158:Exceptions/>
-    </ns158:Method>
-    <ns158:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns158:MethodType">
-     <ns158:Inputs>
-      <ns158:Input qName="ns167:Id" description="" isArray="false" name="id" xmlns:ns167="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns158:Inputs>
-     <ns158:Output qName="ns168:StudySubject" description="" isArray="false" xmlns:ns168="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns158:Exceptions/>
-    </ns158:Method>
-    <ns158:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns158:MethodType">
-     <ns158:Inputs>
-      <ns158:Input qName="ns169:StudySubject" description="" isArray="false" name="studySubject" xmlns:ns169="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns158:Inputs>
-     <ns158:Output qName="ns170:StudySubject" description="" isArray="false" xmlns:ns170="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns158:Exceptions/>
-    </ns158:Method>
-    <ns158:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns158:MethodType">
-     <ns158:Inputs>
-      <ns158:Input qName="ns171:StudySubject" description="" isArray="false" name="studySubject" xmlns:ns171="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns158:Inputs>
-     <ns158:Output qName="ns172:StudySubject" description="" isArray="false" xmlns:ns172="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns158:Exceptions/>
-    </ns158:Method>
-    <ns158:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns158:MethodType">
-     <ns158:Inputs>
-      <ns158:Input qName="ns173:Id" description="" isArray="false" name="id" xmlns:ns173="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns158:Inputs>
-     <ns158:Output qName="void" description="" isArray="false"/>
-     <ns158:Exceptions/>
-    </ns158:Method>
-    <ns158:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns158:MethodType">
-     <ns158:Output qName="ns174:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns174="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns175:MethodSecurity xsi:type="ns175:MethodSecurity" xmlns:ns175="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns175:SecuritySetting xsi:type="ns175:SecuritySetting">None</ns175:SecuritySetting>
-      <ns175:MethodAuthorization xsi:type="ns175:MethodAuthorization">
-       <ns175:NoAuthorization xsi:type="ns175:NoAuthorization"/>
-      </ns175:MethodAuthorization>
-     </ns175:MethodSecurity>
-     <ns158:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns158:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns158:Method>
-   </ns158:Methods>
-   <ns176:ResourcePropertiesList xsi:type="ns176:ResourcePropertiesListType" xmlns:ns176="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns156:Methods xsi:type="ns156:MethodsType" xmlns:ns156="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns156:Method description="" isImported="false" isProvided="false" name="getByStudySite" xsi:type="ns156:MethodType">
+     <ns156:Inputs>
+      <ns156:Input qName="ns157:Id" description="" isArray="false" name="id" xmlns:ns157="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns156:Inputs>
+     <ns156:Output qName="ns158:StudySubject" description="" isArray="true" xmlns:ns158="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns156:Exceptions/>
+    </ns156:Method>
+    <ns156:Method description="" isImported="false" isProvided="false" name="getOutcomes" xsi:type="ns156:MethodType">
+     <ns156:Inputs>
+      <ns156:Input qName="ns159:ST" description="" isArray="false" name="outcomesLoginName" xmlns:ns159="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns156:Inputs>
+     <ns156:Output qName="ns160:StudySubject" description="" isArray="true" xmlns:ns160="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns156:Exceptions/>
+    </ns156:Method>
+    <ns156:Method description="" isImported="false" isProvided="false" name="createOutcomes" xsi:type="ns156:MethodType">
+     <ns156:Inputs>
+      <ns156:Input qName="ns161:StudySubject" description="" isArray="false" name="studySubject" xmlns:ns161="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns156:Inputs>
+     <ns156:Output qName="ns162:StudySubject" description="" isArray="false" xmlns:ns162="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns156:Exceptions/>
+    </ns156:Method>
+    <ns156:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns156:MethodType">
+     <ns156:Inputs>
+      <ns156:Input qName="ns163:Id" description="" isArray="false" name="id" xmlns:ns163="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns156:Inputs>
+     <ns156:Output qName="ns164:StudySubject" description="" isArray="true" xmlns:ns164="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns156:Exceptions/>
+    </ns156:Method>
+    <ns156:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns156:MethodType">
+     <ns156:Inputs>
+      <ns156:Input qName="ns165:Id" description="" isArray="false" name="id" xmlns:ns165="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns156:Inputs>
+     <ns156:Output qName="ns166:StudySubject" description="" isArray="false" xmlns:ns166="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns156:Exceptions/>
+    </ns156:Method>
+    <ns156:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns156:MethodType">
+     <ns156:Inputs>
+      <ns156:Input qName="ns167:StudySubject" description="" isArray="false" name="studySubject" xmlns:ns167="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns156:Inputs>
+     <ns156:Output qName="ns168:StudySubject" description="" isArray="false" xmlns:ns168="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns156:Exceptions/>
+    </ns156:Method>
+    <ns156:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns156:MethodType">
+     <ns156:Inputs>
+      <ns156:Input qName="ns169:StudySubject" description="" isArray="false" name="studySubject" xmlns:ns169="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns156:Inputs>
+     <ns156:Output qName="ns170:StudySubject" description="" isArray="false" xmlns:ns170="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns156:Exceptions/>
+    </ns156:Method>
+    <ns156:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns156:MethodType">
+     <ns156:Inputs>
+      <ns156:Input qName="ns171:Id" description="" isArray="false" name="id" xmlns:ns171="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns156:Inputs>
+     <ns156:Output qName="void" description="" isArray="false"/>
+     <ns156:Exceptions/>
+    </ns156:Method>
+    <ns156:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns156:MethodType">
+     <ns156:Output qName="ns172:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns172="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns173:MethodSecurity xsi:type="ns173:MethodSecurity" xmlns:ns173="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns173:SecuritySetting xsi:type="ns173:SecuritySetting">None</ns173:SecuritySetting>
+      <ns173:MethodAuthorization xsi:type="ns173:MethodAuthorization">
+       <ns173:NoAuthorization xsi:type="ns173:NoAuthorization"/>
+      </ns173:MethodAuthorization>
+     </ns173:MethodSecurity>
+     <ns156:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns156:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns156:Method>
+   </ns156:Methods>
+   <ns174:ResourcePropertiesList xsi:type="ns174:ResourcePropertiesListType" xmlns:ns174="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -809,55 +802,55 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="Submission" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission" packageName="gov.nih.nci.coppa.services.outcomes.submission" xsi:type="ns3:ServiceType">
-   <ns177:Methods xsi:type="ns177:MethodsType" xmlns:ns177="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns177:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns177:MethodType">
-     <ns177:Inputs>
-      <ns177:Input qName="ns178:Id" description="" isArray="false" name="id" xmlns:ns178="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns177:Inputs>
-     <ns177:Output qName="ns179:Submission" description="" isArray="true" xmlns:ns179="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns177:Exceptions/>
-    </ns177:Method>
-    <ns177:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns177:MethodType">
-     <ns177:Inputs>
-      <ns177:Input qName="ns180:Id" description="" isArray="false" name="id" xmlns:ns180="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns177:Inputs>
-     <ns177:Output qName="ns181:Submission" description="" isArray="false" xmlns:ns181="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns177:Exceptions/>
-    </ns177:Method>
-    <ns177:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns177:MethodType">
-     <ns177:Inputs>
-      <ns177:Input qName="ns182:Submission" description="" isArray="false" name="submission" xmlns:ns182="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns177:Inputs>
-     <ns177:Output qName="ns183:Submission" description="" isArray="false" xmlns:ns183="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns177:Exceptions/>
-    </ns177:Method>
-    <ns177:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns177:MethodType">
-     <ns177:Inputs>
-      <ns177:Input qName="ns184:Submission" description="" isArray="false" name="submission" xmlns:ns184="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns177:Inputs>
-     <ns177:Output qName="ns185:Submission" description="" isArray="false" xmlns:ns185="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns177:Exceptions/>
-    </ns177:Method>
-    <ns177:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns177:MethodType">
-     <ns177:Inputs>
-      <ns177:Input qName="ns186:Id" description="" isArray="false" name="id" xmlns:ns186="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns177:Inputs>
-     <ns177:Output qName="void" description="" isArray="false"/>
-     <ns177:Exceptions/>
-    </ns177:Method>
-    <ns177:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns177:MethodType">
-     <ns177:Output qName="ns187:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns187="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns188:MethodSecurity xsi:type="ns188:MethodSecurity" xmlns:ns188="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns188:SecuritySetting xsi:type="ns188:SecuritySetting">None</ns188:SecuritySetting>
-      <ns188:MethodAuthorization xsi:type="ns188:MethodAuthorization">
-       <ns188:NoAuthorization xsi:type="ns188:NoAuthorization"/>
-      </ns188:MethodAuthorization>
-     </ns188:MethodSecurity>
-     <ns177:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns177:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns177:Method>
-   </ns177:Methods>
-   <ns189:ResourcePropertiesList xsi:type="ns189:ResourcePropertiesListType" xmlns:ns189="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns175:Methods xsi:type="ns175:MethodsType" xmlns:ns175="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns175:Method description="" isImported="false" isProvided="false" name="getByStudyProtocol" xsi:type="ns175:MethodType">
+     <ns175:Inputs>
+      <ns175:Input qName="ns176:Id" description="" isArray="false" name="id" xmlns:ns176="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns175:Inputs>
+     <ns175:Output qName="ns177:Submission" description="" isArray="true" xmlns:ns177="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns175:Exceptions/>
+    </ns175:Method>
+    <ns175:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns175:MethodType">
+     <ns175:Inputs>
+      <ns175:Input qName="ns178:Id" description="" isArray="false" name="id" xmlns:ns178="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns175:Inputs>
+     <ns175:Output qName="ns179:Submission" description="" isArray="false" xmlns:ns179="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns175:Exceptions/>
+    </ns175:Method>
+    <ns175:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns175:MethodType">
+     <ns175:Inputs>
+      <ns175:Input qName="ns180:Submission" description="" isArray="false" name="submission" xmlns:ns180="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns175:Inputs>
+     <ns175:Output qName="ns181:Submission" description="" isArray="false" xmlns:ns181="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns175:Exceptions/>
+    </ns175:Method>
+    <ns175:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns175:MethodType">
+     <ns175:Inputs>
+      <ns175:Input qName="ns182:Submission" description="" isArray="false" name="submission" xmlns:ns182="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns175:Inputs>
+     <ns175:Output qName="ns183:Submission" description="" isArray="false" xmlns:ns183="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns175:Exceptions/>
+    </ns175:Method>
+    <ns175:Method description="" isImported="false" isProvided="false" name="delete" xsi:type="ns175:MethodType">
+     <ns175:Inputs>
+      <ns175:Input qName="ns184:Id" description="" isArray="false" name="id" xmlns:ns184="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns175:Inputs>
+     <ns175:Output qName="void" description="" isArray="false"/>
+     <ns175:Exceptions/>
+    </ns175:Method>
+    <ns175:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns175:MethodType">
+     <ns175:Output qName="ns185:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns185="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns186:MethodSecurity xsi:type="ns186:MethodSecurity" xmlns:ns186="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns186:SecuritySetting xsi:type="ns186:SecuritySetting">None</ns186:SecuritySetting>
+      <ns186:MethodAuthorization xsi:type="ns186:MethodAuthorization">
+       <ns186:NoAuthorization xsi:type="ns186:NoAuthorization"/>
+      </ns186:MethodAuthorization>
+     </ns186:MethodSecurity>
+     <ns175:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns175:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns175:Method>
+   </ns175:Methods>
+   <ns187:ResourcePropertiesList xsi:type="ns187:ResourcePropertiesListType" xmlns:ns187="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -865,41 +858,41 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="Patient" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient" packageName="gov.nih.nci.coppa.services.outcomes.patient" xsi:type="ns3:ServiceType">
-   <ns190:Methods xsi:type="ns190:MethodsType" xmlns:ns190="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns190:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns190:MethodType">
-     <ns190:Inputs>
-      <ns190:Input qName="ns191:Id" description="" isArray="false" name="id" xmlns:ns191="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns190:Inputs>
-     <ns190:Output qName="ns192:Patient" description="" isArray="false" xmlns:ns192="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns190:Exceptions/>
-    </ns190:Method>
-    <ns190:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns190:MethodType">
-     <ns190:Inputs>
-      <ns190:Input qName="ns193:Patient" description="" isArray="false" name="patient" xmlns:ns193="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns190:Inputs>
-     <ns190:Output qName="ns194:Patient" description="" isArray="false" xmlns:ns194="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns190:Exceptions/>
-    </ns190:Method>
-    <ns190:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns190:MethodType">
-     <ns190:Inputs>
-      <ns190:Input qName="ns195:Patient" description="" isArray="false" name="patient" xmlns:ns195="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns190:Inputs>
-     <ns190:Output qName="ns196:Patient" description="" isArray="false" xmlns:ns196="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns190:Exceptions/>
-    </ns190:Method>
-    <ns190:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns190:MethodType">
-     <ns190:Output qName="ns197:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns197="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns198:MethodSecurity xsi:type="ns198:MethodSecurity" xmlns:ns198="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns198:SecuritySetting xsi:type="ns198:SecuritySetting">None</ns198:SecuritySetting>
-      <ns198:MethodAuthorization xsi:type="ns198:MethodAuthorization">
-       <ns198:NoAuthorization xsi:type="ns198:NoAuthorization"/>
-      </ns198:MethodAuthorization>
-     </ns198:MethodSecurity>
-     <ns190:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns190:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns190:Method>
-   </ns190:Methods>
-   <ns199:ResourcePropertiesList xsi:type="ns199:ResourcePropertiesListType" xmlns:ns199="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns188:Methods xsi:type="ns188:MethodsType" xmlns:ns188="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns188:Method description="" isImported="false" isProvided="false" name="get" xsi:type="ns188:MethodType">
+     <ns188:Inputs>
+      <ns188:Input qName="ns189:Id" description="" isArray="false" name="id" xmlns:ns189="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns188:Inputs>
+     <ns188:Output qName="ns190:Patient" description="" isArray="false" xmlns:ns190="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns188:Exceptions/>
+    </ns188:Method>
+    <ns188:Method description="" isImported="false" isProvided="false" name="create" xsi:type="ns188:MethodType">
+     <ns188:Inputs>
+      <ns188:Input qName="ns191:Patient" description="" isArray="false" name="patient" xmlns:ns191="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns188:Inputs>
+     <ns188:Output qName="ns192:Patient" description="" isArray="false" xmlns:ns192="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns188:Exceptions/>
+    </ns188:Method>
+    <ns188:Method description="" isImported="false" isProvided="false" name="update" xsi:type="ns188:MethodType">
+     <ns188:Inputs>
+      <ns188:Input qName="ns193:Patient" description="" isArray="false" name="patient" xmlns:ns193="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns188:Inputs>
+     <ns188:Output qName="ns194:Patient" description="" isArray="false" xmlns:ns194="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns188:Exceptions/>
+    </ns188:Method>
+    <ns188:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns188:MethodType">
+     <ns188:Output qName="ns195:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns195="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns196:MethodSecurity xsi:type="ns196:MethodSecurity" xmlns:ns196="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns196:SecuritySetting xsi:type="ns196:SecuritySetting">None</ns196:SecuritySetting>
+      <ns196:MethodAuthorization xsi:type="ns196:MethodAuthorization">
+       <ns196:NoAuthorization xsi:type="ns196:NoAuthorization"/>
+      </ns196:MethodAuthorization>
+     </ns196:MethodSecurity>
+     <ns188:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns188:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns188:Method>
+   </ns188:Methods>
+   <ns197:ResourcePropertiesList xsi:type="ns197:ResourcePropertiesListType" xmlns:ns197="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -907,41 +900,41 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
   <ns3:Service name="User" namespace="http://enterpriseservices.nci.nih.gov/OutcomesServices/User" packageName="gov.nih.nci.coppa.services.outcomes.user" xsi:type="ns3:ServiceType">
-   <ns200:Methods xsi:type="ns200:MethodsType" xmlns:ns200="gme://gov.nih.nci.cagrid.introduce/1/Methods">
-    <ns200:Method description="" isImported="false" isProvided="false" name="getUser" xsi:type="ns200:MethodType">
-     <ns200:Inputs>
-      <ns200:Input qName="ns201:ST" description="" isArray="false" name="loginName" xmlns:ns201="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns200:Inputs>
-     <ns200:Output qName="ns202:User" description="" isArray="false" xmlns:ns202="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns200:Exceptions/>
-    </ns200:Method>
-    <ns200:Method description="" isImported="false" isProvided="false" name="createUser" xsi:type="ns200:MethodType">
-     <ns200:Inputs>
-      <ns200:Input qName="ns203:User" description="" isArray="false" name="user" xmlns:ns203="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns200:Inputs>
-     <ns200:Output qName="ns204:User" description="" isArray="false" xmlns:ns204="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns200:Exceptions/>
-    </ns200:Method>
-    <ns200:Method description="" isImported="false" isProvided="false" name="updateUser" xsi:type="ns200:MethodType">
-     <ns200:Inputs>
-      <ns200:Input qName="ns205:User" description="" isArray="false" name="user" xmlns:ns205="http://outcomes.services.coppa.nci.nih.gov"/>
-     </ns200:Inputs>
-     <ns200:Output qName="ns206:User" description="" isArray="false" xmlns:ns206="http://outcomes.services.coppa.nci.nih.gov"/>
-     <ns200:Exceptions/>
-    </ns200:Method>
-    <ns200:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns200:MethodType">
-     <ns200:Output qName="ns207:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns207="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
-     <ns208:MethodSecurity xsi:type="ns208:MethodSecurity" xmlns:ns208="gme://gov.nih.nci.cagrid.introduce/1/Security">
-      <ns208:SecuritySetting xsi:type="ns208:SecuritySetting">None</ns208:SecuritySetting>
-      <ns208:MethodAuthorization xsi:type="ns208:MethodAuthorization">
-       <ns208:NoAuthorization xsi:type="ns208:NoAuthorization"/>
-      </ns208:MethodAuthorization>
-     </ns208:MethodSecurity>
-     <ns200:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
-     <ns200:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
-    </ns200:Method>
-   </ns200:Methods>
-   <ns209:ResourcePropertiesList xsi:type="ns209:ResourcePropertiesListType" xmlns:ns209="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns198:Methods xsi:type="ns198:MethodsType" xmlns:ns198="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns198:Method description="" isImported="false" isProvided="false" name="getUser" xsi:type="ns198:MethodType">
+     <ns198:Inputs>
+      <ns198:Input qName="ns199:ST" description="" isArray="false" name="loginName" xmlns:ns199="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns198:Inputs>
+     <ns198:Output qName="ns200:User" description="" isArray="false" xmlns:ns200="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns198:Exceptions/>
+    </ns198:Method>
+    <ns198:Method description="" isImported="false" isProvided="false" name="createUser" xsi:type="ns198:MethodType">
+     <ns198:Inputs>
+      <ns198:Input qName="ns201:User" description="" isArray="false" name="user" xmlns:ns201="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns198:Inputs>
+     <ns198:Output qName="ns202:User" description="" isArray="false" xmlns:ns202="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns198:Exceptions/>
+    </ns198:Method>
+    <ns198:Method description="" isImported="false" isProvided="false" name="updateUser" xsi:type="ns198:MethodType">
+     <ns198:Inputs>
+      <ns198:Input qName="ns203:User" description="" isArray="false" name="user" xmlns:ns203="http://outcomes.services.coppa.nci.nih.gov"/>
+     </ns198:Inputs>
+     <ns198:Output qName="ns204:User" description="" isArray="false" xmlns:ns204="http://outcomes.services.coppa.nci.nih.gov"/>
+     <ns198:Exceptions/>
+    </ns198:Method>
+    <ns198:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns198:MethodType">
+     <ns198:Output qName="ns205:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns205="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns206:MethodSecurity xsi:type="ns206:MethodSecurity" xmlns:ns206="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns206:SecuritySetting xsi:type="ns206:SecuritySetting">None</ns206:SecuritySetting>
+      <ns206:MethodAuthorization xsi:type="ns206:MethodAuthorization">
+       <ns206:NoAuthorization xsi:type="ns206:NoAuthorization"/>
+      </ns206:MethodAuthorization>
+     </ns206:MethodSecurity>
+     <ns198:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns198:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns198:Method>
+   </ns198:Methods>
+   <ns207:ResourcePropertiesList xsi:type="ns207:ResourcePropertiesListType" xmlns:ns207="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
    <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
    <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
     <ns3:Singleton xsi:type="ns3:Singleton"/>
@@ -949,7 +942,7 @@
    </ns3:ResourceFrameworkOptions>
   </ns3:Service>
  </ns3:Services>
- <ns210:Extensions xsi:type="ns210:ExtensionsType" xmlns:ns210="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns210:Extension name="cagrid_metadata" version="1.3" xsi:type="ns210:ExtensionType"/>
- </ns210:Extensions>
+ <ns208:Extensions xsi:type="ns208:ExtensionsType" xmlns:ns208="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns208:Extension name="cagrid_metadata" version="1.3" xsi:type="ns208:ExtensionType"/>
+ </ns208:Extensions>
 </ns1:ServiceDescription>

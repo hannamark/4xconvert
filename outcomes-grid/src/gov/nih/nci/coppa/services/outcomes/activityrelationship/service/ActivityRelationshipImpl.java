@@ -60,18 +60,6 @@ public class ActivityRelationshipImpl extends ActivityRelationshipImplBase {
       }
   }
 
-  public gov.nih.nci.coppa.services.outcomes.ActivityRelationship[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
-      try {
-          Ii iiDto = IITransformer.INSTANCE.toDto(id);
-          List<ActivityRelationshipDto> actRelDtos = activityRelationshipService
-              .getByStudyProtocol(iiDto);
-          return ActivityRelationshipTransformer.INSTANCE.convert(actRelDtos);
-      } catch (Exception e) {
-          logger.error(e.getMessage(), e);
-          throw FaultUtil.reThrowRemote(e);
-      }
-  }
-
   public gov.nih.nci.coppa.services.outcomes.ActivityRelationship get(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
     return impl.get(id);
   }

@@ -63,10 +63,6 @@ public class ActivityRelationshipAuthorization implements PDP {
 		
 	}
 	   				
-	public void authorizeGetByStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-	}
-	   				
 	public void authorizeGet(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 	}
@@ -99,9 +95,6 @@ public class ActivityRelationshipAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("getBySourcePerformedActivity")){
 			authorizeGetBySourcePerformedActivity(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("getByStudyProtocol")){
-			authorizeGetByStudyProtocol(peerSubject, context, operation);
 			return true;
 		} else if(operation.getLocalPart().equals("get")){
 			authorizeGet(peerSubject, context, operation);

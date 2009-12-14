@@ -94,7 +94,7 @@ import java.util.List;
 /**
  * @author Steve Lustbader
  */
-public class InvokeActivityRelationshipEjb extends InvokeAccrualStudyServiceEjb<ActivityRelationshipDto> implements
+public class InvokeActivityRelationshipEjb extends InvokeAccrualServiceEjb<ActivityRelationshipDto> implements
         ActivityRelationshipService {
     
     /**

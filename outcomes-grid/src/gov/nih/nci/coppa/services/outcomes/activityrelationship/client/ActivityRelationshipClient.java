@@ -106,18 +106,6 @@ public class ActivityRelationshipClient extends ActivityRelationshipClientBase i
     }
   }
 
-  public gov.nih.nci.coppa.services.outcomes.ActivityRelationship[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getByStudyProtocol");
-    gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolRequest();
-    gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolResponse boxedResult = portType.getByStudyProtocol(params);
-    return boxedResult.getActivityRelationship();
-    }
-  }
-
   public gov.nih.nci.coppa.services.outcomes.ActivityRelationship get(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");

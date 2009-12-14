@@ -38,12 +38,6 @@ public class ActivityRelationshipProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolResponse getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolRequest params) throws RemoteException {
-    gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetByStudyProtocolResponse();
-    boxedResult.setActivityRelationship(impl.getByStudyProtocol(params.getId().getId()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetResponse get(gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetRequest params) throws RemoteException {
     gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetResponse boxedResult = new gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.GetResponse();
     boxedResult.setActivityRelationship(impl.get(params.getId().getId()));

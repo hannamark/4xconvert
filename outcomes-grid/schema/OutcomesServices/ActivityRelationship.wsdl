@@ -80,26 +80,6 @@
           </sequence>
         </complexType>
       </element>
-      <element name="GetByStudyProtocolRequest">
-        <complexType>
-          <sequence>
-            <element name="id">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="GetByStudyProtocolResponse">
-        <complexType>
-          <sequence>
-            <element ref="ns0:ActivityRelationship" minOccurs="1" maxOccurs="unbounded" />
-          </sequence>
-        </complexType>
-      </element>
       <element name="GetRequest">
         <complexType>
           <sequence>
@@ -198,12 +178,6 @@
   <message name="GetBySourcePerformedActivityResponse">
     <part name="parameters" element="tns:GetBySourcePerformedActivityResponse" />
   </message>
-  <message name="GetByStudyProtocolRequest">
-    <part name="parameters" element="tns:GetByStudyProtocolRequest" />
-  </message>
-  <message name="GetByStudyProtocolResponse">
-    <part name="parameters" element="tns:GetByStudyProtocolResponse" />
-  </message>
   <message name="GetRequest">
     <part name="parameters" element="tns:GetRequest" />
   </message>
@@ -241,10 +215,6 @@
     <operation name="getBySourcePerformedActivity">
       <input message="tns:GetBySourcePerformedActivityRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/GetBySourcePerformedActivityRequest" />
       <output message="tns:GetBySourcePerformedActivityResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/GetBySourcePerformedActivityResponse" />
-    </operation>
-    <operation name="getByStudyProtocol">
-      <input message="tns:GetByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/GetByStudyProtocolRequest" />
-      <output message="tns:GetByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/GetByStudyProtocolResponse" />
     </operation>
     <operation name="get">
       <input message="tns:GetRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/GetRequest" />

@@ -28,8 +28,6 @@ public interface ActivityRelationshipI {
    */
   public gov.nih.nci.coppa.services.outcomes.ActivityRelationship[] getBySourcePerformedActivity(gov.nih.nci.coppa.services.outcomes.Id id,gov.nih.nci.coppa.services.outcomes.CD typeCode) throws RemoteException ;
 
-  public gov.nih.nci.coppa.services.outcomes.ActivityRelationship[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException ;
-
   public gov.nih.nci.coppa.services.outcomes.ActivityRelationship get(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException ;
 
   public gov.nih.nci.coppa.services.outcomes.ActivityRelationship create(gov.nih.nci.coppa.services.outcomes.ActivityRelationship activityRelationship) throws RemoteException ;
