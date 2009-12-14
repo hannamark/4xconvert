@@ -51,11 +51,11 @@ public class MailManager {
             // sending the e-mail
             // added new line characters to fix URL link issues when users type
             // in special characters in their passwords
-            String emailBody = formatterBody.format(params) + "\n \n"
-                    + formatterBodyUrl.format(params) + "/userAccountactivate.action?loginName="
-                    + EncoderDecoder.encodeString(mailTo) + "&password="
-                    + EncoderDecoder.encodeString(password) + "\n \n";
-
+            String url = formatterBodyUrl.format(params)
+                + "/userAccountactivate.action?loginName=" + EncoderDecoder.encodeString(mailTo)
+                + "&password=" + EncoderDecoder.encodeString(password);
+            String emailBody = "<html><body><p>" + formatterBody.format(params) + "</p><p><a href=\"" + url + "\">" 
+                + url + "</a></p></body></html>";
             logger.info("emailBody is: " + emailBody);
             sendMail(mailTo, null, emailBody, emailSubject);
         } catch (Exception e) {
@@ -90,11 +90,14 @@ public class MailManager {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(
                     to));
 
-            message.setSubject(subject);
-            message.setText(mailBody);
+            message.setSubject(subject);            
+            if (mailBody.toLowerCase().startsWith("<html>")) {
+                message.setContent(mailBody, "text/html");
+            } else {
+                message.setText(mailBody);
+            }
 
             // Send Message
-
             Transport.send(message);
         } catch (Exception e) {
             logger.error("Send Mail error", e);
