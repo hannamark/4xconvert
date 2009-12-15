@@ -1,4 +1,4 @@
-package gov.nih.nci.coppa.outcome.grid.services;
+package gov.nih.nci.coppa.services.outcomes.grid;
 
 
 import gov.nih.nci.coppa.services.outcomes.Id;

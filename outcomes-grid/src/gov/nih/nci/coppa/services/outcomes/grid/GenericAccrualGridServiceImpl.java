@@ -1,4 +1,4 @@
-package gov.nih.nci.coppa.outcome.grid.services;
+package gov.nih.nci.coppa.services.outcomes.grid;
 
 import gov.nih.nci.accrual.service.BaseAccrualService;
 import gov.nih.nci.coppa.iso.Ii;
@@ -22,7 +22,8 @@ import org.apache.log4j.Logger;
  * @param <DTO> represents the xml element type
  * @param <XML> represents the DTO (remote-ejb) type
  */
-public class GenericAccrualGridServiceImpl<DTO extends BaseDTO, XML extends Object> implements AccrualGridService<DTO, XML> {
+public class GenericAccrualGridServiceImpl<DTO extends BaseDTO, XML extends Object> implements
+        AccrualGridService<DTO, XML> {
 
     private BaseAccrualService<DTO> service;
     private Class<XML> xmlType;
@@ -71,6 +72,7 @@ public class GenericAccrualGridServiceImpl<DTO extends BaseDTO, XML extends Obje
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public XML create(XML xml) throws RemoteException {
         try {
             DTO dto = getService().create((DTO) getTransformer().toDto(xml));
