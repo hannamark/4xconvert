@@ -14,52 +14,52 @@ public final class PerformedSubjectMilestoneTransformerTest
     public PerformedSubjectMilestoneDto makeDtoSimple() {
 
         PerformedSubjectMilestoneDto returnVal = new PerformedSubjectMilestoneDto();
-        makeDtoSimpleHelper(returnVal);
+        createDtoSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public PerformedSubjectMilestone makeXmlSimple() {
         PerformedSubjectMilestone returnVal = new PerformedSubjectMilestone();
-        makeXmlSimpleHelper(returnVal);
+        createXmlSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public void verifyDtoSimple(PerformedSubjectMilestoneDto x) {
-        verifyDtoSimpleHelper(x);
+        checkDtoSimpleHelper(x);
     }
 
     @Override
     public void verifyXmlSimple(PerformedSubjectMilestone x) {
-        verifyXmlSimpleHelper(x);
+        checkXmlSimpleHelper(x);
     }
 
-    public static void makeDtoSimpleHelper(PerformedSubjectMilestoneDto returnVal) {
+    public static void createDtoSimpleHelper(PerformedSubjectMilestoneDto returnVal) {
 
-        PerformedActivityTransformerTest.makeDtoSimpleHelper(returnVal);
+        PerformedActivityTransformerTest.createDtoSimpleHelper(returnVal);
         returnVal.setInformedConsentDate(new TSTransformerTest().makeDtoSimple());
         returnVal.setReasonCode(new CDTransformerTest().makeDtoSimple());
         returnVal.setRegistrationDate(new TSTransformerTest().makeDtoSimple());
     }
 
-    public static void makeXmlSimpleHelper(PerformedSubjectMilestone returnVal) {
+    public static void createXmlSimpleHelper(PerformedSubjectMilestone returnVal) {
 
-        PerformedActivityTransformerTest.makeXmlSimpleHelper(returnVal);
+        PerformedActivityTransformerTest.createXmlSimpleHelper(returnVal);
         returnVal.setInformedConsentDate(new TSTransformerTest().makeXmlSimple());
         returnVal.setReasonCode(new CDTransformerTest().makeXmlSimple());
         returnVal.setRegistrationDate(new TSTransformerTest().makeXmlSimple());
     }
 
-    public static void verifyDtoSimpleHelper(PerformedSubjectMilestoneDto x) {
-        PerformedActivityTransformerTest.verifyDtoSimpleHelper(x);
+    public static void checkDtoSimpleHelper(PerformedSubjectMilestoneDto x) {
+        PerformedActivityTransformerTest.checkDtoSimpleHelper(x);
         new TSTransformerTest().verifyDtoSimple(x.getInformedConsentDate());
         new CDTransformerTest().verifyDtoSimple(x.getReasonCode());
         new TSTransformerTest().verifyDtoSimple(x.getRegistrationDate());
     }
 
-    public static void verifyXmlSimpleHelper(PerformedSubjectMilestone x) {
-        PerformedActivityTransformerTest.verifyXmlSimpleHelper(x);
+    public static void checkXmlSimpleHelper(PerformedSubjectMilestone x) {
+        PerformedActivityTransformerTest.checkXmlSimpleHelper(x);
         new TSTransformerTest().verifyXmlSimple(x.getInformedConsentDate());
         new CDTransformerTest().verifyXmlSimple(x.getReasonCode());
         new TSTransformerTest().verifyXmlSimple(x.getRegistrationDate());

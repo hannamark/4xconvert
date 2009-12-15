@@ -18,28 +18,28 @@ public final class PerformedActivityTransformerTest
     public PerformedActivityDto makeDtoSimple() {
 
         PerformedActivityDto returnVal = new PerformedActivityDto();
-        makeDtoSimpleHelper(returnVal);
+        createDtoSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public PerformedActivity makeXmlSimple() {
         PerformedActivity returnVal = new PerformedActivity();
-        makeXmlSimpleHelper(returnVal);
+        createXmlSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public void verifyDtoSimple(PerformedActivityDto x) {
-        verifyDtoSimpleHelper(x);
+        checkDtoSimpleHelper(x);
     }
 
     @Override
     public void verifyXmlSimple(PerformedActivity x) {
-        verifyXmlSimpleHelper(x);
+        checkXmlSimpleHelper(x);
     }
 
-    public static void makeDtoSimpleHelper(PerformedActivityDto returnVal) {
+    public static void createDtoSimpleHelper(PerformedActivityDto returnVal) {
         BaseActivityTransformerTestHelper.makeDtoSimple(returnVal);
         returnVal.setActualDateRange(new IVLTSTransformerTest().makeDtoSimple());
         returnVal.setActualDuration(new PQTransformerTest().makeDtoSimple());
@@ -49,7 +49,7 @@ public final class PerformedActivityTransformerTest
         returnVal.setStudySubjectIdentifier(new IITransformerTest().makeDtoSimple());
     }
 
-    public static void makeXmlSimpleHelper(PerformedActivityType returnVal) {
+    public static void createXmlSimpleHelper(PerformedActivityType returnVal) {
         BaseActivityTransformerTestHelper.makeXmlSimple(returnVal);
         returnVal.setActualDateRange(new IVLTSTransformerTest().makeXmlSimple());
         returnVal.setActualDuration(new PQTransformerTest().makeXmlSimple());
@@ -59,7 +59,7 @@ public final class PerformedActivityTransformerTest
         returnVal.setStudySubjectIdentifier(new IITransformerTest().makeXmlSimple());
     }
 
-    public static void verifyDtoSimpleHelper(PerformedActivityDto x) {
+    public static void checkDtoSimpleHelper(PerformedActivityDto x) {
         BaseActivityTransformerTestHelper.verifyDtoSimple(x);
         new IVLTSTransformerTest().verifyDtoSimple(x.getActualDateRange());
         new PQTransformerTest().verifyDtoSimple(x.getActualDuration());
@@ -69,7 +69,7 @@ public final class PerformedActivityTransformerTest
         new IITransformerTest().verifyDtoSimple(x.getStudySubjectIdentifier());
     }
 
-    public static void verifyXmlSimpleHelper(PerformedActivityType x) {
+    public static void checkXmlSimpleHelper(PerformedActivityType x) {
         BaseActivityTransformerTestHelper.verifyXmlSimple(x);
         new IVLTSTransformerTest().verifyXmlSimple(x.getActualDateRange());
         new PQTransformerTest().verifyXmlSimple(x.getActualDuration());

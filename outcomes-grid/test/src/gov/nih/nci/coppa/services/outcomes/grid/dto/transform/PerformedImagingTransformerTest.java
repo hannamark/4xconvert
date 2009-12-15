@@ -13,44 +13,44 @@ public final class PerformedImagingTransformerTest extends
     public PerformedImagingDto makeDtoSimple() {
 
         PerformedImagingDto returnVal = new PerformedImagingDto();
-        makeDtoSimpleHelper(returnVal);
+        createDtoSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public PerformedImaging makeXmlSimple() {
         PerformedImaging returnVal = new PerformedImaging();
-        makeXmlSimpleHelper(returnVal);
+        createXmlSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public void verifyDtoSimple(PerformedImagingDto x) {
-        verifyDtoSimpleHelper(x);
+        checkDtoSimpleHelper(x);
     }
 
     @Override
     public void verifyXmlSimple(PerformedImaging x) {
-        verifyXmlSimpleHelper(x);
+        checkXmlSimpleHelper(x);
     }
 
-    public static void makeDtoSimpleHelper(PerformedImagingDto returnVal) {
-        PerformedObservationTransformerTest.makeDtoSimpleHelper(returnVal);
+    public static void createDtoSimpleHelper(PerformedImagingDto returnVal) {
+        PerformedObservationTransformerTest.createDtoSimpleHelper(returnVal);
         returnVal.setContrastAgentEnhancementIndicator(new BLTransformerTest().makeDtoSimple());
     }
 
-    public static void makeXmlSimpleHelper(PerformedImagingType returnVal) {
-        PerformedObservationTransformerTest.makeXmlSimpleHelper(returnVal);
+    public static void createXmlSimpleHelper(PerformedImagingType returnVal) {
+        PerformedObservationTransformerTest.createXmlSimpleHelper(returnVal);
         returnVal.setContrastAgentEnhancementIndicator(new BLTransformerTest().makeXmlSimple());
     }
 
-    public static void verifyDtoSimpleHelper(PerformedImagingDto x) {
-        PerformedObservationTransformerTest.verifyDtoSimpleHelper(x);
+    public static void checkDtoSimpleHelper(PerformedImagingDto x) {
+        PerformedObservationTransformerTest.checkDtoSimpleHelper(x);
         new BLTransformerTest().verifyDtoSimple(x.getContrastAgentEnhancementIndicator());
     }
 
-    public static void verifyXmlSimpleHelper(PerformedImaging x) {
-        PerformedObservationTransformerTest.verifyXmlSimpleHelper(x);
+    public static void checkXmlSimpleHelper(PerformedImaging x) {
+        PerformedObservationTransformerTest.checkXmlSimpleHelper(x);
         new BLTransformerTest().verifyXmlSimple(x.getContrastAgentEnhancementIndicator());
     }
 

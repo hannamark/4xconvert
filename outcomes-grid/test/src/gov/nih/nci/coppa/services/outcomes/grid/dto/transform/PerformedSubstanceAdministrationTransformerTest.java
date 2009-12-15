@@ -16,29 +16,29 @@ public final class PerformedSubstanceAdministrationTransformerTest
     public PerformedSubstanceAdministrationDto makeDtoSimple() {
 
         PerformedSubstanceAdministrationDto returnVal = new PerformedSubstanceAdministrationDto();
-        makeDtoSimpleHelper(returnVal);
+        createDtoSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public PerformedSubstanceAdministration makeXmlSimple() {
         PerformedSubstanceAdministration returnVal = new PerformedSubstanceAdministration();
-        makeXmlSimpleHelper(returnVal);
+        createXmlSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public void verifyDtoSimple(PerformedSubstanceAdministrationDto x) {
-        verifyDtoSimpleHelper(x);
+        checkDtoSimpleHelper(x);
     }
 
     @Override
     public void verifyXmlSimple(PerformedSubstanceAdministration x) {
-        verifyXmlSimpleHelper(x);
+        checkXmlSimpleHelper(x);
     }
 
-    public static void makeDtoSimpleHelper(PerformedSubstanceAdministrationDto returnVal) {
-        PerformedActivityTransformerTest.makeDtoSimpleHelper(returnVal);
+    public static void createDtoSimpleHelper(PerformedSubstanceAdministrationDto returnVal) {
+        PerformedActivityTransformerTest.createDtoSimpleHelper(returnVal);
         returnVal.setDose(new PQTransformerTest().makeDtoSimple());
         returnVal.setDoseDescription(new STTransformerTest().makeDtoSimple());
         returnVal.setDoseDuration(new PQTransformerTest().makeDtoSimple());
@@ -50,8 +50,8 @@ public final class PerformedSubstanceAdministrationTransformerTest
         returnVal.setRouteOfAdministrationCode(new CDTransformerTest().makeDtoSimple());
     }
 
-    public static void makeXmlSimpleHelper(PerformedSubstanceAdministrationType returnVal) {
-        PerformedActivityTransformerTest.makeXmlSimpleHelper(returnVal);
+    public static void createXmlSimpleHelper(PerformedSubstanceAdministrationType returnVal) {
+        PerformedActivityTransformerTest.createXmlSimpleHelper(returnVal);
         returnVal.setDose(new PQTransformerTest().makeXmlSimple());
         returnVal.setDoseDescription(new STTransformerTest().makeXmlSimple());
         returnVal.setDoseDuration(new PQTransformerTest().makeXmlSimple());
@@ -63,8 +63,8 @@ public final class PerformedSubstanceAdministrationTransformerTest
         returnVal.setRouteOfAdministrationCode(new CDTransformerTest().makeXmlSimple());
     }
 
-    public static void verifyDtoSimpleHelper(PerformedSubstanceAdministrationDto returnVal) {
-        PerformedActivityTransformerTest.verifyDtoSimpleHelper(returnVal);
+    public static void checkDtoSimpleHelper(PerformedSubstanceAdministrationDto returnVal) {
+        PerformedActivityTransformerTest.checkDtoSimpleHelper(returnVal);
         new PQTransformerTest().verifyDtoSimple(returnVal.getDose());
         new STTransformerTest().verifyDtoSimple(returnVal.getDoseDescription());
         new PQTransformerTest().verifyDtoSimple(returnVal.getDoseDuration());
@@ -76,8 +76,8 @@ public final class PerformedSubstanceAdministrationTransformerTest
         new CDTransformerTest().verifyDtoSimple(returnVal.getRouteOfAdministrationCode());
     }
 
-    public static void verifyXmlSimpleHelper(PerformedSubstanceAdministrationType returnVal) {
-        PerformedActivityTransformerTest.verifyXmlSimpleHelper(returnVal);
+    public static void checkXmlSimpleHelper(PerformedSubstanceAdministrationType returnVal) {
+        PerformedActivityTransformerTest.checkXmlSimpleHelper(returnVal);
         new PQTransformerTest().verifyXmlSimple(returnVal.getDose());
         new STTransformerTest().verifyXmlSimple(returnVal.getDoseDescription());
         new PQTransformerTest().verifyXmlSimple(returnVal.getDoseDuration());

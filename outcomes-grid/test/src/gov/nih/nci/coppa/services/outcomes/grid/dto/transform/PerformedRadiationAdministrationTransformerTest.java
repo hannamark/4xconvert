@@ -13,44 +13,44 @@ public final class PerformedRadiationAdministrationTransformerTest
     public PerformedRadiationAdministrationDto makeDtoSimple() {
 
         PerformedRadiationAdministrationDto returnVal = new PerformedRadiationAdministrationDto();
-        PerformedRadiationAdministrationTransformerTest.makeDtoSimpleHelper(returnVal);
+        PerformedRadiationAdministrationTransformerTest.createDtoSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public PerformedRadiationAdministration makeXmlSimple() {
         PerformedRadiationAdministration returnVal = new PerformedRadiationAdministration();
-        PerformedRadiationAdministrationTransformerTest.makeXmlSimpleHelper(returnVal);
+        PerformedRadiationAdministrationTransformerTest.createXmlSimpleHelper(returnVal);
         return returnVal;
     }
 
     @Override
     public void verifyDtoSimple(PerformedRadiationAdministrationDto x) {
-        PerformedRadiationAdministrationTransformerTest.verifyDtoSimpleHelper(x);
+        PerformedRadiationAdministrationTransformerTest.checkDtoSimpleHelper(x);
     }
 
     @Override
     public void verifyXmlSimple(PerformedRadiationAdministration x) {
-        PerformedRadiationAdministrationTransformerTest.verifyXmlSimpleHelper(x);
+        PerformedRadiationAdministrationTransformerTest.checkXmlSimpleHelper(x);
     }
 
-    public static void makeDtoSimpleHelper(PerformedRadiationAdministrationDto returnVal) {
-        PerformedSubstanceAdministrationTransformerTest.makeDtoSimpleHelper(returnVal);
+    public static void createDtoSimpleHelper(PerformedRadiationAdministrationDto returnVal) {
+        PerformedSubstanceAdministrationTransformerTest.createDtoSimpleHelper(returnVal);
         returnVal.setMachineTypeCode(new CDTransformerTest().makeDtoSimple());
     }
 
-    public static void makeXmlSimpleHelper(PerformedRadiationAdministration returnVal) {
-        PerformedSubstanceAdministrationTransformerTest.makeXmlSimpleHelper(returnVal);
+    public static void createXmlSimpleHelper(PerformedRadiationAdministration returnVal) {
+        PerformedSubstanceAdministrationTransformerTest.createXmlSimpleHelper(returnVal);
         returnVal.setMachineTypeCode(new CDTransformerTest().makeXmlSimple());
     }
 
-    public static void verifyDtoSimpleHelper(PerformedRadiationAdministrationDto returnVal) {
-        PerformedSubstanceAdministrationTransformerTest.verifyDtoSimpleHelper(returnVal);
+    public static void checkDtoSimpleHelper(PerformedRadiationAdministrationDto returnVal) {
+        PerformedSubstanceAdministrationTransformerTest.checkDtoSimpleHelper(returnVal);
         new CDTransformerTest().verifyDtoSimple(returnVal.getMachineTypeCode());
     }
 
-    public static void verifyXmlSimpleHelper(PerformedRadiationAdministration returnVal) {
-        PerformedSubstanceAdministrationTransformerTest.verifyXmlSimpleHelper(returnVal);
+    public static void checkXmlSimpleHelper(PerformedRadiationAdministration returnVal) {
+        PerformedSubstanceAdministrationTransformerTest.checkXmlSimpleHelper(returnVal);
         new CDTransformerTest().verifyXmlSimple(returnVal.getMachineTypeCode());
     }
 
