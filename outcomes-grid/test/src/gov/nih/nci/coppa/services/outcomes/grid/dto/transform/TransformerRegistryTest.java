@@ -86,10 +86,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
+import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.accrual.dto.PerformedImagingDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.StudySubjectTransformer;
-import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.TransformerRegistry;
 
 import java.util.Map;
 
@@ -101,7 +105,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(2, tMap.size());
+        assertEquals(8, tMap.size());
         tMap.clear();
     }
 
@@ -114,6 +118,24 @@ public class TransformerRegistryTest {
         //#2
         trans = TransformerRegistry.INSTANCE.getTransformer(ActivityRelationshipDto.class);
         assertTrue(trans instanceof ActivityRelationshipTransformer);
+        //#3
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedActivityDto.class);
+        assertTrue(trans instanceof PerformedActivityTransformer);
+        //#4
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedObservationDto.class);
+        assertTrue(trans instanceof PerformedObservationTransformer);
+        //#5
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedImagingDto.class);
+        assertTrue(trans instanceof PerformedImagingTransformer);
+        //#6
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedSubjectMilestoneDto.class);
+        assertTrue(trans instanceof PerformedSubjectMilestoneTransformer);
+        //#7
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedSubstanceAdministrationDto.class);
+        assertTrue(trans instanceof PerformedSubstanceAdministrationTransformer);
+        //#8
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedRadiationAdministrationDto.class);
+        assertTrue(trans instanceof PerformedRadiationAdministrationTransformer);
     }
 
     @Test (expected=RuntimeException.class)

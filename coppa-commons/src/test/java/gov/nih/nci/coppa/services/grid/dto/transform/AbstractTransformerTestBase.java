@@ -40,7 +40,11 @@ public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO
     {
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         final Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-        tClass = (Class<T>) actualTypeArguments[0];
+        if (actualTypeArguments[0] instanceof Class) {
+            tClass = (Class<T>) actualTypeArguments[0];
+        } else {
+            tClass = (Class<T>) ((ParameterizedType) actualTypeArguments[0]).getRawType();
+        }
         xmlClass = (Class<XML>) actualTypeArguments[1];
         if (actualTypeArguments[2] instanceof Class) {
             dtoClass = (Class<DTO>) actualTypeArguments[2];

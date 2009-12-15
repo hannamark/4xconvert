@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The OutcomesServices
+ * source code form and machine readable, binary, object code form. The PA Grid
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This OutcomesServices Software License (the License) is between NCI and You. You (or
+ * This PA Grid Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the OutcomesServices Software to (i) use, install, access, operate,
+ * its rights in the PA Grid Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the OutcomesServices Software; (ii) distribute and
- * have distributed to and by third parties the OutcomesServices Software and any
+ * and prepare derivative works of the PA Grid Software; (ii) distribute and
+ * have distributed to and by third parties the PA Grid Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -82,65 +82,57 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.AbstractActivityDto;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.coppa.services.outcomes.ActivityType;
 
 /**
- * A registry of Transformer(s).
+ * Transforms Activity instances.
  *
- * @author smatyas
+ * @author mshestopalov
  *
+ * @param <ACTY> xml
+ * @param <Acty> dto
  */
-public final class TransformerRegistry {
-
-    private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
-
-    static {
-        values.put(StudySubjectDto.class, StudySubjectTransformer.INSTANCE);
-        values.put(ActivityRelationshipDto.class, ActivityRelationshipTransformer.INSTANCE);
-        values.put(PerformedActivityDto.class, PerformedActivityTransformer.INSTANCE);
-        values.put(PerformedObservationDto.class, PerformedObservationTransformer.INSTANCE);
-        values.put(PerformedImagingDto.class, PerformedImagingTransformer.INSTANCE);
-        values.put(PerformedSubjectMilestoneDto.class, PerformedSubjectMilestoneTransformer.INSTANCE);
-        values.put(PerformedSubstanceAdministrationDto.class, PerformedSubstanceAdministrationTransformer.INSTANCE);
-        values.put(PerformedRadiationAdministrationDto.class, PerformedRadiationAdministrationTransformer.INSTANCE);
-    }
+public abstract class AbstractActivityTransformer<ACTY extends ActivityType, Acty extends AbstractActivityDto>
+    extends AbstractStudyTransformer<ACTY, Acty>
+    implements Transformer<ACTY, Acty> {
 
     /**
-     * Public singleton.
+     *
+     * @param input xml
+     * @return performed activity dto
+     * @throws DtoTransformException same as toDto
      */
-    public static final TransformerRegistry INSTANCE = new TransformerRegistry();
-
-    private TransformerRegistry() {
-    }
-
-    /**
-     * @param type DTO type to translate
-     * @return transformer for the type requested
-     */
-    public Transformer<?, ?> getTransformer(Class<?> type) {
-        Transformer<?, ?> transformer = values.get(type);
-        if (transformer == null) {
-            throw new RuntimeException("Unable to find Transformer for type " + type);
+    @Override
+    public Acty toDto(ACTY input) throws DtoTransformException {
+        Acty returnVal = super.toDto(input);
+        if (returnVal == null) {
+            return null;
         }
-        return transformer;
+        returnVal.setCategoryCode(CDTransformer.INSTANCE.toDto(input.getCategoryCode()));
+        returnVal.setSubcategoryCode(CDTransformer.INSTANCE.toDto(input.getSubcategoryCode()));
+        returnVal.setTextDescription(STTransformer.INSTANCE.toDto(input.getTextDescription()));
+        return returnVal;
     }
 
     /**
-     * @return an unmodifiable version of the registry
+     * @param input dto
+     * @return xml
+     * @throws DtoTransformException same as toXml
      */
-    public static Map<Class<?>, Transformer<?, ?>> getRegistry() {
-        return Collections.unmodifiableMap(values);
+    @Override
+    public ACTY toXml(Acty input) throws DtoTransformException {
+        ACTY returnVal = super.toXml(input);
+        if (returnVal == null) {
+            return null;
+        }
+        returnVal.setCategoryCode(CDTransformer.INSTANCE.toXml(input.getCategoryCode()));
+        returnVal.setSubcategoryCode(CDTransformer.INSTANCE.toXml(input.getSubcategoryCode()));
+        returnVal.setTextDescription(STTransformer.INSTANCE.toXml(input.getTextDescription()));
+        return returnVal;
     }
 }

@@ -85,7 +85,6 @@ package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLTSTransformer;
@@ -97,7 +96,8 @@ import gov.nih.nci.coppa.services.outcomes.StudySubject;
  *
  * @author Steve Lustbader
  */
-public final class StudySubjectTransformer extends AbstractTransformer<StudySubject, StudySubjectDto> implements
+public final class StudySubjectTransformer 
+    extends AbstractStudyTransformer<StudySubject, StudySubjectDto> implements
         Transformer<StudySubject, StudySubjectDto> {
 
     /**
@@ -121,11 +121,8 @@ public final class StudySubjectTransformer extends AbstractTransformer<StudySubj
         if (input == null) {
             return null;
         }
-
-        StudySubjectDto result = new StudySubjectDto();
-        result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
-        result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toDto(input.getStudyProtocolIdentifier()));
-
+        StudySubjectDto result = super.toDto(input);
+        
         result.setAssignedIdentifier(STTransformer.INSTANCE.toDto(input.getAssignedIdentifier()));
         result.setDiseaseIdentifier(IITransformer.INSTANCE.toDto(input.getDiseaseIdentifier()));
         result.setOutcomesLoginName(STTransformer.INSTANCE.toDto(input.getOutcomesLoginName()));
@@ -144,10 +141,8 @@ public final class StudySubjectTransformer extends AbstractTransformer<StudySubj
         if (input == null) {
             return null;
         }
-        StudySubject result = new StudySubject();
-        result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
-        result.setStudyProtocolIdentifier(IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier()));
-
+        StudySubject result = super.toXml(input);
+        
         result.setAssignedIdentifier(STTransformer.INSTANCE.toXml(input.getAssignedIdentifier()));
         result.setDiseaseIdentifier(IITransformer.INSTANCE.toXml(input.getDiseaseIdentifier()));
         result.setOutcomesLoginName(STTransformer.INSTANCE.toXml(input.getOutcomesLoginName()));
@@ -157,6 +152,22 @@ public final class StudySubjectTransformer extends AbstractTransformer<StudySubj
         result.setStatusDateRange(IVLTSTransformer.INSTANCE.toXml(input.getStatusDateRange()));
         result.setStudySiteIdentifier(IITransformer.INSTANCE.toXml(input.getStudySiteIdentifier()));
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected StudySubjectDto newDto() {
+        return new StudySubjectDto();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected StudySubject newXml() {
+        return new StudySubject();
     }
 
 }
