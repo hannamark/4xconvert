@@ -277,7 +277,8 @@ public class UserBeanLocal
         
         String contextName;
         try {
-            contextName = getEjbContext().getCallerPrincipal().getName();
+            contextName =
+                getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : DEFAULT_CONTEXT_NAME;
         } catch (Exception e) {
             contextName = DEFAULT_CONTEXT_NAME;
         }
