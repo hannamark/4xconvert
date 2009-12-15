@@ -114,6 +114,48 @@ public class MockActivityRelationshipBean implements ActivityRelationshipService
         dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
         dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
         arsList.add(dto);
+        
+        /*dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.COURSEID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DRUGBIOLOGICID));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DRUGBIOLOGICID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.HEIGHTID));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DRUGBIOLOGICID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.WEIGHTID));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DRUGBIOLOGICID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.BSAID));
+        arsList.add(dto);*/
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.PERT));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID2));
+        arsList.add(dto);
     }
     
     private synchronized String getKey() {

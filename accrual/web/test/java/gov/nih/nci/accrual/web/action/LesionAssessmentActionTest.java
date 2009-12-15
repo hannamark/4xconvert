@@ -77,82 +77,129 @@
 *
 */
 
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.web.action;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.accrual.web.dto.util.LesionAssessmentWebDto;
+import gov.nih.nci.accrual.web.enums.ResponseInds;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.enums.DoseModificationType;
+import gov.nih.nci.pa.enums.LesionMeasurementMethodCode;
+import gov.nih.nci.pa.enums.MeasurableEvaluableDiseaseTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
-import java.rmi.RemoteException;
-import java.util.List;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.opensymphony.xwork2.ActionSupport;
+
 /**
  * @author Kalpana Guthikonda
- * @since 11/13/2009
+ * @since 12/14/2009
  */
-public class ActivityRelationshipServiceTest extends AbstractServiceTest<ActivityRelationshipService> {
+public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
+    LesionAssessmentAction action;
+    LesionAssessmentWebDto lesionAssessment;
+    private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+
+    @Before
+    public void initAction() throws Exception {
+        action = new LesionAssessmentAction();
+        action.prepare();
+        lesionAssessment = new LesionAssessmentWebDto();
+        setParticipantIi(PARTICIPANT1);
+    }
 
     @Override
-    @Before
-    public void instantiateServiceBean() throws Exception {
-        bean = new ActivityRelationshipBeanLocal();
+    @Test
+    public void executeTest() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
-    /*@Test
-    public void get() throws Exception {
-        ActivityRelationshipDto dto = bean.get(IiConverter.convertToIi(TestSchema.activityRelationships.get(0).getId()));
-        assertNotNull(dto);
-        try {
-            dto = bean.get(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-    }*/
-  @Test
-    public void create() throws Exception {
-        ActivityRelationshipDto dto = new ActivityRelationshipDto();
-        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(TestSchema.performedActivities.get(0).getId()));
-        dto.setTypeCode(CdConverter.convertStringToCd("PERT"));
-        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(TestSchema.performedActivities.get(0).getId()));
-        ActivityRelationshipDto r = bean.create(dto);
-        assertNotNull(r);
-        assertNotNull(r.getIdentifier().getExtension());
-        ActivityRelationshipDto dto2 = bean.get(r.getIdentifier());
-        assertNotNull(dto2);
-        try {
-            dto2 = bean.get(BII);
-        } catch (RemoteException e) {
-            // expected behavior
-        }
-        String newtype = ActivityRelationshipTypeCode.COMP.getCode();
-        assertFalse(newtype.equals(dto.getTypeCode()));
-        ActivityRelationshipDto dto3 = bean.get(r.getIdentifier());
-        dto3.setTypeCode(CdConverter.convertStringToCd(newtype));
-        ActivityRelationshipDto r2 = bean.update(dto3);
-        assertTrue(newtype.equals(r2.getTypeCode().getCode()));
-        
-        ActivityRelationshipDto dto4 = bean.get(r.getIdentifier());
-        List<ActivityRelationshipDto> rList1 = bean.getBySourcePerformedActivity(dto4.getSourcePerformedActivityIdentifier(), dto4.getTypeCode());
-        assertTrue(0 < rList1.size());
-        rList1 = bean.getByTargetPerformedActivity(dto4.getTargetPerformedActivityIdentifier(), dto4.getTypeCode());
-        assertTrue(0 < rList1.size());
+    @Override
+    @Test
+    public void createTest() {
+       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
     }
-   /* @Test
-    public void update() throws Exception {
-        String newtype = "newType";
-        assertFalse(newtype.equals(TestSchema.activityRelationships.get(0).getTypeCode()));
-        ActivityRelationshipDto dto = bean.get(IiConverter.convertToIi(TestSchema.activityRelationships.get(0).getId()));
-        dto.setTypeCode(CdConverter.convertStringToCd(newtype));
-        ActivityRelationshipDto r = bean.update(dto);
-        assertTrue(newtype.equals(r.getTypeCode().getCode()));
-    }*/
+
+    @Override
+    @Test
+    public void retrieveTest() {
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
+    }
+
+    @Override
+    @Test
+     public void updateTest() { 
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.LESION_ASSESSMENTID);
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
+    }
+
+    @Override
+    @Test
+    public void deleteTest() throws Exception {
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.LESION_ASSESSMENTID);
+        action.delete();
+    }
+
+    @Override
+    @Test
+    public void addTest() throws Exception {
+        lesionAssessment.setLesionSite(CdConverter.convertStringToCd("LesionSite")); 
+        Pq lesionLongestDiameter = new Pq();
+        lesionLongestDiameter.setValue(new BigDecimal("2"));
+        lesionLongestDiameter.setUnit("Years");
+        lesionAssessment.setId(new Ii());
+        lesionAssessment.setClinicalAssessmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        lesionAssessment.setContrastAgentIndicator(CdConverter.convertToCd(ResponseInds.YES));
+        lesionAssessment.setImageIdentifier(IiConverter.convertToIi(1L));
+        lesionAssessment.setImageSeriesIdentifier(IiConverter.convertToIi(1L));
+        lesionAssessment.setLesionLongestDiameter(lesionLongestDiameter);
+        lesionAssessment.setLesionNum(IiConverter.convertToIi(1L));
+        lesionAssessment.setMeasurableEvaluableDiseaseType(CdConverter.convertToCd(MeasurableEvaluableDiseaseTypeCode.EVALUABLE));
+        action.setLesionAssessment(lesionAssessment);
+        assertEquals(ActionSupport.SUCCESS, action.add());
+    }
+
+    @Override
+    @Test
+    public void editTest() throws Exception {
+        Pq lesionLongestDiameter = new Pq();
+        lesionLongestDiameter.setValue(new BigDecimal("4"));
+        lesionLongestDiameter.setUnit("Months");
+        lesionAssessment.setLesionSite(CdConverter.convertStringToCd("LesionSite edited")); 
+        lesionAssessment.setImageSeriesIdentifier(IiConverter.convertToIi(3L));
+        lesionAssessment.setMeasurableEvaluableDiseaseType(CdConverter.convertToCd(MeasurableEvaluableDiseaseTypeCode.BOTH));
+        lesionAssessment.setId(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID));
+        lesionAssessment.setOldTreatmentPlanId(MockPerformedActivityBean.TPID);
+        lesionAssessment.setTreatmentPlanId("TestTP2");
+        lesionAssessment.setLesionNum(IiConverter.convertToIi(2L));
+        lesionAssessment.setImageIdentifier(IiConverter.convertToIi(2L));
+        lesionAssessment.setLesionLongestDiameter(lesionLongestDiameter);
+        lesionAssessment.setClinicalAssessmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
+        lesionAssessment.setContrastAgentIndicator(CdConverter.convertToCd(ResponseInds.NO));
+        action.setLesionAssessment(lesionAssessment);
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.LESION_ASSESSMENTID);
+        assertEquals(ActionSupport.SUCCESS, action.edit());
+    }
+    
+    @Test
+    public void editExceptionTest() throws Exception {
+        Date test = new Date();
+        lesionAssessment.setClinicalAssessmentDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        lesionAssessment.setImageIdentifier(new Ii());
+        lesionAssessment.setImageSeriesIdentifier(new Ii());
+        lesionAssessment.setLesionNum(new Ii());
+        action.setLesionAssessment(lesionAssessment);
+        assertEquals(ActionSupport.INPUT, action.edit());
+    }
 }

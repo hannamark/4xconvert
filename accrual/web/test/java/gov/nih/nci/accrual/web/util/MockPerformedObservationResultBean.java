@@ -90,15 +90,20 @@ import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
+import gov.nih.nci.pa.enums.MeasurableEvaluableDiseaseTypeCode;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -155,8 +160,69 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY));
         dto.setResultCode(CdConverter.convertToCd(AutopsyDeathCause.PROTOCOL_TREATMENT));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        porList.add(dto);        
+        porList.add(dto);     
+        
+        Pq pq = new Pq();
+        pq.setValue(new BigDecimal("2"));
+        pq.setUnit("Years");     
+        
+        /*dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.HEIGHTID));
+        dto.setResultQuantity(pq);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.WEIGHTID));
+        dto.setResultQuantity(pq);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.BSAID));
+        dto.setResultQuantity(pq);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);*/
+        
     }
+    
+    private List<PerformedLesionDescriptionDto> pldList;
+    {
+        pldList = new ArrayList<PerformedLesionDescriptionDto>();
+        PerformedLesionDescriptionDto dto = new PerformedLesionDescriptionDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID));
+        dto.setLesionNumber(IntConverter.convertToInt("1"));
+        dto.setMeasurableIndicator(BlConverter.convertToBl(true));
+        dto.setEvaluableIndicator(BlConverter.convertToBl(false));
+        Pq longestDiameter = new Pq();
+        longestDiameter.setUnit("mm");
+        longestDiameter.setValue(new BigDecimal("2"));
+        dto.setLongestDiameter(longestDiameter);
+        Ivl<Ts> clinicalAssessmentDate = new Ivl<Ts>();
+        clinicalAssessmentDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setResultDateRange(clinicalAssessmentDate);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        pldList.add(dto);
+    }
+    private List<PerformedImageDto> piList;
+    {
+        piList = new ArrayList<PerformedImageDto>();
+        PerformedImageDto dto = new PerformedImageDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID2));
+        Ivl<Ts> clinicalAssessmentDate = new Ivl<Ts>();
+        clinicalAssessmentDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setResultDateRange(clinicalAssessmentDate);
+        dto.setImageIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setSeriesIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        piList.add(dto);
+    }
+    
     private class PdPa {
         public String pa;
         public PerformedDiagnosisDto dto;
@@ -316,7 +382,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public List<PerformedImageDto> getPerformedImageByPerformedActivity(Ii ii)
             throws RemoteException {
-        return new ArrayList<PerformedImageDto>();
+        return piList;
     }
 
     public PerformedLesionDescriptionDto getPerformedLesionDescription(Ii ii)
@@ -326,7 +392,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public List<PerformedLesionDescriptionDto> getPerformedLesionDescriptionByPerformedActivity(
             Ii ii) throws RemoteException {
-        return new ArrayList<PerformedLesionDescriptionDto>();
+        return pldList;
     }
 
     public PerformedMedicalHistoryResultDto getPerformedMedicalHistoryResult(

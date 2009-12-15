@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
 import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
@@ -287,5 +288,7 @@ public class PerformedObservationResultServiceTest
         assertTrue(0 < rList5.size());
         List<PerformedLesionDescriptionDto> rList6 = bean.getPerformedLesionDescriptionByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList6.size());
+        List<PerformedObservationResultDto> rList7 = bean.getPerformedObservationResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
+        assertTrue(0 < rList7.size());
     }  
 }

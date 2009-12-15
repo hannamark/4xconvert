@@ -91,16 +91,21 @@ import gov.nih.nci.accrual.web.action.AbstractAccrualActionTest;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.enums.DoseModificationType;
+import gov.nih.nci.pa.enums.LesionMeasurementMethodCode;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -121,6 +126,11 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public static final String SURGERYID = "Srugery 1";
     public static final String DEATH_INFORMATIONID = "DeathInformation 1";
     public static final String AUTOPSY_INFORMATIONID = "AutopsyInformation 1";
+    public static final String LESION_ASSESSMENTID = "Lesion Assessment 1";
+    public static final String LESION_ASSESSMENTID2 = "Lesion Assessment 2";
+    /*public static final String HEIGHTID = "Height 1";
+    public static final String WEIGHTID = "Weight 1";
+    public static final String BSAID = "BSA 1";*/
     private List<PerformedActivityDto> paList;
     {
         paList = new ArrayList<PerformedActivityDto>();
@@ -170,6 +180,38 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         poList.add(dto);
+        
+        /*dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(HEIGHTID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.HEIGHT));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(WEIGHTID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.WEIGHT));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(BSAID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.BSA));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);*/
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(LESION_ASSESSMENTID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.LESION_ASSESSMENT));
+        dto.setTargetSiteCode(CdConverter.convertStringToCd("LesionSite")); 
+        List<Cd> cds = new ArrayList<Cd>();
+        cds.add(CdConverter.convertToCd(LesionMeasurementMethodCode.BONE_SCAN));
+        dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
     }
     
     private List<PerformedSubjectMilestoneDto> psmList;   
@@ -200,6 +242,41 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         ppList.add(dto);
+    }
+    private List<PerformedSubstanceAdministrationDto> psaList;
+    {
+        psaList = new ArrayList<PerformedSubstanceAdministrationDto>();
+        /*PerformedSubstanceAdministrationDto dto = new PerformedSubstanceAdministrationDto();       
+        dto.setIdentifier(IiConverter.convertToIi(RADIATIONID));
+        dto.setInterventionIdentifier(MockPaInterventionBean.list.get(0).getIdentifier());
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.DRUG_BIOLOGIC));
+        dto.setDoseFormCode(CdConverter.convertStringToCd("TABLET"));
+        dto.setDoseFrequencyCode(CdConverter.convertStringToCd("BID"));
+        dto.setRouteOfAdministrationCode(CdConverter.convertStringToCd("ORAL"));
+        Pq dose = new Pq();
+        dose.setValue(new BigDecimal("2"));
+        dose.setUnit("Years");
+        dto.setDose(dose);
+        dto.setDoseDuration(dose);
+        dto.setDoseTotal(dose);
+        dto.setDoseModificationType(CdConverter.convertToCd(DoseModificationType.DOSE_INCREASED));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        psaList.add(dto);*/
+    }
+    private List<PerformedImagingDto> piList;
+    {
+        piList = new ArrayList<PerformedImagingDto>();
+        PerformedImagingDto dto =new PerformedImagingDto();
+        dto.setIdentifier(IiConverter.convertToIi(LESION_ASSESSMENTID2));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.LESION_ASSESSMENT));
+        dto.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(true));
+        List<Cd> cds = new ArrayList<Cd>();
+        cds.add(CdConverter.convertToCd(LesionMeasurementMethodCode.BONE_SCAN));
+        dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        piList.add(dto);
     }
 
     private static int key = 1000;
@@ -361,12 +438,21 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedImagingDto getPerformedImaging(Ii ii)
             throws RemoteException {
-        return new PerformedImagingDto();
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedImaging");
+        }
+        PerformedImagingDto dto = new PerformedImagingDto();
+        for (PerformedImagingDto pi : piList) {
+            if (ii.getExtension().equals(pi.getIdentifier().getExtension())) {
+                dto = pi;
+            }
+        }        
+        return (dto == null) ? new PerformedImagingDto() : dto;      
     }
 
     public List<PerformedImagingDto> getPerformedImagingByStudySubject(Ii ii)
             throws RemoteException {
-        return new ArrayList<PerformedImagingDto>();
+        return piList;
     }
 
     public PerformedObservationDto getPerformedObservation(Ii ii)
@@ -410,18 +496,28 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudySubject(
             Ii ii) throws RemoteException {
-        return new ArrayList<PerformedSubstanceAdministrationDto>();
+        return psaList;
     }
 
     public PerformedImagingDto updatePerformedImaging(PerformedImagingDto dto)
             throws RemoteException, DataFormatException {
-        return new PerformedImagingDto();
+        for (PerformedImagingDto pi : piList) {
+            if (dto.getIdentifier().getExtension().equals(pi.getIdentifier().getExtension())) {
+                pi = dto;
+            }
+        }
+        return dto;
     }
 
     public PerformedObservationDto updatePerformedObservation(
             PerformedObservationDto dto) throws RemoteException,
             DataFormatException {
-        return new PerformedObservationDto();
+        for (PerformedObservationDto po : poList) {
+            if (dto.getIdentifier().getExtension().equals(po.getIdentifier().getExtension())) {
+                po = dto;
+            }
+        }
+        return dto;
     }
 
     public PerformedProcedureDto updatePerformedProcedure(

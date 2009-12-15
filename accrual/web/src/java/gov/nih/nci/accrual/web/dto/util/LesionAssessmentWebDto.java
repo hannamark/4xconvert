@@ -195,7 +195,7 @@ public class LesionAssessmentWebDto implements Serializable {
             action.addFieldError("lesionAssessment.lesionLongestDiameter.value", 
                     "Please enter Lesion Longest Diameter Value.");
         }
-        if (dto.getLesionLongestDiameter().getValue() != null 
+        if (dto.getLesionLongestDiameter() != null && dto.getLesionLongestDiameter().getValue() != null 
                 && !PAUtil.isNumber(dto.getLesionLongestDiameter().getValue().toString())) {
             action.addFieldError("lesionAssessment.lesionLongestDiameter.value", NUMERICMESSAGE);
         }
