@@ -67,7 +67,9 @@ function handleEditAction(){
         <td class="label">
           <label>
               <fmt:message key="participant.assignedIdentifier"/>
-              <span class="required">*</span>
+              <s:if test="%{currentAction != 'retrieve'}">
+              		<span class="required">*</span>
+              </s:if>
           </label>
         </td>
         <td class="value" colspan="4">
@@ -85,7 +87,9 @@ function handleEditAction(){
         <td class="label">
           <label>
             <fmt:message key="participant.birthDate"/>
-            <span class="required">*</span>
+            <s:if test="%{currentAction != 'retrieve'}">
+            		<span class="required">*</span>
+            </s:if>
           </label>
         </td>
         <td class="value" colspan="4">
@@ -103,7 +107,9 @@ function handleEditAction(){
         <td class="label">
           <label>
             <fmt:message key="participant.gender"/>
-            <span class="required">*</span>
+            <s:if test="%{currentAction != 'retrieve'}">
+            		<span class="required">*</span>
+            </s:if>
           </label>
         </td>
         <td class="value" colspan="4">
@@ -123,7 +129,9 @@ function handleEditAction(){
         <td class="label">
          <label>
             <fmt:message key="participant.race"/>
-            <span class="required">*</span>
+            <s:if test="%{currentAction != 'retrieve'}">
+            		<span class="required">*</span>
+            </s:if>
         </label>
         </td>
         <td class="value" colspan="4">
@@ -145,7 +153,9 @@ function handleEditAction(){
         <td scope="row" class="label">
          <label>
             <fmt:message key="participant.ethnicity"/>
-            <span class="required">*</span>
+            <s:if test="%{currentAction != 'retrieve'}">
+            		<span class="required">*</span>
+            </s:if>
         </label>
         </td>
         <td class="value" colspan="4">
@@ -165,7 +175,9 @@ function handleEditAction(){
         <td class="label">
          <label>
             <fmt:message key="participant.country"/>
-            <span class="required">*</span>
+            <s:if test="%{currentAction != 'retrieve'}">
+            		<span class="required">*</span>
+            </s:if>
         </label>
         </td>
         <td class="value" colspan="4">

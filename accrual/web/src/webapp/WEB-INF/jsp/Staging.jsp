@@ -33,6 +33,7 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <s:hidden name="staging.id"/>
+<fmt:message key="staging.saveMsg"/>
 <table class="form">
 
     <!-- Staging Method -->
@@ -92,8 +93,8 @@
     </tr>
 
 </table>
-</s:form>
 
+<h2>Tumor Markers</h2>
 <s:if test="displayTagList != null">
     <div class="box">
         <display:table class="data" name="displayTagList" sort="list" pagesize="10"  requestURI="executeStaging.action">    
@@ -104,6 +105,7 @@
     </div>
 </s:if>
 
+</s:form>
 <div class="actionsrow">
    <del class="btnwrapper">
       <ul class="btnrow">

@@ -24,7 +24,7 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>
-        <fmt:message key="treatPlan.mainPage"/>
+        <fmt:message key="treatPlan.frameName"/>
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>

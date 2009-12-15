@@ -53,9 +53,7 @@
     }
 </script>
 <title>
-    <s:if test="%{currentAction== 'detail'}">
-        <c:set var="topic" scope="request" value="prior_therapies"/>
-      </s:if>
+    <c:set var="topic" scope="request" value="prior_therapies"/>
      Prior Therapies
 </title>
 <s:head />
@@ -93,7 +91,7 @@
 <s:fielderror cssClass="formErrorMsg"><s:param>priors.totalRegimenNum</s:param></s:fielderror></td></tr>
 <tr><td>&nbsp;</td><td>
     <s:set name="priorsList" scope="request" value="priors.list"/>    
-    <s:set name="priorTherapyTypeCodeValues" value="@gov.nih.nci.pa.enums.PriorTherapyTypeCode@getDisplayNames()" />
+    <s:set name="priorTherapyTypeCodeValues" value="@gov.nih.nci.pa.enums.PriorTherapyTypeCode@getDisplayNames()" />   
     <display:table class="data" summary="The list of Prior Therapy Regimens.
             Please use column headers to sort results." length="0" pagesize="0"
             sort="list" uid="row" name="priorsList" requestURI="PriorTherapies.action" export="false">
@@ -130,6 +128,7 @@
 <tr><td scope="row" class="label"><label style="${roClass}"><fmt:message key="priorTherapy.label.chemoNum"/></label></td>
 <td class="value"><s:textfield name="priors.chemoRegimenNum" cssStyle="color: #909090; font-weight: normal; border: 0px solid black" readonly="true"/></td></tr>
 </table>
+<fmt:message key="priorTherapy.saveMsg"/>
 </s:form>
 
 <div class="actionsrow">

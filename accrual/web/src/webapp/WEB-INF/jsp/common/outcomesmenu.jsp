@@ -73,12 +73,10 @@
             </c:choose>
             <c:choose>
                 <c:when test="${(requestScope.topic == 'prior_therapies')}">
-                    <li><a href="executePriorTherapies.action" class="selected">Prior
-                    Therapies</a></li>
+                    <li><a href="executePriorTherapies.action" class="selected">Prior Therapies</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="executePriorTherapies.action">Prior
-                    Therapies</a></li>
+                    <li><a href="executePriorTherapies.action">Prior Therapies</a></li>
                 </c:otherwise>
             </c:choose>
             <c:choose>
@@ -97,19 +95,19 @@
         <ul id="part_sites">
         <c:choose>
                 <c:when test="${(requestScope.topic == 'treatment_plan') || (requestScope.topic == 'add_treatment') || (requestScope.topic == 'update_treatment')}">
-                    <li><a href="executeTreatment.action" class="selected">Treatment Plan</a></li>
+                    <li><a href="executeTreatment.action" class="selected">Treatment Regimen</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="executeTreatment.action">Treatment Plan</a></li>
+                    <li><a href="executeTreatment.action">Treatment Regimen</a></li>
                 </c:otherwise>
             </c:choose>
             <c:if test="${(sessionScope.treatmentPlanIi != null)}">
             <c:choose>
                 <c:when test="${(requestScope.topic == 'course') || (requestScope.topic == 'add_course') || (requestScope.topic == 'update_course')}">
-                    <li><a href="executeCourse.action" class="selected">Course</a></li>
+                    <li><a href="executeCourse.action" class="selected">Cycle</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="executeCourse.action">Course</a></li>
+                    <li><a href="executeCourse.action">Cycle</a></li>
                 </c:otherwise>
             </c:choose>
             </c:if>

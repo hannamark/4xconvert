@@ -104,7 +104,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="drugBiologic.dose"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="radiation.dose"/>:<span class="required">*</span></label></td>
         <td class="value">
             <s:textfield name="radiation.dose.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>radiation.dose.value</s:param></s:fielderror>

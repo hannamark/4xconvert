@@ -53,6 +53,7 @@
 	<s:hidden name = "currentAction"/>
 	<s:hidden name = "selectedRowIdentifier"/>
 	<s:hidden name = "treatment.id"/>
+	<fmt:message key="treatPlan.recordMsg"/>
 <table class="form">
 <tr>
         <td scope="row" class="label"><label><fmt:message key="treatPlan.name"/>:<span class="required">*</span></label></td>

@@ -700,13 +700,15 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
                 || toValidateDto.getType().getCode().equals(""))
                 && toValidateDto.getDescription() != null && toValidateDto.getDescription().getValue() != null 
                 && !toValidateDto.getDescription().getValue().equals("")) {
-            addActionError("Prior Therapy Type is required.\n");
+            addActionError("Prior Therapy Type is required.Modify: Both: Prior Therapy Type"
+                    + " and Prior Therapy Description values must be assigned for saving record.\n");
         }
         if (toValidateDto.getType() != null && toValidateDto.getType().getCode() != null
                 && !toValidateDto.getType().getCode().equals("") && (toValidateDto.getDescription() == null 
                 || toValidateDto.getDescription().getValue() == null 
                 || toValidateDto.getDescription().getValue().equals(""))) {
-            addActionError("Prior Therapy Description is required.\n");
+            addActionError("Prior Therapy Description is required. Modify: Both: Prior Therapy Type"
+                    + " and Prior Therapy Description values must be assigned for saving record.\n");
         }
     }
 }

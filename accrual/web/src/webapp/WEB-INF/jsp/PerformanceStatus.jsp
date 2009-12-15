@@ -36,15 +36,15 @@
 <s:hidden name="performance.id" />
 <label><fmt:message key="perfStatus.label.onlyOne"/></label>
 <table class="form">
-<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.ecog"/><span class="required">*</span></label></td>
+<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.ecog"/></label></td>
 <td><s:select id="performance.ecogStatus" name="performance.ecogStatus" headerKey="" headerValue="--Select--"
                list="performance.ecogStatuses" listKey="code" listValue="code" value="performance.ecogStatus.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>performance.ecogStatus</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.karn"/><span class="required">*</span></label></td>
+<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.karn"/></label></td>
 <td><s:select id="performance.karnofskyStatus" name="performance.karnofskyStatus" headerKey="" headerValue="--Select--"
                list="performance.karnofskyStatuses" listKey="code" listValue="code" value="performance.karnofskyStatus.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>performance.karnofskyStatus</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.lans"/><span class="required">*</span></label></td>
+<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.lans"/></label></td>
 <td><s:select id="performance.lanskyStatus" name="performance.lanskyStatus" headerKey="" headerValue="--Select--"
                list="performance.lanskyStatuses" listKey="code" listValue="code" value="performance.lanskyStatus.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>performance.lanskyStatus</s:param></s:fielderror></td></tr>

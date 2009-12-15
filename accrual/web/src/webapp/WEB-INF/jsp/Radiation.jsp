@@ -35,7 +35,7 @@
             <display:column titleKey="radiation.date" sortable="true" headerClass="sortable">
             	<s:property value="%{#attr.row.radDate}"/>
             </display:column>
-            <display:column titleKey="drugBiologic.dose" property="dose.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="radiation.dose" property="dose.value" sortable="true" headerClass="sortable"/>
             <display:column titleKey="drugBiologic.doseUOM" property="dose.unit" sortable="true" headerClass="sortable"/>
             <display:column titleKey="drugBiologic.frequency" property="doseFreq.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="radiation.machineType" property="machineType.code" sortable="true" headerClass="sortable"/>
