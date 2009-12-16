@@ -96,7 +96,6 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
     @Before
     public void initAction() {
         action = new WelcomeAction();
-        setDisclaimer(false);
     }
 
     @Test
@@ -105,11 +104,6 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
         //assertEquals(WelcomeAction.AR_OUTCOMES, action.execute());
         assertEquals(AccrualConstants.ROLE_OUTCOMES, ServletActionContext.getRequest().getSession().
                 getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
-    }
-
-    @Test
-    public void nullRoleTest() {
-        assertEquals(AccrualConstants.AR_DISCLAIMER, action.execute());
     }
 
 }

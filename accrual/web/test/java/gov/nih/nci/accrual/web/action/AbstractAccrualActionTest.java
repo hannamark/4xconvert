@@ -153,7 +153,6 @@ public class AbstractAccrualActionTest {
         ServletActionContext.setRequest(request);
 
         setRole(AccrualConstants.ROLE_OUTCOMES);
-        setDisclaimer(true);
     }
 
 
@@ -230,15 +229,6 @@ public class AbstractAccrualActionTest {
             ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_ROLE, role);
         } else {
             ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_ROLE);
-        }
-    }
-
-    public void setDisclaimer(boolean value) {
-        if (value) {
-            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER,
-                    AccrualConstants.DISCLAIMER_ACCEPTED);
-        } else {
-            ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
         }
     }
     

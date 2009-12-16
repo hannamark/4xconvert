@@ -238,13 +238,6 @@ public class UserAccountAction extends AbstractAccrualAction {
      * @return String
      */
     public String updateAccount() {
-        //check if users accepted the disclaimer if not show one
-        String disclaimer = (String) ServletActionContext.getRequest().getSession().
-            getAttribute(AccrualConstants.SESSION_ATTR_DISCLAIMER);
-        if (disclaimer == null || !disclaimer.equals(AccrualConstants.DISCLAIMER_ACCEPTED)) {
-            return AccrualConstants.AR_DISCLAIMER;
-        }
-
         String loginName = ServletActionContext.getRequest().getRemoteUser();
         try {
             UserDto user = userSvc.getUser(StConverter.convertToSt(loginName));

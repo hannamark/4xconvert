@@ -91,10 +91,6 @@ public final class AccrualConstants {
     public static final String SESSION_ATTR_ROLE = "accrualRole";
     /** Role-name for the outcomes role. */
     public static final String ROLE_OUTCOMES = "Outcomes";
-    /** Attribute used to store the role in session. */
-    public static final String SESSION_ATTR_DISCLAIMER = "accrualDisclaimer";
-    /** Role-name for the public role. */
-    public static final String DISCLAIMER_ACCEPTED = "Accepted";
     /** Attribute used to hold selected participant key. */
     public static final String SESSION_ATTR_PARTICIPANT_II = "studySubjectIi";
     /** Attribute used to hold submitting organization key. */
@@ -126,8 +122,6 @@ public final class AccrualConstants {
 
     /** Action result for the global log out result. */
     public static final String AR_LOGOUT = "logout";
-    /** Action result for the show disclaimer. */
-    public static final String AR_DISCLAIMER = "show_Disclaimer_Page";
 
     /** Success Message . */
     public static final String SUCCESS_MESSAGE = "successMessage";

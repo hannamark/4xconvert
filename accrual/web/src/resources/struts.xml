@@ -67,7 +67,6 @@
                 <param name="parse">true</param>
                 <param name="userAction">${userAction}</param>
             </result>
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
         </action>
         <action name="lookup*" class="gov.nih.nci.accrual.web.action.UserAccountAction" method="lookup{1}">
             <result>/WEB-INF/jsp/nodecorate/lookup{1}.jsp</result>
@@ -78,20 +77,14 @@
         <action name="welcome" class="gov.nih.nci.accrual.web.action.WelcomeAction">
             <result name="outcomesNamespace" type="redirectAction">
                 <param name="namespace">../outcomes</param>
-                <param name="actionName">disClaimerAction</param>
+                <param name="actionName">executeParticipants</param>
             </result>
         </action>
     </package>
 
-    <package name="outcomes" namespace="/outcomes" extends="default">
-        <action name="disClaimerAction*" class="gov.nih.nci.accrual.web.action.DisclaimerAction" method="{1}">
-            <result>executeParticipants.action</result>
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
-        </action>
-
+    <package name="outcomes" namespace="/outcomes" extends="default">            
         <action name="execute*" class="gov.nih.nci.accrual.web.action.{1}Action">
             <result>/WEB-INF/jsp/{1}.jsp</result>
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/disclaimer.jsp</result>
             <result name="input">/WEB-INF/jsp/{1}Detail.jsp</result>
         </action>
     
