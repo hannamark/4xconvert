@@ -162,7 +162,6 @@ public class StudySubjectBeanLocal
      */
     public StudySubjectDto createOutcomes(StudySubjectDto dto) throws RemoteException {
         validateOutcomesLoginName(dto.getOutcomesLoginName());
-        //validateUniqueAssignedIdentifierRule(dto);
         dto.setStudyProtocolIdentifier(searchTrialSvc.getOutcomesStudyProtocolIi());
         return super.create(dto);
     }
@@ -226,16 +225,5 @@ public class StudySubjectBeanLocal
         if (!DEFAULT_CONTEXT_NAME.equals(cn) && !ln.equals(cn)) {
             throw new RemoteException("OutcomesLoginName does not match context.");
         }
-    }
-    /*private void validateUniqueAssignedIdentifierRule(StudySubjectDto dto) throws RemoteException {
-     List<StudySubjectDto> studySubjectList = this.getByStudySite(dto.getStudySiteIdentifier());
-     for (StudySubjectDto ssdto : studySubjectList) {
-       if (!PAUtil.isStNull(ssdto.getAssignedIdentifier()) && !ssdto.getAssignedIdentifier().getValue().equals("")
-          && !PAUtil.isStNull(dto.getAssignedIdentifier()) && !dto.getAssignedIdentifier().getValue().equals("")
-          && ssdto.getAssignedIdentifier().getValue().equals(dto.getAssignedIdentifier().getValue())) {
-             throw new RemoteException("Study Subject with Assigned identifier already exists.");
-       }
-     }
-    }*/
-    
+    }    
 }
