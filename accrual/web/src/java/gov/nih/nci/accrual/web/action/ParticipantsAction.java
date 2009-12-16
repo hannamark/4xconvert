@@ -110,7 +110,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Hugh Reinhart
  * @since Sep 21, 2009
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
 public class ParticipantsAction extends AbstractListEditAccrualAction<ParticipantWebDto> {
 
     private static final long serialVersionUID = -6820189447703204634L;
@@ -338,6 +338,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
     private void businessRules() {
         if (!hasActionErrors()) {
             validateUnitedStatesRules();
+            validateNoPatientDuplicates();
         }
     }
 
@@ -348,10 +349,34 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         }
     }
 
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    private void validateNoPatientDuplicates() {
+        List<StudySubjectDto> allSss = null;
+        StudySubjectDto ssub = participant.getStudySubjectDto(getAuthorizedUser());
+        try {
+            allSss = studySubjectSvc.getByStudyProtocol(ssub.getStudyProtocolIdentifier());
+        } catch (RemoteException e) {
+            LOG.error("Error in PatientAction.validateNoPatientDuplicates().", e);
+            addActionError(e.getLocalizedMessage());
+        }
+        
+        for (StudySubjectDto ss : allSss) {
+            if (ss.getAssignedIdentifier().getValue().equals(ssub.getAssignedIdentifier().getValue())
+                    && (PAUtil.isIiNull(ssub.getIdentifier())
+                        || !(ssub.getIdentifier().getExtension().equals(ss.getIdentifier().getExtension())))
+                    && !deletedStatusCode.equals(CdConverter.convertCdToString(ss.getStatusCode()))) {
+                addActionError("This Patient Id (" + ssub.getAssignedIdentifier().getValue()
+                        + ") has already been added to this study.");
+                break;
+            }
+        }
+    }
     private void sortListOfParticipants() {
         TreeMap<String, Ii> ids = new TreeMap<String, Ii>();
         for (ParticipantWebDto pat : getDisplayTagList()) {
-            ids.put(StConverter.convertToString(pat.getAssignedIdentifier()), pat.getStudySubjectIi());
+           String sortString = StConverter.convertToString(pat.getAssignedIdentifier()) 
+             + IiConverter.convertToString(pat.getStudySubjectIi());
+            ids.put(sortString, pat.getStudySubjectIi());
         }
         List<ParticipantWebDto> result = new ArrayList<ParticipantWebDto>();
         for (Ii ssId : ids.values()) {

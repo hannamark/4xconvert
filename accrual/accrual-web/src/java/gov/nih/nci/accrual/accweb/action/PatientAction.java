@@ -421,12 +421,14 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             List<PlannedEligibilityCriterionDTO> pecList;
             try {
                 pecList = plannedActivitySvc.getPlannedEligibilityCriterionByStudyProtocol(getSpIi());
+                if (!pecList.isEmpty()) {
                 for (PlannedEligibilityCriterionDTO pec : pecList) {
                     if (PaServiceLocator.ELIG_CRITERION_NAME_GENDER.equals(
                             StConverter.convertToString(pec.getCriterionName()))) {
                         genderCriterion = EligibleGenderCode.getByCode(
                                 CdConverter.convertCdToString(pec.getEligibleGenderCode()));
                     }
+                }
                 }
             } catch (Exception e) {
                 genderCriterion = EligibleGenderCode.BOTH;
