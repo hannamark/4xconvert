@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.coppa.iso.Ii;
@@ -95,12 +94,26 @@ import java.util.List;
  * @since 11/13/2009
  *
  */
-public class MockServiceBean implements UserService {
+public class MockUserBean implements UserService {
 	
 	private static Long seq = 1L;
     private static List<UserDto> userList;
     static {
     	userList = new ArrayList<UserDto>();
+    	UserDto dto = new UserDto();
+        dto.setFirstName(StConverter.convertToSt("firstName"));
+        dto.setLastName(StConverter.convertToSt("lastName"));
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        dto.setLoginName(StConverter.convertToSt("firstName"));
+        dto.setPoOrganizationIdentifier(IiConverter.convertToIi(1L));
+        dto.setPoPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
+        userList.add(dto);
+        dto = new UserDto();
+        dto.setFirstName(StConverter.convertToSt("firstName"));
+        dto.setLastName(StConverter.convertToSt("lastName"));
+        dto.setIdentifier(IiConverter.convertToIi(seq++));
+        dto.setLoginName(StConverter.convertToSt("joe@barngrill.com"));
+        userList.add(dto);
     }
     
     /**
@@ -117,6 +130,9 @@ public class MockServiceBean implements UserService {
      */
     public UserDto getUser(St isoLoginName) throws RemoteException {
     	String loginName = StConverter.convertToString(isoLoginName);
+    	if(loginName != null && loginName.equals("throwException") || loginName == null) {
+            throw new RemoteException("testing");
+        }
     	UserDto dto = null;
         for (UserDto user : userList) {
             if (loginName.equals(StConverter.convertToString(user.getLoginName()))) {

@@ -81,17 +81,16 @@ package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import gov.nih.nci.accrual.service.AbstractServiceTest;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.iso.util.IiConverter;
 
 /**
  * @author lhebel

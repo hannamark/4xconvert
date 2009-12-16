@@ -79,12 +79,10 @@
 package gov.nih.nci.accrual.web.dto.util;
 
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
 
 
 

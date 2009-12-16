@@ -73,84 +73,102 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
 
 package gov.nih.nci.accrual.web.util;
 
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.service.util.PatientService;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetEnumConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.PatientDTO;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * @author Hugh Reinhart
- * @since Sep 26, 2009
+ * @author lhebel
+ *
  */
-public class MockPatientBean implements PatientService {
-    private static Long seq = 1L;
-    private static List<PatientDto> pList;
-    static {
-        pList = new ArrayList<PatientDto>();
-        PatientDto p = new PatientDto();
-        p.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("3/1/1968")));
-        p.setCountryIdentifier(IiConverter.convertToCountryIi(1L));
-        p.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
-        p.setGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));
-        p.setIdentifier(IiConverter.convertToIi(seq++));
-        p.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.WHITE.getName()));
-        p.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
-        p.setZip(StConverter.convertToSt("12345"));
-    }
+public class MockPatientCorrelationServiceRemote implements PatientCorrelationServiceRemote
+{
 
-    /**
-     * {@inheritDoc}
-     */
-    public PatientDto create(PatientDto dto) throws RemoteException {
-        dto.setIdentifier(IiConverter.convertToIi(seq++));
-        pList.add(dto);
-        return dto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PatientDto get(Ii ii) throws RemoteException {
-        Long id = IiConverter.convertToLong(ii);
-        PatientDto result = null;
-        for (PatientDto dto : pList) {
-            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
-                result = dto;
-            }
+    public Ii createCorrelation(PatientDTO arg0)
+            throws EntityValidationException, CurationException {
+        Ii identifier = new Ii();
+        String id = identifier.getExtension();
+        if (id == null || id == "") {
+            id = "0";
         }
-        return result;
+        id = String.valueOf(Integer.parseInt(id) + 1);
+        identifier.setExtension(id);
+        arg0.setIdentifier(DSetConverter.convertIiToDset(identifier));
+        return identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public PatientDto update(PatientDto dto) throws RemoteException {
-        Long id = IiConverter.convertToLong(dto.getIdentifier());
-        for (PatientDto p : pList) {
-            if (id.equals(IiConverter.convertToLong(p.getIdentifier()))) {
-                p = dto;
-            }
+    public PatientDTO getCorrelation(Ii ii) throws NullifiedRoleException {
+        if (NullFlavor.NA.equals(ii.getNullFlavor())) {
+            Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+            nullifiedEntities.put(ii, IiConverter.convertToPoOrganizationalContactIi("1"));
+            throw new NullifiedRoleException(nullifiedEntities);
         }
-        return dto;
+        ii.setReliability(IdentifierReliability.ISS);
+        PatientDTO dto = new PatientDTO();
+        dto.setIdentifier(DSetConverter.convertIiToDset(ii));
+        dto.setPlayerIdentifier(IiConverter.convertToPoPersonIi("PO PERSON ID 01"));
+        dto.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+        dto.setStatus(CdConverter.convertStringToCd("ACTIVE"));
+        return dto;    
+    }
+
+    public List<PatientDTO> getCorrelations(Ii[] arg0)
+            throws NullifiedRoleException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<PatientDTO> getCorrelationsByPlayerIds(Ii[] arg0)
+            throws NullifiedRoleException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<PatientDTO> search(PatientDTO arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<PatientDTO> search(PatientDTO arg0, LimitOffset arg1)
+            throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void updateCorrelation(PatientDTO arg0)
+            throws EntityValidationException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void updateCorrelationStatus(Ii arg0, Cd arg1)
+            throws EntityValidationException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public Map<String, String[]> validate(PatientDTO arg0) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

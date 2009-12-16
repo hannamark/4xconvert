@@ -85,8 +85,6 @@ import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.pa.enums.DoseModificationType;
-import gov.nih.nci.pa.enums.LesionMeasurementMethodCode;
 import gov.nih.nci.pa.enums.MeasurableEvaluableDiseaseTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;

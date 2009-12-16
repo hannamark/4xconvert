@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.web.util;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;

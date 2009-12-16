@@ -103,7 +103,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final PatientServiceRemote poPatientService = new MockPaPatientServiceBean();
     private final PerformedObservationResultService porService = new MockPerformedObservationResultBean();
     private final ActivityRelationshipService arService = new MockActivityRelationshipBean();
-    private final UserService userService = new MockServiceBean();
+    private final UserService userService = new MockUserBean();
     
     /**
      * {@inheritDoc}

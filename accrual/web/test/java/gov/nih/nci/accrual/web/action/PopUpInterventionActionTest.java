@@ -78,7 +78,6 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.web.dto.util.InterventionWebDto;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;

@@ -87,14 +87,13 @@ import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.web.enums.ResponseInds;
+import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
-import gov.nih.nci.pa.enums.MeasurableEvaluableDiseaseTypeCode;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -150,7 +149,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.AUTOPSY_PERFORMED_INDICATOR));
-        dto.setResultCode(CdConverter.convertToCd(ResponseInds.YES));
+        dto.setResultCode(CdConverter.convertToCd(AutopsyPerformed.YES));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
         
