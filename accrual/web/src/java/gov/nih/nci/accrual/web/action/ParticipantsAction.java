@@ -354,7 +354,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
         List<StudySubjectDto> allSss = null;
         StudySubjectDto ssub = participant.getStudySubjectDto(getAuthorizedUser());
         try {
-            allSss = studySubjectSvc.getByStudyProtocol(ssub.getStudyProtocolIdentifier());
+            allSss = studySubjectSvc.getOutcomes(getAuthorizedUser());
         } catch (RemoteException e) {
             LOG.error("Error in PatientAction.validateNoPatientDuplicates().", e);
             addActionError(e.getLocalizedMessage());
