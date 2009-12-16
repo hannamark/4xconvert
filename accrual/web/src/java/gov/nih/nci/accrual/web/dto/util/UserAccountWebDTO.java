@@ -15,12 +15,14 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Bala Nair
  *
  */
-@SuppressWarnings({"PMD.TooManyFields" })
+@SuppressWarnings({"PMD.TooManyFields", "PMD.CyclomaticComplexity" })
 public class UserAccountWebDTO {
 
     private String  id;
@@ -43,7 +45,9 @@ public class UserAccountWebDTO {
     private String  physicianId;
     private String  physician;
     private static final String USER_ACCOUNT = "userAccount";
-    private static final int MIN_PASSWORD_LENGTH = 6;
+    private static final int MIN_PASSWORD_LENGTH = 8;
+    private static final Pattern ONE_NON_ALPHA_NUMERIC = Pattern.compile("(.*\\p{Punct}.*)+");
+    private static final Pattern ONE_DIGIT = Pattern.compile("(.*\\p{Digit}.*)+");
     
     /**
      *  Default Constructor.
@@ -153,11 +157,22 @@ public class UserAccountWebDTO {
      * @param action action to add for errors
      */
     public static void validatePassword(String password, AbstractAccrualAction action) {
+        // password must have min 8 chars with at least one not alpha-numeric char and one digit
+        String dotPassword = ".password";
+        Matcher oneNonAlphaNumericMatcher = ONE_NON_ALPHA_NUMERIC.matcher(password);
+        Matcher oneDigitMatcher = ONE_DIGIT.matcher(password);
+        
         if (PAUtil.isEmpty(password)) {
-            action.addFieldError(USER_ACCOUNT + ".password", "> Please enter a Password");
+            action.addFieldError(USER_ACCOUNT + dotPassword, "> Please enter a Password");
         } else if (password.length() < MIN_PASSWORD_LENGTH) {
-            action.addFieldError(USER_ACCOUNT + ".password", 
-                                 "> Please enter a Password that is at least 6 characters in length");
+            action.addFieldError(USER_ACCOUNT + dotPassword, 
+                                 "> Please enter a Password that is at least 8 characters in length");
+        } else if (!oneNonAlphaNumericMatcher.find(0)) {
+            action.addFieldError(USER_ACCOUNT + dotPassword, 
+                                 "> Please enter a Password that contains at least one special character");
+        } else if (!oneDigitMatcher.find(0)) {
+            action.addFieldError(USER_ACCOUNT + dotPassword, 
+                                 "> Please enter a Password that contains at least one digit");
         }
     }
     
@@ -167,9 +182,14 @@ public class UserAccountWebDTO {
      * @param action action to add for errors
      */
     public static void validateRetypePassword(String retypePassword, String password, AbstractAccrualAction action) {
+        Matcher oneNonAlphaNumericMatcher = ONE_NON_ALPHA_NUMERIC.matcher(password);
+        Matcher oneDigitMatcher = ONE_DIGIT.matcher(password);
+        
         if (PAUtil.isEmpty(retypePassword)
          || PAUtil.isEmpty(password)
-         || password.length() < MIN_PASSWORD_LENGTH) {
+         || password.length() < MIN_PASSWORD_LENGTH
+         || !oneNonAlphaNumericMatcher.find(0)
+         || !oneDigitMatcher.find(0)) {
             action.addFieldError(USER_ACCOUNT + ".retypePassword", "> Please retype the Password");
         } else if (!password.equals(retypePassword)) {
             action.addFieldError(USER_ACCOUNT + ".retypePassword", 

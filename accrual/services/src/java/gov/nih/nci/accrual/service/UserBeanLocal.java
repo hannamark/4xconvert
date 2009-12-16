@@ -97,6 +97,8 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.DataFormatException;
 
 import javax.annotation.security.RolesAllowed;
@@ -118,7 +120,7 @@ public class UserBeanLocal
         implements UserService {
 
     private static final String DEFAULT_CONTEXT_NAME = "ejbclient";
-    private static final int MIN_PASSWORD_LENGTH = 6;    
+    private static final int MIN_PASSWORD_LENGTH = 8;    
     
     /**
      * {@inheritDoc}
@@ -289,13 +291,7 @@ public class UserBeanLocal
     
     private void validateData(UserDto dto) throws RemoteException {        
         // validate password
-        String password = StConverter.convertToString(dto.getPassword());
-        if (PAUtil.isEmpty(password)) {
-            throw new RemoteException("Password must be set.");
-        }    
-        if (password.length() < MIN_PASSWORD_LENGTH) {
-            throw new RemoteException("Password must be at least 6 characters in length.");
-        }
+        validatePassword(StConverter.convertToString(dto.getPassword()));
         
         // validate first name
         if (PAUtil.isEmpty(StConverter.convertToString(dto.getFirstName()))) {
@@ -331,6 +327,29 @@ public class UserBeanLocal
         // validate PO person identifier
         if (PAUtil.isIiNull(dto.getPoPersonIdentifier())) {
             throw new RemoteException("PO Person Identifier must be set.");
+        }
+    }
+    
+    private void validatePassword(String password) throws RemoteException {
+        // password must have min 8 chars with at least one not alpha-numeric char and one digit
+        if (PAUtil.isEmpty(password)) {
+            throw new RemoteException("Password must be set.");
+        } 
+    
+        if (password.length() < MIN_PASSWORD_LENGTH) {
+            throw new RemoteException("Password must be at least 8 characters in length.");
+        }
+        
+        Pattern oneNonAlphaNumeric = Pattern.compile("(.*\\p{Punct}.*)+");
+        Matcher oneNonAlphaNumericMatcher = oneNonAlphaNumeric.matcher(password);       
+        if (!oneNonAlphaNumericMatcher.find(0)) {
+            throw new RemoteException("Password must contain at least one special character.");
+        }
+        
+        Pattern oneDigit = Pattern.compile("(.*\\p{Digit}.*)+");
+        Matcher oneDigitMatcher = oneDigit.matcher(password);
+        if (!oneDigitMatcher.find(0)) {
+            throw new RemoteException("Password must contain at least one digit.");
         }
     }
     

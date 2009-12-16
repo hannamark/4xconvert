@@ -39,11 +39,13 @@
         <s:form name="requestAccountForm">
             <s:hidden name="userAction" />
             <s:if test="userAction == 'resetPassword'">
-                <p>To reset your password, please begin by entering your login name and new password. </p>
+                <p>To reset your password, please begin by entering your login name and new password. <br>
+                   Passwords must have a minimum of 8 characters and contain at least one special character and one digit.</p>
             </s:if>
             <s:else>
-                <p>Create account to report outcomes information on patient outcomes.</p>
-            </s:else>            
+                <p>Create account to report outcomes information on patient outcomes. <br>
+                   Passwords must have a minimum of 8 characters and contain at least one special character and one digit.</p>
+            </s:else>
             <table class="form"> 
                 <tr><td colspan="2" class="space">&nbsp;</td></tr>
                 <tr>
