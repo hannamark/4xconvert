@@ -1,12 +1,12 @@
 package gov.nih.nci.coppa.services.outcomes.grid;
 
+import gov.nih.nci.accrual.dto.AbstractStudyDto;
 import gov.nih.nci.accrual.service.BaseAccrualStudyService;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.outcomes.Id;
 import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.faults.FaultUtil;
 import gov.nih.nci.coppa.services.outcomes.grid.remote.InvokeAccrualStudyServiceEjb;
-import gov.nih.nci.pa.iso.dto.StudyDTO;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
  * @param <XML> represents the DTO (remote-ejb) type
  */
 
-public class GenericAccrualStudyGridServiceImpl<DTO extends StudyDTO, XML extends Object> extends
+public class GenericAccrualStudyGridServiceImpl<DTO extends AbstractStudyDto, XML extends Object> extends
         GenericAccrualGridServiceImpl<DTO, XML> implements AccrualStudyGridService<DTO, XML> {
 
     private static final Logger LOGGER = LogManager.getLogger(GenericAccrualStudyGridServiceImpl.class);

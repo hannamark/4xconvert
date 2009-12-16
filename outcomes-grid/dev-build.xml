@@ -460,4 +460,8 @@
         </sequential>
     </macrodef>
 
+    <target name="runSubmissionClient" depends="checkGlobus, defineClasspaths" description="Run the sample Submission Client">
+        <run-client serviceEndpointName="Submission" class="gov.nih.nci.coppa.services.outcomes.submission.client.SubmissionClient" debug-suspend="n" />
+    </target>
+    
 </project>
