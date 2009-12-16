@@ -93,13 +93,13 @@ public abstract class AbstractTransformerTestBase<T extends Transformer<XML, DTO
         }
     }
 
-    public abstract XML makeXmlSimple();
+    public abstract XML makeXmlSimple() throws DtoTransformException;
 
-    public abstract DTO makeDtoSimple();
+    public abstract DTO makeDtoSimple() throws DtoTransformException;
 
-    public abstract void verifyXmlSimple(XML x);
+    public abstract void verifyXmlSimple(XML x) throws DtoTransformException;
 
-    public abstract void verifyDtoSimple(DTO x);
+    public abstract void verifyDtoSimple(DTO x) throws DtoTransformException;
 
     public void testXmlConvert() throws DtoTransformException {
         // create list of XML objects
