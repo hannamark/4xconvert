@@ -186,6 +186,8 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
             }   
             priors.clear();
             newPrior = priors.getList().get(0);
+            ServletActionContext.getRequest().getSession().removeAttribute(SESSION_PRIOR_THERAPIES_ITEM_LIST);
+            ServletActionContext.getRequest().getSession().removeAttribute(DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST);
       }
     }
 
