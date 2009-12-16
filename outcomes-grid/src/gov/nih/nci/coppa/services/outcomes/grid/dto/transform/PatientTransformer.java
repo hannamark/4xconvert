@@ -82,67 +82,89 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
+import gov.nih.nci.coppa.services.outcomes.Patient;
 
 /**
- * A registry of Transformer(s).
- *
- * @author smatyas
+ * Transformer for Patient instances.
+ * @author kkanchinadam
  *
  */
-public final class TransformerRegistry {
-
-    private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
-
-    static {
-        values.put(StudySubjectDto.class, StudySubjectTransformer.INSTANCE);
-        values.put(ActivityRelationshipDto.class, ActivityRelationshipTransformer.INSTANCE);
-        values.put(PerformedActivityDto.class, PerformedActivityTransformer.INSTANCE);
-        values.put(PerformedObservationDto.class, PerformedObservationTransformer.INSTANCE);
-        values.put(PerformedImagingDto.class, PerformedImagingTransformer.INSTANCE);
-        values.put(PerformedSubjectMilestoneDto.class, PerformedSubjectMilestoneTransformer.INSTANCE);
-        values.put(PerformedSubstanceAdministrationDto.class, PerformedSubstanceAdministrationTransformer.INSTANCE);
-        values.put(PerformedRadiationAdministrationDto.class, PerformedRadiationAdministrationTransformer.INSTANCE);
-        values.put(PatientDto.class, PatientTransformer.INSTANCE);
-    }
+public final class PatientTransformer
+    extends AbstractTransformer<Patient, PatientDto>
+    implements Transformer<Patient, PatientDto> {
 
     /**
      * Public singleton.
      */
-    public static final TransformerRegistry INSTANCE = new TransformerRegistry();
+    public static final PatientTransformer INSTANCE = new PatientTransformer();
 
-    private TransformerRegistry() {
+    /**
+     * Private constructor.
+     */
+    private PatientTransformer() {
+        super();
     }
 
     /**
-     * @param type DTO type to translate
-     * @return transformer for the type requested
+     * {@inheritDoc}
      */
-    public Transformer<?, ?> getTransformer(Class<?> type) {
-        Transformer<?, ?> transformer = values.get(type);
-        if (transformer == null) {
-            throw new RuntimeException("Unable to find Transformer for type " + type);
+    public Patient[] createXmlArray(int input) throws DtoTransformException {
+        return new Patient[input];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PatientDto toDto(Patient patientXml) throws DtoTransformException {
+        if (patientXml == null) {
+            return null;
         }
-        return transformer;
+        PatientDto returnVal = new PatientDto();
+        returnVal.setIdentifier(IITransformer.INSTANCE.toDto(patientXml.getIdentifier()));
+        returnVal.setAssignedIdentifier(IITransformer.INSTANCE.toDto(patientXml.getAssignedIdentifier()));
+        returnVal.setBirthDate(TSTransformer.INSTANCE.toDto(patientXml.getBirthDate()));
+        returnVal.setCountryIdentifier(IITransformer.INSTANCE.toDto(patientXml.getCountryIdentifier()));
+        returnVal.setEthnicCode(CDTransformer.INSTANCE.toDto(patientXml.getEthnicCode()));
+        returnVal.setGenderCode(CDTransformer.INSTANCE.toDto(patientXml.getGenderCode()));
+        returnVal.setOrganizationIdentifier(IITransformer.INSTANCE.toDto(patientXml.getOrganizationIdentifier()));
+        returnVal.setPersonIdentifier(IITransformer.INSTANCE.toDto(patientXml.getPersonIdentifier()));
+        returnVal.setRaceCode(DSETCDTransformer.INSTANCE.toDto(patientXml.getRaceCode()));
+        returnVal.setStatusCode(CDTransformer.INSTANCE.toDto(patientXml.getStatusCode()));
+        returnVal.setStatusDateRangeLow(TSTransformer.INSTANCE.toDto(patientXml.getStatusDateRangeLow()));
+        returnVal.setZip(STTransformer.INSTANCE.toDto(patientXml.getZip()));
+        return returnVal;
     }
 
     /**
-     * @return an unmodifiable version of the registry
+     * {@inheritDoc}
      */
-    public static Map<Class<?>, Transformer<?, ?>> getRegistry() {
-        return Collections.unmodifiableMap(values);
+    public Patient toXml(PatientDto patientDto) throws DtoTransformException {
+        if (patientDto == null) {
+            return null;
+        }
+        Patient returnVal = new Patient();
+        returnVal.setIdentifier(IITransformer.INSTANCE.toXml(patientDto.getIdentifier()));
+        returnVal.setAssignedIdentifier(IITransformer.INSTANCE.toXml(patientDto.getAssignedIdentifier()));
+        returnVal.setBirthDate(TSTransformer.INSTANCE.toXml(patientDto.getBirthDate()));
+        returnVal.setCountryIdentifier(IITransformer.INSTANCE.toXml(patientDto.getCountryIdentifier()));
+        returnVal.setEthnicCode(CDTransformer.INSTANCE.toXml(patientDto.getEthnicCode()));
+        returnVal.setGenderCode(CDTransformer.INSTANCE.toXml(patientDto.getGenderCode()));
+        returnVal.setOrganizationIdentifier(IITransformer.INSTANCE.toXml(patientDto.getOrganizationIdentifier()));
+        returnVal.setPersonIdentifier(IITransformer.INSTANCE.toXml(patientDto.getPersonIdentifier()));
+        returnVal.setRaceCode(DSETCDTransformer.INSTANCE.toXml(patientDto.getRaceCode()));
+        returnVal.setStatusCode(CDTransformer.INSTANCE.toXml(patientDto.getStatusCode()));
+        returnVal.setStatusDateRangeLow(TSTransformer.INSTANCE.toXml(patientDto.getStatusDateRangeLow()));
+        returnVal.setZip(STTransformer.INSTANCE.toXml(patientDto.getZip()));
+        return returnVal;
     }
+
 }

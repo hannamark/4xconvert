@@ -463,5 +463,9 @@
     <target name="runSubmissionClient" depends="checkGlobus, defineClasspaths" description="Run the sample Submission Client">
         <run-client serviceEndpointName="Submission" class="gov.nih.nci.coppa.services.outcomes.submission.client.SubmissionClient" debug-suspend="n" />
     </target>
-    
+
+    <target name="runPatientClient" depends="checkGlobus, defineClasspaths" description="Run the sample Patient Client">
+        <run-client serviceEndpointName="Patient" class="gov.nih.nci.coppa.services.outcomes.patient.client.PatientClient" debug-suspend="n" />
+    </target>
+
 </project>

@@ -80,69 +80,72 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
+package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.accrual.service.util.PatientService;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.rmi.RemoteException;
 
 /**
- * A registry of Transformer(s).
- *
- * @author smatyas
- *
+ * Invokes the generic accrual service.
+ * @author kkanchinadam
  */
-public final class TransformerRegistry {
+public class InvokePatientEjb implements PatientService {
+    private final ServiceLocator serviceLocator = JNDIServiceLocator.getInstance();
 
-    private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
+    /**
+     * Constructor.
+     */
+    public InvokePatientEjb() {
 
-    static {
-        values.put(StudySubjectDto.class, StudySubjectTransformer.INSTANCE);
-        values.put(ActivityRelationshipDto.class, ActivityRelationshipTransformer.INSTANCE);
-        values.put(PerformedActivityDto.class, PerformedActivityTransformer.INSTANCE);
-        values.put(PerformedObservationDto.class, PerformedObservationTransformer.INSTANCE);
-        values.put(PerformedImagingDto.class, PerformedImagingTransformer.INSTANCE);
-        values.put(PerformedSubjectMilestoneDto.class, PerformedSubjectMilestoneTransformer.INSTANCE);
-        values.put(PerformedSubstanceAdministrationDto.class, PerformedSubstanceAdministrationTransformer.INSTANCE);
-        values.put(PerformedRadiationAdministrationDto.class, PerformedRadiationAdministrationTransformer.INSTANCE);
-        values.put(PatientDto.class, PatientTransformer.INSTANCE);
     }
 
     /**
-     * Public singleton.
+     * @param dto The Patient DTO
+     * @return created object
+     * @throws RemoteException exception
      */
-    public static final TransformerRegistry INSTANCE = new TransformerRegistry();
-
-    private TransformerRegistry() {
-    }
-
-    /**
-     * @param type DTO type to translate
-     * @return transformer for the type requested
-     */
-    public Transformer<?, ?> getTransformer(Class<?> type) {
-        Transformer<?, ?> transformer = values.get(type);
-        if (transformer == null) {
-            throw new RuntimeException("Unable to find Transformer for type " + type);
+    public PatientDto create(PatientDto dto) throws RemoteException {
+        try {
+            return serviceLocator.getPatientService().create(dto);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
         }
-        return transformer;
     }
 
     /**
-     * @return an unmodifiable version of the registry
+     * @param ii index of object
+     * @return Patient DTO Object
+     * @throws RemoteException exception
      */
-    public static Map<Class<?>, Transformer<?, ?>> getRegistry() {
-        return Collections.unmodifiableMap(values);
+    public PatientDto get(Ii ii) throws RemoteException {
+        try {
+            return serviceLocator.getPatientService().get(ii);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
+
+    /**
+     * @param dto The Patient DTO
+     * @return updated object
+     * @throws RemoteException exception
+     */
+    public PatientDto update(PatientDto dto) throws RemoteException {
+        try {
+            return serviceLocator.getPatientService().update(dto);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
 }

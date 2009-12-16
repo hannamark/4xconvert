@@ -93,6 +93,7 @@ import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
 import java.util.Map;
@@ -105,7 +106,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(8, tMap.size());
+        assertEquals(9, tMap.size());
         tMap.clear();
     }
 
@@ -136,6 +137,9 @@ public class TransformerRegistryTest {
         //#8
         trans = TransformerRegistry.INSTANCE.getTransformer(PerformedRadiationAdministrationDto.class);
         assertTrue(trans instanceof PerformedRadiationAdministrationTransformer);
+        //#9
+        trans = TransformerRegistry.INSTANCE.getTransformer(PatientDto.class);
+        assertTrue(trans instanceof PatientTransformer);
     }
 
     @Test (expected=RuntimeException.class)
