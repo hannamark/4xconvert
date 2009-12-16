@@ -24,9 +24,11 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -124,43 +126,54 @@ public class UserAccountAction extends AbstractAccrualAction {
      * getTreatmentSite.
      * @param poOrganizationId the poOrganizationId
      * @return String
-     * @throws Exception exception
+     * @throws RemoteException exception 
      */
-    public static String getTreatmentSite(Ii poOrganizationId) throws Exception {
+    public static String getTreatmentSite(Ii poOrganizationId) throws RemoteException {
         if (poOrganizationId == null) {
             return null;
         }
-        OrganizationDTO organization = PoRegistry.getOrganizationEntityService().getOrganization(poOrganizationId);
-        return organization.getName().getPart().get(0).getValue();
+        OrganizationDTO organization;
+        try {
+            organization = PoRegistry.getOrganizationEntityService().getOrganization(poOrganizationId);
+            return organization.getName().getPart().get(0).getValue();
+        } catch (NullifiedEntityException e) {
+            LOG.equals("NullifiedEntityException" + e.getMessage());
+        }
+        return "This Organization is no longer available. Please select another.";
     }
     
     /**
      * getPhysician.
      * @param poPersonId the poPersonId
      * @return String
-     * @throws Exception exception
+     * @throws RemoteException exception
      */
-    public static String getPhysician(Ii poPersonId) throws Exception {
+    public static String getPhysician(Ii poPersonId) throws RemoteException {
         if (poPersonId == null) {
             return null;
         }
-        PersonDTO person = PoRegistry.getPersonEntityService().getPerson(poPersonId);
-    
+        PersonDTO person;
         String lastName = null;
         String firstName = null;                
-        List<Enxp> nameList = person.getName().getPart();
-        Iterator<Enxp> nameIterator = nameList.iterator();
-        while (nameIterator.hasNext()) {
-            Enxp part = nameIterator.next();
-            if (EntityNamePartType.FAM == part.getType()) {
-                lastName = part.getValue();
-            } else if (EntityNamePartType.GIV == part.getType()) {
-                if (firstName == null) {
-                    firstName = part.getValue();
+
+        try {
+            person = PoRegistry.getPersonEntityService().getPerson(poPersonId);
+            List<Enxp> nameList = person.getName().getPart();
+            Iterator<Enxp> nameIterator = nameList.iterator();
+            while (nameIterator.hasNext()) {
+                Enxp part = nameIterator.next();
+                if (EntityNamePartType.FAM == part.getType()) {
+                    lastName = part.getValue();
+                } else if (EntityNamePartType.GIV == part.getType()) {
+                    if (firstName == null) {
+                        firstName = part.getValue();
+                    }
                 }
             }
+        } catch (NullifiedEntityException e) {
+            LOG.equals("NullifiedEntityException" + e.getMessage());
+            firstName = "This Person is no longer available. Please select another.";
         }
-    
         String physician = (lastName == null) ? "" : lastName;
         physician += (firstName == null) ? "" : ", " + firstName;
         return physician;
