@@ -50,13 +50,15 @@
             <s:actionerror/>
             <s:hidden name="userAccount.id" />
             <s:if test="userAccount.id == null">
-                <p>To activate your account for NCI Outcomes, please begin by creating your login information. <br>
-                   Please note: asterisks (<span class="required">*</span>) indicate required fields. <br>
+                <p>To activate your account for NCI Outcomes, please begin by creating your login information.<br>                   
+                   Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
+                   Passwords must have a minimum of 8 characters and contain at least one special character and one digit.<br>
                    <b><i>Please provide professional contact information only.</i></b>
                 </p>             
             </s:if>
             <s:else>
-                <p>You may update your account information. Please note: asterisks (<span class="required">*</span>) indicate required fields. <br>
+                <p>You may update your account information. Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
+                   Passwords must have a minimum of 8 characters and contain at least one special character and one digit.<br>
                    <b><i>Please provide professional contact information only.</i></b>
                 </p>
             </s:else>
