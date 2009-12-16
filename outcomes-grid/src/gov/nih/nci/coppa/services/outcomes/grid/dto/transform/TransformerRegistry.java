@@ -90,6 +90,7 @@ import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
@@ -116,6 +117,7 @@ public final class TransformerRegistry {
         values.put(PerformedSubjectMilestoneDto.class, PerformedSubjectMilestoneTransformer.INSTANCE);
         values.put(PerformedSubstanceAdministrationDto.class, PerformedSubstanceAdministrationTransformer.INSTANCE);
         values.put(PerformedRadiationAdministrationDto.class, PerformedRadiationAdministrationTransformer.INSTANCE);
+        values.put(SubmissionDto.class, SubmissionTransformer.INSTANCE);
         values.put(PatientDto.class, PatientTransformer.INSTANCE);
     }
 

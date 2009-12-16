@@ -72,6 +72,9 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
                     System.out.println("Test Get By Study Prot ID");
                     testGetByStudyProtocol(client);
 
+                    System.out.println("Test Get");
+                    testGet(client);
+                    
                 } else {
                     usage();
                     System.exit(1);
@@ -86,9 +89,18 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
         }
     }
 
-    private static void testGetByStudyProtocol(SubmissionClient client) throws RemoteException {
+    private static void testGet(SubmissionClient client) throws RemoteException {
         Id id = new Id();
         id.setExtension("541");
+        
+        Submission subm = client.get(id);
+        System.out.println(subm.getLabel().getValue());
+        
+    }
+    
+    private static void testGetByStudyProtocol(SubmissionClient client) throws RemoteException {
+        Id id = new Id();
+        id.setExtension("27428");
 
         Submission[] subms = client.getByStudyProtocol(id);
         for (Submission subm : subms) {
