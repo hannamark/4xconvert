@@ -96,12 +96,14 @@ public class WelcomeActionTest extends AbstractAccrualActionTest {
     @Before
     public void initAction() {
         action = new WelcomeAction();
+        action.prepare();
     }
 
     @Test
     public void outcomesRoleTest() {
+        assertEquals("success", action.execute());
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_OUTCOMES, true);
-        //assertEquals(WelcomeAction.AR_OUTCOMES, action.execute());
+        assertEquals(WelcomeAction.AR_OUTCOMES, action.execute());
         assertEquals(AccrualConstants.ROLE_OUTCOMES, ServletActionContext.getRequest().getSession().
                 getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
     }

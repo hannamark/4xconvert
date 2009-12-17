@@ -121,7 +121,7 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     @Test
     public void retrieveTest() {
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier("1");
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
     }
 
