@@ -93,6 +93,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.config.Configuration;
@@ -147,6 +148,10 @@ public abstract class AbstractPaActionTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(sess);
         ServletActionContext.setRequest(request);
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ServletActionContext.setResponse(response);
+        
     }
 
     /**
@@ -169,5 +174,14 @@ public abstract class AbstractPaActionTest {
      */
     protected MockHttpSession getSession() {
         return (MockHttpSession) ServletActionContext.getRequest().getSession();
+    }
+    
+    /**
+     * Gets the response.
+     * 
+     * @return the response
+     */
+    protected MockHttpServletResponse  getResponse() {
+        return (MockHttpServletResponse) ServletActionContext.getResponse();
     }
 }

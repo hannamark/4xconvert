@@ -32,7 +32,7 @@ public class NCISpecificInformationActionTest extends AbstractPaActionTest {
     @Test
     public void testQuery() {
         String result = nciSpecificInformationAction.query();
-        assertEquals("error", result);
+        assertEquals("success", result);
     }
 
     @Test

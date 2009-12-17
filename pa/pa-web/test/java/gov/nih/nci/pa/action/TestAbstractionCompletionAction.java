@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
@@ -15,16 +15,17 @@ import org.junit.Test;
  * @author asharma
  *
  */
-public class AbstractionCompletionActionTest extends AbstractPaActionTest{
+public class TestAbstractionCompletionAction extends AbstractPaActionTest {
 
     AbstractionCompletionAction abstractionCompletionAction;
+
     @Before
     public void setUp() throws PAException {
         abstractionCompletionAction = new AbstractionCompletionAction();
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
-        
+
      }
-    
+
     /**
      * Test method for {@link gov.nih.nci.pa.action.AbstractionCompletionAction#query()}.
      */
@@ -39,9 +40,12 @@ public class AbstractionCompletionActionTest extends AbstractPaActionTest{
      */
     @Test
     public void testGenerateXML() {
-        String result = abstractionCompletionAction.generateXML();
-        assertEquals("displayXML", result);
-        
+   	    getRequest().setupAddParameter("studyProtocolId", "1");
+   	    abstractionCompletionAction.setStudyProtocolId(1L);
+   	    abstractionCompletionAction.setServletResponse(getResponse());
+   	    String result = abstractionCompletionAction.generateXML();
+        assertEquals("none", result);
+
     }
 
     /**
@@ -49,9 +53,29 @@ public class AbstractionCompletionActionTest extends AbstractPaActionTest{
      */
     @Test
     public void testViewTSR() {
+
+   	 abstractionCompletionAction.setServletResponse(getResponse());
         String result = abstractionCompletionAction.viewTSR();
-        assertEquals("success", result);
-    
+        assertEquals("none", result);
+
     }
 
+    /**
+     * Testview tsr word.
+     */
+    @Test
+    public void testviewTSRWord() {
+    	 abstractionCompletionAction.setServletResponse(getResponse());
+    	assertEquals("none", abstractionCompletionAction.viewTSRWord());
+    }
+
+
+    /**
+     * Testdisplay reporting xml.
+     */
+    @Test
+    public void testdisplayReportingXML() {
+    	 getRequest().setupAddParameter("studyProtocolId", "1");
+    	assertEquals("displayXML", abstractionCompletionAction.displayReportingXML());
+    }
 }

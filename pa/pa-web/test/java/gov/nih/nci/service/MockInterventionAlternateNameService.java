@@ -141,8 +141,13 @@ public class MockInterventionAlternateNameService
      */
     public List<InterventionAlternateNameDTO> getByIntervention(
             Ii[] interventionsIi) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+    	List<InterventionAlternateNameDTO> resultList = new ArrayList<InterventionAlternateNameDTO>();
+        for (InterventionAlternateName item : list) {
+            if (item.getIntervention().getId().equals(IiConverter.convertToLong(interventionsIi[0]))) {
+                resultList.add(converter.convertFromDomainToDto(item));
+            }
+        }
+        return resultList;
     }
 
     /**

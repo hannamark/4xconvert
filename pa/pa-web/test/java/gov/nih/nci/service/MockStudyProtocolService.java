@@ -85,19 +85,30 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
+import gov.nih.nci.pa.enums.StudyModelCode;
+import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -205,7 +216,22 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
      * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)
      */
     public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
-        return null;
+    	    ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
+            Timestamp now = new Timestamp((new Date()).getTime());
+            ospDTO.setStartDate(TsConverter.convertToTs(now));
+            ospDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
+            ospDTO.setPrimaryCompletionDate(TsConverter.convertToTs(now));
+            ospDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
+            ospDTO.setStudyModelCode(CdConverter.convertStringToCd(StudyModelCode.CASE_CONTROL.getCode()));
+            ospDTO.setTimePerspectiveCode(CdConverter.convertStringToCd(TimePerspectiveCode.PROSPECTIVE.getCode()));
+            ospDTO.setBiospecimenDescription(StConverter.convertToSt("BiospecimenDescription"));
+            ospDTO.setBiospecimenRetentionCode(CdConverter.convertStringToCd(BiospecimenRetentionCode.RETAINED.getCode()));
+            ospDTO.setNumberOfGroups(IntConverter.convertToInt(4));
+            ospDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
+            ospDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
+            ospDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+            ospDTO.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));
+            return ospDTO;        
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)

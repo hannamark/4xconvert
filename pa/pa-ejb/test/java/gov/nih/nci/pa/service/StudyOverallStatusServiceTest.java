@@ -76,21 +76,26 @@
 * 
 * 
 */
-package gov.nih.nci.pa.domain;
+package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.util.HibernateUtil;
+import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolTest;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -98,86 +103,130 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class StudyMilestoneTest {
-    Session sess;
+public class StudyOverallStatusServiceTest {
+    private StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
+    private StudyOverallStatusServiceRemote remoteEjb = bean;
+    private final DocumentWorkflowStatusServiceBean dws = new DocumentWorkflowStatusServiceBean();
+    private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
+    Ii pid;
     
     @Before
-    public void setUp() throws Exception {        
+    public void setUp() throws Exception {
+        bean.dwsService = dws;
+        bean.studyProtocolService = sps;
         TestSchema.reset1();
         TestSchema.primeData();
-        sess = HibernateUtil.getCurrentSession();
-    }
-    public static StudyMilestone createStudyMilestoneObj(String comment, StudyProtocol studyProtocol) {
-        StudyMilestone result = new StudyMilestone();
-        result.setCommentText(comment);
-        result.setMilestoneCode(MilestoneCode.READY_FOR_QC);
-        result.setMilestoneDate(new Timestamp(new Date().getTime()));
-        result.setStudyProtocol(studyProtocol);
-        return result;
-    }
-    public static StudyMilestone createTrialSummarySentStudyMilestoneObj(StudyProtocol studyProtocol) {
-        StudyMilestone result = new StudyMilestone();
-        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
-        result.setMilestoneDate(new Timestamp(new Date().getTime()));
-        result.setStudyProtocol(studyProtocol);
-        return result;
-    }
-    public static StudyMilestone createTrialSummarySentStudyMilestoneObjFiveDays(StudyProtocol studyProtocol) {
-        StudyMilestone result = new StudyMilestone();
-        Calendar offsetTime = Calendar.getInstance();
-        offsetTime.set(2009, 12, 2);
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");  
-        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
-        result.setMilestoneDate(new Timestamp(offsetTime.getTime().getTime()));
-        result.setStudyProtocol(studyProtocol);
-        return result;
-    }
+        pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        
+    }    
+    
     @Test
-    public void mergeTest() {
-        StudyMilestone m = new StudyMilestone();
-        StudyProtocol sp = new StudyProtocol();
-        sp.setId(TestSchema.studySiteIds.get(0));
-        PlannedActivity pa = new PlannedActivity();
-        pa.setId(TestSchema.plannedActivityIds.get(0));
-        Date now = new Date();
-        String user = "Joe";
+    public void updateTest() throws Exception {
+        StudyOverallStatusDTO dto = 
+            remoteEjb.getCurrentByStudyProtocol(pid);
+        try {
+            remoteEjb.create(dto);
+            fail("StudyOverallStatus objects cannot be modified.");
+        } catch (PAException e) {
+            // expected behavior
+        }
         
-        m.setCommentText("12345");
-        m.setMilestoneCode(MilestoneCode.INITIAL_ABSTRACTION_VERIFY);
-        m.setMilestoneDate(new Timestamp(now.getTime()));
-        m.setDateLastCreated(now);
-        m.setDateLastUpdated(now);
-        m.setStudyProtocol(sp);
-        m.setUserLastCreated(user);
-        m.setUserLastUpdated(user);
-        m = (StudyMilestone) sess.merge(m);
-        sess.flush();
+        // Following tests assume current status is ACTIVE, ACTIVE can transition 
+        //   to CLOSED_TO_ACCRUAL, and ACTIVE cannot transition to COMPLETE.
+        assertTrue(StudyStatusCode.ACTIVE.getCode().equals(dto.getStatusCode().getCode()));
+        assertTrue(StudyStatusCode.ACTIVE.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
+        assertFalse(StudyStatusCode.ACTIVE.canTransitionTo(StudyStatusCode.COMPLETE));
+        try {
+            dto.setIdentifier(IiConverter.convertToIi((Long) null)); 
+            dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
+            dto.setStudyProtocolIdentifier(pid);
+            remoteEjb.create(dto);
+            fail("StudyOverallStatus transitions must follow business rules.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("2/2/2009")));
+        dto.setStudyProtocolIdentifier(pid);
+        remoteEjb.create(dto);
         
-        Long idOut = m.getId();
-        assertNotNull(idOut);
-        sess.clear();
+        StudyOverallStatusDTO result = 
+            remoteEjb.getCurrentByStudyProtocol(pid);
+        assertNotNull (IiConverter.convertToLong(result.getIdentifier()));
+        assertEquals (result.getStatusCode().getCode(), dto.getStatusCode().getCode());
+        assertEquals (TsConverter.convertToTimestamp(result.getStatusDate())
+                    , TsConverter.convertToTimestamp(dto.getStatusDate()));
+        assertEquals (IiConverter.convertToLong(pid)
+                    , IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
         
-        StudyMilestone armOut = (StudyMilestone) sess.get(StudyMilestone.class, idOut);
-        StudyProtocol spOut = (StudyProtocol) sess.get(StudyProtocol.class, sp.getId());
-        List<StudyMilestone> armsOut = spOut.getStudyMilestones();
-        assertTrue(armsOut.contains(armOut));
-        assertEquals(user, armOut.getUserLastCreated());
-        assertEquals(user, armOut.getUserLastUpdated());
-        assertEquals(now, armOut.getDateLastCreated());
-        assertEquals(now, armOut.getDateLastUpdated());
     }
+    
+    @Test 
+    public void getByProtocolTest() throws Exception {
+        List<StudyOverallStatusDTO> statusList = 
+            remoteEjb.getByStudyProtocol(pid);
+        assertEquals(2, statusList.size());
+        
+        StudyOverallStatusDTO dto = 
+            remoteEjb.getCurrentByStudyProtocol(pid);
+        assertEquals(IiConverter.convertToLong(statusList.get(1).getIdentifier())
+                , (IiConverter.convertToLong(dto.getIdentifier())));
+    }
+    
     @Test
-    public void deleteTest() {
-        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studySiteIds.get(0));
-        List<StudyMilestone> smList = sp.getStudyMilestones();
-        int oldCount = smList.size();
-        assertTrue(0 < oldCount);
-        sess.delete(smList.get(0));
-        sess.flush();
-        sess.clear();
-        sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studySiteIds.get(0));
-        smList = sp.getStudyMilestones();
-        assertEquals(oldCount - 1, smList.size());
+    public void createTest() throws Exception {
+        // simulate creating new protocol using registry
+        StudyProtocol spNew = StudyProtocolTest.createStudyProtocolObj();
+        spNew.setOfficialTitle("New Protocol");
+        TestSchema.addUpdObject(spNew);
+        
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+        Ii initialIi = null;
+        dto.setIdentifier(initialIi);
+        assertTrue(PAUtil.isIiNull(dto.getIdentifier()));
+        StudyOverallStatusDTO resultDto = remoteEjb.create(dto);
+        assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
     }
-
+    
+    @Test
+    public void nullInDateTest() throws Exception {
+        StudyProtocol spNew = StudyProtocolTest.createStudyProtocolObj();
+        spNew.setOfficialTitle("New Protocol");
+        TestSchema.addUpdObject(spNew);
+        
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
+        dto.setStatusDate(null);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+        dto.setIdentifier(null);
+        try {
+            remoteEjb.create(dto);
+            fail("PAException should have been thrown for null in status date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        dto.setStatusDate(TsConverter.convertToTs(null));
+        try {
+            remoteEjb.create(dto);
+            fail("PAException should have been thrown for Ts null in status date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2000")));
+        dto = remoteEjb.create(dto);
+        assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
+    }
+    @Test 
+    public void iiRootTest() throws Exception {
+        List<StudyOverallStatusDTO> dtoList = remoteEjb.getByStudyProtocol(pid);
+        assertTrue(dtoList.size() > 0);
+        StudyOverallStatusDTO dto = dtoList.get(0);
+        assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_OVERALL_STATUS_ROOT);
+        assertTrue(PAUtil.isNotEmpty(dto.getIdentifier().getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 }

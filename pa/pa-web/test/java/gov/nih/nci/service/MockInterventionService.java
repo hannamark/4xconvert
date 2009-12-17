@@ -114,8 +114,13 @@ public class MockInterventionService extends MockAbstractBaseIsoService <Interve
      */
     public List<InterventionDTO> search(InterventionDTO searchCriteria)
             throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+    	List<InterventionDTO> listDTO = null;
+       if (searchCriteria.getDescriptionText().getValue().contains("Test")) {
+    	   listDTO = new ArrayList<InterventionDTO>();
+    	   listDTO.add(converter.convertFromDomainToDto(list.get(0)));
+    	   
+       }
+       return listDTO;
     }
 
     /**

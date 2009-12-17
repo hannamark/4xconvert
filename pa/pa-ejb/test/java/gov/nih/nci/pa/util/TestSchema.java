@@ -576,7 +576,9 @@ public class TestSchema {
 
             StudyMilestone studyMilestone = StudyMilestoneTest.createStudyMilestoneObj("comment 01", sp);
             addUpdObject(studyMilestone);
-
+            StudyMilestone studyMilestonetss1 = StudyMilestoneTest.createTrialSummarySentStudyMilestoneObj(sp);
+            addUpdObject(studyMilestonetss1);
+                        
             RegulatoryAuthority rega = new RegulatoryAuthority();
             rega.setCountry(country);
             rega.setAuthorityName("Authority");

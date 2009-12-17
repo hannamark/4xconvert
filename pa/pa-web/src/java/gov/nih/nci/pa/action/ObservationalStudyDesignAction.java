@@ -255,7 +255,8 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                 dto.setNumberOfGroups(ospDTO.getNumberOfGroups().getValue().toString());
             }                
 
-            if (ospDTO.getTargetAccrualNumber().getLow().getValue() != null) {
+            if (ospDTO.getTargetAccrualNumber() != null  && ospDTO.getTargetAccrualNumber().getLow() != null 
+                && ospDTO.getTargetAccrualNumber().getLow().getValue() != null) {
                 dto.setMinimumTargetAccrualNumber(ospDTO.getTargetAccrualNumber().getLow().getValue().toString());
             }
 

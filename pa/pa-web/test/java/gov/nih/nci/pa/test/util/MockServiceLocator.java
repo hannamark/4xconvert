@@ -114,7 +114,6 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
-import gov.nih.nci.pa.service.StudyResourcingBeanLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
@@ -137,6 +136,7 @@ import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.service.MockArmService;
 import gov.nih.nci.service.MockInterventionAlternateNameService;
 import gov.nih.nci.service.MockInterventionService;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
@@ -145,15 +145,21 @@ import gov.nih.nci.service.MockPlannedActivityService;
 import gov.nih.nci.service.MockProtocolQueryService;
 import gov.nih.nci.service.MockRegistryUserService;
 import gov.nih.nci.service.MockRegulatoryInformationService;
+import gov.nih.nci.service.MockStudyIndIdeService;
 import gov.nih.nci.service.MockStudyMilestoneService;
 import gov.nih.nci.service.MockStudyObjectiveService;
 import gov.nih.nci.service.MockStudyOnholdService;
 import gov.nih.nci.service.MockStudyOutcomeMeasureService;
 import gov.nih.nci.service.MockStudyOverallStatusService;
 import gov.nih.nci.service.MockStudyProtocolService;
+import gov.nih.nci.service.MockStudyResourcingService;
 import gov.nih.nci.service.MockStudySiteAccrualStatusService;
 import gov.nih.nci.service.MockStudySiteService;
+import gov.nih.nci.service.util.MockAbstractionCompletionService;
+import gov.nih.nci.service.util.MockCTGovXMLGeneratorService;
+import gov.nih.nci.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.service.util.MockStudySiteAccrualAccessService;
+import gov.nih.nci.service.util.MockTSRReportGeneratorService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -183,7 +189,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final DiseaseServiceLocal diseaseService = new DiseaseBeanLocal();
     private final DocumentServiceLocal documentService = new DocumentBeanLocal();
     private final StudyMilestoneServicelocal studyMilestoneService = new MockStudyMilestoneService();
-    private final StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
+    private final StudyResourcingServiceLocal studyResourcingService = new MockStudyResourcingService();
     private final RegulatoryInformationServiceRemote regulatoryInformationService = new MockRegulatoryInformationService();
     private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
     private final StudyOutcomeMeasureServiceLocal studyOutcomeMService = new MockStudyOutcomeMeasureService();
@@ -196,7 +202,13 @@ public class MockServiceLocator implements ServiceLocator {
     private final StudyInboxServiceLocal studyInboxService = new StudyInboxServiceBean();
     private final StudyCheckoutServiceLocal studyCheckoutService = new StudyCheckoutServiceBean();
     private final PlannedSubstanceAdministrationServiceRemote plannedSAService = new PlannedSubstanceAdministrationServiceBean();
-
+    private final LookUpTableServiceRemote lookUpService = new MockLookUpTableServiceBean();
+    private final ArmServiceLocal armService = new MockArmService();
+    private final StudyIndldeServiceLocal studyIndIdeService = new MockStudyIndIdeService();
+    private final AbstractionCompletionServiceRemote abstractionCompletionService = new MockAbstractionCompletionService();
+    private final CTGovXmlGeneratorServiceRemote ctGovXmlGeneratorService = new MockCTGovXMLGeneratorService();
+    private final TSRReportGeneratorServiceRemote tsrReportGeneratorService = new MockTSRReportGeneratorService();
+    
     /**
      * @return mock service
      */
@@ -303,8 +315,7 @@ public class MockServiceLocator implements ServiceLocator {
      * @see gov.nih.nci.pa.util.ServiceLocator#getLookUpTableService()
      */
     public LookUpTableServiceRemote getLookUpTableService() {
-        // TODO Auto-generated method stub
-        return null;
+    	return lookUpService;
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.util.ServiceLocator#getProtocolQueryService()
@@ -368,27 +379,24 @@ public class MockServiceLocator implements ServiceLocator {
      * @see gov.nih.nci.pa.util.ServiceLocator#getArmService()
      */
     public ArmServiceLocal getArmService() {
-        // TODO Auto-generated method stub
-        return null;
+        return armService;
     }
 
     public StudyIndldeServiceLocal getStudyIndldeService() {
         // TODO Auto-generated method stub
-        return null;
+        return studyIndIdeService;
     }
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.util.ServiceLocator#getCTGovXmlGeneratorService()
      */
     public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() {
-        // TODO Auto-generated method stub
-        return null;
+         return ctGovXmlGeneratorService;
     }
 
     public AbstractionCompletionServiceRemote getAbstractionCompletionService()
         throws PAException {
-      // TODO Auto-generated method stub
-      return null;
+       return abstractionCompletionService;
     }
 
     public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
@@ -448,8 +456,7 @@ public class MockServiceLocator implements ServiceLocator {
     }
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
         throws PAException {
-      // TODO Auto-generated method stub
-      return null;
+       return tsrReportGeneratorService;
     }
 
     public RegistryUserServiceRemote getRegisterUserService() {
@@ -537,6 +544,5 @@ public class MockServiceLocator implements ServiceLocator {
         // TODO Auto-generated method stub
         return null;
     }
-
-
+   
 }

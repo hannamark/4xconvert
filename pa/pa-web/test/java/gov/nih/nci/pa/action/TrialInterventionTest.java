@@ -14,15 +14,15 @@ public class TrialInterventionTest extends AbstractPaActionTest {
 		trialIntervention = new TrialInterventionsAction();
 		trialIntervention.prepare();		      
      }
-	/*@Test(expected=Exception.class)
+	@Test
 	public void testAdd() throws PAException{
-		trialIntervention.add();
+		assertEquals(trialIntervention.add(),"edit");
 	}
 
-	/*@Test(expected=Exception.class)
+	@Test
 	public void testUpdate() throws PAException {
-		trialIntervention.update();
-	}*/
+		assertEquals(trialIntervention.update(),"edit");
+	}
 
 	@Test
 	public void testDelete() throws PAException{
