@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.outcomes.grid;
 
 
+import gov.nih.nci.accrual.dto.AbstractStudyDto;
 import gov.nih.nci.coppa.services.outcomes.Id;
-import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 import java.rmi.RemoteException;
 
@@ -11,7 +11,8 @@ import java.rmi.RemoteException;
  * @param <DTO> DTO object
  * @param <XML> XML object
  */
-public interface AccrualStudyGridService<DTO extends BaseDTO, XML extends Object> extends AccrualGridService<DTO, XML> {
+public interface AccrualStudyGridService<DTO extends AbstractStudyDto, XML extends Object> extends
+        AccrualGridService<DTO, XML> {
 
     /**
      * Get objects by study protocol.

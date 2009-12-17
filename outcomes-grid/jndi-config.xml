@@ -289,6 +289,10 @@
           <name>etcDirectoryPath</name>
           <value>ETC-PATH</value>
         </parameter>
+        <parameter>
+          <name>gridServicePrincipalSeparator</name>
+          <value>@gridServicePrincipalSeparator@</value>
+        </parameter>
       </resourceParams>
     </resource>
     <resource name="home" type="gov.nih.nci.coppa.services.outcomes.service.globus.resource.OutcomesServicesResourceHome">

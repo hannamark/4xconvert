@@ -16,3 +16,5 @@ jdbc.driver=org.postgresql.Driver
 hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 jboss.deploy.dir=C:/jboss/jboss-4.0.5.GA/server/default/deploy
 outcomes.url=http://${jboss.server.hostname}:${jboss.server.port}/outcomes
+gridServicePrincipal=Gr1DU5er
+gridServiceCredential=ltHZmZ1rqYq8j2uyHEABIQ==

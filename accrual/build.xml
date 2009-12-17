@@ -66,22 +66,22 @@
     <!-- ====================================================================== -->
     <!-- Deploy targets                                                         -->
     <!-- ====================================================================== -->
-    
+
     <target name="set-full">
         <property name="notask" value="" />
     </target>
-    
+
     <target name="set-notask">
         <property name="notask" value="-notest" />
     </target>
-    
+
     <target name="echoTime">
         <tstamp>
             <format property="now" pattern="yyyy MMMM dd HH:mm:ss" locale="en"/>
         </tstamp>
         <echo message="Build completed at ${now}" />
     </target>
-    
+
     <target name="accrual-dist" depends="accrual-ear-ear" if="accrual-ear.build.present">
         <copy todir="${accrual-ear.build.dir}" file="${ear.ear}"/>
     </target>
@@ -93,11 +93,11 @@
         <fail unless="earEarPresent" message="Ear file not found."/>
         <copy todir="${jboss.deploy.dir}" file="${ear.ear}"/>
     </target>
-    
+
     <target name="build-notest" description="Build the ear, jar and war" depends="set-notask, accrual-dist">
     </target>
-    
-    <target name="deploy" depends="set-full, fix-server-xml, deploy-ear, echoTime" 
+
+    <target name="deploy" depends="set-full, fix-server-xml, deploy-ear, echoTime"
             description="Build test and deploy."/>
 
     <target name="test-dynamic-analysis">
@@ -116,7 +116,7 @@
             <target name="test-dynamic-analysis"/>
         </ant>
     </target>
-    
+
     <!-- The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
         security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
         remote deployments. This definition supports the developer local deployments.
@@ -134,8 +134,8 @@
             </filterchain>
         </copy>
     </target>
-    
-    <target name="deploy-notest" depends="set-notask, fix-server-xml, deploy-ear, echoTime" 
+
+    <target name="deploy-notest" depends="set-notask, fix-server-xml, deploy-ear, echoTime"
             description="Build and deploy without testing or getting dependencies.">
     </target>
 
@@ -143,7 +143,7 @@
     <!-- Ivy targets                                                            -->
     <!-- ====================================================================== -->
 
-    <target name="ivy-init"> 
+    <target name="ivy-init">
         <mkdir dir="${local.repo.dir}"/>
         <mkdir dir="${lib.dir}"/>
         <copy todir="${lib.dir}" overwrite="false">
@@ -153,12 +153,12 @@
         </copy>
     </target>
 
-    <target name="ivy-get" depends="ivy-init"> 
+    <target name="ivy-get" depends="ivy-init">
         <ant target="ivy-get" dir="${web.dir}"/>
         <ant target="ivy-get" dir="${services.dir}"/>
         <ant target="ivy-get" dir="${ear.dir}"/>
     </target>
-    
+
     <target name="ivy-clean" description="Delete jars.">
         <ant target="ivy-clean" dir="${accrual-web.dir}"/>
         <ant target="ivy-clean" dir="${web.dir}"/>
@@ -170,29 +170,29 @@
     <!-- ====================================================================== -->
     <!-- Copies JSP to the tmp folder                                           -->
     <!-- ====================================================================== -->
-        
+
     <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
         <ant target="copy-jsp" dir="${web.dir}"/>
         <ant target="copy-jsp" dir="${accrual-web.dir}"/>
-    </target> 
-    
+    </target>
+
     <!-- ====================================================================== -->
     <!-- Build the jar, war and ear                                             -->
     <!-- ====================================================================== -->
-    
+
     <target name="accrual-services-jar">
         <fail unless="hibernate.dialect" message="Missing required property hibernate.dialect"/>
         <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
             dir="${services.dir}" >
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
-        	<property name="po.port.number" value="${po.port.number}" />
-        	<property name="jboss.server.hostname" value="${jboss.server.hostname}" />
-        	<property name="outcomes.url" value="${outcomes.url}" />
+            <property name="po.port.number" value="${po.port.number}" />
+            <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
+            <property name="outcomes.url" value="${outcomes.url}" />
             <target name="${services.build.target}${notask}"/>
         </ant>
     </target>
-    
+
     <target name="accrual-web-war" depends="accrual-services-jar">
         <ant inheritAll="false" inheritRefs="false" antfile="${web.build.file}"
             dir="${web.dir}" >
@@ -202,7 +202,7 @@
             <target name="${web.build.target}${notask}"/>
         </ant>
     </target>
-    
+
     <target name="accrual-accweb-war" depends="accrual-services-jar">
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-web.build.file}"
             dir="${accrual-web.dir}" >
@@ -218,6 +218,8 @@
         <fail unless="database.password" message="Missing required property database.password"/>
         <fail unless="database.url" message="Missing required property database.url"/>
         <fail unless="jdbc.driver" message="Missing required property database.driver"/>
+        <fail unless="gridServicePrincipal" message="Missing required property gridServicePrincipal"/>
+        <fail unless="gridServiceCredential" message="Missing required property gridServiceCredential"/>
 
         <ant inheritAll="false" inheritRefs="false" antfile="${ear.build.file}"
             dir="${ear.dir}" >
@@ -228,6 +230,8 @@
             <property name="accrual.jdbc.url" value="${database.url}" />
             <property name="accrual.db.username" value="${database.user}"/>
             <property name="accrual.db.password" value="${database.password}"/>
+            <property name="gridServicePrincipal" value="${gridServicePrincipal}"/>
+            <property name="gridServiceCredential" value="${gridServiceCredential}"/>
 
             <target name="${ear.build.target}"/>
         </ant>
@@ -236,21 +240,21 @@
     <!-- ====================================================================== -->
     <!-- Clean the ear, services and web subprojects                            -->
     <!-- ====================================================================== -->
-    
+
     <target name="accrual-web-clean">
         <ant inheritAll="false" inheritRefs="false" antfile="${web.build.file}"
             dir="${web.dir}" >
             <target name="${web.clean.target}"/>
         </ant>
     </target>
-    
+
     <target name="accrual-services-clean">
         <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
             dir="${services.dir}" >
             <target name="${services.clean.target}"/>
         </ant>
     </target>
-    
+
     <target name="accrual-ear-clean">
         <ant inheritAll="false" inheritRefs="false" antfile="${ear.build.file}"
             dir="${ear.dir}" >

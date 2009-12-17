@@ -13,8 +13,8 @@ import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 import java.lang.reflect.Method;
@@ -96,79 +96,65 @@ public final class JNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    public UserService getUserService() throws NamingException {
+        return (UserService) lookup("accrual/UserBean/remote");
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
     public ActivityRelationshipService getActivityRelationshipService() throws NamingException {
-        return (ActivityRelationshipService) lookup("accrual/ActivityRelationshipBean/remote");
+        throw new IllegalStateException("This service must be called securely");
     }
 
     /**
      * {@inheritDoc}
      */
     public PerformedActivityService getPerformedActivityService() throws NamingException {
-        return (PerformedActivityService) lookup("accrual/PerformedActivityBean/remote");
+        throw new IllegalStateException("This service must be called securely");
     }
 
     /**
      * {@inheritDoc}
      */
     public PerformedObservationResultService getPerformedObservationResultService() throws NamingException {
-        return (PerformedObservationResultService) lookup("accrual/PerformedObservationResultBean/remote");
+        throw new IllegalStateException("This service must be called securely");
     }
 
     /**
      * {@inheritDoc}
      */
     public StudySubjectService getStudySubjectService() throws NamingException {
-        return (StudySubjectService) lookup("accrual/StudySubjectBean/remote");
+        throw new IllegalStateException("This service must be called securely");
     }
 
     /**
      * {@inheritDoc}
      */
     public SubmissionService getSubmissionService() throws NamingException {
-        return (SubmissionService) lookup("accrual/SubmissionBean/remote");
+        throw new IllegalStateException("This service must be called securely");
     }
 
     /**
      * {@inheritDoc}
      */
     public PatientService getPatientService() throws NamingException {
-        return (PatientService) lookup("accrual/PatientBean/remote");
+        throw new IllegalStateException("This service must be called securely");
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public <B extends BaseDTO> BaseAccrualService<B> getBaseAccrualService(Class<B> type) throws NamingException {
-        Method serviceMethod = values.get(type);
-        BaseAccrualService<B> service = null;
-        try {
-            service = (BaseAccrualService<B>) serviceMethod.invoke(this);
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
-        }
-        if (service == null) {
-            throw new IllegalArgumentException("Unable to locate service for type, " + type);
-        }
-        return service;
+        throw new IllegalStateException("This service must be called securely");
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public <B extends BaseDTO> BaseAccrualStudyService getBaseAccrualStudyService(Class<B> type)
+    public <B extends BaseDTO> BaseAccrualStudyService<B> getBaseAccrualStudyService(Class<B> type)
             throws NamingException {
-        Method serviceMethod = values.get(type);
-        BaseAccrualStudyService<B> service = null;
-        try {
-            service = (BaseAccrualStudyService<B>) serviceMethod.invoke(this);
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
-        }
-        if (service == null) {
-            throw new IllegalArgumentException("Unable to locate service for type, " + type);
-        }
-        return service;
+        throw new IllegalStateException("This service must be called securely");
     }
 }

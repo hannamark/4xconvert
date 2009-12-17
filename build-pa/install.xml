@@ -72,13 +72,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Jboss configurtion related properties -->
     <property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
     <property name="jboss.service.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/jboss-service.xml"/>
-    
+
     <!-- added for updated secure grid ssaksa 090826 -->
      <property name="sync-gts.dir" location="${basedir}/${sync-gts.dist.relative.dir}"/>
      <property name="sync-gts.build.dir" location="${sync-gts.dir}/syncgts"/>
      <property name="cagrid-target.dir" location="${sync-gts.dir}/cagrid-target"/>
      <property name="grid.dir.dest.jboss" value="wsrf.war" />
-    
+
     <!-- *-ds.xml and WAR -->
     <property name="pa-ear.dir.dist" value="${basedir}/${pa-ear.dist.relative.dir}" />
     <property name="pa-ear.ds.file" value="pa-ds.xml" />
@@ -96,7 +96,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-    
+
     <property name="pa-grid.dir.dist" value="${basedir}/${pa-grid.dist.relative.dir}" />
     <property name="pa-grid.dir.src" value="${basedir}/${pa-grid.dist.relative.dir}" />
     <property name="pa-grid.dir.target" value="wsrf.war" />
@@ -176,11 +176,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <basename file="${pagrid.grid.secure.cert.location}" property="pagrid.grid.secure.cert.file"/>
     <dirname file="${pagrid.grid.secure.cert.location}" property="pagrid.grid.secure.dir"/>
     <basename file="${pagrid.grid.secure.key.location}" property="pagrid.grid.secure.key.file"/>
-    
+
     <basename file="${outcomes-grid.grid.secure.cert.location}" property="outcomes-grid.grid.secure.cert.file"/>
     <dirname file="${outcomes-grid.grid.secure.cert.location}" property="outcomes-grid.grid.secure.dir"/>
     <basename file="${outcomes-grid.grid.secure.key.location}" property="outcomes-grid.grid.secure.key.file"/>
-    
+
     <!-- figure out whether to use install-properties.template or upgrade-proprties.template based on the name of the properties file -->
     <propertyregex property="properties.file.type"
         input="${properties.file}"
@@ -435,7 +435,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
     <target name="install:jboss:binaries:pa-grid" unless="exclude.pa-grid">
         <jboss-install-binaries2
-			jems.install.option="default"
+            jems.install.option="default"
             jboss.server.name="${pagrid.jboss.server.name}"
             />
     </target>
@@ -560,7 +560,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
         <zip basedir="${temp.dir}/${pa-grid.dist.relative.dir}" compress="true" file="${pa-grid.dir.dist}/${pa-grid.artifact.file}" update="false"/>
     </target>
-    
+
     <target name="install:jboss:outcomes-grid:pre-configure" unless="exclude.outcomes-grid">
         <mkdir dir="${temp.dir}/${outcomes-grid.dist.relative.dir}"/>
         <delete dir="${temp.dir}/${outcomes-grid.dist.relative.dir}"/>
@@ -637,15 +637,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
         <unzip dest="${jboss.home}/server/${outcomes-grid.jboss.server.name}/deploy/${outcomes-grid.dir.target}" src="${outcomes-grid.dir.src}/${outcomes-grid.artifact.file}" />
     </target>
-    
+
     <!-- Configures installed pa-grid application -->
     <target name="install:pa-grid:configure" description="Configure pa-grid service based on properties" unless="exclude.pa-grid">
         <!--
-        NOTE: During an upgrade, the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) copies over 
-        the -cert.pem and -key.pem host cert file to the ${jboss.home}/server/${pagrid.jboss.server.name}/conf directory.  
+        NOTE: During an upgrade, the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) copies over
+        the -cert.pem and -key.pem host cert file to the ${jboss.home}/server/${pagrid.jboss.server.name}/conf directory.
         Therefore, we're changing the appserver.conf.dir property to point to pagrid.grid.secure.dir instead.
-        
-        This is required whenever the host certs are not installed within the ${jboss.home}/server/${pagrid.jboss.server.name}/conf directory   
+
+        This is required whenever the host certs are not installed within the ${jboss.home}/server/${pagrid.jboss.server.name}/conf directory
         -->
         <grid-appserver-configure
             appserver.home="${jboss.home}"
@@ -668,7 +668,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             grid.secure.cert.file="${pagrid.grid.secure.cert.file}"
             grid.external.secure.host="${pagrid.grid.external.secure.host}"
             grid.external.secure.port="${pagrid.grid.external.secure.port}"
-        	appserver.external.http.host="${pagrid.jboss.external.http.host}"
+            appserver.external.http.host="${pagrid.jboss.external.http.host}"
         />
     </target>
 
@@ -693,11 +693,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Configures installed outcomes-grid application -->
     <target name="install:outcomes-grid:configure" description="Configure outcomes-grid service based on properties" unless="exclude.outcomes-grid">
         <!--
-        NOTE: During an upgrade, the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) copies over 
-        the -cert.pem and -key.pem host cert file to the ${jboss.home}/server/${outcomes-grid.jboss.server.name}/conf directory.  
+        NOTE: During an upgrade, the <jboss-configure/> macrodef (which calls <grid-secure-configure-connector/> macrodef) copies over
+        the -cert.pem and -key.pem host cert file to the ${jboss.home}/server/${outcomes-grid.jboss.server.name}/conf directory.
         Therefore, we're changing the appserver.conf.dir property to point to outcomes-grid.grid.secure.dir instead.
-        
-        This is required whenever the host certs are not installed within the ${jboss.home}/server/${outcomes-grid.jboss.server.name}/conf directory   
+
+        This is required whenever the host certs are not installed within the ${jboss.home}/server/${outcomes-grid.jboss.server.name}/conf directory
         -->
         <grid-appserver-configure
             appserver.home="${jboss.home}"
@@ -720,7 +720,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             grid.secure.cert.file="${outcomes-grid.grid.secure.cert.file}"
             grid.external.secure.host="${outcomes-grid.grid.external.secure.host}"
             grid.external.secure.port="${outcomes-grid.grid.external.secure.port}"
-        	appserver.external.http.host="${outcomes-grid.jboss.external.http.host}"
+            appserver.external.http.host="${outcomes-grid.jboss.external.http.host}"
         />
     </target>
 
@@ -795,7 +795,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <jboss-configure
             jboss.server.ports.name="bda-ports"
             jboss.server.binding.template.location="${bda-utils.resource.dir}/template-binding.xml"
-            
+
                 />
         <!-- Default values for all attributes if you are using standard NCICB port configurations
         <jboss-configure
@@ -948,7 +948,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 jboss.http-connector.remove="false"
                 />
     </target>
-    
+
     <target name="install:jboss:configure:outcomes-grid" unless="exclude.outcomes-grid">
           <!-- create a new template bindings file from template (using ports for outcomes-grid -->
             <copy file="${bda-utils.resource.dir}/template-binding.xml"
@@ -1022,7 +1022,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                 />
     </target>
 
-    
+
     <!-- Calls to bda macros for basic functionality -->
     <target name="install:jboss:stop" if="jboss.exists" unless="exclude.jboss">
         <antcall target="install:jboss:stop:outcomes-grid"/>

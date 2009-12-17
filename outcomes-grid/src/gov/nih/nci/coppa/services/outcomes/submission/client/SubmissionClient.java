@@ -2,29 +2,14 @@ package gov.nih.nci.coppa.services.outcomes.submission.client;
 
 import gov.nih.nci.coppa.services.outcomes.Id;
 import gov.nih.nci.coppa.services.outcomes.Submission;
-import java.io.InputStream;
+import gov.nih.nci.coppa.services.outcomes.submission.common.SubmissionI;
+
 import java.rmi.RemoteException;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.Stub;
-import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
-import org.oasis.wsrf.properties.GetResourcePropertyResponse;
-
 import org.globus.gsi.GlobusCredential;
-
-import gov.nih.nci.coppa.services.outcomes.submission.stubs.SubmissionPortType;
-import gov.nih.nci.coppa.services.outcomes.submission.stubs.service.SubmissionServiceAddressingLocator;
-import gov.nih.nci.coppa.services.outcomes.submission.common.SubmissionI;
-import gov.nih.nci.cagrid.introduce.security.client.ServiceSecurityClient;
-
 import org.iso._21090.ST;
 
 /**
@@ -35,13 +20,13 @@ import org.iso._21090.ST;
  *
  * On construction the class instance will contact the remote service and retrieve it's security
  * metadata description which it will use to configure the Stub specifically for each method call.
- * 
+ *
  * @created by Introduce Toolkit version 1.3
  */
-public class SubmissionClient extends SubmissionClientBase implements SubmissionI {	
+public class SubmissionClient extends SubmissionClientBase implements SubmissionI {
 
     public SubmissionClient(String url) throws MalformedURIException, RemoteException {
-        this(url,null);	
+        this(url,null);
     }
 
     public SubmissionClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
@@ -74,7 +59,7 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
 
                     System.out.println("Test Get");
                     testGet(client);
-                    
+
                 } else {
                     usage();
                     System.exit(1);
@@ -91,16 +76,16 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
 
     private static void testGet(SubmissionClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("541");
-        
+        id.setExtension("1");
+
         Submission subm = client.get(id);
         System.out.println(subm.getLabel().getValue());
-        
+
     }
-    
+
     private static void testGetByStudyProtocol(SubmissionClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("27428");
+        id.setExtension("1");
 
         Submission[] subms = client.getByStudyProtocol(id);
         for (Submission subm : subms) {
@@ -108,7 +93,7 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
         }
     }
 
-    private static Submission testCreateSubmission(SubmissionClient client) 
+    private static Submission testCreateSubmission(SubmissionClient client)
     throws RemoteException {
         Submission submission = new Submission();
         ST desc_st = new ST();

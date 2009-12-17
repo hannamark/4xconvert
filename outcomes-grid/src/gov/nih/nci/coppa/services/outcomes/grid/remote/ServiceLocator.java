@@ -7,6 +7,7 @@ import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
+import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 
@@ -86,5 +87,14 @@ public interface ServiceLocator {
      */
     @SuppressWarnings("unchecked")
     <B extends BaseDTO> BaseAccrualStudyService getBaseAccrualStudyService(Class<B> type) throws NamingException;
+
+    /**
+     * Gets the UserService.
+     *
+     * @return UserService
+     * @throws NamingException on error looking up the service
+     */
+     UserService getUserService() throws NamingException;
+
 
 }

@@ -97,7 +97,7 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
 
     /**
      * {@inheritDoc}
-     * @throws Exception 
+     * @throws Exception
      */
     public ServiceLocator getLocator() throws Exception {
         return GridSecurityJNDIServiceLocator.newInstance();

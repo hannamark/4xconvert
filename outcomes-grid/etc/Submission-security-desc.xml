@@ -5,10 +5,17 @@
       <none />
     </auth-method>
   </method>
+  <authz value="submission:gov.nih.nci.coppa.services.outcomes.submission.service.globus.SubmissionAuthorization" />
   <auth-method>
-    <none />
+    <GSITransport>
+      <protection-level>
+        <privacy />
+      </protection-level>
+    </GSITransport>
   </auth-method>
-  <authz value="none" />
+  <run-as>
+    <system-identity />
+  </run-as>
 </securityConfig>
 
 

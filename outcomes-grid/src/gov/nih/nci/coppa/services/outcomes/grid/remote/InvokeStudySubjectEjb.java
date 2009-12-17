@@ -96,8 +96,6 @@ import java.util.List;
 public class InvokeStudySubjectEjb extends InvokeAccrualStudyServiceEjb<StudySubjectDto>
         implements StudySubjectService {
 
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
-
     /**
      * Const.
      */

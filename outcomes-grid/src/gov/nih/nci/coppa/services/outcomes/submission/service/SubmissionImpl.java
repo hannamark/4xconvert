@@ -1,23 +1,18 @@
 package gov.nih.nci.coppa.services.outcomes.submission.service;
 
 import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.outcomes.Submission;
 import gov.nih.nci.coppa.services.outcomes.grid.GenericAccrualStudyGridServiceImpl;
-import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.SubmissionTransformer;
 import gov.nih.nci.coppa.services.outcomes.grid.remote.InvokeSubmissionEjb;
-import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.faults.FaultUtil;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
  * Dispatches to the remote EJBs and Transformers.
- * 
+ *
  * @author ludetc
  *
  */
@@ -31,12 +26,12 @@ public class SubmissionImpl extends SubmissionImplBase {
     public SubmissionImpl() throws RemoteException {
         super();
     }
-    
-    public gov.nih.nci.coppa.services.outcomes.Submission[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id) 
+
+    public gov.nih.nci.coppa.services.outcomes.Submission[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id)
         throws RemoteException {
         return impl.getByStudyProtocol(id);
     }
-    
+
     public gov.nih.nci.coppa.services.outcomes.Submission get(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
         return impl.get(id);
     }

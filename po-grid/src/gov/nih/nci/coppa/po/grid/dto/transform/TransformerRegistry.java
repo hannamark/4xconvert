@@ -50,7 +50,6 @@ public final class TransformerRegistry {
         values.put(PatientDTO.class, PatientTransformer.INSTANCE);
         values.put(CorrelationNodeDTO.class, CorrelationNodeTransformer.INSTANCE);
         values.put(EntityNodeDto.class, EntityNodeTransformer.INSTANCE);
-        
     }
 
     /**

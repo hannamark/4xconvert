@@ -57,118 +57,205 @@ public class PerformedObservationResultAuthorization implements PDP {
 					
 	public void authorizeGet(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeCreate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeDelete(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedObservationResultByPerformedActivity(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedHistopathologyByPerformedActivity(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedHistopathology(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeCreatePerformedHistopathology(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdatePerformedHistopathology(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedDiagnosisByPerformedActivity(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedDiagnosis(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeCreatePerformedDiagnosis(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdatePerformedDiagnosis(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedImageByPerformedActivity(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedImage(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeCreatePerformedImage(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdatePerformedImage(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedClinicalResultByPerformedActivity(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedClinicalResult(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeCreatePerformedClinicalResult(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdatePerformedClinicalResult(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedMedicalHistoryResultByPerformedActivity(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedMedicalHistoryResult(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeCreatePerformedMedicalHistoryResult(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdatePerformedMedicalHistoryResult(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedLesionDescriptionByPerformedActivity(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetPerformedLesionDescription(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeCreatePerformedLesionDescription(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeUpdatePerformedLesionDescription(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
 	}
 	   				
 	public void authorizeGetServiceSecurityMetadata(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
@@ -303,7 +390,10 @@ public class PerformedObservationResultAuthorization implements PDP {
     		String serviceName = (String)config.getProperty(name, "serviceName");
     	    String etcPath = ContainerConfig.getBaseDirectory() + File.separator + (String)config.getProperty(name, "etcDirectoryPath");
 
-    	
+    	 
+	   		authorizationClassMap.put("enforce_auth",Class.forName("org.cagrid.enforce.authorization.extension.service.EnforceAuthorization").newInstance());
+			((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).initialize(serviceName, etcPath);
+			
     	} catch (Exception e){
         	throw new InitializeException(e.getMessage(),e);
 		}

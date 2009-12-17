@@ -83,19 +83,6 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.cagrid.introduce.servicetools.security.SecurityUtils;
-
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
-import javax.naming.CommunicationException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.coppa.services.pa.service.PAServicesConfiguration;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -141,6 +128,18 @@ import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.naming.CommunicationException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 /**
  * Service locator that uses JNDI to look up services using Grid Security.
  */
@@ -163,16 +162,12 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
 
     /**
      * Get an instance of the service locator. specific to the grid user.
-     * 
+     *
      * @param userIdentity user identity of the grid user
      */
     public GridSecurityJNDIServiceLocator(String userIdentity) {
 
         try {
-            /*
-             * Cache the Method instead of the actual Remote instance as it would be very difficult to handle
-             * NamingException, etc..
-             */
             /*
              * Cache the Method instead of the actual Remote instance as it would be very difficult to handle
              * NamingException, etc..
@@ -256,7 +251,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudyResourcingServiceRemote getStudyResourcingService() throws NamingException {
-        StudyResourcingServiceRemote result = 
+        StudyResourcingServiceRemote result =
             (StudyResourcingServiceRemote) lookup("pa/StudyResourcingServiceBean/remote");
         return result;
     }
@@ -265,7 +260,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException {
-        StudyRegulatoryAuthorityServiceRemote result = 
+        StudyRegulatoryAuthorityServiceRemote result =
             (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
         return result;
     }
@@ -274,7 +269,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() throws NamingException {
-        StudyRecruitmentStatusServiceRemote result = 
+        StudyRecruitmentStatusServiceRemote result =
             (StudyRecruitmentStatusServiceRemote) lookup("pa/StudyRecruitmentStatusServiceBean/remote");
         return result;
     }
@@ -283,7 +278,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() throws NamingException {
-        StudySiteAccrualStatusServiceRemote result = 
+        StudySiteAccrualStatusServiceRemote result =
             (StudySiteAccrualStatusServiceRemote) lookup("pa/StudySiteAccrualStatusServiceBean/remote");
         return result;
     }
@@ -292,7 +287,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudySiteContactServiceRemote getStudySiteContactService() throws NamingException {
-        StudySiteContactServiceRemote result = 
+        StudySiteContactServiceRemote result =
             (StudySiteContactServiceRemote) lookup("pa/StudySiteContactServiceBean/remote");
         return result;
     }
@@ -301,7 +296,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService() throws NamingException {
-        StudyOutcomeMeasureServiceRemote result = 
+        StudyOutcomeMeasureServiceRemote result =
             (StudyOutcomeMeasureServiceRemote) lookup("pa/StudyOutcomeMeasureServiceBean/remote");
         return result;
     }
@@ -318,7 +313,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudyOverallStatusServiceRemote getStudyOverallStatusService() throws NamingException {
-        StudyOverallStatusServiceRemote result = 
+        StudyOverallStatusServiceRemote result =
             (StudyOverallStatusServiceRemote) lookup("pa/StudyOverallStatusServiceBean/remote");
         return result;
     }
@@ -359,7 +354,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudyRelationshipServiceRemote getStudyRelationshipService() throws NamingException {
-        StudyRelationshipServiceRemote result = 
+        StudyRelationshipServiceRemote result =
             (StudyRelationshipServiceRemote) lookup("pa/StudyRelationshipServiceBean/remote");
         return result;
     }
@@ -368,7 +363,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() throws NamingException {
-        DocumentWorkflowStatusServiceRemote result = 
+        DocumentWorkflowStatusServiceRemote result =
             (DocumentWorkflowStatusServiceRemote) lookup("pa/DocumentWorkflowStatusServiceBean/remote");
         return result;
     }
@@ -385,7 +380,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public PlannedActivityServiceRemote getPlannedActivityService() throws NamingException {
-        PlannedActivityServiceRemote result = 
+        PlannedActivityServiceRemote result =
             (PlannedActivityServiceRemote) lookup("pa/PlannedActivityServiceBean/remote");
         return result;
     }

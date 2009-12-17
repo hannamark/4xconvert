@@ -89,11 +89,13 @@ import org.oasis.wsrf.lifetime.TerminationNotification;
  * 
  */
 public abstract class PerformedActivityResourceBase extends ReflectionResource implements Resource
+                                                  ,SecureResource
                                                   {
 
 	static final Log logger = LogFactory.getLog(PerformedActivityResourceBase.class);
 
 	private PerformedActivityResourceConfiguration configuration;
+	private ResourceSecurityDescriptor desc;
 
 	// this can be used to cancel the registration renewal
     private AdvertisementClient registrationClient;
@@ -114,6 +116,7 @@ public abstract class PerformedActivityResourceBase extends ReflectionResource i
                            
         // Call the super initialize on the ReflectionResource                  
 	    super.initialize(resourceBean,resourceElementQName,id);
+		this.desc = null;
 
 
 		// register the service to the index service
@@ -128,7 +131,22 @@ public abstract class PerformedActivityResourceBase extends ReflectionResource i
 	
 
 
-	  
+	
+    /**
+     * Sets the security descriptor for this resource.  The default resource
+     * security will be null so it will fall back to method level then service
+     * level security.  If you want to protect this particular instance of this
+     * resource then provide a resource security descriptor to this resource
+     * through this method.
+     */
+	public void setSecurityDescriptor(ResourceSecurityDescriptor desc) {
+		this.desc = desc;
+	}
+	
+	
+	public ResourceSecurityDescriptor getSecurityDescriptor() {
+		return this.desc;
+	}  
 
 	
 	public PerformedActivityResourceConfiguration getConfiguration() {

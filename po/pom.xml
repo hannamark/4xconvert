@@ -12,7 +12,7 @@
     <inceptionYear>2008</inceptionYear>
 
     <properties>
-        <jboss.home>C:/dev/app_servers/jboss-4.0.5.GA</jboss.home>
+        <jboss.home>/Applications/jboss-4.0.5.GA</jboss.home>
         <jboss.hostname>localhost</jboss.hostname>
         <jboss.port>8080</jboss.port>
         <jboss.naming.port>1099</jboss.naming.port>

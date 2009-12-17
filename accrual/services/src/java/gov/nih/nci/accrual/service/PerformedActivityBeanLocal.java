@@ -128,14 +128,14 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
- @SuppressWarnings({"unchecked", "PMD" })
-public class PerformedActivityBeanLocal
-        extends AbstractBaseAccrualStudyBean<PerformedActivityDto, PerformedActivity, PerformedActivityConverter>
-implements PerformedActivityService {
+@SuppressWarnings({"unchecked", "PMD" })
+public class PerformedActivityBeanLocal extends
+        AbstractBaseAccrualStudyBean<PerformedActivityDto, PerformedActivity, PerformedActivityConverter> implements
+        PerformedActivityService {
 
     /**
      * {@inheritDoc}
-     */   
+     */
     public List<PerformedActivityDto> getByStudySubject(Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called getByStudySubject() with Ii == null.");
@@ -171,7 +171,7 @@ implements PerformedActivityService {
         getLogger().info("Leaving getByStudySubject, returning " + resultList.size() + " object(s).  ");
         return resultList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -422,7 +422,7 @@ implements PerformedActivityService {
         }
         return resultDto;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -644,7 +644,7 @@ implements PerformedActivityService {
 
         // step 3: query the result
         queryList = query.list();
-        ArrayList<PerformedRadiationAdministrationDto> resultList = new 
+        ArrayList<PerformedRadiationAdministrationDto> resultList = new
         ArrayList<PerformedRadiationAdministrationDto>();
         for (PerformedRadiationAdministration bo : queryList) {
             try {
@@ -760,7 +760,7 @@ implements PerformedActivityService {
 
         // step 3: query the result
         queryList = query.list();
-        ArrayList<PerformedSubstanceAdministrationDto> resultList = new 
+        ArrayList<PerformedSubstanceAdministrationDto> resultList = new
         ArrayList<PerformedSubstanceAdministrationDto>();
         for (PerformedSubstanceAdministration bo : queryList) {
             try {
@@ -823,10 +823,10 @@ implements PerformedActivityService {
         resultDto = PerformedSubstanceAdministrationConverter.convertFromDomainToDto(bo);
         return resultDto;
     }
-    
+
     /**
      * {@inheritDoc}
-     */   
+     */
     public List<PerformedObservationDto> getPerformedObservationByStudySubject(Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called getPerformedObservationByStudySubject() with Ii == null.");
@@ -866,23 +866,23 @@ implements PerformedActivityService {
         getLogger().info("Leaving getPerformedObservationByStudySubject " + resultList.size() + " object(s).  ");
         return resultList;
     }
-    
+
     /**
      * Validate tumor business rule - checks to see if there exista a tumor with the same name.
-     * 
+     *
      * @param dto the dto
-     * 
+     *
      * @throws RemoteException the remote exception
      */
     private void validateTumorBusinessRule(PerformedObservationDto dto) throws RemoteException {
-      List<PerformedObservationDto> performedObservationList = 
+      List<PerformedObservationDto> performedObservationList =
            this.getPerformedObservationByStudySubject(dto.getStudySubjectIdentifier());
       for (PerformedObservationDto performedObservation : performedObservationList) {
-       if (!PAUtil.isCdNull(performedObservation.getCategoryCode()) 
+       if (!PAUtil.isCdNull(performedObservation.getCategoryCode())
            && performedObservation.getCategoryCode().getCode().equals(ActivityCategoryCode.TUMOR_MARKER.getCode())
            && performedObservation.getName().getValue().equalsIgnoreCase(dto.getName().getValue())) {
           getLogger().info("Tumor Marker already exists " + dto.getName().getValue());
-          throw new RemoteException("Tumor Marker " + dto.getName().getValue() + " already exists." 
+          throw new RemoteException("Tumor Marker " + dto.getName().getValue() + " already exists."
           + " Please select another Tumor Marker");
        }
       }

@@ -95,7 +95,6 @@ import java.rmi.RemoteException;
  * @param <DTO> base dto
  */
 public class InvokeAccrualServiceEjb<DTO extends BaseDTO> implements BaseAccrualService<DTO> {
-    private final ServiceLocator locator = JNDIServiceLocator.getInstance();
     private final Class<DTO> type;
 
     /**
@@ -164,8 +163,8 @@ public class InvokeAccrualServiceEjb<DTO extends BaseDTO> implements BaseAccrual
     /**
      * {@inheritDoc}
      */
-    public ServiceLocator getLocator() {
-        return locator;
+    public ServiceLocator getLocator() throws Exception {
+        return GridSecurityJNDIServiceLocator.newInstance();
     }
 
     /**

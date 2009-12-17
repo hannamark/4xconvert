@@ -71,10 +71,9 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
               // place client calls here if you want to use this main as a
               // test....
               getResearchOrg(client);
-              searchResearchOrg(client);
               queryResearchOrg(client);
-              System.out.println("---getbyplayerids----");
               getResearchOrgsByPlayerIds(client);
+              searchResearchOrg(client);
             } else {
                 usage();
                 System.exit(1);
@@ -90,28 +89,30 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
 
     private static void getResearchOrg(ResearchOrganizationClient client) throws RemoteException {
+        System.out.println("Get by ID");
         Id id = new Id();
         id.setRoot(RESEARCH_ORG_ROOT);
         id.setIdentifierName(RESEARCH_ORG_IDENTIFIER_NAME);
-        id.setExtension("6812");
+        id.setExtension("720838");
         ResearchOrganization result = client.getById(id);
         ClientUtils.handleResult(result);
         for (II ii : result.getIdentifier().getItem()) {
             System.out.println(ToStringBuilder.reflectionToString(ii, ToStringStyle.MULTI_LINE_STYLE));
         }
     }
-    
+
     private static void getResearchOrgsByPlayerIds(ResearchOrganizationClient client) {
+        System.out.println("Get by Player IDs");
         Id id1 = new Id();
         id1.setRoot(OrganizationClient.ORG_ROOT);
         id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
         id1.setExtension("1847");
-        
+
         Id id2 = new Id();
         id2.setRoot(OrganizationClient.ORG_ROOT);
         id2.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
         id2.setExtension("2119");
-        
+
         try {
             ResearchOrganization[] results = client.getByPlayerIds(new Id[] {id1, id2});
             ClientUtils.handleSearchResults(results);
@@ -123,6 +124,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
 
     private static void searchResearchOrg(ResearchOrganizationClient client) throws RemoteException {
+        System.out.println("search");
         ResearchOrganization criteria = createCriteria();
         ResearchOrganization[] results = client.search(criteria);
         ClientUtils.handleSearchResults(results);
@@ -140,6 +142,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     }
 
     private static void queryResearchOrg(ResearchOrganizationClient client) throws RemoteException {
+        System.out.println("query");
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);
         limitOffset.setOffset(0);

@@ -45,6 +45,8 @@ public class OutcomesServicesConfiguration implements ServiceConfiguration {
 	
 
 	
+	private String gridServicePrincipalSeparator;
+	
 	
     public String getEtcDirectoryPath() {
 		return ContainerConfig.getBaseDirectory() + File.separator + etcDirectoryPath;
@@ -54,6 +56,16 @@ public class OutcomesServicesConfiguration implements ServiceConfiguration {
 		this.etcDirectoryPath = etcDirectoryPath;
 	}
 
+
+	
+	public String getGridServicePrincipalSeparator() {
+		return gridServicePrincipalSeparator;
+	}
+	
+	
+	public void setGridServicePrincipalSeparator(String gridServicePrincipalSeparator) {
+		this.gridServicePrincipalSeparator = gridServicePrincipalSeparator;
+	}
 
 	
 }
