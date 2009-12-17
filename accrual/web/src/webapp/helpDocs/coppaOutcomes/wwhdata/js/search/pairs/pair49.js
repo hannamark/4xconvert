@@ -1,0 +1,25 @@
+function FileData_Pairs(x)
+{
+x.t("working","outcome");
+x.t("icon","follow");
+x.t("edit","icon");
+x.t("modifying","lesion");
+x.t("records","working");
+x.t("records","modifying");
+x.t("records","modify");
+x.t("record","click");
+x.t("assessment","data");
+x.t("submitting","lesion");
+x.t("follow","steps");
+x.t("steps","adding");
+x.t("outcome","data");
+x.t("click","edit");
+x.t("existing","record");
+x.t("lesion","assessment");
+x.t("lesion","assesment");
+x.t("data","submitting");
+x.t("data","adding");
+x.t("adding","lesion");
+x.t("modify","existing");
+x.t("assesment","records");
+}

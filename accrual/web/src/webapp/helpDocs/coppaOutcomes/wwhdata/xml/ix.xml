@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpIX version="5.0" xmlns="urn:WebWorks-Help-Index-Schema">
+  <g t="A" o="002">
+    <i t="accounts">
+      <i t="creating">
+        <j l="5#1078282" />
+      </i>
+    </i>
+  </g>
+  <g t="B" o="002">
+    <i t="Becoming a registered user">
+      <j l="1" />
+    </i>
+  </g>
+  <g t="C" o="002">
+    <i t="creating accounts">
+      <j l="5#1078282" />
+    </i>
+  </g>
+  <g t="L" o="002">
+    <i t="logging in">
+      <j l="6#1077992" />
+    </i>
+    <i t="logging out">
+      <j l="8#1078813" />
+    </i>
+  </g>
+  <g t="N" o="002">
+    <i t="NCI Clinical Protocol Abstraction Portal">
+      <i t="overview of">
+        <j l="4" />
+      </i>
+      <i t="see also, Protocol Abstraction" />
+    </i>
+  </g>
+  <g t="O" o="002">
+    <i t="Online help">
+      <i t="locating topics of interest">
+        <j l="1#1081251" />
+      </i>
+      <i t="printing">
+        <j l="1#1081275" />
+      </i>
+      <i t="using navigation tools">
+        <j l="2" />
+      </i>
+    </i>
+    <i t="Online help, using">
+      <j l="1" />
+    </i>
+    <i t="Outcomes">
+      <i t="logging out">
+        <j l="8#1078813" />
+      </i>
+    </i>
+  </g>
+  <g t="P" o="002">
+    <i t="passwords">
+      <i t="requirements for">
+        <j l="5#1077899" />
+      </i>
+      <i t="resetting">
+        <j l="7#1078663" />
+      </i>
+    </i>
+    <i t="prior therapies">
+      <i t="deleting">
+        <j l="34#1092765" />
+      </i>
+    </i>
+  </g>
+  <g t="R" o="002">
+    <i t="registering">
+      <i t="new users">
+        <j l="5#1077866" />
+      </i>
+    </i>
+    <i t="Registration">
+      <j l="1" />
+    </i>
+    <i t="registration, user account">
+      <j l="5#1077866" />
+    </i>
+  </g>
+  <g t="T" o="002">
+    <i t="trials">
+      <i t="searching for">
+        <j l="37#1083228" />
+        <j l="38#1081704" />
+      </i>
+    </i>
+  </g>
+  <g t="U" o="002">
+    <i t="user">
+      <i t="registration">
+        <j l="5#1077866" />
+      </i>
+    </i>
+    <i t="Using online help">
+      <j l="1" />
+    </i>
+  </g>
+</WebWorksHelpIX>

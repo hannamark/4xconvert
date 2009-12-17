@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpTOC version="5.0" xmlns="urn:WebWorks-Help-TOC-Schema">
+  <i t="Outcomes Online Help" l="0">
+    <i t="Using the Online Help" l="1">
+      <i t="Using Navigation Tools" l="2" />
+    </i>
+  </i>
+  <i t="Getting Started" l="3">
+    <i t="Overview of the NCI Outcomes Portal" l="4" />
+    <i t="Creating an Account" l="5" />
+    <i t="Logging In to the NCI Outcomes Portal" l="6">
+      <i t="Resetting Your Password" l="7" />
+    </i>
+    <i t="Logging Out of the NCI Outcomes Portal" l="8" />
+  </i>
+  <i t="Working With Treatment Data" l="9">
+    <i t="About Treatment Data" l="10" />
+    <i t="Submitting Treatment Regimen Data" l="11">
+      <i t="Adding Treatment Regimens" l="12" />
+      <i t="Updating Treatment Regimen REcords" l="13" />
+    </i>
+    <i t="Submitting Cycle Data" l="14">
+      <i t="Adding Cycles" l="15" />
+      <i t="Updating Cycle Data" l="16" />
+    </i>
+    <i t="Submitting Drug/Biologics Data" l="17">
+      <i t="Adding Drug/Biologic Data" l="18" />
+      <i t="Updating Drug/Biologic Data" l="19" />
+    </i>
+    <i t="Submitting Surgery Data" l="20">
+      <i t="Adding Surgery Data" l="21" />
+      <i t="Updating Surgery Data" l="22" />
+    </i>
+    <i t="Submitting Radiation Data" l="23">
+      <i t="Adding Radiation Data" l="24" />
+      <i t="Updating Radiation Data" l="25" />
+    </i>
+    <i t="Submitting Off-Treatment Data" l="26" />
+  </i>
+  <i t="Working With Baseline Data" l="27">
+    <i t="About Baseline Data" l="28" />
+    <i t="Submitting Diagnosis Data" l="29" />
+    <i t="Submitting Staging Data" l="30">
+      <i t="Adding Tumor Markers" l="31" />
+    </i>
+    <i t="Submitting Pathology Data" l="32" />
+    <i t="Submitting Prior Therapies Data" l="33">
+      <i t="Adding Prior Therapies" l="34" />
+    </i>
+    <i t="Submitting Performance Status Data" l="35" />
+  </i>
+  <i t="Searching for and Adding Patients" l="36">
+    <i t="About Patient Data" l="37" />
+    <i t="Searching For Patients" l="38" />
+    <i t="Viewing Existing Patient Details" l="39" />
+    <i t="Updating Patient Records" l="40" />
+    <i t="Adding New Patients" l="41" />
+    <i t="Deleting Patient Records" l="42" />
+  </i>
+  <i t="Working With Outcome Data" l="43">
+    <i t="About Outcome Data" l="44" />
+    <i t="For example, clinicians may measure a tumor many times throughout the course of treatment in order to make a formal assessment of response. Each measurement must be added to the patient’s record. Submitting Disease Evaluation Data" l="45">
+      <i t="Adding Disease Evaluation Records" l="46" />
+    </i>
+    <i t="Submitting Lesion Assessment Data" l="47">
+      <i t="Adding Lesion Assesment Records" l="48">
+        <i t="Modifying Lesion Assesment Records" l="49" />
+        <i t="Deleting Lesion Assement Records" l="50" />
+      </i>
+    </i>
+    <i t="Submitting Death Information" l="51" />
+  </i>
+  <i t="Application Support" l="52" />
+</WebWorksHelpTOC>
