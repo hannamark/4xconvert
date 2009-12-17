@@ -77,118 +77,67 @@
 *
 */
 
-package gov.nih.nci.accrual.web.util;
+package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.service.StudySubjectService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.accrual.web.dto.util.StagingWebDto;
+import gov.nih.nci.accrual.web.enums.StagingMethods;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.StagingSystemCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.Before;
+
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * @author Hugh Reinhart
- * @since Sep 26, 2009
+ * @author Kalpana Guthikonda
  */
-public class MockStudySubjectBean implements StudySubjectService {
+public class StagingActionTest extends AbstractAccrualActionTest {
+    StagingAction action;
+    StagingWebDto staging;
 
-    Long seq = 1L;
-    List<StudySubjectDto> ssList;
-    {
-        ssList = new ArrayList<StudySubjectDto>();
-        StudySubjectDto dto = new StudySubjectDto();
-        dto.setAssignedIdentifier(StConverter.convertToSt("SUBJ 001"));
-        dto.setDiseaseIdentifier(null);
-        dto.setIdentifier(IiConverter.convertToIi(seq++));
-        dto.setPatientIdentifier(IiConverter.convertToIi(1L));
-        dto.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MEDICAID));
-        dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(1L));
-        dto.setStatusDateRange(new Ivl<Ts>());
-        ssList.add(dto);
+    @Before
+    public void initAction() throws Exception {
+        action = new StagingAction();
+        action.prepare();
+        staging = new StagingWebDto();
+        setParticipantIi(PARTICIPANT1);
     }
-    /**
-     * {@inheritDoc}
-     */
-    public List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException {
-        return ssList;
+    
+    @Override
+    public void executeTest() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectDto create(StudySubjectDto dto) throws RemoteException {
-        dto.setIdentifier(IiConverter.convertToIi(seq++));
-        ssList.add(dto);
-        return dto;
+    @Override
+    public void addTest() throws Exception {
+        staging.setMethod(CdConverter.convertToCd(StagingMethods.PATHOLOGICAL));
+        staging.setMm(StConverter.convertToSt("M"));
+        staging.setNn(StConverter.convertToSt("N"));
+        staging.setTt(StConverter.convertToSt("T"));
+        staging.setStage(StConverter.convertToSt("Stage"));
+        staging.setSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        staging.setId(new Ii());
+        action.setStaging(staging);
+        assertEquals(ActionSupport.SUCCESS, action.save());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void delete(Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
-
+    @Override
+    public void editTest() throws Exception { 
+        staging.setId(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
+        staging.setMethod(CdConverter.convertToCd(StagingMethods.PATHOLOGICAL));
+        staging.setMm(StConverter.convertToSt("M"));
+        staging.setNn(StConverter.convertToSt("N"));
+        staging.setTt(StConverter.convertToSt("T"));
+        staging.setStage(StConverter.convertToSt("Stage"));
+        staging.setSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        action.setStaging(staging);
+        assertEquals(ActionSupport.SUCCESS, action.save()); 
+        assertNotNull(action.getStaging());
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectDto get(Ii ii) throws RemoteException {
-        Long id = IiConverter.convertToLong(ii);
-        StudySubjectDto result = null;
-        for (StudySubjectDto dto : ssList) {
-            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
-                result = dto;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectDto update(StudySubjectDto dto) throws RemoteException {
-        Long id = IiConverter.convertToLong(dto.getIdentifier());
-        for (StudySubjectDto ss : ssList) {
-            if (id.equals(IiConverter.convertToLong(ss.getIdentifier()))) {
-                ss = dto;
-            }
-        }
-        return dto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<StudySubjectDto> getByStudyProtocol(Ii ii) throws RemoteException {
-        return ssList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectDto createOutcomes(StudySubjectDto dto)
-            throws RemoteException {
-        return create(dto);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<StudySubjectDto> getOutcomes(St outcomesLoginName)
-            throws RemoteException {
-        return ssList;
-    }
-
 }

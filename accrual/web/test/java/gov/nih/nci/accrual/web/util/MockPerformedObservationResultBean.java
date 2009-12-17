@@ -85,6 +85,7 @@ import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
 import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
@@ -95,6 +96,7 @@ import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
+import gov.nih.nci.pa.enums.StagingSystemCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -186,6 +188,12 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);*/
         
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TUMORMARKERID));
+        dto.setResultQuantity(pq);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
     }
     
     private List<PerformedLesionDescriptionDto> pldList;
@@ -220,6 +228,46 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setSeriesIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         piList.add(dto);
+    }
+    private List<PerformedClinicalResultDto> pcrList;
+    {
+        pcrList = new ArrayList<PerformedClinicalResultDto>();
+        PerformedClinicalResultDto dto = new PerformedClinicalResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.T));
+        dto.setResultText(StConverter.convertToSt("T"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        pcrList.add(dto);
+        
+        dto = new PerformedClinicalResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.N));
+        dto.setResultText(StConverter.convertToSt("N"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        pcrList.add(dto);
+        
+        dto = new PerformedClinicalResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.M));
+        dto.setResultText(StConverter.convertToSt("M"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        pcrList.add(dto);
+        
+        dto = new PerformedClinicalResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.STAGE));
+        dto.setResultText(StConverter.convertToSt("STAGE"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        pcrList.add(dto);
+        
     }
     
     private class PdPa {
@@ -337,6 +385,11 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         for (CrPa item : listCr) {
             if (item.pa.equals(ii.getExtension())) {
                 list.add(item.dto);
+            }
+        }
+        for (PerformedClinicalResultDto item : pcrList) {
+            if (ii.getExtension().equals(item.getPerformedObservationIdentifier().getExtension())) {
+                list.add(item);
             }
         }
         return list;

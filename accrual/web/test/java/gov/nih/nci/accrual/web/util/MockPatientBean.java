@@ -115,6 +115,7 @@ public class MockPatientBean implements PatientService {
         p.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.WHITE.getName()));
         p.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         p.setZip(StConverter.convertToSt("12345"));
+        pList.add(p);
     }
 
     /**

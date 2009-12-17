@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,6 +141,9 @@ public class MockPaInterventionBean implements InterventionServiceRemote {
      * @throws PAException
      */
     public InterventionDTO get(Ii ii) throws PAException {
+        if (ii == null || ii.getExtension() == null) {
+            throw new PAException("NULL argument getInterventionDTO");
+        }
         Long id = IiConverter.convertToLong(ii);
         InterventionDTO result = null;
         for (InterventionDTO item : list) {

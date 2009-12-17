@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.SurgeryWebDto;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -107,11 +108,18 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
         action = new SurgeryAction();
         action.prepare();
         surgery = new SurgeryWebDto();
+        setParticipantIi(PARTICIPANT1);
     }
 
     @Override
     @Test
     public void executeTest() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+    }
+    
+    @Test
+    public void executeExceptionTest() {
+        setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
@@ -149,6 +157,16 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
         action.setSurgery(surgery);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
+    
+    @Test
+    public void addExceptionTest() throws Exception {
+        surgery.setName(StConverter.convertToSt("Surgery1"));
+        int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+        Date test = new Date();
+        surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        action.setSurgery(surgery);
+        assertEquals(ActionSupport.INPUT, action.add());
+    }
 
     @Override
     @Test
@@ -158,6 +176,7 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
         surgery.setId(IiConverter.convertToIi(MockPerformedActivityBean.SURGERYID));
         action.setSurgery(surgery);
         assertEquals(ActionSupport.SUCCESS, action.edit());
+        assertNotNull(action.getSurgery());
     }
     
     @Test

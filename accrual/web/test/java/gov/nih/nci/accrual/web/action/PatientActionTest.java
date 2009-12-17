@@ -84,6 +84,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.dto.util.ParticipantWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchParticipantCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -138,8 +139,11 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void retrieveTest() {
+        action.execute();
         action.retrieve();
         assertTrue(action.hasActionErrors());
+        action.setSelectedRowIdentifier("1");
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
     }
 
     @Override
@@ -147,12 +151,15 @@ public class PatientActionTest extends AbstractAccrualActionTest {
      public void updateTest() {
         action.update();
         assertTrue(action.hasActionErrors());
+        action.setSelectedRowIdentifier("1");
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
     }
 
     @Override
-    @Test(expected = NullPointerException.class)
+    @Test
     public void deleteTest() throws Exception {
-        action.delete();
+        action.setSelectedRowIdentifier("1");
+        assertEquals(ActionSupport.SUCCESS,action.delete());
     }
 
     @Override

@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -103,6 +104,7 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
         action = new TreatmentAction();
         action.prepare();
         treatment = new TreatmentWebDto();
+        setParticipantIi(PARTICIPANT1);
     }
 
     @Override
@@ -156,5 +158,6 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
         treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
         action.setTreatment(treatment);
         assertEquals(ActionSupport.SUCCESS, action.edit());
+        assertNotNull(action.getTreatment());
     }
 }

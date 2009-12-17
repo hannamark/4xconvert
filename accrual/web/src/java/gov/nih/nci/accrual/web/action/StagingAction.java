@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
@@ -259,8 +258,9 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
     public void loadDisplayList() {
      List<TumorMarkerWebDto> tumorMarkerList = new ArrayList<TumorMarkerWebDto>();
      try {
-            List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(getParticipantIi());
-            for (PerformedActivityDto pa : paList) {
+            List<PerformedObservationDto> paList = performedActivitySvc.getPerformedObservationByStudySubject(
+                    getParticipantIi());
+            for (PerformedObservationDto pa : paList) {
                 if (pa.getCategoryCode() != null && pa.getCategoryCode().getCode() != null
                         && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.TUMOR_MARKER.getCode())) {
                  TumorMarkerWebDto item = new TumorMarkerWebDto();

@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.web.action.AbstractAccrualActionTest;
+import gov.nih.nci.accrual.web.enums.StagingMethods;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
@@ -125,6 +126,8 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public static final String AUTOPSY_INFORMATIONID = "AutopsyInformation 1";
     public static final String LESION_ASSESSMENTID = "Lesion Assessment 1";
     public static final String LESION_ASSESSMENTID2 = "Lesion Assessment 2";
+    public static final String STAGINGID = "Staging 1";
+    public static final String TUMORMARKERID = "TumorMarker 1";
     /*public static final String HEIGHTID = "Height 1";
     public static final String WEIGHTID = "Weight 1";
     public static final String BSAID = "BSA 1";*/
@@ -209,6 +212,24 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(STAGINGID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.STAGING));
+        cds = new ArrayList<Cd>();
+        cds.add(CdConverter.convertToCd(StagingMethods.PATHOLOGICAL));
+        dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(TUMORMARKERID));
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.TUMOR_MARKER));
+        dto.setName(StConverter.convertToSt("Tumor Marker"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
     }
     
     private List<PerformedSubjectMilestoneDto> psmList;   
@@ -238,6 +259,15 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setInterventionIdentifier(IiConverter.convertToIi(1L));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        ppList.add(dto);
+        
+        dto = new PerformedProcedureDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SURGERY));
+        dto.setTextDescription(StConverter.convertToSt("Surgery Info2"));
+        dto.setActualDateRange(surgeryDate);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT2));
         ppList.add(dto);
     }
     private List<PerformedSubstanceAdministrationDto> psaList;
@@ -473,7 +503,13 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedProcedureDto> getPerformedProcedureByStudySubject(
             Ii ii) throws RemoteException {
-        return ppList;
+        List<PerformedProcedureDto> list = new ArrayList<PerformedProcedureDto>();
+        for (PerformedProcedureDto item : ppList) {
+            if (ii.getExtension().equals(item.getStudySubjectIdentifier().getExtension())) {
+                list.add(item);
+            }
+        }
+        return list;
     }
 
     public PerformedRadiationAdministrationDto getPerformedRadiationAdministration(
