@@ -180,7 +180,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
             if (priors.getId() != null && priors.getId().getExtension() != null) {
                 try {
                     performedActivitySvc.delete(priors.getId());
-                } catch (RemoteException e) {
+                } catch (Exception e) {
                     addActionError(e.getMessage());
                 }
             }   
@@ -581,6 +581,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     private PriorTherapiesWebDto getData() {
         PriorTherapiesWebDto dbPriors = new PriorTherapiesWebDto();      
         dbPriors.setId(null);
+        dbPriors.setList(new ArrayList<PriorTherapiesItemWebDto>());
         try {
             List<PerformedObservationDto> paList = performedActivitySvc.getPerformedObservationByStudySubject(
                     getParticipantIi());
@@ -682,8 +683,10 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
      */
     private void validateForm(List<PriorTherapiesItemWebDto> toValidateDtoList) {
         getUpdatedDesc(toValidateDtoList);
-        for (PriorTherapiesItemWebDto toValidateDto : toValidateDtoList) {
-            validateAddPrior(toValidateDto);
+        if (toValidateDtoList != null && !toValidateDtoList.isEmpty()) {
+            for (PriorTherapiesItemWebDto toValidateDto : toValidateDtoList) {
+                validateAddPrior(toValidateDto);
+            }
         }
     }
 

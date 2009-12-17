@@ -92,10 +92,8 @@
 <tr><td>&nbsp;</td><td>
     <s:set name="priorsList" scope="request" value="priors.list"/>    
     <s:set name="priorTherapyTypeCodeValues" value="@gov.nih.nci.pa.enums.PriorTherapyTypeCode@getDisplayNames()" />   
-    <display:table class="data" summary="The list of Prior Therapy Regimens.
-            Please use column headers to sort results." length="0" pagesize="0"
-            sort="list" uid="row" name="priorsList" requestURI="PriorTherapies.action" export="false">
-        <display:column titleKey="priorTherapy.label.list.type" headerClass="left" sortable="true" class="${roClass}">
+    <display:table class="data" summary="The list of Prior Therapy Regimens." length="0" pagesize="0" uid="row" name="priorsList" export="false">
+        <display:column titleKey="priorTherapy.label.list.type" headerClass="left" class="${roClass}">
              <s:if test="%{!priors.hasPrior}">&nbsp;
              </s:if>
              <s:elseif test="%{#attr.row_rowNum == priors.list.size()}">
@@ -107,7 +105,7 @@
                     list="#priorTherapyTypeCodeValues" value="%{#attr.row.type.code}"/>
              </s:else>
         </display:column>
-        <display:column titleKey="priorTherapy.label.list.description" headerClass="left" sortable="true" class="${roClass}">
+        <display:column titleKey="priorTherapy.label.list.description" headerClass="left" class="${roClass}">
              <s:if test="%{!priors.hasPrior}">&nbsp;
              </s:if>
              <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:textfield size="50" name="newPrior.description"/>
@@ -115,7 +113,7 @@
              <s:else><s:textfield size="50" name="desc_%{#attr.row.id.extension}" value="%{#attr.row.description}"/>
              </s:else>
         </display:column>
-       <display:column titleKey="priorTherapy.label.list.action" sortable="true" 
+       <display:column titleKey="priorTherapy.label.list.action"  
          headerClass="centered" class="centered" headerScope="col">
              <s:if test="%{!priors.hasPrior}">&nbsp;
              </s:if>
