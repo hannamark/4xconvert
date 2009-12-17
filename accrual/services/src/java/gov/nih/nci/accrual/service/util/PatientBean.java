@@ -78,50 +78,15 @@
 */
 package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.convert.Converters;
-import gov.nih.nci.accrual.convert.PatientConverter;
-import gov.nih.nci.accrual.dto.util.POPatientDTO;
-import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
-import gov.nih.nci.accrual.util.PoRegistry;
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.iso.util.AddressConverterUtil;
-import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.DSetEnumConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.entity.NullifiedEntityException;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.zip.DataFormatException;
-
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.SessionContext;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Hugh Reinhart
@@ -129,181 +94,9 @@ import org.hibernate.Session;
  */
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
-public class PatientBean implements PatientService {
-
-    private static final Logger LOG  = Logger.getLogger(PatientBean.class);
-    private SessionContext ejbContext;
-    @EJB
-    CountryService countryServ;
-    @EJB
-    PatientServiceRemote patientCorrelationSvc;
-
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        ejbContext = ctx;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PatientDto create(PatientDto dto) throws RemoteException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Update method should be used to modify existing.");
-        }
-        return createOrUpdate(dto);
-    }
-
-    /**
-     * @param dto dto
-     * @throws RemoteException exception
-     */
-    void enforceBusinessRules(PatientDto dto) throws RemoteException {
-        Set<String> raceCodes = DSetEnumConverter.convertDSetToSet(dto.getRaceCode());
-        boolean containsUnique = false;
-        for (String raceCode : raceCodes) {
-            if (PatientRaceCode.getByCode(raceCode).isUnique()) {
-                containsUnique = true;
-            }
-        }
-        if (raceCodes.size() > 1 && containsUnique) {
-           throw new RemoteException("Business rule is violated. No multiple selection"
-                + " when race code is Not Reported or Unknown.");
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PatientDto get(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
-            throw new RemoteException("Called get() with Ii == null.");
-        }
-        Patient bo = null;
-        PatientDto resultDto = null;
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            bo = (Patient) session.get(Patient.class, IiConverter.convertToLong(ii));
-            if (bo == null) {
-                LOG.error("Object not found using get() for id = "
-                        + IiConverter.convertToString(ii) + ".");
-                return resultDto;
-            }
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in get().", hbe);
-        }
-        try {
-            resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
-        } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in get().", e);
-        }
-        return resultDto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PatientDto update(PatientDto dto) throws RemoteException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to create new.");
-        }
-        return createOrUpdate(dto);
-    }
-
-    private PatientDto createOrUpdate(PatientDto dto) throws RemoteException {
-        enforceBusinessRules(dto);
-        Patient bo = null;
-        try {
-            updatePOPatientCorrelation(dto);
-            bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
-            bo.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
-           //PO generated Player identifier
-            bo.setPersonIdentifier(IiConverter.convertToString(dto.getPersonIdentifier()));
-            updatePOPatientDetails(dto);
-            bo.setStatusCode(StructuralRoleStatusCode.PENDING);
-            bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
-        }
-        PatientDto resultDto = null;
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
-            if (PAUtil.isIiNull(dto.getIdentifier())) {
-                bo.setUserLastCreated(bo.getUserLastUpdated());
-                bo.setDateLastCreated(bo.getDateLastUpdated());
-            } else {
-                Patient oldBo = (Patient) session.get(Patient.class, IiConverter.convertToLong(dto.getIdentifier()));
-                bo.setDateLastCreated(oldBo.getDateLastCreated());
-                bo.setUserLastCreated(oldBo.getUserLastCreated());
-                session.evict(oldBo);
-            }
-            bo = (Patient) session.merge(bo);
-            session.flush();
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in createOrUpdate().", hbe);
-        }
-        try {
-            resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
-        } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
-        }
-        return resultDto;
-    }
-
-    private void updatePOPatientDetails(PatientDto dto) throws RemoteException {
-
-        gov.nih.nci.services.person.PersonDTO poPersonDTO = new gov.nih.nci.services.person.PersonDTO();
-        try {
-            PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
-             Ii personID = IiConverter.convertToPoPersonIi(dto.getPersonIdentifier().getExtension());
-             poPersonDTO = peService.getPerson(personID);
-        } catch (NullifiedEntityException e) {
-            LOG.info("This Person is nullified " + dto.getPersonIdentifier().getExtension());
-        }
-
-        poPersonDTO.setBirthDate(dto.getBirthDate());
-        poPersonDTO.setRaceCode(dto.getRaceCode());
-        poPersonDTO.setSexCode(dto.getGenderCode());
-        List<Cd> cds = new ArrayList<Cd>();
-        cds.add(dto.getEthnicCode());
-        poPersonDTO.setEthnicGroupCode(DSetConverter.convertCdListToDSet(cds));
-       try {
-            PoRegistry.getPersonEntityService().updatePerson(poPersonDTO);
-        } catch (EntityValidationException e) {
-            LOG.info("EntityValidationException in updatePOPatientDetails:  " + e.getMessage());
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void updatePOPatientCorrelation(PatientDto dto)
-            throws RemoteException {
-        POPatientDTO popDTO = new POPatientDTO();
-        Ii scoper = IiConverter.convertToPoOrganizationIi(
-                IiConverter.convertToString(dto.getOrganizationIdentifier()));
-        scoper.setReliability(IdentifierReliability.ISS);
-        popDTO.setScoperIdentifier(scoper);
-
-        Country country = countryServ.getCountry(dto.getCountryIdentifier());
-        String zip = PAUtil.isStNull(dto.getZip()) ? "11111" : StConverter.convertToString(dto.getZip());
-
-        Ad ad = AddressConverterUtil.create("Street", null, "City", "VA", zip, country.getAlpha3());
-        popDTO.setPostalAddress(new DSet<Ad>());
-        popDTO.getPostalAddress().setItem(Collections.singleton(ad));
-
-        POPatientDTO poPatientDTO = null;
-            if (dto.getAssignedIdentifier() != null && dto.getAssignedIdentifier().getExtension() != null) {
-                poPatientDTO = patientCorrelationSvc.get(IiConverter.convertToPOPatientIi(
-                    IiConverter.convertToLong(dto.getAssignedIdentifier())));
-                poPatientDTO.setScoperIdentifier(scoper);
-                poPatientDTO.setPostalAddress(popDTO.getPostalAddress());
-                popDTO = patientCorrelationSvc.update(poPatientDTO);
-            } else {
-                popDTO = patientCorrelationSvc.create(popDTO);
-            }
-        dto.setAssignedIdentifier(popDTO.getIdentifier());
-        dto.setPersonIdentifier(popDTO.getPlayerIdentifier());
-    }
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+public class PatientBean extends PatientBeanLocal implements PatientService {
+    
 }

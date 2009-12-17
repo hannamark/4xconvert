@@ -115,7 +115,7 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      * {@inheritDoc}
      */
     public PatientService getPatientService() {
-        return (PatientService) JNDIUtil.lookup("accrual/PatientBean/remote");
+        return (PatientService) JNDIUtil.lookup("accrual/PatientBeanLocal/remote");
     }
 
     /**
