@@ -147,7 +147,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="outcomes-grid.build.target" value="clean:deployJBoss"/>
     <property name="outcomes-grid.artifact.dir" value="${outcomes-grid.base.dir}/target" />
     <property name="outcomes-grid.dist.dir" value="${dist.exploded.dir}/${outcomes-grid.dist.relative.dir}"/>
-    
+
     <!-- Selenium settings -->
     <property name="selenium.jar" location="${lib.dir}/test-selenium/selenium-server-1.0-beta-1.jar"/>
     <property name="selenium.browser" value="*firefox"/>
@@ -391,9 +391,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
-	<target name="ivy-get" description="Get dependencies">
+    <target name="ivy-get" description="Get dependencies">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
-        	            dir="${pa-ear.base.dir}" >
+                        dir="${pa-ear.base.dir}" >
             <target name="ivy-get"/>
         </ant>
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
@@ -420,8 +420,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${viewer-web.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-	</target>
-	
+    </target>
+
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
         depends="
@@ -487,6 +487,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.port.number" value="${po.port.number}" />
             <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
             <property name="outcomes.url" value="${outcomes.url}" />
+            <property name="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
+            <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrytped}"/>
             <target name="${accrual-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
         </ant>
@@ -650,7 +652,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       </zip>
       <delete dir="${pa-grid-legacy.artifact.dir}/server" />
     </target>
-    
+
     <!-- Build outcomes-grid sub-project produces project level artifact -->
     <target name="build:outcomes-grid" depends="init" unless="exclude.outcomes-grid">
       <fail unless="jboss.server.hostname"/>
@@ -675,7 +677,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       </zip>
       <delete dir="${outcomes-grid.artifact.dir}/server" />
     </target>
-    
+
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="validate:pre:build">
         <validate-pre-build
@@ -703,7 +705,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         dist:tools:retrieve:jboss,
         dist:tools:retrieve:sync-gts
         " />
-    <!-- 
+    <!--
        See https://wiki.nci.nih.gov/display/BuildandDeploymentAutomation/How+to+configure+a+Secure+Grid+Listener for more details
     -->
     <target name="dist:tools:retrieve:sync-gts"  description="Downloads caGrid SyncGTS service file from binary repository and verifies checksum">
@@ -789,9 +791,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <include name="**/*"/>
             </fileset>
         </copy>
-    	<copy todir="${dist.exploded.dir}" overwrite="true">
-    		<fileset file="${build.dir}/jboss-server-lib-deletes.txt" />
-    	</copy>
+        <copy todir="${dist.exploded.dir}" overwrite="true">
+            <fileset file="${build.dir}/jboss-server-lib-deletes.txt" />
+        </copy>
 
     <dist-prep />
 
@@ -980,7 +982,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         remoteSshKeyfile="${outcomes-grid.ssh.key.file}"
         remotesshcommand=". .bash_profile;cd ${outcomes-grid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true -Dexclude.pa-ear=true -Dexclude.accrual-ear=true -Dexclude.database=true -Dexclude.pa-grid=true -Dexclude.pa-grid-legacy=true ${install.target}" />
     </target>
-    
+
     <!-- Upgrades the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point upgrader to correct enviornment to upgrade -->
     <target name="deploy:remote:upgrade"
         depends="
@@ -1352,7 +1354,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <target name="${accrual-ear.deploy.target}"/>
         </ant>
     </target>
-        
+
     <target name="deploy:hot" depends="build:all, deploy:hot:accrual" description="Hot deploys the deployment artifact">
         <copy file="${pa-ear.dist.dir}/${pa-ear.file.name}" todir="${jboss.hot.deploy.dir}" />
     </target>
