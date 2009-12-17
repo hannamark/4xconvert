@@ -171,7 +171,7 @@
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.treatmentSite.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield readonly="true" size="30" name="userAccount.treatmentSite" cssStyle="float:left; width:200px" cssClass="readonly"/>                       
+                        <s:textfield readonly="true" size="30" name="userAccount.treatmentSite" cssStyle="float:left; width:350px" cssClass="readonly"/>                       
                         <s:hidden name="userAccount.treatmentSiteId"/>
                         <a href="#" class="btn" onclick="lookupTreatmentSite('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.treatmentSite</s:param></s:fielderror>
@@ -180,7 +180,7 @@
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.physician.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield readonly="true" size="30" name="userAccount.physician" cssStyle="float:left; width:200px" cssClass="readonly"/>
+                        <s:textfield readonly="true" size="30" name="userAccount.physician" cssStyle="float:left; width:350px" cssClass="readonly"/>
                         <s:hidden name="userAccount.physicianId"/>
                         <a href="#" class="btn" onclick="lookupPhysician('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.physician</s:param></s:fielderror>

@@ -47,13 +47,14 @@ public class UserAccountAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 1L;
     private UserAccountWebDTO userAccount = new UserAccountWebDTO();
     private String userAction = "";
-    /** Create. */
-    public static final String CREATE = "create";
+    private static final String CREATE = "create";
     private String lookupType;
     private TreatmentSiteWebDTO treatmentSiteSearchCriteria = new TreatmentSiteWebDTO();
     private List<TreatmentSiteWebDTO> treatmentSites = new ArrayList<TreatmentSiteWebDTO>();
     private PhysicianWebDTO physicianSearchCriteria = new PhysicianWebDTO();
     private List<PhysicianWebDTO> physicians = new ArrayList<PhysicianWebDTO>();
+    private static final String UNAVAIL_ORG_MSG = "This Organization is no longer available. Please select another.";
+    private static final String UNAVAIL_PERSON_MSG = "This Person is no longer available. Please select another.";
 
     /**
      * @return success
@@ -110,7 +111,13 @@ public class UserAccountAction extends AbstractAccrualAction {
                 userAccount.setPassword(password);
             } else { // user already exists
                 String treatmentSite = getTreatmentSite(user.getPoOrganizationIdentifier());
+                if (treatmentSite == null || treatmentSite.equals(UNAVAIL_ORG_MSG)) {
+                    user.setPoOrganizationIdentifier(null);
+                }
                 String physician = getPhysician(user.getPoPersonIdentifier());
+                if (physician == null || physician.equals(UNAVAIL_PERSON_MSG)) {
+                    user.setPoPersonIdentifier(null);
+                }
                 userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
             }
         } catch (Exception e) {
@@ -139,7 +146,7 @@ public class UserAccountAction extends AbstractAccrualAction {
         } catch (NullifiedEntityException e) {
             LOG.equals("NullifiedEntityException" + e.getMessage());
         }
-        return "This Organization is no longer available. Please select another.";
+        return UNAVAIL_ORG_MSG;
     }
     
     /**
@@ -172,7 +179,7 @@ public class UserAccountAction extends AbstractAccrualAction {
             }
         } catch (NullifiedEntityException e) {
             LOG.equals("NullifiedEntityException" + e.getMessage());
-            firstName = "This Person is no longer available. Please select another.";
+            firstName = UNAVAIL_PERSON_MSG;
         }
         String physician = (lastName == null) ? "" : lastName;
         physician += (firstName == null) ? "" : ", " + firstName;
@@ -257,7 +264,13 @@ public class UserAccountAction extends AbstractAccrualAction {
             
             if (user != null) {
                 String treatmentSite = getTreatmentSite(user.getPoOrganizationIdentifier());
+                if (treatmentSite == null || treatmentSite.equals(UNAVAIL_ORG_MSG)) {
+                    user.setPoOrganizationIdentifier(null);
+                }
                 String physician = getPhysician(user.getPoPersonIdentifier());
+                if (physician == null || physician.equals(UNAVAIL_PERSON_MSG)) {
+                    user.setPoPersonIdentifier(null);
+                }
                 userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
             }
         } catch (Exception e) {

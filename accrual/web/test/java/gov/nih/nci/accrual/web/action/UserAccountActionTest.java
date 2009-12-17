@@ -123,8 +123,8 @@ public class UserAccountActionTest extends AbstractAccrualActionTest{
             userAccount.setCountry("USA");
             userAccount.setPhoneNumber("phone");
             userAccount.setOrganization("testOrg");
-            userAccount.setPhysician("physician");
-            userAccount.setTreatmentSite("treatmentSite");
+            userAccount.setPhysicianId("physicianID");
+            userAccount.setTreatmentSiteId("treatmentSiteID");
             action.setUserAccount(userAccount);
             assertEquals("redirectToLogin", action.create());
         }
@@ -171,8 +171,8 @@ public class UserAccountActionTest extends AbstractAccrualActionTest{
             userAccount.setCountry("country");
             userAccount.setPhoneNumber("phone");
             userAccount.setOrganization("testOrg");
-            userAccount.setPhysician("physician");
-            userAccount.setTreatmentSite("treatmentSite");
+            userAccount.setPhysicianId("physicianID");
+            userAccount.setTreatmentSiteId("treatmentSiteID");
             userAccount.setId("1");
             action.setUserAccount(userAccount);
             assertEquals("create", action.updateAccount());

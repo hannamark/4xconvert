@@ -129,12 +129,12 @@ public class UserAccountWebDTO {
                                         "> Please enter an Organization Affiliation");
             
             // validate treatment site
-            action.addFieldErrorIfEmpty(userAccount.getTreatmentSite(), 
+            action.addFieldErrorIfEmpty(userAccount.getTreatmentSiteId(), 
                                         USER_ACCOUNT + ".treatmentSite", 
                                         "> Please select a Treatment Site");
             
             // validate physician
-            action.addFieldErrorIfEmpty(userAccount.getPhysician(), 
+            action.addFieldErrorIfEmpty(userAccount.getPhysicianId(), 
                                         USER_ACCOUNT + ".physician", 
                                         "> Please select a Physician");
         }

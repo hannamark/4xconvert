@@ -84,6 +84,8 @@ import gov.nih.nci.accrual.convert.UserConverter;
 import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -93,6 +95,9 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -146,6 +151,9 @@ public class UserBeanLocal
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in getUser().", e);
             }
+            
+            resultDto.setPoOrganizationIdentifier(checkPoOrganizationId(resultDto.getPoOrganizationIdentifier()));
+            resultDto.setPoPersonIdentifier(checkPoPersonId(resultDto.getPoPersonIdentifier()));
         
             // get the CSM user
             User csmUser = AccrualCsmUtil.getInstance().getCSMUser(loginName);
@@ -441,5 +449,35 @@ public class UserBeanLocal
         }
         
         throw new RemoteException("Error while retrieving country name");
+    }
+    
+    private Ii checkPoOrganizationId(Ii poOrganizationId) throws RemoteException {
+        if (poOrganizationId == null) {
+            return null;
+        }
+        
+        OrganizationDTO organization;
+        try {
+            organization = PoRegistry.getOrganizationEntityService().getOrganization(poOrganizationId);            
+        } catch (NullifiedEntityException e) {
+            return null;
+        }
+        
+        return organization.getIdentifier();
+    }
+    
+    private Ii checkPoPersonId(Ii poPersonId) throws RemoteException {
+        if (poPersonId == null) {
+            return null;
+        }
+        
+        PersonDTO person;
+        try {
+            person = PoRegistry.getPersonEntityService().getPerson(poPersonId);
+        } catch (NullifiedEntityException e) {
+            return null;
+        }
+        
+        return person.getIdentifier();
     }
 }
