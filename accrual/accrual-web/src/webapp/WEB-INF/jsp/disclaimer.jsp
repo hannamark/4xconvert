@@ -39,7 +39,7 @@ function submitForm(btnSelected){
 <hr>
 Welcome to the NCI's Clinical Trials Reporting Program (CTRP) Accrual Module pilot website.  As a CTRP pilot cancer 
 center, we value your feedback in the initial evaluation of the CTRP Accrual Module and accrual information submission 
-process.  Please send your questions, comments, and feedback to <s:a href="NCICTRP@mail.nih.gov">NCICTRP@mail.nih.gov</s:a>
+process.  Please send your questions, comments, and feedback to <s:a href="mailto:NCICTRP@mail.nih.gov">NCICTRP@mail.nih.gov</s:a>
 <hr>
 </td>
 </tr>
