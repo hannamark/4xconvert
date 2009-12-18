@@ -26,8 +26,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
-import gov.nih.nci.registry.dto.TrialFundingWebDTO;
-import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.TrialUtil;
@@ -117,27 +115,14 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             ServletActionContext.getRequest().setAttribute(
                     "failureMessage" , "The form has errors and could not be submitted, "
                     + "please check the fields highlighted below");
-            addSessionAttributes(trialDTO);
         return ERROR;
         }
         if (hasActionErrors()) {
-            addSessionAttributes(trialDTO);
             return ERROR;
         }
         try {
-            List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
-            .getSession().getAttribute(Constants.INDIDE_LIST);
-            if (indList != null) {
-                trialDTO.setIndIdeDtos(indList);
-            }
-            List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
-            .getSession().getAttribute(Constants.GRANT_LIST);
-            if (grantList != null) {
-                trialDTO.setFundingDtos(grantList);
-            }
             trialDTO.setDocDtos(addDocDTOToList());
         } catch (IOException e) {
-                addSessionAttributes(trialDTO);
                 addActionError(e.getMessage());
                 return ERROR;
         }
@@ -293,7 +278,6 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     public String edit() {
         trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().
             getSession().getAttribute(SESSION_TRIAL_DTO);
-        addSessionAttributes(trialDTO);
         return "edit";
     }
     /**
@@ -303,6 +287,9 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     public String create() {
         trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession().
             getAttribute(SESSION_TRIAL_DTO);
+        if (trialDTO == null) {
+            return ERROR;
+        }
         TrialUtil util = new TrialUtil();
         try {
             StudyProtocolDTO studyProtocolDTO = convertToInterventionalStudyProtocolDTO(trialDTO);
@@ -354,7 +341,6 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
         } catch (PAException e) {
             LOG.error(e);
             addActionError(e.getMessage());
-            addSessionAttributes(trialDTO);
             return ERROR;
         }
         return "review";
@@ -386,19 +372,6 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
     public String cancel() {
         TrialValidator.removeSessionAttributes();
         return "redirect_to_search";
-    }
-    private void addSessionAttributes(ProprietaryTrialDTO tDTO) {
-        if (tDTO == null) {
-            return;
-        }
-        if (tDTO.getIndIdeDtos() != null && !tDTO.getIndIdeDtos().isEmpty()) {
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST,
-                    tDTO.getIndIdeDtos());
-        }
-        if (tDTO.getFundingDtos() != null && !tDTO.getFundingDtos().isEmpty()) {
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
-                    tDTO.getFundingDtos());
-        }
     }
     private List<TrialDocumentWebDTO> addDocDTOToList() throws IOException {
         TrialUtil util = new TrialUtil();

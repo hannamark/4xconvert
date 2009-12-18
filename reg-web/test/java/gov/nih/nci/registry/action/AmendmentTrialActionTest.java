@@ -9,8 +9,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.util.CtrpHibernateHelper;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.TestHibernateHelper;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -19,6 +22,8 @@ import java.net.URL;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.Session;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -35,12 +40,20 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     
     private AmendmentTrialAction trialAction;
     private static final String FILE_NAME = "ProtocolDoc.doc";
+    private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
+    @Before 
+    public void setup(){
+        HibernateUtil.testHelper = testHelper;
+        Session session = HibernateUtil.getCurrentSession();
+        session.clear();
+    }
     @Test
     public void testView() throws Exception {
         trialAction = new AmendmentTrialAction();
         trialAction.setStudyProtocolId("1");
-        trialAction.view();
-//        assertEquals("sucess",trialAction.view());
+        //trialAction.view();
+        primeData();
+        assertEquals("success",trialAction.view());
     }
     @Test
     public void testViewWithIdInRequest() throws Exception {
@@ -50,8 +63,8 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         request.setupAddParameter("studyProtocolId", "1");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        trialAction.view();
-//        assertEquals("sucess",trialAction.view());
+        //trialAction.view();
+        assertEquals("success",trialAction.view());
     }
     @Test
     public void testEdit() throws Exception {
@@ -579,7 +592,5 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setIrbApprovalFileName(FILE_NAME);
         trialAction.setChangeMemoDocFileName(FILE_NAME);
         assertEquals("error", trialAction.review());
-       
-        
     }
 }

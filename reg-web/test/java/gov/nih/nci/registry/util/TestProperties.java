@@ -1,7 +1,7 @@
-/***
+/*
 * caBIG Open Source Software License
 * 
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
+* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
 * 
@@ -76,91 +76,30 @@
 * 
 * 
 */
-package gov.nih.nci.registry.dto;
+package gov.nih.nci.registry.util;
 
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 
 /**
- * Class for holding attributes for StudySite DTO.
- * @author Bala Nair
+ * Environment properties passed in to tests.
  */
-public class StudyParticipationWebDTO {
+public class TestProperties {
+    public static final String TEST_SCHEMA_SHOWSQL = "test.schema.showsql";
 
-    private String id;
-    private String localProtocolIdentifier;
-    private String summary4FundingSponsor;
-    private String nctNumber;
-
-    /**
-     * @param iso StudyResourcingDTO object
-     */
-    public StudyParticipationWebDTO(StudySiteDTO iso) {
-        super();
-        this.localProtocolIdentifier = iso.getLocalStudyProtocolIdentifier().getValue().toString();
-        this.id = iso.getIdentifier().getExtension();
+    private static Properties properties = new Properties();
+    static {
+        try {
+            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("test.properties");;
+            properties.load(stream);
+        } catch (IOException e) {
+            //throw new RuntimeException(e);
+        }
     }
-
-    /** .
-     *  Default Constructor
-     */
-    public StudyParticipationWebDTO() {
-        super();
+    
+    public static String getShowSQL() {
+        return properties.getProperty(TEST_SCHEMA_SHOWSQL, "false");
     }
-
-    /**
-     * @return fundingMechanismCode
-     */
-    public String getLocalProtocolIdentifier() {
-        return localProtocolIdentifier;
-    }
-
-    /**
-     * @param localProtocolIdentifier localProtocolIdentifier
-     */
-    public void setLocalProtocolIdentifier(String localProtocolIdentifier) {
-        this.localProtocolIdentifier = localProtocolIdentifier;
-    }
-
-    /**
-     * @return id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the summary4FundingSponsor
-     */
-    public String getSummary4FundingSponsor() {
-        return summary4FundingSponsor;
-    }
-
-    /**
-     * @param summary4FundingSponsor the summary4FundingSponsor to set
-     */
-    public void setSummary4FundingSponsor(String summary4FundingSponsor) {
-        this.summary4FundingSponsor = summary4FundingSponsor;
-    }
-
-    /**
-     * @param nctNumber the nctNumber to set
-     */
-    public void setNctNumber(String nctNumber) {
-        this.nctNumber = nctNumber;
-    }
-
-    /**
-     * @return the nctNumber
-     */
-    public String getNctNumber() {
-        return nctNumber;
-    }
-
 }

@@ -31,6 +31,12 @@ public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO
         dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         docList.add(dto);
+        dto = new DocumentDTO();
+        dto.setFileName(StConverter.convertToSt("fileName"));
+        dto.setTypeCode(CdConverter.convertStringToCd("IRB Approval Document"));
+        dto.setIdentifier(IiConverter.convertToIi("2"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
+        docList.add(dto);
     }
     
     /* (non-Javadoc)
@@ -51,8 +57,13 @@ public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO
      * @see gov.nih.nci.pa.service.DocumentService#get(gov.nih.nci.coppa.iso.Ii)
      */
     public DocumentDTO get(Ii id) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        DocumentDTO  matchingDto = new DocumentDTO();
+        for (DocumentDTO dto: docList){
+            if(dto.getIdentifier().getExtension().equals(id.getExtension())) {
+                matchingDto = dto;
+            }
+        }
+        return matchingDto;
     }
 
     /* (non-Javadoc)

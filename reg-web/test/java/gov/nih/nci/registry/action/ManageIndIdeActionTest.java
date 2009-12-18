@@ -4,6 +4,8 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.registry.util.Constants;
 
 import javax.servlet.http.HttpSession;
@@ -33,9 +35,11 @@ public class ManageIndIdeActionTest extends AbstractRegWebTest {
         request.setupAddParameter("expandedaccess", "arg1");
         request.setupAddParameter("expandedaccesstype", "arg1");
         sess.setAttribute(Constants.INDIDE_LIST, getIndDtos());
+        sess.setAttribute(Constants.INDIDE_ADD_LIST, getIndDtos());
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("display_ideind",indAction.addIdeIndIndicator());
+        assertEquals("display_ideindadd",indAction.addIdeIndIndicatorForUpdate());
     }
     @Test
     public void testAddIndIde(){
@@ -52,6 +56,7 @@ public class ManageIndIdeActionTest extends AbstractRegWebTest {
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("display_ideind",indAction.addIdeIndIndicator());
+        assertEquals("display_ideindadd" ,indAction.addIdeIndIndicatorForUpdate());
     }
     @Test
     public void testAddIndIdeSomeEmpty(){
@@ -68,6 +73,7 @@ public class ManageIndIdeActionTest extends AbstractRegWebTest {
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("success",indAction.addIdeIndIndicator());
+        assertEquals("success",indAction.addIdeIndIndicatorForUpdate());
     }
     @Test
     public void testAddIndIdeAllEmpty(){
@@ -84,6 +90,7 @@ public class ManageIndIdeActionTest extends AbstractRegWebTest {
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("display_ideind",indAction.addIdeIndIndicator());
+        assertEquals("display_ideindadd" ,indAction.addIdeIndIndicatorForUpdate());
     }
     @Test
     public void testDeleteIndIde(){
@@ -92,9 +99,11 @@ public class ManageIndIdeActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("uuid", "1");
         sess.setAttribute(Constants.INDIDE_LIST, getIndDtos());
+        sess.setAttribute(Constants.INDIDE_ADD_LIST, getIndDtos());
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("display_ideind",indAction.deleteIndIde());
+        assertEquals("display_ideindadd",indAction.deleteIndIdeForUpdate());
     }
     @Test
     public void testDeleteIndIdeNotInList(){
@@ -103,9 +112,17 @@ public class ManageIndIdeActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("uuid", "2");
         sess.setAttribute(Constants.INDIDE_LIST, getIndDtos());
+        sess.setAttribute(Constants.INDIDE_ADD_LIST, getIndDtos());
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("display_ideind",indAction.deleteIndIde());
+        assertEquals("display_ideindadd",indAction.deleteIndIdeForUpdate());
     }
-   
+   @Test
+   public void testPropertyStudyProtocolId() {
+       indAction = new ManageIndIdeAction();
+       assertNull(indAction.getStudyProtocolId());
+       indAction.setStudyProtocolId("studyProtocolId");
+       assertNotNull(indAction.getStudyProtocolId());
+   }
 }

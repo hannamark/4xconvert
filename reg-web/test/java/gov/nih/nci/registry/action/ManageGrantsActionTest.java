@@ -30,9 +30,11 @@ public class ManageGrantsActionTest extends AbstractRegWebTest {
         request.setupAddParameter("nciDivisionProgramCode", "CCR");
         request.setupAddParameter("serialNumber", "12345");
         sess.setAttribute(Constants.GRANT_LIST, getfundingDtos());
+        sess.setAttribute(Constants.GRANT_ADD_LIST, getfundingDtos());
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("display_grants",grantAction.addGrant());
+        assertEquals("display_grants_add",grantAction.addGrantForUpdate());
     }
     @Test
     public void testAddGrant(){
@@ -46,6 +48,7 @@ public class ManageGrantsActionTest extends AbstractRegWebTest {
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("display_grants",grantAction.addGrant());
+        assertEquals("display_grants_add",grantAction.addGrantForUpdate());
     }
     @Test
     public void testDeleteGrant(){
@@ -53,10 +56,12 @@ public class ManageGrantsActionTest extends AbstractRegWebTest {
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
         sess.setAttribute(Constants.GRANT_LIST, getfundingDtos());
+        sess.setAttribute(Constants.GRANT_ADD_LIST, getfundingDtos());
         request.setupAddParameter("uuid", "1");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("display_grants",grantAction.deleteGrant());
+        assertEquals("display_grants_add",grantAction.deleteGrantForUpdate());
     }
     @Test
     public void testDeleteGrantNotInList(){
@@ -74,5 +79,6 @@ public class ManageGrantsActionTest extends AbstractRegWebTest {
         grantAction = new ManageGrantsAction();
         assertEquals("show_ok_create", grantAction.showWaitDialog());
     }
+
    
 }

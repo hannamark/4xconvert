@@ -4,32 +4,20 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
-import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
-import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
-import gov.nih.nci.pa.service.StudyIndldeServiceRemote;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
-import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.StudySiteServiceRemote;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
-import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -47,13 +35,16 @@ import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPersonEntityService;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
 import gov.nih.nci.registry.service.MockRegistryUserService;
+import gov.nih.nci.registry.service.MockRegulatoryInformationService;
 import gov.nih.nci.registry.service.MockStudyContactService;
 import gov.nih.nci.registry.service.MockStudyIndldeService;
 import gov.nih.nci.registry.service.MockStudyOverallStatusService;
+import gov.nih.nci.registry.service.MockStudyProtocolService;
+import gov.nih.nci.registry.service.MockStudyRegulatoryAuthorityService;
+import gov.nih.nci.registry.service.MockStudyResourcingService;
+import gov.nih.nci.registry.service.MockStudySiteAccrualStatusService;
 import gov.nih.nci.registry.service.MockStudySiteContactService;
 import gov.nih.nci.registry.service.MockStudySiteService;
-import gov.nih.nci.registry.service.MockStudyProtocolService;
-import gov.nih.nci.registry.service.MockStudyResourcingService;
 import gov.nih.nci.registry.service.MockTrialRegistrationService;
 import gov.nih.nci.registry.util.ServiceLocator;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
@@ -84,6 +75,9 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final StudyContactServiceLocal studyContactService = new MockStudyContactService();
     private final StudySiteContactServiceLocal studySiteContactService = new MockStudySiteContactService();
     private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
+    private final RegulatoryInformationServiceRemote regulatoryInfoService = new MockRegulatoryInformationService();
+    private final StudyRegulatoryAuthorityServiceLocal studyRegulatorAuthService = new MockStudyRegulatoryAuthorityService();
+    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();    
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -145,8 +139,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     }
 
     public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-        // TODO Auto-generated method stub
-        return null;
+        return regulatoryInfoService;
     }
 
     public StudyContactServiceLocal getStudyContactService() {
@@ -175,8 +168,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     }
 
     public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
-        // TODO Auto-generated method stub
-        return null;
+        return studyRegulatorAuthService;
     }
 
     public StudyResourcingServiceLocal getStudyResoucringService() {
@@ -184,8 +176,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     }
 
     public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
-        // TODO Auto-generated method stub
-        return null;
+        return studySiteAccrualStatusService;
     }
 
     public TrialRegistrationServiceLocal getTrialRegistrationService()

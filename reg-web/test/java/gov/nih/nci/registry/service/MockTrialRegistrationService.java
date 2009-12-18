@@ -110,8 +110,10 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
             OrganizationDTO summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
+            throw new PAException("test");
+        }
+        return IiConverter.convertToIi("3");
     }
 
     public void update(StudyProtocolDTO studyProtocolDTO,

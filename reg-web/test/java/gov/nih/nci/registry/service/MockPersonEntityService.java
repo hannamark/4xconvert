@@ -120,8 +120,24 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
 
     public List<PersonDTO> search(PersonDTO arg0, LimitOffset arg1)
             throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+        List<PersonDTO> matchingDTO = new ArrayList<PersonDTO>();
+        if (arg0.getName() != null) {
+            List<Enxp> nameList = arg0.getName().getPart();
+            for(PersonDTO dto:personList){
+                List<Enxp> dtoNameList = dto.getName().getPart();
+                if(dtoNameList.get(0).getValue().equals(nameList.get(0).getValue())){
+                    matchingDTO.add(dto);
+                }
+            }
+        }
+        if (arg0.getIdentifier() != null && arg0.getIdentifier().getExtension() != null ) {
+            for(PersonDTO dto:personList){
+                if(dto.getIdentifier().getExtension().equals(arg0.getIdentifier().getExtension())){
+                    matchingDTO.add(dto);
+                }
+            }
+        }
+        return matchingDTO;
     }
 
 }

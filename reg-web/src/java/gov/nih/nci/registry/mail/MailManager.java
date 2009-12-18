@@ -182,39 +182,4 @@ public class MailManager {
         }
         logger.info("Leaving sendEmail");
       }
-    /**
-     * Sends an email notifying the submitter that the protocol is amended in the system.
-     * @param mailTo mailTo
-     * @param nciIdentifier nciIdentifier
-     * @param amendmentDate amendmentDate
-     * @param amendmentNumber amendmentNo
-     */
-    public void sendAmendNotificationMail(
-            String mailTo, 
-            String nciIdentifier, 
-            String amendmentDate, String amendmentNumber)  {
-    
-        try {
-
-            String[] params = {mailTo , };
-            
-            MessageFormat formatterSubject = new MessageFormat(
-                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("trial.amend.subject"));
-            String emailSubject = formatterSubject.format(params);
-            logger.info("emailSubject is: " + emailSubject);
-            String submissionMailBody = RegistryServiceLocator.getLookUpTableService().
-                                    getPropertyValue("trial.amend.body");
-            submissionMailBody = submissionMailBody.replace("${nciTrialIdentifier}", nciIdentifier);
-            submissionMailBody = submissionMailBody.replace("${amendmentNumber}", amendmentNumber);
-            submissionMailBody = submissionMailBody.replace("${amendmentDate}", amendmentDate);
-            MessageFormat formatterBody = new MessageFormat(submissionMailBody);
-            String emailBody =  formatterBody.format(params);
-
-            logger.info("emailBody is: " + emailBody);
-            sendMail(mailTo, null, emailBody, emailSubject);
-        } catch (Exception e) {
-            logger.error("Send submission notification mail error", e);
-        }
-     }
-
 }

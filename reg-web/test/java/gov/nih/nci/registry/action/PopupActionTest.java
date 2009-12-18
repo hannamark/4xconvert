@@ -69,6 +69,16 @@ public class PopupActionTest extends AbstractRegWebTest {
         assertEquals("success", popUpAction.displayOrgList());
     }
     @Test
+    public void testDisplayOrgListWithCountryList() throws Exception{
+        popUpAction = new PopupAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setupAddParameter("orgName", "OrgName");
+        request.setupAddParameter("countryName", "USA");
+        popUpAction.prepare();
+        ServletActionContext.setRequest(request);
+        assertEquals("success", popUpAction.displayOrgList());
+    }
+    @Test
     public void testDisplayOrgListNoRecords(){
         popUpAction = new PopupAction();
         MockHttpServletRequest request = new MockHttpServletRequest();

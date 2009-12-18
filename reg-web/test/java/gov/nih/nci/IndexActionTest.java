@@ -17,6 +17,8 @@
  */
 package gov.nih.nci;
 
+import java.util.Date;
+
 import junit.framework.TestCase;
 
 import com.opensymphony.xwork2.Action;
@@ -30,5 +32,10 @@ public class IndexActionTest extends TestCase {
         IndexAction action = new IndexAction();
         String result = action.execute();
         assertEquals(Action.SUCCESS, result);
+    }
+    public void testgetDateNow() {
+        IndexAction action = new IndexAction();
+        Date result = action.getDateNow();
+        assertNotNull(result);
     }
 }

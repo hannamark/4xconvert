@@ -34,6 +34,7 @@ public class MockStudyProtocolService implements StudyProtocolServiceLocal {
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
         sp.setOfficialTitle("officialTitle");
+        sp.setIdentifier("NCI-2009-00001");
         list.add(sp);
         sp = new InterventionalStudyProtocol();
         sp.setId(3L);

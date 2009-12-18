@@ -28,16 +28,25 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setOfficialTitle("officialTitle");
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
+        spQueryDTO.setLeadOrganizationId(1L);
+        spQueryDTO.setPiId(2L);
         list.add(spQueryDTO);
         spQueryDTO = new StudyProtocolQueryDTO();
         spQueryDTO.setStudyProtocolId(2L);
-        spQueryDTO.setNciIdentifier("NCI-2009-00001");
+        spQueryDTO.setNciIdentifier("NCI-2009-00002");
         spQueryDTO.setLocalStudyProtocolIdentifier("DupTestinglocalStudyProtocolId");
         spQueryDTO.setOfficialTitle("officialTitle");
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
         list.add(spQueryDTO);
-        
+        spQueryDTO = new StudyProtocolQueryDTO();
+        spQueryDTO.setStudyProtocolId(3L);
+        spQueryDTO.setNciIdentifier("NCI-2009-00003");
+        spQueryDTO.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier3");
+        spQueryDTO.setOfficialTitle("officialTitle");
+        spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
+        spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
+        list.add(spQueryDTO);
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByCriteria(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
@@ -51,6 +60,10 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         for (StudyProtocolQueryDTO sp: list) {
             if(sp.getLocalStudyProtocolIdentifier().equals(sc.getLeadOrganizationTrialIdentifier())) {
                 // TODO need to check with OrgId too
+                returnList.add(sp);
+            }
+            if(sc.getNciIdentifier() != null && !sc.getNciIdentifier().equals("") 
+                    && sp.getNciIdentifier().equalsIgnoreCase(sc.getNciIdentifier())) {
                 returnList.add(sp);
             }
         }

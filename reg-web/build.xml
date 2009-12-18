@@ -155,13 +155,25 @@
             <fileset dir="${reg-web.build.resourceDir.0}"/>
         </copy>
     </target>
+	 <!-- ====================================================================== -->
+	    <!-- Configure test compilation target                                      -->
+	    <!-- ====================================================================== -->
 
+	    <target name="configure-tests">
+	        <copy file="${pa.resourceDir}/test.properties.reg-web" 
+	              tofile="${reg-web.build.testResourceDir.0}/test.properties"
+	              overwrite="true">
+	            <filterset>
+	                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
+	            </filterset>
+	        </copy>
+	    </target>
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-      depends="compile" 
+      depends="compile, configure-tests" 
       description="Compile the test code"> 
         <mkdir dir="${reg-web.build.testOutputDir}"/>
         <javac destdir="${reg-web.build.testOutputDir}" 
@@ -383,8 +395,8 @@
                           srcdir="${reg-web.build.srcDir.0}" />
         
         <cobertura-check datafile="${reg-web.build.dir}/cobertura.ser"
-                         totalbranchrate="30" 
-                         totallinerate="40"
+                         totalbranchrate="70" 
+                         totallinerate="80"
                          haltonfailure="false"/>
      </target>
      

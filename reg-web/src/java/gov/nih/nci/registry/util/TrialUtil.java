@@ -505,22 +505,6 @@ public class TrialUtil {
         isoDto.setIdentifier(IiConverter.convertToPoOrganizationIi(trialDTO.getSummaryFourOrgIdentifier()));
         return isoDto;
     }
-    
-    /**
-     * Convert to summary4 org dto.
-     * 
-     * @param isoDto OrganizationDTO
-     * @param trialDTO do
-     */
-    public void convertToSummary4OrgDTO(TrialDTO trialDTO, OrganizationDTO isoDto) {
-        if (trialDTO != null && isoDto != null && trialDTO.getSummaryFourOrgIdentifier() != null 
-                && !trialDTO.getSummaryFourOrgIdentifier().equals("")) {
-           
-        isoDto.setIdentifier(IiConverter.convertToPoOrganizationIi(trialDTO.getSummaryFourOrgIdentifier()));
-        } 
-       
-    }
-    
     /**
      * Convert to lead org dto.
      * 

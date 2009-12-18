@@ -43,7 +43,11 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         countryList.add(country);
         country = new Country();
         country.setAlpha2("AS");
-        country.setAlpha3("ASU");
+        country.setAlpha3("AUS");
+        countryList.add(country);
+        country = new Country();
+        country.setAlpha2("JP");
+        country.setAlpha3("JPN");
         countryList.add(country);
         return countryList;
     }

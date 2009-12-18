@@ -71,8 +71,6 @@ public class TrialDTO {
     private List <TrialIndIdeDTO> indIdeAddDtos;
     private String lst = null;
     private String selectedRegAuth = null;
-    private String programcodenihselectedvalue;
-    private String programcodenciselectedvalue;
     private String studyProtocolId;
     
     private String fdaRegulatoryInformationIndicator;
@@ -672,30 +670,6 @@ public class TrialDTO {
      */
     public void setSelectedRegAuth(String selectedRegAuth) {
         this.selectedRegAuth = selectedRegAuth;
-    }
-    /**
-     * @return the programcodenihselectedvalue
-     */
-    public String getProgramcodenihselectedvalue() {
-        return programcodenihselectedvalue;
-    }
-    /**
-     * @param programcodenihselectedvalue the programcodenihselectedvalue to set
-     */
-    public void setProgramcodenihselectedvalue(String programcodenihselectedvalue) {
-        this.programcodenihselectedvalue = programcodenihselectedvalue;
-    }
-    /**
-     * @return the programcodenciselectedvalue
-     */
-    public String getProgramcodenciselectedvalue() {
-        return programcodenciselectedvalue;
-    }
-    /**
-     * @param programcodenciselectedvalue the programcodenciselectedvalue to set
-     */
-    public void setProgramcodenciselectedvalue(String programcodenciselectedvalue) {
-        this.programcodenciselectedvalue = programcodenciselectedvalue;
     }
     /**
      * @return the indIdeUpdateDtos

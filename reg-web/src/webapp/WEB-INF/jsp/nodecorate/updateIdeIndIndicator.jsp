@@ -76,14 +76,17 @@
         selectbox.options.add(optn);
     }   
     function SelectSubCatUpdate(i){
-        removeAllOptionsUpdate(document.getElementById('SubCatUpdate'));
-        addOptionUpdate(document.getElementById('SubCatUpdate'), "", "-Select-", "");   
+        var name = i.name;
+        var vSubCat = name.substring(0,name.indexOf('.'));
+        vSubCat =  vSubCat+".grantor";
+        removeAllOptionsUpdate(document.getElementById(vSubCat));
+        addOptionUpdate(document.getElementById(vSubCat), "", "-Select-", "");   
         if(i.value == 'IND'){
-            addOption(document.getElementById('SubCatUpdate'),"CDER", "CDER");
-            addOption(document.getElementById('SubCatUpdate'),"CBER", "CBER");
+            addOption(document.getElementById(vSubCat),"CDER", "CDER");
+            addOption(document.getElementById(vSubCat),"CBER", "CBER");
         }
         if(i.value == 'IDE'){
-            addOption(document.getElementById('SubCatUpdate'),"CDRH", "CDRH");
+            addOption(document.getElementById(vSubCat),"CDRH", "CDRH");
         }
     }
     
@@ -129,10 +132,10 @@
                  </td>
                  <td> 
                   <s:if test="%{indIdeUpdateDtos[#indidestats.index].indldeType == 'IND'}">
-                   <s:select id="SubCatUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDER':'CDER', 'CBER':'CBER'}" cssStyle="width:75px" ></s:select>
+                   <s:select id="indIdeUpdateDtos[%{#indidestats.index}].grantor" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDER':'CDER', 'CBER':'CBER'}" cssStyle="width:75px" ></s:select>
                   </s:if>
                   <s:else>
-                    <s:select id="SubCatUpdate" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDRH':'CDRH'}" cssStyle="width:75px" ></s:select>
+                    <s:select id="indIdeUpdateDtos[%{#indidestats.index}].grantor" name="indIdeUpdateDtos[%{#indidestats.index}].grantor" value="%{indIdeUpdateDtos[#indidestats.index].grantor}" list="#{'CDRH':'CDRH'}" cssStyle="width:75px" ></s:select>
                   </s:else>
                    <span class="formErrorMsg" >
                                         <s:fielderror>

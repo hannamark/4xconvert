@@ -33,6 +33,14 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         studyRDto.setIdentifier(IiConverter.convertToIi("1"));
         studyRDto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         list.add(studyRDto);
+        studyRDto = new StudyResourcingDTO();
+        studyRDto.setFundingMechanismCode(CdConverter.convertStringToCd("B09"));
+        studyRDto.setNihInstitutionCode(CdConverter.convertStringToCd("AG"));
+        studyRDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("CCR"));
+        studyRDto.setSerialNumber(StConverter.convertToSt("123456"));
+        studyRDto.setIdentifier(IiConverter.convertToIi("2"));
+        studyRDto.setStudyProtocolIdentifier(IiConverter.convertToIi("3"));
+        list.add(studyRDto);
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudyResourcingService#createStudyResourcing(gov.nih.nci.pa.iso.dto.StudyResourcingDTO)
@@ -57,8 +65,13 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
      */
     public StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi)
             throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        StudyResourcingDTO matchingDto= new StudyResourcingDTO();
+        for (StudyResourcingDTO dto :list){
+            if(dto.getIdentifier().getExtension().equals(studyResourceIi.getExtension())){
+                matchingDto = dto;
+            }
+        }
+        return matchingDto;
     }
 
     /* (non-Javadoc)
@@ -80,7 +93,9 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
      */
     public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi)
             throws PAException {
-        // TODO Auto-generated method stub
+        if (studyProtocolIi != null && studyProtocolIi.getExtension().equals("3")) {
+            return new StudyResourcingDTO();
+        }
         return null;
     }
 

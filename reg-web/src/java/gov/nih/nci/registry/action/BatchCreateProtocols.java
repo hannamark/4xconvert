@@ -166,14 +166,14 @@ public class BatchCreateProtocols {
     @SuppressWarnings({"PMD.LooseCoupling" })
     public HashMap<String, String> createProtocols(List<StudyProtocolBatchDTO> dtoList,
             String folderPath, String userName) {
-        LOG.info("Entering into createProtocols...having size of dtolist"
-                + dtoList.size());
         HashMap<String, String> map = new HashMap<String, String>();
         if (dtoList == null || dtoList.size() < 1) {
             map.put("Failed Trial Count" , String.valueOf(failedCount));
             map.put("Sucess Trial Count" , String.valueOf(sucessCount));
             return map;
         }
+        LOG.info("Entering into createProtocols...having size of dtolist"
+                + dtoList.size());
         Iterator iterator = dtoList.iterator();
         StringBuffer result = new StringBuffer();
         TrialBatchDataValidator validator = null;
