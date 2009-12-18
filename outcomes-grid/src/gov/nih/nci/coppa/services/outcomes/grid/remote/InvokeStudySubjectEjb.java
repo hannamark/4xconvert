@@ -86,12 +86,14 @@ import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 
 import java.rmi.RemoteException;
 import java.util.List;
 
 /**
  * @author Steve Lustbader
+ * @author Krishna Kanchinadam
  */
 public class InvokeStudySubjectEjb extends InvokeAccrualStudyServiceEjb<StudySubjectDto>
         implements StudySubjectService {
@@ -106,61 +108,39 @@ public class InvokeStudySubjectEjb extends InvokeAccrualStudyServiceEjb<StudySub
     /**
      * {@inheritDoc}
      */
-    public StudySubjectDto createOutcomes(StudySubjectDto arg0) throws RemoteException {
-        return null;
+    public StudySubjectDto createOutcomes(StudySubjectDto ssDto) throws RemoteException {
+        try {
+            return getLocator().getStudySubjectService().createOutcomes(ssDto);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<StudySubjectDto> getByStudySite(Ii arg0) throws RemoteException {
-        return null;
+    public List<StudySubjectDto> getByStudySite(Ii iiIso) throws RemoteException {
+        try {
+            return getLocator().getStudySubjectService().getByStudySite(iiIso);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<StudySubjectDto> getOutcomes(St arg0) throws RemoteException {
-        return null;
+    public List<StudySubjectDto> getOutcomes(St outcomesLoginName) throws RemoteException {
+        try {
+            return getLocator().getStudySubjectService().getOutcomes(outcomesLoginName);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<StudySubjectDto> getByStudyProtocol(Ii arg0) throws RemoteException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StudySubjectDto create(StudySubjectDto arg0) throws RemoteException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(Ii arg0) throws RemoteException {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StudySubjectDto get(Ii arg0) throws RemoteException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StudySubjectDto update(StudySubjectDto arg0) throws RemoteException {
-        return null;
-    }
-
 }
