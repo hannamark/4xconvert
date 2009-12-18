@@ -42,11 +42,11 @@ var contactPhone;
 
 function setorgid(orgIdentifier, oname){
 	orgid = orgIdentifier;
-	chosenname = oname;
+	chosenname = oname.replace(/&apos;/g,"'");
 }
 function setpersid(persIdentifier, sname,email,phone){
     persid = persIdentifier;
-    chosenname = sname;
+    chosenname = sname.replace(/&apos;/g,"'");
     contactMail = email;
     contactPhone = phone;
 }

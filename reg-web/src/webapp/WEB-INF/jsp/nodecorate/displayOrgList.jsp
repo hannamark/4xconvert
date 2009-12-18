@@ -12,7 +12,7 @@
 	<display:column title="Country" property="country"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
 	<display:column title="Zip" property="zip"  sortable="true"  headerClass="sortable"  headerScope="col"/> 
 		<display:column title="Action" class="action" sortable="false">
-		<a href="#" class="btn" onclick="submitform('${row.id}','${fn:replace(row.name,'\'','')}')">
+		<a href="#" class="btn" onclick="submitform('${row.id}','${fn:replace(row.name,'\'','&apos;')}')">
 		<span class="btn_img"><span class="confirm">Select</span></span></a>  
 	</display:column>
 </display:table>

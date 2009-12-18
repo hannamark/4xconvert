@@ -11,7 +11,7 @@
 	<display:column title="Last Name" property="lastName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Address" property="address"  sortable="true"  headerClass="sortable"  headerScope="col"/>
 	<display:column title="Action" class="action" sortable="false"  headerScope="col">	
-	<a href="#" class="btn" onclick="submitform('${row.id}','${fn:replace(row.lastName,'\'','')}'+','+'${fn:replace(row.firstName,'\'','')}')">
+	<a href="#" class="btn" onclick="submitform('${row.id}','${fn:replace(row.lastName,'\'','&apos;')}'+','+'${fn:replace(row.firstName,'\'','&apos;')}')">
 							<span class="btn_img"><span class="confirm">Select</span></span></a>	
 	</display:column>
 </display:table>
