@@ -78,6 +78,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
@@ -136,6 +137,7 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
     @Test
     public void saveTest() {
         assertEquals(ActionSupport.SUCCESS, dAction.save());
+        assertNotNull(dAction.getPerformance());
     }
 
     /**

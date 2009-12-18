@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.LesionAssessmentWebDto;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
@@ -188,6 +189,7 @@ public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
         action.setLesionAssessment(lesionAssessment);
         action.setSelectedRowIdentifier(MockPerformedActivityBean.LESION_ASSESSMENTID);
         assertEquals(ActionSupport.SUCCESS, action.edit());
+        assertNotNull(action.getLesionAssessment());
     }
     
     @Test

@@ -84,11 +84,11 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.dto.util.ParticipantWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchParticipantCriteriaWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchStudySiteResultWebDto;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -178,6 +178,17 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         action.setParticipant(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
+    
+    @Test
+    public void addExceptionTest() throws Exception {
+        ParticipantsAction.unitedStatesId = 1L;
+        patient.setCountryIdentifier(IiConverter.convertToCountryIi(3L));
+        patient.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MEDICAID_AND_MEDICARE));
+        patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
+        patient.setPatientId(IiConverter.convertToIi(1L));
+        action.setParticipant(patient);
+        assertEquals(ActionSupport.INPUT, action.add());
+    }
 
     @Override
     @Test
@@ -197,5 +208,16 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         ParticipantsAction.unitedStatesId = 1L;
         action.setParticipant(patient);
         assertEquals(ActionSupport.SUCCESS, action.edit());
+    }
+    
+    @Test
+    public void editExceptionTest() throws Exception {
+        ParticipantsAction.unitedStatesId = 1L;
+        patient.setCountryIdentifier(IiConverter.convertToCountryIi(3L));
+        patient.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MEDICAID_AND_MEDICARE));
+        patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
+        patient.setPatientId(IiConverter.convertToIi(1L));
+        action.setParticipant(patient);
+        assertEquals(ActionSupport.INPUT, action.edit());
     }
 }

@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.OffTreatmentWebDto;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.coppa.iso.Ii;
@@ -113,6 +114,8 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
 
     @Override
     public void executeTest() {
+        assertEquals(ActionSupport.ERROR, action.execute());
+        setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
@@ -138,5 +141,16 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
         offTreatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.OFFTREATMENTID));
         action.setOffTreat(offTreatment);
         assertEquals(ActionSupport.SUCCESS, action.save()); 
+        assertNotNull(action.getOffTreat());
+    }
+    
+    @Test
+    public void editExceptionTest() throws Exception {
+        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.EIGHT));
+        Date test = new Date();
+        int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+        offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        action.setOffTreat(offTreatment);
+        assertEquals(ActionSupport.INPUT, action.save());
     }
 }

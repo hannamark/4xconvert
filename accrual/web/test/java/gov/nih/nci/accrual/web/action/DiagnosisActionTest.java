@@ -152,6 +152,7 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
     @Test
     public void saveTest() {
         assertEquals(ActionSupport.SUCCESS, dAction.save());
+        assertNotNull(dAction.getDiagnosis());
     }
 
     /**

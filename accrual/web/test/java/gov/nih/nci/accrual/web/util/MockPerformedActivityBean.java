@@ -128,6 +128,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public static final String LESION_ASSESSMENTID2 = "Lesion Assessment 2";
     public static final String STAGINGID = "Staging 1";
     public static final String TUMORMARKERID = "TumorMarker 1";
+    public static final String PATHOLOGYID = "Pathology 1";
     /*public static final String HEIGHTID = "Height 1";
     public static final String WEIGHTID = "Weight 1";
     public static final String BSAID = "BSA 1";*/
@@ -227,6 +228,13 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setIdentifier(IiConverter.convertToIi(TUMORMARKERID));
         dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.TUMOR_MARKER));
         dto.setName(StConverter.convertToSt("Tumor Marker"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(PATHOLOGYID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PATHOLOGY_GRADE));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         poList.add(dto);
@@ -369,6 +377,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedActivityDto> getByStudySubject(Ii ii)
             throws RemoteException {
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedActivityByStudySubject");
+        }
          return paList;
     }
 
@@ -385,6 +396,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(
             Ii ii) throws RemoteException {
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedSubjectMilestoneByStudySubject");
+        }
         return psmList;
     }
 
@@ -479,6 +493,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedImagingDto> getPerformedImagingByStudySubject(Ii ii)
             throws RemoteException {
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedImagingByStudySubject");
+        }
         return piList;
     }
 
@@ -503,6 +520,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedProcedureDto> getPerformedProcedureByStudySubject(
             Ii ii) throws RemoteException {
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedProcedureByStudySubject");
+        }
         List<PerformedProcedureDto> list = new ArrayList<PerformedProcedureDto>();
         for (PerformedProcedureDto item : ppList) {
             if (ii.getExtension().equals(item.getStudySubjectIdentifier().getExtension())) {
@@ -519,6 +539,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudySubject(
             Ii ii) throws RemoteException {
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedRadiationAdministrationByStudySubject");
+        }
         return new ArrayList<PerformedRadiationAdministrationDto>();
     }
 
@@ -529,6 +552,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudySubject(
             Ii ii) throws RemoteException {
+        if (ii == null) {
+            throw new RemoteException("NULL argument getPerformedSubstanceAdministrationByStudySubject");
+        }
         return psaList;
     }
 

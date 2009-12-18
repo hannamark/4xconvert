@@ -85,10 +85,12 @@ import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
 import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
+import gov.nih.nci.accrual.web.enums.PathologyGradeSystems;
+import gov.nih.nci.accrual.web.enums.PathologyGrades;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
@@ -215,6 +217,21 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         pldList.add(dto);
     }
+    
+    private List<PerformedHistopathologyDto> phpList;
+    {
+        phpList = new ArrayList<PerformedHistopathologyDto>();
+        PerformedHistopathologyDto dto = new PerformedHistopathologyDto();
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PATHOLOGYID));
+        Cd newValue = new Cd();
+        newValue.setCode(PathologyGrades.ANAPLASTIC.getCode());
+        newValue.setCodeSystem(PathologyGradeSystems.FUHRMAN.getCode());
+        dto.setGradeCode(newValue);
+        dto.setDescription(StConverter.convertToSt("Description"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        phpList.add(dto);
+    }
+    
     private List<PerformedImageDto> piList;
     {
         piList = new ArrayList<PerformedImageDto>();
@@ -420,12 +437,18 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public PerformedHistopathologyDto getPerformedHistopathology(Ii ii)
             throws RemoteException {
-        return new PerformedHistopathologyDto();
+        PerformedHistopathologyDto result = null;
+        for (PerformedHistopathologyDto dto : phpList) {
+            if (ii.getExtension().equals(dto.getIdentifier().getExtension())) {
+                result = dto;
+            }
+        }
+        return result;
     }
 
     public List<PerformedHistopathologyDto> getPerformedHistopathologyByPerformedActivity(
             Ii ii) throws RemoteException {
-        return new ArrayList<PerformedHistopathologyDto>();
+        return phpList;
     }
 
     public PerformedImageDto getPerformedImage(Ii ii) throws RemoteException {

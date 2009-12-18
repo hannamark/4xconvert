@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.DeathInfoWebDto;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
 import gov.nih.nci.accrual.web.enums.ResponseInds;
@@ -152,5 +153,6 @@ public class DeathInformationActionTest extends AbstractAccrualActionTest {
         deathInformation.setTreatmentPlanId("TestTP2");
         action.setDeathInfo(deathInformation);
         assertEquals(ActionSupport.SUCCESS, action.save());
+        assertNotNull(action.getDeathInfo());
     }
 }

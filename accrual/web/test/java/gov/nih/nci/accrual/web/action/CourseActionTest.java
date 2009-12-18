@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.CourseWebDto;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -126,6 +127,7 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     @Test
     public void retrieveTest() {
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
+        setParticipantIi(PARTICIPANT1);
         action.setSelectedRowIdentifier(MockPerformedActivityBean.COURSEID);
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
     }
@@ -134,6 +136,7 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     @Test
      public void updateTest() {
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
+        setParticipantIi(PARTICIPANT1);
         action.setSelectedRowIdentifier(MockPerformedActivityBean.COURSEID);
         assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
     }
@@ -153,6 +156,20 @@ public class CourseActionTest extends AbstractAccrualActionTest {
         action.setCourse(course);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
+    
+    @Test
+    public void addExceptionTest() throws Exception {
+        course.setName(StConverter.convertToSt("Course1 Edited"));
+        Date test = new Date();
+        course.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        action.setCourse(course);
+        assertEquals(ActionSupport.INPUT, action.add());
+        setParticipantIi(PARTICIPANT1);
+        course.setName(StConverter.convertToSt("Course1 Edited"));
+        course.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        action.setCourse(course);
+        assertEquals(ActionSupport.INPUT, action.add());
+    }
 
     @Override
     @Test
@@ -163,12 +180,18 @@ public class CourseActionTest extends AbstractAccrualActionTest {
         course.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.COURSEID));
         action.setCourse(course);
         assertEquals(ActionSupport.SUCCESS, action.edit());
+        assertNotNull(action.getCourse());
     }
 
     @Test
     public void editExceptionTest() throws Exception {
         course.setName(StConverter.convertToSt("Course1 Edited"));
         Date test = new Date();
+        course.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        action.setCourse(course);
+        assertEquals(ActionSupport.INPUT, action.edit());
+        setParticipantIi(PARTICIPANT1);
+        course.setName(StConverter.convertToSt("Course1 Edited"));
         course.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
         action.setCourse(course);
         assertEquals(ActionSupport.INPUT, action.edit());

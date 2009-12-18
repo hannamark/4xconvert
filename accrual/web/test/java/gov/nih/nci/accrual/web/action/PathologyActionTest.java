@@ -81,14 +81,14 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.SurgeryWebDto;
+import gov.nih.nci.accrual.web.dto.util.PathologyWebDto;
+import gov.nih.nci.accrual.web.enums.PathologyGradeSystems;
+import gov.nih.nci.accrual.web.enums.PathologyGrades;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-
-import java.sql.Timestamp;
-import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -97,97 +97,47 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Kalpana Guthikonda
- * @since 12/08/2009
  */
-public class SurgeryActionTest extends AbstractAccrualActionTest {
-    SurgeryAction action;
-    SurgeryWebDto surgery;
+public class PathologyActionTest extends AbstractAccrualActionTest {
+    PathologyAction action;
+    PathologyWebDto pathology;
 
     @Before
     public void initAction() throws Exception {
-        action = new SurgeryAction();
+        action = new PathologyAction();
         action.prepare();
-        surgery = new SurgeryWebDto();
+        pathology = new PathologyWebDto();
         setParticipantIi(PARTICIPANT1);
     }
 
     @Override
-    @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
     
     @Test
-    public void executeExceptionTest() {
-        setParticipantIi(PARTICIPANT2);
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+    public void cancelTest() {
+        assertEquals(ActionSupport.SUCCESS, action.cancel());
     }
 
     @Override
-    @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
-    }
-
-    @Override
-    @Test
-    public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
-    }
-
-    @Override
-    @Test
-     public void updateTest() { 
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.SURGERYID);
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
-    }
-
-    @Override
-    @Test
-    public void deleteTest() throws Exception {
-        action.delete();
-    }
-
-    @Override
-    @Test
     public void addTest() throws Exception {
-        surgery.setName(StConverter.convertToSt("Surgery1"));
-        surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        action.setSurgery(surgery);
-        assertEquals(ActionSupport.SUCCESS, action.add());
-    }
-    
-    @Test
-    public void addExceptionTest() throws Exception {
-        surgery.setName(StConverter.convertToSt("Surgery1"));
-        int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
-        Date test = new Date();
-        surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
-        action.setSurgery(surgery);
-        assertEquals(ActionSupport.INPUT, action.add());
+        pathology.setGrade(CdConverter.convertToCd(PathologyGrades.G2));
+        pathology.setDescription(StConverter.convertToSt("Pathology Description"));
+        pathology.setGradeSystem(CdConverter.convertToCd(PathologyGradeSystems.GLEASON));
+        pathology.setId(new Ii());
+        action.setPathology(pathology);
+        assertEquals(ActionSupport.SUCCESS, action.save());
     }
 
     @Override
-    @Test
-    public void editTest() throws Exception {        
-        surgery.setName(StConverter.convertToSt("Surgery1 Edited"));
-        surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        surgery.setId(IiConverter.convertToIi(MockPerformedActivityBean.SURGERYID));
-        action.setSurgery(surgery);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getSurgery());
-    }
-    
-    @Test
-    public void editExceptionTest() throws Exception {
-        surgery.setName(StConverter.convertToSt("Surgery1 Edited"));
-        int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
-        Date test = new Date();
-        surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
-        action.setSurgery(surgery);
-        assertEquals(ActionSupport.INPUT, action.edit());
+    public void editTest() throws Exception { 
+        pathology.setGrade(CdConverter.convertToCd(PathologyGrades.FOUR));
+        pathology.setDescription(StConverter.convertToSt("Pathology Description"));
+        pathology.setGradeSystem(CdConverter.convertToCd(PathologyGradeSystems.BLOOM_RICHARDSON));
+        pathology.setId(IiConverter.convertToIi(MockPerformedActivityBean.PATHOLOGYID));
+        action.setPathology(pathology);
+        assertEquals(ActionSupport.SUCCESS, action.save()); 
+        assertNotNull(action.getPathology());
     }
 }

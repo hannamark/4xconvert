@@ -85,7 +85,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
