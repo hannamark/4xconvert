@@ -31,6 +31,13 @@ function handleAction(){
 function resetValues(){
     document.getElementById("nciIdentifier").value="";
  }
+function remove(id){
+	input_remove_box = confirm("Do you want want to remove?");
+    if (input_remove_box==true){
+    	document.forms[0].action="inboxProcessingremove.action?studyInboxId="+id;
+        document.forms[0].submit();   
+    }
+}
 </SCRIPT>
 <body>
 <!-- main content begins-->

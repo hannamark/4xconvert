@@ -826,12 +826,8 @@ private void populateList() throws PAException {
     if (PAUtil.isEmpty(this.maximumValue)) {
       addFieldError("maximumValue", getText("error.maximumValue"));
     }
-    if (PAUtil.isNotEmpty(this.maximumValue)) {
-      try {
-        Long.parseLong(maximumValue);
-      } catch (NumberFormatException e) {
+    if (PAUtil.isNotEmpty(this.maximumValue) && !PAUtil.isValidNumber(this.maximumValue)) {
         addFieldError("maximumValue", getText("error.numeric"));
-      }
     }
     if (PAUtil.isEmpty(this.valueUnit)) {
       addFieldError("valueUnit", getText("error.valueUnit"));
@@ -839,12 +835,16 @@ private void populateList() throws PAException {
     if (PAUtil.isEmpty(this.minimumValue)) {
       addFieldError("minimumValue", getText("error.minimumValue"));
     }
-    if (PAUtil.isNotEmpty(this.minimumValue)) {
-      try {
-        Long.parseLong(minimumValue);
-      } catch (NumberFormatException e) {
+    if (PAUtil.isNotEmpty(this.minimumValue) && !PAUtil.isValidNumber(this.minimumValue)) {
         addFieldError("minimumValue", getText("error.numeric"));
-      }
+    }
+    if (PAUtil.isNotEmpty(this.minimumValue) && PAUtil.isNotEmpty(this.maximumValue)
+            && PAUtil.isValidNumber(this.minimumValue) && PAUtil.isValidNumber(this.maximumValue)) {
+        long lminVal = Long.parseLong(minimumValue);
+        long lmaxVal = Long.parseLong(maximumValue);
+        if (lminVal > lmaxVal) {
+            addFieldError("minimumValue", "Minimum age should not be greater than maximum age.");
+        }
     }
   }
   

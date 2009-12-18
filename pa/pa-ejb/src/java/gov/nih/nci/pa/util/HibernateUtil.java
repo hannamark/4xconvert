@@ -86,7 +86,10 @@ import org.hibernate.Session;
  */
 public class HibernateUtil {
     private static final CtrpHibernateHelper HIBERNATE_HELPER = new PAHibernateHelper();
-    static CtrpHibernateHelper testHelper = null;
+    /**
+     * 
+     */
+    public static CtrpHibernateHelper testHelper = null;
 
     /**
      * Get the hibernate helper.

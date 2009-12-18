@@ -24,10 +24,8 @@
             paramId="studyProtocolId" paramProperty="studyProtocolId"
             sortable="true" headerClass="sortable"/>
     </c:if>    
-     <display:column class="title" 
-            titleKey="inboxTrial.remove" 
-            href="inboxProcessingremove.action" property="remove"
-            paramId="studyInboxId" paramProperty="studyInboxId"
-            sortable="true" headerClass="sortable"/>
+        <display:column class="title" titleKey="inboxTrial.remove"> 
+            <a href="#" class="title" onclick="remove('${row.studyInboxId}')">Remove</a>
+        </display:column>
 </display:table>
 </s:form>

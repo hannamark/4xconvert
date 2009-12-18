@@ -699,6 +699,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
       */
      public String generate() throws PAException {
       try {
+        enforceBusinessRules();
         String description = "";
         if (isSubstance()) {    
            description = convertInterventionToCSV(generateWebDto(generateSubstanceIsoDto()));
@@ -797,52 +798,55 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      private void enforceBusinessRules() throws PAException {
          StringBuffer sbuf = new StringBuffer();
          if (getInterventionType() == null) {
-            sbuf.append("Intervention type must be set.");
+            sbuf.append("Intervention type must be set.\n");
+         }
+         if (PAUtil.isEmpty(getInterventionIdentifier())) {
+             sbuf.append("An Intervention must be selected.");
          }
          if (getInterventionType() != null && isSubstance()) {
           
           if (getMinDoseValue() != null && !PAUtil.isNumber(getMinDoseValue())) {
-            sbuf.append("Please enter Numeric Min Dose Value");
+            sbuf.append("Please enter Numeric Min Dose Value.\n");
           }
           if (getMaxDoseValue() != null && !PAUtil.isNumber(getMaxDoseValue())) {
-              sbuf.append("Please enter Numeric Max Dose Value");
+              sbuf.append("Please enter Numeric Max Dose Value.\n");
            }
           if (getMaxDoseValue() != null && getMinDoseValue() == null) {
-             sbuf.append("Please enter Min and Max Dose Value");
+             sbuf.append("Please enter Min and Max Dose Value.\n");
           }
           if (getMaxDoseTotalValue() != null && getMinDoseTotalValue() == null) {
-             sbuf.append("Please enter Min and Max Dose Total Value");
+             sbuf.append("Please enter Min and Max Dose Total Value.\n");
           }
           if (getMaxDoseTotalValue() != null && !PAUtil.isNumber(getMaxDoseTotalValue())) {
-              sbuf.append("Please enter Numeric Max Dose Total Value");
+              sbuf.append("Please enter Numeric Max Dose Total Value.\n");
           }
           if (getMinDoseTotalValue() != null && !PAUtil.isNumber(getMinDoseTotalValue())) {
-              sbuf.append("Please enter Numeric Min Dose Total Value");
+              sbuf.append("Please enter Numeric Min Dose Total Value.\n");
             }
           if (getDoseUOM() != null) {
              if (getMinDoseValue() == null) {
-                 sbuf.append("Please enter Min Dose Value for the UOM");              
+                 sbuf.append("Please enter Min Dose Value for the UOM.\n");              
              }
           }
           if (getDoseUOM() == null && getMinDoseValue() != null) {
-             sbuf.append("Please enter Dose UOM");              
+             sbuf.append("Please enter Dose UOM.\n");              
           }
           if (getDoseTotalUOM() != null) {
              if (getMinDoseTotalValue() == null) {
-                 sbuf.append("Please enter Min Dose Total Value for the UOM");              
+                 sbuf.append("Please enter Min Dose Total Value for the UOM.\n");              
              }
              
           }
           if (getDoseTotalUOM() == null && getMinDoseTotalValue() != null) {
-              sbuf.append("Please enter Dose Total UOM");              
+              sbuf.append("Please enter Dose Total UOM.\n");              
            }
           if (getDoseDurationUOM() != null) {
              if (getDoseDurationValue() == null) {
-                 sbuf.append("Please enter Dose Duration Value for the UOM");              
+                 sbuf.append("Please enter Dose Duration Value for the UOM.\n");              
              }
            }
           if (getDoseDurationUOM() == null && getDoseDurationValue() != null) {
-              sbuf.append("Please enter Dose Duration UOM");              
+              sbuf.append("Please enter Dose Duration UOM.\n");              
            }
          }
          if (sbuf.toString().length() > 0) {

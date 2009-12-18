@@ -571,6 +571,7 @@ private void enforceStudyContactNullification(
 
   private void enforceDisease(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList) throws PAException {
       boolean leadExist = false;
+      boolean ctgovxmlIndicator = false;
       List<StudyDiseaseDTO> sdDtos = studyDiseaseService.getByStudyProtocol(studyProtocolIi);
       for (StudyDiseaseDTO sdDto : sdDtos) {
           if (sdDto.getLeadDiseaseIndicator() != null && sdDto.getLeadDiseaseIndicator().getValue()) {
@@ -578,9 +579,19 @@ private void enforceStudyContactNullification(
               break;
           }
       }
+      for (StudyDiseaseDTO sdDto : sdDtos) {
+          if (sdDto.getCtGovXmlIndicator() != null && sdDto.getCtGovXmlIndicator().getValue()) {
+              ctgovxmlIndicator = true;
+              break;
+          }
+      }
       if (!leadExist) {
           abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
                   "Trial must include at least one LEAD disease"));
+      }
+      if (!ctgovxmlIndicator) {
+          abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
+                  "Abstraction cannot be valid if trial has no diseases with ctgov xml idicator = 'yes'"));
       }
 
   }

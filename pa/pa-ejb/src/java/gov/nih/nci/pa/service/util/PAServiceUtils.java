@@ -904,7 +904,11 @@ public class PAServiceUtils {
                 && PAUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
               errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
           }
-          
+        if (PAConstants.YES.equalsIgnoreCase(
+                BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
+                && PAUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
+              errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
+          }
          //Display error in abstraction validation if section 801 indicator = ‘yes’,  
           if (PAConstants.YES.equalsIgnoreCase(
                   BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))

@@ -955,4 +955,17 @@ public class PAUtil {
       }
        return isTypeIntervention;
     }
+    /**
+     * 
+     * @param strNumber str
+     * @return valid
+     */
+    public static boolean isValidNumber(String strNumber) {
+        try {
+            Long.parseLong(strNumber);
+          } catch (NumberFormatException e) {
+            return false;
+          }
+       return true; 
+    }
 }

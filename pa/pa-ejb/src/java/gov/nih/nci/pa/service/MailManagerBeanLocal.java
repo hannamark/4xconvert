@@ -77,7 +77,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   private static final Logger LOG = Logger.getLogger(MailManagerBeanLocal.class);
   private static final int VAL = 65;
   private static final String TSR = "TSR_";
-  private static final String HTML = ".html";
   private static final String WORD = ".doc";
   private final String currentDate = "${CurrentDate}";
   private final String nciTrialIdentifier = "${nciTrialIdentifier}";
@@ -122,7 +121,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       body = body.replace("${receiptDate}", getFormatedDate(spDTO.getDateLastCreated()));
       body = body.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
       body = body.replace("${fileName}", TSR
-                                         + spDTO.getNciIdentifier().toString() + HTML);
+                                         + spDTO.getNciIdentifier().toString() + WORD);
       if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial()) 
               || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
           body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
