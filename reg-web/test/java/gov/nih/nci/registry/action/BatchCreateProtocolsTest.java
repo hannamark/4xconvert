@@ -24,8 +24,8 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
       private BatchCreateProtocols trial = new BatchCreateProtocols();
       @Test
       public void testCreateProtocolsForOriginal() throws URISyntaxException { 
-          //URL fileUrl = ClassLoader.getSystemClassLoader().getResource("batchUploadTest.xls");
-          //File f = new File(fileUrl.toURI());    
+          URL fileUrl = ClassLoader.getSystemClassLoader().getResource("batchUploadTest.xls");
+          File f = new File(fileUrl.toURI());    
           List<StudyProtocolBatchDTO> dtoList = new ArrayList<StudyProtocolBatchDTO>();
           StudyProtocolBatchDTO dto=  getBatchDto();
           dto.setProtcolDocumentFileName("ProtocolDoc.doc");
@@ -66,8 +66,8 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto.setProtocolHighlightDocFileName("ProtocolDoc.doc");
           dto.setChangeRequestDocFileName("ProtocolDoc.doc");
           dtoList.add(dto);
-          //Map<String,String> map = trial.createProtocols(dtoList, f.getParent()+ File.separator, "testUserName");
-          Map<String,String> map = trial.createProtocols(dtoList, "C:\\NCI\\Projects\\COPPA\\code\\reg-web\\test\\resources"+ File.separator, "testUserName");
+          Map<String,String> map = trial.createProtocols(dtoList, f.getParent()+ File.separator, "testUserName");
+          //Map<String,String> map = trial.createProtocols(dtoList, "C:\\NCI\\Projects\\COPPA\\code\\reg-web\\test\\resources"+ File.separator, "testUserName");
           assertNotNull(map);
           assertEquals("2",map.get("Sucess Trial Count"));
       }
