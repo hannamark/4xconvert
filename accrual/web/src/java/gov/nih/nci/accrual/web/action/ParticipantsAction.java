@@ -210,12 +210,22 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String delete() throws RemoteException {
-        StudySubjectDto dto = studySubjectSvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-        dto.setStatusCode(CdConverter.convertStringToCd(deletedStatusCode));
-        dto.getStatusDateRange().setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        studySubjectSvc.update(dto);
-        SessionEnvManager.putParticipantInSession(null, null);
-        return super.delete();
+     try {
+       List<StudySubjectDto> subList = studySubjectSvc.getOutcomes(getAuthorizedUser());
+       for (StudySubjectDto dto : subList) {
+        if (dto.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
+           dto.setStatusCode(CdConverter.convertStringToCd(deletedStatusCode));
+           dto.getStatusDateRange().setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+           studySubjectSvc.update(dto);
+           SessionEnvManager.putParticipantInSession(null, null);  
+           break;
+        }
+       }
+     } catch (RemoteException e) {
+        addActionError("Not authorized to delete the Patient");
+        return super.execute(); 
+     }
+     return super.delete(); 
     }
 
     /**
