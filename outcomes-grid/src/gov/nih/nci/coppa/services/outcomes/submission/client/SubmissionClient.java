@@ -76,7 +76,7 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
 
     private static void testGet(SubmissionClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("1");
+        id.setExtension("75523");
 
         Submission subm = client.get(id);
         System.out.println(subm.getLabel().getValue());
@@ -85,7 +85,7 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
 
     private static void testGetByStudyProtocol(SubmissionClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("1");
+        id.setExtension("45568");
 
         Submission[] subms = client.getByStudyProtocol(id);
         for (Submission subm : subms) {
@@ -107,63 +107,63 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
         return client.create(submission);
     }
 
-    public gov.nih.nci.coppa.services.outcomes.Submission[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"getByStudyProtocol");
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolRequest();
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolResponse boxedResult = portType.getByStudyProtocol(params);
-            return boxedResult.getSubmission();
-        }
+  public gov.nih.nci.coppa.services.outcomes.Submission[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByStudyProtocol");
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolRequest();
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolRequestId idContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.GetByStudyProtocolResponse boxedResult = portType.getByStudyProtocol(params);
+    return boxedResult.getSubmission();
     }
+  }
 
-    public gov.nih.nci.coppa.services.outcomes.Submission get(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"get");
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.GetRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.GetRequest();
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.GetRequestId idContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.GetRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.GetResponse boxedResult = portType.get(params);
-            return boxedResult.getSubmission();
-        }
+  public gov.nih.nci.coppa.services.outcomes.Submission get(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"get");
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.GetRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.GetRequest();
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.GetRequestId idContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.GetRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.GetResponse boxedResult = portType.get(params);
+    return boxedResult.getSubmission();
     }
+  }
 
-    public gov.nih.nci.coppa.services.outcomes.Submission create(gov.nih.nci.coppa.services.outcomes.Submission submission) throws RemoteException {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"create");
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateRequest();
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateRequestSubmission submissionContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateRequestSubmission();
-            submissionContainer.setSubmission(submission);
-            params.setSubmission(submissionContainer);
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateResponse boxedResult = portType.create(params);
-            return boxedResult.getSubmission();
-        }
+  public gov.nih.nci.coppa.services.outcomes.Submission create(gov.nih.nci.coppa.services.outcomes.Submission submission) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"create");
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateRequest();
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateRequestSubmission submissionContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateRequestSubmission();
+    submissionContainer.setSubmission(submission);
+    params.setSubmission(submissionContainer);
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.CreateResponse boxedResult = portType.create(params);
+    return boxedResult.getSubmission();
     }
+  }
 
-    public gov.nih.nci.coppa.services.outcomes.Submission update(gov.nih.nci.coppa.services.outcomes.Submission submission) throws RemoteException {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"update");
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateRequest();
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateRequestSubmission submissionContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateRequestSubmission();
-            submissionContainer.setSubmission(submission);
-            params.setSubmission(submissionContainer);
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateResponse boxedResult = portType.update(params);
-            return boxedResult.getSubmission();
-        }
+  public gov.nih.nci.coppa.services.outcomes.Submission update(gov.nih.nci.coppa.services.outcomes.Submission submission) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"update");
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateRequest();
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateRequestSubmission submissionContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateRequestSubmission();
+    submissionContainer.setSubmission(submission);
+    params.setSubmission(submissionContainer);
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.UpdateResponse boxedResult = portType.update(params);
+    return boxedResult.getSubmission();
     }
+  }
 
-    public void delete(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"delete");
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteRequest();
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteResponse boxedResult = portType.delete(params);
-        }
+  public void delete(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"delete");
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteRequest();
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteRequestId idContainer = new gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.outcomes.submission.stubs.DeleteResponse boxedResult = portType.delete(params);
     }
+  }
 
 }
