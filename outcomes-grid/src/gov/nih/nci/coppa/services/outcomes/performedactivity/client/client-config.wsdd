@@ -105,5 +105,7 @@
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.Submission" qname="ns2:Submission" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.outcomes.User" qname="ns2:User" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://outcomes.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
 
 <!-- END INTRODUCE TYPEMAPPINGS --></deployment>

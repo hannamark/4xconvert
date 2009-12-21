@@ -5,6 +5,7 @@ import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.accrual.service.BaseAccrualService;
@@ -53,6 +54,7 @@ public final class JNDIServiceLocator implements ServiceLocator {
             values.put(StudySubjectDto.class, getInstance().getClass().getMethod("getStudySubjectService"));
             values.put(SubmissionDto.class, getInstance().getClass().getMethod("getSubmissionService"));
             values.put(PatientDto.class, getInstance().getClass().getMethod("getPatientService"));
+            values.put(UserDto.class, getInstance().getClass().getMethod("getUserService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -97,7 +99,7 @@ public final class JNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public UserService getUserService() throws NamingException {
-        return (UserService) lookup("accrual/UserBean/remote");
+        return (UserService) lookup("accrual/UserBeanLocal/remote");
     }
 
 

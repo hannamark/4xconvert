@@ -87,6 +87,7 @@ import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubmissionDto;
+import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
 import gov.nih.nci.accrual.service.BaseAccrualService;
@@ -152,6 +153,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             values.put(StudySubjectDto.class, this.getClass().getMethod("getStudySubjectService"));
             values.put(SubmissionDto.class, this.getClass().getMethod("getSubmissionService"));
             values.put(PatientDto.class, this.getClass().getMethod("getPatientService"));
+            values.put(UserDto.class, this.getClass().getMethod("getUserService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }

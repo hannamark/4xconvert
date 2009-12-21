@@ -27,24 +27,23 @@ public class SubmissionImpl extends SubmissionImplBase {
         super();
     }
 
-    public gov.nih.nci.coppa.services.outcomes.Submission[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id)
-        throws RemoteException {
+  public gov.nih.nci.coppa.services.outcomes.Submission[] getByStudyProtocol(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
         return impl.getByStudyProtocol(id);
     }
 
-    public gov.nih.nci.coppa.services.outcomes.Submission get(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.services.outcomes.Submission get(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
         return impl.get(id);
     }
 
-    public gov.nih.nci.coppa.services.outcomes.Submission create(gov.nih.nci.coppa.services.outcomes.Submission submission) throws RemoteException {
+  public gov.nih.nci.coppa.services.outcomes.Submission create(gov.nih.nci.coppa.services.outcomes.Submission submission) throws RemoteException {
         return impl.create(submission);
     }
 
-    public gov.nih.nci.coppa.services.outcomes.Submission update(gov.nih.nci.coppa.services.outcomes.Submission submission) throws RemoteException {
+  public gov.nih.nci.coppa.services.outcomes.Submission update(gov.nih.nci.coppa.services.outcomes.Submission submission) throws RemoteException {
         return impl.update(submission);
     }
 
-    public void delete(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
+  public void delete(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
         impl.delete(id);
     }
 

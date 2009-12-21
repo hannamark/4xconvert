@@ -1,6 +1,6 @@
 <ns1:ServiceDescription introduceVersion="1.3" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns2:Namespace location="./Outcomes.xsd" namespace="http://outcomes.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.outcomes" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace generateStubs="false" location="./Outcomes.xsd" namespace="http://outcomes.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.outcomes" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement className="ActivityRelationship" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="ActivityRelationship" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="CD" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="CD" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Id" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Id" xsi:type="ns2:SchemaElementType"/>
@@ -22,7 +22,7 @@
    <ns2:SchemaElement type="ST" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="StudySubject" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="StudySubject" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Submission" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="Submission" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="User" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="User" deserializer="gov.nih.nci.coppa.services.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.coppa.services.grid.ser.JaxbSerializerFactory" type="User" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
   <ns2:Namespace location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="br" xsi:type="ns2:SchemaElementType"/>

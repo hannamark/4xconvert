@@ -80,85 +80,65 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
+package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.UserDto;
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.accrual.service.UserService;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 
-import java.util.Map;
+import java.rmi.RemoteException;
 
-import org.junit.Test;
-
-public class TransformerRegistryTest {
-
-    @Test (expected=UnsupportedOperationException.class)
-    public void testGetRegistry() {
-        Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
-        assertNotNull(tMap);
-        assertEquals(11, tMap.size());
-        tMap.clear();
+/**
+ * @author Max Shestopalov
+ */
+public class InvokeUserEjb extends InvokeAccrualServiceEjb<UserDto> implements
+        UserService {
+    
+    /**
+     * Const.
+     */
+    public InvokeUserEjb() {
+        super(UserDto.class);
     }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testGetTransformer() {
-        //#1
-        Transformer trans = TransformerRegistry.INSTANCE.getTransformer(StudySubjectDto.class);
-        assertTrue(trans instanceof StudySubjectTransformer);
-        //#2
-        trans = TransformerRegistry.INSTANCE.getTransformer(ActivityRelationshipDto.class);
-        assertTrue(trans instanceof ActivityRelationshipTransformer);
-        //#3
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedActivityDto.class);
-        assertTrue(trans instanceof PerformedActivityTransformer);
-        //#4
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedObservationDto.class);
-        assertTrue(trans instanceof PerformedObservationTransformer);
-        //#5
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedImagingDto.class);
-        assertTrue(trans instanceof PerformedImagingTransformer);
-        //#6
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedSubjectMilestoneDto.class);
-        assertTrue(trans instanceof PerformedSubjectMilestoneTransformer);
-        //#7
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedSubstanceAdministrationDto.class);
-        assertTrue(trans instanceof PerformedSubstanceAdministrationTransformer);
-        //#8
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedRadiationAdministrationDto.class);
-        assertTrue(trans instanceof PerformedRadiationAdministrationTransformer);
-        //#9
-        trans = TransformerRegistry.INSTANCE.getTransformer(SubmissionDto.class);
-        assertTrue(trans instanceof SubmissionTransformer);
-        //#10
-        trans = TransformerRegistry.INSTANCE.getTransformer(PatientDto.class);
-        assertTrue(trans instanceof PatientTransformer);
-        //#11
-        trans = TransformerRegistry.INSTANCE.getTransformer(UserDto.class);
-        assertTrue(trans instanceof UserTransformer);
+    /**
+     * {@inheritDoc}
+     */
+    public UserDto createUser(UserDto input) throws RemoteException {
+        // purposely using unsecure service.
+        try {
+            return JNDIServiceLocator.getInstance().getUserService().createUser(input);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
-    @Test (expected=RuntimeException.class)
-    public void testGetTranspormerWithNull() {
-        TransformerRegistry.INSTANCE.getTransformer(null);
+    /**
+     * {@inheritDoc}
+     */
+    public UserDto getUser(St input) throws RemoteException {
+        try {
+            return getLocator().getUserService().getUser(input);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 
-    @Test (expected=RuntimeException.class)
-    public void testGetTranspormerWithUnknown() {
-        TransformerRegistry.INSTANCE.getTransformer(String.class);
-    }
-
-
+    /**
+     * {@inheritDoc}
+     */
+    public UserDto updateUser(UserDto input) throws RemoteException {
+        try {
+            return getLocator().getUserService().updateUser(input);
+        } catch (RemoteException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }   
 }
