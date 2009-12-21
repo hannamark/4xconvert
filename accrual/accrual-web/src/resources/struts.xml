@@ -8,18 +8,27 @@
  <constant name="struts.devMode" value="true" />
     <package name="default" extends="struts-default">
         <interceptors>
-            <interceptor name="nci-commonsParams" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.DisplayTagParametersInterceptor" />
-            <interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+            <interceptor name="parameterTrim" 
+               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+            <interceptor name="maliciousInput"
+               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor" />
             <interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
-                <interceptor-ref name="params"/>
+                <interceptor-ref name="params">
+                <!--
+                  Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+                -->
+                <param name="excludeParams">
+                 _,d-\d+?-[sop]
+                </param>
+                </interceptor-ref>
+                <interceptor-ref name="maliciousInput"/>
                 <interceptor-ref name="servletConfig" />
                 <interceptor-ref name="prepare"/>
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
                 <interceptor-ref name="fileUpload"/>
-                <interceptor-ref name="params"/>
                 <interceptor-ref name="conversionError" />
                 <interceptor-ref name="validation">
                     <param name="excludeMethods">input,back,cancel</param>
