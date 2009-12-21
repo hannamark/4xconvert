@@ -84,7 +84,7 @@ package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.UserDto;
@@ -148,7 +148,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
              */
             values.put(ActivityRelationshipDto.class, this.getClass().getMethod("getActivityRelationshipService"));
             values.put(PerformedActivityDto.class, this.getClass().getMethod("getPerformedActivityService"));
-            values.put(PerformedObservationDto.class,
+            values.put(PerformedObservationResultDto.class,
                     this.getClass().getMethod("getPerformedObservationResultService"));
             values.put(StudySubjectDto.class, this.getClass().getMethod("getStudySubjectService"));
             values.put(SubmissionDto.class, this.getClass().getMethod("getSubmissionService"));

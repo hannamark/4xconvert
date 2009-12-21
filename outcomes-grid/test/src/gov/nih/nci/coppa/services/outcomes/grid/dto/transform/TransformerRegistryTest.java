@@ -87,8 +87,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
+import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
+import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
+import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedImagingDto;
+import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
+import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
@@ -108,7 +115,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(11, tMap.size());
+        assertEquals(18, tMap.size());
         tMap.clear();
     }
 
@@ -146,6 +153,27 @@ public class TransformerRegistryTest {
         trans = TransformerRegistry.INSTANCE.getTransformer(PatientDto.class);
         assertTrue(trans instanceof PatientTransformer);
         //#11
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedObservationResultDto.class);
+        assertTrue(trans instanceof PerformedObservationResultTransformer);
+        //#12
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedLesionDescriptionDto.class);
+        assertTrue(trans instanceof PerformedLesionDescriptionTransformer);
+        //#13
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedClinicalResultDto.class);
+        assertTrue(trans instanceof PerformedClinicalResultTransformer);
+        //#14
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedMedicalHistoryResultDto.class);
+        assertTrue(trans instanceof PerformedMedicalHistoryResultTransformer);
+        //#15
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedImageDto.class);
+        assertTrue(trans instanceof PerformedImageTransformer);
+        //#16
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedDiagnosisDto.class);
+        assertTrue(trans instanceof PerformedDiagnosisTransformer);
+        //#17
+        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedHistopathologyDto.class);
+        assertTrue(trans instanceof PerformedHistopathologyTransformer);
+        //#18
         trans = TransformerRegistry.INSTANCE.getTransformer(UserDto.class);
         assertTrue(trans instanceof UserTransformer);
     }

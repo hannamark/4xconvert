@@ -84,8 +84,15 @@ package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
+import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
+import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
+import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
+import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedImagingDto;
+import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
+import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
@@ -120,6 +127,13 @@ public final class TransformerRegistry {
         values.put(PerformedRadiationAdministrationDto.class, PerformedRadiationAdministrationTransformer.INSTANCE);
         values.put(SubmissionDto.class, SubmissionTransformer.INSTANCE);
         values.put(PatientDto.class, PatientTransformer.INSTANCE);
+        values.put(PerformedObservationResultDto.class, PerformedObservationResultTransformer.INSTANCE);
+        values.put(PerformedLesionDescriptionDto.class, PerformedLesionDescriptionTransformer.INSTANCE);
+        values.put(PerformedClinicalResultDto.class, PerformedClinicalResultTransformer.INSTANCE);
+        values.put(PerformedMedicalHistoryResultDto.class, PerformedMedicalHistoryResultTransformer.INSTANCE);
+        values.put(PerformedImageDto.class, PerformedImageTransformer.INSTANCE);
+        values.put(PerformedDiagnosisDto.class, PerformedDiagnosisTransformer.INSTANCE);
+        values.put(PerformedHistopathologyDto.class, PerformedHistopathologyTransformer.INSTANCE);
         values.put(UserDto.class, UserTransformer.INSTANCE);
     }
 

@@ -460,7 +460,6 @@
         </sequential>
     </macrodef>
 
-
 	<target name="runActivityRelationshipClient" depends="checkGlobus, defineClasspaths" description="Run the sample ActivityRelationshipService Client">
 		   <run-client serviceendpointname="ActivityRelationship" class="gov.nih.nci.coppa.services.outcomes.activityrelationship.client.ActivityRelationshipClient" debug-suspend="n" />
 	</target>
@@ -481,4 +480,8 @@
 	        <run-client serviceEndpointName="User" class="gov.nih.nci.coppa.services.outcomes.user.client.UserClient" debug-suspend="n" />
 	</target>
 
+    <target name="runPerformedObservationResultClient" depends="checkGlobus, defineClasspaths" description="Run the sample PerformedObservationResult Client">
+        <run-client serviceEndpointName="PerformedObservationResult" class="gov.nih.nci.coppa.services.outcomes.performedobservationresult.client.PerformedObservationResultClient" debug-suspend="n" />
+    </target>
+    
 </project>

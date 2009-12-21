@@ -54,11 +54,12 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
                     // place client calls here if you want to use this main as a
                     // test....
 
+                    System.out.println("Test Get");
+                    testGet(client);
+
                     System.out.println("Test Get By Study Prot ID");
                     testGetByStudyProtocol(client);
 
-                    System.out.println("Test Get");
-                    testGet(client);
 
                 } else {
                     usage();
@@ -85,7 +86,7 @@ public class SubmissionClient extends SubmissionClientBase implements Submission
 
     private static void testGetByStudyProtocol(SubmissionClient client) throws RemoteException {
         Id id = new Id();
-        id.setExtension("45568");
+        id.setExtension("27428");
 
         Submission[] subms = client.getByStudyProtocol(id);
         for (Submission subm : subms) {
