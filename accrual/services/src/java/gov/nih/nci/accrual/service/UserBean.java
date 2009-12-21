@@ -79,9 +79,13 @@
 
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.coppa.iso.St;
 
-import javax.annotation.security.DeclareRoles;
+import java.rmi.RemoteException;
+
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -97,8 +101,27 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors(AccrualHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@DeclareRoles({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
 public class UserBean
         extends UserBeanLocal implements UserService {
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Override
+    @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+    public UserDto getUser(St isoLoginName) throws RemoteException {
+        return super.getUser(isoLoginName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Override
+    @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+    public UserDto updateUser(UserDto dto) throws RemoteException {
+        return super.updateUser(dto);
+    }
+
 }

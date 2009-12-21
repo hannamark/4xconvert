@@ -106,7 +106,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.DataFormatException;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -125,8 +124,9 @@ public class UserBeanLocal
         implements UserService {
 
     private static final String DEFAULT_CONTEXT_NAME = "ejbclient";
-    private static final int MIN_PASSWORD_LENGTH = 8;    
-    
+    private static final String GRID_CONTEXT_NAME = "Gr1DU5er";
+    private static final int MIN_PASSWORD_LENGTH = 8;
+
     /**
      * {@inheritDoc}
      */
@@ -140,30 +140,30 @@ public class UserBeanLocal
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving user.", e);
         }
-        
+
         UserDto resultDto = null;
         if (registryUser != null) { // user exists
             registryUser.setCountry(getCountryCode(registryUser.getCountry()));
             registryUser.setState(USStateCode.getByCode(registryUser.getState()).getName());
-        
+
             try {
                 resultDto = Converters.get(UserConverter.class).convertFromDomainToDto(registryUser);
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in getUser().", e);
             }
-            
+
             resultDto.setPoOrganizationIdentifier(checkPoOrganizationId(resultDto.getPoOrganizationIdentifier()));
             resultDto.setPoPersonIdentifier(checkPoPersonId(resultDto.getPoPersonIdentifier()));
-        
+
             // get the CSM user
             User csmUser = AccrualCsmUtil.getInstance().getCSMUser(loginName);
             resultDto.setLoginName(StConverter.convertToSt(csmUser.getLoginName()));
             resultDto.setPassword(StConverter.convertToSt(csmUser.getPassword()));
         }
-    
+
         return resultDto;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -171,31 +171,31 @@ public class UserBeanLocal
         getLogger().info("Entering createUser().");
         String loginName = StConverter.convertToString(dto.getLoginName());
         validateLoginName(loginName);
-        
+
         RegistryUser registryUser;
         try {
             registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving user.", e);
         }
-        
+
         if (registryUser != null) {
             throw new RemoteException("User already exists.");
         }
-        
+
         validateData(dto);
-        
+
         try {
             registryUser = Converters.get(UserConverter.class).convertFromDtoToDomain(dto);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in createUser().", e);
         }
-        
+
         registryUser.setCountry(getCountryName(registryUser.getCountry()));
-        registryUser.setState(USStateCode.valueOf(registryUser.getState()).getCode());        
-        
+        registryUser.setState(USStateCode.valueOf(registryUser.getState()).getCode());
+
         // create the CSM user
-        User csmUser = AccrualCsmUtil.getInstance().createCSMUser(registryUser, 
+        User csmUser = AccrualCsmUtil.getInstance().createCSMUser(registryUser,
             loginName, StConverter.convertToString(dto.getPassword()));
         registryUser.setCsmUserId(csmUser.getUserId());
 
@@ -205,76 +205,75 @@ public class UserBeanLocal
         } catch (PAException e) {
             throw new RemoteException("Exception while creating user.", e);
         }
-        
+
         registryUser.setCountry(getCountryCode(registryUser.getCountry()));
         registryUser.setState(USStateCode.getByCode(registryUser.getState()).getName());
-        
+
         UserDto resultDto;
         try {
             resultDto = Converters.get(UserConverter.class).convertFromDomainToDto(registryUser);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in createUser().", e);
         }
-        
+
         resultDto.setLoginName(StConverter.convertToSt(csmUser.getLoginName()));
         resultDto.setPassword(StConverter.convertToSt(csmUser.getPassword()));
         return resultDto;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
     public UserDto updateUser(UserDto dto) throws RemoteException {
         getLogger().info("Entering updateUser().");
         String loginName = StConverter.convertToString(dto.getLoginName());
         validateLoginName(loginName);
-        
+
         RegistryUser registryUser;
         try {
             registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving user.", e);
         }
-        
+
         if (registryUser == null) {
             throw new RemoteException("User does not exist.");
         }
-        
+
         Long csmUserId = registryUser.getCsmUserId();
         validateData(dto);
-        
+
         try {
             registryUser = Converters.get(UserConverter.class).convertFromDtoToDomain(dto);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in updateUser().", e);
         }
-        
+
         registryUser.setCsmUserId(csmUserId);
         registryUser.setCountry(getCountryName(registryUser.getCountry()));
         registryUser.setState(USStateCode.valueOf(registryUser.getState()).getCode());
-        
+
         // update the CSM user
-        User csmUser = AccrualCsmUtil.getInstance().updateCSMUser(registryUser, 
+        User csmUser = AccrualCsmUtil.getInstance().updateCSMUser(registryUser,
             loginName, StConverter.convertToString(dto.getPassword()));
-        
+
         // update the user
         try {
             registryUser = PaRegistry.getRegisterUserService().updateUser(registryUser);
         } catch (PAException e) {
             throw new RemoteException("Exception while updating user.", e);
         }
-        
+
         registryUser.setCountry(getCountryCode(registryUser.getCountry()));
         registryUser.setState(USStateCode.getByCode(registryUser.getState()).getName());
-        
+
         UserDto resultDto;
         try {
             resultDto = Converters.get(UserConverter.class).convertFromDomainToDto(registryUser);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in updateUser().", e);
         }
-    
+
         resultDto.setLoginName(StConverter.convertToSt(csmUser.getLoginName()));
         resultDto.setPassword(StConverter.convertToSt(csmUser.getPassword()));
         return resultDto;
@@ -284,7 +283,7 @@ public class UserBeanLocal
         if (PAUtil.isEmpty(loginName)) {
             throw new RemoteException("LoginName must be set.");
         }
-        
+
         String contextName;
         try {
             contextName =
@@ -292,87 +291,88 @@ public class UserBeanLocal
         } catch (Exception e) {
             contextName = DEFAULT_CONTEXT_NAME;
         }
-        if (!DEFAULT_CONTEXT_NAME.equals(contextName) && !loginName.equals(contextName)) {
+        if (!DEFAULT_CONTEXT_NAME.equals(contextName) && !loginName.equals(contextName)
+                && !GRID_CONTEXT_NAME.equals(contextName)) {
             throw new RemoteException("LoginName does not match context.");
         }
     }
-    
-    private void validateData(UserDto dto) throws RemoteException {        
+
+    private void validateData(UserDto dto) throws RemoteException {
         // validate password
         validatePassword(StConverter.convertToString(dto.getPassword()));
-        
+
         // validate first name
         if (PAUtil.isEmpty(StConverter.convertToString(dto.getFirstName()))) {
             throw new RemoteException("First Name must be set.");
         }
-        
+
         // validate last name
         if (PAUtil.isEmpty(StConverter.convertToString(dto.getLastName()))) {
             throw new RemoteException("Last Name must be set.");
         }
-        
+
         // validate country
         validateCountry(StConverter.convertToString(dto.getCountry()));
-        
+
         // validate state
         validateState(StConverter.convertToString(dto.getState()), StConverter.convertToString(dto.getCountry()));
-        
+
         // validate phone number
         if (PAUtil.isEmpty(StConverter.convertToString(dto.getPhone()))) {
             throw new RemoteException("Phone must be set.");
         }
-        
+
         // validate organization
         if (PAUtil.isEmpty(StConverter.convertToString(dto.getAffiliateOrg()))) {
             throw new RemoteException("Organization Affiliation must be set.");
         }
-        
+
         // validate PO organization identifier
         if (PAUtil.isIiNull(dto.getPoOrganizationIdentifier())) {
             throw new RemoteException("PO Organization Identifier must be set.");
         }
-        
+
         // validate PO person identifier
         if (PAUtil.isIiNull(dto.getPoPersonIdentifier())) {
             throw new RemoteException("PO Person Identifier must be set.");
         }
     }
-    
+
     private void validatePassword(String password) throws RemoteException {
         // password must have min 8 chars with at least one not alpha-numeric char and one digit
         if (PAUtil.isEmpty(password)) {
-            throw new RemoteException("Password must be set.");
-        } 
-    
+            return;   // grid account
+        }
+
         if (password.length() < MIN_PASSWORD_LENGTH) {
             throw new RemoteException("Password must be at least 8 characters in length.");
         }
-        
+
         Pattern oneNonAlphaNumeric = Pattern.compile("(.*\\p{Punct}.*)+");
-        Matcher oneNonAlphaNumericMatcher = oneNonAlphaNumeric.matcher(password);       
+        Matcher oneNonAlphaNumericMatcher = oneNonAlphaNumeric.matcher(password);
         if (!oneNonAlphaNumericMatcher.find(0)) {
             throw new RemoteException("Password must contain at least one special character.");
         }
-        
+
         Pattern oneDigit = Pattern.compile("(.*\\p{Digit}.*)+");
         Matcher oneDigitMatcher = oneDigit.matcher(password);
         if (!oneDigitMatcher.find(0)) {
             throw new RemoteException("Password must contain at least one digit.");
         }
     }
-    
+
     private void validateCountry(String country) throws RemoteException {
         if (PAUtil.isEmpty(country)) {
             throw new RemoteException("Country must be set.");
         }
-        
+
         List<Country> countries;
         try {
             countries = PaRegistry.getLookUpTableService().getCountries();
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving countries.", e);
         }
-        
+
         boolean countryFound = false;
         for (Country countryIterator : countries) {
            if (countryIterator.getAlpha3().equals(country)) {
@@ -380,17 +380,17 @@ public class UserBeanLocal
                break; // since match has been found
            }
         }
-        
+
         if (!countryFound) {
             throw new RemoteException("Invalid country specified.");
         }
     }
-    
+
     private void validateState(String state, String country) throws RemoteException {
         if (PAUtil.isEmpty(state)) {
             throw new RemoteException("State must be set.");
         }
-    
+
         List<USStateCode> states = Arrays.asList(USStateCode.values());
         boolean stateFound = false;
         for (USStateCode stateIterator : states) {
@@ -399,11 +399,11 @@ public class UserBeanLocal
                break; // since match has been found
            }
         }
-        
+
         if (!stateFound) {
             throw new RemoteException("Invalid state specified.");
         }
-        
+
         if ("USA".equals(country)) {
             if ("INTERNATIONAL".equals(state)) {
                 throw new RemoteException("State must be a State of the United States.");
@@ -414,7 +414,7 @@ public class UserBeanLocal
             }
         }
     }
-    
+
     private String getCountryCode(String countryName) throws RemoteException {
         List<Country> countries;
         try {
@@ -422,17 +422,17 @@ public class UserBeanLocal
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving countries.", e);
         }
-        
+
         for (int i = 0; i < countries.size(); i++) {
-            Country country = (Country) countries.get(i);
+            Country country = countries.get(i);
             if (country.getName().equals(countryName)) {
                 return country.getAlpha3();
             }
         }
-        
+
         throw new RemoteException("Error while retrieving country code");
     }
-    
+
     private String getCountryName(String countryCode) throws RemoteException {
         List<Country> countries;
         try {
@@ -440,44 +440,44 @@ public class UserBeanLocal
         } catch (PAException e) {
             throw new RemoteException("Exception while retrieving countries.", e);
         }
-        
+
         for (int i = 0; i < countries.size(); i++) {
-            Country country = (Country) countries.get(i);
+            Country country = countries.get(i);
             if (country.getAlpha3().equals(countryCode)) {
                 return country.getName();
             }
         }
-        
+
         throw new RemoteException("Error while retrieving country name");
     }
-    
+
     private Ii checkPoOrganizationId(Ii poOrganizationId) throws RemoteException {
         if (poOrganizationId == null) {
             return null;
         }
-        
+
         OrganizationDTO organization;
         try {
-            organization = PoRegistry.getOrganizationEntityService().getOrganization(poOrganizationId);            
+            organization = PoRegistry.getOrganizationEntityService().getOrganization(poOrganizationId);
         } catch (NullifiedEntityException e) {
             return null;
         }
-        
+
         return organization.getIdentifier();
     }
-    
+
     private Ii checkPoPersonId(Ii poPersonId) throws RemoteException {
         if (poPersonId == null) {
             return null;
         }
-        
+
         PersonDTO person;
         try {
             person = PoRegistry.getPersonEntityService().getPerson(poPersonId);
         } catch (NullifiedEntityException e) {
             return null;
         }
-        
+
         return person.getIdentifier();
     }
 }
