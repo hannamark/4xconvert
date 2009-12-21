@@ -123,8 +123,6 @@ public class UserBeanLocal
         extends AbstractBaseAccrualBean<UserDto, RegistryUser, UserConverter>
         implements UserService {
 
-    private static final String DEFAULT_CONTEXT_NAME = "ejbclient";
-    private static final String GRID_CONTEXT_NAME = "Gr1DU5er";
     private static final int MIN_PASSWORD_LENGTH = 8;
 
     /**
@@ -132,8 +130,9 @@ public class UserBeanLocal
      */
     public UserDto getUser(St isoLoginName) throws RemoteException {
         getLogger().info("Entering getUser().");
+        validateLoginName(isoLoginName);
         String loginName = StConverter.convertToString(isoLoginName);
-        validateLoginName(loginName);
+
         RegistryUser registryUser;
         try {
             registryUser = PaRegistry.getRegisterUserService().getUser(loginName);
@@ -169,8 +168,8 @@ public class UserBeanLocal
      */
     public UserDto createUser(UserDto dto) throws RemoteException {
         getLogger().info("Entering createUser().");
+        validateLoginName(dto.getLoginName());
         String loginName = StConverter.convertToString(dto.getLoginName());
-        validateLoginName(loginName);
 
         RegistryUser registryUser;
         try {
@@ -226,8 +225,8 @@ public class UserBeanLocal
      */
     public UserDto updateUser(UserDto dto) throws RemoteException {
         getLogger().info("Entering updateUser().");
+        validateLoginName(dto.getLoginName());
         String loginName = StConverter.convertToString(dto.getLoginName());
-        validateLoginName(loginName);
 
         RegistryUser registryUser;
         try {
@@ -277,24 +276,6 @@ public class UserBeanLocal
         resultDto.setLoginName(StConverter.convertToSt(csmUser.getLoginName()));
         resultDto.setPassword(StConverter.convertToSt(csmUser.getPassword()));
         return resultDto;
-    }
-
-    private void validateLoginName(String loginName) throws RemoteException {
-        if (PAUtil.isEmpty(loginName)) {
-            throw new RemoteException("LoginName must be set.");
-        }
-
-        String contextName;
-        try {
-            contextName =
-                getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : DEFAULT_CONTEXT_NAME;
-        } catch (Exception e) {
-            contextName = DEFAULT_CONTEXT_NAME;
-        }
-        if (!DEFAULT_CONTEXT_NAME.equals(contextName) && !loginName.equals(contextName)
-                && !GRID_CONTEXT_NAME.equals(contextName)) {
-            throw new RemoteException("LoginName does not match context.");
-        }
     }
 
     private void validateData(UserDto dto) throws RemoteException {

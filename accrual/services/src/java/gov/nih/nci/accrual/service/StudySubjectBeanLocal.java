@@ -117,8 +117,6 @@ public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
         implements StudySubjectService {
 
-    private static final String DEFAULT_CONTEXT_NAME = "ejbclient";
-
     @EJB
     SearchTrialService searchTrialSvc;
 
@@ -128,7 +126,7 @@ public class StudySubjectBeanLocal
     @SuppressWarnings("unchecked")
     public List<StudySubjectDto> getOutcomes(St outcomesLoginName) throws RemoteException {
         getLogger().info("Entering getOutcomesParticipants().");
-        validateOutcomesLoginName(outcomesLoginName);
+        validateLoginName(outcomesLoginName);
         Session session = null;
         List<StudySubject> queryList = new ArrayList<StudySubject>();
         try {
@@ -161,7 +159,7 @@ public class StudySubjectBeanLocal
      * {@inheritDoc}
      */
     public StudySubjectDto createOutcomes(StudySubjectDto dto) throws RemoteException {
-        validateOutcomesLoginName(dto.getOutcomesLoginName());
+        validateLoginName(dto.getOutcomesLoginName());
         dto.setStudyProtocolIdentifier(searchTrialSvc.getOutcomesStudyProtocolIi());
         return super.create(dto);
     }
@@ -215,15 +213,4 @@ public class StudySubjectBeanLocal
         }
         return super.create(dto);
     }
-
-    private void validateOutcomesLoginName(St oln) throws RemoteException {
-        String ln = StConverter.convertToString(oln);
-        if (ln == null) {
-            throw new RemoteException("OutcomesLoginName must be set.");
-        }
-        String cn = getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : DEFAULT_CONTEXT_NAME;
-        if (!DEFAULT_CONTEXT_NAME.equals(cn) && !ln.equals(cn)) {
-            throw new RemoteException("OutcomesLoginName does not match context.");
-        }
-    }    
 }

@@ -82,9 +82,11 @@ import gov.nih.nci.accrual.convert.AbstractConverter;
 import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.lang.reflect.ParameterizedType;
@@ -112,6 +114,8 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         CONVERTER extends AbstractConverter<DTO, BO>> implements BaseAccrualService<DTO> {
 
     private static final String UNCHECKED = "unchecked";
+    private static final String DEFAULT_CONTEXT_NAME = "ejbclient";
+    private static final String GRID_CONTEXT_NAME = "Gr1DU5er";
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
     @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
@@ -295,5 +299,28 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
         }
         return resultDto;
+    }
+
+
+    /**
+     * @param loginName a passed in login in name to test
+     * @throws RemoteException exception
+     */
+    protected void validateLoginName(St loginName) throws RemoteException {
+        String lName = StConverter.convertToString(loginName);
+        if (PAUtil.isEmpty(lName)) {
+            throw new RemoteException("LoginName must be set.");
+        }
+
+        String contextName;
+        try {
+            contextName = getEjbContext().getCallerPrincipal().getName();
+        } catch (Exception e) {
+            contextName = DEFAULT_CONTEXT_NAME;
+        }
+        if (!DEFAULT_CONTEXT_NAME.equals(contextName) && !lName.equals(contextName)
+                && !GRID_CONTEXT_NAME.equals(contextName)) {
+            throw new RemoteException("LoginName does not match context.");
+        }
     }
 }
