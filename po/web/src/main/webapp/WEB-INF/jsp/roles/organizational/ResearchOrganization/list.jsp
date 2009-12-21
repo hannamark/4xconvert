@@ -9,10 +9,10 @@
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
         <display:column titleKey="researchOrganization.id" property="id" sortable="true" sortProperty="ID"/>
         <display:column titleKey="researchOrganization.name" property="name" sortable="true" sortProperty="NAME"/>
-        <display:column titleKey="researchOrganization.typeCode" sortable="true" sortProperty="TYPE_DESC">
+        <display:column titleKey="researchOrganization.typeCode" sortable="false" sortProperty="TYPE_DESC">
             ${row.typeCode.description}
         </display:column>
-        <display:column titleKey="researchOrganization.fundingMechanism" property="fundingMechanism.code" sortable="true" sortProperty="FUNDING"/>
+        <display:column titleKey="researchOrganization.fundingMechanism" property="fundingMechanism.code" sortable="false" sortProperty="FUNDING"/>
         <display:column titleKey="researchOrganization.status" sortable="true" sortProperty="ROLE_STATUS">
             <c:choose>
             <c:when test="${fn:length(row.changeRequests) > 0}">

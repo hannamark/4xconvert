@@ -8,7 +8,7 @@
         <display:setProperty name="pagination.sortdirection.param" value="results.sortDirection" />
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
         <display:column titleKey="oversightCommittee.id" property="id" sortable="true" sortProperty="ID"/>
-        <display:column titleKey="oversightCommittee.typeCode" sortable="true" sortProperty="TYPE_CODE">
+        <display:column titleKey="oversightCommittee.typeCode" sortable="false" sortProperty="TYPE_CODE">
             ${row.typeCode.code}
         </display:column>
         <display:column titleKey="oversightCommittee.status" sortable="true" sortProperty="ROLE_STATUS">

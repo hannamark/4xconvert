@@ -14,7 +14,7 @@
         </s:if>
         <s:else>
             <display:column titleKey="organizationalContact.scoper.id" property="scoper.id" sortable="true" sortProperty="SCOPER_ID" maxLength="10"/>
-            <display:column titleKey="organizationalContact.scoper.name" property="scoper.name" sortable="true" sortProperty="SCOPER_NAME" maxLength="30"/>
+            <display:column titleKey="organizationalContact.scoper.name" property="scoper.name" sortable="false" sortProperty="SCOPER_NAME" maxLength="30"/>
         </s:else>
         <display:column titleKey="organizationalContact.type" property="type.code" sortable="false" maxLength="30"/>
         <display:column titleKey="organizationalContact.status" sortable="true" sortProperty="ROLE_STATUS">

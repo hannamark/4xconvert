@@ -9,7 +9,7 @@
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
         <display:column titleKey="healthCareProvider.id" property="id" sortable="true" sortProperty="ID"/>
         <display:column titleKey="healthCareProvider.scoper.id" property="scoper.id" sortable="true" sortProperty="SCOPER_ID" maxLength="10"/>
-        <display:column titleKey="healthCareProvider.scoper.name" property="scoper.name" sortable="true" sortProperty="SCOPER_NAME" maxLength="30"/>
+        <display:column titleKey="healthCareProvider.scoper.name" property="scoper.name" sortable="false" sortProperty="SCOPER_NAME" maxLength="30"/>
         <display:column titleKey="healthCareProvider.status" sortable="true" sortProperty="ROLE_STATUS">
             <c:choose>
             <c:when test="${fn:length(row.changeRequests) > 0}">

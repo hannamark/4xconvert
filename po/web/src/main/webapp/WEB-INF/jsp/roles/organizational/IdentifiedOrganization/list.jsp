@@ -9,7 +9,7 @@
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
         <display:column titleKey="identifiedOrganization.id" property="id" sortable="true" sortProperty="ID"/>
         <display:column titleKey="identifiedOrganization.scoper.id" property="scoper.id" sortable="true" sortProperty="SCOPER_ID" maxLength="10"/>
-        <display:column titleKey="identifiedOrganization.scoper.name" property="scoper.name" sortable="true" sortProperty="SCOPER_NAME" maxLength="30"/>
+        <display:column titleKey="identifiedOrganization.scoper.name" property="scoper.name" sortable="false" sortProperty="SCOPER_NAME" maxLength="30"/>
         <display:column titleKey="identifiedOrganization.assignedIdentifier.root">
             ${row.assignedIdentifier.root}
         </display:column>
