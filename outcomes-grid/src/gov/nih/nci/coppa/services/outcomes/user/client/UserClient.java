@@ -12,6 +12,7 @@ import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.II;
 import org.iso._21090.ST;
 
 /**
@@ -53,7 +54,10 @@ public class UserClient extends UserClientBase implements UserI {
 		if(!(args.length < 2)){
 			if(args[0].equals("-url")){
 			  UserClient client = new UserClient(args[1]);
+			  ST loginName = 
 			  createUser(client);
+			  getUser(loginName, client);
+			  updateUser(loginName, client);
 			} else {
 				usage();
 				System.exit(1);
@@ -78,6 +82,32 @@ public class UserClient extends UserClientBase implements UserI {
         ST lastName = new ST();
         lastName.setValue("last name");
         user.setLastName(lastName);
+        ST country = new ST();
+        country.setValue("USA");
+        ST state = new ST();
+        state.setValue("MD");
+        ST city = new ST();
+        city.setValue("Rockville");
+        ST addressLine = new ST();
+        addressLine.setValue("2115 E. Jefferson st");
+        ST phone = new ST();
+        phone.setValue("301-555-5555");
+        ST orgAffl = new ST();
+        orgAffl.setValue("534");
+        II poOrgId = new II();
+        poOrgId.setExtension("534");
+        II poPersonId = new II();
+        poPersonId.setExtension("501");
+        
+        user.setCountry(country);
+        user.setState(state);
+        user.setCity(city);
+        user.setAddress(addressLine);
+        user.setPhone(phone);
+        user.setAffiliateOrg(orgAffl);
+        user.setPoOrganizationIdentifier(poOrgId);
+        user.setPoPersonIdentifier(poPersonId);
+        
         User freshUser = client.createUser(user);          
         printResults(freshUser);
         return freshUser.getLoginName();
@@ -90,8 +120,10 @@ public class UserClient extends UserClientBase implements UserI {
 	         new gov.nih.nci.coppa.services.outcomes.ST();
 	     lgN.setValue(loginName.getValue());
 	     User user = client.getUser(lgN);
-	     user.getLastName().setValue("new last name");
-	     User freshUser = client.createUser(user);          
+	     ST newLastName = new ST();
+	     newLastName.setValue("new last name");
+    	 user.setLastName(newLastName);
+	     User freshUser = client.updateUser(user);          
 	     printResults(freshUser);
 	}
 	
