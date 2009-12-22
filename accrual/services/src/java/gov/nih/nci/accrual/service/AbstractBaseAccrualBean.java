@@ -319,7 +319,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             contextName = DEFAULT_CONTEXT_NAME;
         }
         if (!DEFAULT_CONTEXT_NAME.equals(contextName) && !lName.equals(contextName)
-                && !GRID_CONTEXT_NAME.equals(contextName)) {
+                && !contextName.startsWith(GRID_CONTEXT_NAME)) {
             throw new RemoteException("LoginName does not match context.");
         }
     }
