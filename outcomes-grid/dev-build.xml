@@ -463,7 +463,7 @@
 	<target name="runActivityRelationshipClient" depends="checkGlobus, defineClasspaths" description="Run the sample ActivityRelationshipService Client">
 		   <run-client serviceendpointname="ActivityRelationship" class="gov.nih.nci.coppa.services.outcomes.activityrelationship.client.ActivityRelationshipClient" debug-suspend="n" />
 	</target>
-	
+
 	<target name="runPerformedActivityClient" depends="checkGlobus, defineClasspaths" description="Run the sample PerformedActivityService Client">
 	           <run-client serviceendpointname="PerformedActivity" class="gov.nih.nci.coppa.services.outcomes.performedactivity.client.PerformedActivityClient" debug-suspend="n" />
 	</target>
@@ -475,7 +475,11 @@
     <target name="runPatientClient" depends="checkGlobus, defineClasspaths" description="Run the sample Patient Client">
         <run-client serviceEndpointName="Patient" class="gov.nih.nci.coppa.services.outcomes.patient.client.PatientClient" debug-suspend="n" />
     </target>
-	
+
+    <target name="runStudySubjectClient" depends="checkGlobus, defineClasspaths" description="Run the sample Study Subject Client">
+        <run-client serviceEndpointName="StudySubject" class="gov.nih.nci.coppa.services.outcomes.studysubject.client.StudySubjectClient" debug-suspend="n" />
+    </target>
+
 	<target name="runUserClient" depends="checkGlobus, defineClasspaths" description="Run the sample User Client">
 	        <run-client serviceEndpointName="User" class="gov.nih.nci.coppa.services.outcomes.user.client.UserClient" debug-suspend="n" />
 	</target>
@@ -483,5 +487,5 @@
     <target name="runPerformedObservationResultClient" depends="checkGlobus, defineClasspaths" description="Run the sample PerformedObservationResult Client">
         <run-client serviceEndpointName="PerformedObservationResult" class="gov.nih.nci.coppa.services.outcomes.performedobservationresult.client.PerformedObservationResultClient" debug-suspend="n" />
     </target>
-    
+
 </project>
