@@ -83,12 +83,14 @@ import gov.nih.nci.cadsr.domain.ClassificationScheme;
 import gov.nih.nci.cadsr.domain.ClassificationSchemeItem;
 import gov.nih.nci.cadsr.domain.DataElement;
 import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
+import gov.nih.nci.cadsr.domain.ReferenceDocument;
 import gov.nih.nci.cadsr.domain.ValueDomain;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.UnitOfMeasurement;
+import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -117,14 +119,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.commons.lang.StringEscapeUtils;
 
 
 /**
@@ -144,6 +145,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static final String ELIGIBILITYADD = "eligibilityAdd";
     private static final int MAXIMUM_CHAR_POPULATION = 800;
     private static final int MAXIMUM_CHAR_DESCRIPTION = 5000;
+    private static final int MAX_CADSR_RESULT = 200;
     private static final String SP = " ";
     private static final String BR = " ;";
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
@@ -161,7 +163,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static final int RECORDSVALUE = 2;
     private String studyPopulationDescription;
     private String samplingMethodCode;
-    private List<DataElement> cadsrResult = new ArrayList<DataElement>();  
+    //private List<DataElement> cadsrResult = new ArrayList<DataElement>();
+    private List<CaDSRWebDTO> cadsrResult = new ArrayList<CaDSRWebDTO>();
     private static long cadsrCsId;
     private static float cadsrCsVersion;  
     private static List<ClassificationSchemeItem> csisResult = null;
@@ -219,10 +222,12 @@ public class EligibilityCriteriaAction extends ActionSupport {
             ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
             ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
             if (ospDTO != null) {
-                if (ospDTO.getSamplingMethodCode().getCode() != null) {
+                if (ospDTO.getSamplingMethodCode() != null 
+                    && ospDTO.getSamplingMethodCode().getCode() != null) {
                     samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
                 }   
-                if (ospDTO.getStudyPopulationDescription().getValue() != null) {
+                if (ospDTO.getStudyPopulationDescription() != null 
+                    && ospDTO.getStudyPopulationDescription().getValue() != null) {
                     studyPopulationDescription = ospDTO.getStudyPopulationDescription().getValue().toString();
                 }
             }
@@ -288,7 +293,30 @@ public class EligibilityCriteriaAction extends ActionSupport {
             List classCes = appService.query(criteria);
           
             for (Object obj : classCes) {
-                cadsrResult.add((DataElement) obj);
+              CaDSRWebDTO cadsrWebDTO = new CaDSRWebDTO();
+              DataElement de = (DataElement) obj;
+              cadsrWebDTO.setId(de.getId());
+              cadsrWebDTO.setPublicId(Long.toString(de.getPublicID()));
+              cadsrWebDTO.setVersion(Float.toString(de.getVersion()));
+              if (de.getReferenceDocumentCollection() != null && !de.getReferenceDocumentCollection().isEmpty()) {
+               for (ReferenceDocument  refDoc : de.getReferenceDocumentCollection()) {
+                 if (refDoc.getType().equals("Preferred Question Text")) {
+                   cadsrWebDTO.setPreferredQuestion(refDoc.getDoctext());  
+                  } 
+               }
+
+              } else {
+                 if (de.getDataElementConcept() != null && de.getDataElementConcept().getLongName() != null) { 
+                   cadsrWebDTO.setPreferredQuestion(de.getDataElementConcept().getLongName());
+                 }
+              }
+              cadsrResult.add(cadsrWebDTO);
+            }
+            if (cadsrResult.size() > MAX_CADSR_RESULT) {
+              ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, 
+               "Search results too large returned more than 200 records");
+              cadsrResult.clear();
+              return CDES_BY_CSI;
             }
             webDTO.setCdeCategoryCode(csiName);
             setCdeCategoryCode(csiName);
@@ -297,6 +325,16 @@ public class EligibilityCriteriaAction extends ActionSupport {
         }     
         return CDES_BY_CSI;      
     }  
+    
+    /**
+     * Gets the classified cd es display tag.
+     * 
+     * @return the classified cd es display tag
+     */
+    public String getClassifiedCDEsDisplayTag() {
+      this.getClassifiedCDEs();
+        return "cdeDisplayTag";
+    }
 
     /**
      * display the cdes.
@@ -322,7 +360,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
               permValues = new ArrayList<String>();
               Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
               for (ValueDomainPermissibleValue vdPv : vdPvList) {
-                  permValues.add(vdPv.getPermissibleValue().getValue());
+                 // permValues.add(vdPv.getPermissibleValue().getValue());
+                  permValues.add(vdPv.getPermissibleValue().getValueMeaning().getLongName());
               }
               
           } else {
@@ -338,48 +377,6 @@ public class EligibilityCriteriaAction extends ActionSupport {
         
         return DISPLAY_CDE;
        
-    }
-    
-    /**
-     * can be removed.
-     * @return String
-     */
-    public String displaycadsr() {
-        cadsrResult.clear();
-        String name = ServletActionContext.getRequest().getParameter("searchName");
-        boolean restrictToStandards = 
-            Boolean.valueOf(ServletActionContext.getRequest().getParameter("restrictToStandard"));
-        try {
-            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
-            DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
-            criteria.add(Expression.ilike("longName", "%" + name + "%"));
-            criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
-            if (restrictToStandards) {
-                criteria.add(Expression.eq("registrationStatus", "Standard"));
-            }
-      
-            Set result = new HashSet();
-            result.addAll(appService.query(criteria));
-      
-            criteria = DetachedCriteria.forClass(DataElement.class, "de");
-            criteria.add(Expression.ilike("preferredName", "%" + name + "%"));
-            criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
-      
-            if (restrictToStandards) {
-                criteria.add(Expression.eq("registrationStatus", "Standard"));
-            } 
-      
-            result.addAll(appService.query(criteria));
-      
-            for (Object obj : result) {
-                getCadsrResult().add((DataElement) obj);
-            }
-      
-        } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        } 
-      
-        return SUCCESS;
     }
     
     /**
@@ -1194,14 +1191,14 @@ private void populateList() throws PAException {
    * 
    * @return cadsrResult
    */
-  public List<DataElement> getCadsrResult() {
+  public List<CaDSRWebDTO> getCadsrResult() {
       return cadsrResult;
   }
   /**
    * 
-   * @param result data element
+   * @param result CaDSRWebDTO
    */
-  public void setCadsrResult(List<DataElement> result) {
+  public void setCadsrResult(List<CaDSRWebDTO> result) {
       this.cadsrResult = result;
   }
   

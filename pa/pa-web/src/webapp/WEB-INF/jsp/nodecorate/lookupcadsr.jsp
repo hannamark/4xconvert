@@ -56,7 +56,7 @@
 <body>
 <s:form id="cadsrlookup" name="cadsrlookup">
 <div class="box" id="searchcaDSR">
-<h2>Search CaDSR</h2>
+<h2>Search caDSR</h2>
 <table  class="form">  
     <tr>    
         <td scope="row" class="label">
@@ -77,29 +77,24 @@
 
 </table>
 </div>
-  <div class="line"></div>
+ <div id="cdeRequestEmail" style="display:none">
+     <jsp:include page="/WEB-INF/jsp/nodecorate/requestToCreateCDE.jsp"/>
+ </div>
+  <div class="actionsrow">
+    <del class="btnwrapper">
+      <ul class="btnrow">
+        <li>
+           <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>
+           <s:a href="#" cssClass="btn" onclick="openEmail()"><span class="btn_img"><span class="search">Create CDE Request</span></span>
+           </s:a>
+        </li>
+      </ul>
+   </del>
+ </div>
+   <div class="line"></div>
     <div id="getCadsr" align="center">   
         <jsp:include page="/WEB-INF/jsp/nodecorate/lookupcadsrdisplaycadsr.jsp"/>
-    </div>
-    <div id="cdeRequestEmail" style="display:none">
-     <jsp:include page="/WEB-INF/jsp/nodecorate/requestToCreateCDE.jsp"/>
-    </div>
-
-
-  <div class="actionsrow">
-         <del class="btnwrapper">
-            <ul class="btnrow">
-               <li>
-                   <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                   <s:a href="#" cssClass="btn" onclick="openEmail()"><span class="btn_img"><span class="search">Create CDE Request</span></span>
-                </s:a>
-               </li>
-            </ul>
-            </td>  
-               </li>
-            </ul>
-          </del>
- </div>
+    </div>   
 </s:form>
 </body>
 </html>

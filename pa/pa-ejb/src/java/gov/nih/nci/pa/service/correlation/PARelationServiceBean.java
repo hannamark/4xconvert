@@ -160,7 +160,7 @@ public class PARelationServiceBean {
             throw new PAException(" Organization PO Identifier is null");
         }
         if (PAUtil.isIiNull(contactDto.getPersonIdentifier()) && PAUtil.isIiNull(contactDto.getSrIdentifier())) {
-            throw new PAException(" Person or Tilte PO Identifier is null");
+            throw new PAException(" Person or Title PO Identifier is null");
         }
         if (PAUtil.isIiNull(contactDto.getStudyProtocolIdentifier())) {
             throw new PAException("Study Protocol Identifer is null");

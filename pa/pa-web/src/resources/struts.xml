@@ -24,13 +24,13 @@
                 <interceptor-ref name="conversionError"/>
                 <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="params">
-		  <!--
-		      Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
-		   -->
-		  <param name="excludeParams">
-		    _,d-\d+?-[sop]
-		 </param>
-		</interceptor-ref>
+		         <!--
+		           Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
+		         -->
+		         <param name="excludeParams">
+		          _,d-\d+?-[sop]
+		         </param>
+		        </interceptor-ref>
                 <interceptor-ref name="maliciousInput"/>
                 <interceptor-ref name="parameterTrim">
                     <param name="trimToNull">true</param>
@@ -204,6 +204,7 @@
             <result>/WEB-INF/jsp/nodecorate/lookupcadsr{1}.jsp</result>
             <result name ="cdesByCsiResult">/WEB-INF/jsp/nodecorate/lookupcadsrdisplaycadsr.jsp</result>
             <result name ="requestToCreateCDE">/WEB-INF/jsp/nodecorate/requestToCreateCDE.jsp</result>
+            <result name ="cdeDisplayTag">/WEB-INF/jsp/nodecorate/lookupcadsr.jsp</result>
         </action>
         <action name="ajaxEligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
             <result name="displaycde">/WEB-INF/jsp/nodecorate/eligibilityBuildCriterion.jsp</result>

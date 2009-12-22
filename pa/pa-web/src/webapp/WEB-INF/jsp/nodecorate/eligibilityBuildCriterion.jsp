@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <table class="form">
 <tr>
-    <th colspan="3"><fmt:message key="isdesign.eligibilitycriteria.buildDescription" /><span class="required">*</span></th>
+    <th colspan="3"><fmt:message key="isdesign.eligibilitycriteria.buildDescription" /></th>
 </tr>
             <tr>
                      <td scope="row" class="label">
@@ -152,7 +152,7 @@
                                </s:fielderror>                            
                          </span>
                     <td scope="row"  class="label"><label>
-                        <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/>(Max 5,000 chars)</label>
+                        <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/><span class="required">*</span>(Max 5,000 chars)</label>
                     </td>
                     <td class="value">
                         <s:textarea name="webDTO.textDescription" rows="6" cssStyle="width:600px" onblur='activate();' />
