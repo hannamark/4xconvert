@@ -45,7 +45,7 @@ public class TrialDocumentActionTest extends AbstractPaActionTest{
     @Test
     public void testQuery() {
         String result = trialDocumentAction.query();
-        assertEquals("error",result);
+        assertEquals("success",result);
     }
 
     /**

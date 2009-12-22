@@ -80,7 +80,6 @@ package gov.nih.nci.pa.test.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.DiseaseBeanLocal;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentBeanLocal;
@@ -100,7 +99,6 @@ import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyCheckoutServiceBean;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
-import gov.nih.nci.pa.service.StudyDiseaseBeanLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyInboxServiceBean;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
@@ -137,6 +135,10 @@ import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockArmService;
+import gov.nih.nci.service.MockDiseaseAlternateService;
+import gov.nih.nci.service.MockDiseaseParentService;
+import gov.nih.nci.service.MockDiseaseService;
+import gov.nih.nci.service.MockDocumentService;
 import gov.nih.nci.service.MockInterventionAlternateNameService;
 import gov.nih.nci.service.MockInterventionService;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
@@ -145,6 +147,8 @@ import gov.nih.nci.service.MockPlannedActivityService;
 import gov.nih.nci.service.MockProtocolQueryService;
 import gov.nih.nci.service.MockRegistryUserService;
 import gov.nih.nci.service.MockRegulatoryInformationService;
+import gov.nih.nci.service.MockStudyContactService;
+import gov.nih.nci.service.MockStudyDiseaseService;
 import gov.nih.nci.service.MockStudyIndIdeService;
 import gov.nih.nci.service.MockStudyMilestoneService;
 import gov.nih.nci.service.MockStudyObjectiveService;
@@ -185,9 +189,10 @@ public class MockServiceLocator implements ServiceLocator {
     private final StudyOnholdServiceLocal studyOnholdService = new MockStudyOnholdService();
     private final PAHealthCareProviderRemote healthCareProviderRemote = new MockPAHealthCareProviderService();
     private final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
-    private final StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();
-    private final DiseaseServiceLocal diseaseService = new DiseaseBeanLocal();
-    private final DocumentServiceLocal documentService = new DocumentBeanLocal();
+    private final StudyDiseaseServiceLocal studyDiseaseService = new MockStudyDiseaseService();
+    private final DiseaseServiceLocal diseaseService = new MockDiseaseService();
+    private final DiseaseParentServiceRemote diseaseParentService = new MockDiseaseParentService();
+    private final DiseaseAlternameServiceLocal diseaseAlternateService = new MockDiseaseAlternateService();
     private final StudyMilestoneServicelocal studyMilestoneService = new MockStudyMilestoneService();
     private final StudyResourcingServiceLocal studyResourcingService = new MockStudyResourcingService();
     private final RegulatoryInformationServiceRemote regulatoryInformationService = new MockRegulatoryInformationService();
@@ -208,6 +213,8 @@ public class MockServiceLocator implements ServiceLocator {
     private final AbstractionCompletionServiceRemote abstractionCompletionService = new MockAbstractionCompletionService();
     private final CTGovXmlGeneratorServiceRemote ctGovXmlGeneratorService = new MockCTGovXMLGeneratorService();
     private final TSRReportGeneratorServiceRemote tsrReportGeneratorService = new MockTSRReportGeneratorService();
+    private final StudyContactServiceLocal studyContactService = new MockStudyContactService();
+    private final DocumentServiceLocal documentService = new MockDocumentService();
     
     /**
      * @return mock service
@@ -408,16 +415,14 @@ public class MockServiceLocator implements ServiceLocator {
      * @return
      */
     public DiseaseAlternameServiceLocal getDiseaseAlternameService() {
-        // TODO Auto-generated method stub
-        return null;
+        return diseaseAlternateService;
     }
 
     /**
      * @return
      */
     public DiseaseParentServiceRemote getDiseaseParentService() {
-        // TODO Auto-generated method stub
-        return null;
+         return diseaseParentService;
     }
 
     /**
@@ -438,8 +443,7 @@ public class MockServiceLocator implements ServiceLocator {
      * @return StudyContact
      */
     public StudyContactServiceLocal getStudyContactService() {
-        // TODO Auto-generated method stub
-        return null;
+         return studyContactService;
     }
 
     public OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService()

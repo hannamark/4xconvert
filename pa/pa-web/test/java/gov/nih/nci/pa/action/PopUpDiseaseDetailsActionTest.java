@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.action;
 
 import org.junit.Before;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
@@ -23,11 +24,10 @@ public class PopUpDiseaseDetailsActionTest extends AbstractPaActionTest{
     /**
      * Test method for {@link gov.nih.nci.pa.action.PopUpDiseaseDetailsAction#execute()}.
      */
-    @Test(expected=Exception.class)
+    @Test
     public void testExecute() throws Exception{
-            popUpDiseaseDetailsAction.execute();
-        
-        
+     getRequest().setupAddParameter("diseaseId", "1");
+     assertEquals("success" ,popUpDiseaseDetailsAction.execute());        
     }
 
 }

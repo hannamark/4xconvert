@@ -1,12 +1,15 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAConstants;
@@ -37,6 +40,12 @@ public class MockPoOrganizationEntityService implements
                 create("streetAddressLine", "deliveryAddressLine", 
                         "cityOrMunicipality", "stateOrProvince",
                         "postalCode", "USA"));
+        List<String> phones = new ArrayList<String>();
+        phones.add("7037071111");
+        phones.add("7037071112");
+        phones.add("7037071113");
+        DSet<Tel> master = new DSet<Tel>();
+        dto.setTelecomAddress(DSetConverter.convertListToDSet(phones, "PHONE",master));
         orgDtoList.add(dto);
         
         dto = new OrganizationDTO();

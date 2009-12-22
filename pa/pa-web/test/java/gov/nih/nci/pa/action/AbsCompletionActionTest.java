@@ -15,7 +15,7 @@ import org.junit.Test;
  * @author asharma
  *
  */
-public class TestAbstractionCompletionAction extends AbstractPaActionTest {
+public class AbsCompletionActionTest extends AbstractPaActionTest {
 
     AbstractionCompletionAction abstractionCompletionAction;
 

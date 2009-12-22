@@ -79,6 +79,11 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.util.Constants;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -89,16 +94,48 @@ import org.junit.Test;
  */
 public class IrbActionTest extends AbstractPaActionTest {
     private static IrbAction act;
+    StudyProtocolQueryDTO spDTO;
     
     @Before
     public void prepare() throws Exception {
         act = new IrbAction();
+        spDTO = new StudyProtocolQueryDTO();
+        spDTO.setStudyProtocolId(1L);
+        getSession().setAttribute(Constants.TRIAL_SUMMARY, spDTO);
         act.prepare();
     }
     
-    @Test
-    public void testDefaultValues() throws Exception {
-        act.execute();
-        assertNull(act.getApprovalStatus());
-    }
+   	@Test
+	public void testExecute() {
+		 act.execute();
+	     assertNull(act.getApprovalStatus());
+	}
+
+	
+	@Test
+	public void testFromPO() {
+		getRequest().setupAddParameter("orgId", "");
+		assertEquals("success", act.fromPO());
+	}
+	@Test
+	public void testFromPOwithOrg() {
+		 getRequest().setupAddParameter("orgId", "abc");
+		assertEquals("success", act.fromPO());
+	}
+	@Test
+	public void testSave() {
+		assertEquals("success", act.save());
+		assertTrue(act.hasActionErrors());
+	}
+	@Test
+	public void testSavewithData() {
+		act.setApprovalStatus(ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode());
+		assertEquals("success", act.save());
+	}
+	@Test
+	public void testEnforceBusinessRules() {
+		act.setApprovalStatus(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode());
+		assertEquals("success", act.save());
+		assertTrue(act.hasActionErrors());
+	}
 }

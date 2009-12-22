@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.service.PAException;
 
 import org.junit.Before;
@@ -12,15 +13,23 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
 	
 	@Before 
 	public void setUp() throws PAException {
-	  popUpDisAction =  new PopUpDisAction();	
-	  getRequest().setupAddParameter("searchName", "");
-	  getRequest().setupAddParameter("includeSynonym", "yes");
-	  getRequest().setupAddParameter("exactMatch", "yes");
+	  popUpDisAction =  new PopUpDisAction();	  
 	} 
 	
 	@Test
 	public void testDisplayList() {
-		popUpDisAction.displayList();
-		assertNotNull(getRequest().getAttribute("failureMessage"));
-	}	
+	 getRequest().setupAddParameter("searchName", "");
+	 getRequest().setupAddParameter("includeSynonym", "true");
+	 getRequest().setupAddParameter("exactMatch", "true");
+	 popUpDisAction.displayList();
+	assertNotNull(getRequest().getAttribute("failureMessage"));
+	}
+	
+	@Test
+	public void testDisplayListWithSearchResults() {
+	 getRequest().setupAddParameter("searchName", "disease");
+	 getRequest().setupAddParameter("includeSynonym", "true");
+	 getRequest().setupAddParameter("exactMatch", "true");
+	 assertEquals("success", popUpDisAction.displayList());
+	}
 }

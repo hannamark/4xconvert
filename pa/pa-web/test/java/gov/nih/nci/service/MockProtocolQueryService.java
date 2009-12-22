@@ -28,6 +28,7 @@ public class MockProtocolQueryService implements ProtocolQueryServiceLocal {
         spQueryDTO.setOfficialTitle("officialTitle");
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
+        spQueryDTO.setLeadOrganizationId(1L);
         list.add(spQueryDTO);
         spQueryDTO = new StudyProtocolQueryDTO();
         spQueryDTO.setStudyProtocolId(2L);

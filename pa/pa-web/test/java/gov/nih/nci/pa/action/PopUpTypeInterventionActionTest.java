@@ -19,15 +19,15 @@ public class PopUpTypeInterventionActionTest extends AbstractPaActionTest {
 	
 	@Before 
 	public void setUp() throws PAException {
-    	popUpInterventionAction =  new PopUpTypeInterventionAction();	
-	  getRequest().setupAddParameter("className", "uom");
-	  getRequest().setupAddParameter("divName", "uomDetails");
+    	popUpInterventionAction =  new PopUpTypeInterventionAction();	  
 	} 
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#type()}.
 	 */
 	@Test
 	public void testType() {
+		getRequest().setupAddParameter("className", "uom");
+		getRequest().setupAddParameter("divName", "uomDetails");
 		assertEquals("lookUp", popUpInterventionAction.type());
 		assertEquals("uom",popUpInterventionAction.getLookupSearchCriteria().getType());
 	}
@@ -46,7 +46,86 @@ public class PopUpTypeInterventionActionTest extends AbstractPaActionTest {
 		 assertEquals("success",popUpInterventionAction.displayLookUpList());
 		 assertEquals("Please enter at least one search criteria", getRequest().getAttribute("failureMessage"));
 	}
-
+	/**
+	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#displayLookUpList()}.
+	 */
+	@Test
+	public void testDisplayLookUpListWithDataUOM() {
+		 getRequest().setupAddParameter("code", "ml");
+		 getRequest().setupAddParameter("publicId", "");
+		 getRequest().setupAddParameter("description", "");
+		 getRequest().setupAddParameter("displayName", "");
+		 getRequest().setupAddParameter("className", "UnitOfMeasurement");
+		 getRequest().setupAddParameter("divName", "code");
+		 assertEquals("success",popUpInterventionAction.displayLookUpList());
+	}
+	/**
+	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#displayLookUpList()}.
+	 */
+	@Test
+	public void testDisplayLookUpListWithDataDoseForm() {
+		 getRequest().setupAddParameter("code", "pill");
+		 getRequest().setupAddParameter("publicId", "");
+		 getRequest().setupAddParameter("description", "");
+		 getRequest().setupAddParameter("displayName", "");
+		 getRequest().setupAddParameter("className", "DoseForm");
+		 getRequest().setupAddParameter("divName", "code");
+		 assertEquals("success",popUpInterventionAction.displayLookUpList());
+	}
+	
+	/**
+	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#displayLookUpList()}.
+	 */
+	@Test
+	public void testDisplayLookUpListWithDataDoseFrequency() {
+		 getRequest().setupAddParameter("code", "q2");
+		 getRequest().setupAddParameter("publicId", "");
+		 getRequest().setupAddParameter("description", "");
+		 getRequest().setupAddParameter("displayName", "");
+		 getRequest().setupAddParameter("className", "DoseFrequency");
+		 getRequest().setupAddParameter("divName", "code");
+		 assertEquals("success",popUpInterventionAction.displayLookUpList());
+	}
+	
+	/**
+	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#displayLookUpList()}.
+	 */
+	@Test
+	public void testDisplayLookUpListWithDataRouteOfAdministration() {
+		 getRequest().setupAddParameter("code", "oral");
+		 getRequest().setupAddParameter("publicId", "");
+		 getRequest().setupAddParameter("description", "");
+		 getRequest().setupAddParameter("displayName", "");
+		 getRequest().setupAddParameter("className", "RouteOfAdministration");
+		 getRequest().setupAddParameter("divName", "code");
+		 assertEquals("success",popUpInterventionAction.displayLookUpList());
+	}
+	/**
+	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#displayLookUpList()}.
+	 */
+	@Test
+	public void testDisplayLookUpListWithDataMethodCode() {
+		 getRequest().setupAddParameter("code", "test");
+		 getRequest().setupAddParameter("publicId", "");
+		 getRequest().setupAddParameter("description", "");
+		 getRequest().setupAddParameter("displayName", "");
+		 getRequest().setupAddParameter("className", "MethodCode");
+		 getRequest().setupAddParameter("divName", "code");
+		 assertEquals("success",popUpInterventionAction.displayLookUpList());
+	}
+	/**
+	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#displayLookUpList()}.
+	 */
+	@Test
+	public void testDisplayLookUpListWithDataTargetSite() {
+		 getRequest().setupAddParameter("code", "Chest");
+		 getRequest().setupAddParameter("publicId", "");
+		 getRequest().setupAddParameter("description", "");
+		 getRequest().setupAddParameter("displayName", "");
+		 getRequest().setupAddParameter("className", "TargetSite");
+		 getRequest().setupAddParameter("divName", "code");
+		 assertEquals("success",popUpInterventionAction.displayLookUpList());
+	}
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#displayLookUpListDisplayTag()}.
 	 */

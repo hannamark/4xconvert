@@ -79,8 +79,9 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.Constants;
 
@@ -94,20 +95,56 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
     private static TrialHistoryAction trialHistory;
 
     @Before
-    public void prepare() throws Exception {
+    public void setup() throws Exception {
         trialHistory = new TrialHistoryAction();
         trialHistory.prepare();
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
      }
  
     @Test
-    public void listTest() throws Exception {
+    public void testLoadListForm() throws Exception {
         // select from main menu
-        assertEquals(AbstractListEditAction.AR_LIST, trialHistory.execute());
-        assertFalse(trialHistory.hasErrors());
+        trialHistory.loadListForm();
+        
+    }
+    @Test
+    public void testLoadEditForm() throws Exception {
+    	trialHistory.setCurrentAction("create");
+    	trialHistory.setSelectedRowIdentifier("1");
+        // select from main menu
+        trialHistory.loadEditForm();
+        
+    }
+    @Test
+    public void testOpen() throws Exception {
+    	trialHistory.setDocii("1");
+    	trialHistory.setStudyProtocolii("1");
+    	trialHistory.setServletResponse(getResponse());
+    	assertEquals("none",trialHistory.open());
     }
     
+    @Test
+    public void testUpdate() throws Exception {
+    	trialHistory.setDocii("1");
+    	trialHistory.setStudyProtocolii("1");
+    	trialHistory.setServletResponse(getResponse());
+    	TrialHistoryWebDTO webDTO = new TrialHistoryWebDTO();
+    	trialHistory.setTrialHistoryWbDto(webDTO);
+    	assertEquals("edit",trialHistory.update());
+    }
     
+    @Test
+    public void testUpdateNoFieldErrors() throws Exception {
+    	trialHistory.setDocii("1");
+    	trialHistory.setStudyProtocolii("1");
+    	trialHistory.setServletResponse(getResponse());
+    	TrialHistoryWebDTO webDTO = new TrialHistoryWebDTO();
+    	webDTO.setAmendmentDate("12/21/2009");
+    	webDTO.setIdentifier("1");
+    	webDTO.setAmendmentReasonCode(AmendmentReasonCode.ADMINISTRATIVE.getCode());
+    	trialHistory.setTrialHistoryWbDto(webDTO);
+    	assertEquals("list",trialHistory.update());
+    }
     
     @Test
     public void updateTest() throws Exception {
