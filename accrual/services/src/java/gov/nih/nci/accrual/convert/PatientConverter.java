@@ -80,13 +80,13 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -106,7 +106,9 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
     @Override
     public PatientDto convertFromDomainToDto(Patient bo) throws DataFormatException {
         PatientDto dto = new PatientDto();
-        dto.setBirthDate(AccrualUtil.yearMonthStringToTs(bo.getBirthDate().toString()));
+        if (bo.getBirthDate() != null) {
+            dto.setBirthDate(AccrualUtil.yearMonthStringToTs(bo.getBirthDate().toString()));
+        }
         dto.setCountryIdentifier(IiConverter.convertToIi(bo.getCountryIdentifier()));
         dto.setEthnicCode(CdConverter.convertToCd(bo.getEthnicCode()));
         dto.setGenderCode(CdConverter.convertToCd(bo.getSexCode()));
