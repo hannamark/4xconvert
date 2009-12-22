@@ -145,6 +145,9 @@ public class StatesAction extends ActionSupport {
      * @param field form field name.
      */
     public void setField(String field) {
+        if (!field.matches("^(\\w+\\.?)*\\w+$")) {
+            throw new IllegalArgumentException("Invalid field");
+        }
         this.field = field;
     }
 
