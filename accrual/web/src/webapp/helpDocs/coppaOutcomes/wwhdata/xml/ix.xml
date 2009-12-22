@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebWorksHelpIX version="5.0" xmlns="urn:WebWorks-Help-Index-Schema">
+  <g t="A" o="002">
+    <i t="accounts, creating">
+      <j l="5#1078282" />
+    </i>
+  </g>
+  <g t="B" o="002">
+    <i t="baseline data overview">
+      <j l="17#1096866" />
+    </i>
+    <i t="Becoming a registered user">
+      <j l="1" />
+    </i>
+    <i t="best response values">
+      <j l="46#1097861" />
+    </i>
+    <i t="biologics, see drug/biologics" />
+  </g>
+  <g t="C" o="002">
+    <i t="causes of death">
+      <j l="51#1100361" />
+    </i>
+    <i t="creating accounts">
+      <j l="5#1078282" />
+    </i>
+    <i t="cycle data">
+      <i t="overview of">
+        <j l="30#1100234" />
+      </i>
+      <i t="prerequisites for submitting">
+        <j l="30#1099924" />
+      </i>
+      <i t="submitting">
+        <j l="30#1100234" />
+      </i>
+    </i>
+    <i t="cycle records">
+      <i t="adding">
+        <j l="31#1100006" />
+      </i>
+      <i t="editing">
+        <j l="32#1091976" />
+      </i>
+    </i>
+  </g>
+  <g t="D" o="002">
+    <i t="death information, submitting">
+      <j l="51" />
+    </i>
+    <i t="death, causes of">
+      <j l="51#1100361" />
+    </i>
+    <i t="demographic details, viewing">
+      <j l="12" />
+    </i>
+    <i t="diagnosis data, submitting">
+      <j l="18#1091526" />
+    </i>
+    <i t="diagnosis, searching for">
+      <j l="18#1091538" />
+    </i>
+    <i t="disease evaluation data">
+      <i t="overview of">
+        <j l="45#1097698" />
+      </i>
+      <i t="submitting">
+        <j l="45" />
+      </i>
+    </i>
+    <i t="disease evaluation records, adding">
+      <j l="46" />
+    </i>
+    <i t="disease status values">
+      <j l="46#1097834" />
+    </i>
+    <i t="diseases, searching for names of">
+      <j l="18#1091538" />
+    </i>
+    <i t="dose duration modification values">
+      <j l="40#1103833" />
+    </i>
+    <i t="drug/biologics data">
+      <i t="prerequisites for submitting">
+        <j l="33#1100897" />
+        <j l="34#1092002" />
+      </i>
+    </i>
+    <i t="drug/biologics records">
+      <i t="adding">
+        <j l="34#1101096" />
+      </i>
+      <i t="updating">
+        <j l="35#1112326" />
+      </i>
+    </i>
+  </g>
+  <g t="E" o="002">
+    <i t="evidence of disease values">
+      <j l="46#1097882" />
+    </i>
+  </g>
+  <g t="G" o="002">
+    <i t="grade system values">
+      <j l="21#1091858" />
+    </i>
+    <i t="grade values, pathology">
+      <j l="21#1091757" />
+    </i>
+  </g>
+  <g t="L" o="002">
+    <i t="lesion assessment data">
+      <i t="overview of">
+        <j l="47#1098993" />
+      </i>
+      <i t="submitting">
+        <j l="47#1098993" />
+      </i>
+    </i>
+    <i t="lesion assessment records">
+      <i t="adding">
+        <j l="48#1098199" />
+      </i>
+      <i t="updating">
+        <j l="49" />
+      </i>
+    </i>
+    <i t="lesion measurement methods">
+      <j l="48#1098672" />
+    </i>
+    <i t="logging in">
+      <j l="6#1077992" />
+    </i>
+    <i t="login page, accessing the">
+      <j l="6#1078003" />
+    </i>
+  </g>
+  <g t="N" o="002">
+    <i t="navigation pane links">
+      <j l="6#1078003" />
+    </i>
+    <i t="NCI Outcomes Portal">
+      <i t="browser support for">
+        <j l="4#1077545" />
+      </i>
+      <i t="overview of">
+        <j l="4" />
+      </i>
+      <i t="see also, Outcomes" />
+    </i>
+  </g>
+  <g t="O" o="002">
+    <i t="off-treatment reason codes, described">
+      <j l="42#1105133" />
+    </i>
+    <i t="off-treatment records">
+      <i t="prerequisites for submitting">
+        <j l="42#1106790" />
+      </i>
+      <i t="submitting">
+        <j l="42#1106790" />
+      </i>
+    </i>
+    <i t="Online help">
+      <i t="locating topics of interest">
+        <j l="1#1081251" />
+      </i>
+      <i t="printing">
+        <j l="1#1081275" />
+      </i>
+      <i t="using navigation tools">
+        <j l="2" />
+      </i>
+    </i>
+    <i t="Online help, using">
+      <j l="1" />
+    </i>
+    <i t="outcome data, overview of">
+      <j l="44#1101706" />
+    </i>
+    <i t="outcome record overview">
+      <j l="44#1101706" />
+    </i>
+    <i t="Outcomes">
+      <i t="accessing">
+        <j l="4#1081092" />
+        <j l="5#1078282" />
+      </i>
+      <i t="logging in to">
+        <j l="6" />
+        <j l="6#1077997" />
+      </i>
+      <i t="logging out of">
+        <j l="8#1078813" />
+      </i>
+    </i>
+    <i t="overview">
+      <i t="of baseline data">
+        <j l="17#1096866" />
+      </i>
+      <i t="of cycle data">
+        <j l="30#1100234" />
+      </i>
+      <i t="of disease evaluation data">
+        <j l="45#1097698" />
+      </i>
+      <i t="of lesion assessment data">
+        <j l="47#1098993" />
+      </i>
+      <i t="of NCI Outcomes Portal" />
+      <i t="of outcome data">
+        <j l="44#1101706" />
+      </i>
+      <i t="of patient data">
+        <j l="10#1083228" />
+      </i>
+    </i>
+  </g>
+  <g t="P" o="002">
+    <i t="passwords">
+      <i t="requirements for">
+        <j l="5#1077899" />
+      </i>
+      <i t="resetting">
+        <j l="7#1078663" />
+      </i>
+    </i>
+    <i t="pathology data, submitting">
+      <j l="21#1091745" />
+    </i>
+    <i t="pathology grade values">
+      <j l="21#1091757" />
+    </i>
+    <i t="patient data">
+      <i t="overview of">
+        <j l="10#1083228" />
+      </i>
+      <i t="viewing">
+        <j l="11#1079554" />
+      </i>
+    </i>
+    <i t="patient demographic details, viewing">
+      <j l="12" />
+    </i>
+    <i t="patient records">
+      <i t="adding, new">
+        <j l="14#1083510" />
+      </i>
+      <i t="deleting">
+        <j l="15#1084461" />
+      </i>
+      <i t="lists of">
+        <j l="12#1085471" />
+      </i>
+      <i t="searching for">
+        <j l="11" />
+      </i>
+      <i t="updating">
+        <j l="13#1084143" />
+      </i>
+    </i>
+    <i t="patients, searching for">
+      <j l="11#1081704" />
+    </i>
+    <i t="performance score values">
+      <j l="24#1095901" />
+      <i t="ECOG">
+        <j l="24#1095906" />
+      </i>
+      <i t="Karnofsky">
+        <j l="24#1095942" />
+      </i>
+      <i t="Lansky">
+        <j l="24#1095998" />
+      </i>
+    </i>
+    <i t="prerequisites">
+      <i t="for submitting cycle data">
+        <j l="30#1099924" />
+      </i>
+      <i t="for submitting drug/biologics data">
+        <j l="34#1092002" />
+      </i>
+      <i t="for submitting off-treatment data">
+        <j l="42#1106790" />
+      </i>
+      <i t="for submitting radiation data">
+        <j l="39#1103700" />
+        <j l="40#1113268" />
+      </i>
+      <i t="for submitting treatment data">
+        <j l="26#1098280" />
+      </i>
+      <i t="for using Outcomes">
+        <j l="4#1081092" />
+      </i>
+    </i>
+    <i t="prior therapies">
+      <i t="adding">
+        <j l="23#1092325" />
+      </i>
+      <i t="deleting">
+        <j l="23#1092765" />
+      </i>
+      <i t="submitting">
+        <j l="22#1091869" />
+      </i>
+    </i>
+  </g>
+  <g t="R" o="002">
+    <i t="radiation dose modification">
+      <j l="40#1103833" />
+    </i>
+    <i t="radiation machine types">
+      <j l="40#1108547" />
+    </i>
+    <i t="radiation records">
+      <i t="prerequisites for submitting">
+        <j l="39#1103700" />
+        <j l="40#1113268" />
+      </i>
+      <i t="submitting">
+        <j l="39#1103700" />
+        <j l="40#1113268" />
+      </i>
+      <i t="updating">
+        <j l="41#1103859" />
+      </i>
+    </i>
+    <i t="radiation types">
+      <j l="40#1104234" />
+    </i>
+    <i t="registering new users">
+      <j l="5#1077866" />
+    </i>
+    <i t="Registration">
+      <j l="1" />
+    </i>
+    <i t="registration, user account">
+      <j l="5#1077866" />
+    </i>
+    <i t="response values">
+      <j l="46#1097861" />
+    </i>
+  </g>
+  <g t="S" o="002">
+    <i t="search tips">
+      <j l="5#1081341" />
+    </i>
+    <i t="staging data, submitting">
+      <j l="19#1091580" />
+    </i>
+    <i t="staging records, adding tumor markers to">
+      <j l="20#1091677" />
+    </i>
+    <i t="staging systems, supported">
+      <j l="19#1091600" />
+    </i>
+    <i t="surgery records">
+      <i t="adding">
+        <j l="37#1113055" />
+      </i>
+      <i t="prerequisites for submitting">
+        <j l="36#1108077" />
+        <j l="37#1113068" />
+      </i>
+      <i t="submitting">
+        <j l="36#1108077" />
+        <j l="37#1113068" />
+      </i>
+      <i t="updating">
+        <j l="38#1103221" />
+      </i>
+    </i>
+    <i t="system time-out">
+      <j l="6#1077993" />
+    </i>
+  </g>
+  <g t="T" o="002">
+    <i t="therapy data, overview of">
+      <j l="22#1091869" />
+    </i>
+    <i t="treatment data, prerequisites for submitting">
+      <j l="26#1098280" />
+    </i>
+    <i t="treatment record data">
+      <j l="26#1098172" />
+    </i>
+    <i t="treatment regimen data">
+      <i t="overview of">
+        <j l="27#1111061" />
+      </i>
+      <i t="submitting">
+        <j l="27" />
+      </i>
+    </i>
+    <i t="treatment regimens">
+      <i t="adding">
+        <j l="28#1091931" />
+      </i>
+      <i t="updating">
+        <j l="29#1091941" />
+      </i>
+    </i>
+    <i t="tumor markers, adding">
+      <j l="20#1091677" />
+    </i>
+  </g>
+  <g t="U" o="002">
+    <i t="user accounts, creating">
+      <j l="5#1077866" />
+    </i>
+    <i t="user registration">
+      <j l="5#1077866" />
+    </i>
+    <i t="Using online help">
+      <j l="1" />
+    </i>
+  </g>
+  <g t="V" o="002">
+    <i t="vital status values">
+      <j l="46#1097822" />
+    </i>
+  </g>
+</WebWorksHelpIX>

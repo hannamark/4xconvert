@@ -1,0 +1,27 @@
+function FileData_Pairs(x)
+{
+x.t("treatment","outcome");
+x.t("create","patient");
+x.t("working","patient");
+x.t("access","via");
+x.t("holder","search");
+x.t("via","nci");
+x.t("account","holder");
+x.t("records","access");
+x.t("records","patient");
+x.t("search","review");
+x.t("contain","demographic");
+x.t("portal","contain");
+x.t("review","create");
+x.t("demographic","baseline");
+x.t("outcome","data");
+x.t("baseline","treatment");
+x.t("data","working");
+x.t("data","patient");
+x.t("data","outcomes");
+x.t("patient","records");
+x.t("patient","data");
+x.t("nci","outcomes");
+x.t("outcomes","account");
+x.t("outcomes","portal");
+}
