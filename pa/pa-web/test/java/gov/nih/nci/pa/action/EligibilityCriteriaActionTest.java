@@ -5,7 +5,11 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,19 +39,45 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
     }
 
     @Test
-    public void testSave() {
+    public void testSaveWithErrors() {
         eligibilityCriteriaAction.save();
         assertTrue(eligibilityCriteriaAction.hasFieldErrors());
     }
-
+    @Test
+    public void testSave() {
+    	eligibilityCriteriaAction.setStudyPopulationDescription("test");
+    	eligibilityCriteriaAction.setSamplingMethodCode("test");
+    	eligibilityCriteriaAction.setAcceptHealthyVolunteersIndicator("false");
+    	eligibilityCriteriaAction.setEligibleGenderCode("male");
+    	eligibilityCriteriaAction.setEligibleGenderCodeId("1");
+    	eligibilityCriteriaAction.setMaximumValue("45");
+    	eligibilityCriteriaAction.setMinimumValue("23");
+    	eligibilityCriteriaAction.setValueUnit("years");
+    	eligibilityCriteriaAction.setValueId("1");
+    	assertEquals("eligibility",eligibilityCriteriaAction.save());
+    }
     @Test
     public void testInput() {
         String result = eligibilityCriteriaAction.input();
         assertEquals("eligibilityAdd", result);
     }
-
     @Test
     public void testCreate() {
+    	ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
+    	webDTO.setStructuredType("Structured");
+    	webDTO.setDisplayOrder("1");
+    	webDTO.setTextDescription("test");
+    	webDTO.setCriterionName("test");
+    	webDTO.setOperator("=");
+    	webDTO.setValueIntegerMax("4");
+    	webDTO.setValueIntegerMin("1");
+    	webDTO.setValueText("test");
+    	eligibilityCriteriaAction.setWebDTO(webDTO);
+        String result = eligibilityCriteriaAction.create();
+        assertEquals("eligibility", result);
+    }
+    @Test
+    public void testCreateWithError() {
         String result = eligibilityCriteriaAction.create();
         assertEquals("eligibilityAdd", result);
     }
@@ -60,9 +90,23 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
     }
 
     @Test
-    public void testUpdate() {
+    public void testUpdateWithErrors() {
         eligibilityCriteriaAction.update();
         assertTrue(eligibilityCriteriaAction.hasFieldErrors());
+    }
+    @Test
+    public void testUpdate() {
+    	ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
+    	webDTO.setStructuredType("Structured");
+    	webDTO.setDisplayOrder("3");
+    	webDTO.setTextDescription("test");
+    	webDTO.setCriterionName("test");
+    	webDTO.setOperator("=");
+    	webDTO.setValueIntegerMax("4");
+    	webDTO.setValueIntegerMin("1");
+    	webDTO.setValueText("test");
+    	eligibilityCriteriaAction.setWebDTO(webDTO);
+    	assertEquals("eligibility",eligibilityCriteriaAction.update());
     }
 
     @Test
@@ -71,5 +115,49 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
        String result =  eligibilityCriteriaAction.delete();
         assertEquals("eligibility", result);
     }
-
+    @Test(expected=Exception.class)
+	public void testDisplaySelectedTypeDoseUnitOfMeasurement() throws PAException{
+		getRequest().setupAddParameter("id", "1");
+		getRequest().setupAddParameter("className", "UnitOfMeasurement");
+		getRequest().setupAddParameter("divName", "loadUOM");
+		eligibilityCriteriaAction.displaySelectedType();
+	}
+    @Test
+    public void testReOrder() {
+    	ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
+    	webDTO.setStructuredType("Structured");
+    	webDTO.setDisplayOrder("3");
+    	webDTO.setTextDescription("test");
+    	webDTO.setCriterionName("test");
+    	webDTO.setOperator("=");
+    	webDTO.setValueIntegerMax("4");
+    	webDTO.setValueIntegerMin("1");
+    	webDTO.setValueText("test");
+    	webDTO.setId("1");
+    	ISDesignDetailsWebDTO webDTO1 = new ISDesignDetailsWebDTO();
+    	webDTO1.setStructuredType("Structured");
+    	webDTO1.setDisplayOrder("5");
+    	webDTO1.setTextDescription("test");
+    	webDTO1.setCriterionName("test");
+    	webDTO1.setOperator("=");
+    	webDTO1.setValueIntegerMax("4");
+    	webDTO1.setValueIntegerMin("1");
+    	webDTO1.setValueText("test");
+    	webDTO1.setId("2");
+    	List<ISDesignDetailsWebDTO> webDTOList = new ArrayList<ISDesignDetailsWebDTO>();
+    	webDTOList.add(webDTO);
+    	webDTOList.add(webDTO1);
+    	eligibilityCriteriaAction.setEligibilityList(webDTOList);
+    	assertEquals("eligibility",eligibilityCriteriaAction.reOrder());
+    }
+    @Test
+    public void testRequestToCreateCDE() {
+    	assertEquals("requestToCreateCDE",eligibilityCriteriaAction.requestToCreateCDE());
+    }
+    @Test(expected=Exception.class)
+    public void testsendCDERequestEmail() {
+    	getRequest().setupAddParameter("fromEmail", "a@a.com");
+		getRequest().setupAddParameter("emailMsg", "test");
+    	assertEquals("requestToCreateCDE",eligibilityCriteriaAction.sendCDERequestEmail());
+    }
 }

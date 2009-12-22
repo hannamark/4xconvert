@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.enums.InterventionTypeCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,7 @@ public class MockInterventionService extends MockAbstractBaseIsoService <Interve
         Intervention i = new Intervention();
         i.setId(seq++);
         i.setName("Test Int. 001");
+        i.setCtGovTypeCode(InterventionTypeCode.DRUG);
         list.add(i);
     }
 

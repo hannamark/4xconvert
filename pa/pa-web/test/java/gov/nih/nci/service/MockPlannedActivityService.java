@@ -79,9 +79,12 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
+import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -91,9 +94,11 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -199,8 +204,29 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
      */
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(
             Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+    	List<PlannedEligibilityCriterionDTO> dtoList = new ArrayList<PlannedEligibilityCriterionDTO>();
+    	PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
+        dto.setCriterionName(StConverter.convertToSt("WHC"));
+        dto.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setEligibleGenderCode(CdConverter.convertStringToCd("male"));
+        dto.setIdentifier(IiConverter.convertToIi("1"));
+        dto.setStructuredIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        dto.setSubcategoryCode(CdConverter.convertStringToCd("Other"));
+        dto.setDisplayOrder(IntConverter.convertToInt("2"));
+        dto.setOperator(StConverter.convertToSt(">"));
+        Pq pqLow = new Pq();
+        pqLow.setValue(new BigDecimal("80"));
+        pqLow.setUnit(UnitsCode.YEARS.getCode());
+        Pq pqHigh = new Pq();
+        pqHigh.setValue(new BigDecimal("90"));
+        pqHigh.setUnit(UnitsCode.YEARS.getCode());
+        Ivl<Pq> ivlPq = new Ivl<Pq>();
+        ivlPq.setHigh(pqHigh);
+        ivlPq.setLow(pqLow);
+        dto.setValue(ivlPq);
+        dtoList.add(dto);
+        return dtoList;
     }
 
     /**
