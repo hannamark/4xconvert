@@ -99,7 +99,7 @@ import org.jboss.annotation.security.SecurityDomain;
  */
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @SecurityDomain("pa")
 public class UserBean
         extends UserBeanLocal implements UserService {

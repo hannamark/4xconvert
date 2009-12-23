@@ -117,7 +117,7 @@ import javax.interceptor.Interceptors;
  */
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class UserBeanLocal
         extends AbstractBaseAccrualBean<UserDto, RegistryUser, UserConverter>
