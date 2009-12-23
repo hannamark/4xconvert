@@ -64,7 +64,11 @@ public class ClinicalResearchStaffActionTest extends AbstractRoleActionTest {
 
     @Test
     public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
-        action.setRootKey("a");
+        // can only set root key to the key of an object in the session,
+        // so after setting the root key, we have to clear out the session manually to test this case
+        action.setRootKey("abc-123");
+        getSession().clearAttributes();
+
         action.prepare();
         //assertNull(action.getRole());
         assertNotNull(action.getRole());
@@ -73,8 +77,9 @@ public class ClinicalResearchStaffActionTest extends AbstractRoleActionTest {
     @Test
     public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
         ClinicalResearchStaff o = new ClinicalResearchStaff();
-        action.setRootKey("a");
-        getSession().setAttribute(action.getRootKey(), o);
+        String rootKey = "a";
+        getSession().setAttribute(rootKey, o);
+        action.setRootKey(rootKey);
         action.prepare();
         assertSame(o, action.getRole());
     }
@@ -222,7 +227,7 @@ public class ClinicalResearchStaffActionTest extends AbstractRoleActionTest {
         assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
                 .changeCurrentChangeRequest());
     }
-    
+
     @Test
     public void testUsFormat() {
         action.setRole(null);
@@ -272,8 +277,18 @@ public class ClinicalResearchStaffActionTest extends AbstractRoleActionTest {
     @Test
     public void testRootKeyProperty() {
         assertNull(action.getRootKey());
-        action.setRootKey("abc");
+        action.setRootKey("abc-123");
         assertNotNull(action.getRootKey());
+        action.setRootKey("");
+        assertNotNull(action.getRootKey());
+        action.setRootKey(null);
+        assertNull(action.getRootKey());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidRootKeyProperty() {
+        assertNull(action.getRootKey());
+        action.setRootKey("abc-321");
     }
 
     /**

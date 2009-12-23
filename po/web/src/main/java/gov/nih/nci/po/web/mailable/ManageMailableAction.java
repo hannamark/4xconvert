@@ -158,9 +158,10 @@ public class ManageMailableAction extends ActionSupport implements Addressable, 
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
+        PoHttpSessionUtil.validateSessionKey(rootKey);
         this.rootKey = rootKey;
     }
-    
+
     /**
      * @return whether display should be read-only or not.
      */
@@ -174,7 +175,7 @@ public class ManageMailableAction extends ActionSupport implements Addressable, 
     public void setReadonly(boolean readOnly) {
         this.readonly = readOnly;
     }
-    
+
     /**
      * @return addresses result
      */
@@ -209,7 +210,7 @@ public class ManageMailableAction extends ActionSupport implements Addressable, 
     public void setIndex(Integer addressIndex) {
         this.index = addressIndex;
     }
-    
+
     /**
      * {@inheritDoc}
      */

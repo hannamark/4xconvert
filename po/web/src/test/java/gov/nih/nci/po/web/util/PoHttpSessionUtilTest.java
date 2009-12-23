@@ -47,7 +47,7 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
         assertSame(p1, PoHttpSessionUtil.getSession().getAttribute(result1));
         assertSame(p2, PoHttpSessionUtil.getSession().getAttribute(result2));
     }
-    
+
     @Test
     public void testAddAttribute_SOSC() {
         StrutsOrganizationSearchCriteria x = new StrutsOrganizationSearchCriteria();
@@ -58,7 +58,7 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
         assertSame(x, PoHttpSessionUtil.getSession().getAttribute(resultX));
         assertSame(y, PoHttpSessionUtil.getSession().getAttribute(resultY));
     }
-    
+
     @Test
     public void testAddAttribute_SPSC() {
         StrutsPersonSearchCriteria x = new StrutsPersonSearchCriteria();
@@ -69,7 +69,7 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
         assertSame(x, PoHttpSessionUtil.getSession().getAttribute(resultX));
         assertSame(y, PoHttpSessionUtil.getSession().getAttribute(resultY));
     }
-    
+
     @Test
     public void testAddAttribute_CRS() {
         ClinicalResearchStaff x = new ClinicalResearchStaff();
@@ -80,7 +80,7 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
         assertSame(x, PoHttpSessionUtil.getSession().getAttribute(resultX));
         assertSame(y, PoHttpSessionUtil.getSession().getAttribute(resultY));
     }
-    
+
     @Test
     public void testAddAttribute_HCP() {
         HealthCareProvider x = new HealthCareProvider();
@@ -95,6 +95,9 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testRemoveAttribute() {
+        // make sure the session is clean to start
+        getSession().clearAttributes();
+
         Person p1 = new Person();
         Person p2 = new Person();
         Person p3 = new Person();
@@ -119,7 +122,18 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
         names = new ArrayList<String>();
         CollectionUtils.addAll(names, en);
         assertEquals(0, names.size());
+    }
+
+    @Test
+    public void testValidateSessionKeyValidKey() {
+        PoHttpSessionUtil.validateSessionKey("abc-123");
 
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testValidateSessionKeyInvalidKey() {
+        PoHttpSessionUtil.validateSessionKey("abc-123");
+        getSession().clearAttributes();
+        PoHttpSessionUtil.validateSessionKey("abc-123");
+    }
 }

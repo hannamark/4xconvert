@@ -87,6 +87,7 @@ import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.List;
 
@@ -136,9 +137,10 @@ public abstract class AbstractEditContactListAction<Entry extends Contact>
      * @param rootKey session key of the Contactable to edit.
      */
     public void setRootKey(String rootKey) {
+        PoHttpSessionUtil.validateSessionKey(rootKey);
         this.rootKey = rootKey;
     }
-    
+
     /**
      * @return whether display should be read-only or not.
      */

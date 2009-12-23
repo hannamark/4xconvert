@@ -20,7 +20,7 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
 
 /**
  * Used to set up common test infrastructure for the web tier.
- * 
+ *
  * @author Scott Miller
  */
 public abstract class AbstractPoTest {
@@ -40,6 +40,7 @@ public abstract class AbstractPoTest {
     public void initMockrequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
+        request.getSession().setAttribute("abc-123", new Object());
         ServletActionContext.setRequest(request);
     }
 

@@ -98,6 +98,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -110,8 +111,13 @@ public class PoHttpSessionUtil {
 
     private static int sidCounter = Integer.MIN_VALUE;
 
+    /**
+     * Regex that matches PO SIDs.
+     */
+    public static final String SID_REGEX = "^[A-Za-z]+\\-[0-9A-Fa-f]+$";
+
     private static synchronized String getNextSid(String prefix) {
-        return prefix + Integer.toHexString(sidCounter++);
+        return prefix + "-" + Integer.toHexString(sidCounter++);
     }
 
     /**
@@ -142,12 +148,23 @@ public class PoHttpSessionUtil {
     }
 
     /**
+     * Validates if there is an attribute in the session with the given key and throws an IllegalArgumentException if
+     * there is no matching session attribute.
+     * @param key session key to validate
+     */
+    public static final void validateSessionKey(String key) {
+        if (StringUtils.isNotBlank(key) && getSession().getAttribute(key) == null) {
+            throw new IllegalArgumentException("invalid session key: " + key);
+        }
+    }
+
+    /**
      * Adds an org to the http session with a unique key.
      * @param o the org to add to the session
      * @return the key used to add the objects
      */
     public static String addAttribute(Organization o) {
-        return addUniqueAttribute("o-", o);
+        return addUniqueAttribute("o", o);
     }
 
     /**
@@ -156,7 +173,7 @@ public class PoHttpSessionUtil {
      * @return the key used to add the objects
      */
     public static String addAttribute(Person p) {
-        return addUniqueAttribute("p-", p);
+        return addUniqueAttribute("p", p);
     }
 
     /**
@@ -185,7 +202,7 @@ public class PoHttpSessionUtil {
      * @return the key used to add the objects
      */
     public static String addAttribute(StrutsOrganizationSearchCriteria criteria) {
-        return addUniqueAttribute("sosc-", criteria);
+        return addUniqueAttribute("sosc", criteria);
     }
 
     /**
@@ -194,7 +211,7 @@ public class PoHttpSessionUtil {
      * @return the key used to add the objects
      */
     public static String addAttribute(StrutsPersonSearchCriteria criteria) {
-        return addUniqueAttribute("spsc-", criteria);
+        return addUniqueAttribute("spsc", criteria);
     }
 
     /**
@@ -203,7 +220,7 @@ public class PoHttpSessionUtil {
      * @return the key used to add the objects
      */
     public static String addAttribute(ClinicalResearchStaff role) {
-        return addUniqueAttribute("crs-", role);
+        return addUniqueAttribute("crs", role);
     }
 
     /**
@@ -212,16 +229,16 @@ public class PoHttpSessionUtil {
      * @return the key used to add the objects
      */
     public static String addAttribute(HealthCareProvider role) {
-        return addUniqueAttribute("hcp-", role);
+        return addUniqueAttribute("hcp", role);
     }
 
     /**
-     * Adds a organziation contact role to the http session with a unique key.
+     * Adds a organization contact role to the http session with a unique key.
      * @param role the person role to add to the session
      * @return the key used to add the objects
      */
     public static String addAttribute(OrganizationalContact role) {
-        return addUniqueAttribute("oc-", role);
+        return addUniqueAttribute("oc", role);
     }
     /**
      * Adds a health care facility role to the http session with a unique key.
@@ -229,7 +246,7 @@ public class PoHttpSessionUtil {
      * @return the key used to add the objects
      */
     public static String addAttribute(HealthCareFacility role) {
-        return addUniqueAttribute("hcf-", role);
+        return addUniqueAttribute("hcf", role);
     }
 
     /**
@@ -238,6 +255,6 @@ public class PoHttpSessionUtil {
      * @return the key used to add the objects
      */
     public static String addAttribute(ResearchOrganization role) {
-        return addUniqueAttribute("ro-", role);
+        return addUniqueAttribute("ro", role);
     }
 }

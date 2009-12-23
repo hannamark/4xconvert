@@ -39,7 +39,11 @@ public class CreateOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
-        action.setRootKey("a");
+        // can only set root key to the key of an object in the session,
+        // so after setting the root key, we have to clear out the session manually to test this case
+        action.setRootKey("abc-123");
+        getSession().clearAttributes();
+
         action.prepare();
         assertNull(action.getOrganization());
     }
@@ -47,8 +51,9 @@ public class CreateOrganizationActionTest extends AbstractPoTest {
     @Test
     public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
         Organization o = new Organization();
-        action.setRootKey("a");
-        getSession().setAttribute(action.getRootKey(), o);
+        String rootKey = "a";
+        getSession().setAttribute(rootKey, o);
+        action.setRootKey(rootKey);
         action.prepare();
         assertSame(o, action.getOrganization());
     }
@@ -84,7 +89,7 @@ public class CreateOrganizationActionTest extends AbstractPoTest {
         action.setOrganization(null);
         assertEquals("", action.getOrganizationId());
     }
-    
+
     @Test
     public void getOrganizationIdPropertyOrgWithId() {
         action.setOrganization(new Organization());

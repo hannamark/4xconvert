@@ -36,7 +36,7 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v) {
             field: stateFieldElem
             }
     });
-   countryElem = ''+ formNameBase + addressKeyBase + '.country';
+    countryElem = ''+ formNameBase + addressKeyBase + '.country';
     switchContactNumberFormats(countryElem);
 }
 
@@ -60,7 +60,7 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v) {
     onchange="loadStateProvince('%{#attr.formNameBase}' , '%{#attr.addressKeyBase}' , this.value);"
     id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
 </s:select>
-<s:textfield name="%{#attr.addressKeyBase + '.streetAddressLine'}" 
+<s:textfield name="%{#attr.addressKeyBase + '.streetAddressLine'}"
     required="%{#attr.required}" cssClass="%{cssClass}" size="70"
     label="%{getText(#attr.addressKeyBase + '.streetAddressLine')}" />
 <s:textfield name="%{#attr.addressKeyBase + '.deliveryAddressLine'}" size="70"
@@ -70,7 +70,7 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v) {
     label="%{getText(#attr.addressKeyBase + '.cityOrMunicipality')}" />
 <po:inputRow>
     <po:inputRowElement>
-	    <div id="${formNameBase}.${addressKeyBase}.div_stateOrProvince">
+        <div id="${formNameBase}.${addressKeyBase}.div_stateOrProvince">
             Loading States...
         </div>
         <script type="text/javascript"><!--

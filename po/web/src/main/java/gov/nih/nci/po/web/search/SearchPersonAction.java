@@ -79,7 +79,7 @@ public class SearchPersonAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -87,10 +87,11 @@ public class SearchPersonAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
+        PoHttpSessionUtil.validateSessionKey(rootKey);
         this.rootKey = rootKey;
     }
 

@@ -79,7 +79,7 @@ public class SearchOrganizationAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * 
+     *
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -87,10 +87,11 @@ public class SearchOrganizationAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
+        PoHttpSessionUtil.validateSessionKey(rootKey);
         this.rootKey = rootKey;
     }
 

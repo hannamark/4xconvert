@@ -93,12 +93,12 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
      * @throws JMSException if an error occurred while publishing the announcement
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "person"),
-            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.phone", 
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.phone",
                     message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
-            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.fax", 
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.fax",
                     message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
-            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.tty", 
-                    message = "US and Canadian tty numbers must match ###-###-####(x#*).")       
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.tty",
+                    message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
     public String curate() throws JMSException {
         // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
@@ -138,6 +138,7 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
+        PoHttpSessionUtil.validateSessionKey(rootKey);
         this.rootKey = rootKey;
     }
 
@@ -230,7 +231,7 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
     public void setDuplicateOf(Person duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -180,6 +180,7 @@ public class OrganizationalContactAction extends
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
+        PoHttpSessionUtil.validateSessionKey(rootKey);
         this.rootKey = rootKey;
     }
 
@@ -320,12 +321,12 @@ public class OrganizationalContactAction extends
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
                 parameters = { @ValidationParameter(name = "resourceKeyBase", value = "organizationalContact") }),
-                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.phone", 
+                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.phone",
                         message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
-                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.fax", 
+                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.fax",
                         message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
-                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.tty", 
-                        message = "US and Canadian tty numbers must match ###-###-####(x#*).")       
+                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.tty",
+                        message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
     @Override
     @SuppressWarnings("PMD.UselessOverridingMethod")
@@ -339,12 +340,12 @@ public class OrganizationalContactAction extends
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
                 parameters = { @ValidationParameter(name = "resourceKeyBase", value = "organizationalContact") }),
-                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.phone", 
+                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.phone",
                         message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
-                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.fax", 
+                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.fax",
                         message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
-                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.tty", 
-                        message = "US and Canadian tty numbers must match ###-###-####(x#*).")       
+                @CustomValidator(type = USORCANADAVALIDATOR, fieldName = "role.tty",
+                        message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
     @Override
     public String edit() throws JMSException {
@@ -397,7 +398,7 @@ public class OrganizationalContactAction extends
     public boolean isGenericContact() {
         return genericContact;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -28,14 +28,15 @@ public class ManageMailableActionTest extends AbstractPoTest {
         action = new ManageMailableAction();
         assertNotNull(action.getAddress());
 
-        action.setRootKey("abc");
-        getSession().setAttribute(action.getRootKey(), new ClinicalResearchStaff());
+        String rootKey = "abc";
+        getSession().setAttribute(rootKey, new ClinicalResearchStaff());
+        action.setRootKey(rootKey);
         action.prepare();
     }
-    
+
     @Test
     public void testUsFormat() {
-       
+
         assertFalse(action.isUsOrCanadaFormat());
         Address addr1 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
                 new Country("United States", "840", "US", "USA"));
@@ -96,8 +97,16 @@ public class ManageMailableActionTest extends AbstractPoTest {
         assertNotNull(action.getRootKey());
         action.setRootKey(null);
         assertNull(action.getRootKey());
+        action.setRootKey("abc-123");
+        assertNotNull(action.getRootKey());
     }
-    
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidRootKeyProperty() {
+        assertNotNull(action.getRootKey());
+        action.setRootKey("abc-321");
+    }
+
     @Test
     public void testReadonlyProperty() {
         assertFalse(action.isReadonly());

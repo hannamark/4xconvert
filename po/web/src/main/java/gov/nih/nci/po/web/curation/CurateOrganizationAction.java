@@ -84,13 +84,13 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
         findAndSetCr(cr.getId());
         return CURATE_RESULT;
     }
-    
+
     private void initializeCtepRoles(Organization org) {
       //need this for duplicate validation check
       org.getHealthCareFacilities().size();
       org.getResearchOrganizations().size();
       org.isAssociatedWithCtepRoles();
-      
+
     }
 
     private void initializeCollections(Contactable contactable) {
@@ -107,18 +107,18 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
      * @throws JMSException if an error occurred while publishing the announcement
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization"),
-            @CustomValidator(type = "duplicateOfNullifiedOrg", fieldName = "duplicateOf", 
+            @CustomValidator(type = "duplicateOfNullifiedOrg", fieldName = "duplicateOf",
                     message = "A duplicate Organization must be provided."),
-            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.phone", 
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.phone",
                     message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
-            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.fax", 
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.fax",
                     message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
-            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.tty", 
-                    message = "US and Canadian tty numbers must match ###-###-####(x#*).")       
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.tty",
+                    message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
     public String curate() throws JMSException {
         // PO-1196 - We are using a struts validator to make sure that when an org with associated ctep roles
-        // is nullified, it must have a duplicateOf set. The reason we are using a struts validator instead of a 
+        // is nullified, it must have a duplicateOf set. The reason we are using a struts validator instead of a
         // hibernate validator is the comment below.
         // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
         // set organization.duplicateOf.id directly, so we're setting it manually
@@ -134,8 +134,8 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
              * what we expect then we'll throw the root cause. Next, our custom result exception-mapping within our
              * action mapping will ultimately redirects to our curateError.jsp page. NOTE: We are redirecting and
              * passing the organization and duplicateOf as request params to ensure that a separate HB Session is used
-             * since the current HB Session is dirty and has validation errors within it. Also, we know that doing so 
-             * will abandon any changes made by the user to the Organization but, is of little concern in this case 
+             * since the current HB Session is dirty and has validation errors within it. Also, we know that doing so
+             * will abandon any changes made by the user to the Organization but, is of little concern in this case
              * because the Organization was being NULLIFIED.
              */
             Throwable rootCause = ExceptionUtils.getRootCause(e);
@@ -164,7 +164,7 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
     }
 
     /**
-     * 
+     *
      * @return the session key of the root object (org or person)
      */
     public String getRootKey() {
@@ -172,10 +172,11 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
     }
 
     /**
-     * 
+     *
      * @param rootKey the session key of the root object.
      */
     public void setRootKey(String rootKey) {
+        PoHttpSessionUtil.validateSessionKey(rootKey);
         this.rootKey = rootKey;
     }
 
@@ -277,12 +278,12 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
     public void setDuplicateOf(Organization duplicateOf) {
         this.duplicateOf = duplicateOf;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean isUsOrCanadaFormat() {
         return this.organization.isUsOrCanadaAddress();
     }
-    
+
 }
