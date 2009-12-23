@@ -144,118 +144,16 @@ public class SearchTrialAction extends ActionSupport {
         if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
             return "show_Disclaimer_Page";
         }
-        String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
-        try {
-            // remove the session variables stored during a previous view if any
-            ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
-            Ii studyProtocolIi = IiConverter.convertToIi(pId);
-            //TODO need to find a permanent solution
-            // workaround to get the appropriate trial type
-            StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
-            viewCriteria.setStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-            RegistryServiceLocator.getProtocolQueryService().
-                                        getStudyProtocolByCriteria(viewCriteria);
-            // end of workaround
-            StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
-                    studyProtocolIi);            
-            // TrialWebDTO trialWebDTO = new TrialWebDTO(protocolDTO);
-            // put an entry in the session and store
-            // InterventionalStudyProtocolDTO
-            ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
-            if (protocolDTO != null) {
-                String trialType = null;
-              String studyProtocolType = protocolDTO.getStudyProtocolType().getValue();
-              if (studyProtocolType.equals("InterventionalStudyProtocol")) {
-                  trialType = "Interventional";
-              } else if (studyProtocolType.equals("ObservationalStudyProtocol")) {
-                  trialType = "Observational";
-              }
-              ServletActionContext.getRequest().setAttribute(Constants.TRIAL_TYPE, trialType);
-            }
-            // query the study grants
-            List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService()
-                    .getstudyResourceByStudyProtocol(studyProtocolIi);
-            if (!(isoList.isEmpty())) {
-                // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().setAttribute(Constants.TRIAL_FUNDING_LIST, isoList);
-            }
-            // remove the session variables stored during a previous view if any
-            ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_OVERALL_STATUS);
-           /* List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
-                    .getCurrentByStudyProtocol(studyProtocolIi);
-           */ // List <StudyOverallStatusWebDTO> overallStatusList;
-            StudyOverallStatusDTO overallStatusISO = RegistryServiceLocator.getStudyOverallStatusService()
-            .getCurrentByStudyProtocol(studyProtocolIi);
-            if (overallStatusISO != null) {
-                // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().setAttribute(Constants.TRIAL_OVERALL_STATUS,
-                        overallStatusISO);
-            }
-            // remove the session variables stored during a previous view if any
-            ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PARTICIPATION);
-            // query the lead organization study participation site
-            StudySiteDTO leadSiteDTO = getStudySite(studyProtocolIi,
-                    StudySiteFunctionalCode.LEAD_ORGANIZATION);
-            if (leadSiteDTO != null) {
-                // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,
-                                                                    leadSiteDTO);
-            }            
-            // query the NCT number
-            StudySiteDTO nctSiteDTO = getStudySite(studyProtocolIi,
-                                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-            if (nctSiteDTO != null) {
-                String nctNumber = StConverter.convertToString(nctSiteDTO.getLocalStudyProtocolIdentifier());
-                ServletActionContext.getRequest().setAttribute(Constants.STUDY_NCT_NUMBER, nctNumber);
-            } 
-            // retrieve responsible party info
-            getReponsibleParty(studyProtocolIi, false);
-            StudyProtocolQueryDTO queryDTO = RegistryServiceLocator.getProtocolQueryService()
-                    .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-            // put an entry in the session and avoid conflict using
-            // STUDY_PROTOCOL_II for now
-            ServletActionContext.getRequest().setAttribute(Constants.STUDY_PROTOCOL_II, queryDTO);
-            // put an entry in the session and getsummary4ReportedResource
-            StudyResourcingDTO resourcingDTO = RegistryServiceLocator.getStudyResourcingService()
-                    .getsummary4ReportedResource(studyProtocolIi);
-            // get the organzation name
-            if (resourcingDTO != null && resourcingDTO.
-                    getOrganizationIdentifier() != null && resourcingDTO.
-                    getOrganizationIdentifier().getExtension() != null && !resourcingDTO.
-                    getOrganizationIdentifier().getExtension().equals("")) {
-                Organization o = new CorrelationUtils().
-                    getPAOrganizationByIi(resourcingDTO.getOrganizationIdentifier());
-                ServletActionContext.getRequest().setAttribute("summaryFourSponsorName", o.getName());  
-            }
-
-            // put an entry in the session and avoid conflict using
-            // NIH_INSTITUTE for now
-            ServletActionContext.getRequest().setAttribute(Constants.NIH_INSTITUTE, resourcingDTO);
-            List<StudyIndldeDTO> studyIndldeDTOList = RegistryServiceLocator.getStudyIndldeService()
-                    .getByStudyProtocol(studyProtocolIi);
-            // List<StudyIndldeDTO> studyIndldeDTOList
-            if (!(studyIndldeDTOList.isEmpty())) {
-                // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().setAttribute(Constants.STUDY_INDIDE, studyIndldeDTOList);
-            }
-            // query the trial documents
-            List<DocumentDTO> documentISOList = RegistryServiceLocator.getDocumentService()
-                    .getDocumentsByStudyProtocol(studyProtocolIi);
-            // List <TrialDocumentWebDTO> documentList;
-            if (!(documentISOList.isEmpty())) {
-                ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
-            }
-            LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
-            return "view";
-        } catch (PAException e) {
-            addActionError(e.getLocalizedMessage());
-            return ERROR;
-        } catch (NullifiedRoleException e) {
-            addActionError(e.getLocalizedMessage());
-            return ERROR;
-        } finally {
-            ServletActionContext.getRequest().getSession().removeAttribute(("protocolId"));            
+        String trialAction = (String) ServletActionContext.getRequest().getParameter("trialAction");
+        if (PAUtil.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit") 
+                || trialAction.equalsIgnoreCase("amend"))) {
+            String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
+            ServletActionContext.getRequest().setAttribute("studyProtocolId", pId);
+            studyProtocolId = Long.valueOf(pId);
+            return view();
         }
+        return SUCCESS;
+        
     }
 
     /**

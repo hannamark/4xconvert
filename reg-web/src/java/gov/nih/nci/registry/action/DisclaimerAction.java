@@ -78,10 +78,6 @@
 */
 package gov.nih.nci.registry.action;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -109,21 +105,15 @@ public class DisclaimerAction extends ActionSupport {
         return "show_Disclaimer_Page";
     }
     /**
-     * 
+     * @return string
      */
-    public void accept() {
+    public String accept() {
         ServletActionContext.getRequest().getSession().setAttribute("disclaimer", "accept");
         if ("".equals(actionName)) {
             actionName = "searchTrial.action";
         }
-        try {
-            ServletActionContext.getRequest().getRequestDispatcher(actionName)
-                .forward(ServletActionContext.getRequest(), ServletActionContext.getResponse());
-        } catch (ServletException e) {
-            LOG.error(e.getMessage());
-        } catch (IOException e) {
-            LOG.error(e.getMessage());
-        }
+        LOG.info("redirect to" + actionName);
+        return "redirect_to";
     }
     /**
      * @return the actionName
@@ -137,5 +127,4 @@ public class DisclaimerAction extends ActionSupport {
     public void setActionName(String actionName) {
         this.actionName = actionName;
     }
-    
 }
