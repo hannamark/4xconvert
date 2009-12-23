@@ -110,8 +110,8 @@ import org.junit.Test;
  * @since Sep 3, 2009
  */
 public class StudySiteAccrualAccessServiceTest {
-    private static final Long csmUserId = 23L;
-    private static final String requestDetails = "request details";
+    private static final Long CSM_USER_ID = 23L;
+    private static final String REQUEST_DETAILS = "request details";
     private Long id;
     private Long ssId;
 
@@ -141,15 +141,15 @@ public class StudySiteAccrualAccessServiceTest {
     @Test
     public void create() throws Exception {
         StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
-        dto.setCsmUserId(csmUserId);
-        dto.setRequestDetails(requestDetails);
+        dto.setCsmUserId(CSM_USER_ID);
+        dto.setRequestDetails(REQUEST_DETAILS);
         dto.setStudySiteId(ssId);
         dto.setStatusCode(ActiveInactiveCode.ACTIVE);
         assertNull(dto.getId());
         StudySiteAccrualAccessDTO r = bean.create(dto);
         assertNotNull(r.getId());
-        assertEquals(csmUserId, r.getCsmUserId());
-        assertEquals(requestDetails, r.getRequestDetails());
+        assertEquals(CSM_USER_ID, r.getCsmUserId());
+        assertEquals(REQUEST_DETAILS, r.getRequestDetails());
         assertEquals(ssId, r.getStudySiteId());
         assertNotNull(r.getUserLastCreated());
         assertNotNull(r.getDateLastCreated());
@@ -163,9 +163,9 @@ public class StudySiteAccrualAccessServiceTest {
     public void get() throws Exception {
         create();
         StudySiteAccrualAccessDTO r = bean.get(id);
-        assertEquals(csmUserId, r.getCsmUserId());
+        assertEquals(CSM_USER_ID, r.getCsmUserId());
         assertEquals(ssId, r.getStudySiteId());
-        assertEquals(requestDetails, r.getRequestDetails());
+        assertEquals(REQUEST_DETAILS, r.getRequestDetails());
     }
 
     @Test
