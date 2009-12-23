@@ -94,8 +94,6 @@ import java.rmi.RemoteException;
  * @author kkanchinadam
  */
 public class InvokePatientEjb implements PatientService {
-    private final ServiceLocator serviceLocator = JNDIServiceLocator.getInstance();
-
     /**
      * Constructor.
      */
@@ -110,7 +108,7 @@ public class InvokePatientEjb implements PatientService {
      */
     public PatientDto create(PatientDto dto) throws RemoteException {
         try {
-            return serviceLocator.getPatientService().create(dto);
+            return GridSecurityJNDIServiceLocator.newInstance().getPatientService().create(dto);
         } catch (RemoteException e) {
             throw e;
         } catch (Exception e) {
@@ -125,7 +123,7 @@ public class InvokePatientEjb implements PatientService {
      */
     public PatientDto get(Ii ii) throws RemoteException {
         try {
-            return serviceLocator.getPatientService().get(ii);
+            return GridSecurityJNDIServiceLocator.newInstance().getPatientService().get(ii);
         } catch (RemoteException e) {
             throw e;
         } catch (Exception e) {
@@ -140,12 +138,11 @@ public class InvokePatientEjb implements PatientService {
      */
     public PatientDto update(PatientDto dto) throws RemoteException {
         try {
-            return serviceLocator.getPatientService().update(dto);
+            return GridSecurityJNDIServiceLocator.newInstance().getPatientService().update(dto);
         } catch (RemoteException e) {
             throw e;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
-
 }
