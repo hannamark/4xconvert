@@ -32,6 +32,7 @@ public class StudySubjectClient extends StudySubjectClientBase implements StudyS
     private static final String studySiteIdentifier = "20001";
     private static final String patientIdentifier = "30001";
     private static final String studySubjectIdentifier = "40001";
+    private static final String outcomesLoginName = "newUser";
 
 	public StudySubjectClient(String url) throws MalformedURIException, RemoteException {
 		this(url,null);
@@ -59,7 +60,7 @@ public class StudySubjectClient extends StudySubjectClientBase implements StudyS
 		if(!(args.length < 2)){
 			if(args[0].equals("-url")){
 			  StudySubjectClient client = new StudySubjectClient(args[1]);
-			  handleResults(createStudySubject(client, null));
+			  handleResults(createStudySubject(client));
 			  getStudySubject(client);
 			  getByStudyProtocol(client);
 			  getByStudySite(client);
@@ -81,39 +82,44 @@ public class StudySubjectClient extends StudySubjectClientBase implements StudyS
 		}
 	}
 
-	private static StudySubject createStudySubject(StudySubjectClient client, String outcomeLoginName) throws RemoteException {
+	private static StudySubject createStudySubject(StudySubjectClient client) throws RemoteException {
 	    System.out.println("StudySubjectClient - In createStudySubject()");
+	    StudySubject ss = getNewStudySubject();
+	    StudySubject newSS = client.create(ss);
+	    return newSS;
+	}
+
+    private static void createOutcomes(StudySubjectClient client) throws RemoteException {
+        System.out.println("StudySubjectClient - In createOutcomes()");
+        StudySubject ss = getNewStudySubject();
+        org.iso._21090.ST loginName = new org.iso._21090.ST();
+        loginName.setValue(StudySubjectClient.outcomesLoginName);
+        ss.setOutcomesLoginName(loginName);
+
+        StudySubject newSS = client.createOutcomes(ss);
+        handleResults(newSS);
+    }
+
+	private static StudySubject getNewStudySubject() {
 	    StudySubject ss = new StudySubject();
 
-	    org.iso._21090.CD statusCode = new org.iso._21090.CD();
-	    statusCode.setCode("Active");
-	    ss.setStatusCode(statusCode);
+        org.iso._21090.CD statusCode = new org.iso._21090.CD();
+        statusCode.setCode("Active");
+        ss.setStatusCode(statusCode);
 
-	    II studyProtocolIdentifier = new II();
-	    studyProtocolIdentifier.setExtension(StudySubjectClient.studyProtocolIdentifier);
-	    ss.setStudyProtocolIdentifier(studyProtocolIdentifier);
+        II studyProtocolIdentifier = new II();
+        studyProtocolIdentifier.setExtension(StudySubjectClient.studyProtocolIdentifier);
+        ss.setStudyProtocolIdentifier(studyProtocolIdentifier);
 
-	    II studySiteIdentiier = new II();
-	    studySiteIdentiier.setExtension(StudySubjectClient.studySiteIdentifier);
+        II studySiteIdentiier = new II();
+        studySiteIdentiier.setExtension(StudySubjectClient.studySiteIdentifier);
         ss.setStudySiteIdentifier(studySiteIdentiier);
 
-	    II patientIdentifer = new II();
-	    patientIdentifer.setExtension(StudySubjectClient.patientIdentifier);
-	    ss.setPatientIdentifier(patientIdentifer);
+        II patientIdentifer = new II();
+        patientIdentifer.setExtension(StudySubjectClient.patientIdentifier);
+        ss.setPatientIdentifier(patientIdentifer);
 
-	    if (outcomeLoginName != null) {
-	        org.iso._21090.ST loginName = new org.iso._21090.ST();
-	        loginName.setValue(outcomeLoginName);
-	        ss.setOutcomesLoginName(loginName);
-	    }
-
-	    StudySubject newSS = null;
-	    if (outcomeLoginName != null) {
-	        newSS = client.createOutcomes(ss);
-	    } else {
-	        newSS = client.create(ss);
-	    }
-	    return newSS;
+        return ss;
 	}
 
 	private static void getStudySubject(StudySubjectClient client) throws RemoteException {
@@ -126,7 +132,7 @@ public class StudySubjectClient extends StudySubjectClientBase implements StudyS
 
 	private static void deleteStudySubject(StudySubjectClient client) throws RemoteException {
 	    System.out.println("StudySubjectClient - In deleteStudySubject()");
-	    StudySubject newSS = createStudySubject(client, null);
+	    StudySubject newSS = createStudySubject(client);
 	    System.out.println("New Study Subject Id = " + newSS.getIdentifier().toString());
 
 	    // delete.
@@ -171,14 +177,8 @@ public class StudySubjectClient extends StudySubjectClientBase implements StudyS
 	private static void getByOutcomesLoginName(StudySubjectClient client) throws RemoteException {
         System.out.println("StudySubjectClient - In getByOutcomesLoginName()");
         gov.nih.nci.coppa.services.outcomes.ST outcomesLoginName = new gov.nih.nci.coppa.services.outcomes.ST();
-        outcomesLoginName.setValue("/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=coppagridtest");
+        outcomesLoginName.setValue(StudySubjectClient.outcomesLoginName);
         StudySubject[] ss = client.getOutcomes(outcomesLoginName);
-        handleResults(ss);
-    }
-
-	private static void createOutcomes(StudySubjectClient client) throws RemoteException {
-        System.out.println("StudySubjectClient - In createOutcomes()");
-        StudySubject ss = createStudySubject(client, "newUser");
         handleResults(ss);
     }
 
