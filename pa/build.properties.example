@@ -9,13 +9,14 @@ jdbc.driver=org.postgresql.Driver
 jdbc.url=jdbc:postgresql://localhost:5432/ctods
 test.schema.showsql=false
 test.java.naming.provider=localhost
+doc.upload.filepath.loc=D://doc
 po.server.name=localhost
 po.port.number=21499
 po.username=ejbclient
 po.pass=pass
+#Pre-shared JNDI principal & credential for pa-grid <-> pa.ear authentication
 gridServicePrincipal=Gr1DU5er
 gridServiceCredential=ltHZmZ1rqYq8j2uyHEABIQ==
-doc.upload.filepath.loc=D://doc
 
 # Registry batch upload docs location
 batch.upload.filepath.loc=D://batch_docs
@@ -40,8 +41,3 @@ csm.submitter.group=Submitter
 
 # Use the tier-specific Registration application url
 register.mail.body.url=http://localhost:8080/registry
-
-#Pre-shared JNDI principal & credential for pa-grid <-> pa.ear authentication
-gridServicePrincipal=Gr1DU5er
-#decrypted password is 'Pa44Wurd' (excluding apostrophes)
-gridServiceCredential=ltHZmZ1rqYq8j2uyHEABIQ\=\=
