@@ -38,7 +38,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     
     private AmendmentTrialAction trialAction;
     private static final String FILE_NAME = "ProtocolDoc.doc";
-    private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
+    //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
     @Before 
     public void setup(){
         //HibernateUtil.testHelper = testHelper;
