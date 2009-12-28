@@ -209,7 +209,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		  <isset property="env.ANT_OPTS"/>
 	  </not>
 	  <then>
-		  <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator} set  ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m'  # for windows."/>
+		  <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator} set  ANT_OPTS=-Xms256m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=512m  # for windows."/>
 	  </then>
   </if>
   <!-- Targets -->
