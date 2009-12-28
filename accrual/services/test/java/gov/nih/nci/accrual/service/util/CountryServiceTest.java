@@ -117,6 +117,11 @@ public class CountryServiceTest extends AbstractServiceTest<CountryService> {
         } catch (RemoteException ex) {
             // expected
         }
+        try {
+            place = bean.getCountry(BII);
+        } catch (RemoteException ex) {
+            // expected
+        }
         
         try {
             Long id = Long.valueOf(1);

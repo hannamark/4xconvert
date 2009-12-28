@@ -1,5 +1,8 @@
 package gov.nih.nci.accrual.service;
 
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.accrual.service.util.BaseLookUpBean;
+import gov.nih.nci.accrual.service.util.BaseLookUpService;
 import gov.nih.nci.pa.domain.DoseFrequency;
 
 import java.util.ArrayList;
@@ -13,19 +16,18 @@ public class BaseLookUpServiceTest extends AbstractServiceTest<BaseLookUpService
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        bean = new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
+        bean = new BaseLookUpBean();
     }
     @Test
     public void search() throws Exception {
         DoseFrequency criteria = new DoseFrequency();
         criteria.setCode("Q");
         List<DoseFrequency> list = new ArrayList<DoseFrequency>();
-        BaseLookUpService<DoseFrequency> lookUpService =
-            new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
-        list.addAll(lookUpService.search(criteria));
+        list.addAll(bean.search(criteria));
+        assertNotNull(list);
         for (DoseFrequency df :  list) {
-            df = lookUpService.getById(df.getId());
-            df = lookUpService.getByCode(df.getCode());
+            assertNotNull(bean.getById(df));
+            assertNotNull(bean.getByCode(df));
         }
     }
 }

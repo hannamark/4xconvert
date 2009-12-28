@@ -80,7 +80,6 @@
 package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
@@ -88,6 +87,7 @@ import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;

@@ -92,6 +92,8 @@ import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
+import java.rmi.RemoteException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -135,6 +137,17 @@ public class PatientServiceBeanTest extends AbstractServiceTest<PatientServiceBe
         assertNotNull(scoper);
         Cd status = dto2.getStatus();
         assertNotNull(status);
+        
+        try{
+            bean.create(dto2);
+        }catch(RemoteException e){
+            // expected
+        }
+        try{
+            bean.get(null);
+        }catch(RemoteException e){
+            // expected
+        }
     }
     
     @Test

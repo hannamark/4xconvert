@@ -87,6 +87,7 @@ import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.UserService;
+import gov.nih.nci.accrual.service.util.BaseLookUpService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
@@ -127,7 +128,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 4/16/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyFields" })
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
 
@@ -161,6 +162,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected InterventionServiceRemote interventionSvc;
     /** UserService. */
     protected UserService userSvc;
+    /** BaseLookUpService. */
+    protected BaseLookUpService baseLookupSvc;
 
     /**
      * {@inheritDoc}
@@ -181,6 +184,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         interventionANameSvc = PaServiceLocator.getInstance().getInterventionAlternateNameService();
         interventionSvc = PaServiceLocator.getInstance().getInterventionService();    
         userSvc = AccrualServiceLocator.getInstance().getUserService();
+        baseLookupSvc = AccrualServiceLocator.getInstance().getBaseLookupService();
     }
     /**
      * Default execute method for action classes.
@@ -305,12 +309,15 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @throws RemoteException pass to caller
      */
     public Date getEarliestCourseDate() throws RemoteException {
-        Date earliest = new Date();
+        Date earliest = null;
         List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(getParticipantIi());
         for (PerformedActivityDto pa : paList) {
             Date temp = getPaCreateDate(pa);
-            if (temp != null && earliest.getTime() > temp.getTime()) {
-                earliest = temp;
+            if (temp != null) {
+                earliest = new Date();
+                if (earliest.getTime() > temp.getTime()) {
+                    earliest = temp;
+                }
             }
         }
         
@@ -339,13 +346,16 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @throws RemoteException pass to caller
      */
     public Date getEarliestOffTreatmentDate() throws RemoteException {
-        Date earliest = new Date();
+        Date earliest = null;
         List<PerformedSubjectMilestoneDto> psmList =
             performedActivitySvc.getPerformedSubjectMilestoneByStudySubject(getParticipantIi());
         for (PerformedSubjectMilestoneDto psm : psmList) {
             Date temp = getAdrLowDate(psm);
-            if (temp != null && earliest.getTime() > temp.getTime()) {
-                earliest = temp;
+            if (temp != null) {
+                earliest = new Date();
+                if (earliest.getTime() > temp.getTime()) {
+                    earliest = temp;
+                }
             }
         }
 
@@ -401,13 +411,16 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @throws RemoteException pass to caller
      */
     public Date getEarliestDeathDate() throws RemoteException {
-        Date earliest = new Date();
+        Date earliest = null;
         List<PerformedObservationDto> poList = performedActivitySvc.getPerformedObservationByStudySubject(
                 getParticipantIi());
         for (PerformedObservationDto poBean : poList) {
             Date temp = getDeathDate(poBean);
-            if (temp != null && earliest.getTime() > temp.getTime()) {
-                earliest = temp;
+            if (temp != null) {
+                earliest = new Date();
+                if (earliest.getTime() > temp.getTime()) {
+                    earliest = temp;
+                }
             }
         }
         return earliest;
@@ -425,12 +438,12 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
             earliest = getEarliestCourseDate();
 
             temp = getEarliestOffTreatmentDate();
-            if (earliest.getTime() > temp.getTime()) {
+            if (earliest != null && temp != null && earliest.getTime() > temp.getTime()) {
                 earliest = temp;
             }
 
             temp = getEarliestDeathDate();
-            if (earliest.getTime() > temp.getTime()) {
+            if (earliest != null && temp != null && earliest.getTime() > temp.getTime()) {
                 earliest = temp;
             }
         } catch (RemoteException ex) {

@@ -81,86 +81,110 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
+import gov.nih.nci.accrual.web.dto.util.PriorTherapiesItemWebDto;
+import gov.nih.nci.accrual.web.dto.util.PriorTherapiesWebDto;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.PriorTherapyTypeCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Kalpana Guthikonda
- * @since 12/04/2009
+ * @since 12/14/2009
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
+public class PriorTherapiesActionTest extends AbstractAccrualActionTest {
+    PriorTherapiesAction action;
+    PriorTherapiesWebDto priors;
+    private PriorTherapiesItemWebDto newPrior;
 
     @Before
     public void initAction() throws Exception {
-        action = new TreatmentAction();
+        action = new PriorTherapiesAction();
         action.prepare();
-        treatment = new TreatmentWebDto();
+        priors = new PriorTherapiesWebDto();
+        newPrior = new PriorTherapiesItemWebDto();
         setParticipantIi(PARTICIPANT1);
     }
 
     @Override
     @Test
     public void executeTest() {
+        action.setCurrentAction("reset");
         assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
     }
 
-    @Override
     @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
+     public void cancelTest() { 
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.cancel());
     }
-
-    @Override
-    @Test
-    public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-    }
-
-    @Override
-    @Test
-     public void updateTest() { 
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
-    }
-
-    @Override
-    @Test
-    public void deleteTest() throws Exception {
-        action.delete();
-    }
-
+    
     @Override
     @Test
     public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.add());
+        action.setCurrentAction("addPrior");
+        newPrior.setType(CdConverter.convertToCd(PriorTherapyTypeCode.CHEMOTHERAPY_MULTIPLE_AGENTS_SYSTEMIC));
+        newPrior.setDescription(StConverter.convertToSt("Test"));
+        newPrior.setId(new Ii());
+        action.setNewPrior(newPrior);
+        priors.setId(new Ii());
+        priors.setIdHasPrior(new Ii());
+        priors.setIdChemoRegimenNum(new Ii());
+        priors.setIdTotalRegimenNum(new Ii());
+        action.setPriors(priors);
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.add());
+        String desc = "desc_5";
+        String type = "type_5";
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter(desc, desc);
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter(type, type);
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.save());
+        action.setDelItem("1");
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.delete());
+        assertNotNull(action.getPriors());
+        assertNotNull(action.getPriorTherapy());
+        assertNotNull(action.getNewPrior());
+        assertNotNull(action.getDelItem());
     }
-
+    
+    @Test
+    public void addExceptionTest() throws Exception {
+        action.setCurrentAction("addPrior");
+        newPrior.setType(CdConverter.convertToCd(PriorTherapyTypeCode.CHEMOTHERAPY_MULTIPLE_AGENTS_SYSTEMIC));
+        newPrior.setDescription(StConverter.convertToSt("Test"));
+        newPrior.setId(new Ii());
+        action.setNewPrior(newPrior);
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.add());
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.save());
+    }
+    
     @Override
     @Test
     public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
+        priors.setId(IiConverter.convertToIi(1L));
+        priors.setIdHasPrior(IiConverter.convertToIi(1L));
+        priors.setIdChemoRegimenNum(IiConverter.convertToIi(1L));
+        priors.setIdTotalRegimenNum(IiConverter.convertToIi(1L));
+        action.setPriors(priors);
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.save());
     }
+
+    @Test
+    public void editExceptionTest() throws Exception {
+        setParticipantIi(null);
+        priors.setId(IiConverter.convertToIi(1L));
+        priors.setIdHasPrior(IiConverter.convertToIi(1L));
+        priors.setIdChemoRegimenNum(IiConverter.convertToIi(1L));
+        priors.setIdTotalRegimenNum(IiConverter.convertToIi(1L));
+        action.setPriors(priors);
+        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.save());
+        assertNotNull(action.hasActionErrors());
+    }
+
 }

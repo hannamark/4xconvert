@@ -77,90 +77,57 @@
 *
 */
 
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.accweb.converter;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import static org.junit.Assert.assertTrue;
 
+import org.apache.struts2.util.StrutsTypeConverter;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
- * @author Kalpana Guthikonda
- * @since 12/04/2009
+ * Converter test root.
+ *
+ * @author lhebel
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
+public abstract class AbstractStrutsConverterTest {
 
+    protected StrutsTypeConverter converter = null;     // required
+    protected String validText = null;                  // required
+    protected String invalidText = null;                // can be left null
+    protected Object obj = null;
+    protected Object nullObj = null;                    // must be changed for iso types
+
+    public abstract void init();
+    public abstract void checkType();
+
+    /**
+     * Always initialize first.
+     */
     @Before
-    public void initAction() throws Exception {
-        action = new TreatmentAction();
-        action.prepare();
-        treatment = new TreatmentWebDto();
-        setParticipantIi(PARTICIPANT1);
+    public void initialize() {
+        init();
+        assertNotNull(converter);
+        assertNotNull(validText);
+        obj = converter.convertFromString(null, new String[]{validText}, String.class);
+        assertNotNull(obj);
+    }    
+
+    @Test
+    public void checkValidFromString() {
+        String val = converter.convertToString(null, obj);
+        assertTrue(validText.equals(val));
     }
 
-    @Override
     @Test
-    public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
+    public void checkNullToString() {
+        String val = converter.convertToString(null, null);
+        assertTrue(val.equals(""));
     }
 
-    @Override
     @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
-    }
-
-    @Override
-    @Test
-    public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-    }
-
-    @Override
-    @Test
-     public void updateTest() { 
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
-    }
-
-    @Override
-    @Test
-    public void deleteTest() throws Exception {
-        action.delete();
-    }
-
-    @Override
-    @Test
-    public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.add());
-    }
-
-    @Override
-    @Test
-    public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
+    public void checkObjectType() {
+        checkType();
     }
 }

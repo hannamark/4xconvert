@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.UserService;
+import gov.nih.nci.accrual.service.util.BaseLookUpService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.PatientServiceRemote;
@@ -104,6 +105,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final PerformedObservationResultService porService = new MockPerformedObservationResultBean();
     private final ActivityRelationshipService arService = new MockActivityRelationshipBean();
     private final UserService userService = new MockUserBean();
+    private final BaseLookUpService baseLooupSvc = new MockBaseLookUpBean();
     
     /**
      * {@inheritDoc}
@@ -167,5 +169,8 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
      */
     public UserService getUserService() {
         return userService;
+    }
+    public BaseLookUpService getBaseLookupService() {
+        return baseLooupSvc;
     }
 }

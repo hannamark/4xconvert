@@ -79,12 +79,16 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.accrual.web.dto.util.DiagnosisItemWebDto;
 import gov.nih.nci.accrual.web.dto.util.DiagnosisWebDto;
+import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.junit.Before;
@@ -106,7 +110,7 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
      */
     @Before
     public void initAction() throws Exception {
-        setParticipantIi(PARTICIPANT1);
+        //setParticipantIi(PARTICIPANT1);
         dAction = new DiagnosisAction();
         dAction.prepare();
         dAction.setSearchDiagnosis(new St());
@@ -124,6 +128,7 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
      */
     @Override
     public void executeTest() {
+        assertEquals(ActionSupport.ERROR, dAction.execute());
         setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
 
@@ -134,7 +139,7 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
     public void execute2ndTest() {
         setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
-
+        dAction.setDisWebList(new ArrayList<DiagnosisItemWebDto>());
         assertNotNull(dAction.getDisWebList());
     }
 
@@ -143,6 +148,7 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
      */
     @Test
     public void cancelTest() {
+        setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, dAction.cancel());
     }
 
@@ -151,8 +157,8 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
      */
     @Test
     public void saveTest() {
+        setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, dAction.save());
-        assertNotNull(dAction.getDiagnosis());
     }
 
     /**
@@ -161,6 +167,13 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
     @Test
     public void save2Test() {
         setParticipantIi(PARTICIPANT2);
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
+    }
+    
+    @Test
+    public void saveUpdateTest() {
+        setParticipantIi(PARTICIPANT1);
+        dAction.getDiagnosis().setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DIAGNOSISID));
         assertEquals(ActionSupport.SUCCESS, dAction.save());
     }
 

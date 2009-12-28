@@ -107,7 +107,8 @@ public class MockSubmissionBean implements SubmissionService {
     /** mock data. */
     public static List<SubmissionDto> dtos;
     public static List<SearchTrialResultDto> trialDtos;
-
+    public static final String SUBMISSIONID = "1";
+    
     static {
         dtos = new ArrayList<SubmissionDto>();
         SubmissionDto r = new SubmissionDto();
@@ -120,7 +121,7 @@ public class MockSubmissionBean implements SubmissionService {
         r.setSubmitUser(StConverter.convertToSt("Test User"));
         r.setDescription(StConverter.convertToSt("Test Description"));
         r.setCutOffDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-
+        r.setIdentifier(IiConverter.convertToIi(SUBMISSIONID));
         dtos.add(r);
 
     }
@@ -169,8 +170,14 @@ public class MockSubmissionBean implements SubmissionService {
 	}
 
 	public SubmissionDto get(Ii ii) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+	    SubmissionDto result = new SubmissionDto();
+	    Long id = IiConverter.convertToLong(ii);
+        for (SubmissionDto dto : dtos) {
+            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
+                result=dto;
+            }
+        }
+        return result;
 	}
 
 	public SubmissionDto update(SubmissionDto dto) throws RemoteException {

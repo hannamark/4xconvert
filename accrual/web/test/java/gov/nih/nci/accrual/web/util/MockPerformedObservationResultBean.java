@@ -90,6 +90,7 @@ import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
 import gov.nih.nci.accrual.web.enums.PathologyGradeSystems;
 import gov.nih.nci.accrual.web.enums.PathologyGrades;
+import gov.nih.nci.accrual.web.enums.ResponseInds;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
@@ -97,7 +98,11 @@ import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
+import gov.nih.nci.pa.enums.DiseaseStatusCode;
+import gov.nih.nci.pa.enums.EvidenceOfDiseaseCode;
+import gov.nih.nci.pa.enums.PatientVitalStatus;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
+import gov.nih.nci.pa.enums.PriorTherapyTypeCode;
 import gov.nih.nci.pa.enums.StagingSystemCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -169,7 +174,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         pq.setValue(new BigDecimal("2"));
         pq.setUnit("Years");     
         
-        /*dto = new PerformedObservationResultDto();
+        dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.HEIGHTID));
         dto.setResultQuantity(pq);
@@ -188,12 +193,67 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.BSAID));
         dto.setResultQuantity(pq);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        porList.add(dto);*/
+        porList.add(dto);
         
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TUMORMARKERID));
         dto.setResultQuantity(pq);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESID));
+        dto.setResultCode(CdConverter.convertToCd(PatientVitalStatus.ALIVE));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.VITAL_STATUS));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESID));
+        dto.setResultIndicator(BlConverter.convertToBl(true));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.EVALUABLE_FOR_RESPONSE));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESID));
+        dto.setResultCode(CdConverter.convertToCd(AutopsyPerformed.UNKNOWN));
+        Ivl<Ts> recurrenceDate = new Ivl<Ts>();
+        recurrenceDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setResultDateRange(recurrenceDate);
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.DISEASE_RECURRENCE_INDICATOR));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASESTATUSID));
+        dto.setResultCode(CdConverter.convertToCd(DiseaseStatusCode.DISEASE_PROGRESSION));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASEPROGRESSIONID));
+        dto.setResultCode(CdConverter.convertToCd(AutopsyPerformed.UNKNOWN));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESBESTRESPONSEID));
+        dto.setResultCode(CdConverter.convertToCd(ResponseInds.YES));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        porList.add(dto);
+        
+        dto = new PerformedObservationResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASEEVIDENCEID));
+        dto.setResultCode(CdConverter.convertToCd(EvidenceOfDiseaseCode.DISEASE_PRESENT));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
     }
@@ -283,7 +343,46 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setResultText(StConverter.convertToSt("STAGE"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
-        pcrList.add(dto);
+        pcrList.add(dto);        
+    }
+    
+    private List<PerformedMedicalHistoryResultDto> pmhr;
+    {
+        pmhr = new ArrayList<PerformedMedicalHistoryResultDto>();
+        PerformedMedicalHistoryResultDto dto = new PerformedMedicalHistoryResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PRIORTHERAPIESID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.HAD_PRIOR_THERAPIES));
+        dto.setResultIndicator(BlConverter.convertToBl(true));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        pmhr.add(dto); 
+        
+        dto = new PerformedMedicalHistoryResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PRIORTHERAPIESID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.PRIOR_THERAPY));
+        dto.setResultCode(CdConverter.convertToCd(PriorTherapyTypeCode.CHEMOTHERAPY_MULTIPLE_AGENTS_SYSTEMIC));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        pmhr.add(dto);
+        
+        dto = new PerformedMedicalHistoryResultDto();        
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PRIORTHERAPIESID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.NUMBER_OF_PRIOR_THERAPIES));
+        Pq resultQuantity = new Pq();
+        resultQuantity.setUnit("Unitary");
+        resultQuantity.setValue(new BigDecimal("1"));
+        dto.setResultQuantity(resultQuantity);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        pmhr.add(dto); 
+        
+        dto = new PerformedMedicalHistoryResultDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PRIORTHERAPIESID));
+        dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.NUMBER_OF_PRIOR_CHEMOTHERAPY_REGIMENS));
+        dto.setResultQuantity(resultQuantity);
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        pmhr.add(dto);
         
     }
     
@@ -387,7 +486,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
     public PerformedClinicalResultDto getPerformedClinicalResult(Ii ii)
             throws RemoteException {
         if (ii == null) {
-            throw new RemoteException("NULL argument getPerformedDiagnosis");
+            throw new RemoteException("NULL argument getPerformedClinicalResult");
         }
         PerformedClinicalResultDto dto = hmCr.get(ii.getExtension());
         return (dto == null) ? new PerformedClinicalResultDto() : dto;
@@ -397,7 +496,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
             Ii ii) throws RemoteException {
         ArrayList<PerformedClinicalResultDto> list = new ArrayList<PerformedClinicalResultDto>();
         if (ii == null) {
-            throw new RemoteException("NULL argument getPerformedDiagnosisByPerformedActivity");
+            throw new RemoteException("NULL argument getPerformedClinicalResultByPerformedActivity");
         }
         for (CrPa item : listCr) {
             if (item.pa.equals(ii.getExtension())) {
@@ -477,7 +576,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public List<PerformedMedicalHistoryResultDto> getPerformedMedicalHistoryResultByPerformedActivity(
             Ii ii) throws RemoteException {
-        return new ArrayList<PerformedMedicalHistoryResultDto>();
+        return pmhr;
     }
 
     public PerformedClinicalResultDto updatePerformedClinicalResult(

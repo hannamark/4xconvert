@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
 import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
@@ -117,7 +118,7 @@ public class PerformedObservationResultServiceTest
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        bean = new PerformedObservationResultBeanLocal();
+        bean = new PerformedObservationResultBean();
     }
 
     @Test
@@ -134,36 +135,130 @@ public class PerformedObservationResultServiceTest
         assertNotNull(dto5);
         PerformedLesionDescriptionDto dto6 = bean.getPerformedLesionDescription(IiConverter.convertToIi(TestSchema.performedLesionDescriptions.get(0).getId()));
         assertNotNull(dto6);
+        try{
+            dto1.setIdentifier(null);
+            dto1.setStudyProtocolIdentifier(null);
+            bean.createPerformedDiagnosis(dto1);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            bean.createPerformedDiagnosis(dto1);            
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            dto1.setIdentifier(null);
+            bean.updatePerformedDiagnosis(dto1);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            dto2.setIdentifier(null);
+            dto2.setStudyProtocolIdentifier(null);
+            bean.createPerformedImage(dto2);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            bean.createPerformedImage(dto2);            
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            dto2.setIdentifier(null);
+            bean.updatePerformedImage(dto2);
+        } catch (RemoteException e) {
+            // expected behavior
+        }try{
+            dto3.setIdentifier(null);
+            dto3.setStudyProtocolIdentifier(null);
+            bean.createPerformedHistopathology(dto3);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            bean.createPerformedHistopathology(dto3);            
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            dto3.setIdentifier(null);
+            bean.updatePerformedHistopathology(dto3);
+        } catch (RemoteException e) {
+            // expected behavior
+        }try{
+            dto4.setIdentifier(null);
+            dto4.setStudyProtocolIdentifier(null);
+            bean.createPerformedClinicalResult(dto4);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            bean.createPerformedClinicalResult(dto4);            
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            dto4.setIdentifier(null);
+            bean.updatePerformedClinicalResult(dto4);
+        } catch (RemoteException e) {
+            // expected behavior
+        }try{
+            dto5.setIdentifier(null);
+            dto5.setStudyProtocolIdentifier(null);
+            bean.createPerformedMedicalHistoryResult(dto5);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            bean.createPerformedMedicalHistoryResult(dto5);            
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            dto5.setIdentifier(null);
+            bean.updatePerformedMedicalHistoryResult(dto5);
+        } catch (RemoteException e) {
+            // expected behavior
+        }        
         try {
-            dto1 = bean.getPerformedDiagnosis(BII);
+            bean.getPerformedDiagnosis(BII);
         } catch (RemoteException e) {
             // expected behavior
         }
         try {
-            dto2 = bean.getPerformedImage(BII);
+            bean.getPerformedImage(BII);
         } catch (RemoteException e) {
             // expected behavior
         }
         try {
-            dto3 = bean.getPerformedHistopathology(BII);
+            bean.getPerformedHistopathology(BII);
         } catch (RemoteException e) {
             // expected behavior
         }
         try {
-            dto4 = bean.getPerformedClinicalResult(BII);
+           bean.getPerformedClinicalResult(BII);
         } catch (RemoteException e) {
             // expected behavior
         }
         try {
-            dto5 = bean.getPerformedMedicalHistoryResult(BII);
+            bean.getPerformedMedicalHistoryResult(BII);
         } catch (RemoteException e) {
             // expected behavior
         }
         try {
-            dto6 = bean.getPerformedLesionDescription(BII);
+            bean.getPerformedLesionDescription(BII);
         } catch (RemoteException e) {
             // expected behavior
         }
+        assertNull(bean.getPerformedDiagnosis(null));
+        assertNull(bean.getPerformedImage(null));
+        assertNull(bean.getPerformedHistopathology(null));
+        assertNull(bean.getPerformedClinicalResult(null));
+        assertNull(bean.getPerformedMedicalHistoryResult(null));        
+        assertNull(bean.getPerformedLesionDescription(null));
+        
     }
     @Test
     public void create() throws Exception {
@@ -175,6 +270,12 @@ public class PerformedObservationResultServiceTest
         PerformedDiagnosisDto pdr = bean.createPerformedDiagnosis(pddto);
         assertNotNull(pdr);
         assertNotNull(pdr.getIdentifier().getExtension());
+        
+        try {
+            bean.createPerformedDiagnosis(pdr);
+        } catch(RemoteException e){
+            //expected
+        }
    
         Timestamp newValue = PAUtil.dateStringToTimestamp("11/13/2009");
         assertFalse(newValue.equals(TestSchema.performedDiagnosis.get(0).getResultDateRangeLow()));
@@ -195,6 +296,12 @@ public class PerformedObservationResultServiceTest
         PerformedImageDto pi = bean.createPerformedImage(pidto);
         assertNotNull(pi);
         assertNotNull(pi.getIdentifier().getExtension());
+        
+        try {
+            bean.createPerformedImage(pi);
+        } catch(RemoteException e){
+            //expected
+        }
    
         Timestamp pinewValue = PAUtil.dateStringToTimestamp("11/13/2009");
         assertFalse(pinewValue.equals(TestSchema.performedImages.get(0).getResultDateRangeLow()));
@@ -221,6 +328,12 @@ public class PerformedObservationResultServiceTest
         PerformedClinicalResultDto pcr = bean.createPerformedClinicalResult(pcrdto);
         assertNotNull(pcr);
         assertNotNull(pcr.getIdentifier().getExtension());
+        
+        try {
+            bean.createPerformedClinicalResult(pcr);
+        } catch(RemoteException e){
+            //expected
+        }
    
         PerformedClinicalResultDto pcrdto2 = bean.getPerformedClinicalResult(IiConverter.convertToIi(TestSchema.performedClinicalResults.get(0).getId()));
         pcrdto2.setStageCodingSystem(CdConverter.convertStringToCd("test"));
@@ -236,6 +349,12 @@ public class PerformedObservationResultServiceTest
         PerformedHistopathologyDto phpr = bean.createPerformedHistopathology(phpdto);
         assertNotNull(phpr);
         assertNotNull(phpr.getIdentifier().getExtension());
+        
+        try {
+            bean.createPerformedHistopathology(phpr);
+        } catch(RemoteException e){
+            //expected
+        }
    
         PerformedHistopathologyDto phpdto2 = bean.getPerformedHistopathology(IiConverter.convertToIi(TestSchema.performedHistopathologies.get(0).getId()));
         phpdto2.setGradeCode(CdConverter.convertStringToCd("test"));
@@ -253,6 +372,12 @@ public class PerformedObservationResultServiceTest
         PerformedMedicalHistoryResultDto pmhrr = bean.createPerformedMedicalHistoryResult(pmhrdto);
         assertNotNull(pmhrr);
         assertNotNull(pmhrr.getIdentifier().getExtension());
+        
+        try {
+            bean.createPerformedMedicalHistoryResult(pmhrr);
+        } catch(RemoteException e){
+            //expected
+        }
    
         PerformedMedicalHistoryResultDto pmhrdto2 = bean.getPerformedMedicalHistoryResult(IiConverter.convertToIi(TestSchema.performedMedicalHistoryResults.get(0).getId()));
         pmhrdto2.setTypeCode(CdConverter.convertStringToCd(PerformedObservationResultTypeCode.VITAL_STATUS.getCode()));
@@ -268,6 +393,12 @@ public class PerformedObservationResultServiceTest
         PerformedLesionDescriptionDto pldr = bean.createPerformedLesionDescription(plddto);
         assertNotNull(pldr);
         assertNotNull(pldr.getIdentifier().getExtension());
+        
+        try {
+            bean.createPerformedLesionDescription(pldr);
+        } catch(RemoteException e){
+            //expected
+        }
    
         PerformedLesionDescriptionDto plddto2 = bean.getPerformedLesionDescription(IiConverter.convertToIi(TestSchema.performedLesionDescriptions.get(0).getId()));
         plddto2.setLesionNumber(IntConverter.convertToInt("4"));
@@ -278,17 +409,24 @@ public class PerformedObservationResultServiceTest
     public void getByPerformedActivity() throws Exception {
         List<PerformedDiagnosisDto> rList1 = bean.getPerformedDiagnosisByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList1.size());
+        assertNull(bean.getPerformedDiagnosisByPerformedActivity(null));
         List<PerformedImageDto> rList2 = bean.getPerformedImageByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList2.size());
+        assertNull(bean.getPerformedImageByPerformedActivity(null));
         List<PerformedHistopathologyDto> rList3 = bean.getPerformedHistopathologyByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList3.size());
+        assertNull(bean.getPerformedHistopathologyByPerformedActivity(null));
         List<PerformedClinicalResultDto> rList4 = bean.getPerformedClinicalResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList4.size());
+        assertNull(bean.getPerformedClinicalResultByPerformedActivity(null));
         List<PerformedMedicalHistoryResultDto> rList5 = bean.getPerformedMedicalHistoryResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList5.size());
+        assertNull(bean.getPerformedMedicalHistoryResultByPerformedActivity(null));
         List<PerformedLesionDescriptionDto> rList6 = bean.getPerformedLesionDescriptionByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList6.size());
+        assertNull(bean.getPerformedLesionDescriptionByPerformedActivity(null));
         List<PerformedObservationResultDto> rList7 = bean.getPerformedObservationResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
         assertTrue(0 < rList7.size());
+        assertNull(bean.getPerformedObservationResultByPerformedActivity(null));
     }  
 }

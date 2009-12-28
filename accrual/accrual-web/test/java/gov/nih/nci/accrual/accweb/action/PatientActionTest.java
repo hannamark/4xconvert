@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
@@ -142,6 +143,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     public void retrieveTest() {
         action.retrieve();
         assertTrue(action.hasActionErrors());
+        action.setSelectedRowIdentifier("1");
+        assertEquals(AccrualConstants.AR_DETAIL, action.retrieve());
     }
 
     @Override
@@ -149,12 +152,15 @@ public class PatientActionTest extends AbstractAccrualActionTest {
      public void updateTest() {
         action.update();
         assertTrue(action.hasActionErrors());
+        action.setSelectedRowIdentifier("1");
+        assertEquals(AccrualConstants.AR_DETAIL, action.update());
     }
 
     @Override
-    @Test(expected = NullPointerException.class)
+    @Test
     public void deleteTest() throws Exception {
-        action.delete();
+        action.setSelectedRowIdentifier("1");
+        assertEquals(ActionSupport.SUCCESS,action.delete());
     }
 
     @Override
@@ -164,7 +170,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
         patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
-        patient.setGenderCode(PatientGenderCode.MALE.getCode());
+        patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
         Set<String> raceCode = new HashSet<String>();
         raceCode.add(PatientRaceCode.WHITE.getName());
         patient.setRaceCode(raceCode);
@@ -185,7 +191,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
         patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
-        patient.setGenderCode(PatientGenderCode.MALE.getCode());
+        patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
         Set<String> raceCode = new HashSet<String>();
         raceCode.add(PatientRaceCode.WHITE.getName());
         patient.setRaceCode(raceCode);
@@ -199,11 +205,49 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         PatientAction.unitedStatesId = 1L;
         action.setPatient(patient);
         assertEquals("success", action.edit());
+        assertNotNull(action.getPatient());
+    }
+    
+    @Test
+    public void addExceptionTest() throws Exception {
+        assertEquals(AccrualConstants.AR_DETAIL, action.edit());
+        patient.setBirthDate("7/16/2009");
+        patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
+        patient.setGenderCode(PatientGenderCode.MALE.getCode());
+        Set<String> raceCode = new HashSet<String>();
+        raceCode.add(PatientRaceCode.WHITE.getName());
+        patient.setRaceCode(raceCode);
+        patient.setCountryIdentifier(Long.valueOf(2));
+        patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        patient.setAssignedIdentifier("PO PATIENT ID 01");
+        patient.setStudySiteId(Long.valueOf("01"));
+        patient.setDiseaseIdentifier(Long.valueOf("1"));
+        patient.setStudySubjectId(1L);
+        patient.setZip("12345");
+        patient.setPaymentMethodCode("paymentMethodCode");
+        PatientAction.unitedStatesId = 1L;
+        action.setPatient(patient);
+        assertEquals("detail", action.add());
     }
 
     @Test
     public void displayDiseaseTest() throws Exception {
+        try{
+            action.displayDisease();
+        }catch(Exception e){
+            //expected
+        }
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("diseaseId", "1");
         assertEquals(ActionSupport.SUCCESS, action.displayDisease());
+    }
+    
+    @Test
+    public void criteriaTest() throws Exception {
+        criteria.setAssignedIdentifier("PO PATIENT ID 01");
+        criteria.setStudySiteId(Long.valueOf("02"));
+        criteria.setBirthDate("7/16/2009");
+        criteria.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        action.setCriteria(criteria);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 }

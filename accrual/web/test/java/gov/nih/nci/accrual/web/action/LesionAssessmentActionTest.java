@@ -121,6 +121,8 @@ public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
     @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
+        setParticipantIi(null);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
     @Override
@@ -167,6 +169,17 @@ public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
         lesionAssessment.setMeasurableEvaluableDiseaseType(CdConverter.convertToCd(MeasurableEvaluableDiseaseTypeCode.EVALUABLE));
         action.setLesionAssessment(lesionAssessment);
         assertEquals(ActionSupport.SUCCESS, action.add());
+    }
+    
+    @Test
+    public void addExceptionTest() throws Exception {
+        Date test = new Date();
+        lesionAssessment.setClinicalAssessmentDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        lesionAssessment.setImageIdentifier(new Ii());
+        lesionAssessment.setImageSeriesIdentifier(new Ii());
+        lesionAssessment.setLesionNum(new Ii());
+        action.setLesionAssessment(lesionAssessment);
+        assertEquals(ActionSupport.INPUT, action.add());
     }
 
     @Override

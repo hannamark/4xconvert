@@ -102,6 +102,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Hugh Reinhart
  * @since Nov 5, 2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
 
     private static final long serialVersionUID = -2561560856212211656L;
@@ -296,7 +297,9 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
                 for (PerformedObservationDto item : pd) {
 
                     // Ignore everything that isn't the Performance Status
-                    if (!item.getNameCode().getCode().equals(ActivityNameCode.PERFORMANCE_STATUS.getCode())) {
+                    if (item.getNameCode() == null
+                            || item.getNameCode().getCode() == null
+                            || !item.getNameCode().getCode().equals(ActivityNameCode.PERFORMANCE_STATUS.getCode())) {
                         continue;
                     }
 

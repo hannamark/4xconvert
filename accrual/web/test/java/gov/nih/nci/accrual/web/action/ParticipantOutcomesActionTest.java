@@ -81,10 +81,18 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.accrual.web.dto.util.ParticipantOutcomesWebDto;
+import gov.nih.nci.accrual.web.enums.AutopsyPerformed;
+import gov.nih.nci.accrual.web.enums.ResponseInds;
+import gov.nih.nci.pa.enums.BestResponseCode;
+import gov.nih.nci.pa.enums.DiseaseStatusCode;
+import gov.nih.nci.pa.enums.EvidenceOfDiseaseCode;
+import gov.nih.nci.pa.enums.PatientVitalStatus;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -93,74 +101,74 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Kalpana Guthikonda
- * @since 12/04/2009
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
+public class ParticipantOutcomesActionTest extends AbstractAccrualActionTest {
+    ParticipantOutcomesAction action;
+    ParticipantOutcomesWebDto targetOutcome ;
+    private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
 
     @Before
     public void initAction() throws Exception {
-        action = new TreatmentAction();
+        action = new ParticipantOutcomesAction();
         action.prepare();
-        treatment = new TreatmentWebDto();
-        setParticipantIi(PARTICIPANT1);
+        targetOutcome  = new ParticipantOutcomesWebDto();
     }
 
     @Override
     @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
+        setParticipantIi(PARTICIPANT1);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
-
-    @Override
-    @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
-    }
-
-    @Override
-    @Test
-    public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-    }
-
-    @Override
-    @Test
-     public void updateTest() { 
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
-    }
-
-    @Override
-    @Test
-    public void deleteTest() throws Exception {
-        action.delete();
-    }
-
+    
     @Override
     @Test
     public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
+        setParticipantIi(PARTICIPANT2);
+        targetOutcome.setAssessmentType(CdConverter.convertStringToCd("AssessmentType"));
+        targetOutcome.setBestResponse(CdConverter.convertToCd(BestResponseCode.PARTIAL_RESPONSE));
+        targetOutcome.setDiseaseEvidence(CdConverter.convertToCd(EvidenceOfDiseaseCode.DISEASE_PRESENT));
+        targetOutcome.setDiseaseStatus(CdConverter.convertToCd(DiseaseStatusCode.DISEASE_PROGRESSION));
+        targetOutcome.setProgressionInd(CdConverter.convertToCd(AutopsyPerformed.YES));
+        targetOutcome.setProgressionSite(CdConverter.convertStringToCd("ProgressionSite"));
+        targetOutcome.setRecurrenceInd(CdConverter.convertToCd(AutopsyPerformed.YES));
+        targetOutcome.setResponseInd(CdConverter.convertToCd(ResponseInds.YES));
+        targetOutcome.setVitalStatus(CdConverter.convertToCd(PatientVitalStatus.UNKNOWN));
+        Date now = new Date();
+        Timestamp ts = new Timestamp(now.getTime());
+        targetOutcome.setBestResponseDate(TsConverter.convertToTs(ts));
+        targetOutcome.setEvaluationDate(TsConverter.convertToTs(ts));
+        targetOutcome.setProgressionDate(TsConverter.convertToTs(ts));
+        targetOutcome.setRecurrenceDate(TsConverter.convertToTs(ts));
+        targetOutcome.setDiseaseStatusDate(TsConverter.convertToTs(ts));
+        action.setTargetOutcome(targetOutcome);
         assertEquals(ActionSupport.SUCCESS, action.add());
+        assertNotNull(action.getTargetOutcome());
     }
-
-    @Override
+    
     @Test
-    public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
+    public void addExceptionTest() throws Exception {
+        setParticipantIi(PARTICIPANT1);
+        Date test = new Date();
+        targetOutcome.setBestResponseDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        targetOutcome.setEvaluationDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        targetOutcome.setProgressionDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        targetOutcome.setRecurrenceDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        targetOutcome.setDiseaseStatusDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
+        targetOutcome.setRecurrenceInd(CdConverter.convertToCd(ResponseInds.YES));
+        targetOutcome.setProgressionInd(CdConverter.convertToCd(ResponseInds.YES));
+        action.setTargetOutcome(targetOutcome);
+        assertEquals(ActionSupport.INPUT, action.add());
+        
+        targetOutcome.setRecurrenceInd(CdConverter.convertToCd(ResponseInds.YES));
+        targetOutcome.setProgressionInd(CdConverter.convertToCd(ResponseInds.YES));
+        targetOutcome.setBestResponseDate(TsConverter.convertToTs(new Timestamp(test.getTime() - MILLIS_IN_DAY)));
+        targetOutcome.setEvaluationDate(TsConverter.convertToTs(new Timestamp(test.getTime() - MILLIS_IN_DAY)));
+        targetOutcome.setProgressionDate(TsConverter.convertToTs(new Timestamp(test.getTime() - MILLIS_IN_DAY)));
+        targetOutcome.setRecurrenceDate(TsConverter.convertToTs(new Timestamp(test.getTime() - MILLIS_IN_DAY)));
+        targetOutcome.setDiseaseStatusDate(TsConverter.convertToTs(new Timestamp(test.getTime() - MILLIS_IN_DAY)));
+        action.setTargetOutcome(targetOutcome);
+        assertEquals(ActionSupport.INPUT, action.add());
     }
 }

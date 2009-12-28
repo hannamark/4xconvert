@@ -88,10 +88,12 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -101,7 +103,13 @@ import java.util.zip.DataFormatException;
  */
 public class MockPerformedActivityBean implements PerformedActivityService {
 
-    private static List<PerformedSubjectMilestoneDto> psmList = new ArrayList<PerformedSubjectMilestoneDto>();
+    private List<PerformedSubjectMilestoneDto> psmList;
+    {
+        psmList = new ArrayList<PerformedSubjectMilestoneDto>();
+        PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
+        dto.setRegistrationDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        psmList.add(dto);        
+    }
 
     public PerformedSubjectMilestoneDto createPerformedSubjectMilestone(
             PerformedSubjectMilestoneDto dto) throws RemoteException {
@@ -122,7 +130,6 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(
             Ii ii) throws RemoteException {
-        // TODO Auto-generated method stub
         return psmList;
     }
 

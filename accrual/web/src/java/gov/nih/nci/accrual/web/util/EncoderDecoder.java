@@ -1,9 +1,11 @@
 package gov.nih.nci.accrual.web.util;
 
 import java.io.IOException;
+
 import org.apache.log4j.Logger;
-import sun.misc.BASE64Encoder;
+
 import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 /**
  *

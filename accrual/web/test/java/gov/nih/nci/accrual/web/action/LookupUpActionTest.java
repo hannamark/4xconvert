@@ -73,94 +73,148 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
-import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.accrual.web.dto.util.LookUpWebDto;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * @author Kalpana Guthikonda
- * @since 12/04/2009
+ * @author Rajani Kumar
+ * @since  Oct 2, 2009
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
 
-    @Before
-    public void initAction() throws Exception {
-        action = new TreatmentAction();
+public class LookupUpActionTest extends AbstractAccrualActionTest {
+
+    LookUpAction action;
+    private String type;
+    private St searchText;
+    private List<LookUpWebDto> lookUpList;
+    
+	@Before
+      public void setUp() throws Exception {
+		
+        action = new LookUpAction();
         action.prepare();
-        treatment = new TreatmentWebDto();
-        setParticipantIi(PARTICIPANT1);
+        searchText = StConverter.convertToSt("test");
+        lookUpList = new ArrayList<LookUpWebDto>();
     }
 
-    @Override
-    @Test
-    public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
+    @After
+    public void tearDown() throws Exception {
     }
 
-    @Override
     @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
+    public void testSearchDoseFrequency() throws Exception {    	
+        assertEquals(ActionSupport.SUCCESS, action.doseFrequency());
+        assertEquals(ActionSupport.INPUT, action.doseFrequency());
+    }
+    @Test
+    public void testSearchAnatomicSites() throws Exception { 
+        assertEquals(ActionSupport.SUCCESS, action.anatomicSites());
+        assertEquals(ActionSupport.INPUT, action.anatomicSites());
+    }
+    @Test
+    public void testSearchAssessmentType() throws Exception {  
+        assertEquals(ActionSupport.SUCCESS, action.assessmentType()); 
+        assertEquals(ActionSupport.INPUT, action.assessmentType());        
+    }
+    @Test
+    public void testSearchLesionLocationAnatomicSite() throws Exception {  
+        assertEquals(ActionSupport.SUCCESS, action.lesionLocationAnatomicSite()); 
+        assertEquals(ActionSupport.INPUT, action.lesionLocationAnatomicSite());        
+    }
+    @Test
+    public void testSearchProcedureName() throws Exception {   
+        assertEquals(ActionSupport.SUCCESS, action.procedureName());
+        assertEquals(ActionSupport.INPUT, action.procedureName());        
+    }
+    @Test
+    public void testSearchRouteOfAdministration() throws Exception { 
+        assertEquals(ActionSupport.SUCCESS, action.routeOfAdministration());  
+        assertEquals(ActionSupport.INPUT, action.routeOfAdministration());        
+    }
+    
+    @Test
+    public void testSearchTumorMarker() throws Exception { 
+        assertEquals(ActionSupport.SUCCESS, action.tumorMarker());  
+        assertEquals(ActionSupport.INPUT, action.tumorMarker());        
+    }
+    
+    @Test
+    public void testSearchUnitOfMeasurement() throws Exception { 
+        assertEquals(ActionSupport.SUCCESS, action.unitOfMeasurement());  
+        assertEquals(ActionSupport.INPUT, action.unitOfMeasurement());        
+    }
+        
+    @Test
+    public void testLoadResultList() throws Exception {
+      action.setSearchText(searchText);
+      assertNotNull(PAUtil.isEmpty(action.getSearchText().getValue()));
+      DoseFrequency criteria = new DoseFrequency();
+      criteria.setCode(action.getSearchText().getValue());
+      assertNotNull(criteria);
+      ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("searchText",searchText.getValue());
+      ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("type", type);
+      assertEquals(ActionSupport.SUCCESS, action.doseFrequency());
+      assertNotNull(action.getLookUpList());
+      assertEquals(ActionSupport.SUCCESS, action.anatomicSites());
+      assertNotNull(action.getLookUpList());
+      assertEquals(ActionSupport.SUCCESS, action.assessmentType()); 
+      assertNotNull(action.getLookUpList());
+      assertEquals(ActionSupport.SUCCESS, action.lesionLocationAnatomicSite()); 
+      assertNotNull(action.getLookUpList());      
+      assertEquals(ActionSupport.SUCCESS, action.procedureName());      
+      assertNotNull(action.getLookUpList());
+      assertEquals(ActionSupport.SUCCESS, action.routeOfAdministration()); 
+      assertNotNull(action.getLookUpList());       
+      assertEquals(ActionSupport.SUCCESS, action.tumorMarker());        
+      assertNotNull(action.getLookUpList());
+      assertEquals(ActionSupport.SUCCESS, action.unitOfMeasurement());  
+      assertNotNull(action.getLookUpList());
     }
 
-    @Override
     @Test
-    public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
+    public void testSearchNameProperty() {
+        action.setSearchText(searchText);
+        assertNotNull(action.getSearchText());
     }
 
-    @Override
     @Test
-     public void updateTest() { 
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
+    public void testActionProperty() {
+    	assertNotNull(action.getLookUpList());
+    	action.setType("test");
+    	assertNotNull(action.getType());
+   }
+
+
+   /* @Test
+    public void testIncludeSynonymProperty() {
+        action.setIncludeSynonym(includeSynonym);
+        assertNotNull(action.getIncludeSynonym());
     }
 
-    @Override
+   
     @Test
-    public void deleteTest() throws Exception {
-        action.delete();
-    }
+    public void testExactMatchProperty() {
+        action.setExactMatch(exactMatch);
+        assertNotNull(action.getExactMatch());
+    }*/
 
-    @Override
-    @Test
-    public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.add());
-    }
-
-    @Override
-    @Test
-    public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
-    }
 }

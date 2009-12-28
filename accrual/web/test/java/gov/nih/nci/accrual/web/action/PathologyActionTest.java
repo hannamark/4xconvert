@@ -113,6 +113,8 @@ public class PathologyActionTest extends AbstractAccrualActionTest {
     @Override
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
+        setParticipantIi(null);
+        assertEquals(ActionSupport.ERROR, action.execute());
     }
     
     @Test

@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.web.dto.util.ParticipantWebDto;
 import gov.nih.nci.accrual.web.dto.util.SearchParticipantCriteriaWebDto;
@@ -208,6 +209,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         ParticipantsAction.unitedStatesId = 1L;
         action.setParticipant(patient);
         assertEquals(ActionSupport.SUCCESS, action.edit());
+        assertNotNull(action.getParticipant());
     }
     
     @Test
@@ -219,5 +221,12 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setPatientId(IiConverter.convertToIi(1L));
         action.setParticipant(patient);
         assertEquals(ActionSupport.INPUT, action.edit());
+    }
+    @Test
+    public void criteriaTest() throws Exception {
+        criteria.setAssignedIdentifier("PO PATIENT ID 01");
+        criteria.setBirthDate("7/16/2009");
+        action.setCriteria(criteria);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 }

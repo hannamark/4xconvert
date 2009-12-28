@@ -79,7 +79,6 @@
 package gov.nih.nci.accrual.accweb.dto.util;
 
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 
 import org.junit.Before;
 import org.junit.Test;

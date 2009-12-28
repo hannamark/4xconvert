@@ -79,17 +79,20 @@ package gov.nih.nci.accrual.accweb.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import gov.nih.nci.accrual.accweb.util.MockSubmissionBean;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.ActionSupport;
 
 
@@ -119,6 +122,7 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
     public void executeTest() throws Exception{
 
        // show list of submissions
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("studyProtocolId", "1");
         assertEquals(ActionSupport.SUCCESS, action.execute());
 
     }
@@ -137,6 +141,8 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void submitTest() throws Exception {
+      assertEquals(ActionSupport.SUCCESS, action.submit());
+      action.setSelectedRowIdentifier(MockSubmissionBean.SUBMISSIONID);      
       assertEquals(ActionSupport.SUCCESS, action.submit());
     }
 

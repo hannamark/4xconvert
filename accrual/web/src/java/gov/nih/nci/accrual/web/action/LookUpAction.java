@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.accrual.web.action;
 
-import gov.nih.nci.accrual.service.BaseLookUpService;
 import gov.nih.nci.accrual.web.dto.util.LookUpWebDto;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.AnatomicSites;
@@ -136,9 +135,7 @@ public class LookUpAction extends AbstractAccrualAction {
         ProcedureName criteria = new ProcedureName();
         criteria.setCode(sTxt);
           List<ProcedureName> procedureNameList = new ArrayList<ProcedureName>();
-          BaseLookUpService<ProcedureName> lookUpService =
-              new BaseLookUpService<ProcedureName>(ProcedureName.class);
-          procedureNameList.addAll(lookUpService.search(criteria));
+          procedureNameList.addAll(baseLookupSvc.search(criteria));
           for (ProcedureName pn :  procedureNameList) {
              LookUpWebDto lookupdto = new LookUpWebDto();
              lookupdto.setCode(StConverter.convertToSt(pn.getCode()));
@@ -174,9 +171,7 @@ public class LookUpAction extends AbstractAccrualAction {
         UnitOfMeasurement criteria = new UnitOfMeasurement();
         criteria.setCode(sTxt);
         List<UnitOfMeasurement> list = new ArrayList<UnitOfMeasurement>();
-        BaseLookUpService<UnitOfMeasurement> lookUpService =
-            new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
-        list.addAll(lookUpService.search(criteria));
+        list.addAll(baseLookupSvc.search(criteria));
         for (UnitOfMeasurement bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
@@ -212,9 +207,7 @@ public class LookUpAction extends AbstractAccrualAction {
         RouteOfAdministration criteria = new RouteOfAdministration();
         criteria.setCode(sTxt);
         List<RouteOfAdministration> list = new ArrayList<RouteOfAdministration>();
-        BaseLookUpService<RouteOfAdministration> lookUpService =
-            new BaseLookUpService<RouteOfAdministration>(RouteOfAdministration.class);
-        list.addAll(lookUpService.search(criteria));
+        list.addAll(baseLookupSvc.search(criteria));
         for (RouteOfAdministration bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
@@ -250,9 +243,7 @@ public class LookUpAction extends AbstractAccrualAction {
         DoseFrequency criteria = new DoseFrequency();
         criteria.setCode(sTxt);
         List<DoseFrequency> list = new ArrayList<DoseFrequency>();
-        BaseLookUpService<DoseFrequency> lookUpService =
-            new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
-        list.addAll(lookUpService.search(criteria));
+        list.addAll(baseLookupSvc.search(criteria));
         for (DoseFrequency bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
@@ -288,9 +279,7 @@ public class LookUpAction extends AbstractAccrualAction {
         AnatomicSites criteria = new AnatomicSites();
         criteria.setCode(sTxt);
         List<AnatomicSites> list = new ArrayList<AnatomicSites>();
-        BaseLookUpService<AnatomicSites> lookUpService =
-            new BaseLookUpService<AnatomicSites>(AnatomicSites.class);
-        list.addAll(lookUpService.search(criteria));
+        list.addAll(baseLookupSvc.search(criteria));
         for (AnatomicSites bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
@@ -326,9 +315,7 @@ public class LookUpAction extends AbstractAccrualAction {
         AssessmentType criteria = new AssessmentType();
         criteria.setCode(sTxt);
         List<AssessmentType> list = new ArrayList<AssessmentType>();
-        BaseLookUpService<AssessmentType> lookUpService =
-            new BaseLookUpService<AssessmentType>(AssessmentType.class);
-        list.addAll(lookUpService.search(criteria));
+        list.addAll(baseLookupSvc.search(criteria));
         for (AssessmentType bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
@@ -364,9 +351,7 @@ public class LookUpAction extends AbstractAccrualAction {
         TumorMarker criteria = new TumorMarker();
         criteria.setCode(sTxt);
         List<TumorMarker> list = new ArrayList<TumorMarker>();
-        BaseLookUpService<TumorMarker> lookUpService =
-            new BaseLookUpService<TumorMarker>(TumorMarker.class);
-        list.addAll(lookUpService.search(criteria));
+        list.addAll(baseLookupSvc.search(criteria));
         for (TumorMarker bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));
@@ -402,9 +387,7 @@ public class LookUpAction extends AbstractAccrualAction {
         LesionLocationAnatomicSite criteria = new LesionLocationAnatomicSite();
         criteria.setCode(sTxt);
         List<LesionLocationAnatomicSite> list = new ArrayList<LesionLocationAnatomicSite>();
-        BaseLookUpService<LesionLocationAnatomicSite> lookUpService =
-            new BaseLookUpService<LesionLocationAnatomicSite>(LesionLocationAnatomicSite.class);
-        list.addAll(lookUpService.search(criteria));
+        list.addAll(baseLookupSvc.search(criteria));
         for (LesionLocationAnatomicSite bean :  list) {
             LookUpWebDto lookupdto = new LookUpWebDto();
             lookupdto.setCode(StConverter.convertToSt(bean.getCode()));

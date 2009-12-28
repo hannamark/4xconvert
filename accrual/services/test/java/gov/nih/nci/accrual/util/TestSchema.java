@@ -82,6 +82,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedActivity;
@@ -98,6 +99,7 @@ import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
 import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -114,6 +116,7 @@ import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
@@ -167,6 +170,7 @@ public class TestSchema {
     public static List<PlannedActivity> plannedActivities;
     public static List<PerformedActivity> performedActivities;
     public static List<ActivityRelationship> activityRelationships;
+    public static ArrayList<Long> interventionIds;
 
     public static int outcomesSpId = 0;
     public static int outcomesSsId = 0;
@@ -255,6 +259,7 @@ public class TestSchema {
         plannedActivities = new ArrayList<PlannedActivity>();
         performedActivities = new ArrayList<PerformedActivity>();
         activityRelationships = new ArrayList<ActivityRelationship>();
+        interventionIds = new ArrayList<Long>();
 
         // Organization
         Organization org = new Organization();
@@ -594,6 +599,8 @@ public class TestSchema {
         pimaging.setStudyProtocol(studyProtocols.get(0));
         pimaging.setStudySubject(studySubjects.get(0));
         pimaging.setContrastAgentEnhancementIndicator(true);
+        pimaging.setMethodCode("PerformedImaging MethodCode");
+        pimaging.setTargetSiteCode("PerformedImaging TargetSiteCode");
         addUpdObject(pimaging);
         performedImagings.add(pimaging);
 
@@ -610,6 +617,9 @@ public class TestSchema {
         psa.setDoseTotalValue(new BigDecimal("5"));
         psa.setRouteOfAdministrationCode("Oral");
         psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
+        psa.setDoseDurationValue(new BigDecimal("2"));
+        psa.setDoseDurationUnit("10Milligrams");
+        psa.setDoseModificationType("doseModificationType");
         psa.setStudySubject(studySubjects.get(0));
         addUpdObject(psa);
         performedSubstanceAdministrations.add(psa);
@@ -618,6 +628,18 @@ public class TestSchema {
         PerformedRadiationAdministration pra = new PerformedRadiationAdministration();
         pra.setStudyProtocol(studyProtocols.get(0));
         pra.setMachineTypeCode(RadiationMachineTypeCode.ACCELERATOR);
+        pra.setDoseModificationType("doseModificationType");
+        pra.setDoseValue(new BigDecimal("2"));
+        pra.setDoseUnit("10Milligrams");
+        pra.setDoseDurationValue(new BigDecimal("2"));
+        pra.setDoseDurationUnit("10Milligrams");
+        pra.setDoseDescription("TestDose");
+        pra.setDoseFormCode("Tablet");
+        pra.setDoseFrequencyCode("BID");
+        pra.setDoseRegimen("doseRegimen");
+        pra.setDoseTotalUnit("doseTotalUom");
+        pra.setDoseTotalValue(new BigDecimal("5"));
+        pra.setRouteOfAdministrationCode("Oral");
         pra.setStudySubject(studySubjects.get(0));
         addUpdObject(pra);
         performedRadiationAdministrations.add(pra);
@@ -682,6 +704,8 @@ public class TestSchema {
         PerformedLesionDescription pld = new PerformedLesionDescription();
         pld.setResultCode("PerformedLesionDescription");
         pld.setLesionNumber(1);
+        pld.setLongestDiameterUnit("longestDiameterUnit");
+        pld.setLongestDiameterValue(new BigDecimal(2));
         pld.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
         pld.setStudyProtocol(studyProtocols.get(0));
         pld.setPerformedObservation(performedObservation);
@@ -701,6 +725,17 @@ public class TestSchema {
         pera.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(pera);
         performedActivities.add(pera);
+        
+        Intervention inv = new Intervention();
+        inv.setName("Chocolate Bar");
+        inv.setDescriptionText("Oral intervention to improve morale");
+        inv.setDateLastUpdated(new Date());
+        inv.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        inv.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+        inv.setTypeCode(InterventionTypeCode.DIETARY_SUPPLEMENT);
+        inv.setUserLastUpdated("Joe");
+        addUpdObject(inv);
+        interventionIds.add(inv.getId());
 
        /* ActivityRelationship ar = new ActivityRelationship();
         ar.setTypeCode("ActivityRelationship");
@@ -714,6 +749,11 @@ public class TestSchema {
         df.setDisplayName("Four Times Weekly");
         df.setDescription("Four Times Weekly");
         addUpdObject(df);
+        
+        RegulatoryAuthority ra = new RegulatoryAuthority();
+        ra.setAuthorityName("authorityName");
+        ra.setCountry(countries.get(0));
+        addUpdObject(ra);
     }
 
 }

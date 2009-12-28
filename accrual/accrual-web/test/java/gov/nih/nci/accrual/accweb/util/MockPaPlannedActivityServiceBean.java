@@ -1,18 +1,30 @@
 package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedProcedureDTO;
 import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceRemote{
 
+    private List<PlannedEligibilityCriterionDTO> pecList;
+    {
+        pecList = new ArrayList<PlannedEligibilityCriterionDTO>();
+        PlannedEligibilityCriterionDTO dto= new PlannedEligibilityCriterionDTO();
+        dto.setCriterionName(StConverter.convertToSt("GENDER"));
+        dto.setEligibleGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));        
+        pecList.add(dto);
+    }
     /**
      * {@inheritDoc}
      */
@@ -75,8 +87,7 @@ public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceR
      * {@inheritDoc}
      */
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        return pecList;
     }
 
     /**

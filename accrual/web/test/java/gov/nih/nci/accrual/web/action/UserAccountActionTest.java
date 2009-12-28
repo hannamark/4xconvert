@@ -237,4 +237,17 @@ public class UserAccountActionTest extends AbstractAccrualActionTest{
             action.setUserAccount(userAccount);
             assertEquals("input", action.request());
         }
+        @Test
+        public void testRequestAccountException2(){
+            userAccount.setPassword("test");
+            action.setUserAccount(userAccount);
+            assertEquals("input", action.request());
+        }
+        @Test
+        public void testRequestAccountException3(){
+            userAccount.setLoginName("test");
+            userAccount.setPassword("testing1");
+            action.setUserAccount(userAccount);
+            assertEquals("input", action.request());
+        }
 }

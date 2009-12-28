@@ -103,7 +103,7 @@ public class ActivityRelationshipServiceTest extends AbstractServiceTest<Activit
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        bean = new ActivityRelationshipBeanLocal();
+        bean = new ActivityRelationshipBean();
     }
 
     /*@Test

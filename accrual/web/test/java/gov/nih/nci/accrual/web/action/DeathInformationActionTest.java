@@ -119,6 +119,8 @@ public class DeathInformationActionTest extends AbstractAccrualActionTest {
     @Override
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
+        setParticipantIi(null);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
     @Override

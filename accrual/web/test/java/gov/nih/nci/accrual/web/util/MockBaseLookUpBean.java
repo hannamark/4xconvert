@@ -77,90 +77,163 @@
 *
 */
 
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.web.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.accrual.service.util.BaseLookUpService;
+import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+import gov.nih.nci.pa.domain.AnatomicSites;
+import gov.nih.nci.pa.domain.AssessmentType;
+import gov.nih.nci.pa.domain.DoseFrequency;
+import gov.nih.nci.pa.domain.LesionLocationAnatomicSite;
+import gov.nih.nci.pa.domain.ProcedureName;
+import gov.nih.nci.pa.domain.RouteOfAdministration;
+import gov.nih.nci.pa.domain.TumorMarker;
+import gov.nih.nci.pa.domain.UnitOfMeasurement;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.opensymphony.xwork2.ActionSupport;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Kalpana Guthikonda
- * @since 12/04/2009
+ * @since Dec 24, 2009
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
-
-    @Before
-    public void initAction() throws Exception {
-        action = new TreatmentAction();
-        action.prepare();
-        treatment = new TreatmentWebDto();
-        setParticipantIi(PARTICIPANT1);
+public class MockBaseLookUpBean implements BaseLookUpService {
+    private ProcedureName pn = new ProcedureName();
+    {
+        pn.setCode("test");
+        pn.setId(1L);
     }
-
-    @Override
-    @Test
-    public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
+    private UnitOfMeasurement uom = new UnitOfMeasurement();
+    {
+        uom.setCode("test");
+        uom.setId(1L);
     }
-
-    @Override
-    @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
+    private RouteOfAdministration roa = new RouteOfAdministration();
+    {
+        roa.setCode("test");
+        roa.setId(1L);
     }
-
-    @Override
-    @Test
-    public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
+    private DoseFrequency df = new DoseFrequency();
+    {
+        df.setCode("test");
+        df.setId(1L);
     }
-
-    @Override
-    @Test
-     public void updateTest() { 
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
+    private AnatomicSites as = new AnatomicSites();
+    {
+        as.setCode("test");
+        as.setId(1L);
     }
-
-    @Override
-    @Test
-    public void deleteTest() throws Exception {
-        action.delete();
+    private AssessmentType at = new AssessmentType();
+    {
+        at.setCode("test");
+        at.setId(1L);
     }
-
-    @Override
-    @Test
-    public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.add());
+    private TumorMarker tm = new TumorMarker();
+    {
+        tm.setCode("test");
+        tm.setId(1L);
     }
-
-    @Override
-    @Test
-    public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
+    private LesionLocationAnatomicSite llas = new LesionLocationAnatomicSite();
+    {
+        llas.setCode("test");
+        llas.setId(1L);
     }
+    public <BO extends AbstractLookUpEntity> BO getByCode(BO bo)
+            throws RemoteException {
+        if (bo instanceof ProcedureName) {
+            bo.setCode(pn.getCode());
+            bo.setId(pn.getId());
+        }else if (bo instanceof UnitOfMeasurement) {
+            bo.setCode(uom.getCode());
+            bo.setId(uom.getId());
+        }else if (bo instanceof RouteOfAdministration) {
+            bo.setCode(roa.getCode());
+            bo.setId(roa.getId());
+        }else if (bo instanceof DoseFrequency) {
+            bo.setCode(df.getCode());
+            bo.setId(df.getId());
+        }else if (bo instanceof AnatomicSites) {
+            bo.setCode(as.getCode());
+            bo.setId(as.getId());
+        }else if (bo instanceof AssessmentType) {
+            bo.setCode(at.getCode());
+            bo.setId(at.getId());
+        }else if (bo instanceof TumorMarker) {
+            bo.setCode(tm.getCode());
+            bo.setId(tm.getId());
+        }else if (bo instanceof LesionLocationAnatomicSite) {
+            bo.setCode(llas.getCode());
+            bo.setId(llas.getId());
+        }
+        return bo;
+    }
+    public <BO extends AbstractLookUpEntity> BO getById(BO bo)
+            throws RemoteException {
+        if (bo instanceof ProcedureName) {
+            bo.setCode(pn.getCode());
+            bo.setId(pn.getId());
+        }else if (bo instanceof UnitOfMeasurement) {
+            bo.setCode(uom.getCode());
+            bo.setId(uom.getId());
+        }else if (bo instanceof RouteOfAdministration) {
+            bo.setCode(roa.getCode());
+            bo.setId(roa.getId());
+        }else if (bo instanceof DoseFrequency) {
+            bo.setCode(df.getCode());
+            bo.setId(df.getId());
+        }else if (bo instanceof AnatomicSites) {
+            bo.setCode(as.getCode());
+            bo.setId(as.getId());
+        }else if (bo instanceof AssessmentType) {
+            bo.setCode(at.getCode());
+            bo.setId(at.getId());
+        }else if (bo instanceof TumorMarker) {
+            bo.setCode(tm.getCode());
+            bo.setId(tm.getId());
+        }else if (bo instanceof LesionLocationAnatomicSite) {
+            bo.setCode(llas.getCode());
+            bo.setId(llas.getId());
+        }
+        return bo;
+    }
+    public <BO extends AbstractLookUpEntity> List<BO> search(BO bo)
+            throws RemoteException {
+        List<BO> bos = new ArrayList<BO>();
+        if (bo instanceof ProcedureName) {
+            bo.setCode(pn.getCode());
+            bo.setId(pn.getId());
+            bos.add(bo);
+        }else if (bo instanceof UnitOfMeasurement) {
+            bo.setCode(uom.getCode());
+            bo.setId(uom.getId());
+            bos.add(bo);
+        }else if (bo instanceof RouteOfAdministration) {
+            bo.setCode(roa.getCode());
+            bo.setId(roa.getId());
+            bos.add(bo);
+        }else if (bo instanceof DoseFrequency) {
+            bo.setCode(df.getCode());
+            bo.setId(df.getId());
+            bos.add(bo);
+        }else if (bo instanceof AnatomicSites) {
+            bo.setCode(as.getCode());
+            bo.setId(as.getId());
+            bos.add(bo);
+        }else if (bo instanceof AssessmentType) {
+            bo.setCode(at.getCode());
+            bo.setId(at.getId());
+            bos.add(bo);
+        }else if (bo instanceof TumorMarker) {
+            bo.setCode(tm.getCode());
+            bo.setId(tm.getId());
+            bos.add(bo);
+        }else if (bo instanceof LesionLocationAnatomicSite) {
+            bo.setCode(llas.getCode());
+            bo.setId(llas.getId());
+            bos.add(bo);
+        }
+        return bos;
+    } 
+ 
 }

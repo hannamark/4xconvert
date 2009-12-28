@@ -92,11 +92,14 @@ import gov.nih.nci.accrual.web.enums.StagingMethods;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.enums.DoseModificationType;
 import gov.nih.nci.pa.enums.LesionMeasurementMethodCode;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
+import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -104,6 +107,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -129,9 +133,19 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public static final String STAGINGID = "Staging 1";
     public static final String TUMORMARKERID = "TumorMarker 1";
     public static final String PATHOLOGYID = "Pathology 1";
-    /*public static final String HEIGHTID = "Height 1";
+    public static final String PARTICIPANTOUTCOMESID = "ParticipantOutcomes 1";
+    public static final String PARTICIPANTOUTCOMESDISEASESTATUSID = "ParticipantOutcomes DiseaseStatus 1";
+    public static final String PARTICIPANTOUTCOMESDISEASEPROGRESSIONID = "ParticipantOutcomes DiseaseProgression 1";
+    public static final String PARTICIPANTOUTCOMESBESTRESPONSEID = "ParticipantOutcomes BestResponse 1";
+    public static final String PARTICIPANTOUTCOMESDISEASEEVIDENCEID = "ParticipantOutcomes DiseaseEvidence 1";
+    public static final String DIAGNOSISID = "Diagnosis 1";
+    public static final String PRIORTHERAPIESID = "PriorTherapies 1";
+    public static final String DRUGBIOLOGICID = "DrugBiologic 1";
+    public static final String HEIGHTID = "Height 1";
     public static final String WEIGHTID = "Weight 1";
-    public static final String BSAID = "BSA 1";*/
+    public static final String BSAID = "BSA 1";
+    public static final String RADIATIONID = "Radiation 1";
+    
     private List<PerformedActivityDto> paList;
     {
         paList = new ArrayList<PerformedActivityDto>();
@@ -158,11 +172,11 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     {
         poList = new ArrayList<PerformedObservationDto>();
         PerformedObservationDto dto = new PerformedObservationDto();
-        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setIdentifier(IiConverter.convertToIi(DIAGNOSISID));
         dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.DIAGNOSIS));
-        Ivl<Ts> diagnosisDate = new Ivl<Ts>();
-        diagnosisDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        dto.setActualDateRange(diagnosisDate);
+        Ivl<Ts> date = new Ivl<Ts>();
+        date.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setActualDateRange(date);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToStudySiteIi(1L));
         poList.add(dto);
@@ -182,7 +196,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         poList.add(dto);
         
-        /*dto = new PerformedObservationDto();
+        dto = new PerformedObservationDto();
         dto.setIdentifier(IiConverter.convertToIi(HEIGHTID));
         dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.HEIGHT));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
@@ -201,7 +215,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.BSA));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
-        poList.add(dto);*/
+        poList.add(dto);
         
         dto = new PerformedObservationDto();
         dto.setIdentifier(IiConverter.convertToIi(LESION_ASSESSMENTID));
@@ -235,6 +249,56 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto = new PerformedObservationDto();
         dto.setIdentifier(IiConverter.convertToIi(PATHOLOGYID));
         dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PATHOLOGY_GRADE));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(PARTICIPANTOUTCOMESID));
+        dto.setActualDateRange(date);
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PARTICIPANT_OUTCOMES));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(PARTICIPANTOUTCOMESDISEASESTATUSID));
+        dto.setActualDateRange(date);
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.DISEASE_STATUS));
+        cds = new ArrayList<Cd>();
+        cds.add(CdConverter.convertStringToCd("AssessmentType"));
+        dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(PARTICIPANTOUTCOMESDISEASEPROGRESSIONID));
+        dto.setTargetSiteCode(CdConverter.convertStringToCd("ProgressionSite"));
+        dto.setActualDateRange(date);
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.DISEASE_PROGRESSION));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(PARTICIPANTOUTCOMESBESTRESPONSEID));
+        dto.setActualDateRange(date);
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.BEST_RESPONSE));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(PARTICIPANTOUTCOMESDISEASEEVIDENCEID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.EVIDENCE_OF_DISEASE));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        poList.add(dto);
+        
+        dto = new PerformedObservationDto();
+        dto.setIdentifier(IiConverter.convertToIi(PRIORTHERAPIESID));
+        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PRIOR_THERAPIES));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         poList.add(dto);
@@ -281,8 +345,8 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     private List<PerformedSubstanceAdministrationDto> psaList;
     {
         psaList = new ArrayList<PerformedSubstanceAdministrationDto>();
-        /*PerformedSubstanceAdministrationDto dto = new PerformedSubstanceAdministrationDto();       
-        dto.setIdentifier(IiConverter.convertToIi(RADIATIONID));
+        PerformedSubstanceAdministrationDto dto = new PerformedSubstanceAdministrationDto();       
+        dto.setIdentifier(IiConverter.convertToIi(DRUGBIOLOGICID));
         dto.setInterventionIdentifier(MockPaInterventionBean.list.get(0).getIdentifier());
         dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.DRUG_BIOLOGIC));
         dto.setDoseFormCode(CdConverter.convertStringToCd("TABLET"));
@@ -297,7 +361,30 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setDoseModificationType(CdConverter.convertToCd(DoseModificationType.DOSE_INCREASED));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
-        psaList.add(dto);*/
+        psaList.add(dto);
+    }
+    private List<PerformedRadiationAdministrationDto> praList;
+    {
+        praList = new ArrayList<PerformedRadiationAdministrationDto>();
+        PerformedRadiationAdministrationDto dto = new PerformedRadiationAdministrationDto();
+        dto.setIdentifier(IiConverter.convertToIi(RADIATIONID));
+        Ivl<Ts> radiationDate = new Ivl<Ts>();
+        radiationDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setActualDateRange(radiationDate);
+        dto.setName(StConverter.convertToSt("Test"));
+        dto.setInterventionIdentifier(MockPaInterventionBean.list.get(0).getIdentifier());
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.RADIATION));
+        dto.setDoseFrequencyCode(CdConverter.convertStringToCd("BID"));
+        Pq dose = new Pq();
+        dose.setValue(new BigDecimal("2"));
+        dose.setUnit("Years");
+        dto.setDose(dose);
+        dto.setDoseDuration(dose);
+        dto.setDoseTotal(dose);
+        dto.setMachineTypeCode(CdConverter.convertToCd(RadiationMachineTypeCode.BONE_DENSITOMETER));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        praList.add(dto);
     }
     private List<PerformedImagingDto> piList;
     {
@@ -342,7 +429,7 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setNameCode(CdConverter.convertStringToCd(ActivityNameCode.DIAGNOSIS.getCode()));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
         id = MockPerformedActivityBean.class.getName() + ".hmPo " + getKey();
-        dto.setIdentifier(IiConverter.convertToIi(id));
+        dto.setIdentifier(IiConverter.convertToIi(DIAGNOSISID));
         hmPo.put(id, dto);
         listPo.add(new PoSs(AbstractAccrualActionTest.PARTICIPANT1, dto));
 
@@ -380,7 +467,13 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         if (ii == null) {
             throw new RemoteException("NULL argument getPerformedActivityByStudySubject");
         }
-         return paList;
+         List<PerformedActivityDto> list = new ArrayList<PerformedActivityDto>();
+         for (PerformedActivityDto item : paList) {
+             if (ii.getExtension().equals(item.getStudySubjectIdentifier().getExtension())) {
+                 list.add(item);
+             }
+         }
+         return list;
     }
 
     public PerformedSubjectMilestoneDto getPerformedSubjectMilestone(Ii ii)
@@ -474,7 +567,10 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     public PerformedSubstanceAdministrationDto createPerformedSubstanceAdministration(
             PerformedSubstanceAdministrationDto dto) throws RemoteException,
             DataFormatException {
-        return new PerformedSubstanceAdministrationDto();
+        PerformedSubstanceAdministrationDto psa = (dto == null) ? new PerformedSubstanceAdministrationDto() : dto;
+        String id = getKey();
+        psa.setIdentifier(IiConverter.convertToIi(id));
+        return psa;
     }
 
     public PerformedImagingDto getPerformedImaging(Ii ii)
@@ -534,7 +630,13 @@ public class MockPerformedActivityBean implements PerformedActivityService {
 
     public PerformedRadiationAdministrationDto getPerformedRadiationAdministration(
             Ii ii) throws RemoteException {
-        return new PerformedRadiationAdministrationDto();
+        PerformedRadiationAdministrationDto dto = new PerformedRadiationAdministrationDto();
+        for (PerformedRadiationAdministrationDto po : praList) {
+            if (ii.getExtension().equals(po.getIdentifier().getExtension())) {
+                dto = po;
+            }
+        }        
+        return dto;  
     }
 
     public List<PerformedRadiationAdministrationDto> getPerformedRadiationAdministrationByStudySubject(
@@ -542,12 +644,18 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         if (ii == null) {
             throw new RemoteException("NULL argument getPerformedRadiationAdministrationByStudySubject");
         }
-        return new ArrayList<PerformedRadiationAdministrationDto>();
+        return praList;
     }
 
     public PerformedSubstanceAdministrationDto getPerformedSubstanceAdministration(
             Ii ii) throws RemoteException {
-        return new PerformedSubstanceAdministrationDto();
+        PerformedSubstanceAdministrationDto dto = new PerformedSubstanceAdministrationDto();
+        for (PerformedSubstanceAdministrationDto po : psaList) {
+            if (ii.getExtension().equals(po.getIdentifier().getExtension())) {
+                dto = po;
+            }
+        }        
+        return dto;  
     }
 
     public List<PerformedSubstanceAdministrationDto> getPerformedSubstanceAdministrationByStudySubject(

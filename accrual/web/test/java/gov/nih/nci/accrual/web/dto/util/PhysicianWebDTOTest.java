@@ -50,4 +50,8 @@ public class PhysicianWebDTOTest {
     public void firstNameTest() {
       assertNotNull(physicianWebDto.getFirstName());
     }
+    @Test
+    public void addressTest() {
+      assertNotNull(physicianWebDto.getAddress());
+    }
 }

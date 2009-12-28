@@ -77,90 +77,53 @@
 *
 */
 
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.domain.AbstractLookUpEntity;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.rmi.RemoteException;
+import java.util.List;
 
-import com.opensymphony.xwork2.ActionSupport;
+import javax.ejb.Remote;
 
-/**
+
+ /**
  * @author Kalpana Guthikonda
- * @since 12/04/2009
+ *@since 11/17/2009
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
-
-    @Before
-    public void initAction() throws Exception {
-        action = new TreatmentAction();
-        action.prepare();
-        treatment = new TreatmentWebDto();
-        setParticipantIi(PARTICIPANT1);
-    }
-
-    @Override
-    @Test
-    public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
-    }
-
-    @Override
-    @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
-    }
-
-    @Override
-    @Test
-    public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-    }
-
-    @Override
-    @Test
-     public void updateTest() { 
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
-    }
-
-    @Override
-    @Test
-    public void deleteTest() throws Exception {
-        action.delete();
-    }
-
-    @Override
-    @Test
-    public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.add());
-    }
-
-    @Override
-    @Test
-    public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
-    }
+@Remote
+public interface BaseLookUpService {
+    
+     /**
+      * Gets the by id.
+      * @param <BO> type 
+      * @param bo the bo
+      * 
+      * @return the by id
+      * 
+      * @throws RemoteException the remote exception
+      */
+     <BO extends AbstractLookUpEntity>BO getById(BO bo) throws RemoteException;
+     
+     /**
+      * Gets the by code.
+      * @param <BO> type 
+      * @param bo the bo
+      * 
+      * @return the by code
+      * 
+      * @throws RemoteException the remote exception
+      */
+     <BO extends AbstractLookUpEntity>BO getByCode(BO bo) throws RemoteException;
+     
+     /**
+      * Search.
+      * @param <BO> type 
+      * @param bo the bo
+      * 
+      * @return the list< b o>
+      * 
+      * @throws RemoteException the remote exception
+      */
+     <BO extends AbstractLookUpEntity>List<BO> search(BO bo) throws RemoteException;
 }

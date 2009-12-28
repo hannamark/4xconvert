@@ -231,6 +231,9 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
                     addFieldError("diagnosis.createDate",
                             "The Diagnosis Date must be on or before " + AccrualUtil.dateToMDY(earliest));
                 }
+            } else if (!hasActionErrors()) {
+                // since we don't have any dates in database
+                savePdd(savePod());
             }
         } catch (Exception e) {
             addActionError("Error in save().  " + e.getLocalizedMessage());

@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.web.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.web.dto.util.PerformanceStatusWebDto;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
 import org.junit.Before;
@@ -107,6 +108,28 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
         PerformanceStatusWebDto temp = dAction.getPerformance();
         temp.setKarnofskyStatus(CdConverter.convertStringToCd("100"));
     }
+    
+    @Test
+    public void webDtoTest() {
+        dAction.getPerformance().setLanskyStatus(CdConverter.convertStringToCd("300"));
+        dAction.getPerformance().setKarnofskyStatus(new Cd());
+        dAction.getPerformance().setEcogStatus(new Cd());
+        assertEquals(true, dAction.getPerformance().validate());
+        
+        dAction.getPerformance().setEcogStatus(CdConverter.convertStringToCd("300"));
+        dAction.getPerformance().setKarnofskyStatus(new Cd());
+        dAction.getPerformance().setLanskyStatus(new Cd());
+        assertEquals(true, dAction.getPerformance().validate());
+        
+        dAction.getPerformance().setKarnofskyStatus(CdConverter.convertStringToCd("300"));
+        dAction.getPerformance().setEcogStatus(new Cd());
+        dAction.getPerformance().setLanskyStatus(new Cd());
+        assertEquals(true, dAction.getPerformance().validate());
+        
+        dAction.getPerformance().setEcogStatus(CdConverter.convertStringToCd("200"));
+        dAction.getPerformance().setLanskyStatus(CdConverter.convertStringToCd("300"));
+        assertEquals(false, dAction.getPerformance().validate());
+    }
 
     /**
      * {@inheritDoc}
@@ -121,6 +144,8 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
     public void execute2ndTest() {
         setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
+        setParticipantIi(null);
+        assertEquals(ActionSupport.INPUT, dAction.execute());
     }
 
     /**

@@ -81,10 +81,16 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
+import gov.nih.nci.accrual.web.dto.util.RadiationWebDto;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -93,17 +99,17 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Kalpana Guthikonda
- * @since 12/04/2009
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
+public class RadiationActionTest extends AbstractAccrualActionTest {
+    RadiationAction action;
+    RadiationWebDto radiation  ;
+    private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
 
     @Before
     public void initAction() throws Exception {
-        action = new TreatmentAction();
+        action = new RadiationAction();
         action.prepare();
-        treatment = new TreatmentWebDto();
+        radiation  = new RadiationWebDto();
         setParticipantIi(PARTICIPANT1);
     }
 
@@ -111,11 +117,15 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
     }
-
+    
+    @Test
+    public void executeExceptionTest() {
+        setParticipantIi(PARTICIPANT2);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+        setParticipantIi(null);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+    }
     @Override
     @Test
     public void createTest() {
@@ -125,42 +135,70 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
     }
 
     @Override
     @Test
      public void updateTest() { 
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.RADIATIONID);
         assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
     }
 
     @Override
     @Test
     public void deleteTest() throws Exception {
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.RADIATIONID);
         action.delete();
     }
 
     @Override
     @Test
     public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
+        radiation.setRadDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        radiation.setDoseFreq(CdConverter.convertStringToCd("BID"));
+        Pq dose = new Pq();
+        dose.setValue(new BigDecimal("2"));
+        dose.setUnit("Years");
+        radiation.setDose(dose);
+        radiation.setDuration(dose);
+        radiation.setTotalDose(dose);
+        radiation.setType(CdConverter.convertStringToCd("radiation"));
+        radiation.setMachineType(CdConverter.convertToCd(RadiationMachineTypeCode.BONE_DENSITOMETER));
+        action.setRadiation(radiation);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
 
-    @Override
+   @Override
     @Test
     public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
+       radiation.setRadDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+       radiation.setDoseFreq(CdConverter.convertStringToCd("BID"));
+       Pq dose = new Pq();
+       dose.setValue(new BigDecimal("2"));
+       dose.setUnit("Years");
+       radiation.setDose(dose);
+       radiation.setDuration(dose);
+       radiation.setTotalDose(dose);
+       radiation.setType(CdConverter.convertStringToCd("radiation"));
+       radiation.setMachineType(CdConverter.convertToCd(RadiationMachineTypeCode.BONE_DENSITOMETER));
+       action.setRadiation(radiation);
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.RADIATIONID);
         assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
+        assertNotNull(action.getRadiation());
+    }
+    
+    @Test
+    public void editExceptionTest() throws Exception {
+        Pq dose = new Pq();
+        dose.setUnit("");
+        radiation.setDose(dose);
+        radiation.setDuration(dose);
+        radiation.setTotalDose(dose);
+        radiation.setRadDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() + MILLIS_IN_DAY)));
+        action.setRadiation(radiation);
+        assertEquals(ActionSupport.INPUT, action.add());
+        assertEquals(ActionSupport.INPUT, action.edit());
     }
 }

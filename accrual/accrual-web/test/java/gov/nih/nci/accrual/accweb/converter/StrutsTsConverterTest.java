@@ -77,90 +77,45 @@
 *
 */
 
-package gov.nih.nci.accrual.web.action;
+package gov.nih.nci.accrual.accweb.converter;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
-import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.iso.Ts;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
- * @author Kalpana Guthikonda
- * @since 12/04/2009
+ * Converter test.
+ *
+ * @author lhebel
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
+public class StrutsTsConverterTest extends AbstractStrutsConverterTest {
 
-    @Before
-    public void initAction() throws Exception {
-        action = new TreatmentAction();
-        action.prepare();
-        treatment = new TreatmentWebDto();
-        setParticipantIi(PARTICIPANT1);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init() {
+        converter = new StrutsTsConverter();
+        validText = "10/08/2009";
+        invalidText = "xyz";
+        nullObj = new Ts();
     }
 
     @Override
-    @Test
-    public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
+    public void checkType() {
+        assertTrue(obj instanceof Ts);
     }
-
-    @Override
+    
     @Test
-    public void createTest() {
-       assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.create());
-    }
-
-    @Override
-    @Test
-    public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-    }
-
-    @Override
-    @Test
-     public void updateTest() { 
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
-    }
-
-    @Override
-    @Test
-    public void deleteTest() throws Exception {
-        action.delete();
-    }
-
-    @Override
-    @Test
-    public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.add());
-    }
-
-    @Override
-    @Test
-    public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
+    public void checkInvalidFromString() {
+        Object tmp = converter.convertFromString(null, new String[]{validText, "text2"}, String.class);
+        assertNotNull(tmp);
+        
+        if (invalidText != null) {
+            tmp = converter.convertFromString(null, new String[]{invalidText}, String.class);
+            assertNotNull(tmp);
+        }
     }
 }

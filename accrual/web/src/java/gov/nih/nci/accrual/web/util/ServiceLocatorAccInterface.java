@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.UserService;
+import gov.nih.nci.accrual.service.util.BaseLookUpService;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.accrual.service.util.PatientServiceRemote;
@@ -140,4 +141,9 @@ public interface ServiceLocatorAccInterface {
      * @return User domain service
      */
     UserService getUserService();
+    
+    /**
+     * @return the base lookup service
+     */
+    BaseLookUpService getBaseLookupService();
 }

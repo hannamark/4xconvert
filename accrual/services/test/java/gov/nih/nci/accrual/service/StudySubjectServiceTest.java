@@ -111,7 +111,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
-        StudySubjectBeanLocal local = new StudySubjectBeanLocal();
+        StudySubjectBeanLocal local = new StudySubjectBean();
         local.searchTrialSvc = new SearchTrialBean();
         bean = local;
     }
@@ -209,7 +209,14 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         } catch (RemoteException ex) {
             // expected
         }
-
+        
+        try{
+            dto.setOutcomesLoginName(StConverter.convertToSt("Test"));
+            bean.create(dto);
+        } catch (RemoteException ex) {
+            // expected
+        }
+        
         try {
             bean.delete(null);
             fail();

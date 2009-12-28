@@ -115,7 +115,7 @@ public class MockActivityRelationshipBean implements ActivityRelationshipService
         dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
         arsList.add(dto);
         
-        /*dto = new ActivityRelationshipDto();
+        dto = new ActivityRelationshipDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
         dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.COURSEID));
@@ -141,7 +141,7 @@ public class MockActivityRelationshipBean implements ActivityRelationshipService
         dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
         dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DRUGBIOLOGICID));
         dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.BSAID));
-        arsList.add(dto);*/
+        arsList.add(dto);
         
         dto = new ActivityRelationshipDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
@@ -155,6 +155,48 @@ public class MockActivityRelationshipBean implements ActivityRelationshipService
         dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.PERT));
         dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID));
         dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID2));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESID));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASESTATUSID));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASEPROGRESSIONID));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESBESTRESPONSEID));
+        arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASEEVIDENCEID));
+        arsList.add(dto);
+    
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.COURSEID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.RADIATIONID));
         arsList.add(dto);
     }
     

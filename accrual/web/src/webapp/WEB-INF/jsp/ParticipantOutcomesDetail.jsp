@@ -28,7 +28,7 @@
 	}
 	
 	function anatomicLookup(){
-        showPopWin('${anatomicLookupUrl}', 900, 400, '', 'Assessment Type');
+        showPopWin('${anatomicLookupUrl}', 900, 400, '', 'Progression Site');
 	}
 </script>
 <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>

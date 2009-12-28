@@ -148,6 +148,8 @@ public class PopUpInterventionActionTest extends AbstractAccrualActionTest {
     public void testSearchNameProperty() {
         action.setSearchName(searchName);
         assertNotNull(action.getSearchName());
+        action.setType("type");
+        assertNotNull(action.getType());
     }
 
     @Test

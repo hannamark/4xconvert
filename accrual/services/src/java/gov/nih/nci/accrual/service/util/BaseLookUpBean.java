@@ -77,7 +77,7 @@
 *
 */
 
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.AccrualHibernateUtil;
@@ -87,6 +87,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -99,81 +102,57 @@ import org.hibernate.criterion.Restrictions;
 
  /**
  * @author Kalpana Guthikonda
- *@since 11/17/2009
- * @param <BO>
+ *@since 12/24/2009
  */
+@Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings("unchecked")
-public class BaseLookUpService <BO extends AbstractLookUpEntity> {
+public class BaseLookUpBean implements BaseLookUpService {
 
-    private final Class<BO> typeArgument;    
-    private static final Logger LOG = Logger.getLogger(BaseLookUpService.class);
+    private static final Logger LOG = Logger.getLogger(BaseLookUpBean.class);
 
     /**
-     * @param typeArgument BO
+     * {@inheritDoc}
      */
-    public BaseLookUpService(Class<BO> typeArgument) {
-        this.typeArgument = typeArgument;
+    public <BO extends AbstractLookUpEntity> BO getByCode(BO bo)
+            throws RemoteException {
+        LOG.info("Entering getByCode ");
+        Session session = null;
+        BO resultBO = null;
+        session = AccrualHibernateUtil.getCurrentSession();        
+        resultBO = (BO) session.createCriteria(bo.getClass()).add(Restrictions.eq("code", bo.getCode())).list().get(0);
+        LOG.info("Leaving getByCode");
+        return resultBO;
     }
 
     /**
-     * Search.
-     * @param bo the bo
-     * @return the list< b o>
-     * @throws RemoteException the remote exception
-     */ 
-    public List<BO> search(BO bo) throws RemoteException {
+     * {@inheritDoc}
+     */
+    public <BO extends AbstractLookUpEntity> BO getById(BO bo)
+            throws RemoteException {
+        LOG.info("Entering getById ");
+        Session session = null;
+        BO resultBO = null;
+        session = AccrualHibernateUtil.getCurrentSession();
+        resultBO = (BO) session.get(bo.getClass(), bo.getId());
+        LOG.info("Leaving getById");
+        return resultBO;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <BO extends AbstractLookUpEntity> List<BO> search(BO bo)
+            throws RemoteException {
         LOG.info("Entering search");
-        AccrualHibernateUtil.getHibernateHelper().openAndBindSession();
         Session session = null;
         List<BO> bos = new ArrayList<BO>();
         session = AccrualHibernateUtil.getCurrentSession();
         Example example = Example.create(bo).enableLike(MatchMode.ANYWHERE).ignoreCase();
-        Criteria criteria = session.createCriteria(getTypeArgument()).add(example);
+        Criteria criteria = session.createCriteria(bo.getClass()).add(example);
         bos = criteria.list();
-        AccrualHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         LOG.info("Leaving search");
         return bos;
-        }
-
-    /**
-     * Gets By Id.
-     * @param boId the bo id
-     * @return the selected
-     * @throws RemoteException the remote exception
-     */
-    public BO getById(Long boId) throws RemoteException {
-        LOG.info("Entering getById ");
-        AccrualHibernateUtil.getHibernateHelper().openAndBindSession();
-        Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
-        BO bo = (BO) session.get(getTypeArgument(), boId);
-        AccrualHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
-        LOG.info("Leaving getById");
-        return bo;
-    }
-    
-    /**
-     * Gets the by code.
-     * @param code the code
-     * @return the by code
-     * @throws RemoteException the remote exception
-     */
-    public BO getByCode(String code) throws RemoteException {
-        LOG.info("Entering getByCode ");
-        AccrualHibernateUtil.getHibernateHelper().openAndBindSession();
-        Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();        
-        BO bo = (BO) session.createCriteria(getTypeArgument()).add(Restrictions.eq("code", code)).list().get(0);        
-        AccrualHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
-        LOG.info("Leaving getByCode");
-        return bo;
-    }
-
-    /**
-     * @return the typeArgument
-     */
-    public Class<BO> getTypeArgument() {
-        return typeArgument;
     }
 }

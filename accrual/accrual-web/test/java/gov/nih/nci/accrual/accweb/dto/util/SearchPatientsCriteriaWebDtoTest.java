@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.accrual.accweb.dto.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
 
 import org.junit.Before;
 import org.junit.Test;

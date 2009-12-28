@@ -81,10 +81,16 @@ package gov.nih.nci.accrual.web.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.web.dto.util.TreatmentWebDto;
+import gov.nih.nci.accrual.web.dto.util.DrugBiologicsWebDto;
+import gov.nih.nci.accrual.web.util.MockPaInterventionBean;
 import gov.nih.nci.accrual.web.util.MockPerformedActivityBean;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.enums.DoseModificationType;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+
+import java.math.BigDecimal;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -93,17 +99,16 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * @author Kalpana Guthikonda
- * @since 12/04/2009
  */
-public class TreatmentActionTest extends AbstractAccrualActionTest {
-	TreatmentAction action;
-	TreatmentWebDto treatment;
+public class DrugBiologicsActionTest extends AbstractAccrualActionTest {
+    DrugBiologicsAction action;
+    DrugBiologicsWebDto drugBiologic ;
 
     @Before
     public void initAction() throws Exception {
-        action = new TreatmentAction();
+        action = new DrugBiologicsAction();
         action.prepare();
-        treatment = new TreatmentWebDto();
+        drugBiologic  = new DrugBiologicsWebDto();
         setParticipantIi(PARTICIPANT1);
     }
 
@@ -111,9 +116,14 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
+    }
+    
+    @Test
+    public void executeExceptionTest() {
+        setParticipantIi(PARTICIPANT2);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
         setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
+        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
     @Override
@@ -125,42 +135,81 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
+        assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
     }
 
     @Override
     @Test
      public void updateTest() { 
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.TPID);
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.DRUGBIOLOGICID);
         assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update()); 
     }
 
     @Override
     @Test
     public void deleteTest() throws Exception {
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.DRUGBIOLOGICID);
         action.delete();
     }
 
     @Override
     @Test
     public void addTest() throws Exception {
-        treatment.setName(StConverter.convertToSt("TP1"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        action.setTreatment(treatment);
+        drugBiologic.setInterventionId(MockPaInterventionBean.list.get(0).getIdentifier());
+        drugBiologic.setDoseFreq(CdConverter.convertStringToCd("BID"));
+        drugBiologic.setDoseRoute(CdConverter.convertStringToCd("ORAL"));
+        Pq dose = new Pq();
+        dose.setValue(new BigDecimal("2"));
+        dose.setUnit("Years");
+        drugBiologic.setDose(dose);
+        drugBiologic.setDoseDur(dose);
+        drugBiologic.setDoseTotal(dose);
+        drugBiologic.setBsa(dose);
+        drugBiologic.setDrugName(StConverter.convertToSt("drugName"));
+        drugBiologic.setHeight(dose);
+        drugBiologic.setWeight(dose);
+        drugBiologic.setDoseModType(CdConverter.convertToCd(DoseModificationType.DOSE_INCREASED));
+        action.setDrugBiologic(drugBiologic);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
 
-    @Override
+   @Override
     @Test
     public void editTest() throws Exception {
-    	treatment.setName(StConverter.convertToSt("TP1 Edited"));
-        treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
-        action.setTreatment(treatment);
+        drugBiologic.setId(IiConverter.convertToIi(MockPerformedActivityBean.DRUGBIOLOGICID));
+        drugBiologic.setInterventionId(MockPaInterventionBean.list.get(0).getIdentifier());
+        drugBiologic.setDoseFreq(CdConverter.convertStringToCd("BID"));
+        drugBiologic.setDoseRoute(CdConverter.convertStringToCd("ORAL"));
+        Pq dose = new Pq();
+        dose.setValue(new BigDecimal("2"));
+        dose.setUnit("Years");
+        drugBiologic.setDose(dose);
+        drugBiologic.setDoseDur(dose);
+        drugBiologic.setDoseTotal(dose);
+        drugBiologic.setBsa(dose);
+        drugBiologic.setDrugName(StConverter.convertToSt("drugName"));
+        drugBiologic.setHeight(dose);
+        drugBiologic.setWeight(dose);
+        drugBiologic.setDoseModType(CdConverter.convertToCd(DoseModificationType.DOSE_INCREASED));
+        action.setDrugBiologic(drugBiologic);
+        action.setSelectedRowIdentifier(MockPerformedActivityBean.DRUGBIOLOGICID);
         assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getTreatment());
+        assertNotNull(action.getDrugBiologic());
     }
+    
+   @Test
+   public void editExceptionTest() throws Exception {
+       Pq dose = new Pq();
+       dose.setUnit("");
+       drugBiologic.setDose(dose);
+       drugBiologic.setDoseDur(dose);
+       drugBiologic.setDoseTotal(dose);
+       drugBiologic.setBsa(dose);
+       drugBiologic.setHeight(dose);
+       drugBiologic.setWeight(dose);
+       action.setDrugBiologic(drugBiologic);
+       assertEquals(ActionSupport.INPUT, action.add());
+       assertEquals(ActionSupport.INPUT, action.edit());
+   }
 }
