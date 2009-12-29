@@ -27,29 +27,49 @@ function irbSave(){
 function statusChange() {
     var newStatus=document.irbForm.approvalStatus.value;
     if(newStatus=="Submission not required"){
-        document.irbForm.approvalNumber.disabled=true;
-        document.getElementById('name').disabled=true;
-        setContactDisabled(true);
-        document.irbForm.contactAffiliation.disabled=true;
+        hideRow(document.getElementById('approvalNumberrow'));
+        hideRow(document.getElementById('boradNamerow'));
+        hideRow(document.getElementById('mailAddressrow'));
+        hideRow(document.getElementById('cityrow'));
+        hideRow(document.getElementById('staterow'));
+        hideRow(document.getElementById('ziprow'));
+        hideRow(document.getElementById('countryrow'));
+        hideRow(document.getElementById('phonerow'));
+        hideRow(document.getElementById('emailrow'));
+        hideRow(document.getElementById('boardAffiliationrow'));
     }else if(newStatus=="Submitted, approved"){
-        document.irbForm.approvalNumber.disabled=false;
-        document.getElementById('name').disabled=false;
-        if(document.irbForm.boardChanged.value!="true"){
-            setContactDisabled(false);
-        }
-        document.irbForm.contactAffiliation.disabled=false;    
+    	showRow(document.getElementById('approvalNumberrow'));
+    	showRow(document.getElementById('boradNamerow'));
+    	showRow(document.getElementById('mailAddressrow'));
+    	showRow(document.getElementById('cityrow'));
+    	showRow(document.getElementById('staterow'));
+    	showRow(document.getElementById('ziprow'));
+    	showRow(document.getElementById('countryrow'));
+    	showRow(document.getElementById('phonerow'));
+    	showRow(document.getElementById('emailrow'));
+    	showRow(document.getElementById('boardAffiliationrow'));    
     }else if(newStatus=="Submitted, exempt" || newStatus=="Submitted, pending" || newStatus=="Submitted, denied"){
-        document.irbForm.approvalNumber.disabled=false;
-        document.getElementById('name').disabled=false;
-        if(document.irbForm.boardChanged.value!="true"){
-            setContactDisabled(false);
-        }
-        document.irbForm.contactAffiliation.disabled=false;    
+    	hideRow(document.getElementById('approvalNumberrow'));
+        showRow(document.getElementById('boradNamerow'));
+        showRow(document.getElementById('mailAddressrow'));
+        showRow(document.getElementById('cityrow'));
+        showRow(document.getElementById('staterow'));
+        showRow(document.getElementById('ziprow'));
+        showRow(document.getElementById('countryrow'));
+        showRow(document.getElementById('phonerow'));
+        showRow(document.getElementById('emailrow'));
+        showRow(document.getElementById('boardAffiliationrow'));    
     }else{
-        document.irbForm.approvalNumber.disabled=true;
-        document.getElementById('name').disabled=true;
-        setContactDisabled(true);
-        document.irbForm.contactAffiliation.disabled=true;    
+    	hideRow(document.getElementById('approvalNumberrow'));
+        hideRow(document.getElementById('boradNamerow'));
+        hideRow(document.getElementById('mailAddressrow'));
+        hideRow(document.getElementById('cityrow'));
+        hideRow(document.getElementById('staterow'));
+        hideRow(document.getElementById('ziprow'));
+        hideRow(document.getElementById('countryrow'));
+        hideRow(document.getElementById('phonerow'));
+        hideRow(document.getElementById('emailrow'));
+        hideRow(document.getElementById('boardAffiliationrow'));    
     }
 }
 function setContactDisabled(value){
@@ -78,6 +98,12 @@ function loadDiv(orgid){
     document.irbForm.action='irbfromPO.action?orgId='+orgid;
     document.irbForm.submit();
     return false;
+}
+function hideRow(row){          
+    row.style.display = 'none'; 
+}
+function showRow(row){
+    row.style.display = '';
 }
 </script>
 
@@ -109,12 +135,12 @@ function loadDiv(orgid){
                 name="approvalStatus" list="#approvalStatusValues" 
                 onchange="statusChange()" onfocus="statusChange()"/></td>
         </tr>
-        <tr>
-            <td class="label">Board Approval Number:</td>
+        <tr id="approvalNumberrow">
+            <td class="label">Board Approval Number:<span class="required">*</span></td>
             <td class="value" colspan="2"><s:textfield name="approvalNumber" maxlength="30" size="30" cssStyle="width:200px;float:left"/></td>
         </tr>
-        <tr>
-             <td class="label">Board Name:</td>
+        <tr id="boradNamerow">
+             <td class="label">Board Name:<span class="required">*</span></td>
              <td class="value"> 
                <s:textfield name="ct.name" id="name" size="30"  readonly="true" cssClass="readonly" onchange="changeName()"/></td>
               <td>  <ul style="margin-top:-3px;">
@@ -124,42 +150,42 @@ function loadDiv(orgid){
                 </ul>
              </td>
         </tr>
-        <tr>
+        <tr id="mailAddressrow">
             <td class="label">Board Contact Mailing Address:</td>
             <td class="value" colspan="2">
             <s:textfield id="address" name="ct.address" cssStyle="width:280px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
-         <tr>
+         <tr id="cityrow">
             <td class="label">Board Contact City:</td>
             <td class="value" colspan="2">
             <s:textfield id="city" name="ct.city" cssStyle="width:140px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
-         <tr>
+         <tr id="staterow">
             <td class="label">Board Contact State/Province:</td>
             <td class="value" colspan="2"><s:textfield id="state" name="ct.state" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
-         <tr>
+         <tr id="ziprow">
             <td class="label">Board Contact Zip/Postal Code:</td>
             <td class="value" colspan="2">
             <s:textfield id="zip" name="ct.zip" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
-         <tr>
+         <tr id="countryrow">
             <td class="label">Board Contact Country:</td>
             <td class="value" colspan="2">
             <s:textfield id="country" name="ct.country" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
-        <tr>
+        <tr  id="phonerow">
             <td class="label">Board Contact Phone:</td>
             <td class="value" colspan="2">
             <s:textfield id="phone" name="ct.phone" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
-        <tr>
+        <tr id="emailrow">
             <td class="label">Board Contact Email Address:</td>
             <td class="value" colspan="2">
             <s:textfield id="email" name="ct.email" cssStyle="width:140px;float:left" readonly="true" cssClass="readonly"/></td>
         </tr>
-        <tr>
-            <td class="label">Board Affiliation:</td>
+        <tr id="boardAffiliationrow">
+            <td class="label">Board Affiliation:<span class="required">*</span></td>
              <td colspan="2" class="value">
             <s:textarea name="contactAffiliation" cssStyle="width:606px" rows="4"/><i><fmt:message key="irbaffiliation.maxCodeLength"/></i></td>
         </tr>
