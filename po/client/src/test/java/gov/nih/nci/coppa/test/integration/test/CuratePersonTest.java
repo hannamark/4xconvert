@@ -132,7 +132,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
 
         selenium.select("curateEntityForm.person.statusCode", "label=NULLIFIED");
         /* wait for in-browser js to execute via select's onchange event */
-        Thread.sleep(1000);
+        pause(1000);
         selenium.isVisible("//div[@id='duplicateOfDiv']");
         clickAndWaitButton("select_duplicate");
         selenium.selectFrame("popupFrame");

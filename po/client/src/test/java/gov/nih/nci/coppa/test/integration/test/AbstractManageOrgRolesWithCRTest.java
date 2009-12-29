@@ -260,13 +260,12 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         waitForElementById(anchorAddId, 20);
 
         // a hack. The statement following this try/catch always fails the first time test is run for both email/url.
-        // It's probably a timing issue. Instructing the thread to sleep for a while resolves the issue.
-        Thread.sleep(100);
-
+        // It's probably a timing issue. Pausing for a while resolves the issue.
+        pause(1000);
         assertTrue(selenium.isTextPresent(blankValueErrorMsg));
         selenium.type(inputId, invalidValue);
         clickAnchor(anchorAddId);
-        waitForElementById(anchorAddId, 20);
+        pause(1000);
         assertTrue(selenium.isTextPresent(incorrectFormatMsg));
         selenium.type(inputId, validValue);
         clickAnchor(anchorAddId);

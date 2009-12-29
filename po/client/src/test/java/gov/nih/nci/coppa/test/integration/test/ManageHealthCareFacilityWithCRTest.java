@@ -196,6 +196,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         this.waitForElementById("curateRoleForm.role.status", 10);
         // Attempt to save with no status
         selenium.select("curateRoleForm.role.status", "label=--Select a Role Status--");
+        pause(1000);
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Role Status must be set"));
     }

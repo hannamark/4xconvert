@@ -94,7 +94,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class StatesAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
 
-    private long countryId;
+    private String countryId;
     private Country country;
     private String value;
     private String field;
@@ -102,14 +102,14 @@ public class StatesAction extends ActionSupport {
     /**
      * @return countryId
      */
-    public long getCountryId() {
+    public String getCountryId() {
         return countryId;
     }
 
     /**
      * @param countryId countryId
      */
-    public void setCountryId(long countryId) {
+    public void setCountryId(String countryId) {
         this.countryId = countryId;
     }
 
@@ -155,7 +155,11 @@ public class StatesAction extends ActionSupport {
      * @return SUCCESS
      */
     public String loadCountry() {
-        country =  PoRegistry.getCountryService().getCountry(countryId);
+        if (countryId == null) {
+            country = null;
+        } else {
+           country = PoRegistry.getCountryService().getCountry(Long.valueOf(countryId));
+        }
         return SUCCESS;
     }
 }

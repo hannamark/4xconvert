@@ -49,7 +49,7 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
         
         selenium.select("role.typeCode", "label=" + SELECT_A_ROLE_TYPE);
         
-        Thread.sleep(1000);
+        pause(1000);
         
         List<String> selectOptions = Arrays.asList(selenium.getSelectOptions("role.fundingMechanismSelect"));
         assertTrue(selectOptions.contains(FUNDING_MECH_TO_LOOK_FOR));        
@@ -81,13 +81,13 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
         getToCreateResearchOrganization();
         
         selenium.select("role.typeCode", SELECT_ROLE_WITH_ONE_FUNDING);
-        Thread.sleep(1000);
+        pause(1000);
             
         String selectedLabel = selenium.getSelectedLabel("role.fundingMechanismSelect");
         assertTrue(selectedLabel.startsWith(CODE_FOR_ONE_FUNDING));
         
         selenium.select("role.typeCode", SELECT_ROLE_WITH_MULTIPLE_FUNDING);
-        Thread.sleep(1000);
+        pause(1000);
         
         selectedLabel = selenium.getSelectedLabel("role.fundingMechanismSelect");
         assertEquals(selectedLabel, VALUE_FOR_MULTIPLE_FUNDING);        

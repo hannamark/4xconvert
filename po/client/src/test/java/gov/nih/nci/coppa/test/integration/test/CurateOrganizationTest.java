@@ -146,7 +146,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         selenium.select("curateEntityForm.organization.statusCode", "label=NULLIFIED");
         /* wait for in-browser js to execute via select's onchange event */
-        Thread.sleep(1000);
+        pause(1000);
         selenium.isVisible("//div[@id='duplicateOfDiv']");
         clickAndWaitButton("select_duplicate");
         selenium.selectFrame("popupFrame");
@@ -186,7 +186,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         assertEquals("PO: Persons and Organizations - Organization Details", selenium.getTitle());
         selenium.select("curateEntityForm.organization.statusCode", "label=NULLIFIED");
         /* wait for in-browser js to execute via select's onchange event */
-        Thread.sleep(1000);
+        pause(1000);
         saveAsNullifiedFail(orgId);
     }
 
@@ -305,7 +305,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         selenium.chooseOkOnNextConfirmation();
         clickAndWaitSaveButton();
         selenium.getConfirmation();
-        Thread.sleep(1000);
+        pause(1000);
         assertTrue(selenium.isTextPresent("A duplicate Organization must be provided."));
     }
 
