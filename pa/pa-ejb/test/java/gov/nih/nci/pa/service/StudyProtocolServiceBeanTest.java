@@ -389,7 +389,7 @@ public class StudyProtocolServiceBeanTest {
     }
     @Test
     public void nullInDatesTest() throws Exception {
-        StudyProtocol sp = new StudyProtocol();   
+        StudyProtocol sp = new InterventionalStudyProtocol();   
         sp.setOfficialTitle("cacncer for THOLA");
         sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
