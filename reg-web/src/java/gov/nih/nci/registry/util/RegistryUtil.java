@@ -5,6 +5,7 @@ package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,7 +31,7 @@ public class RegistryUtil {
     public static boolean isValidFileType(String fileName) {
         boolean isValidFileType = false;
         try {
-            String allowedUploadFileTypes = RegistryServiceLocator
+            String allowedUploadFileTypes = PaRegistry
                             .getLookUpTableService().getPropertyValue(
                                             "allowed.uploadfile.types");
             if (allowedUploadFileTypes != null) {

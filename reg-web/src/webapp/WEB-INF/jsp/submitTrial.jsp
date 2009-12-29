@@ -585,7 +585,7 @@ function toggledisplay2 (it) {
                     </tr>
                        
                        <tr>
-                            <s:set name="fundingMechanismValues" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getFundingMechanisms()" />
+                            <s:set name="fundingMechanismValues" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
                             <td>                                             
                                 <s:select headerKey="" headerValue="--Select--" 
                                      name="trialFundingDTO.fundingMechanismCode" 
@@ -596,7 +596,7 @@ function toggledisplay2 (it) {
                                      value="trialFundingDTO.fundingMechanismCode" 
                                      cssStyle="width:150px" />
                             </td>
-                            <s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
+                            <s:set name="nihInstituteCodes" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
                             <td>                                             
                                 <s:select headerKey="" headerValue="--Select--" 
                                      name="trialFundingDTO.nihInstitutionCode" 

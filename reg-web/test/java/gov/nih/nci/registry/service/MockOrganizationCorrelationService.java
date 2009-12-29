@@ -19,7 +19,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
@@ -167,7 +167,7 @@ public class MockOrganizationCorrelationService implements
 
         StudySiteDTO criteria = new StudySiteDTO();
         criteria.setFunctionalCode(CdConverter.convertToCd(functionalCode));
-        List<StudySiteDTO> spList = RegistryServiceLocator
+        List<StudySiteDTO> spList = PaRegistry
                 .getStudySiteService().getByStudyProtocol(
                         IiConverter.convertToIi(studyProtocolId), criteria);
         for (StudySiteDTO sp : spList) {

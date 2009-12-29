@@ -211,8 +211,7 @@ function handleAction(){
                         </td>
                         <td>
                             <s:set name="countries" 
-                                    value="@gov.nih.nci.registry.util.
-                                    RegistryServiceLocator@getLookUpTableService().
+                                    value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().
                                     getCountries()" />
                             <s:select headerKey="United States" headerValue="United States" 
                                      name="registryUserWebDTO.country" 

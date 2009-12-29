@@ -113,6 +113,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -123,7 +124,6 @@ import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
@@ -228,7 +228,7 @@ public class BatchCreateProtocols {
                }
                sucessCount +=  1;
               protocolAssignedId = strMsg 
-                 + RegistryServiceLocator.getStudyProtocolService()
+                 + PaRegistry.getStudyProtocolService()
                          .getStudyProtocol(studyProtocolIi).getAssignedIdentifier().getExtension();
              
              }
@@ -251,7 +251,7 @@ public class BatchCreateProtocols {
             
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
             
-            Long regAuthId = RegistryServiceLocator.getRegulatoryInformationService().
+            Long regAuthId = PaRegistry.getRegulatoryInformationService().
                 getRegulatoryAuthorityId(dto.getOversightOrgName(), dto.getOversightAuthorityCountry());
             studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regAuthId));
             
@@ -260,7 +260,7 @@ public class BatchCreateProtocols {
             
             StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
             viewCriteria.setNciIdentifier(dto.getNciTrialIdentifier());
-            List<StudyProtocolQueryDTO> listofDto = RegistryServiceLocator.getProtocolQueryService().
+            List<StudyProtocolQueryDTO> listofDto = PaRegistry.getProtocolQueryService().
                                         getStudyProtocolByCriteria(viewCriteria);
             if (listofDto.isEmpty() || listofDto.size() > 1) {
                 throw new PAException("mutliple trial or no trial found for given NCI Trial Identifier.\n");
@@ -275,14 +275,14 @@ public class BatchCreateProtocols {
             
             trialDTO = getTrialDTOForUpdate(dto, folderPath, studyProtocolIi);
 
-            StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = RegistryServiceLocator.
+            StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.
                 getStudyRegulatoryAuthorityService().getCurrentByStudyProtocol(studyProtocolIi);
             if (sraFromDatabaseDTO != null) {
                 studyRegAuthDTO.setIdentifier(sraFromDatabaseDTO.getIdentifier());
             }
             
             StudyProtocolDTO studyProtocolDTO = null;
-            studyProtocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            studyProtocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             util.updateStudyProtcolDTO(studyProtocolDTO, trialDTO);
             
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
@@ -294,7 +294,7 @@ public class BatchCreateProtocols {
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-            StudyResourcingDTO summary4studyResourcingDTO = RegistryServiceLocator.getStudyResourcingService()
+            StudyResourcingDTO summary4studyResourcingDTO = PaRegistry.getStudyResourcingService()
                 .getsummary4ReportedResource(studyProtocolIi); 
             if (summary4studyResourcingDTO != null) {
                 util.convertToSummary4StudyResourcingDTO(trialDTO, summary4studyResourcingDTO);
@@ -325,7 +325,7 @@ public class BatchCreateProtocols {
                 for (Iterator it = studyIndldeDTOs.iterator(); it.hasNext();) {
                     StudyIndldeDTO indIdeDto = (StudyIndldeDTO) it.next();
                     try {
-                        RegistryServiceLocator.getStudyIndldeService().validate(indIdeDto);
+                        PaRegistry.getStudyIndldeService().validate(indIdeDto);
                     } catch (PADuplicateException dupEx) {
                         it.remove();
                     }
@@ -336,7 +336,7 @@ public class BatchCreateProtocols {
                 for (Iterator it = studyResourcingDTOs.iterator(); it.hasNext();) {
                     StudyResourcingDTO studyResourcingDTO = (StudyResourcingDTO) it.next();
                     try {
-                        RegistryServiceLocator.getStudyResourcingService().validate(studyResourcingDTO);
+                        PaRegistry.getStudyResourcingService().validate(studyResourcingDTO);
                     } catch (PADuplicateException dupEx) {
                         it.remove();
                     }
@@ -354,7 +354,7 @@ public class BatchCreateProtocols {
                 }
             }
             //get the values from db and update only those are needed and then convert
-                RegistryServiceLocator.getTrialRegistrationService().
+            PaRegistry.getTrialRegistrationService().
                     update(studyProtocolDTO, overallStatusDTO, ssNctIdDto, studyIndldeDTOs, studyResourcingDTOs, 
                     documentDTOs, studyContactDTO, studySiteContactDTO, summary4orgDTO, summary4studyResourcingDTO, 
                     responsiblePartyContactIi, studyRegAuthDTO, null, null, null, 
@@ -490,7 +490,7 @@ public class BatchCreateProtocols {
             StudyProtocolBatchDTO batchDto, String folderPath, String studyProtocolId) throws IOException, PAException {
         TrialUtil util = new TrialUtil();
         
-        List<DocumentDTO> docsFromDB = RegistryServiceLocator.getDocumentService().
+        List<DocumentDTO> docsFromDB = PaRegistry.getDocumentService().
             getDocumentsByStudyProtocol(IiConverter.convertToIi(studyProtocolId));
         Ii irbDocId = null;
         Ii partDocId = null;
@@ -572,7 +572,7 @@ public class BatchCreateProtocols {
         List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
         List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
         if (dto.getSubmissionType().equalsIgnoreCase("O") && !PAUtil.isNotEmpty(trialDTO.getAssignedIdentifier())) {
-            studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().
+            studyProtocolIi =  PaRegistry.getTrialRegistrationService().
                 createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                         studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO,
                         leadOrgSiteIdDTO, nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
@@ -582,7 +582,7 @@ public class BatchCreateProtocols {
             //get the Identifier of study protocol by giving nci identifier
             StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
             viewCriteria.setNciIdentifier(trialDTO.getAssignedIdentifier());
-            List<StudyProtocolQueryDTO> listofDto = RegistryServiceLocator.getProtocolQueryService().
+            List<StudyProtocolQueryDTO> listofDto = PaRegistry.getProtocolQueryService().
                                         getStudyProtocolByCriteria(viewCriteria);
             if (listofDto.isEmpty() || listofDto.size() > 1) {
                 throw new PAException("mutliple trial or no trial found for given NCI Trial Identifier.\n");
@@ -596,7 +596,7 @@ public class BatchCreateProtocols {
                     try {
                         indIdeDto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
                                 Long.valueOf(trialDTO.getIdentifier())));
-                        RegistryServiceLocator.getStudyIndldeService().validate(indIdeDto);
+                        PaRegistry.getStudyIndldeService().validate(indIdeDto);
                     } catch (PADuplicateException dupEx) {
                         it.remove();
                     }
@@ -608,7 +608,7 @@ public class BatchCreateProtocols {
                     try {
                         studyResourcingDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
                                 Long.valueOf(trialDTO.getIdentifier())));
-                        RegistryServiceLocator.getStudyResourcingService().validate(studyResourcingDTO);
+                        PaRegistry.getStudyResourcingService().validate(studyResourcingDTO);
                     } catch (PADuplicateException dupEx) {
                         it.remove();
                     }
@@ -616,7 +616,7 @@ public class BatchCreateProtocols {
             }
             studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
-            studyProtocolIi =  RegistryServiceLocator.getTrialRegistrationService().
+            studyProtocolIi =  PaRegistry.getTrialRegistrationService().
                 amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                     documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
                     nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
@@ -784,7 +784,7 @@ public class BatchCreateProtocols {
                IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
                identifiedOrganizationDTO.setAssignedId(
                             IiConverter.convertToIdentifiedOrgEntityIi(batchDto.getOrgCTEPId()));
-               List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
+               List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
                             .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
                if (identifiedOrgs != null && !identifiedOrgs.isEmpty()) {
                         criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
@@ -799,7 +799,7 @@ public class BatchCreateProtocols {
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         List<OrganizationDTO> poOrgDtos = null;
         try {
-            poOrgDtos = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria, limit);
+            poOrgDtos = PoRegistry.getOrganizationEntityService().search(criteria, limit);
         } catch (TooManyResultsException e) {
             throw new PAException(e);
         }
@@ -860,11 +860,11 @@ public class BatchCreateProtocols {
         DSet<Tel> telco = getDSetTelList(email, phoneNumer, faxNumber,
                 ttyNumber, url);
          orgDto.setTelecomAddress(telco);
-         Ii id = RegistryServiceLocator.getPoOrganizationEntityService()
+         Ii id = PoRegistry.getOrganizationEntityService()
                     .createOrganization(orgDto);
          List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
-            callConvert.add(RegistryServiceLocator
-                    .getPoOrganizationEntityService().getOrganization(id));
+            callConvert.add(PoRegistry
+                    .getOrganizationEntityService().getOrganization(id));
          orgId = callConvert.get(0).getIdentifier();
         
         LOG.info("leaving Create Org with OrgId" + orgId.getExtension());
@@ -935,7 +935,7 @@ public class BatchCreateProtocols {
            IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
            identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctep));
            List<IdentifiedPersonDTO> retResultList = 
-                                  RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
+                                  PoRegistry.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
            if (retResultList != null && !retResultList.isEmpty()) {
                     p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
            } 
@@ -954,7 +954,7 @@ public class BatchCreateProtocols {
                 
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         try {
-            poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p, limit);
+            poPersonList = PoRegistry.getPersonEntityService().search(p, limit);
         } catch (TooManyResultsException e) {
             throw new PAException(e);
         }
@@ -1021,7 +1021,7 @@ public class BatchCreateProtocols {
         DSet<Tel> list = getDSetTelList(email, phone, fax, tty, url);
         dto.setTelecomAddress(list);
         dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
-        personId = RegistryServiceLocator.getPoPersonEntityService().createPerson(dto);
+        personId = PoRegistry.getPersonEntityService().createPerson(dto);
         
         LOG.info("leaving created person  with personId" + personId);
         return personId;

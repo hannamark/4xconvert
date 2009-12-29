@@ -16,12 +16,12 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -267,7 +267,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
-            amendId = RegistryServiceLocator.getTrialRegistrationService().
+            amendId = PaRegistry.getTrialRegistrationService().
             amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, 
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO, 
                     nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO, summary4orgDTO, 

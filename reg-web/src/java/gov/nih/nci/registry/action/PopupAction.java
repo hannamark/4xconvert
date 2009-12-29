@@ -98,9 +98,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -236,7 +237,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                 IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
                 identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctep));
                 List<IdentifiedPersonDTO> retResultList = 
-                                  RegistryServiceLocator.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
+                                  PoRegistry.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
                 if (retResultList != null && retResultList.size() > 0) {
                     p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
                 } 
@@ -246,7 +247,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             if (p.getIdentifier() != null || p.getName() != null) {                
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
                 try {
-                    poPersonList = RegistryServiceLocator.getPoPersonEntityService().search(p, limit);
+                    poPersonList = PoRegistry.getPersonEntityService().search(p, limit);
                 } catch (TooManyResultsException e) {
                     throw new PAException(e);
                 }
@@ -306,7 +307,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             if (ctepId != null && ctepId.length() > 0) {
                 IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
                 identifiedOrganizationDTO.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepId));
-                List<IdentifiedOrganizationDTO> identifiedOrgs = RegistryServiceLocator
+                List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
                         .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
                 if (identifiedOrgs != null && identifiedOrgs.size() > 0) {
                     criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
@@ -321,7 +322,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                     || criteria.getName() != null
                     || criteria.getPostalAddress() != null) {
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-                callConvert = RegistryServiceLocator.getPoOrganizationEntityService().search(criteria, limit);
+                callConvert = PoRegistry.getOrganizationEntityService().search(criteria, limit);
             }
             convertPoOrganizationDTO(callConvert);
             return pagination ? "orgs" : SUCCESS;
@@ -347,7 +348,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private void populateCountryList() throws PAException {
         countryList = (List) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
         if (countryList == null) {
-            countryList = RegistryServiceLocator.getLookUpTableService().getCountries();
+            countryList = PaRegistry.getLookUpTableService().getCountries();
             ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);
         }
     }
@@ -444,9 +445,9 @@ public class PopupAction extends ActionSupport implements Preparable {
             telemail.setValue(new URI("mailto:" + email));
             telco.getItem().add(telemail);
             orgDto.setTelecomAddress(telco);
-            Ii id = RegistryServiceLocator.getPoOrganizationEntityService().createOrganization(orgDto);
+            Ii id = PoRegistry.getOrganizationEntityService().createOrganization(orgDto);
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
-            callConvert.add(RegistryServiceLocator.getPoOrganizationEntityService().getOrganization(id));
+            callConvert.add(PoRegistry.getOrganizationEntityService().getOrganization(id));
             convertPoOrganizationDTO(callConvert);
         } catch (NullifiedEntityException e) {
             handleError(e.getMessage());
@@ -591,8 +592,8 @@ public class PopupAction extends ActionSupport implements Preparable {
                 state = state.trim().toUpperCase();            
             }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
-            Ii id = RegistryServiceLocator.getPoPersonEntityService().createPerson(dto);
-            persons.add(EnPnConverter.convertToPaPersonDTO(RegistryServiceLocator.getPoPersonEntityService().getPerson(
+            Ii id = PoRegistry.getPersonEntityService().createPerson(dto);
+            persons.add(EnPnConverter.convertToPaPersonDTO(PoRegistry.getPersonEntityService().getPerson(
                     id)));
         } catch (NullifiedEntityException e) {
             handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);

@@ -105,9 +105,9 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.util.Constants;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.io.File;
@@ -146,7 +146,7 @@ public class SearchTrialAction extends ActionSupport {
         }
         String trialAction = (String) ServletActionContext.getRequest().getParameter("trialAction");
         if (PAUtil.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit") 
-                || trialAction.equalsIgnoreCase("amend"))) {
+                || trialAction.equalsIgnoreCase("amend") || trialAction.equalsIgnoreCase("update"))) {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
             ServletActionContext.getRequest().setAttribute("studyProtocolId", pId);
             studyProtocolId = Long.valueOf(pId);
@@ -174,7 +174,7 @@ public class SearchTrialAction extends ActionSupport {
                 return ERROR;
             }
             records = new ArrayList<StudyProtocolQueryDTO>();
-            records = RegistryServiceLocator.getProtocolQueryService().
+            records = PaRegistry.getProtocolQueryService().
                               getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
 
             return SUCCESS;
@@ -289,12 +289,12 @@ public class SearchTrialAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
             // TODO need to find a permanent solution
             // workaround to get the appropriate trial type
-            StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
+            /*StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
             viewCriteria.setStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-            RegistryServiceLocator.getProtocolQueryService().
+            PaRegistry.getProtocolQueryService().
                                         getStudyProtocolByCriteria(viewCriteria);
-            // end of workaround 
-            StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
+            */// end of workaround 
+            StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);            
             // TrialWebDTO trialWebDTO = new TrialWebDTO(protocolDTO);
             // put an entry in the session and store
@@ -311,7 +311,7 @@ public class SearchTrialAction extends ActionSupport {
               ServletActionContext.getRequest().setAttribute(Constants.TRIAL_TYPE, trialType);
             }
             // query the study grants
-            List<StudyResourcingDTO> isoList = RegistryServiceLocator.getStudyResourcingService()
+            List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService()
                     .getstudyResourceByStudyProtocol(studyProtocolIi);
             if (!maskFields && !(isoList.isEmpty())) {
                 // put an entry in the session and store TrialFunding
@@ -322,7 +322,7 @@ public class SearchTrialAction extends ActionSupport {
            // List<StudyOverallStatusDTO> overallStatusISOList = RegistryServiceLocator.getStudyOverallStatusService()
             //        .getCurrentByStudyProtocol(studyProtocolIi);
             // List <StudyOverallStatusWebDTO> overallStatusList;
-            StudyOverallStatusDTO overallStatusISO = RegistryServiceLocator.getStudyOverallStatusService()
+            StudyOverallStatusDTO overallStatusISO = PaRegistry.getStudyOverallStatusService()
                     .getCurrentByStudyProtocol(studyProtocolIi);
             if (overallStatusISO != null) {
                 // put an entry in the session and store TrialFunding
@@ -347,7 +347,7 @@ public class SearchTrialAction extends ActionSupport {
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_NCT_NUMBER, nctNumber);
             }            
             
-            StudyProtocolQueryDTO queryDTO = RegistryServiceLocator.getProtocolQueryService()
+            StudyProtocolQueryDTO queryDTO = PaRegistry.getProtocolQueryService()
                     .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
             // put an entry in the session and avoid conflict using
             // STUDY_PROTOCOL_II for now
@@ -357,7 +357,7 @@ public class SearchTrialAction extends ActionSupport {
             getReponsibleParty(studyProtocolIi, maskFields);
             
             // put an entry in the session and getsummary4ReportedResource
-            StudyResourcingDTO resourcingDTO = RegistryServiceLocator.getStudyResourcingService()
+            StudyResourcingDTO resourcingDTO = PaRegistry.getStudyResourcingService()
                     .getsummary4ReportedResource(studyProtocolIi);
             
             // get the organization name
@@ -372,7 +372,7 @@ public class SearchTrialAction extends ActionSupport {
             // put an entry in the session and avoid conflict using
             // NIH_INSTITUTE for now           
             ServletActionContext.getRequest().setAttribute(Constants.NIH_INSTITUTE, resourcingDTO);
-            List<StudyIndldeDTO> studyIndldeDTOList = RegistryServiceLocator.getStudyIndldeService()
+            List<StudyIndldeDTO> studyIndldeDTOList = PaRegistry.getStudyIndldeService()
                     .getByStudyProtocol(studyProtocolIi);
             // List<StudyIndldeDTO> studyIndldeDTOList
             if (!maskFields && !(studyIndldeDTOList.isEmpty())) {
@@ -380,7 +380,7 @@ public class SearchTrialAction extends ActionSupport {
                 ServletActionContext.getRequest().setAttribute(Constants.STUDY_INDIDE, studyIndldeDTOList);
             }
             // query the trial documents
-            List<DocumentDTO> documentISOList = RegistryServiceLocator.getDocumentService()
+            List<DocumentDTO> documentISOList = PaRegistry.getDocumentService()
                     .getDocumentsByStudyProtocol(studyProtocolIi);
             // List <TrialDocumentWebDTO> documentList;
             if (!maskFields && !(documentISOList.isEmpty())) {
@@ -406,7 +406,7 @@ public class SearchTrialAction extends ActionSupport {
         Cd cd = CdConverter.convertToCd(spCode);
         spDto.setFunctionalCode(cd);
 
-        List<StudySiteDTO> spDtos = RegistryServiceLocator.getStudySiteService()
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
             .getByStudyProtocol(studyProtocolIi, spDto);
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos.get(0);
@@ -430,8 +430,8 @@ public class SearchTrialAction extends ActionSupport {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     "spidfromviewresults");
             //Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-            StudyProtocolDTO spDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            DocumentDTO docDTO = RegistryServiceLocator.getDocumentService().get(IiConverter.convertToIi(docId));
+            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(docId));
             // InterventionalStudyProtocolWebDTO spDTO =
             // (InterventionalStudyProtocolWebDTO) ServletActionContext
             // .getRequest().getSession().getAttribute(Constants.PROTOCOL_DOCUMENT);
@@ -501,7 +501,7 @@ public class SearchTrialAction extends ActionSupport {
             String emailAddr = "";
             scDto.setRoleCode(CdConverter.convertToCd(
                     StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-            List<StudyContactDTO> scDtos = RegistryServiceLocator.getStudyContactService().
+            List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().
                                                 getByStudyProtocol(studyProtocolIi, scDto);
             DSet dset = null;
             CorrelationUtils cUtils = new CorrelationUtils();
@@ -520,7 +520,7 @@ public class SearchTrialAction extends ActionSupport {
                 StudySiteContactDTO spart = new StudySiteContactDTO();
                 spart.setRoleCode(CdConverter.convertToCd(
                         StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-                List<StudySiteContactDTO> spDtos = RegistryServiceLocator.getStudySiteContactService()
+                List<StudySiteContactDTO> spDtos = PaRegistry.getStudySiteContactService()
                     .getByStudyProtocol(studyProtocolIi, spart);
                 if (spDtos != null && spDtos.size() > 0) {
                     spart = spDtos.get(0);
@@ -548,7 +548,7 @@ public class SearchTrialAction extends ActionSupport {
             Organization sponsor = null;
             StudySiteDTO spart = new StudySiteDTO();
             spart.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-            List<StudySiteDTO> spDtos = RegistryServiceLocator.getStudySiteService()
+            List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                             .getByStudyProtocol(studyProtocolIi, spart);
             if (spDtos != null && spDtos.size() > 0) {
                 spart = spDtos.get(0);

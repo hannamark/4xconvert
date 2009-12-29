@@ -29,6 +29,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegulatoryAuthorityWebDTO;
 import gov.nih.nci.registry.dto.StudyIndldeWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -36,7 +37,6 @@ import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -843,7 +843,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         try {
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier()));
             //get the studyProtocol DTO
-            StudyProtocolDTO spDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
             spDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser()));
             //set the NCT number 
@@ -864,7 +864,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                  documentDTOs.add(documentDTO);
              }
            //summary4 info
-            StudyResourcingDTO summary4studyResourcingDTO = RegistryServiceLocator.getStudyResourcingService()
+            StudyResourcingDTO summary4studyResourcingDTO = PaRegistry.getStudyResourcingService()
                                               .getsummary4ReportedResource(studyProtocolIi); 
             if (summary4studyResourcingDTO != null) {
                 util.convertToSummary4StudyResourcingDTO(trialDTO, summary4studyResourcingDTO);
@@ -938,7 +938,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
           
           updateId = studyProtocolIi; 
           //call the service to invoke the update method
-          RegistryServiceLocator.getTrialRegistrationService().
+          PaRegistry.getTrialRegistrationService().
                         update(spDTO, sosDto, ssDto, studyIndldeDTOList, studyResourcingDTOs, documentDTOs, 
                                 studyContactDTO, studyParticipationContactDTO,
                                summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
@@ -1092,7 +1092,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         try {
             String countryId = ServletActionContext.getRequest().getParameter("countryid");
             if (countryId != null && !("".equals(countryId))) {
-                regIdAuthOrgList = RegistryServiceLocator.getRegulatoryInformationService()
+                regIdAuthOrgList = PaRegistry.getRegulatoryInformationService()
                                     .getRegulatoryAuthorityNameId(Long.valueOf(countryId));
             } else {
                 RegulatoryAuthOrgDTO defaultVal = new RegulatoryAuthOrgDTO();
@@ -1118,9 +1118,9 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
      try {
       if (getSelectedRegAuth() != null  && !"".equals(getSelectedRegAuth())
               && getLst() != null && !"".equals(getLst())) {   
-                  String orgName = RegistryServiceLocator.getRegulatoryInformationService()
+                  String orgName = PaRegistry.getRegulatoryInformationService()
                          .getCountryOrOrgName(Long.valueOf(getSelectedRegAuth()), "RegulatoryAuthority");
-                  String countryName = RegistryServiceLocator.getRegulatoryInformationService().getCountryOrOrgName(
+                  String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
                              Long.valueOf(getLst()), "Country");
                   webDTO.setTrialOversgtAuthOrgName(orgName);
                   webDTO.setTrialOversgtAuthCountry(countryName);
@@ -1180,7 +1180,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
   private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi) 
   throws PAException {
       StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
-      studyResoureDTO = RegistryServiceLocator.getStudyResourcingService().getStudyResourceByID(
+      studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourceByID(
               IiConverter.convertToIi(Long.parseLong(trialFundingWebDTO.getId())));
       studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
       studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(
@@ -1204,7 +1204,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
    */
   private StudyRegulatoryAuthorityDTO getStudyRegAuth(Ii studyProtocolIi) throws PAException {
       
-      StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = RegistryServiceLocator.getStudyRegulatoryAuthorityService()
+      StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
                                                               .getCurrentByStudyProtocol(studyProtocolIi); 
       StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();
       sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
@@ -1261,7 +1261,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
   private List<StudySiteDTO> getCollaboratorsForUpdate(List<PaOrganizationDTO> collaboratorsList) throws PAException {
       List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
       for (PaOrganizationDTO dto : collaboratorsList) {
-          StudySiteDTO sp = RegistryServiceLocator.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
+          StudySiteDTO sp = PaRegistry.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
           sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.getByCode(dto.getFunctionalRole())));
           ssDTO.add(sp);
       }
@@ -1281,7 +1281,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
   throws PAException {
       List<StudySiteAccrualStatusDTO> ssaDTO = new ArrayList<StudySiteAccrualStatusDTO>();
       for (PaOrganizationDTO dto : ps) {
-          StudySiteAccrualStatusDTO ssasOld = RegistryServiceLocator.getStudySiteAccrualStatusService()
+          StudySiteAccrualStatusDTO ssasOld = PaRegistry.getStudySiteAccrualStatusService()
                                               .getCurrentStudySiteAccrualStatusByStudySite(
                                                       IiConverter.convertToIi(dto.getId()));
                                                       
@@ -1298,7 +1298,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
   private List<StudySiteDTO> getStudySiteToUpdateProgramCode(List<PaOrganizationDTO> ps) throws PAException {
       List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
       for (PaOrganizationDTO dto : ps) {
-          StudySiteDTO sp = RegistryServiceLocator.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
+          StudySiteDTO sp = PaRegistry.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
           sp.setProgramCodeText(StConverter.convertToSt(dto.getProgramCode()));
           ssDTO.add(sp);
       }
@@ -1317,7 +1317,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
   */
  private StudyOverallStatusDTO getOverallStatusForUpdate(TrialUtil util) throws PAException {
       StudyOverallStatusDTO sosDto = null;
-      StudyProtocolQueryDTO spqDTO = RegistryServiceLocator.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+      StudyProtocolQueryDTO spqDTO = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                                       Long.parseLong(trialDTO.getIdentifier()));
 
        //original submission
@@ -1325,7 +1325,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
               && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED") 
       && IntConverter.convertToInteger(IntConverter.convertToInt(trialDTO.getSubmissionNumber())) == 1) {
           
-          sosDto = RegistryServiceLocator.getStudyOverallStatusService().
+          sosDto = PaRegistry.getStudyOverallStatusService().
                       getCurrentByStudyProtocol(IiConverter.convertToIi(trialDTO.getIdentifier()));
           
       } else {

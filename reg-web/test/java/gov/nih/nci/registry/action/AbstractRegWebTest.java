@@ -15,6 +15,7 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
@@ -24,7 +25,6 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.test.util.MockPoServiceLocator;
 import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public abstract class AbstractRegWebTest {
      */
     @Before
     public void setUpServices() {
-        RegistryServiceLocator.getInstance().setServiceLocator(new RegistrationMockServiceLocator());
+        PaRegistry.getInstance().setServiceLocator(new RegistrationMockServiceLocator());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
     /**

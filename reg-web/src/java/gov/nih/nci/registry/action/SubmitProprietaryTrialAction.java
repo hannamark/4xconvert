@@ -23,11 +23,11 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.Constants;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -325,13 +325,13 @@ public class SubmitProprietaryTrialAction extends ActionSupport implements
             
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             
-            Ii studyProtocolIi = RegistryServiceLocator.getTrialRegistrationService().
+            Ii studyProtocolIi = PaRegistry.getTrialRegistrationService().
             createProprietaryInterventionalStudyProtocol(studyProtocolDTO, siteAccrualStatusDTO,  
                     documentDTOs, leadOrganizationDTO, siteInvestigatorDTO,
                     leadOrganizationTrialIdentifierDTO, studySiteOrgDTO, siteDTO, 
                     nctIdentifierDTO, summary4organizationDTO, studyResourcingDTO, 
                     BlConverter.convertToBl(Boolean.FALSE));
-            StudyProtocolDTO protocolDTO = RegistryServiceLocator.getStudyProtocolService().getStudyProtocol(
+            StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
             TrialValidator.removeSessionAttributes();
             ServletActionContext.getRequest().setAttribute(SESSION_TRIAL_DTO, trialDTO);

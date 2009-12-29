@@ -6,11 +6,11 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.EncoderDecoder;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -92,7 +92,7 @@ public class RegisterUserAction extends ActionSupport {
             }
             
             // check if user already exists
-            RegistryUser registryUser = RegistryServiceLocator.getRegistryUserService().
+            RegistryUser registryUser = PaRegistry.getRegisterUserService().
                                             getUser(decodedLoginName);
             
             if (registryUser != null) {
@@ -129,7 +129,7 @@ public class RegisterUserAction extends ActionSupport {
             loginName =  ServletActionContext.
                                         getRequest().getRemoteUser();
             // retrieve user info
-            RegistryUser registryUser = RegistryServiceLocator.getRegistryUserService().
+            RegistryUser registryUser = PaRegistry.getRegisterUserService().
                                             getUser(loginName);
             User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
             if (registryUser != null && csmUser != null) {
@@ -211,7 +211,7 @@ public class RegisterUserAction extends ActionSupport {
                                         registryUserWebDTO.getPassword());
                 
                 //now update the RegistryUser
-                registryUser =  RegistryServiceLocator.getRegistryUserService().
+                registryUser =  PaRegistry.getRegisterUserService().
                                         updateUser(registryUser); 
                 
             } else { //create user
@@ -228,7 +228,7 @@ public class RegisterUserAction extends ActionSupport {
                 }
                 
                 //now create the RegistryUser
-                registryUser =  RegistryServiceLocator.getRegistryUserService().
+                registryUser =  PaRegistry.getRegisterUserService().
                                         createUser(registryUser);           
     
             }

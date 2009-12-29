@@ -87,8 +87,8 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.net.URI;
@@ -164,7 +164,7 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             contactDTO.setTitle(StConverter.convertToSt(title));    
             contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
-            isoDtoList = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
+            isoDtoList = PoRegistry.getOrganizationalContactCorrelationService()
                     .search(contactDTO);
             convertFromISO(isoDtoList);
         } catch (Exception e) {
@@ -226,10 +226,10 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             
             contactDTO.setTelecomAddress(list);
             contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
-            RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
+            PoRegistry.getOrganizationalContactCorrelationService()
                     .createCorrelation(contactDTO);
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
-            isoDtoList = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
+            isoDtoList = PoRegistry.getOrganizationalContactCorrelationService()
                 .search(contactDTO);
             convertFromISO(isoDtoList);
         } catch (Exception e) {

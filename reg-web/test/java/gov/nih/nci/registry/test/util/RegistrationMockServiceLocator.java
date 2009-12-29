@@ -3,26 +3,53 @@ package gov.nih.nci.registry.test.util;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.service.ArmServiceLocal;
+import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.DiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
+import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
+import gov.nih.nci.pa.service.StratumGroupServiceLocal;
+import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
+import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
+import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.registry.service.MockDocumentService;
 import gov.nih.nci.registry.service.MockIdentifiedOrganizationCorrelationService;
 import gov.nih.nci.registry.service.MockIdentifiedPersonCorrelationService;
@@ -46,7 +73,6 @@ import gov.nih.nci.registry.service.MockStudySiteAccrualStatusService;
 import gov.nih.nci.registry.service.MockStudySiteContactService;
 import gov.nih.nci.registry.service.MockStudySiteService;
 import gov.nih.nci.registry.service.MockTrialRegistrationService;
-import gov.nih.nci.registry.util.ServiceLocator;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
@@ -96,12 +122,11 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return lookUpTableService;
     }
 
-    public MailManagerServiceLocal getMailManagerService() throws PAException {
+    public MailManagerServiceLocal getMailManagerService() {
         return mailManagerService;
     }
 
-    public OrganizationCorrelationServiceRemote getOrganizationCorrelationService()
-            throws PAException {
+    public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
         return organizationCorrelationService;
     }
 
@@ -133,11 +158,6 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return protocolQueryService;
     }
 
-    public RegistryUserServiceRemote getRegistryUserService() {
-
-        return registryUserService;
-    }
-
     public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
         return regulatoryInfoService;
     }
@@ -154,8 +174,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return studyOverallStatusService;
     }
 
-    public StudySiteContactServiceLocal getStudySiteContactService()
-            throws PAException {
+    public StudySiteContactServiceLocal getStudySiteContactService() {
         return studySiteContactService;
     }
 
@@ -179,8 +198,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return studySiteAccrualStatusService;
     }
 
-    public TrialRegistrationServiceLocal getTrialRegistrationService()
-            throws PAException {
+    public TrialRegistrationServiceLocal getTrialRegistrationService() {
         return trialRegistrationService;
     }
 
@@ -228,6 +246,143 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     public Person getPAPersonByPAOrganizationalContactId(
             Long paOrganizationalContactId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public AbstractionCompletionServiceRemote getAbstractionCompletionService()
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public ArmServiceLocal getArmService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService()
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DiseaseAlternameServiceLocal getDiseaseAlternameService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DiseaseParentServiceRemote getDiseaseParentService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DiseaseServiceLocal getDiseaseService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public InterventionServiceLocal getInterventionService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyOutcomeMeasureServiceLocal getOutcomeMeasurService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public PAHealthCareProviderRemote getPAHealthCareProviderService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public PlannedActivityServiceLocal getPlannedActivityService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public RegistryUserServiceRemote getRegisterUserService() {
+        return registryUserService;
+    }
+
+    public StratumGroupServiceLocal getStratumGroupService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyCheckoutServiceLocal getStudyCheckoutService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyDiseaseServiceLocal getStudyDiseaseService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyInboxServiceLocal getStudyInboxService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyMilestoneServicelocal getStudyMilestoneService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyMilestoneTasksServiceLocal getStudyMilestoneTasksService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyObjectiveServiceLocal getStudyObjectiveService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyOnholdServiceLocal getStudyOnholdService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyRelationshipServiceLocal getStudyRelationshipService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
+            throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

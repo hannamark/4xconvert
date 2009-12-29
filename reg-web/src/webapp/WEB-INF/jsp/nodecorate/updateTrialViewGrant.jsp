@@ -11,7 +11,7 @@
                          </tr>
                         <s:iterator id="fundingDtos" value="fundingDtos" status="fundstats">
                        <tr>
-                            <s:set name="fundingMechanismValues" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getFundingMechanisms()" />
+                            <s:set name="fundingMechanismValues" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
                             <td>                                             
                                 <s:select headerKey="" headerValue="--Select--" 
                                      name="fundingDtos[%{#fundstats.index}].fundingMechanismCode" 
@@ -27,7 +27,7 @@
                                        </s:fielderror>                            
                                      </span>
                             </td>
-                            <s:set name="nihInstituteCodes" value="@gov.nih.nci.registry.util.RegistryServiceLocator@getLookUpTableService().getNihInstitutes()" />
+                            <s:set name="nihInstituteCodes" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
                             <td>                                             
                                 <s:select headerKey="" headerValue="--Select--" 
                                      name="fundingDtos[%{#fundstats.index}].nihInstitutionCode" 

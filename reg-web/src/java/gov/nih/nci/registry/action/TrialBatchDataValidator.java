@@ -14,6 +14,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
@@ -22,7 +23,6 @@ import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 import gov.nih.nci.registry.util.BatchConstants;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 
 import java.sql.Timestamp;
@@ -682,7 +682,7 @@ public class TrialBatchDataValidator {
         
         TrialBatchDataValidator.countryList = new ArrayList<String>();
         try {
-            List<Country> listOfCountries = RegistryServiceLocator.getLookUpTableService().getCountries();
+            List<Country> listOfCountries = PaRegistry.getLookUpTableService().getCountries();
             Iterator<Country> iter = listOfCountries.iterator();
             while (iter.hasNext()) {
                 Country countries = (Country) iter.next();

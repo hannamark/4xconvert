@@ -90,11 +90,11 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.Constants;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 import gov.nih.nci.registry.util.RegistryUtil;
 
 import java.io.File;
@@ -276,7 +276,7 @@ public class TrialValidator {
                             + "should be future date if Trial Status is changed from 'Approved' to 'Withdrawn'.  ");
             }
             if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
-                StudyOverallStatusDTO oldStatusDto = RegistryServiceLocator.getStudyOverallStatusService()
+                StudyOverallStatusDTO oldStatusDto = PaRegistry.getStudyOverallStatusService()
                         .getCurrentByStudyProtocol(IiConverter.convertToIi(trialDto.getIdentifier()));
                 if (trialDto.getCompletionDateType().equals(anticipatedString)) {
                     addActionError.add("Primary Completion Date cannot be 'Anticipated' when "
@@ -305,7 +305,7 @@ public class TrialValidator {
      */
     private StudyOverallStatusWebDTO getStatusDTO(String id) throws PAException {
         StudyOverallStatusWebDTO webDTO = new StudyOverallStatusWebDTO();    
-       StudyOverallStatusDTO sos = RegistryServiceLocator.getStudyOverallStatusService()
+       StudyOverallStatusDTO sos = PaRegistry.getStudyOverallStatusService()
         .getCurrentByStudyProtocol(IiConverter.convertToIi(id));
         if (sos != null) {
             webDTO.setStatusCode(CdConverter.convertCdToString(sos.getStatusCode()));
@@ -355,7 +355,7 @@ public class TrialValidator {
         }
         List<DocumentDTO> documentISOList;
         try {
-            documentISOList = RegistryServiceLocator.getDocumentService()
+            documentISOList = PaRegistry.getDocumentService()
             .getDocumentsByStudyProtocol(IiConverter.convertToIi(tDTO.getIdentifier()));
             if (!(documentISOList.isEmpty())) {
                 ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
@@ -409,7 +409,7 @@ public class TrialValidator {
         }
         List<DocumentDTO> documentISOList;
         try {
-            documentISOList = RegistryServiceLocator.getDocumentService()
+            documentISOList = PaRegistry.getDocumentService()
             .getDocumentsByStudyProtocol(IiConverter.convertToIi(tDTO.getIdentifier()));
             if (!(documentISOList.isEmpty())) {
                 ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);

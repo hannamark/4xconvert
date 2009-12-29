@@ -2,7 +2,8 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
@@ -46,11 +47,11 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
             }
             OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
             contactDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgContactIdentifier));
-            List<OrganizationalContactDTO> list = RegistryServiceLocator.getPoOrganizationalContactCorrelationService()
+            List<OrganizationalContactDTO> list = PoRegistry.getOrganizationalContactCorrelationService()
                     .search(contactDTO);
             for (OrganizationalContactDTO organizationalContactDTO : list) {
                 try {
-                    persons.add(RegistryServiceLocator.getPoPersonEntityService().getPerson(
+                    persons.add(PoRegistry.getPersonEntityService().getPerson(
                             organizationalContactDTO.getPlayerIdentifier()));
                 } catch (NullifiedEntityException e) {
                     addActionError(e.getMessage());
@@ -99,7 +100,7 @@ public class OrganizationContactAction extends ActionSupport implements Preparab
     private void populateCountryList() throws PAException {
         countryList = (List) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
         if (countryList == null) {
-            countryList = RegistryServiceLocator.getLookUpTableService().getCountries();
+            countryList = PaRegistry.getLookUpTableService().getCountries();
             ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);
         }
     }

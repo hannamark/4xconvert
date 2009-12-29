@@ -2,10 +2,10 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.ExcelReader;
-import gov.nih.nci.registry.util.RegistryServiceLocator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -105,10 +105,10 @@ public class BatchHelper implements Runnable {
             //get the values of email's subject and email body from the database
             String[] params = {userName , };
             MessageFormat formatterSubject = new MessageFormat(
-                    RegistryServiceLocator.getLookUpTableService().getPropertyValue("trial.batchUpload.subject"));
+                    PaRegistry.getLookUpTableService().getPropertyValue("trial.batchUpload.subject"));
             String emailSubject = formatterSubject.format(params);
             LOG.info("emailSubject is: " + emailSubject);
-            String submissionMailBody = RegistryServiceLocator.getLookUpTableService().
+            String submissionMailBody = PaRegistry.getLookUpTableService().
                                     getPropertyValue("trial.batchUpload.body");
             submissionMailBody = submissionMailBody.replace("${totalCount}", totalCount);
             submissionMailBody = submissionMailBody.replace("${successCount}", sucessCount);
