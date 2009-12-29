@@ -174,9 +174,16 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         Session session = null;
         StudyProtocol studyProtocol = null;
         session = HibernateUtil.getCurrentSession();
-        studyProtocol = (StudyProtocol)
-        session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
-
+        studyProtocol = (InterventionalStudyProtocol)
+        session.get(InterventionalStudyProtocol.class, Long.valueOf(ii.getExtension()));
+        //session.load(StudyProtocol.class, Long.valueOf(ii.getExtension()));
+        if (studyProtocol == null) {
+            studyProtocol = (ObservationalStudyProtocol)
+            session.get(ObservationalStudyProtocol.class, Long.valueOf(ii.getExtension()));
+        }
+        if (studyProtocol == null) {
+            throw new PAException("Ii could not be found.");
+        }
         StudyProtocolDTO studyProtocolDTO =
             StudyProtocolConverter.convertFromDomainToDTO(studyProtocol);
 
@@ -366,7 +373,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             throw new PAException(" studyProtocolDTO should not be null ");
 
         }
-        enForceBusinessRules(ospDTO);
+        //enForceBusinessRules(ospDTO);
         ObservationalStudyProtocolDTO  ospRetDTO = null;
         Session session = null;
         session = HibernateUtil.getCurrentSession();

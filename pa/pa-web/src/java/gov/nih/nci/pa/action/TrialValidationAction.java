@@ -271,9 +271,9 @@ public class TrialValidationAction extends ActionSupport {
                     Constants.STUDY_PROTOCOL_II);
             PAServiceUtils paServiceUtil = new PAServiceUtils();
             paServiceUtil.createMilestone(studyProtocolIi, msc, StConverter.convertToSt(gtdDTO.getCommentText()));
-            if (MilestoneCode.SUBMISSION_ACCEPTED.equals(msc)) {
+            /*if (MilestoneCode.SUBMISSION_ACCEPTED.equals(msc)) {
                paServiceUtil.createMilestone(studyProtocolIi, MilestoneCode.READY_FOR_PDQ_ABSTRACTION, null);
-            }   
+            }*/   
             StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
             .getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
         

@@ -12,6 +12,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
@@ -75,6 +77,18 @@ public class MockPoServiceLocator implements PoServiceLocator {
     public PersonEntityServiceRemote getPersonEntityService()
             throws PAException {
         return personEntityService;
+    }
+
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService()
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService()
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

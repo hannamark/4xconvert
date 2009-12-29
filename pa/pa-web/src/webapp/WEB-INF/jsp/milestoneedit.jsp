@@ -56,10 +56,18 @@
                 <s:form name="milestoneForm">
                   <table class="form">
                   <tr>
-                      <s:set name="milestoneValues" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNamesForAddMilestone()" />
-                      <td class="label"><s:label><fmt:message key="milestone.milestone"/></s:label><span class="required">*</span></td>
+                  <td class="label"><s:label><fmt:message key="milestone.milestone"/></s:label><span class="required">*</span></td>
                       <td class="value" style="width: 250px">
-                           <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues"/>
+                        <c:choose>
+                        <c:when test="${(sessionScope.role == 'SuAbstractor') && (sessionScope.trialSummary.submissionTypeCode == 'O')}">
+                            <s:set name="milestoneValues" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNamesMilestoneForSuperUser()" />
+                            <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues"/>
+                         </c:when>
+                         <c:otherwise>
+                          <s:set name="milestoneValues" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNamesForAddMilestone()" />
+                            <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues"/>
+                          </c:otherwise>
+                          </c:choose>
                       </td>
                   </tr>
                   <tr>

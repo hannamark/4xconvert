@@ -177,7 +177,7 @@ public class StudyMilestoneServiceTest {
 
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setCommentText(StConverter.convertToSt("comment"));
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.PDQ_ABSTRACTION_COMPLETE));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.QC_START));
         dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dto.setStudyProtocolIdentifier(spIi);
         remote.create(dto);
@@ -281,7 +281,7 @@ public class StudyMilestoneServiceTest {
     public void missingDataTest() throws Exception {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setCommentText(StConverter.convertToSt("comment"));
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.PDQ_ABSTRACTION_COMPLETE));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.QC_START));
         dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
 
         // spId is null
@@ -304,7 +304,7 @@ public class StudyMilestoneServiceTest {
         }
 
         // date is null
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.PDQ_ABSTRACTION_COMPLETE));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.QC_START));
         dto.setMilestoneDate(null);
         try {
             remote.create(dto);

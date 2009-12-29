@@ -96,6 +96,7 @@ import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.HealthCareProviderTest;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.OversightCommittee;
@@ -310,7 +311,7 @@ public class TestSchema {
             regAuthIds = new ArrayList<Long>();
             personIds = new ArrayList<Long>();
 
-            StudyProtocol sp = new StudyProtocol();
+            StudyProtocol sp = new InterventionalStudyProtocol();
             sp.setOfficialTitle("cacncer for THOLA");
             sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
             sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);

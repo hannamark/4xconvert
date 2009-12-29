@@ -86,6 +86,8 @@ public class StudyMilestoneBeanLocal
      StudyMilestoneDTO resultDto = super.create(workDto);
      createDocumentWorkflowStatuses(resultDto);
      updateRecordVerificationDates(resultDto);
+     sendLateRejectionEmail(workDto);
+
      return resultDto;
   }
 
@@ -142,6 +144,18 @@ public class StudyMilestoneBeanLocal
      if (newDate == null) {
          throw new PAException("Milestone date is required.");
      }
+     //if the milestone is late rejection date then comment is required.
+     if (!PAUtil.isCdNull(dto.getMilestoneCode()) && MilestoneCode.LATE_REJECTION_DATE.getCode().equalsIgnoreCase(
+             dto.getMilestoneCode().getCode())) {  
+         if (PAUtil.isStNull(dto.getCommentText())) {
+             throw new PAException("Milestone Comment is required.");
+         }
+         StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
+         if (sp.getSubmissionNumber().getValue().intValue() > 1) {
+             throw new PAException("Late Rejection Date is applicable to Original Submission.");   
+         }
+     }
+     
 
      // onhold rules
      if (!newCode.isAllowedIfOnhold()
@@ -464,7 +478,11 @@ public class StudyMilestoneBeanLocal
              
               createDocumentWorkflowStatus(DocumentWorkflowStatusCode.VERIFICATION_PENDING, dto);
          }
-     
+     if (newCode.equals(MilestoneCode.LATE_REJECTION_DATE)
+             && canTransition(dwStatus, DocumentWorkflowStatusCode.REJECTED)) {
+                 
+         createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
+     }
   }
 
   private void createDocumentWorkflowStatus(
@@ -585,4 +603,16 @@ public class StudyMilestoneBeanLocal
      }
      return studyMilestoneDTOList;
    }
+   private void sendLateRejectionEmail(StudyMilestoneDTO workDto) throws PAException {
+       MilestoneCode milestoneCode = MilestoneCode.getByCode(
+                           CdConverter.convertCdToString(workDto.getMilestoneCode()));
+       if ((MilestoneCode.LATE_REJECTION_DATE.equals(milestoneCode))) {
+           try {
+               mailManagerService.sendRejectionEmail(workDto.getStudyProtocolIdentifier());
+           } catch (PAException e) {
+               throw new PAException(workDto.getMilestoneCode().getCode() + "' could not "
+                       + "be recorded as sending the rejection email to the submitter  failed.", e);
+           }
+       }
+    }
  }

@@ -189,24 +189,29 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
         tmpSet.add(ABSTRACTED);
+        tmpSet.add(REJECTED);
         tmp.put(ACCEPTED, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(REJECTED);
         tmpSet.add(VERIFICATION_PENDING);
         tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
         tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
         tmp.put(ABSTRACTED, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(REJECTED);
         tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
         tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
         tmp.put(VERIFICATION_PENDING, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(REJECTED);
         tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
         tmp.put(ABSTRACTION_VERIFIED_RESPONSE, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(REJECTED);
         tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
         tmp.put(ABSTRACTION_VERIFIED_NORESPONSE, Collections.unmodifiableSet(tmpSet));
 

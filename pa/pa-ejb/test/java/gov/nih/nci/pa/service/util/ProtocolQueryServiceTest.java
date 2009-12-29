@@ -157,7 +157,9 @@ public class ProtocolQueryServiceTest {
 
     @Test
     public void getStudyProtocolByCriteriaTest() throws Exception {
-        List<StudyProtocolQueryDTO> data = localEjb.getStudyProtocolByCriteria(new StudyProtocolQueryCriteria());
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setNciIdentifier("nci");
+        List<StudyProtocolQueryDTO> data = localEjb.getStudyProtocolByCriteria(criteria);
         assertNotNull(data);
         assertEquals("Size does not match  " , data.size(), 1);
         assertEquals("Title does not match  " , data.get(0).getOfficialTitle(), "Cancer for kids");

@@ -160,6 +160,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
             StudyProtocolQueryCriteria spsc) throws PAException {
         LOG.debug("Entering getStudyProtocolByCriteria ");
+        if (isCriteriaEmpty(spsc)) {
+            throw new PAException("Atleast one criteria is required.");
+        }
         // StudyProtocolServiceImpl pImpl = new StudyProtocolServiceImpl();
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<Object> queryList = getStudyProtocolQueryResults(spsc);
@@ -459,6 +462,9 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
         query = session.createQuery(hql);
         // step 3: query the result
         queryList = query.list();
+        if (queryList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+            throw new PAException("Results exceed more than 500, Please redefine the seacrh criteria");
+        }
         LOG.debug("Leaving getStudyProtocolByCriteria ");
         return queryList;
     }
@@ -731,5 +737,27 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                       + " where spco.userIdentifier='" + studyProtocolQueryCriteria.getUserLastCreated() 
                       + "')");
            }
+    }
+    private boolean isCriteriaEmpty(StudyProtocolQueryCriteria criteria) {
+        if (PAUtil.isEmpty(criteria.getNciIdentifier()) && PAUtil.isEmpty(criteria.getOfficialTitle())
+                && PAUtil.isEmpty(criteria.getLeadOrganizationId())
+                && PAUtil.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
+                && PAUtil.isEmpty(criteria.getPrincipalInvestigatorId())
+                && PAUtil.isEmpty(criteria.getPrimaryPurposeCode())
+                && PAUtil.isEmpty(criteria.getPhaseCode())
+                && PAUtil.isEmpty(criteria.getStudyStatusCode()) 
+                &&  PAUtil.isEmpty(criteria.getDocumentWorkflowStatusCode())
+                && PAUtil.isEmpty(criteria.getStudyMilestone())
+                && ((PAUtil.isNotEmpty(criteria.getSearchOnHold()) && criteria.getSearchOnHold()
+                        .equalsIgnoreCase("false")) || PAUtil.isEmpty(criteria.getSearchOnHold()))
+                && ((PAUtil.isNotEmpty(criteria.getStudyLockedBy()) && criteria.getStudyLockedBy()
+                        .equalsIgnoreCase("false")) || PAUtil.isEmpty(criteria.getStudyLockedBy()))
+                && PAUtil.isEmpty(criteria.getSubmissionType())
+                && PAUtil.isEmpty(criteria.getTrialCategory())
+                && (criteria.getMyTrialsOnly() != null && !criteria.getMyTrialsOnly()
+                    || criteria.getMyTrialsOnly() == null)) {
+                return true;
+        }
+        return false;
     }
 }

@@ -103,39 +103,37 @@ public enum MilestoneCode implements CodedEnum<String> {
     /** 2. */
     SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, null, true, true), 
     /** 3. */
-    READY_FOR_PDQ_ABSTRACTION("Ready for PDQ Abstraction Date", true, false, null, true, true), 
-    /** 4. */
     SUBMISSION_REJECTED("Submission Rejection Date", true, false, null, true, true), 
-    /** 5. */
+    /** 4. */
     ADMINISTRATIVE_PROCESSING_START_DATE("Administrative processing start date", false, false, null, false, true),
-    /** 6. */
+    /** 5. */
     ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative processing completed date", false, false,
             MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, false, true),
-    /** 7. */
+    /** 6. */
     SCIENTIFIC_PROCESSING_START_DATE("Scientific processing start date", false, false, null, false, true),
-    /** 8. */
+    /** 7. */
     SCIENTIFIC_PROCESSING_COMPLETED_DATE("Scientific processing completed date", false, false,
             MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, false, true),
-    /** 9. */ 
+    /** 8. */ 
     READY_FOR_QC("Ready for QC Date", false, true, null, true, true), 
-    /** 10. */
+    /** 9. */
     QC_START("QC Start Date", false, false, MilestoneCode.READY_FOR_QC, true, true), 
-    /** 11. */
+    /** 10. */
     QC_COMPLETE("QC Completed Date", false, true, MilestoneCode.QC_START, false, false), 
-    /** 12. */
-    PDQ_ABSTRACTION_COMPLETE("PDQ Abstraction Completed Date", false, false, null, true, false), 
-    /** 13. */
+    /** 11. */
     TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, true, null, false, false), 
-    /** 14. */
+    /** 12. */
     TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false,
              MilestoneCode.TRIAL_SUMMARY_SENT, false, false), 
-    /** 15. */
+    /** 13. */
     INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null, false, false), 
-    /** 16. */
+    /** 14. */
     INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE("Initial Submission To Clinicaltrials.gov Date", true, 
             false, null, false, false),  
-    /** 17. */
-    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false, false);
+    /** 15. */
+    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false, false),
+    /** 16. */
+    LATE_REJECTION_DATE("Late Rejection Date", true, false, MilestoneCode.SUBMISSION_ACCEPTED, false, false);
 
     private String code;
     private boolean unique;
@@ -156,9 +154,6 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
         tmp.put(SUBMISSION_ACCEPTED, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmp.put(READY_FOR_PDQ_ABSTRACTION, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
         tmpSet.add(DocumentWorkflowStatusCode.REJECTED);
@@ -218,13 +213,6 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmp.put(QC_COMPLETE, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmp.put(PDQ_ABSTRACTION_COMPLETE, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
@@ -252,6 +240,14 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         tmp.put(ONGOING_ABSTRACTION_VERIFICATION, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
+        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
+        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
+        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        tmp.put(LATE_REJECTION_DATE, Collections.unmodifiableSet(tmpSet));
 
         ALLOWED_DWF_STATUSES = Collections.unmodifiableMap(tmp);
     }
@@ -379,10 +375,22 @@ public enum MilestoneCode implements CodedEnum<String> {
         String[] codedNames = getDisplayNames();
         List<String> list = new ArrayList<String>(Arrays.asList(codedNames)); 
         list.remove(MilestoneCode.SUBMISSION_REJECTED.getCode());
+        list.remove(MilestoneCode.LATE_REJECTION_DATE.getCode());
         codedNames = new String[list.size()];
         codedNames = list.toArray(codedNames);
         return codedNames;
-        
-        
+    }
+    /**
+     * 
+     * @return milestone code for super user
+     */
+    @SuppressWarnings({"PMD.UseStringBufferForStringAppends" })
+    public static String[] getDisplayNamesMilestoneForSuperUser() {
+        String[] codedNames = getDisplayNames();
+        List<String> list = new ArrayList<String>(Arrays.asList(codedNames)); 
+        list.remove(MilestoneCode.SUBMISSION_REJECTED.getCode());
+        codedNames = new String[list.size()];
+        codedNames = list.toArray(codedNames);
+        return codedNames;
     }
 }

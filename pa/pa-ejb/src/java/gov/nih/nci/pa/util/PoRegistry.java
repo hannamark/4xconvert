@@ -4,6 +4,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
@@ -121,5 +123,22 @@ public final class PoRegistry {
     public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() 
     throws PAException {
        return getInstance().getPoServiceLocator().getOrganizationalContactCorrelationService(); 
+    }
+    /**
+     * @throws PAException e
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */    
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() 
+        throws PAException {
+        return getInstance().getPoServiceLocator().getIdentifiedOrganizationEntityService();
+    }
+    
+    /**
+     * @throws PAException e
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */    
+    public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() 
+        throws PAException {    
+        return getInstance().getPoServiceLocator().getIdentifiedPersonEntityService();
     }
 }
