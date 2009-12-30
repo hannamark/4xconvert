@@ -293,7 +293,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         T dto = service.getCorrelation(id);
         for (Ii ii : dto.getIdentifier().getItem()) {
             if (id.equals(ii)) {
-                ii.setReliability(null);
+                ii.setRoot("bad root" + ii.getRoot());
             }
         }
         service.updateCorrelation(dto);
@@ -316,7 +316,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
         dto.getIdentifier().getItem().clear();
         Ii wrongId = new Ii();
         wrongId.setExtension("999");
-        wrongId.setRoot(IdConverter.BASE_ROOT);
+        wrongId.setRoot("foo" + IdConverter.BASE_ROOT);
         dto.getIdentifier().getItem().add(wrongId);
         service.updateCorrelation(dto);
     }
@@ -329,7 +329,7 @@ public abstract class AbstractStructrualRoleRemoteServiceTest<T extends Correlat
 
         Ii wrongId = new Ii();
         wrongId.setExtension("999");
-        wrongId.setRoot(IdConverter.BASE_ROOT);
+        wrongId.setRoot("foo" + IdConverter.BASE_ROOT);
 
         getCorrelationService().updateCorrelationStatus(wrongId, cd);
     }

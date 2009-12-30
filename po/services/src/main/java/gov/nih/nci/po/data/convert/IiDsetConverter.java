@@ -83,7 +83,6 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 
 import java.util.LinkedHashSet;
@@ -113,9 +112,7 @@ public class IiDsetConverter {
         if (identifier != null) {
             Set<Ii> iis = identifier.getItem();
             for (Ii ii : iis) {
-                // Since PO only assigns one ID, our identifier will be the only ISS with our root
-                if (IdentifierReliability.ISS == ii.getReliability()
-                        && ii.getRoot().startsWith(IdConverter.BASE_ROOT)) {
+                if (ii.getRoot().startsWith(IdConverter.BASE_ROOT)) {
                     return ii;
                 }
             }
@@ -133,8 +130,7 @@ public class IiDsetConverter {
         if (identifier != null) {
             iis.addAll(identifier.getItem());
             for (Ii ii : iis) {
-                if (IdentifierReliability.ISS == ii.getReliability()
-                        && ii.getRoot().startsWith(IdConverter.BASE_ROOT)) {
+                if (ii.getRoot().startsWith(IdConverter.BASE_ROOT)) {
                     iis.remove(ii);
                     break;
                 }
