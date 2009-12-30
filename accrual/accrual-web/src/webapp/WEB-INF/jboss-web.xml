@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <jboss-web>
-    <security-domain>java:/jaas/accrual</security-domain>
+    <security-domain>java:/jaas/accrual-outcomes</security-domain>
 </jboss-web>

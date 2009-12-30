@@ -95,7 +95,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SecurityDomain("pa")
+@SecurityDomain("accrual-outcomes")
 @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
 public class PerformedObservationResultBean
         extends  PerformedObservationResultBeanLocal implements PerformedObservationResultService {
