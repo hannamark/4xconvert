@@ -13,7 +13,7 @@
     <property name="ear.build.dir" value="${software.dir}/accrual/ear/target"/>
     <property name="ear.build.finalName" value="accrual"/>
     <property name="services.package" value="${software.dir}/accrual/services/target/accrual-services.jar"/>
-    <property name="web.package" value="${software.dir}/accrual/web/target/outcomes.war"/>
+    <property name="outweb.package" value="${software.dir}/accrual/outcomes-web/target/outcomes.war"/>
     <property name="accweb.package" value="${software.dir}/accrual/accrual-web/target/accrual.war"/>
 
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
@@ -59,7 +59,7 @@
     <target name="package-setup" depends="pre-clean">
         <available file="${services.package}" property="services.present"/>
         <fail unless="services.present" message="EJB jar file not found."/>
-        <available file="${web.package}" property="web.present"/>
+        <available file="${outweb.package}" property="web.present"/>
         <fail unless="web.present" message="Outcomes war file not found."/>
         <available file="${accweb.package}" property="web.present"/>
         <fail unless="web.present" message="Accrual war file not found."/>
@@ -69,7 +69,7 @@
     <target name="ear" depends="ivy-get, package-setup" description="Makes an EAR archive.">
         <copy file="${services.package}" 
              todir="${ear.build.dir}/${ear.build.finalName}"/>
-        <copy file="${web.package}" 
+        <copy file="${outweb.package}" 
              todir="${ear.build.dir}/${ear.build.finalName}"/>
         <copy file="${accweb.package}" 
              todir="${ear.build.dir}/${ear.build.finalName}"/>
