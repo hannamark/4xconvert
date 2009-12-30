@@ -191,24 +191,19 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
 
         // email, phone, fax, tty, url
         waitForElementById("email-remove-0", 5);
-        assertEquals("abc@example.com | Remove",
-                selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
+        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-0"));
 
         waitForElementById("phone-remove-0", 5);
-        assertEquals("123-456-7890 | Remove", selenium
-                .getText("//div[@id='phone-list']//div[@id='us_format_phone']/ul/li[@id='phone-entry-0']"));
+        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-0"));
 
         waitForElementById("fax-remove-0", 5);
-        assertEquals("234-567-8901 | Remove", selenium
-                .getText("//div[@id='fax-list']//div[@id='us_format_fax']/ul/li[@id='fax-entry-0']"));
+        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-0"));
 
         waitForElementById("tty-remove-0", 5);
-        assertEquals("345-678-9012 | Remove", selenium
-                .getText("//div[@id='tty-list']//div[@id='us_format_tty']/ul/li[@id='tty-entry-0']"));
+        assertEquals("345-678-9012 | Remove", selenium.getText("id=tty-entry-0"));
 
         waitForElementById("url-remove-0", 5);
-        assertEquals("http://www.example.com | Remove", selenium
-                .getText("//div[@id='url-list']/ul/li[@id='url-entry-0']"));
+        assertEquals("http://www.example.com | Remove", selenium.getText("id=url-entry-0"));
 
         // new cert
         assertEquals("CR cert license change",
@@ -220,24 +215,24 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
 
         selenium.click("copy_emailEntry_value0"); 
         waitForElementById("email-remove-1", 5);
-        assertEquals("cr@example.com | Remove", selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-1']"));
+        assertEquals("cr@example.com | Remove", selenium.getText("id=email-entry-1"));
          
         selenium.click("copy_phoneEntry_value0"); 
         waitForElementById("phone-remove-1", 5);
-        assertEquals("112-233-4455 | Remove", selenium.getText("//div[@id='phone-list']/div[@id='no_format_phone']/ul/li[@id='phone-entry-1']"));
+        assertEquals("112-233-4455 | Remove", selenium.getText("id=phone-entry-1"));
          
         selenium.click("copy_faxEntry_value0"); 
         waitForElementById("fax-remove-1", 5);
-        assertEquals("112-233-4455 | Remove", selenium.getText("//div[@id='fax-list']/div[@id='no_format_fax']/ul/li[@id='fax-entry-1']"));
+        assertEquals("112-233-4455 | Remove", selenium.getText("id=fax-entry-1"));
          
         selenium.click("copy_ttyEntry_value0"); 
         waitForElementById("tty-remove-1", 5);
-        assertEquals("112-233-4455 | Remove", selenium.getText("//div[@id='tty-list']/div[@id='no_format_tty']/ul/li[@id='tty-entry-1']"));
+        assertEquals("112-233-4455 | Remove", selenium.getText("id=tty-entry-1"));
          
         selenium.click("copy_urlEntry_value0"); 
         waitForElementById("url-remove-1", 5);
         assertEquals("http://www.cr.com | Remove",
-        selenium.getText("//div[@id='url-list']/ul/li[@id='url-entry-1']"));
+        selenium.getText("id=url-entry-1"));
          
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully updated!".trim()));

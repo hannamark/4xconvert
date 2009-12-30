@@ -33,14 +33,13 @@ public class SelectOrganizationTest extends OrganizationWebTest {
         selenium.click("link="+poId);
         //wait for div to load
         waitForElementById("selector_org_back_to_search_results", 5);
-
         
         //verify that the org details are correct
-        verifyEquals("http://sample.url.org", selenium.getText("link=exact:http://sample.url.org"));
-        verifyEquals("tty-number", selenium.getText("tty-entry-0"));
-        verifyEquals("123-fax-0908", selenium.getText("fax-entry-0"));
-        verifyEquals("899-090-0987", selenium.getText("phone-entry-0"));
-        verifyEquals("emailAddress@example.com", selenium.getText("email-entry-0"));
+        verifyTrue(selenium.isElementPresent("link=exact:http://sample.url.org"));
+        verifyTrue(selenium.isTextPresent("tty-number"));
+        verifyTrue(selenium.isTextPresent("123-fax-0908"));
+        verifyTrue(selenium.isTextPresent("899-090-0987"));
+        verifyTrue(selenium.isTextPresent("emailAddress@example.com"));
         //address info
         verifyEquals("30345", selenium.getText("wwctrl_address.postalCode"));
         verifyEquals("GA", selenium.getText("wwctrl_address.stateOrProvince"));

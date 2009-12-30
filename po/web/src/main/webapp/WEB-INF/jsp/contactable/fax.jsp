@@ -56,22 +56,22 @@
     </c:url>
     <li>
         <s:hidden id="faxEntry_value" name="faxEntry.value" value=""/>
-        <s:hidden id="faxEntry_part4" name="faxEntry.part4" value=""/>
+        <s:hidden id="faxEntry_part4" value=""/>
         <po:inputRow>
             <po:inputRowElement>
-                <s:textfield key="faxEntry.value" name="faxEntry.part1" size="3" maxlength="3" onkeyup="autotab(this, $('faxEntry_part2'));"/>
+                <s:textfield key="faxEntry.value" name="" id="faxEntry_part1" size="3" maxlength="3" onkeyup="autotab(this, $('faxEntry_part2'));"/>
             </po:inputRowElement>
              <po:inputRowElement>
                 &nbsp;-&nbsp;
             </po:inputRowElement>
             <po:inputRowElement>
-                <s:textfield name="faxEntry.part2" size="3" maxlength="3" onkeyup="autotab(this, $('faxEntry_part3'));"/> 
+                <s:textfield id="faxEntry_part2" size="3" maxlength="3" onkeyup="autotab(this, $('faxEntry_part3'));"/> 
             </po:inputRowElement>
              <po:inputRowElement>
                 &nbsp;-&nbsp;
             </po:inputRowElement>
             <po:inputRowElement>
-                <s:textfield name="faxEntry.part3" size="4" maxlength="4" onkeyup="return submitDivOnReturn(event, 'fax-add');">
+                <s:textfield id="faxEntry_part3" size="4" maxlength="4" onkeyup="return submitDivOnReturn(event, 'fax-add');">
                 <s:param name="after">
                         <a id="fax-add" class="formElementButton" href="javascript://noop/" onclick="clearErrorMessages(); return assembleAndSubmitPhoneNumber('fax', '${addAction}', 'fax-list')">Add</a>
                     </s:param>

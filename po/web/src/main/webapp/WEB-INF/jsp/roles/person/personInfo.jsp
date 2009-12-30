@@ -18,14 +18,12 @@
         </po:inputRow>
         <fieldset>
             <legend>Email Addresses</legend>
-            <div id="email-list-ro">
-            <ul>
-                <s:iterator value="person.email" status="e">
-                    <li id="email-entry-${e.index}">
-                        ${value}
-                    </li>
-                </s:iterator>
-            </ul>
+            <div>
+                <ul>
+                    <s:iterator value="person.email">
+                        <li>${value}</li>
+                    </s:iterator>
+               </ul>
             </div>
         </fieldset>        
         <div class="clear"></div>

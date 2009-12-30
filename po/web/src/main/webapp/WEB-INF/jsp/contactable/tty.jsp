@@ -58,25 +58,25 @@
         <s:hidden id="ttyEntry_value" name="ttyEntry.value" value=""/>
         <po:inputRow>
             <po:inputRowElement>
-                <s:textfield key="ttyEntry.value" name="ttyEntry.part1" size="3" maxlength="3" onkeyup="autotab(this, $('ttyEntry_part2'));"/>
+                <s:textfield key="ttyEntry.value" name="" id="ttyEntry_part1" size="3" maxlength="3" onkeyup="autotab(this, $('ttyEntry_part2'));"/>
             </po:inputRowElement>
              <po:inputRowElement>
                 &nbsp;-&nbsp;
             </po:inputRowElement>
             <po:inputRowElement>
-                <s:textfield name="ttyEntry.part2" size="3" maxlength="3" onkeyup="autotab(this, $('ttyEntry_part3'));"/> 
+                <s:textfield id="ttyEntry_part2" size="3" maxlength="3" onkeyup="autotab(this, $('ttyEntry_part3'));"/> 
             </po:inputRowElement>
              <po:inputRowElement>
                 &nbsp;-&nbsp;
             </po:inputRowElement>
             <po:inputRowElement>
-                <s:textfield name="ttyEntry.part3" size="4" maxlength="4" onkeyup="autotab(this, $('ttyEntry_part4'));"/>
+                <s:textfield id="ttyEntry_part3" size="4" maxlength="4" onkeyup="autotab(this, $('ttyEntry_part4'));"/>
             </po:inputRowElement>
             <po:inputRowElement>
                 &nbsp;x&nbsp;
             </po:inputRowElement>
             <po:inputRowElement>
-                <s:textfield size="5" name="ttyEntry.part4" onkeypress="return submitDivOnReturn(event, 'tty-add');">
+                <s:textfield size="5" id="ttyEntry_part4" onkeypress="return submitDivOnReturn(event, 'tty-add');">
                     <s:param name="after">
                         <a id="tty-add" class="formElementButton" href="javascript://noop/" onclick="clearErrorMessages(); return assembleAndSubmitPhoneNumber('tty', '${addAction}', 'tty-list')">Add</a>
                     </s:param>

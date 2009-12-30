@@ -177,7 +177,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
                 "Some email id",
                 "exact:Email Address is not a well-formed email address",
                 "example1@example.com",
-                "//div[@id='email-list']/ul/li[@id='email-entry-0']",
+                "email-entry-0",
                 "email-remove-0");
     }
 
@@ -242,7 +242,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         addNonUSPostalAddress();
         checkForNonUSFormattedTel(type);
         inputNonUSFormatTel(value[0] + "-" + value[1] + "-" + value[2], type);
-        assertEquals(entryText + " | Remove", selenium.getText(entryId));
+        assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
         clickAnchor(anchorRemoveId);
         removePostalAddress();
 
@@ -250,12 +250,13 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         addUSPostalAddress();
         checkForUSFormattedTel(type);
         inputForTel(value, type);
-        assertEquals(entryText + " | Remove", selenium.getText(entryId));
+        assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
         clickAnchor(anchorRemoveId);
         removePostalAddress();
     }
 
-    private void checkEmailOrUrl(String anchorAddId, String blankValueErrorMsg, String inputId, String invalidValue, String incorrectFormatMsg, String validValue, String entryId, String anchorRemoveId) throws Exception {
+    private void checkEmailOrUrl(String anchorAddId, String blankValueErrorMsg, String inputId, String invalidValue, 
+            String incorrectFormatMsg, String validValue, String entryId, String anchorRemoveId) throws Exception {
         clickAnchor(anchorAddId);
         waitForElementById(anchorAddId, 20);
 
@@ -270,7 +271,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         selenium.type(inputId, validValue);
         clickAnchor(anchorAddId);
         waitForElementById(anchorAddId, 20);
-        assertEquals(validValue + " | Remove", selenium.getText(entryId));
+        assertEquals(validValue + " | Remove", selenium.getText("id=" + entryId));
         clickAnchor(anchorRemoveId);
     }
 
@@ -313,31 +314,25 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
 
         // email, phone, fax, tty, url
         waitForElementById("email-remove-0", 5);
-        assertEquals("abc@example.com | Remove",
-                selenium.getText("//div[@id='email-list']/ul/li[@id='email-entry-0']"));
+        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-0"));
 
         waitForElementById("phone-remove-0", 5);
-        assertEquals("123-456-7890 | Remove", selenium
-                .getText("//div[@id='phone-list']//div[@id='us_format_phone']/ul/li[@id='phone-entry-0']"));
+        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-0"));
 
         waitForElementById("fax-remove-0", 5);
-        assertEquals("234-567-8901 | Remove", selenium
-                .getText("//div[@id='fax-list']//div[@id='us_format_fax']/ul/li[@id='fax-entry-0']"));
+        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-0"));
 
         waitForElementById("tty-remove-0", 5);
-        assertEquals("345-678-9012 | Remove", selenium
-                .getText("//div[@id='tty-list']//div[@id='us_format_tty']/ul/li[@id='tty-entry-0']"));
+        assertEquals("345-678-9012 | Remove", selenium.getText("id=tty-entry-0"));
 
         waitForElementById("url-remove-0", 5);
-        assertEquals("http://www.example.com | Remove", selenium
-                .getText("//div[@id='url-list']/ul/li[@id='url-entry-0']"));
+        assertEquals("http://www.example.com | Remove", selenium.getText("id=url-entry-0"));
     }
 
     protected void copyCRInfo(String crValueId, String expectedValue, String entryId) {
         // Copy the value over.
         selenium.click(crValueId);
-        assertEquals(expectedValue + " | Remove",
-                selenium.getText("//div[@id='email-list']/ul/li[@id='" + entryId + "']"));
+        assertEquals(expectedValue + " | Remove", selenium.getText("id=" + entryId));
 
         // Copy value over a second time, ensure error message is present.
         selenium.click(crValueId);
