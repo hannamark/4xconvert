@@ -139,6 +139,9 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully created!"));
         String roId = selenium.getTable("row.1.0");
         assertNotEquals("null", roId.trim());
+        selenium.click("link=" + getSortFieldTestColumnName());
+        roId = selenium.getTable("row.1.0");
+        assertNotEquals("null", roId.trim());
 
         clickAndWaitButton("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
@@ -205,5 +208,10 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         dto.setFundingMechanism(fm);
 
         RemoteServiceHelper.getResearchOrganizationCorrelationService().updateCorrelation(dto);
+    }
+
+    @Override
+    protected String getSortFieldTestColumnName() {
+        return "Research Organization Type";
     }
 }

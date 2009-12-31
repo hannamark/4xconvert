@@ -99,7 +99,10 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
 
         String ocId = selenium.getTable("row.1.0");
         assertNotEquals("null", ocId.trim());
-
+        selenium.click("link=" + getSortFieldTestColumnName());
+        ocId = selenium.getTable("row.1.0");
+        assertNotEquals("null", ocId.trim());
+        
         clickAndWaitButton("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
@@ -199,6 +202,11 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         clickAndWaitButton("add_button");
         assertTrue(selenium.isTextPresent("Clinical Research Staff Role Information"));
         selectOrganizationScoper(orgId, ORG_WITH_APOS);
+    }
+    
+    @Override
+    protected String getSortFieldTestColumnName() {
+        return "Affiliated Organization Name";
     }
 
 }

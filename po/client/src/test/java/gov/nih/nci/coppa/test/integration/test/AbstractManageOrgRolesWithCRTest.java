@@ -102,6 +102,8 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     private String orgRoleSearchResultsMessage;
     private String orgRoleSearchResultsRowNumber = "row.1.0";
     private String organizationStatus;
+    
+    protected abstract String getSortFieldTestColumnName();
 
     protected void createActiveOrganization() {
         organizationStatus = "ACTIVE";
@@ -284,6 +286,9 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         assertTrue(selenium.isTextPresent("exact:" + orgRoleSearchResultsMessage));
 
         organizationalRoleId = selenium.getTable(orgRoleSearchResultsRowNumber);
+        assertNotEquals("null", getOrganizationalRoleId());
+        assertNotNull(getOrganizationalRoleId());
+        selenium.click("link=" + getSortFieldTestColumnName());
         assertNotEquals("null", getOrganizationalRoleId());
         assertNotNull(getOrganizationalRoleId());
 

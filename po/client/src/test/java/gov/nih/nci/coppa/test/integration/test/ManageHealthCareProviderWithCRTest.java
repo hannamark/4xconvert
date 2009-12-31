@@ -161,6 +161,9 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully created!"));
         String hcpId = selenium.getTable("row.1.0");
         assertNotEquals("null", hcpId.trim());
+        selenium.click("link=" + getSortFieldTestColumnName());
+        hcpId = selenium.getTable("row.1.0");
+        assertNotEquals("null", hcpId.trim());
 
         clickAndWaitButton("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
@@ -272,5 +275,9 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         dto.getTelecomAddress().getItem().add(url);
 
         RemoteServiceHelper.getHealthCareProviderCorrelationService().updateCorrelation(dto);
+    }
+    
+    protected String getSortFieldTestColumnName() {
+        return "Affiliated Organization Name";
     }
 }

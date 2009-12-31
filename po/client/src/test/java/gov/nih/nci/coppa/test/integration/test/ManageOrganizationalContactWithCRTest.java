@@ -238,7 +238,10 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully created!"));
         String ocId = selenium.getTable("row.1.0");
         assertNotEquals("null", ocId.trim());
-
+        selenium.click("link=" + getSortFieldTestColumnName());
+        ocId = selenium.getTable("row.1.0");
+        assertNotEquals("null", ocId.trim());
+        
         clickAndWaitButton("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
@@ -291,5 +294,11 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         }
         
         RemoteServiceHelper.getOrganizationalContactCorrelationService().updateCorrelation(dto);
+    }
+
+    
+    @Override
+    protected String getSortFieldTestColumnName() {
+        return "Contact Type";
     }
 }

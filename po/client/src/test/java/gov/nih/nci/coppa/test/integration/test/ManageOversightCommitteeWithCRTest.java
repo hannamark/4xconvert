@@ -241,4 +241,9 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         dto.getTypeCode().setCode(TYPE_REB);
         RemoteServiceHelper.getOversightCommitteeCorrelationService().updateCorrelation(dto);
     }
+
+    @Override
+    protected String getSortFieldTestColumnName() {
+        return "Oversight Committee Type";
+    }
 }

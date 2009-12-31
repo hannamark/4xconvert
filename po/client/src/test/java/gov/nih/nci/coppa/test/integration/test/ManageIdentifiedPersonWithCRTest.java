@@ -166,7 +166,10 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully created!"));
         String ocId = selenium.getTable("row.1.0");
         assertNotEquals("null", ocId.trim());
-
+        selenium.click("link=" + getSortFieldTestColumnName());
+        ocId = selenium.getTable("row.1.0");
+        assertNotEquals("null", ocId.trim());
+        
         clickAndWaitButton("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
@@ -241,5 +244,10 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         }
         
         RemoteServiceHelper.getIdentifiedPersonCorrelationServiceRemote().updateCorrelation(dto);
+    }
+
+    @Override
+    protected String getSortFieldTestColumnName() {
+        return "Affiliated Organization Name";
     }
 }

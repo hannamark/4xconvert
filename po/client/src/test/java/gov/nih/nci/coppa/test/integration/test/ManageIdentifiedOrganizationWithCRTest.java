@@ -151,7 +151,10 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully created!"));
         String ioId = selenium.getTable("row.1.0");
         assertNotEquals("null", ioId.trim());
-
+        selenium.click("link=" + getSortFieldTestColumnName());
+        ioId = selenium.getTable("row.1.0");
+        assertNotEquals("null", ioId.trim());
+        
         clickAndWaitButton("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
@@ -212,5 +215,9 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         dto.setAssignedId(assignedIdentifier);
 
         RemoteServiceHelper.getIdentifiedOrganizationCorrelationServiceRemote().updateCorrelation(dto);
+    }
+    
+    protected String getSortFieldTestColumnName() {
+        return "Affiliated Organization Name";
     }
 }

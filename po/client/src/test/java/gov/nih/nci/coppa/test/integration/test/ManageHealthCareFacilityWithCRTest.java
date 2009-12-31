@@ -260,4 +260,9 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
 
         RemoteServiceHelper.getHealthCareFacilityCorrelationService().updateCorrelation(dto);
     }
+
+    @Override
+    protected String getSortFieldTestColumnName() {
+        return "Health Care Facility Name";
+    }
 }
