@@ -1,16 +1,10 @@
 package gov.nih.nci.coppa.services.grid.dto.transform.iso;
 
 import gov.nih.nci.coppa.iso.Ed;
-import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.apache.commons.beanutils.BeanUtils;
 import org.iso._21090.ED;
-import org.iso._21090.TEL;
-import org.iso._21090.TELUrl;
 
 /**
  * Transforms strings.
@@ -41,20 +35,10 @@ public final class EDTransformer extends AbstractTransformer<ED, Ed>
         } else {
             x.setNullFlavor(NullFlavorTransformer.INSTANCE.toXml(input.getNullFlavor()));
         }
-        x.setCharset(input.getCharset());
         if (input.getCompression() != null) {
             x.setCompression(org.iso._21090.Compression.valueOf(input.getCompression().name()));
         }
-        x.setMediaType(input.getMediaType());
-        x.setXml(input.getXml());
         x.setData(input.getData());
-        x.setIntegrityCheck(input.getIntegrityCheck());
-        if (input.getIntegrityCheckAlgorithm() != null) {
-            x.setIntegrityCheckAlgorithm(
-                    org.iso._21090.IntegrityCheckAlgorithm.fromValue(input.getIntegrityCheckAlgorithm().name()));
-        }
-        x.setReference(TELTransformer.INSTANCE.toXml(input.getReference()));
-        x.setThumbnail(this.toXml(input.getThumbnail()));
         return x;
     }
 
@@ -73,46 +57,12 @@ public final class EDTransformer extends AbstractTransformer<ED, Ed>
             d.setNullFlavor(NullFlavorTransformer.INSTANCE.toDto(input.getNullFlavor()));
         }
 
-        d.setCharset(input.getCharset());
         if (input.getCompression() != null) {
             d.setCompression(gov.nih.nci.coppa.iso.Compression.valueOf(input.getCompression().name()));
         }
-        d.setMediaType(input.getMediaType());
-        if (input.getXml() != null) {
-            d.setXml(input.getXml().toString());
-        }
         d.setData(input.getData());
 
-        d.setIntegrityCheck(input.getIntegrityCheck());
-        if (input.getIntegrityCheckAlgorithm() != null) {
-            d.setIntegrityCheckAlgorithm(
-                    gov.nih.nci.coppa.iso.IntegrityCheckAlgorithm.valueOf(input.getIntegrityCheckAlgorithm().value()));
-        }
-
-        // Work-around until PO-995 is resolved
-        // should just be TelUrl t = (TelUrl) TELTransformer.INSTANCE.toDto(input.getReference());
-        TelUrl t = workAroundPO995(input);
-        d.setReference(t);
-        d.setThumbnail(this.toDto(input.getThumbnail()));
-
         return d;
-    }
-
-    private TelUrl workAroundPO995(ED input) throws DtoTransformException {
-        TelUrl t = null;
-        TEL reference = input.getReference();
-        if (reference != null) {
-            TELUrl convertedRef = new TELUrl();
-            try {
-                BeanUtils.copyProperties(convertedRef, reference);
-            } catch (IllegalAccessException e) {
-                throw new DtoTransformException(e);
-            } catch (InvocationTargetException e) {
-                throw new DtoTransformException(e);
-            }
-            t = (TelUrl) TELTransformer.INSTANCE.toDto(convertedRef);
-        }
-        return t;
     }
 
     /**

@@ -36,11 +36,6 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
         x.setValue(VALUE_DATE);
         EDText edText = new EDText();
         ED ed = new EDTransformerTest().makeXmlSimple();
-        edText.setCharset(ed.getCharset());
-        edText.setData(ed.getData());
-        edText.setMediaType(ed.getMediaType());
-        edText.setReference(ed.getReference());
-        edText.setXml(ed.getXml());
         edText.setValue(ed.getValue());
         edText.setNullFlavor(ed.getNullFlavor());
         x.setOriginalText(edText);
@@ -62,11 +57,6 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
             x.setValue(sdf.parse(VALUE_DATE));
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
-            edText.setCharset(ed.getCharset());
-            edText.setData(ed.getData());
-            edText.setMediaType(ed.getMediaType());
-            edText.setReference(ed.getReference());
-            edText.setXml(ed.getXml());
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             x.setOriginalText(edText);
@@ -93,16 +83,10 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
             ED ed = new EDTransformerTest().makeXmlSimple();
             assertEquals(ed.getValue(), x.getOriginalText().getValue());
             assertEquals(ed.getNullFlavor(), x.getOriginalText().getNullFlavor());
-            assertEquals(ed.getCharset(), x.getOriginalText().getCharset());
-            assertTrue(Arrays.equals(ed.getData(), x.getOriginalText().getData()));
-            assertEquals(ed.getMediaType(), x.getOriginalText().getMediaType());
-            assertEquals(ed.getReference().getValue(), x.getOriginalText().getReference().getValue());
-            assertEquals(ed.getXml(), x.getOriginalText().getXml());
 
             number1 = sdf.parse(VALUE_DATE);
             number2 = sdf.parse(((TS) x.getUncertainty()).getValue());
             assertEquals(number1.getTime(), number2.getTime());
-
 
             assertNotNull(x.getUncertainty());
             assertEquals(org.iso._21090.UncertaintyType.B, x.getUncertaintyType());
@@ -119,11 +103,6 @@ public class TSTransformerTest extends AbstractTransformerTestBase<TSTransformer
             assertEquals(sdf.parse(VALUE_DATE).getTime(), x.getValue().getTime());
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
-            edText.setCharset(ed.getCharset());
-            edText.setData(ed.getData());
-            edText.setMediaType(ed.getMediaType());
-            edText.setReference(ed.getReference());
-            edText.setXml(ed.getXml());
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             assertEquals(edText, x.getOriginalText());

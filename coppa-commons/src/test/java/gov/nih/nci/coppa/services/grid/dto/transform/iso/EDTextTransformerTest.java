@@ -29,11 +29,6 @@ public class EDTextTransformerTest extends AbstractTransformerTestBase<EDTextTra
     public EDText makeXmlSimple() {
         ED x = new EDTransformerTest().makeXmlSimple();
         EDText edText = new EDText();
-        edText.setCharset(x.getCharset());
-        edText.setData(x.getData());
-        edText.setMediaType(x.getMediaType());
-        edText.setReference(x.getReference());
-        edText.setXml(x.getXml());
         edText.setValue(x.getValue());
         edText.setNullFlavor(x.getNullFlavor());
         return edText;
@@ -43,11 +38,6 @@ public class EDTextTransformerTest extends AbstractTransformerTestBase<EDTextTra
     public EdText makeDtoSimple() {
         Ed x = new EDTransformerTest().makeDtoSimple();
         EdText edText = new EdText();
-        edText.setCharset(x.getCharset());
-        edText.setData(x.getData());
-        edText.setMediaType(x.getMediaType());
-        edText.setReference(x.getReference());
-        edText.setXml(x.getXml());
         edText.setValue(x.getValue());
         edText.setNullFlavor(x.getNullFlavor());
         return edText;
@@ -55,26 +45,12 @@ public class EDTextTransformerTest extends AbstractTransformerTestBase<EDTextTra
 
     @Override
     public void verifyXmlSimple(EDText x) {
-        assertEquals(EDTransformerTest.CHAR_SET, x.getCharset());
-        assertTrue(Arrays.equals(EDTransformerTest.DATA_BYTES, x.getData()));
-        assertEquals(EDTransformerTest.MEDIA_TYPE, x.getMediaType());
-        assertEquals(EDTransformerTest.URL, x.getReference().getValue());
         assertEquals(EDTransformerTest.VALUE, x.getValue());
-        assertEquals(EDTransformerTest.XML, x.getXml());
     }
 
     @Override
     public void verifyDtoSimple(EdText x) {
-        assertEquals(EDTransformerTest.CHAR_SET, x.getCharset());
-        assertTrue(Arrays.equals(EDTransformerTest.DATA_BYTES, x.getData()));
-        assertEquals(EDTransformerTest.MEDIA_TYPE, x.getMediaType());
-        try {
-            assertEquals(new URI(EDTransformerTest.URL), x.getReference().getValue());
-        } catch (URISyntaxException u) {
-            throw new RuntimeException(u);
-        }
         assertEquals(EDTransformerTest.VALUE, x.getValue());
-        assertEquals(EDTransformerTest.XML, x.getXml());
     }
 
     public EDText makeXmlNullFlavored() {
@@ -105,27 +81,9 @@ public class EDTextTransformerTest extends AbstractTransformerTestBase<EDTextTra
     }
 
     @Test(expected = IllegalArgumentException.class )
-    public void testIntegrityCheck() {
+    public void testData() {
         EdText edText = new EdText();
-        edText.setIntegrityCheck(new byte[]{0, 1, 0, 1, 0, 1});
+        edText.setData(new byte[1]);
     }
-
-    @Test(expected = IllegalArgumentException.class )
-    public void testIntegrityCheckAlgorithm() {
-        EdText edText = new EdText();
-        edText.setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm.SHA1);
-    }
-
-    @Test(expected = IllegalArgumentException.class )
-    public void testMediaType() {
-        EdText edText = new EdText();
-        edText.setMediaType("not correct type");
-    }
-
-    @Test(expected = IllegalArgumentException.class )
-    public void testThumbnail() {
-        EdText edText = new EdText();
-        edText.setThumbnail(new EDTransformerTest().makeDtoSimple());
-    }
-
+    
 }

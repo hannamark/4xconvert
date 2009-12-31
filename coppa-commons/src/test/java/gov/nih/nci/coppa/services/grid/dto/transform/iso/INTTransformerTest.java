@@ -33,11 +33,6 @@ public class INTTransformerTest extends AbstractTransformerTestBase<INTTransform
             x.setValue(VALUE);
             EDText edText = new EDText();
             ED ed = new EDTransformerTest().makeXmlSimple();
-            edText.setCharset(ed.getCharset());
-            edText.setData(ed.getData());
-            edText.setMediaType(ed.getMediaType());
-            edText.setReference(ed.getReference());
-            edText.setXml(ed.getXml());
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             x.setOriginalText(edText);
@@ -56,11 +51,6 @@ public class INTTransformerTest extends AbstractTransformerTestBase<INTTransform
             x.setValue(VALUE);
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
-            edText.setCharset(ed.getCharset());
-            edText.setData(ed.getData());
-            edText.setMediaType(ed.getMediaType());
-            edText.setReference(ed.getReference());
-            edText.setXml(ed.getXml());
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             x.setOriginalText(edText);
@@ -79,12 +69,6 @@ public class INTTransformerTest extends AbstractTransformerTestBase<INTTransform
             ED ed = new EDTransformerTest().makeXmlSimple();
             assertEquals(ed.getValue(), x.getOriginalText().getValue());
             assertEquals(ed.getNullFlavor(), x.getOriginalText().getNullFlavor());
-            assertEquals(ed.getCharset(), x.getOriginalText().getCharset());
-            assertTrue(Arrays.equals(ed.getData(), x.getOriginalText().getData()));
-            assertEquals(ed.getMediaType(), x.getOriginalText().getMediaType());
-            assertEquals(ed.getReference().getValue(), x.getOriginalText().getReference().getValue());
-            assertEquals(ed.getXml(), x.getOriginalText().getXml());
-
             assertEquals(UNCERT, ((INT) x.getUncertainty()).getValue());
             assertNotNull(x.getUncertainty());
             assertEquals(org.iso._21090.UncertaintyType.B, x.getUncertaintyType());
@@ -95,11 +79,6 @@ public class INTTransformerTest extends AbstractTransformerTestBase<INTTransform
             assertEquals(VALUE, x.getValue());
             EdText edText = new EdText();
             Ed ed = new EDTransformerTest().makeDtoSimple();
-            edText.setCharset(ed.getCharset());
-            edText.setData(ed.getData());
-            edText.setMediaType(ed.getMediaType());
-            edText.setReference(ed.getReference());
-            edText.setXml(ed.getXml());
             edText.setValue(ed.getValue());
             edText.setNullFlavor(ed.getNullFlavor());
             assertEquals(edText, x.getOriginalText());

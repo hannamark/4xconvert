@@ -51,11 +51,7 @@ public final class EDTextTransformer extends AbstractTransformer<EDText, EdText>
         }
         EdText x = new EdText();
         Ed ed = EDTransformer.INSTANCE.toDto(input);
-        x.setCharset(ed.getCharset());
         x.setData(ed.getData());
-        x.setMediaType(ed.getMediaType());
-        x.setReference(ed.getReference());
-        x.setXml(ed.getXml());
         x.setValue(ed.getValue());
         x.setNullFlavor(ed.getNullFlavor());
         return x;
