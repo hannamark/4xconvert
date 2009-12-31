@@ -1,13 +1,23 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <po:errorMessages />
+<c:choose>
+    <c:when test="${usOrCanadaFormat}">
+        <c:set var="divUsOrCanadaFormatDisplayStyle" value="display:block"/>
+        <c:set var="divNoFormatDisplayStyle" value="display:none"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="divUsOrCanadaFormatDisplayStyle" value="display:none"/>
+        <c:set var="divNoFormatDisplayStyle" value="display:block"/>
+    </c:otherwise>
+</c:choose>
 
-<div id="no_format_phone" style="display:none"> 
+<div id="no_format_phone" style="${divNoFormatDisplayStyle}">
 <ul>
 <s:iterator value="contactable.phone" status="e">
         <c:url var="removeAction" value="../../contactable/phone/remove.action">
             <c:param name="phoneEntry.value" value="${value}"/>
             <c:param name="rootKey" value="${rootKey}"/>
-            <c:param name="usOrCanadaFormat" value="false"/> 
+            <c:param name="usOrCanadaFormat" value="false"/>
         </c:url>
         <li id="phone-entry-${e.index}">
             ${value}
@@ -20,7 +30,7 @@
 <c:if test="${not readonly}">
     <c:url var="addAction" value="../../contactable/phone/add.action">
         <c:param name="rootKey" value="${rootKey}"/>
-        <c:param name="usOrCanadaFormat" value="false"/> 
+        <c:param name="usOrCanadaFormat" value="false"/>
     </c:url>
     <li>
         <s:textfield key="phoneEntry.value" onkeypress="return submitDivOnReturn(event, 'phone-add');">
@@ -33,13 +43,13 @@
 </ul>
 </div>
 
-<div id="us_format_phone" style="display:none">
+<div id="us_format_phone" style="${divUsOrCanadaFormatDisplayStyle}">
 <ul>
     <s:iterator value="contactable.phone" status="e">
         <c:url var="removeAction" value="../../contactable/phone/remove.action">
             <c:param name="phoneEntry.value" value="${value}"/>
             <c:param name="rootKey" value="${rootKey}"/>
-            <c:param name="usOrCanadaFormat" value="true"/> 
+            <c:param name="usOrCanadaFormat" value="true"/>
         </c:url>
         <li id="phone-entry-${e.index}">
             ${value}
@@ -52,7 +62,7 @@
 <c:if test="${not readonly}">
     <c:url var="addAction" value="../../contactable/phone/add.action">
         <c:param name="rootKey" value="${rootKey}"/>
-        <c:param name="usOrCanadaFormat" value="true"/> 
+        <c:param name="usOrCanadaFormat" value="true"/>
     </c:url>
     <li>
         <s:hidden id="phoneEntry_value" name="phoneEntry.value" value=""/>
@@ -64,7 +74,7 @@
                 &nbsp;-&nbsp;
             </po:inputRowElement>
             <po:inputRowElement>
-                <s:textfield id="phoneEntry_part2" size="3" maxlength="3" onkeyup="autotab(this, $('phoneEntry_part3'));"/> 
+                <s:textfield id="phoneEntry_part2" size="3" maxlength="3" onkeyup="autotab(this, $('phoneEntry_part3'));"/>
             </po:inputRowElement>
              <po:inputRowElement>
                 &nbsp;-&nbsp;
@@ -83,20 +93,8 @@
 	            </s:textfield>
             </po:inputRowElement>
         </po:inputRow>
-        
+
     </li>
 </c:if>
 </ul>
 </div>
-
-<script type="text/javascript">
-<!--
-if (${create || usOrCanadaFormat}) {
-    $('no_format_phone').hide();
-    $('us_format_phone').show();
-} else {
-    $('no_format_phone').show();
-    $('us_format_phone').hide();
-}
--->
-</script>

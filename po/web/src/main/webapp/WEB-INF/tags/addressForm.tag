@@ -36,8 +36,7 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v) {
             field: stateFieldElem
             }
     });
-    countryElem = ''+ formNameBase + addressKeyBase + '.country';
-    switchContactNumberFormats(countryElem);
+    switchContactNumberFormats('${formNameBase}.${addressKeyBase}.country');
 }
 
 --></script>
@@ -57,7 +56,7 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v) {
     cssClass="%{cssClass}" required="%{#attr.required}"
     headerKey="" headerValue="--Select a Country--"
     value="#attr.address.country.id"
-    onchange="loadStateProvince('%{#attr.formNameBase}' , '%{#attr.addressKeyBase}' , this.value);"
+    onchange="loadStateProvince('%{#attr.formNameBase}' , '%{#attr.addressKeyBase}' , this.value); "
     id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
 </s:select>
 <s:textfield name="%{#attr.addressKeyBase + '.streetAddressLine'}"

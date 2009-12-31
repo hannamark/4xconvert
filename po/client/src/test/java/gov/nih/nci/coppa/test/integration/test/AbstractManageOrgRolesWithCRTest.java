@@ -400,4 +400,10 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         this.orgRoleSearchResultsRowNumber = orgRoleSearchResultsRowNumber;
     }
 
+    /**
+     * @param organizationStatus the organizationStatus to set
+     */
+    public void setOrganizationStatus(String organizationStatus) {
+        this.organizationStatus = organizationStatus;
+    }
 }

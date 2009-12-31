@@ -1,13 +1,23 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <po:errorMessages />
+<c:choose>
+    <c:when test="${usOrCanadaFormat}">
+        <c:set var="divUsOrCanadaFormatDisplayStyle" value="display:block"/>
+        <c:set var="divNoFormatDisplayStyle" value="display:none"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="divUsOrCanadaFormatDisplayStyle" value="display:none"/>
+        <c:set var="divNoFormatDisplayStyle" value="display:block"/>
+    </c:otherwise>
+</c:choose>
 
-<div id="no_format_tty" style="display:none"> 
+<div id="no_format_tty" style="${divNoFormatDisplayStyle}">
 <ul>
 <s:iterator value="contactable.tty" status="e">
         <c:url var="removeAction" value="../../contactable/tty/remove.action">
             <c:param name="ttyEntry.value" value="${value}"/>
             <c:param name="rootKey" value="${rootKey}"/>
-            <c:param name="usOrCanadaFormat" value="false"/> 
+            <c:param name="usOrCanadaFormat" value="false"/>
         </c:url>
         <li id="tty-entry-${e.index}">
             ${value}
@@ -20,7 +30,7 @@
 <c:if test="${not readonly}">
     <c:url var="addAction" value="../../contactable/tty/add.action">
         <c:param name="rootKey" value="${rootKey}"/>
-        <c:param name="usOrCanadaFormat" value="false"/> 
+        <c:param name="usOrCanadaFormat" value="false"/>
     </c:url>
     <li>
         <s:textfield key="ttyEntry.value" onkeypress="return submitDivOnReturn(event, 'tty-add');">
@@ -33,13 +43,13 @@
 </ul>
 </div>
 
-<div id="us_format_tty" style="display:none">
+<div id="us_format_tty" style="${divUsOrCanadaFormatDisplayStyle}">
 <ul>
     <s:iterator value="contactable.tty" status="e">
         <c:url var="removeAction" value="../../contactable/tty/remove.action">
             <c:param name="ttyEntry.value" value="${value}"/>
             <c:param name="rootKey" value="${rootKey}"/>
-            <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>  
+            <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
         </c:url>
         <li id="tty-entry-${e.index}">
             ${value}
@@ -52,7 +62,7 @@
 <c:if test="${not readonly}">
     <c:url var="addAction" value="../../contactable/tty/add.action">
         <c:param name="rootKey" value="${rootKey}"/>
-        <c:param name="usOrCanadaFormat" value="true"/> 
+        <c:param name="usOrCanadaFormat" value="true"/>
     </c:url>
     <li>
         <s:hidden id="ttyEntry_value" name="ttyEntry.value" value=""/>
@@ -64,7 +74,7 @@
                 &nbsp;-&nbsp;
             </po:inputRowElement>
             <po:inputRowElement>
-                <s:textfield id="ttyEntry_part2" size="3" maxlength="3" onkeyup="autotab(this, $('ttyEntry_part3'));"/> 
+                <s:textfield id="ttyEntry_part2" size="3" maxlength="3" onkeyup="autotab(this, $('ttyEntry_part3'));"/>
             </po:inputRowElement>
              <po:inputRowElement>
                 &nbsp;-&nbsp;
@@ -83,20 +93,8 @@
                 </s:textfield>
             </po:inputRowElement>
         </po:inputRow>
-        
+
     </li>
 </c:if>
 </ul>
 </div>
-
-<script type="text/javascript">
-<!--
-if (${create || usOrCanadaFormat}) {
-    $('no_format_tty').hide();
-    $('us_format_tty').show();
-} else {
-    $('no_format_tty').show();
-    $('us_format_tty').hide();
-}
--->
-</script>
