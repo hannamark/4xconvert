@@ -101,13 +101,13 @@
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>iso-datatypes</artifactId>
-            <version>1.2.6-SNAPSHOT</version>
+            <version>1.2.6</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>coppa-commons</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.6</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
