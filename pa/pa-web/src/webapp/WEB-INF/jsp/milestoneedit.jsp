@@ -33,6 +33,22 @@
         document.milestoneForm.action="milestone.action";
         document.milestoneForm.submit();
     }
+    function hideCol(col){          
+        col.style.display = 'none'; 
+    }
+    function showCol(col){
+        col.style.display = '';
+    }
+    function statusChange() {
+    	var selectedMilestone = document.forms["milestoneForm"].elements["milestone.milestone"].value;
+    	if(selectedMilestone == "Late Rejection Date") {
+    		hideCol(document.getElementById('milestoneComments'));
+    		showCol(document.getElementById('latemilestoneComments'));
+    	} else {
+    		hideCol(document.getElementById('latemilestoneComments'));
+    		showCol(document.getElementById('milestoneComments'));
+    	}
+    }
 </script>
 </head>
 <body>
@@ -61,11 +77,13 @@
                         <c:choose>
                         <c:when test="${(sessionScope.role == 'SuAbstractor') && (sessionScope.trialSummary.submissionTypeCode == 'O')}">
                             <s:set name="milestoneValues" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNamesMilestoneForSuperUser()" />
-                            <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues"/>
+                            <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues"
+                            onchange="statusChange()" onfocus="statusChange()"/>
                          </c:when>
                          <c:otherwise>
                           <s:set name="milestoneValues" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNamesForAddMilestone()" />
-                            <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues"/>
+                            <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues" 
+                            onchange="statusChange()" onfocus="statusChange()"/>
                           </c:otherwise>
                           </c:choose>
                       </td>
@@ -79,7 +97,9 @@
                       </td> 
                   </tr>
                   <tr>
-                      <td class="label"><s:label><fmt:message key="milestone.comment"/></s:label></td>
+                      <td class="label" id="milestoneComments"><s:label><fmt:message key="milestone.comment"/></s:label></td>
+                      <td class="label" id="latemilestoneComments"><s:label>Late Rejection <fmt:message key="milestone.comment"/></s:label><span class="required">*</span></td>
+
                       <td class="value">
                           <s:textarea name="milestone.comment" rows="3" cssStyle="width:280px;float:left"/>
                       </td>
