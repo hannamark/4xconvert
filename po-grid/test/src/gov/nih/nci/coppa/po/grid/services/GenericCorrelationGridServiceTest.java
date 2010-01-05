@@ -118,6 +118,7 @@ public class GenericCorrelationGridServiceTest {
         
         @Override
         protected CorrelationService<OrganizationalContactDTO> getService() {
+            super.getService();
             return new InvokeCorrelationServiceStub<OrganizationalContactDTO>(OrganizationalContactDTO.class);
         }
         
@@ -128,26 +129,66 @@ public class GenericCorrelationGridServiceTest {
         ModifiedForUseWithStub<OrganizationalContactDTO,OrganizationalContact> impl 
         = new ModifiedForUseWithStub<OrganizationalContactDTO, OrganizationalContact>(OrganizationalContact.class, OrganizationalContactDTO.class);
         
+        try {
+            impl.create(null);
+        } catch (Exception e) {
+            //NOOP
+        }
         Id ocId = impl.create(new OrganizationalContactTransformerTest().makeXmlSimple());
         
+        try {
+            impl.getById(null);
+        } catch (Exception e) {
+            //NOOP
+        }
         OrganizationalContact xml = impl.getById(ocId);
         new OrganizationalContactTransformerTest().verifyXmlSimple(xml);
         
+        try {
+            impl.getByIds(null);
+        } catch (Exception e) {
+            //NOOP
+        }
         OrganizationalContact[] ocObjs = impl.getByIds(new Id[] {ocId});
         verifyXmlObjs(ocObjs);
         
+        try {
+            impl.getByPlayerIds(null);
+        } catch (Exception e) {
+            //NOOP
+        }
         ocObjs = impl.getByPlayerIds(new Id[] {ocId});
         verifyXmlObjs(ocObjs);
         
+        try {
+            impl.search(null);
+        } catch (Exception e) {
+            //NOOP
+        }
         ocObjs = impl.search(xml);
         verifyXmlObjs(ocObjs);
        
+        try {
+            impl.update(null);
+        } catch (Exception e) {
+            //NOOP
+        }
         impl.update(xml);
         assertTrue(InvokeCorrelationServiceStub.update_flag);
         
+        try {
+            impl.updateStatus(null, new Cd());
+        } catch (Exception e) {
+            //NOOP
+        }
         impl.updateStatus(ocId, new Cd());
         assertTrue(InvokeCorrelationServiceStub.update_status_flag);
         
+        try {
+            impl.validate(null);
+        } catch (Exception e) {
+            //NOOP
+        }
         StringMap sm = impl.validate(xml);
         assertNotNull(sm);
         assertNotNull(sm.getEntry());

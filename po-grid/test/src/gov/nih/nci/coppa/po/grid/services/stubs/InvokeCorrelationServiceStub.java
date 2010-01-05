@@ -84,7 +84,6 @@ package gov.nih.nci.coppa.po.grid.services.stubs;
 
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationalContactTransformerTest;
 import gov.nih.nci.coppa.po.grid.remote.InvokeCorrelationService;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -93,7 +92,6 @@ import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
-import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -126,6 +124,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
     @Override
     public Ii createCorrelation(DTO dto) throws EntityValidationException {
         try {
+            if (dto == null) {
+                throw new Exception("test for exception throwing.");
+            }
             Ii result = new Ii();
             result.setRoot(ORG_CONTACT_ROOT_VALUE);
             result.setIdentifierName(ORG_CONTACT_IDENT_VALUE);
@@ -142,6 +143,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
     @Override
     public DTO getCorrelation(Ii id) throws NullifiedRoleException {
         try {
+            if (id == null) {
+                throw new Exception("test for exception throwing.");
+            }
             DTO result = (DTO) new OrganizationalContactTransformerTest().makeDtoSimple();
             return result;
         }  catch (Exception e) {
@@ -155,6 +159,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
     @Override
     public List<DTO> getCorrelations(Ii[] ids) throws NullifiedRoleException {
         try {
+            if (ids == null) {
+                throw new Exception("test for exception throwing.");
+            }
             List<DTO> results = new ArrayList<DTO>();
             results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
             results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
@@ -171,6 +178,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
     @Override
     public List<DTO> getCorrelationsByPlayerIds(Ii[] pids) throws NullifiedRoleException {
         try {
+            if (pids == null) {
+                throw new Exception("test for exception throwing.");
+            }
             List<DTO> results = new ArrayList<DTO>();
             results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
             results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
@@ -187,6 +197,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
     @Override
     public List<DTO> search(DTO dto) {
         try {
+            if (dto == null) {
+                throw new Exception("test for exception throwing.");
+            }
             List<DTO> results = new ArrayList<DTO>();
             results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
             results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
@@ -201,6 +214,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
      */
     @Override
     public void updateCorrelation(DTO proposedState) throws EntityValidationException {
+        if (proposedState == null) {
+            throw new EntityValidationException(null);
+        }
         update_flag = true;
     }
 
@@ -209,6 +225,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
      */
     @Override
     public void updateCorrelationStatus(Ii target, Cd status) throws EntityValidationException {
+        if (target == null) {
+            throw new EntityValidationException(null);
+        }
         update_status_flag = true;
     }
 
@@ -218,6 +237,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
     @Override
     public Map<String, String[]> validate(DTO dto) {
         try {
+            if (dto == null) {
+                throw new Exception("test for exception throwing.");
+            }
             Map<String, String[]> results = new HashMap<String, String[]>();
             results.put("id", new String[] {"this", "is","an", "array"});
             return results;
@@ -233,6 +255,9 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
     @Override
     public List<DTO> search(DTO dto, LimitOffset page) throws TooManyResultsException {
         try {
+            if (dto == null) {
+                throw new Exception("test for exception throwing.");
+            }
             List<DTO> results = new ArrayList<DTO>();
             results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
             results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
