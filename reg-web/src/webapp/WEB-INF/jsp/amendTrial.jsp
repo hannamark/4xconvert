@@ -52,23 +52,23 @@ function setpersid(persIdentifier, sname,email,phone){
 }
 //
 function lookup4loadleadorg(){
-    showPopWin('${lookupOrgUrl}', 900, 400, loadLeadOrgDiv, 'Select Lead Organization');
+	showPopup('${lookupOrgUrl}', loadLeadOrgDiv, 'Select Lead Organization');
 }
 function lookup4loadleadpers(){
-    showPopWin('${lookupPersUrl}', 900, 400, loadLeadPersDiv, 'Select Principal Investigator');
+	showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
 }
 function lookup4sponsor(){
-    showPopWin('${lookupOrgUrl}', 900, 400, loadSponsorDiv, 'Select Sponsor');
+	showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
 } 
 function lookup4loadresponsibleparty(){	
-	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible Party Contact');
+	showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid,  createOrgContactDiv, 'Select Responsible Party Contact');
 }
 function lookup4loadresponsiblepartygenericcontact(){ 
 	var orgid = document.getElementById('trialDTO.sponsorIdentifier').value;
-    showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+	showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
 function lookup4loadSummary4Sponsor(){
-    showPopWin('${lookupOrgUrl}', 900, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+	showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
 }
 //
 function loadLeadOrgDiv() {	

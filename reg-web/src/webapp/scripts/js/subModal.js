@@ -137,7 +137,6 @@ function showPopWin(url, width, height, returnFunc, title) {
         window.setTimeout("setPopTitle();", 600);
     }
 }
-
 //
 var gi = 0;
 function centerPopWin(width, height) {
@@ -306,4 +305,33 @@ function displaySelectBoxes() {
 			}
 		}
 	}
+}
+function showPopup(url, returnFunc, title) {
+	showPopWin(url, calculateMaxPopupWidth(), calculateMaxPopupHeight(), returnFunc, title);
+}
+
+function calculateMaxPopupWidth() {
+	var fullWidth = getViewportWidth();
+	var width = ((fullWidth / 1.5) > 895) ? width = (fullWidth / 1.5): width = 895; 
+	return width;
+}
+
+function calculateMaxPopupHeight() {
+	var fullHeight = getViewportHeight();
+	var height = ((fullHeight / 1.25) > 560) ? height = (fullHeight / 1.25): height = 560;
+	return height;
+}
+function getViewportHeight() {
+	if (window.innerHeight!=window.undefined) return window.innerHeight;
+	if (document.compatMode=='CSS1Compat') return document.documentElement.clientHeight;
+	if (document.body) return document.body.clientHeight; 
+
+	return window.undefined; 
+}
+function getViewportWidth() {
+	var offset = 17;
+	var width = null;
+	if (window.innerWidth!=window.undefined) return window.innerWidth; 
+	if (document.compatMode=='CSS1Compat') return document.documentElement.clientWidth; 
+	if (document.body) return document.body.clientWidth; 
 }

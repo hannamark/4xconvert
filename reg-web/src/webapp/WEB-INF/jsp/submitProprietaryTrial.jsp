@@ -44,16 +44,16 @@ function setpersid(persIdentifier, sname,email,phone){
 
 //
 function lookup4loadleadorg(){
-    showPopWin('${lookupOrgUrl}', 900, 400, loadLeadOrgDiv, 'Select Lead Organization');
+	showPopup('${lookupOrgUrl}', loadLeadOrgDiv, 'Select Lead Organization');
 }
 function lookup4loadSiteOrg () {
-	showPopWin('${lookupOrgUrl}', 900, 400, loadSiteOrgDiv, 'Select Site Organization');
+	showPopup('${lookupOrgUrl}', loadSiteOrgDiv, 'Select Site Organization');
 }
 function lookup4loadSitePerson(){
-    showPopWin('${lookupPersUrl}', 900, 500, loadLeadPersDiv, 'Select Site Principal Investigator');
+	showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Site Principal Investigator');
 }
 function lookup4loadSummary4Sponsor(){
-    showPopWin('${lookupOrgUrl}', 900, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+	showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
 }
 //
 function loadLeadOrgDiv() { 
