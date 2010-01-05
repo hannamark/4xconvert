@@ -141,7 +141,12 @@ public class InvokeCorrelationService<DTO extends PoDto> implements CorrelationS
         }
     }
 
-    private ServiceLocator getLocator() throws Exception {
+    /**
+     * Finds the service locator.
+     * @return a service locator
+     * @throws Exception if the locator can't be created or found.
+     */
+    protected ServiceLocator getLocator() throws Exception {
         return GridSecurityJNDIServiceLocator.newInstance();
     }
 

@@ -338,6 +338,7 @@
         <cobertura-instrument todir="${build.dir}/intrumented" datafile="${basedir}/build/cobertura.ser">
             <fileset dir="${build.dest}">
                 <include name="**/dto/**/*.class" />
+                <include name="**/InvokeCorrelationService.class" />
                 <exclude name="**/*Test.class" />
             </fileset>
         </cobertura-instrument>
