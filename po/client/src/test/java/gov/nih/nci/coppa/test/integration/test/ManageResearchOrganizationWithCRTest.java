@@ -169,12 +169,12 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         // copy over new type code
         selenium.click("copy_curateCrForm_role_typeCode");
         waitForElementById("curateRoleForm_role_typeCode", 5);
+        waitForElementById("curateRoleForm.role._selectFundingMechanism", 5);
         assertEquals("6", selenium.getValue("curateRoleForm_role_typeCode").trim());
         
         // copy over new funding Mechanism
         selenium.click("copy_curateCrForm_role_fundingMechanism");
-        waitForElementById("curateRoleForm.role._selectFundingMechanism", 5);
-        assertEquals("307", selenium.getValue("curateRoleForm.role._selectFundingMechanism").trim());
+        assertEquals("307", selenium.getValue("id=curateRoleForm.role._selectFundingMechanism"));
         
         clickAndWaitButton("save_button");
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully updated!".trim()));

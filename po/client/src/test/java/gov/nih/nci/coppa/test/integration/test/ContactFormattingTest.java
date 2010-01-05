@@ -115,7 +115,7 @@ public class ContactFormattingTest extends AbstractPoWebTest {
         }
 
         String countryLocatorId = "curateEntityForm." + entityType.name() + ".postalAddress.country";
-        Thread.sleep(100);
+        pause(100);
         checkPhoneFaxTtyFormats("phone", countryLocatorId);
         checkPhoneFaxTtyFormats("fax", countryLocatorId);
         checkPhoneFaxTtyFormats("tty", countryLocatorId);
@@ -138,7 +138,7 @@ public class ContactFormattingTest extends AbstractPoWebTest {
         openAndWait(urlAccessPersonOrOrgScreen);
 
         String countryLocatorId = "curateEntityForm." + entityType.name() + ".postalAddress.country";
-        Thread.sleep(100);
+        pause(100);
         checkPhoneFaxTtyFormats("phone", countryLocatorId);
         checkPhoneFaxTtyFormats("fax", countryLocatorId);
         checkPhoneFaxTtyFormats("tty", countryLocatorId);
@@ -164,7 +164,7 @@ public class ContactFormattingTest extends AbstractPoWebTest {
         waitForTelecomFormsToLoad();
 
         // By default, US/Canada formatting is off.
-        Thread.sleep(100);
+        pause(100);
         checkPhoneFaxTtyFormats("phone", false);
         checkPhoneFaxTtyFormats("fax", false);
         checkPhoneFaxTtyFormats("tty", false);
@@ -172,7 +172,7 @@ public class ContactFormattingTest extends AbstractPoWebTest {
         // add us address. should display us/canada format.
         addPostalAddressUsingPopup("Address One", "suite xyz", "phoenix", "AZ", "67890", "United States", 1);
         selenium.selectFrame("relative=parent");
-        Thread.sleep(100);
+        pause(100);
         checkPhoneFaxTtyFormats("phone", true);
         checkPhoneFaxTtyFormats("fax", true);
         checkPhoneFaxTtyFormats("tty", true);
@@ -180,7 +180,7 @@ public class ContactFormattingTest extends AbstractPoWebTest {
         // add non-us/canada address. should display non-US formatted phone/fax/tty.
         addPostalAddressUsingPopup("Non US Address", "suite xyz", "City One", "State One", "67890", "Thailand", 1);
         selenium.selectFrame("relative=parent");
-        Thread.sleep(100);
+        pause(100);
         checkPhoneFaxTtyFormats("phone", false);
         checkPhoneFaxTtyFormats("fax", false);
         checkPhoneFaxTtyFormats("tty", false);
@@ -216,11 +216,11 @@ public class ContactFormattingTest extends AbstractPoWebTest {
 
     private void selectCountry(String countryLocatorId, String countryLabelText) throws InterruptedException {
         selenium.select(countryLocatorId, countryLabelText);
-        Thread.sleep(100);
+        pause(100);
     }
 
     private void checkDivVisibility(String visibleDivId, String invisibleDivId) throws InterruptedException {
-        Thread.sleep(100);
+        pause(1000);
         assertTrue(selenium.isVisible(visibleDivId));
         assertFalse(selenium.isVisible(invisibleDivId));
     }
