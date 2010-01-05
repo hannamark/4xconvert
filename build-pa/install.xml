@@ -1208,7 +1208,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:clean:jboss,
         install:init,
         install:jboss:binaries,
-        install:jboss:accrual-ear:re-configure,
         install:jboss:accrual-ear,
         install:jboss:pa-ear:re-configure,
         install:jboss:pa-ear,
@@ -1280,30 +1279,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             appxml="${temp.dir}/pa-ear/META-INF/application.xml"
             />
     </target>
-
-    <!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
-    <target name="install:jboss:accrual-ear:re-configure" unless="exclude.accrual-ear">
-        <mkdir dir="${temp.dir}/accrual-ear"/>
-        <delete dir="${temp.dir}/accrual-ear"/>
-        <mkdir dir="${temp.dir}/accrual-ear"/>
-        <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
-
-        <delete file="${temp.dir}/accrual-ear/META-INF/security-config.xml"/>
-        <copy todir="${temp.dir}/accrual-ear/META-INF" filtering="true">
-            <fileset dir="${jboss-conf.dir.dest}">
-                <include name="security-config.xml"/>
-            </fileset>
-            <filterset refid="filterset.pre"/>
-        </copy>
-
-        <move file="${pa-ear.dir.dist}/${accrual-ear.ear.file}" tofile="${pa-ear.dir.dist}/${accrual-ear.ear.file}.orig"/>
-
-        <ear destfile="${pa-ear.dir.dist}/${accrual-ear.ear.file}"
-            basedir="${temp.dir}/accrual-ear"
-            compress="false"
-            appxml="${temp.dir}/accrual-ear/META-INF/application.xml"
-            />
-    </target>
+    
     <target name="install:jboss:pa-grid-legacy:pre-configure" unless="exclude.pa-grid-legacy">
         <mkdir dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
         <delete dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
@@ -1351,7 +1327,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         depends="
         upgrade-ncm:jboss,
         install:jboss:accrual-ear,
-        install:jboss:accrual-ear:re-configure,
         install:jboss:pa-ear:re-configure,
         install:jboss:pa-ear,
         install:jboss:pa-ear:configure,
