@@ -38,7 +38,11 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     private Class<XML> xmlType;
     private Class<DTO> dtoType;
 
-    private CorrelationService<DTO> getService() {
+    /**
+     * Return a new InvokeCorrelationService based on DTO passed in.
+     * @return InvokeCorrelationService.
+     */
+    protected CorrelationService<DTO> getService() {
         if (service == null) {
             service = new InvokeCorrelationService<DTO>(getDTOType());
         }
