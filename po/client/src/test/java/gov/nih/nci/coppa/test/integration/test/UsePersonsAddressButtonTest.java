@@ -93,7 +93,7 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
 
         selenium.click("link=Manage Organizational Contact(s)");
         waitForPageToLoad();
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         addPostalAddress(getAddress());
         waitForTelecomFormsToLoad();
         inputContactInfoForUSAndCan("abc@example.com", new String[]{"123","456","7890"},
@@ -113,12 +113,12 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
 
         waitForElementById("url-remove-0", 5);
         assertEquals("http://www.example.com | Remove", selenium.getText("url-entry-0"));
-        clickAndWaitButton("return_to_button");
-        clickAndWaitButton("return_to_button");
+        clickAndWait("return_to_button");
+        clickAndWait("return_to_button");
 
         selenium.click("link=Manage Health Care Provider(s)");
         waitForPageToLoad();
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
       //add postal addresses
         addPostalAddressUsingPopup("456 jik", "suite xyz", "bogota", "n/a", "67890", "Colombia", 1);
         waitForTelecomFormsToLoad();
@@ -138,23 +138,23 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
 
         waitForElementById("url-remove-0", 5);
         assertEquals("http://www.example.com | Remove", selenium.getText("id=url-entry-0"));
-        clickAndWaitButton("return_to_button");
-        clickAndWaitButton("return_to_button");
+        clickAndWait("return_to_button");
+        clickAndWait("return_to_button");
 
         selenium.click("link=Manage Clinical Research Staff(s)");
         waitForPageToLoad();
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         addPostalAddress(getAddress());
-        clickAndWaitButton("return_to_button");
-        clickAndWaitButton("return_to_button");
+        clickAndWait("return_to_button");
+        clickAndWait("return_to_button");
     }
 
     private void addPostalAddress(Address address) {
         waitForElementById("add_address", 5);
-        clickAndWaitButton("add_address");
+        clickAndWait("add_address");
 
         selenium.selectFrame("popupFrame");
-        clickAndWaitButton("copy_parent_postalAddress");
+        clickAndWait("copy_parent_postalAddress");
         /* wait for results to load */
         selenium.selectFrame("relative=parent");
         waitForElementById("postalAddress0", 30);

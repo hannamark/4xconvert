@@ -176,15 +176,14 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void clickAndWaitSaveButton() {
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
     }
 
-    protected void clickAndWaitButton(String buttonId) {
-        clickAndWait("//a[@id='" + buttonId + "']/span/span");
-    }
-
-    protected void clickAnchor(String anchorId) {
-        selenium.click("//a[@id='" + anchorId + "']");
+    protected void clickAndWaitAnchor(String anchorId) {
+        selenium.click("id=" + anchorId);
+        //This pause is to allow for any js associated with an anchor to complete execution
+        //before moving on.
+        pause(500);
     }
 
     protected void openCreateOrganization() {
@@ -491,7 +490,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void inputAddressInfoPopup(Address address) {
-        clickAndWaitButton("add_address");
+        clickAndWait("add_address");
         selenium.selectFrame("popupFrame");
         selenium.select("postalAddressForm.address.country", "label=" + address.getCountry());
         waitForElementById("address.stateOrProvince", 10);
@@ -500,7 +499,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.type("postalAddressForm_address_cityOrMunicipality", address.getCityOrMunicipality());
         selenium.select("address.stateOrProvince", "value=" + address.getStateOrProvince());
         selenium.type("postalAddressForm_address_postalCode", address.getPostalCode());
-        clickAndWaitButton("submitPostalAddressForm");
+        clickAndWait("submitPostalAddressForm");
         selenium.selectFrame("relative=up");
     }
 
@@ -619,7 +618,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void selectOrganizationScoper(String orgId, String orgName) {
-        clickAndWaitButton("select_scoper");
+        clickAndWait("select_scoper");
         selenium.selectFrame("popupFrame");
         selenium.type("duplicateOrganizationForm_criteria_organization_id", orgId);
         /* search for dups */
@@ -627,7 +626,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         /* wait for results to load */
         waitForElementById("mark_as_dup_" + orgId, 10);
         /* select record to use at duplicate */
-        clickAndWaitButton("mark_as_dup_" + orgId);
+        clickAndWait("mark_as_dup_" + orgId);
         selenium.selectFrame("relative=parent");
         assertEquals(orgName + " (" + orgId + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
     }
@@ -644,10 +643,11 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
             String countryName, int totalNumberOfAddressesAfterAdd) {
                 assertTrue(totalNumberOfAddressesAfterAdd > 0);
                 waitForElementById("add_address", 10);
-                clickAndWaitButton("add_address");
+                clickAndWait("add_address");
                 selenium.selectFrame("popupFrame");
                 selenium.select("postalAddressForm.address.country", "label="+countryName);
                 //might need to wait for //div[@id=address.div_stateOrProvince] to reload
+                pause(5000);
                 waitForElementById("address.stateOrProvince", 10);
 
                 selenium.type("postalAddressForm_address_streetAddressLine", street1);
@@ -655,7 +655,6 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 selenium.type("postalAddressForm_address_cityOrMunicipality", city);
                 if (selenium.isElementPresent("css=input[name=address.stateOrProvince]")){
                     selenium.type("address.stateOrProvince", stateCode);
-
                 } else if (selenium.isElementPresent("css=select[name=address.stateOrProvince]")) {
                     selenium.select("address.stateOrProvince", "value="+stateCode);
                 } else {
@@ -672,7 +671,6 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 selenium.isTextPresent(stateCode);
                 selenium.isTextPresent(zip);
                 selenium.isTextPresent(countryName);
-
             }
 
     public enum ENTITYTYPE {

@@ -108,7 +108,7 @@ public class SelectOrganizationTest extends OrganizationWebTest {
 
         //input search results
         selenium.type("duplicateOrganizationForm_criteria_organization_id", poId);
-        clickAndWaitButton("submitDuplicateOrganizationForm");
+        clickAndWait("submitDuplicateOrganizationForm");
         //wait for div to load
         waitForElementById("mark_as_dup_" + poId, 5);
 

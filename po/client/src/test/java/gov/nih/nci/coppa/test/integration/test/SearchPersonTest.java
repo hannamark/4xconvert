@@ -111,7 +111,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
 
     private void nothingSelectedTest() {
         clear();
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         assertTrue("At least one criterion message is missing", selenium.isTextPresent("At least one criterion must be provided"));
         assertTrue("Nothing found message is missing", selenium.isTextPresent("Nothing found to display"));
         assertTrue("No items found message is missing", selenium.isTextPresent("No items found"));
@@ -119,21 +119,21 @@ public class SearchPersonTest extends AbstractPoWebTest {
 
     private void noRowsReturnedTest() {
         selenium.type("searchPersonForm_criteria_org", "jf yfnfufigkmi");
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         assertTrue(selenium.isTextPresent("Nothing found to display"));
         assertTrue(selenium.isTextPresent("No items found"));
     }
 
     private void searchByEmail() {
         selenium.type("searchPersonForm_criteria_email", email);
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         verify();
     }
 
     private void searchByName() {
         selenium.type("searchPersonForm_criteria_firstName", firstName);
         selenium.type("searchPersonForm_criteria_lastName", lastName);
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         verify();
     }
 

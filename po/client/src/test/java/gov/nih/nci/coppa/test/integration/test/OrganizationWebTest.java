@@ -115,7 +115,7 @@ public class OrganizationWebTest extends AbstractPoWebTest {
 
     protected void searchByName(boolean clear) {
         selenium.type("searchOrganizationForm_criteria_organization_name", orgName);
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         verify(clear);
     }
 

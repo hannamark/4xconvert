@@ -110,7 +110,7 @@ public class SearchOrganizationTest extends OrganizationWebTest {
 
     private void nothingSelectedTest() {
         clear();
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         assertTrue("At least one criterion message is missing", selenium.isTextPresent("At least one criterion must be provided"));
         assertTrue("Nothing found message is missing", selenium.isTextPresent("Nothing found to display"));
         assertTrue("No items found message is missing", selenium.isTextPresent("No items found"));
@@ -118,7 +118,7 @@ public class SearchOrganizationTest extends OrganizationWebTest {
 
     private void noRowsReturnedTest() {
         selenium.type("searchOrganizationForm_criteria_organization_postalAddress_streetAddressLine", "jf yfnfufigkmi");
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         assertTrue("Nothing found message is missing", selenium.isTextPresent("Nothing found to display"));
         assertTrue("No items found message is missing", selenium.isTextPresent("No items found"));
     }
@@ -126,7 +126,7 @@ public class SearchOrganizationTest extends OrganizationWebTest {
     private void searchByPoId() {
         selenium.type("searchOrganizationForm_criteria_organization_id", poId);
         selenium.select("searchOrganizationForm_criteria_organization_statusCode", "label=PENDING");
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         verify();
     }
 
@@ -137,7 +137,7 @@ public class SearchOrganizationTest extends OrganizationWebTest {
         selenium.type("criteria.organization.postalAddress.stateOrProvince", "GA");
         selenium.type("searchOrganizationForm_criteria_organization_postalAddress_postalCode", "30345");
         selenium.select("searchOrganizationForm.criteria.organization.postalAddress.country", "label=United States");
-        clickAndWaitButton("submitSearchOrganizationForm");
+        clickAndWait("submitSearchOrganizationForm");
         verify();
     }
 

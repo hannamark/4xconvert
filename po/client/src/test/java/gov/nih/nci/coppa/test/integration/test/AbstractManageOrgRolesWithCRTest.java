@@ -163,7 +163,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     }
 
     protected void removePostalAddress() {
-        clickAnchor("address-remove-0");
+        clickAndWaitAnchor("address-remove-0");
         waitForElementById("add_address", 10);
     }
 
@@ -245,7 +245,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         checkForNonUSFormattedTel(type);
         inputNonUSFormatTel(value[0] + "-" + value[1] + "-" + value[2], type);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
-        clickAnchor(anchorRemoveId);
+        clickAndWaitAnchor(anchorRemoveId);
         removePostalAddress();
 
         // Add a US postal address, check tel format, also check Tel entry/removal.
@@ -253,32 +253,28 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         checkForUSFormattedTel(type);
         inputForTel(value, type);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
-        clickAnchor(anchorRemoveId);
+        clickAndWaitAnchor(anchorRemoveId);
         removePostalAddress();
     }
 
     private void checkEmailOrUrl(String anchorAddId, String blankValueErrorMsg, String inputId, String invalidValue, 
             String incorrectFormatMsg, String validValue, String entryId, String anchorRemoveId) throws Exception {
-        clickAnchor(anchorAddId);
-        waitForElementById(anchorAddId, 20);
-
-        // a hack. The statement following this try/catch always fails the first time test is run for both email/url.
-        // It's probably a timing issue. Pausing for a while resolves the issue.
-        pause(1000);
+        clickAndWaitAnchor(anchorAddId);
         assertTrue(selenium.isTextPresent(blankValueErrorMsg));
+       
         selenium.type(inputId, invalidValue);
-        clickAnchor(anchorAddId);
-        pause(1000);
+        clickAndWaitAnchor(anchorAddId);
+        
         assertTrue(selenium.isTextPresent(incorrectFormatMsg));
         selenium.type(inputId, validValue);
-        clickAnchor(anchorAddId);
-        waitForElementById(anchorAddId, 20);
+        clickAndWaitAnchor(anchorAddId);
         assertEquals(validValue + " | Remove", selenium.getText("id=" + entryId));
-        clickAnchor(anchorRemoveId);
+        
+        clickAndWaitAnchor(anchorRemoveId);
     }
 
     protected void saveOrganizationalRole() {
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:" + orgRoleCreateMessage));
         if (StringUtils.isNotEmpty(orgRoleName)) { // Some org roles do not have a name - eg: oversight committee.
             assertTrue(selenium.isTextPresent("exact:" + orgRoleName));
@@ -292,15 +288,15 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         assertNotEquals("null", getOrganizationalRoleId());
         assertNotNull(getOrganizationalRoleId());
 
-        clickAndWaitButton("return_to_button");
+        clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:Organization was successfully curated!"));
     }
 
     protected void updateOrganizationalRole() {
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:" + orgRoleUpdateMessage));
         if (StringUtils.isNotEmpty(orgRoleName)) { // Some org roles do not have a name - eg: oversight committee.
             assertTrue(selenium.isTextPresent("exact:" + orgRoleName + " Updated"));
@@ -337,10 +333,12 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     protected void copyCRInfo(String crValueId, String expectedValue, String entryId) {
         // Copy the value over.
         selenium.click(crValueId);
+        pause(1000);
         assertEquals(expectedValue + " | Remove", selenium.getText("id=" + entryId));
 
         // Copy value over a second time, ensure error message is present.
         selenium.click(crValueId);
+        pause(1000);
         assertTrue(selenium.isTextPresent("exact:Already added"));
     }
 

@@ -133,7 +133,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         // Goto Manage IP Page
         accessManageIdentifiedPersonScreen();
         // add IP
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         assertTrue(selenium.isTextPresent("Other Person Identifier Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
@@ -161,7 +161,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         selenium.type("curateRoleForm.role.assignedIdentifier.identifierName", "identifierNameValue");
         selenium.select("curateRoleForm.role.assignedIdentifier.scope", "label=BUSN");
      
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully created!"));
         String ocId = selenium.getTable("row.1.0");
@@ -170,16 +170,16 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         ocId = selenium.getTable("row.1.0");
         assertNotEquals("null", ocId.trim());
         
-        clickAndWaitButton("return_to_button");
+        clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         
         updateRemoteOcOrg(ocId.trim(), activeNewOrgId);
 
         // Goto Manage IP Page.... should see CR
         openAndWait("/po-web/protected/roles/person/IdentifiedPerson/start.action?person=" + personIdExt);
-        clickAndWaitButton("edit_identifiedPerson_id_" + ocId.trim());
+        clickAndWait("edit_identifiedPerson_id_" + ocId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Other Person Identifier - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
@@ -216,7 +216,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assertEquals("VER", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
         assertEquals("UNV", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
         
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully updated!".trim()));
     }
 

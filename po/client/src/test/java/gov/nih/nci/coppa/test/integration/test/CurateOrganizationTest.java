@@ -150,7 +150,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         openEntityInboxOrganization();
 
         // click on item to curate
-        clickAndWaitButton("org_id_" + id.getExtension());
+        clickAndWait("org_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
@@ -189,7 +189,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         openEntityInboxOrganization();
 
         // click on item to curate
-        clickAndWaitButton("org_id_" + id.getExtension());
+        clickAndWait("org_id_" + id.getExtension());
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
         verifyPostalAddress(ENTITYTYPE.organization);
@@ -230,7 +230,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         /* wait for in-browser js to execute via select's onchange event */
         pause(1000);
         selenium.isVisible("//div[@id='duplicateOfDiv']");
-        clickAndWaitButton("select_duplicate");
+        clickAndWait("select_duplicate");
         selenium.selectFrame("popupFrame");
         selenium.type("duplicateOrganizationForm_criteria_organization_id", dupId.getExtension());
 
@@ -239,7 +239,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         /* wait for results to load */
         waitForElementById("mark_as_dup_" + dupId.getExtension(), 30);
         /* select record to use at duplicate */
-        clickAndWaitButton("mark_as_dup_" + dupId.getExtension());
+        clickAndWait("mark_as_dup_" + dupId.getExtension());
 
         selenium.selectFrame("relative=parent");
 

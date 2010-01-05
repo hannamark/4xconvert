@@ -130,13 +130,13 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         // Goto Manage HCP Page
         accessManageHealthCareProviderScreen();
         // add HCP
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         assertTrue(selenium.isTextPresent("Health Care Provider Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
         selenium.type("curateRoleForm.role.certificateLicenseText", "CR Original");
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         // assert validation messages
         assertEquals("ACTIVE", selenium.getSelectedLabel("curateRoleForm.role.status"));
         // assertTrue(selenium.isTextPresent("exact:Affiliated Organization ID must be set"));
@@ -145,7 +145,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
 
         // select a ACTIVE Scoper
         selectOrganizationScoper(activeOrgId.trim(), AFFILIATE_ORG_FOR_PERSON);
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
         assertFalse(selenium.isTextPresent("exact:Role status not compatible with associated entity's status."));
         assertFalse(selenium.isTextPresent("exact:Affiliated Organization ID must be set."));
@@ -157,7 +157,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         inputContactInfoForUSAndCan("abc@example.com", new String[] {"123", "456", "7890"}, new String[] {"234", "567",
                 "8901"}, new String[] {"345", "678", "9012"}, "http://www.example.com");
         // save HCP
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully created!"));
         String hcpId = selenium.getTable("row.1.0");
         assertNotEquals("null", hcpId.trim());
@@ -165,17 +165,17 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         hcpId = selenium.getTable("row.1.0");
         assertNotEquals("null", hcpId.trim());
 
-        clickAndWaitButton("return_to_button");
+        clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         // assertTrue(selenium.isTextPresent("exact:Person was successfully curated!"));
 
         updateRemoteHcpOrg(hcpId.trim());
 
         // Goto Manage HCP Page.... should see CR
         openAndWait("/po-web/protected/roles/person/HealthCareProvider/start.action?person=" + personIdExt);
-        clickAndWaitButton("edit_healthCareProvider_id_" + hcpId.trim());
+        clickAndWait("edit_healthCareProvider_id_" + hcpId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Health Care Provider - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
@@ -237,7 +237,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertEquals("http://www.cr.com | Remove",
         selenium.getText("id=url-entry-1"));
          
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully updated!".trim()));
     }
 

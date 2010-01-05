@@ -115,7 +115,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         // Goto Manage RO Page
         accessManageResearchOrganizationScreen();
         // add RO
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         assertTrue(selenium.isTextPresent("Research Organization Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
@@ -134,7 +134,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         waitForTelecomFormsToLoad();
         addContactInformation();
         
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully created!"));
         String roId = selenium.getTable("row.1.0");
@@ -143,16 +143,16 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         roId = selenium.getTable("row.1.0");
         assertNotEquals("null", roId.trim());
 
-        clickAndWaitButton("return_to_button");
+        clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         
         updateRemoteRoOrg(roId.trim());
 
         // Goto Manage RO Page.... should see CR
         openAndWait("/po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + activeOrgId);
-        clickAndWaitButton("edit_researchOrganization_id_" + roId.trim());
+        clickAndWait("edit_researchOrganization_id_" + roId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Research Organization - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
@@ -176,7 +176,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         selenium.click("copy_curateCrForm_role_fundingMechanism");
         assertEquals("307", selenium.getValue("id=curateRoleForm.role._selectFundingMechanism"));
         
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully updated!".trim()));
     }
     

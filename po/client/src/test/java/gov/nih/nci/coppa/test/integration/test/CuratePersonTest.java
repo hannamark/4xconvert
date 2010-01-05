@@ -134,7 +134,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         openEntityInboxPerson();
 
         // click on item to curate
-        clickAndWaitButton("person_id_" + id.getExtension());
+        clickAndWait("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
@@ -174,7 +174,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         openEntityInboxPerson();
 
         // click on item to curate
-        clickAndWaitButton("person_id_" + id.getExtension());
+        clickAndWait("person_id_" + id.getExtension());
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
 
@@ -216,7 +216,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         /* wait for in-browser js to execute via select's onchange event */
         pause(1000);
         selenium.isVisible("//div[@id='duplicateOfDiv']");
-        clickAndWaitButton("select_duplicate");
+        clickAndWait("select_duplicate");
         selenium.selectFrame("popupFrame");
         selenium.type("duplicatePersonForm_criteria_email", DEFAULT_EMAIL);
 
@@ -225,7 +225,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         /* wait for results to load */
         waitForElementById("mark_as_dup_" + dupId.getExtension(), 30);
         /* select record to use as duplicate */
-        clickAndWaitButton("mark_as_dup_" + dupId.getExtension());
+        clickAndWait("mark_as_dup_" + dupId.getExtension());
 
         selenium.selectFrame("relative=parent");
 

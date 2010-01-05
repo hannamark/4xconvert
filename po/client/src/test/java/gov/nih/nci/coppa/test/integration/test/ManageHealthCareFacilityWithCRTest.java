@@ -155,7 +155,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         // Go to the Manage HCF Screen
         accessOrgRoleScreen();
 
-        clickAnchor("edit_healthCareFacility_id_" + getOrganizationalRoleId());
+        clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
         // check Status
         checkStatus();
 
@@ -175,11 +175,11 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
 
     private void removeAddressAndContactInformationFromRole() {
         removePostalAddress();
-        clickAnchor("email-remove-0");
-        clickAnchor("url-remove-0");
-        clickAnchor("phone-remove-0");
-        clickAnchor("fax-remove-0");
-        clickAnchor("tty-remove-0");
+        clickAndWaitAnchor("email-remove-0");
+        clickAndWaitAnchor("url-remove-0");
+        clickAndWaitAnchor("phone-remove-0");
+        clickAndWaitAnchor("fax-remove-0");
+        clickAndWaitAnchor("tty-remove-0");
     }
 
     private void checkContactInformation() throws Exception {
@@ -197,7 +197,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         // Attempt to save with no status
         selenium.select("curateRoleForm.role.status", "label=--Select a Role Status--");
         pause(1000);
-        clickAndWaitButton("save_button");
+        clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("exact:Role Status must be set"));
     }
 
@@ -210,8 +210,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         // Go to the Manage HCF Screen
         accessOrgRoleScreen();
 
-        clickAnchor("edit_healthCareFacility_id_" + getOrganizationalRoleId());
-        waitForPageToLoad();
+        clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
         assertTrue(selenium.isTextPresent("exact:Edit Health Care Facility - Comparison"));
 
         // Check Status

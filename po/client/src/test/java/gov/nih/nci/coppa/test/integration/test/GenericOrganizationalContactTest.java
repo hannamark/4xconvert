@@ -90,7 +90,7 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
         loginAsCurator();
         createOrganization();
         clickAndWait("link=Manage Organizational Contact(s)");
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         waitForTelecomFormsToLoad();
         createGenericOrganizationalContact("PENDING", "", "--Select a Contact Type--", getAddress(), "gen@example.com",
                 "", "123-123-1234", null, "http://www.example.com/genoc", false);
@@ -109,7 +109,7 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title", "IRB", null, "",
                 "098-765-4321", "", null, "", true);
 
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         waitForTelecomFormsToLoad();
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title", "IRB", null, "gen@example.com",
                 "098-765-4321", "123-123-1234", null, "http://www.example.com/genoc", false);
@@ -118,7 +118,7 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
 
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title", "Site", null, "",
                 "", "", null, "", true);
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         waitForTelecomFormsToLoad();
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title", "Site", null, "",
                 "", "", null, "http://www.example.com/genoc", false);
@@ -128,7 +128,7 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title - New", "Site", null, "",
                 "098-765-4321", "", null, "", true);
 
-        clickAndWaitButton("add_button");
+        clickAndWait("add_button");
         waitForTelecomFormsToLoad();
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title - New", "Site", null, "gen@example.com",
                 "098-765-4321", "123-123-1234", null, "http://www.example.com/genoc", false);
