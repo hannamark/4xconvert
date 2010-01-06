@@ -163,7 +163,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     }
 
     protected void removePostalAddress() {
-        clickAndWaitAnchor("address-remove-0");
+        clickAndWaitAjax("address-remove-0");
         waitForElementById("add_address", 10);
     }
 
@@ -245,7 +245,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         checkForNonUSFormattedTel(type);
         inputNonUSFormatTel(value[0] + "-" + value[1] + "-" + value[2], type);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
-        clickAndWaitAnchor(anchorRemoveId);
+        clickAndWaitAjax(anchorRemoveId);
         removePostalAddress();
 
         // Add a US postal address, check tel format, also check Tel entry/removal.
@@ -253,28 +253,28 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         checkForUSFormattedTel(type);
         inputForTel(value, type);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
-        clickAndWaitAnchor(anchorRemoveId);
+        clickAndWaitAjax(anchorRemoveId);
         removePostalAddress();
     }
 
     private void checkEmailOrUrl(String anchorAddId, String blankValueErrorMsg, String inputId, String invalidValue, 
             String incorrectFormatMsg, String validValue, String entryId, String anchorRemoveId) throws Exception {
-        clickAndWaitAnchor(anchorAddId);
+        clickAndWaitAjax(anchorAddId);
         assertTrue(selenium.isTextPresent(blankValueErrorMsg));
        
         selenium.type(inputId, invalidValue);
-        clickAndWaitAnchor(anchorAddId);
+        clickAndWaitAjax(anchorAddId);
         
         assertTrue(selenium.isTextPresent(incorrectFormatMsg));
         selenium.type(inputId, validValue);
-        clickAndWaitAnchor(anchorAddId);
+        clickAndWaitAjax(anchorAddId);
         assertEquals(validValue + " | Remove", selenium.getText("id=" + entryId));
         
-        clickAndWaitAnchor(anchorRemoveId);
+        clickAndWaitAjax(anchorRemoveId);
     }
 
     protected void saveOrganizationalRole() {
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:" + orgRoleCreateMessage));
         if (StringUtils.isNotEmpty(orgRoleName)) { // Some org roles do not have a name - eg: oversight committee.
             assertTrue(selenium.isTextPresent("exact:" + orgRoleName));
@@ -291,12 +291,12 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Organization was successfully curated!"));
     }
 
     protected void updateOrganizationalRole() {
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:" + orgRoleUpdateMessage));
         if (StringUtils.isNotEmpty(orgRoleName)) { // Some org roles do not have a name - eg: oversight committee.
             assertTrue(selenium.isTextPresent("exact:" + orgRoleName + " Updated"));
@@ -305,7 +305,9 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     }
 
     protected void checkOrgRoleContactInfomation() {
-     // Check the address info.
+        //Pause to allow for section to load completely.
+        waitForElementById("postalAddresses.div", 5);
+        // Check the address info.
         assertEquals("Address One", selenium.getText("wwctrl_address.streetAddressLine1"));
         assertEquals("suite xyz", selenium.getText("wwctrl_address.deliveryAddressLine1"));
         assertEquals("phoenix", selenium.getText("wwctrl_address.cityOrMunicipality1"));

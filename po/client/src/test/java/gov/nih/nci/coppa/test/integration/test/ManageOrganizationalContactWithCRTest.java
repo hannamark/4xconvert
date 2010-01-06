@@ -124,7 +124,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         selenium.select("curateRoleForm.role.status", "label=ACTIVE"); 
         selenium.type("curateRoleForm_role_title", "original OC title");
         selenium.select("curateRoleForm.role.type", "label=IRB"); 
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
         
@@ -136,7 +136,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         waitForTelecomFormsToLoad();
         addContactInformation();
       
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully created!"));
         String ocId = selenium.getTable("row.1.0");
@@ -145,7 +145,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         updateRemoteOcOrg(ocId.trim(), null);
 
@@ -170,7 +170,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         waitForElementById("curateRoleForm.role.type", 5);
         assertEquals("500", selenium.getValue("curateRoleForm.role.type").trim());
         
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully updated!".trim()));
     }
     
@@ -223,7 +223,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         selenium.select("curateRoleForm.role.status", "label=ACTIVE"); 
      
         selenium.select("curateRoleForm.role.type", "label=IRB"); 
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
         //add Contact Information
@@ -233,7 +233,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         addUSPostalAddress();
         waitForTelecomFormsToLoad();
         addContactInformation();
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully created!"));
         String ocId = selenium.getTable("row.1.0");
@@ -245,7 +245,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         updateRemoteOcOrg(ocId.trim(), activeNewOrgId);
 
@@ -270,7 +270,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         waitForElementById("curateRoleForm.role.type", 5);
         assertEquals("500", selenium.getValue("curateRoleForm.role.type").trim());
         
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully updated!".trim()));
     }
 

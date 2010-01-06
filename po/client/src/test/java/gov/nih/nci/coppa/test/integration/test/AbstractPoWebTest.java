@@ -175,21 +175,9 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
     }
 
-    protected void clickAndWaitSaveButton() {
-        clickAndWait("save_button");
-    }
-
-    protected void clickAndWaitAnchor(String anchorId) {
-        selenium.click("id=" + anchorId);
-        //This pause is to allow for any js associated with an anchor to complete execution
-        //before moving on.
-        pause(500);
-    }
-
     protected void openCreateOrganization() {
         goHome();
-        selenium.click("CreateOrganization");
-        waitForPageToLoad();
+        clickAndWait("CreateOrganization");
         waitForTelecomFormsToLoad();
     }
 
@@ -215,8 +203,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
 
     protected void openCreatePerson() {
         goHome();
-        selenium.click("CreatePerson");
-        waitForPageToLoad();
+        clickAndWait("CreatePerson");
         waitForTelecomFormsToLoad();
     }
 

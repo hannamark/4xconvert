@@ -149,8 +149,7 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
         searchByName(false);
 
         // click on item to curate
-        clickAndWait("//a[@id='org_id_" + poId + "']/span/span");
-        waitForPageToLoad();
+        clickAndWait("org_id_" + poId);
         waitForTelecomFormsToLoad();
         assertEquals(orgName, selenium.getValue("curateEntityForm_organization_name"));
 

@@ -95,7 +95,6 @@ public class CreatePersonTest extends AbstractPoWebTest {
      * Verifies PO-618, PO-619 via UI
      */
     private void verifyDefaultValidationErrors() {
-
         clickAndWaitSaveButton();
         assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
         assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));

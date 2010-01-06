@@ -155,7 +155,7 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         openOrgRoleScreen(true);
         selenium.select("curateRoleForm_role_typeCode", TYPE_EC);
         selenium.select("curateRoleForm.role.status", ROLE_STATUS_ACTIVE);
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Role status not compatible with associated entity's status"));
         // Test the CR
         checkCR();
@@ -179,7 +179,7 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         // Attempt to save
         selenium.select("curateRoleForm_role_typeCode", "label=--Select a Type--");
         selenium.select("curateRoleForm.role.status", "label=--Select a Role Status--");
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Oversight Committee Type must be set"));
         assertTrue(selenium.isTextPresent("exact:Role Status must be set"));
     }
@@ -197,7 +197,7 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         openOrgRoleScreen(true);
         selenium.select("curateRoleForm_role_typeCode", oversightCommitteeType);
         selenium.select("curateRoleForm.role.status", roleStatus);
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Organization already has an Oversight Committee of this type"));
     }
 

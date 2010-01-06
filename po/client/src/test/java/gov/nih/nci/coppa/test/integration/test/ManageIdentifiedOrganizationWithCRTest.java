@@ -146,7 +146,7 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         selenium.type("curateRoleForm.role.assignedIdentifier.identifierName", "identifierNameValue");
         selenium.select("curateRoleForm.role.assignedIdentifier.scope", "label=BUSN");
 
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully created!"));
         String ioId = selenium.getTable("row.1.0");
@@ -158,7 +158,7 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         updateRemoteIoOrg(ioId.trim());
 
@@ -194,7 +194,7 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertEquals("newIdentifierNameValue", selenium.getValue("curateRoleForm.role.assignedIdentifier.identifierName").trim());
         assertEquals("VER", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
         assertEquals("UNV", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully updated!".trim()));
     }
 

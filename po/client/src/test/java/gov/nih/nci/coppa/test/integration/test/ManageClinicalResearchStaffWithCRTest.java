@@ -145,7 +145,7 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
 
         //verify validation messages
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertEquals("ACTIVE", selenium.getSelectedLabel("curateRoleForm.role.status"));
 
         assertTrue(selenium.isTextPresent("Affiliated Organization ID must be set"));
@@ -154,14 +154,14 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
 
         //select a PENDING Scoper
         selectOrganizationScoper(orgId.getExtension(), ORG_WITH_APOS);
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("Role status not compatible with associated entity's status."));
         assertTrue(selenium.isTextPresent("Phone number is required for this status."));
         assertFalse(selenium.isTextPresent("Affiliated Organization ID must be set"));
 
         //select a ACTIVE Scoper
         selectOrganizationScoper(affiliateOldOrgId, AFFILIATE_ORG_FOR_PERSON_CRS_OLD);
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("Phone number is required for this status."));
         assertFalse(selenium.isTextPresent("Role status not compatible with associated entity's status."));
         assertFalse(selenium.isTextPresent("Affiliated Organization ID must be set"));
@@ -175,7 +175,7 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         addContactInformation();
 
         //save CRS
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue("PO: Persons and Organizations - Manage Clinical Research Staff(s)".equals(selenium.getTitle()));
         assertTrue(selenium.isTextPresent("Clinical Research Staff was successfully created!"));
 
@@ -188,7 +188,7 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
 
         updateRemoteCrsOrg(ocId, affiliateNewOrgId);
 
@@ -207,7 +207,7 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         waitForElementById("wwctrl_curateRoleForm_role_scoper_id", 5);
         assertEquals(AFFILIATE_ORG_FOR_PERSON_CRS_NEW + " (" + affiliateNewOrgId.trim() + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id").trim());
 
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Clinical Research Staff was successfully updated!".trim()));
 
     }
@@ -252,11 +252,11 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         assertTrue(selenium.isTextPresent("Clinical Research Staff Role Information"));
         assertEquals("PENDING", selenium.getText("wwctrl_person.statusCode"));
 
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("Affiliated Organization ID must be set"));
 
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("Role status not compatible with associated entity's status."));
         selenium.select("curateRoleForm.role.status", "label=PENDING");
 
@@ -267,8 +267,7 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         selenium.selectFrame("relative=parent");
         waitForTelecomFormsToLoad();
         inputContactInfo("abc@example.com", "1234567890", "2345678901", "3456789012", "http://www.example.com");
-
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
     }
 
     public void createPersonWithClinicalResearchStaffTest() throws Exception {

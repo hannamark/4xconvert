@@ -134,7 +134,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         waitForTelecomFormsToLoad();
         addContactInformation();
         
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully created!"));
         String roId = selenium.getTable("row.1.0");
@@ -146,7 +146,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         updateRemoteRoOrg(roId.trim());
 
@@ -176,7 +176,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         selenium.click("copy_curateCrForm_role_fundingMechanism");
         assertEquals("307", selenium.getValue("id=curateRoleForm.role._selectFundingMechanism"));
         
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully updated!".trim()));
     }
     

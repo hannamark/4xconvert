@@ -261,7 +261,6 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         Ii orgId = createNewOrgWithCtepRoleThenCurateAsActive();
         openAndWait("po-web/protected/organization/curate/start.action?organization.id=" + orgId.getExtension());
 
-        waitForPageToLoad();
         waitForTelecomFormsToLoad();
 
         // method exits on certain page
@@ -290,8 +289,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         openEntityInboxOrganization();
 
         // click on item to curate
-        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
+        clickAndWait("org_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
@@ -316,8 +314,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         openEntityInboxOrganization();
 
         // click on item to curate
-        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
+        clickAndWait("org_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
@@ -341,8 +338,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         openEntityInboxOrganization();
 
         // click on item to curate
-        selenium.click("//a[@id='org_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
+        clickAndWait("org_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
 
         // method exits on certain page
@@ -353,8 +349,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
     private void openEntityInboxOrganization() {
         selenium.open("/po-web/protected/curate/search/listOrgs.action");
-        selenium.click("id=EntityInboxOrganization");
-        waitForPageToLoad();
+        clickAndWait("id=EntityInboxOrganization");
     }
 
     private void saveAsActive(Ii id) {

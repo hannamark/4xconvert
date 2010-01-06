@@ -175,11 +175,11 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
 
     private void removeAddressAndContactInformationFromRole() {
         removePostalAddress();
-        clickAndWaitAnchor("email-remove-0");
-        clickAndWaitAnchor("url-remove-0");
-        clickAndWaitAnchor("phone-remove-0");
-        clickAndWaitAnchor("fax-remove-0");
-        clickAndWaitAnchor("tty-remove-0");
+        clickAndWaitAjax("email-remove-0");
+        clickAndWaitAjax("url-remove-0");
+        clickAndWaitAjax("phone-remove-0");
+        clickAndWaitAjax("fax-remove-0");
+        clickAndWaitAjax("tty-remove-0");
     }
 
     private void checkContactInformation() throws Exception {
@@ -197,7 +197,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         // Attempt to save with no status
         selenium.select("curateRoleForm.role.status", "label=--Select a Role Status--");
         pause(1000);
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Role Status must be set"));
     }
 

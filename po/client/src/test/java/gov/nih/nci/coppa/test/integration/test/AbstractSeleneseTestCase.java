@@ -94,7 +94,6 @@ import com.thoughtworks.selenium.SeleneseTestCase;
  */
 public abstract class AbstractSeleneseTestCase extends SeleneseTestCase {
     private static final int PAGE_TIMEOUT_SECONDS = 180;
-
     private static final Logger LOG = Logger.getLogger(AbstractSeleneseTestCase.class);
 
     @Override
@@ -124,31 +123,31 @@ public abstract class AbstractSeleneseTestCase extends SeleneseTestCase {
         selenium.waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('"
                 + id + "');", toMillisecondsString(timeoutSeconds));
     }
-
-    protected void waitForElementByXPath(String xpathExpression, int timeoutSeconds) {
-        String cond = "var doc = selenium.browserbot.getCurrentWindow().document; "
-                + "doc.evaluate("
-                + toJSString(xpathExpression) + ", doc, null, XPathResult.BOOLEAN_TYPE, null).booleanValue;";
-        LOG.info(cond);
-        selenium.waitForCondition(cond, toMillisecondsString(timeoutSeconds));
-    }
-
-    protected static String toJSString(String str) {
-        if (str == null) { return "null"; }
-        StringBuffer sb = new StringBuffer().append('\'');
-        char[] cs = str.toCharArray();
-        for (char c : cs) {
-            if (c == '\'' || c == '\\') {
-                sb.append('\\');
-            }
-            sb.append(c);
-        }
-
-        return sb.append('\'').toString();
-    }
-
+    
+    /**
+     * Click and wait for a page to load.
+     * @param locator the locator of the element to click
+     */
     protected void clickAndWait(String locator) {
         selenium.click(locator);
         waitForPageToLoad();
+    }
+    
+    /**
+     * Click and pause to allow for ajax to complete 
+     * @param locator the locator of the element to click
+     */
+    protected void clickAndWaitAjax(String locator) {
+        selenium.click(locator);
+        //This pause is to allow for any js associated with an anchor to complete execution
+        //before moving on.
+        pause(500);
+    }
+    
+    /**
+     * Click the save button and wait for the resulting page to load.
+     */
+    protected void clickAndWaitSaveButton() {
+        clickAndWait("save_button");
     }
 }

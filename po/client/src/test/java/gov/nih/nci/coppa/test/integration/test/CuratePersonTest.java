@@ -262,8 +262,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         openEntityInboxPerson();
 
         // click on item to curate
-        selenium.click("//a[@id='person_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
+        clickAndWait("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
@@ -289,8 +288,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         openEntityInboxPerson();
 
         // click on item to curate
-        selenium.click("//a[@id='person_id_" + id.getExtension() + "']/span/span");
-        waitForPageToLoad();
+        clickAndWait("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
 
         // method exits on certain page
@@ -301,8 +299,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
 
     private void openEntityInboxPerson() {
         selenium.open("/po-web/protected/curate/search/listPersons.action");
-        selenium.click("id=EntityInboxPerson");
-        waitForPageToLoad();
+        clickAndWait("EntityInboxPerson");
     }
 
     private void saveAsInactive(Ii id) {

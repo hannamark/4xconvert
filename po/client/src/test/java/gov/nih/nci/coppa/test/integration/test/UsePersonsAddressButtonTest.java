@@ -90,9 +90,8 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
     public void testUsePersonsAddressButtonWorks() {
         openCreatePerson();
         createPerson();
-
-        selenium.click("link=Manage Organizational Contact(s)");
-        waitForPageToLoad();
+        
+        clickAndWait("link=Manage Organizational Contact(s)");
         clickAndWait("add_button");
         addPostalAddress(getAddress());
         waitForTelecomFormsToLoad();
@@ -116,10 +115,10 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
         clickAndWait("return_to_button");
         clickAndWait("return_to_button");
 
-        selenium.click("link=Manage Health Care Provider(s)");
-        waitForPageToLoad();
+        clickAndWait("link=Manage Health Care Provider(s)");
         clickAndWait("add_button");
-      //add postal addresses
+        
+        //add postal addresses
         addPostalAddressUsingPopup("456 jik", "suite xyz", "bogota", "n/a", "67890", "Colombia", 1);
         waitForTelecomFormsToLoad();
         inputContactInfo("abc@example.com", "1010 555 6666 7777", "1010 666 777 88888", "1010 777 888 9999", "http://www.example.com");
@@ -141,8 +140,7 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
         clickAndWait("return_to_button");
         clickAndWait("return_to_button");
 
-        selenium.click("link=Manage Clinical Research Staff(s)");
-        waitForPageToLoad();
+        clickAndWait("link=Manage Clinical Research Staff(s)");
         clickAndWait("add_button");
         addPostalAddress(getAddress());
         clickAndWait("return_to_button");

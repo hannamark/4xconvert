@@ -161,7 +161,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         selenium.type("curateRoleForm.role.assignedIdentifier.identifierName", "identifierNameValue");
         selenium.select("curateRoleForm.role.assignedIdentifier.scope", "label=BUSN");
      
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully created!"));
         String ocId = selenium.getTable("row.1.0");
@@ -173,7 +173,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         
         updateRemoteOcOrg(ocId.trim(), activeNewOrgId);
 
@@ -216,7 +216,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assertEquals("VER", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
         assertEquals("UNV", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
         
-        clickAndWait("save_button");
+        clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully updated!".trim()));
     }
 
