@@ -127,6 +127,7 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
 
     @Override
     public void addTest() throws Exception {
+        setParticipantIi(PARTICIPANT1);
         offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.ELEVEN));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         offTreatment.setId(new Ii());
@@ -136,6 +137,7 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
 
     @Override
     public void editTest() throws Exception { 
+        setParticipantIi(PARTICIPANT1);
         offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.EIGHT));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         offTreatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.OFFTREATMENTID));

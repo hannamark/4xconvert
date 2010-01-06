@@ -126,7 +126,7 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
- @SuppressWarnings({"unchecked", "PMD" })
+ @SuppressWarnings({"unchecked", "PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PerformedObservationResultBeanLocal
         extends AbstractBaseAccrualBean<PerformedObservationResultDto, PerformedObservationResult,
         PerformedObservationResultConverter> implements PerformedObservationResultService {
@@ -226,14 +226,20 @@ public class PerformedObservationResultBeanLocal
         PerformedHistopathologyDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedHistopathologyConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedHistopathologyConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedHistopathology) session.load(PerformedHistopathology.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
             PerformedHistopathology delta = PerformedHistopathologyConverter.convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -339,14 +345,20 @@ public class PerformedObservationResultBeanLocal
         PerformedImageDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedImageConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedImageConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedImage) session.load(PerformedImage.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
             PerformedImage delta = PerformedImageConverter.convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -453,14 +465,20 @@ public class PerformedObservationResultBeanLocal
         PerformedDiagnosisDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedDiagnosisConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedDiagnosisConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedDiagnosis) session.load(PerformedDiagnosis.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
             PerformedDiagnosis delta = PerformedDiagnosisConverter.convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -568,14 +586,20 @@ public class PerformedObservationResultBeanLocal
         PerformedClinicalResultDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedClinicalResultConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedClinicalResultConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedClinicalResult) session.load(PerformedClinicalResult.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
             PerformedClinicalResult delta = PerformedClinicalResultConverter.convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -683,8 +707,12 @@ public class PerformedObservationResultBeanLocal
         PerformedMedicalHistoryResultDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedMedicalHistoryResultConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedMedicalHistoryResultConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedMedicalHistoryResult) session.load(PerformedMedicalHistoryResult.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
@@ -692,6 +720,8 @@ public class PerformedObservationResultBeanLocal
             PerformedMedicalHistoryResult delta = PerformedMedicalHistoryResultConverter
             .convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -799,8 +829,12 @@ public class PerformedObservationResultBeanLocal
         PerformedLesionDescriptionDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedLesionDescriptionConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedLesionDescriptionConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedLesionDescription) session.load(PerformedLesionDescription.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
@@ -808,6 +842,8 @@ public class PerformedObservationResultBeanLocal
             PerformedLesionDescription delta = PerformedLesionDescriptionConverter
             .convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }

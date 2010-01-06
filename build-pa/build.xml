@@ -489,6 +489,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="outcomes.url" value="${outcomes.url}" />
             <property name="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
             <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrytped}"/>
+            <property name="po.username" value="${po.username}"/>
+            <property name="po.pass" value="${po.pass}"/>
             <target name="${accrual-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
         </ant>

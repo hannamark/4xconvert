@@ -38,6 +38,7 @@
 </h1>
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+    <accrual:sucessMessage /> 
 <s:form name="detailForm">
 <s:hidden name="offTreat.id"/>
 <table class="form">

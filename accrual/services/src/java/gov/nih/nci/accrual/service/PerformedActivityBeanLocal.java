@@ -128,7 +128,7 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(AccrualHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({"unchecked", "PMD" })
+@SuppressWarnings({"unchecked", "PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PerformedActivityBeanLocal extends
         AbstractBaseAccrualStudyBean<PerformedActivityDto, PerformedActivity, PerformedActivityConverter> implements
         PerformedActivityService {
@@ -267,14 +267,20 @@ public class PerformedActivityBeanLocal extends
         PerformedSubjectMilestoneDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedSubjectMilestoneConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedSubjectMilestoneConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedSubjectMilestone) session.load(PerformedSubjectMilestone.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
             PerformedSubjectMilestone delta = PerformedSubjectMilestoneConverter.convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -380,14 +386,20 @@ public class PerformedActivityBeanLocal extends
         PerformedImagingDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedImagingConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedImagingConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedImaging) session.load(PerformedImaging.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
             PerformedImaging delta = PerformedImagingConverter.convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -459,14 +471,20 @@ public class PerformedActivityBeanLocal extends
         PerformedObservationDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedObservationConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedObservationConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedObservation) session.load(PerformedObservation.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
             PerformedObservation delta = PerformedObservationConverter.convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -574,14 +592,20 @@ public class PerformedActivityBeanLocal extends
         PerformedProcedureDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedProcedureConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedProcedureConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedProcedure) session.load(PerformedProcedure.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
 
             PerformedProcedure delta = PerformedProcedureConverter.convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -689,8 +713,12 @@ public class PerformedActivityBeanLocal extends
         PerformedRadiationAdministrationDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedRadiationAdministrationConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedRadiationAdministrationConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedRadiationAdministration) session.load(PerformedRadiationAdministration.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
@@ -698,6 +726,8 @@ public class PerformedActivityBeanLocal extends
             PerformedRadiationAdministration delta = PerformedRadiationAdministrationConverter
             .convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }
@@ -805,8 +835,12 @@ public class PerformedActivityBeanLocal extends
         PerformedSubstanceAdministrationDto resultDto = null;
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
+        bo = PerformedSubstanceAdministrationConverter.convertFromDtoToDomain(dto);
+        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PerformedSubstanceAdministrationConverter.convertFromDtoToDomain(dto);
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
         } else {
             bo = (PerformedSubstanceAdministration) session.load(PerformedSubstanceAdministration.class,
                     IiConverter.convertToLong(dto.getIdentifier()));
@@ -814,6 +848,8 @@ public class PerformedActivityBeanLocal extends
             PerformedSubstanceAdministration delta = PerformedSubstanceAdministrationConverter
             .convertFromDtoToDomain(dto);
             bo = delta;
+            bo.setUserLastUpdated(
+                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             session.evict(bo);
         }

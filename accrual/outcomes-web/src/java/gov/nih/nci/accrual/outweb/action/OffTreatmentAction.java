@@ -169,7 +169,7 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
             addActionError("Error in OffTreatmentAction save().  " + e.getLocalizedMessage());
             return INPUT;
         }
-        return super.execute();
+        return super.save();
     }
 
     /**
