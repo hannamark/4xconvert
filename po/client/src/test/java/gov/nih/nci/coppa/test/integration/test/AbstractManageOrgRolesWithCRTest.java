@@ -102,7 +102,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     private String orgRoleSearchResultsMessage;
     private String orgRoleSearchResultsRowNumber = "row.1.0";
     private String organizationStatus;
-    
+
     protected abstract String getSortFieldTestColumnName();
 
     protected void createActiveOrganization() {
@@ -218,15 +218,15 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     }
 
     private void checkTelFormat(String type, Boolean usFormat) {
-        String xpathUSFormatDivStyle = "//div[@id = 'us_format_" + type + "']/@style";
-        String xpathNonUSFormatDivStyle = "//div[@id = 'no_format_" + type + "']/@style";
+        String usFormatDivId = "id=us_format_" + type;
+        String noFormatDivId = "id=no_format_" + type;
 
         if (usFormat) {
-            assertTrue(selenium.isElementPresent(xpathUSFormatDivStyle));
-            assertEquals("display: none;", selenium.getAttribute(xpathNonUSFormatDivStyle));
+            assertTrue(selenium.isVisible(usFormatDivId));
+            assertFalse(selenium.isVisible(noFormatDivId));
         } else {
-            assertTrue(selenium.isElementPresent(xpathNonUSFormatDivStyle));
-            assertEquals("display: none;", selenium.getAttribute(xpathUSFormatDivStyle));
+            assertFalse(selenium.isVisible(usFormatDivId));
+            assertTrue(selenium.isVisible(noFormatDivId));
         }
     }
 
@@ -257,19 +257,19 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         removePostalAddress();
     }
 
-    private void checkEmailOrUrl(String anchorAddId, String blankValueErrorMsg, String inputId, String invalidValue, 
+    private void checkEmailOrUrl(String anchorAddId, String blankValueErrorMsg, String inputId, String invalidValue,
             String incorrectFormatMsg, String validValue, String entryId, String anchorRemoveId) throws Exception {
         clickAndWaitAjax(anchorAddId);
         assertTrue(selenium.isTextPresent(blankValueErrorMsg));
-       
+
         selenium.type(inputId, invalidValue);
         clickAndWaitAjax(anchorAddId);
-        
+
         assertTrue(selenium.isTextPresent(incorrectFormatMsg));
         selenium.type(inputId, validValue);
         clickAndWaitAjax(anchorAddId);
         assertEquals(validValue + " | Remove", selenium.getText("id=" + entryId));
-        
+
         clickAndWaitAjax(anchorRemoveId);
     }
 
