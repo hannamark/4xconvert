@@ -5,7 +5,6 @@
             <activeByDefault>true</activeByDefault>
         </activation>
         <properties>
-            <jboss.home>/Applications/jboss-4.0.5.GA</jboss.home>
             <!--maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug-->
         </properties>
     </profile>
@@ -23,12 +22,10 @@
             <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
             <jdbc.username>poadmin</jdbc.username>
             <jdbc.password>poadmin123</jdbc.password>
-            <jboss.home>/Applications/jboss-4.0.5.GA</jboss.home>
             <jboss.configuration>poear</jboss.configuration>
             <jboss.port>29480</jboss.port>
             <jboss.naming.port>21499</jboss.naming.port>
             <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug>
-            <selenium-maven-plugin.version>1.0</selenium-maven-plugin.version>
         </properties>
     </profile>
     <profile>
@@ -43,7 +40,6 @@
             <!-- maven.test.skip>true</maven.test.skip-->
             <pmd.skip>true</pmd.skip>
             <checkstyle.skip>true</checkstyle.skip>
-            <jboss.home>/Applications/jboss-4.0.5.GA</jboss.home>
         </properties>
     </profile>
 </profiles>
