@@ -105,13 +105,13 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
 
     public void testCreateActiveOrganizationWithPendingRO() throws Exception {
         loginAsCurator();
-        
+
         // create ACTIVE org we are using now.
         createOrganization("ACTIVE", ORG_FOR_TEST, getAddress(), "sample@example.com", "703-111-2345",
                 "703-111-1234", "703-111-1234", "http://www.example.com");
         String activeOrgId = selenium.getText("wwctrl_organization.id");
         assertNotEquals("null", activeOrgId.trim());
-  
+
         // Goto Manage RO Page
         accessManageResearchOrganizationScreen();
         // add RO
@@ -119,13 +119,13 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         assertTrue(selenium.isTextPresent("Research Organization Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
-        
-        selenium.select("curateRoleForm.role.status", "label=PENDING"); 
+
+        selenium.select("curateRoleForm.role.status", "label=PENDING");
         selenium.type("curateRoleForm.role.name", "original RO name");
         selenium.select("curateRoleForm_role_typeCode", "label=Cancer Center");
         waitForElementById("curateRoleForm.role._selectFundingMechanism", 30);
         selenium.select("curateRoleForm.role._selectFundingMechanism", "label=P30 - Center Core Grants");
-        
+
         //add Contact Information
         waitForTelecomFormsToLoad();
         checkContactInformation();
@@ -133,9 +133,9 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         addUSPostalAddress();
         waitForTelecomFormsToLoad();
         addContactInformation();
-        
+
         clickAndWaitSaveButton();
-        
+
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully created!"));
         String roId = selenium.getTable("row.1.0");
         assertNotEquals("null", roId.trim());
@@ -147,7 +147,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
         clickAndWaitSaveButton();
-        
+
         updateRemoteRoOrg(roId.trim());
 
         // Goto Manage RO Page.... should see CR
@@ -156,30 +156,34 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         assertTrue(selenium.isTextPresent("exact:Edit Research Organization - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
-        
+
+        // verify that the type code required indicator is not present. Verifies PO-1155 via UI.
+        verifyPresenceOfRequiredIndicator(false, "curateRoleForm_role_typeCode");
+        verifyPresenceOfRequiredIndicator(false, "curateCrForm_cr_typeCode_description");
+
         assertEquals("original RO name", selenium.getValue("curateRoleForm.role.name").trim());
         assertEquals("1", selenium.getValue("curateRoleForm_role_typeCode").trim());
         assertEquals("367", selenium.getValue("curateRoleForm.role._selectFundingMechanism").trim());
-        
+
         // copy over new name
         selenium.click("copy_curateCrForm_role_name");
         waitForElementById("curateRoleForm.role.name", 5);
         assertEquals("new RO name", selenium.getValue("curateRoleForm.role.name").trim());
-       
+
         // copy over new type code
         selenium.click("copy_curateCrForm_role_typeCode");
         waitForElementById("curateRoleForm_role_typeCode", 5);
         waitForElementById("curateRoleForm.role._selectFundingMechanism", 5);
         assertEquals("6", selenium.getValue("curateRoleForm_role_typeCode").trim());
-        
+
         // copy over new funding Mechanism
         selenium.click("copy_curateCrForm_role_fundingMechanism");
         assertEquals("307", selenium.getValue("id=curateRoleForm.role._selectFundingMechanism"));
-        
+
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully updated!".trim()));
     }
-    
+
     private void checkContactInformation() throws Exception {
         // Check contact information functionality - add/remove, eror messages etc.
         checkPostalAddress();
@@ -197,7 +201,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         id.setRoot("2.16.840.1.113883.3.26.4.4.5");
         id.setIdentifierName("NCI Research Organization identifier");
         ResearchOrganizationDTO dto = RemoteServiceHelper.getResearchOrganizationCorrelationService().getCorrelation(id);
-        
+
         dto.setName(StringConverter.convertToEnOn("new RO name"));
         Cd type = new Cd();
         type.setCode("NWK");

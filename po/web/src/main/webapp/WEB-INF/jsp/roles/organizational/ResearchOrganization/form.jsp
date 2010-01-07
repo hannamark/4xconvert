@@ -83,7 +83,7 @@
                       }
                       loadDiv(url, 'curateRoleForm_displayFundingMechanism', true, selectOnlyFundingMechanism);
                     }
-                    
+
                     --></script>
                     <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
                     <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.ResearchOrganizationType@class"/>
@@ -101,7 +101,6 @@
                            listValue="description"
                            value="role.typeCode.id"
                            headerKey="" headerValue="--Select a Type--"
-                           required="true" cssClass="required"
                            onchange="return curateRoleForm_displayFundingMechanism(this.value);"/>
                           <s:hidden key="role.fundingMechanism" id="curateRoleForm.role.fundingMechanism"/>
                         <div id="curateRoleForm_displayFundingMechanism" class="inline">

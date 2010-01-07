@@ -101,6 +101,7 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
 
     /**
      * Verifies PO-924 via UI
+     * Verifies PO-1155 via UI.
      */
     public void testVerifyReasearchOrganizationTypeOrder() throws Exception {
         getToCreateResearchOrganization();
@@ -156,6 +157,8 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
         openAndWait("po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + poId);
         clickAndWait("//a[@id='add_button']/span/span");
 
+        // verify that the type code required indicator is not present. Verifies PO-1155 via UI.
+        verifyPresenceOfRequiredIndicator(false, "curateRoleForm_role_typeCode");
     }
 
     public void testFundingMechanismIsSelectedIfOnlyOneOption() throws Exception {

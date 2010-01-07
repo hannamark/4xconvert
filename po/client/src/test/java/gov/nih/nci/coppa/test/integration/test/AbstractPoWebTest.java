@@ -701,4 +701,12 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         assertFalse(selenium.isElementPresent("//a[@id='organization_id_" + id.getExtension() + "']/span/span"));
     }
 
+    protected void verifyPresenceOfRequiredIndicator(boolean expectedValue, String labelFor) {
+        assertEquals(expectedValue, isRequiredIndicatorPresent(labelFor));
+    }
+
+    private boolean isRequiredIndicatorPresent(String labelFor) {
+        String xpath = "//label[@for='" + labelFor + "']/span[@class='required' and ./text()='*']";
+        return selenium.isElementPresent(xpath);
+    }
 }
