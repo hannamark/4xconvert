@@ -463,7 +463,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.topic.clientId" value="${po.topic.clientId}"/>
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
             <property name="gridServicePrincipal" value="${pagrid.jndi.principal}"/>
-            <property name="gridServiceCredential" value="${pagrid.jndi.credentials.encrytped}"/>
+            <property name="gridServiceCredential" value="${pagrid.jndi.credentials.encrypted}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
         </ant>
@@ -488,7 +488,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
             <property name="outcomes.url" value="${outcomes.url}" />
             <property name="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
-            <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrytped}"/>
+            <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
             <target name="${accrual-clean.build.target}"/>

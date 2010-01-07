@@ -239,7 +239,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
         <filter token="grid" value="${hibernate.cfg.file.path}"/>
         <filter token="gridServicePrincipal" value="${pagrid.jndi.principal}"/>
-        <filter token="gridServiceCredential" value="${pagrid.jndi.credentials.encrytped}"/>
+        <filter token="gridServiceCredential" value="${pagrid.jndi.credentials.encrypted}"/>
     </filterset>
 
 
