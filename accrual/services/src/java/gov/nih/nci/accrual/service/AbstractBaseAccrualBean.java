@@ -276,15 +276,12 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         Session session = null;
         try {
             session = AccrualHibernateUtil.getCurrentSession();
-            bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
+            setAuditValues(bo);
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo.setUserLastCreated(bo.getUserLastUpdated());
                 bo.setDateLastCreated(bo.getDateLastUpdated());
             } else {
                 BO oldBo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
-                bo.setDateLastCreated(oldBo.getDateLastCreated());
-                bo.setUserLastCreated(oldBo.getUserLastCreated());
                 session.evict(oldBo);
             }
             bo = (BO) session.merge(bo);
@@ -319,5 +316,15 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         } catch (Exception e) {
             logger.info("Context not found.");
         }
+    }
+    
+    /**
+     * Sets the audit values.
+     * 
+     * @param bo the new audit values
+     */
+    protected void setAuditValues(AbstractEntity bo) {
+        bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
+        bo.setDateLastUpdated(new Date());     
     }
 }

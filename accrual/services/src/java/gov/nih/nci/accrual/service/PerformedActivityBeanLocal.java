@@ -108,7 +108,6 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -268,8 +267,7 @@ public class PerformedActivityBeanLocal extends
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
         bo = PerformedSubjectMilestoneConverter.convertFromDtoToDomain(dto);
-        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-        bo.setDateLastUpdated(new Date());
+        setAuditValues(bo);
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo.setUserLastCreated(bo.getUserLastUpdated());
             bo.setDateLastCreated(bo.getDateLastUpdated());
@@ -279,9 +277,7 @@ public class PerformedActivityBeanLocal extends
 
             PerformedSubjectMilestone delta = PerformedSubjectMilestoneConverter.convertFromDtoToDomain(dto);
             bo = delta;
-            bo.setUserLastUpdated(
-                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
+            setAuditValues(bo);
             session.evict(bo);
         }
 
@@ -387,8 +383,7 @@ public class PerformedActivityBeanLocal extends
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
         bo = PerformedImagingConverter.convertFromDtoToDomain(dto);
-        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-        bo.setDateLastUpdated(new Date());        
+        setAuditValues(bo);    
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo.setUserLastCreated(bo.getUserLastUpdated());
             bo.setDateLastCreated(bo.getDateLastUpdated());
@@ -398,9 +393,7 @@ public class PerformedActivityBeanLocal extends
 
             PerformedImaging delta = PerformedImagingConverter.convertFromDtoToDomain(dto);
             bo = delta;
-            bo.setUserLastUpdated(
-                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
+            setAuditValues(bo);
             session.evict(bo);
         }
 
@@ -472,8 +465,7 @@ public class PerformedActivityBeanLocal extends
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
         bo = PerformedObservationConverter.convertFromDtoToDomain(dto);
-        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-        bo.setDateLastUpdated(new Date());        
+        setAuditValues(bo); 
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo.setUserLastCreated(bo.getUserLastUpdated());
             bo.setDateLastCreated(bo.getDateLastUpdated());
@@ -483,9 +475,7 @@ public class PerformedActivityBeanLocal extends
 
             PerformedObservation delta = PerformedObservationConverter.convertFromDtoToDomain(dto);
             bo = delta;
-            bo.setUserLastUpdated(
-                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
+            setAuditValues(bo);
             session.evict(bo);
         }
 
@@ -593,8 +583,7 @@ public class PerformedActivityBeanLocal extends
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
         bo = PerformedProcedureConverter.convertFromDtoToDomain(dto);
-        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-        bo.setDateLastUpdated(new Date());        
+        setAuditValues(bo);        
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo.setUserLastCreated(bo.getUserLastUpdated());
             bo.setDateLastCreated(bo.getDateLastUpdated());
@@ -604,9 +593,7 @@ public class PerformedActivityBeanLocal extends
 
             PerformedProcedure delta = PerformedProcedureConverter.convertFromDtoToDomain(dto);
             bo = delta;
-            bo.setUserLastUpdated(
-                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
+            setAuditValues(bo);
             session.evict(bo);
         }
 
@@ -714,8 +701,7 @@ public class PerformedActivityBeanLocal extends
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
         bo = PerformedRadiationAdministrationConverter.convertFromDtoToDomain(dto);
-        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-        bo.setDateLastUpdated(new Date());        
+        setAuditValues(bo);  
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo.setUserLastCreated(bo.getUserLastUpdated());
             bo.setDateLastCreated(bo.getDateLastUpdated());
@@ -726,9 +712,7 @@ public class PerformedActivityBeanLocal extends
             PerformedRadiationAdministration delta = PerformedRadiationAdministrationConverter
             .convertFromDtoToDomain(dto);
             bo = delta;
-            bo.setUserLastUpdated(
-                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
+            setAuditValues(bo);
             session.evict(bo);
         }
 
@@ -836,8 +820,7 @@ public class PerformedActivityBeanLocal extends
         Session session = null;
         session = AccrualHibernateUtil.getCurrentSession();
         bo = PerformedSubstanceAdministrationConverter.convertFromDtoToDomain(dto);
-        bo.setUserLastUpdated(getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-        bo.setDateLastUpdated(new Date());        
+        setAuditValues(bo);    
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo.setUserLastCreated(bo.getUserLastUpdated());
             bo.setDateLastCreated(bo.getDateLastUpdated());
@@ -848,9 +831,7 @@ public class PerformedActivityBeanLocal extends
             PerformedSubstanceAdministration delta = PerformedSubstanceAdministrationConverter
             .convertFromDtoToDomain(dto);
             bo = delta;
-            bo.setUserLastUpdated(
-                    getEjbContext() != null ? getEjbContext().getCallerPrincipal().getName() : "not logged");
-            bo.setDateLastUpdated(new Date());
+            setAuditValues(bo);
             session.evict(bo);
         }
 
