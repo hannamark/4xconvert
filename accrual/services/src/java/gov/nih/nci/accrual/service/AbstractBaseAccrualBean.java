@@ -114,7 +114,6 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         CONVERTER extends AbstractConverter<DTO, BO>> implements BaseAccrualService<DTO> {
 
     private static final String UNCHECKED = "unchecked";
-    private static final String DEFAULT_CONTEXT_NAME = "ejbclient";
     private static final String GRID_CONTEXT_NAME = "Gr1DU5er";
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
@@ -312,15 +311,13 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             throw new RemoteException("LoginName must be set.");
         }
 
-        String contextName;
         try {
-            contextName = getEjbContext().getCallerPrincipal().getName();
+            String contextName = getEjbContext().getCallerPrincipal().getName();
+            if (!lName.equals(contextName) && !contextName.startsWith(GRID_CONTEXT_NAME)) {
+                logger.info("LoginName does not match context.");
+            }
         } catch (Exception e) {
-            contextName = DEFAULT_CONTEXT_NAME;
-        }
-        if (!DEFAULT_CONTEXT_NAME.equals(contextName) && !lName.equals(contextName)
-                && !contextName.startsWith(GRID_CONTEXT_NAME)) {
-            throw new RemoteException("LoginName does not match context.");
+            logger.info("Context not found.");
         }
     }
 }
