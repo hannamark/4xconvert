@@ -1,9 +1,9 @@
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.util.JNDIUtil;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
 
 public abstract class AbstractServiceBeanTest extends AbstractBeanTest {
     
@@ -26,9 +26,9 @@ public abstract class AbstractServiceBeanTest extends AbstractBeanTest {
     }
     
     public HealthCareFacilityServiceBean getHealthCareFacilityServiceBean() {
-        return (HealthCareFacilityServiceBean) JNDIUtil.lookup("po/HealthCareFacilityServiceBean/local");
+        return (HealthCareFacilityServiceBean) JndiUtils.lookup("po/HealthCareFacilityServiceBean/local");
     }
     public ResearchOrganizationServiceBean getResearchOrganizationServiceBean() {
-        return (ResearchOrganizationServiceBean) JNDIUtil.lookup("po/ResearchOrganizationServiceBean/local");
+        return (ResearchOrganizationServiceBean) JndiUtils.lookup("po/ResearchOrganizationServiceBean/local");
     }
 }

@@ -85,7 +85,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
-import gov.nih.nci.po.util.JNDIUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
 
 import java.io.IOException;
@@ -106,6 +105,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
 
 /**
  * EJB that handles publishing changes to people and organizations to
@@ -146,7 +147,7 @@ public class MessageProducerBean implements MessageProducerLocal {
      */
     protected Properties getJndiProperties() throws IOException {
         if (jndiProps == null) {
-            jndiProps = JNDIUtil.getProperties();
+            jndiProps = JndiUtils.getProperties();
         }
         return jndiProps;
     }
@@ -157,7 +158,7 @@ public class MessageProducerBean implements MessageProducerLocal {
      * @return the factory.
      */
     protected TopicConnectionFactory getTopicConnectionFactory(InitialContext ic) {
-        return (TopicConnectionFactory) JNDIUtil.lookup(ic, "java:/POJmsXA");
+        return (TopicConnectionFactory) JndiUtils.lookup(ic, "java:/POJmsXA");
     }
 
     /**
@@ -166,7 +167,7 @@ public class MessageProducerBean implements MessageProducerLocal {
      * @return the topic.
      */
     protected Topic getTopic(InitialContext ic) {
-        return (Topic) JNDIUtil.lookup(ic, "/topic/" + MessageProducerBean.TOPIC_NAME);
+        return (Topic) JndiUtils.lookup(ic, "/topic/" + MessageProducerBean.TOPIC_NAME);
     }
 
     /**

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
+
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
@@ -109,111 +111,111 @@ public class JndiServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public GenericServiceLocal getGenericService()  {
-        return (GenericServiceLocal) JNDIUtil.lookup("po/GenericServiceBean/local");
+        return (GenericServiceLocal) JndiUtils.lookup("po/GenericServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationServiceLocal getOrganizationService() {
-        return (OrganizationServiceLocal) JNDIUtil.lookup("po/OrganizationServiceBean/local");
+        return (OrganizationServiceLocal) JndiUtils.lookup("po/OrganizationServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public PersonServiceLocal getPersonService() {
-        return (PersonServiceLocal) JNDIUtil.lookup("po/PersonServiceBean/local");
+        return (PersonServiceLocal) JndiUtils.lookup("po/PersonServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public CountryServiceLocal getCountryService() {
-        return (CountryServiceLocal) JNDIUtil.lookup("po/CountryServiceBean/local");
+        return (CountryServiceLocal) JndiUtils.lookup("po/CountryServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return (HealthCareProviderServiceLocal) JNDIUtil.lookup("po/HealthCareProviderServiceBean/local");
+        return (HealthCareProviderServiceLocal) JndiUtils.lookup("po/HealthCareProviderServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return (OversightCommitteeServiceLocal) JNDIUtil.lookup("po/OversightCommitteeServiceBean/local");
+        return (OversightCommitteeServiceLocal) JndiUtils.lookup("po/OversightCommitteeServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return (ResearchOrganizationServiceLocal) JNDIUtil.lookup("po/ResearchOrganizationServiceBean/local");
+        return (ResearchOrganizationServiceLocal) JndiUtils.lookup("po/ResearchOrganizationServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return (HealthCareFacilityServiceLocal) JNDIUtil.lookup("po/HealthCareFacilityServiceBean/local");
+        return (HealthCareFacilityServiceLocal) JndiUtils.lookup("po/HealthCareFacilityServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return (ClinicalResearchStaffServiceLocal) JNDIUtil.lookup("po/ClinicalResearchStaffServiceBean/local");
+        return (ClinicalResearchStaffServiceLocal) JndiUtils.lookup("po/ClinicalResearchStaffServiceBean/local");
     }
     
     /**
      * {@inheritDoc}
      */
     public PatientServiceLocal getPatientService() {
-        return (PatientServiceLocal) JNDIUtil.lookup("po/PatientServiceBean/local");
+        return (PatientServiceLocal) JndiUtils.lookup("po/PatientServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return (IdentifiedOrganizationServiceLocal) JNDIUtil.lookup("po/IdentifiedOrganizationServiceBean/local");
+        return (IdentifiedOrganizationServiceLocal) JndiUtils.lookup("po/IdentifiedOrganizationServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
-        return (IdentifiedPersonServiceLocal) JNDIUtil.lookup("po/IdentifiedPersonServiceBean/local");
+        return (IdentifiedPersonServiceLocal) JndiUtils.lookup("po/IdentifiedPersonServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationalContactServiceLocal getOrganizationalContactService() {
-        return (OrganizationalContactServiceLocal) JNDIUtil.lookup("po/OrganizationalContactServiceBean/local");
+        return (OrganizationalContactServiceLocal) JndiUtils.lookup("po/OrganizationalContactServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public GenericCodeValueServiceLocal getGenericCodeValueService() {
-        return (GenericCodeValueServiceLocal) JNDIUtil.lookup("po/GenericCodeValueServiceBean/local");
+        return (GenericCodeValueServiceLocal) JndiUtils.lookup("po/GenericCodeValueServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public CtepImportService getCtepImportService() {
-        return (CtepImportService) JNDIUtil.lookup("po/CtepImportServiceBean/local");
+        return (CtepImportService) JndiUtils.lookup("po/CtepImportServiceBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationCRServiceLocal getOrganizationCRService() {
-        return (OrganizationCRServiceLocal) JNDIUtil.lookup("po/OrganizationCRServiceBean/local");
+        return (OrganizationCRServiceLocal) JndiUtils.lookup("po/OrganizationCRServiceBean/local");
     }
 }

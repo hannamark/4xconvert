@@ -6,7 +6,6 @@ import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
-import gov.nih.nci.po.util.JNDIUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
@@ -20,6 +19,7 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 
 import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
 
 /**
  * @param <T> Entity type.
@@ -124,7 +124,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
     protected <R extends Correlation> GenericStructrualRoleServiceLocal<R> getServiceForRole(Class<R> roleType) {
         String className = CGLIBUtils.unEnhanceCBLIBClass(roleType).getSimpleName();
         String serviceName = String.format("po/%sServiceBean/local", className);
-        return (GenericStructrualRoleServiceLocal<R>) JNDIUtil.lookup(serviceName);
+        return (GenericStructrualRoleServiceLocal<R>) JndiUtils.lookup(serviceName);
     }
 
     /**
