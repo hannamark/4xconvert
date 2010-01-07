@@ -11,19 +11,19 @@ function lookup4loadresponsibleparty1(){
     } catch(err) {
         orgid = document.getElementById('generalTrialDesignquery_gtdDTO_sponsorIdentifier').value;  
     }
-    showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
+    showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, createOrgContactDiv, 'Select Responsible contact');
 }
 function lookup4loadleadorg(){
-       showPopWin('${lookupOrgUrl}', 900, 400, loadLeadOrgDiv, 'Select Organization');
+	showPopup('${lookupOrgUrl}', loadLeadOrgDiv, 'Select Organization');
 }
 function lookup4loadleadpers(){
-    showPopWin('${lookupPersUrl}', 900, 400, loadLeadPersDiv, 'Select Principal Investigator');
+	showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
 }
 function lookup4sponsor(){
-    showPopWin('${lookupOrgUrl}', 900, 400, loadSponsorDiv, 'Select Sponsor');
+	showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
 } 
 function lookup4loadSummary4Sponsor(){
-    showPopWin('${lookupOrgUrl}', 900, 400, loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+	showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
 }   
 function loadLeadOrgDiv() { 
     var url = 'ajaxTrialValidationdisplayLeadOrganization.action?orgId='+orgid;
@@ -70,7 +70,7 @@ function createOrgGenericContactDiv() {
 }
 function lookup4loadresponsiblepartygenericcontact(){
     var orgid = document.getElementById('sponsorIdentifier').value;
-    showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Responsible Party', 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+    showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Responsible Party', createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
 }
 function manageRespPartyLookUp(){
     if(document.getElementById('gtdDTO.responsiblePartyTypepi').checked==true) {

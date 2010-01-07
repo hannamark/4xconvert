@@ -28,7 +28,7 @@ function handleAction(){
      document.forms[0].submit();     
 }
 function generateReport(pid) {
-    showPopWin('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+pid, 900, 400, '', 'View Trial Summary Report');
+	showPopup('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId='+pid, '', 'View Trial Summary Report');
 }
 function resetValues(){
     document.getElementById("nciIdentifier").value="";

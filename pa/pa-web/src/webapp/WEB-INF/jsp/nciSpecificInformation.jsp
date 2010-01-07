@@ -27,7 +27,7 @@
 	}
 	 
 	function lookup(){
-	    showPopWin('${lookupUrl}', 900, 400, '', 'Organization');
+		showPopup('${lookupUrl}', '', 'Organization');
 	}	
 	function loadDiv(orgid) {
 		var url = '/pa/protected/ajaxorgdisplayOrg.action?orgId='+orgid;

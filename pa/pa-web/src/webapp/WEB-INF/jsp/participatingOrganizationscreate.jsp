@@ -63,16 +63,16 @@
 	     });
 	}	
 	function lookup(){
-	    showPopWin('${lookupUrl}', 900, 400, '', 'Organization');
+		showPopup('${lookupUrl}', '', 'Organization');
 	}	
 	function lookupperson(){
-	    showPopWin('${lookupPersonsUrl}', 900, 400, '', 'Persons');
+		showPopup('${lookupPersonsUrl}','', 'Persons');
 	}	
 	function lookupcontactperson(){
 		var tel = document.getElementById('personContactWebDTO.telephone').value;
 		var email = document.getElementById('personContactWebDTO.email').value;
 		var url = '${lookupContactPersonsUrl}?tel='+tel+'&email='+email;
-	    showPopWin(url, 900, 400, '', 'Persons');
+		showPopup(url, '', 'Persons');
 	}
 	function loadDiv(orgid){
 			 var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;
@@ -196,7 +196,7 @@
 	}
 	function lookup4genericcontact(){ 
 	        var orgid = document.getElementById('editOrg.identifier').value;
-	        showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Site', 900, 400, createOrgGenericContactDiv, 'Select Generic Contact');
+	        showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Site', createOrgGenericContactDiv, 'Select Generic Contact');
 	}
 	function createOrgGenericContactDiv() {
 		   document.getElementById('personContactWebDTO.firstName').value = '';

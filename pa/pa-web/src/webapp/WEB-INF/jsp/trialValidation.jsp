@@ -70,11 +70,11 @@
 	}
     function lookup4loadresponsibleparty(){
     	var orgid = document.getElementById('sponsorIdentifier').value;
-    	showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
+    	showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, createOrgContactDiv, 'Select Responsible contact');
     }
     function lookup4loadresponsiblepartygenericcontact(){
     	var orgid = document.getElementById('sponsorIdentifier').value;
-        showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, 900, 400, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+    	showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid,  createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
     }
         
 

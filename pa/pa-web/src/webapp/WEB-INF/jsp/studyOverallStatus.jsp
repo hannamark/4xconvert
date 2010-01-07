@@ -29,7 +29,7 @@
         setFocusToFirstControl();         
     }
     function lookup(){
-        showPopWin('${lookupUrl}', 900, 400, '', 'Status History');
+    	showPopup('${lookupUrl}', '', 'Status History');
     }   
     function statusChange() {
         var newStatus=document.getElementById('currentTrialStatus').value;

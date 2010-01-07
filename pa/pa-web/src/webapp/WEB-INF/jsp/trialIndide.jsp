@@ -45,6 +45,7 @@ function handleDelete(studyProtocolIi){
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">  
   <pa:sucessMessage/>
+  <pa:failureMessage/>
     <s:form><s:actionerror/>
     <h2><fmt:message key="trialIndide.subtitle" /></h2>
     <s:if test="studyIndideList != null">

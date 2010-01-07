@@ -41,7 +41,7 @@ function facilityUpdate(){
 function setpersid(persid){}
 function setorgid(orgid){}
 function lookup(){
-    showPopWin('${lookupUrl}', 900, 400, '', 'Organization');
+	showPopup('${lookupUrl}','', 'Organization');
 }   
 function loadDiv(orgid){
      var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;

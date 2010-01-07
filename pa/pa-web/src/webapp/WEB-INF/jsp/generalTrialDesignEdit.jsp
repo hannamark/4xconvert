@@ -43,7 +43,7 @@
     }    
     function lookup4loadresponsibleparty(){
        var orgid = document.getElementById('sponsorIdentifier').value;
-        showPopWin('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, 900, 400, createOrgContactDiv, 'Select Responsible contact');
+       showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, createOrgContactDiv, 'Select Responsible contact');
     }
 
     function setorgid(orgIdentifier){
@@ -60,7 +60,7 @@
         BubbleTips.activateTipOn("dfn"); 
     }
     function lookupCentralContact(){
-        showPopWin('${lookupPersUrl}', 900, 400, loadCentralContactDiv, 'Select Central Contact');
+    	showPopup('${lookupPersUrl}', loadCentralContactDiv, 'Select Central Contact');
     }
     
     function loadCentralContactDiv() {
@@ -75,7 +75,7 @@
     }
     function lookupGenericCentralContact(){
         var orgid = document.getElementById('gtdDTO.leadOrganizationIdentifier').value;
-        showPopWin('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Site', 900, 400, createGenericCentralContactDiv, 'Select Generic Contact');
+        showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Site', createGenericCentralContactDiv, 'Select Generic Contact');
     }
     function createGenericCentralContactDiv() {
        document.getElementById('gtdDTO.centralContactName').value = '';
@@ -122,6 +122,13 @@
         <s:hidden name="gtdDTO.phaseOtherText" id= "gtdDTO.phaseOtherText"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeCode" id= "gtdDTO.primaryPurposeCode"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeOtherText" id= "gtdDTO.primaryPurposeOtherText"></s:hidden>
+    </c:if>
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+        <s:hidden name="gtdDTO.centralContactName" id="gtdDTO.centralContactName"></s:hidden>
+        <s:hidden name="gtdDTO.centralContactTitle" id="gtdDTO.centralContactTitle"></s:hidden>
+        <s:hidden name="gtdDTO.centralContactIdentifier" id="gtdDTO.centralContactIdentifier"></s:hidden>
+        <s:hidden name="gtdDTO.centralContactEmail" id="gtdDTO.centralContactEmail"></s:hidden>
+        <s:hidden name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone"></s:hidden>
     </c:if>
     <tr>
         <td scope="row" class="label">

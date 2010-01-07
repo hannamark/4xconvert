@@ -23,7 +23,7 @@ function callOnloadFunctions(){
 }
 function handleView(diseaseId){
     var url = '/pa/protected/popupDiseaseDetails.action?diseaseId='+diseaseId;
-    showPopWin(url, 900, 400, '', 'Disease');
+    showPopup(url,'', 'Disease');
 }
 function handleEdit(rowId){
     document.diseaseForm.selectedRowIdentifier.value = rowId;

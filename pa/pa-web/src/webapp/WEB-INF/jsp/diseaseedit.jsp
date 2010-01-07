@@ -33,7 +33,7 @@
         }
     }
     function lookup(){
-        showPopWin('${lookupUrl}', 900, 400, '', 'Disease');
+    	showPopup('${lookupUrl}', '', 'Disease');
     }   
     function loadDiv(intid){
          var url = '/pa/protected/ajaxptpDiseasedisplay.action?diseaseId='+intid;

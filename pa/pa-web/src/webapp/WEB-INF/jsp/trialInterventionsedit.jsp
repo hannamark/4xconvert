@@ -78,34 +78,34 @@
     }
     
     function lookup(){
-        showPopWin('${lookupUrl}', 900, 400, '', 'Intervention');
+    	showPopup('${lookupUrl}','', 'Intervention');
     }   
     function lookupDoseForm(){
-        showPopWin('${lookupDoseFormUrl}', 900, 400, '', 'Dose Form');
+    	showPopup('${lookupDoseFormUrl}', '', 'Dose Form');
     }
     function lookupROA(){
-        showPopWin('${lookupROAUrl}', 900, 400, '', 'Route of Administration');
+    	showPopup('${lookupROAUrl}', '', 'Route of Administration');
     }
     function lookupDoseFreq(){
-        showPopWin('${lookupDoseFreqUrl}', 900, 400, '', 'Dose Frequency');
+    	showPopup('${lookupDoseFreqUrl}', '', 'Dose Frequency');
     }
     function lookupDoseUOM(){
-        showPopWin('${lookupDoseUOMUrl}', 900, 400, '', 'Dose Unit Of Measure');
+    	showPopup('${lookupDoseUOMUrl}', '', 'Dose Unit Of Measure');
     }
     function lookupDoseDurationUOM(){
-        showPopWin('${lookupDoseDurationUOMUrl}', 900, 400, '', 'Dose Duration Unit Of Measure');
+    	showPopup('${lookupDoseDurationUOMUrl}', '', 'Dose Duration Unit Of Measure');
     }
     function lookupTotalDoseUOM(){
-        showPopWin('${lookupTotalDoseUOMUrl}', 900, 400, '', 'Total Dose Unit Of Measure');
+    	showPopup('${lookupTotalDoseUOMUrl}','', 'Total Dose Unit Of Measure');
     }
     function lookupTargetSite(){
-        showPopWin('${lookupTargetSiteUrl}', 900, 400, '', 'Target Site');
+    	showPopup('${lookupTargetSiteUrl}','', 'Target Site');
     }
     function lookupApproachSite(){
-        showPopWin('${lookupApproachSiteUrl}', 900, 400, '', 'Approach Site');
+    	showPopup('${lookupApproachSiteUrl}','', 'Approach Site');
     }
     function lookupMethodCode(){
-        showPopWin('${lookupMethodCodeUrl}', 900, 400, '', 'Method Code');
+    	showPopup('${lookupMethodCodeUrl}', '', 'Method Code');
     }
     function loadDiv(intid){
          var url = '/pa/protected/ajaxptpInterventiondisplay.action?interventionId='+intid;

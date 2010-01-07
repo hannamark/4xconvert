@@ -45,14 +45,14 @@
         document.proprietarySite.submit();	
     }    
     function lookup(){
-        showPopWin('${lookupUrl}', 900, 400, '', 'Organization');
+    	showPopup('${lookupUrl}', '', 'Organization');
     }   
     function lookupperson(){
-        showPopWin('${lookupPersonsUrl}', 900, 400, '', 'Persons');
+    	showPopup('${lookupPersonsUrl}', '', 'Persons');
     }   
     function lookupStatusHistory(){
-        showPopWin('${lookupUrlstatusHistory}?studySiteId='+document.getElementById('studySiteIdentifier').value,
-                 900, 400, '', 'Status History');
+    	showPopup('${lookupUrlstatusHistory}?studySiteId='+document.getElementById('studySiteIdentifier').value
+                 ,'', 'Status History');
     }   
     function loadDiv(orgid){
          var url = '/pa/protected/ajaxptpOrgdisplayOrg.action?orgId='+orgid;
