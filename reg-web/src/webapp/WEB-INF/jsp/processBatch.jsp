@@ -23,7 +23,12 @@ function handleAction(){
     <reg-web:failureMessage/>
     <s:form name="batchUpload" method="POST" enctype="multipart/form-data"><s:actionerror/>
         <s:hidden name="page" />
-        <p>Register multiple trials into NCI Clinical Trials Reporting Portal by uploading the Trial Data file and documents zip. Please note: All fields are required. </p>
+        <p> Register multiple trials into NCI Clinical Trials Reporting Portal by uploading the Trial Data file and Documents Zip.  
+         <br>&nbsp;Please note that 
+         <br> &nbsp;&nbsp; 1) This form can only be used for submitting non-proprietary trials.
+         <br> &nbsp;&nbsp; 2) Trial data in attached files must conform to the version of the CTRP Registry non-Proprietary Batch Upload Template valid for the current release, found <a href="http://www.cancer.gov/ncictrp/page11">here.</a> 
+         <br> &nbsp;&nbsp; 3) All fields on this form are mandatory.
+         </p>
         <table class="form"> 
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>

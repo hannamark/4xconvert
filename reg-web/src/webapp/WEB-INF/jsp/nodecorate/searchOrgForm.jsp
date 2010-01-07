@@ -18,47 +18,48 @@ function formReset(){
     Please do not use wildcard characters.<br>
 </p>
 <table  class="form">
+    <table>
    	<tr> 	
  		<td scope="row" class="label">
             <label for="poOrganizations_orgSearchCriteria_orgName"> <fmt:message key="popUpOrg.name"/></label>
         </td>
  		<td>
- 			<s:textfield id="orgNameSearch" name="orgSearchCriteria.orgName" maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield id="orgNameSearch" name="orgSearchCriteria.orgName" maxlength="200" size="100"  cssStyle="width:195px" />
  		</td>
  		
  		<td scope="row" class="label">
             <label for="poOrganizations_orgSearchCriteria_orgCountry"> <fmt:message key="popUpOrg.country"/></label>
         </td>
-        <td>
+        <td colspan="3">
               	<s:select  
                 id="orgCountrySearch"
                 name="orgSearchCriteria.orgCountry" 
                 list="countryList"  
-                listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
-        </td>		
+                listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:270px" />
+        </td>
 	</tr>
+	<tr><td colspan="6"></td></tr>
 	<tr>  
  		<td scope="row" class="label">
             <label for="poOrganizations_orgSearchCriteria_orgCity"> <fmt:message key="popUpOrg.city"/></label>
         </td>
  		<td> 			
- 			<s:textfield id="orgCitySearch" name="orgSearchCriteria.orgCity"  maxlength="200" size="100"  cssStyle="width:200px" />
+ 			<s:textfield id="orgCitySearch" name="orgSearchCriteria.orgCity"  maxlength="200" size="100"  cssStyle="width:195px" />
 		</td>
-        <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_orgState"> <fmt:message key="popUpOrg.state"/></label></td>
- 		<td><s:textfield id="orgStateSearch" name="orgSearchCriteria.orgState"  maxlength="75" size="20"/><br><font size="1"><span class="info">please enter two letter identifier for US states for ex: 'MD' for Maryland</span></font></td>
-	</tr>
-	<tr>
- 		 <td scope="row" class="label">
-            <label for="poOrganizations_orgSearchCriteria_orgZip"> <fmt:message key="popUpOrg.zip"/></label>
+        <td scope="row" class="label"> <label for="poOrganizations_orgSearchCriteria_orgState"> <fmt:message key="popUpOrg.state"/></label></td>
+        <td><s:textfield id="orgStateSearch" name="orgSearchCriteria.orgState"  maxlength="55" size="30" cssStyle="width:135px" /><br><font size="1"><span class="info">please enter two letter <br>identifier for US states for ex:<br> 'MD' for Maryland</span></font></td>
+
+        <td scope="row" class="value">
+            <label for="poOrganizations_orgSearchCriteria_orgZip"> <fmt:message key="popUpOrg.zip"/> </label>
         </td>
- 		<td>
- 			<s:textfield id="orgZipSearch" name="orgSearchCriteria.orgZip"  maxlength="75" size="20"/>
-		</td>
-	
+        <td>
+            <s:textfield id="orgZipSearch" name="orgSearchCriteria.orgZip"  maxlength="15" size="20" cssStyle="width:100px"/>
+        </td>
+
 	</tr>
-	<tr><td colspan="4"> <hr></td> </tr>
+	<tr><td colspan="6"> <hr></td> </tr>
 	<tr>  
- 		<td scope="row" class="label">
+ 		<td >
             <label for="poOrganizations_orgSearchCriteria_ctepId">CTEP Identifier :</label>
             
         </td>
@@ -68,6 +69,7 @@ function formReset(){
 		</td>
 	</tr>
 	</table>
+	</table>
 	<div class="actionsrow">
          <del class="btnwrapper">
             <ul class="btnrow">
@@ -75,6 +77,7 @@ function formReset(){
                    <s:a href="#" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search">Search</span></span></s:a>
                    <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();"><span class="btn_img"><span class="add">Add Org</span></span></s:a>
                    <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                   <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="close">Close</span></span></s:a>
                    </li>
                </ul>   
           </del>

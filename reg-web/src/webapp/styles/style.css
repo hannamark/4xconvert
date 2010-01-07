@@ -561,6 +561,8 @@ A.btn SPAN.organization
 { background:url("../images/ico_organization.gif") no-repeat; }
 A.btn SPAN.print
 { background:url("../images/ico_print.gif") no-repeat; }
+A.btn SPAN.close
+{ background:url("../images/close.gif") no-repeat; }
 
 /* Footer */
 
