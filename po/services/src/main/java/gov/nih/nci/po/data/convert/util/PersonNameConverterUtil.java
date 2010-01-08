@@ -3,6 +3,7 @@ package gov.nih.nci.po.data.convert.util;
 import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.NullFlavor;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -36,7 +37,9 @@ public class PersonNameConverterUtil {
         addEnxp(enpn, middleName, EntityNamePartType.GIV);
         addEnxp(enpn, prefix, EntityNamePartType.PFX);
         addEnxp(enpn, suffix, EntityNamePartType.SFX);
+        if (enpn.getPart().size() <= 0) {
+            enpn.setNullFlavor(NullFlavor.NI);
+        }
         return enpn;
     }
-
 }
