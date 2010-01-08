@@ -155,7 +155,7 @@ public class StatesAction extends ActionSupport {
     /**
      * @return the fieldRequired
      */
-    public boolean getFieldRequired() {
+    public boolean isFieldRequired() {
         return fieldRequired;
     }
 
