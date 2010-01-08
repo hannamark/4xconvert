@@ -97,6 +97,8 @@ public class SearchOrganizationTest extends OrganizationWebTest {
 
         loginAsCurator();
         openCreateOrganization();
+        // verify the presence of required indicator in create screen.
+        verifyRequiredIndicators(true);
         addOrganization();
         openSearchOrganization();
         verifySearchForm();
@@ -107,6 +109,14 @@ public class SearchOrganizationTest extends OrganizationWebTest {
         nothingSelectedTest();
 
       }
+
+    private void verifyRequiredIndicators(boolean expectedValue) {
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm.organization.postalAddress.country");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_organization_postalAddress_streetAddressLine");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_organization_postalAddress_cityOrMunicipality");
+        verifyPresenceOfRequiredIndicator(expectedValue, "organization.postalAddress.stateOrProvince");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_organization_postalAddress_postalCode");
+    }
 
     private void nothingSelectedTest() {
         clear();
@@ -152,7 +162,12 @@ public class SearchOrganizationTest extends OrganizationWebTest {
         assertTrue("State field is missing",selenium.isElementPresent("criteria.organization.postalAddress.stateOrProvince"));
         assertTrue("Postal code field is missing",selenium.isElementPresent("searchOrganizationForm_criteria_organization_postalAddress_postalCode"));
         assertTrue("Country field is missing",selenium.isElementPresent("searchOrganizationForm.criteria.organization.postalAddress.country"));
+
+        // verify the absence of required indicators.
+        verifyPresenceOfRequiredIndicator(false, "searchOrganizationForm.criteria.organization.postalAddress.country");
+        verifyPresenceOfRequiredIndicator(false, "searchOrganizationForm_criteria_organization_postalAddress_streetAddressLine");
+        verifyPresenceOfRequiredIndicator(false, "searchOrganizationForm_criteria_organization_postalAddress_cityOrMunicipality");
+        verifyPresenceOfRequiredIndicator(false, "criteria.organization.postalAddress.stateOrProvince");
+        verifyPresenceOfRequiredIndicator(false, "searchOrganizationForm_criteria_organization_postalAddress_postalCode");
     }
-
-
 }

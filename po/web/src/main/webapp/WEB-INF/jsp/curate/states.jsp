@@ -8,7 +8,7 @@
             />
 </s:if>
 <s:else>
-    <po:field labelKey="${field}" fieldRequired="true">
+    <po:field labelKey="${field}" fieldRequired="${fieldRequired}">
     <select id="${field}" name="${field}">
         <option value="">--Select a State--</option>
        <s:iterator value="country.states" status="statusStatus">

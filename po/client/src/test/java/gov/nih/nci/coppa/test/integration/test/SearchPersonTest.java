@@ -98,6 +98,8 @@ public class SearchPersonTest extends AbstractPoWebTest {
     public void testSearchPerson(){
         loginAsCurator();
         openCreatePerson();
+        // verify the presence of required indicator in create screen.
+        verifyRequiredIndicators(true);
 
         createPerson("PENDING", "Dr", firstName, "L", lastName, "III",
                 getAddress(), email, "703-111-2345", "http://www.example.com", "703-111-1234");
@@ -108,6 +110,14 @@ public class SearchPersonTest extends AbstractPoWebTest {
         noRowsReturnedTest();
         nothingSelectedTest();
        }
+
+    private void verifyRequiredIndicators(boolean expectedValue) {
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm.person.postalAddress.country");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_person_postalAddress_streetAddressLine");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_person_postalAddress_cityOrMunicipality");
+        verifyPresenceOfRequiredIndicator(expectedValue, "person.postalAddress.stateOrProvince");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_person_postalAddress_postalCode");
+    }
 
     private void nothingSelectedTest() {
         clear();

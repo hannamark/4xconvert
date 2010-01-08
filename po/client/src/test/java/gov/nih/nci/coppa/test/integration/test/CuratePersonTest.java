@@ -136,6 +136,10 @@ public class CuratePersonTest extends AbstractPoWebTest {
         // click on item to curate
         clickAndWait("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
+
+        // verify the presence of required indicator in create screen.
+        verifyRequiredIndicators(true);
+
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
 
@@ -143,6 +147,14 @@ public class CuratePersonTest extends AbstractPoWebTest {
         verifyTelecom();
 
         savePersonAsActive(id);
+    }
+
+    private void verifyRequiredIndicators(boolean expectedValue) {
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm.person.postalAddress.country");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_person_postalAddress_streetAddressLine");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_person_postalAddress_cityOrMunicipality");
+        verifyPresenceOfRequiredIndicator(expectedValue, "person.postalAddress.stateOrProvince");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_person_postalAddress_postalCode");
     }
 
     public void testCuratePersonWithCRs() throws Exception {

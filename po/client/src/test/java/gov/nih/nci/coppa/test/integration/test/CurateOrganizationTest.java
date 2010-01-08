@@ -154,11 +154,22 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         waitForTelecomFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
 
+        // verify the presence of required indicator in create screen.
+        verifyRequiredIndicators(true);
+
         verifyPostalAddress(ENTITYTYPE.organization);
 
         verifyTelecom();
 
         saveAsActive(id);
+    }
+
+    private void verifyRequiredIndicators(boolean expectedValue) {
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm.organization.postalAddress.country");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_organization_postalAddress_streetAddressLine");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_organization_postalAddress_cityOrMunicipality");
+        verifyPresenceOfRequiredIndicator(expectedValue, "organization.postalAddress.stateOrProvince");
+        verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm_organization_postalAddress_postalCode");
     }
 
     public void testCurateOrgWithCRs() throws Exception {

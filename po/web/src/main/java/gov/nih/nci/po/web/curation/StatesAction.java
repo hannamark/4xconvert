@@ -98,6 +98,7 @@ public class StatesAction extends ActionSupport {
     private Country country;
     private String value;
     private String field;
+    private boolean fieldRequired = true;
 
     /**
      * @return countryId
@@ -149,6 +150,20 @@ public class StatesAction extends ActionSupport {
             throw new IllegalArgumentException("Invalid field");
         }
         this.field = field;
+    }
+
+    /**
+     * @return the fieldRequired
+     */
+    public boolean getFieldRequired() {
+        return fieldRequired;
+    }
+
+    /**
+     * @param fieldRequired the fieldRequired to set
+     */
+    public void setFieldRequired(boolean fieldRequired) {
+        this.fieldRequired = fieldRequired;
     }
 
     /**

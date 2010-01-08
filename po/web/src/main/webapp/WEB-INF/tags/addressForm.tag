@@ -12,7 +12,7 @@
 /*
  Toggles the display of a stateOrProvince textfield or a select-box.
 */
-function loadStateProvince(formNameBase, addressKeyBase, code, v) {
+function loadStateProvince(formNameBase, addressKeyBase, code, v, flagRequired) {
     var div_stateOrProvince = '' + formNameBase + '.' + addressKeyBase + '.div_stateOrProvince';
     var url = contextPath + "/protected/ajax/curate/states.action";
     var div = $(div_stateOrProvince);
@@ -33,7 +33,8 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v) {
         parameters: {
             countryId: code,
             value: v,
-            field: stateFieldElem
+            field: stateFieldElem,
+            fieldRequired: flagRequired
             }
     });
     switchContactNumberFormats('${formNameBase}.${addressKeyBase}.country');
@@ -56,7 +57,7 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v) {
     cssClass="%{cssClass}" required="%{#attr.required}"
     headerKey="" headerValue="--Select a Country--"
     value="#attr.address.country.id"
-    onchange="loadStateProvince('%{#attr.formNameBase}' , '%{#attr.addressKeyBase}' , this.value); "
+    onchange="loadStateProvince('%{#attr.formNameBase}' , '%{#attr.addressKeyBase}' , this.value, '', %{#attr.required}); "
     id="%{#attr.formNameBase + '.' + #attr.addressKeyBase + '.country'}">
 </s:select>
 <s:textfield name="%{#attr.addressKeyBase + '.streetAddressLine'}"
@@ -73,7 +74,7 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v) {
             Loading States...
         </div>
         <script type="text/javascript"><!--
-            loadStateProvince('${formNameBase}', '${addressKeyBase}', $('${formNameBase}.${addressKeyBase}.country').value, '${pofn:escapeJavaScript(address.stateOrProvince)}');
+            loadStateProvince('${formNameBase}', '${addressKeyBase}', $('${formNameBase}.${addressKeyBase}.country').value, '${pofn:escapeJavaScript(address.stateOrProvince)}', ${required});
         --></script>
     </po:inputRowElement>
     <po:inputRowElement>

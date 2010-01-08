@@ -12,7 +12,7 @@
         <c:if test="${fieldRequired == true}"><span class='required'>*</span></c:if>
         <s:text name="%{#attr.labelKey}"/>:
         </label>
-    </div> 
+    </div>
     <br/>
     <div class="wwctrl" id="wwctrl_${labelKey}${idSuffix}">
         <jsp:doBody />
