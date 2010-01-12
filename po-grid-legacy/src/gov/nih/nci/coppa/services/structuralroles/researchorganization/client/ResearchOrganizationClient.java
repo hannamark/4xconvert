@@ -74,6 +74,8 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
               queryResearchOrg(client);
               getResearchOrgsByPlayerIds(client);
               searchResearchOrg(client);
+              
+              testUpdate(client);
             } else {
                 usage();
                 System.exit(1);
@@ -88,6 +90,19 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
         }
     }
 
+    private static void testUpdate(ResearchOrganizationClient client) throws RemoteException {
+        System.out.println("test update funding mech");
+        
+        Id id = new Id();
+        id.setRoot(RESEARCH_ORG_ROOT);
+        id.setIdentifierName(RESEARCH_ORG_IDENTIFIER_NAME);
+        id.setExtension("8748");
+        ResearchOrganization result = client.getById(id);
+        
+        result.getFundingMechanism().setCode("P01");
+        client.update(result);
+    }
+    
     private static void getResearchOrg(ResearchOrganizationClient client) throws RemoteException {
         System.out.println("Get by ID");
         Id id = new Id();
