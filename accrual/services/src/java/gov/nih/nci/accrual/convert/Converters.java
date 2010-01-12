@@ -105,8 +105,8 @@ public class Converters {
     private static PerformedObservationConverter pObservationConverter = new PerformedObservationConverter();
     private static PerformedImagingConverter pImagingConverter = new PerformedImagingConverter();
     private static PerformedProcedureConverter pProcedureConverter = new PerformedProcedureConverter();
-    private static PerformedSubjectMilestoneConverter pSubjectMilestoneConverter = new 
-    PerformedSubjectMilestoneConverter();
+    private static PerformedSubstanceAdministrationConverter pSubstanceAdministrationConverter = new 
+    PerformedSubstanceAdministrationConverter();
     private static PerformedRadiationAdministrationConverter pRadiationAdministrationConverter = new
     PerformedRadiationAdministrationConverter();
     private static ActivityRelationshipConverter activityRelationshipConverter = new ActivityRelationshipConverter();
@@ -149,8 +149,8 @@ public class Converters {
             return (CONV) pImagingConverter;
         } else if (clazz.equals(PerformedProcedureConverter.class)) {
             return (CONV) pProcedureConverter;
-        } else if (clazz.equals(PerformedSubjectMilestoneConverter.class)) {
-            return (CONV) pSubjectMilestoneConverter;
+        } else if (clazz.equals(PerformedSubstanceAdministrationConverter.class)) {
+            return (CONV) pSubstanceAdministrationConverter;
         } else if (clazz.equals(PerformedRadiationAdministrationConverter.class)) {
             return (CONV) pRadiationAdministrationConverter;
         } else if (clazz.equals(ActivityRelationshipConverter.class)) {

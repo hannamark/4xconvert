@@ -90,7 +90,8 @@ import java.util.zip.DataFormatException;
  * @author Kalpana Guthikonda
  * @since 11/09/2009
  */
-public class PerformedHistopathologyConverter extends PerformedObservationResultConverter {
+public class PerformedHistopathologyConverter extends AbstractConverter
+<PerformedHistopathologyDto, PerformedHistopathology> {
 
    /**
     * Convert from domain to dto.
@@ -98,7 +99,7 @@ public class PerformedHistopathologyConverter extends PerformedObservationResult
     * @return the performed histopathology dto
     * @throws DataFormatException the data format exception
     */
-   public static PerformedHistopathologyDto convertFromDomainToDto(PerformedHistopathology bo)
+   public PerformedHistopathologyDto convertFromDomainToDto(PerformedHistopathology bo)
             throws DataFormatException {
         PerformedHistopathologyDto dto = (PerformedHistopathologyDto)
         PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedHistopathologyDto());
@@ -116,7 +117,7 @@ public class PerformedHistopathologyConverter extends PerformedObservationResult
      * @return the performed histopathology
      * @throws DataFormatException the data format exception
      */
-    public static PerformedHistopathology convertFromDtoToDomain(PerformedHistopathologyDto dto)
+    public PerformedHistopathology convertFromDtoToDomain(PerformedHistopathologyDto dto)
             throws DataFormatException {
         PerformedHistopathology bo = (PerformedHistopathology)
         PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedHistopathology());

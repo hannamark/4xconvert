@@ -92,7 +92,8 @@ import java.util.zip.DataFormatException;
  * @since 11/10/2009
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class PerformedSubstanceAdministrationConverter extends PerformedActivityConverter {
+public class PerformedSubstanceAdministrationConverter extends AbstractConverter
+<PerformedSubstanceAdministrationDto, PerformedSubstanceAdministration> {
 
     /**
      * Convert from domain to dto.
@@ -100,7 +101,7 @@ public class PerformedSubstanceAdministrationConverter extends PerformedActivity
      * @return the performed substance administration dto
      * @throws DataFormatException the data format exception
      */
-    public static PerformedSubstanceAdministrationDto convertFromDomainToDto(PerformedSubstanceAdministration bo)
+    public PerformedSubstanceAdministrationDto convertFromDomainToDto(PerformedSubstanceAdministration bo)
             throws DataFormatException {
         PerformedSubstanceAdministrationDto dto = (PerformedSubstanceAdministrationDto)
         PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedSubstanceAdministrationDto());
@@ -140,7 +141,7 @@ public class PerformedSubstanceAdministrationConverter extends PerformedActivity
      * @return the performed substance administration
      * @throws DataFormatException the data format exception
      */
-    public static PerformedSubstanceAdministration convertFromDtoToDomain(PerformedSubstanceAdministrationDto dto)
+    public PerformedSubstanceAdministration convertFromDtoToDomain(PerformedSubstanceAdministrationDto dto)
     throws DataFormatException {
         PerformedSubstanceAdministration bo = (PerformedSubstanceAdministration)
         PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedSubstanceAdministration());      

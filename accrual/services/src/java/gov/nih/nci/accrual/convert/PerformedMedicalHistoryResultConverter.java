@@ -88,7 +88,8 @@ import java.util.zip.DataFormatException;
  * @author Kalpana Guthikonda
  * @since 11/09/2009
  */
-public class PerformedMedicalHistoryResultConverter extends PerformedObservationResultConverter {
+public class PerformedMedicalHistoryResultConverter extends AbstractConverter
+<PerformedMedicalHistoryResultDto, PerformedMedicalHistoryResult> {
 
    /**
     * Convert from domain to dto.
@@ -96,7 +97,7 @@ public class PerformedMedicalHistoryResultConverter extends PerformedObservation
     * @return the performed medical history result dto
     * @throws DataFormatException the data format exception
     */
-   public static PerformedMedicalHistoryResultDto convertFromDomainToDto(PerformedMedicalHistoryResult bo)
+   public PerformedMedicalHistoryResultDto convertFromDomainToDto(PerformedMedicalHistoryResult bo)
             throws DataFormatException {
         PerformedMedicalHistoryResultDto dto = (PerformedMedicalHistoryResultDto)
         PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedMedicalHistoryResultDto());
@@ -110,7 +111,7 @@ public class PerformedMedicalHistoryResultConverter extends PerformedObservation
      * @return the performed medical history result
      * @throws DataFormatException the data format exception
      */
-    public static PerformedMedicalHistoryResult convertFromDtoToDomain(PerformedMedicalHistoryResultDto dto)
+    public PerformedMedicalHistoryResult convertFromDtoToDomain(PerformedMedicalHistoryResultDto dto)
             throws DataFormatException {
         PerformedMedicalHistoryResult bo = (PerformedMedicalHistoryResult)
         PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedMedicalHistoryResult());

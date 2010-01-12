@@ -91,7 +91,8 @@ import java.util.zip.DataFormatException;
  * @author Kalpana Guthikonda
  * @since 11/09/2009
  */
-public class PerformedLesionDescriptionConverter extends PerformedObservationResultConverter {
+public class PerformedLesionDescriptionConverter extends AbstractConverter
+<PerformedLesionDescriptionDto, PerformedLesionDescription> {
 
     /**
      * Convert from domain to dto.
@@ -99,7 +100,7 @@ public class PerformedLesionDescriptionConverter extends PerformedObservationRes
      * @return the performed lesion description dto
      * @throws DataFormatException the data format exception
      */
-    public static PerformedLesionDescriptionDto convertFromDomainToDto(PerformedLesionDescription bo)
+    public PerformedLesionDescriptionDto convertFromDomainToDto(PerformedLesionDescription bo)
     throws DataFormatException {
         PerformedLesionDescriptionDto dto = (PerformedLesionDescriptionDto)
         PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedLesionDescriptionDto());
@@ -121,7 +122,7 @@ public class PerformedLesionDescriptionConverter extends PerformedObservationRes
      * @return the performed lesion description
      * @throws DataFormatException the data format exception
      */
-    public static PerformedLesionDescription convertFromDtoToDomain(PerformedLesionDescriptionDto dto)
+    public PerformedLesionDescription convertFromDtoToDomain(PerformedLesionDescriptionDto dto)
     throws DataFormatException {
         PerformedLesionDescription bo = (PerformedLesionDescription)
         PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedLesionDescription());

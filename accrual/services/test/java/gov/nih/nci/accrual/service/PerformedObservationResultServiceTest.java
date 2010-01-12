@@ -204,7 +204,8 @@ public class PerformedObservationResultServiceTest
             bean.updatePerformedClinicalResult(dto4);
         } catch (RemoteException e) {
             // expected behavior
-        }try{
+        }
+        try{
             dto5.setIdentifier(null);
             dto5.setStudyProtocolIdentifier(null);
             bean.createPerformedMedicalHistoryResult(dto5);
@@ -221,7 +222,25 @@ public class PerformedObservationResultServiceTest
             bean.updatePerformedMedicalHistoryResult(dto5);
         } catch (RemoteException e) {
             // expected behavior
-        }        
+        }
+        try{
+            dto6.setIdentifier(null);
+            dto6.setStudyProtocolIdentifier(null);
+            bean.createPerformedLesionDescription(dto6);
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            bean.createPerformedLesionDescription(dto6);            
+        } catch (RemoteException e) {
+            // expected behavior
+        }
+        try{
+            dto6.setIdentifier(null);
+            bean.updatePerformedLesionDescription(dto6);
+        } catch (RemoteException e) {
+            // expected behavior
+        }          
         try {
             bean.getPerformedDiagnosis(BII);
         } catch (RemoteException e) {
@@ -262,6 +281,25 @@ public class PerformedObservationResultServiceTest
     }
     @Test
     public void create() throws Exception {
+        //PerformedObservationResult
+        PerformedObservationResultDto pordto = new  PerformedObservationResultDto();
+        pordto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        
+        PerformedObservationResultDto por = bean.create(pordto);
+        assertNotNull(por);
+        assertNotNull(por.getIdentifier().getExtension());
+        
+        try {
+            bean.create(por);
+        } catch(RemoteException e){
+            //expected
+        }
+   
+        PerformedObservationResultDto pordto2 = bean.get(por.getIdentifier());
+        pordto2.setResultCode(CdConverter.convertStringToCd("test"));
+        PerformedObservationResultDto por2 = bean.update(pordto2);
+        assertTrue(pordto2.getResultCode().getCode().equals(por2.getResultCode().getCode()));
+        
         //PerformedDiagnosis
         PerformedDiagnosisDto pddto = new  PerformedDiagnosisDto();
         pddto.setResultDateRange(IvlConverter.convertTs().convertToIvl(PAUtil.dateStringToTimestamp("11/12/2009"),null));

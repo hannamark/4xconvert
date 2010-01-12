@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.convert.PerformedClinicalResultConverter;
 import gov.nih.nci.accrual.convert.PerformedDiagnosisConverter;
 import gov.nih.nci.accrual.convert.PerformedHistopathologyConverter;
@@ -148,7 +149,7 @@ public class PerformedObservationResultBeanLocal
                     + IiConverter.convertToString(ii));
         }
         try {
-            resultDto = PerformedHistopathologyConverter.convertFromDomainToDto(bo);
+            resultDto = Converters.get(PerformedHistopathologyConverter.class).convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in getPerformedHistopathology().", e);
         }
@@ -185,7 +186,7 @@ public class PerformedObservationResultBeanLocal
         ArrayList<PerformedHistopathologyDto> resultList = new ArrayList<PerformedHistopathologyDto>();
         for (PerformedHistopathology bo : queryList) {
             try {
-                resultList.add(PerformedHistopathologyConverter.convertFromDomainToDto(bo));
+                resultList.add(Converters.get(PerformedHistopathologyConverter.class).convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
                         + " getPerformedHistopathologyByPerformedActivity().", e);
@@ -205,7 +206,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new RemoteException("StudyProtocol must be set.  ");
         }
-        return createOrUpdatePerformedHistopathology(dto);
+        return createOrUpdateNew(dto, Converters.get(PerformedHistopathologyConverter.class));
     }
 
     /**
@@ -216,34 +217,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.  ");
         }
-        return createOrUpdatePerformedHistopathology(dto);
-    }
-
-    private PerformedHistopathologyDto createOrUpdatePerformedHistopathology(
-            PerformedHistopathologyDto dto) throws RemoteException, DataFormatException {
-        PerformedHistopathology bo = null;
-        PerformedHistopathologyDto resultDto = null;
-        Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
-        bo = PerformedHistopathologyConverter.convertFromDtoToDomain(dto);
-        setAuditValues(bo);        
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo.setUserLastCreated(bo.getUserLastUpdated());
-            bo.setDateLastCreated(bo.getDateLastUpdated());
-        } else {
-            bo = (PerformedHistopathology) session.load(PerformedHistopathology.class,
-                    IiConverter.convertToLong(dto.getIdentifier()));
-
-            PerformedHistopathology delta = PerformedHistopathologyConverter.convertFromDtoToDomain(dto);
-            bo = delta;
-            setAuditValues(bo);
-            session.evict(bo);
-        }
-
-        bo = (PerformedHistopathology) session.merge(bo);
-        session.flush();
-        resultDto = PerformedHistopathologyConverter.convertFromDomainToDto(bo);
-        return resultDto;
+        return createOrUpdateNew(dto, Converters.get(PerformedHistopathologyConverter.class));
     }
 
     /**
@@ -264,7 +238,7 @@ public class PerformedObservationResultBeanLocal
                     + IiConverter.convertToString(ii));
         }
         try {
-            resultDto = PerformedImageConverter.convertFromDomainToDto(bo);
+            resultDto = Converters.get(PerformedImageConverter.class).convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in getPerformedImage().", e);
         }
@@ -301,7 +275,7 @@ public class PerformedObservationResultBeanLocal
         ArrayList<PerformedImageDto> resultList = new ArrayList<PerformedImageDto>();
         for (PerformedImage bo : queryList) {
             try {
-                resultList.add(PerformedImageConverter.convertFromDomainToDto(bo));
+                resultList.add(Converters.get(PerformedImageConverter.class).convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
                         + " getPerformedImageByPerformedActivity().", e);
@@ -321,7 +295,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new RemoteException("StudyProtocol must be set.  ");
         }
-        return createOrUpdatePerformedImage(dto);
+        return createOrUpdateNew(dto, Converters.get(PerformedImageConverter.class));
     }
 
     /**
@@ -332,34 +306,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.  ");
         }
-        return createOrUpdatePerformedImage(dto);
-    }
-
-    private PerformedImageDto createOrUpdatePerformedImage(
-            PerformedImageDto dto) throws RemoteException, DataFormatException {
-        PerformedImage bo = null;
-        PerformedImageDto resultDto = null;
-        Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
-        bo = PerformedImageConverter.convertFromDtoToDomain(dto);
-        setAuditValues(bo);       
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo.setUserLastCreated(bo.getUserLastUpdated());
-            bo.setDateLastCreated(bo.getDateLastUpdated());
-        } else {
-            bo = (PerformedImage) session.load(PerformedImage.class,
-                    IiConverter.convertToLong(dto.getIdentifier()));
-
-            PerformedImage delta = PerformedImageConverter.convertFromDtoToDomain(dto);
-            bo = delta;
-            setAuditValues(bo);
-            session.evict(bo);
-        }
-
-        bo = (PerformedImage) session.merge(bo);
-        session.flush();
-        resultDto = PerformedImageConverter.convertFromDomainToDto(bo);
-        return resultDto;
+        return createOrUpdateNew(dto, Converters.get(PerformedImageConverter.class));
     }
 
     /**
@@ -380,7 +327,7 @@ public class PerformedObservationResultBeanLocal
                     + IiConverter.convertToString(ii));
         }
         try {
-            resultDto = PerformedDiagnosisConverter.convertFromDomainToDto(bo);
+            resultDto = Converters.get(PerformedDiagnosisConverter.class).convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in getPerformedDiagnosis().", e);
         }
@@ -417,7 +364,7 @@ public class PerformedObservationResultBeanLocal
         ArrayList<PerformedDiagnosisDto> resultList = new ArrayList<PerformedDiagnosisDto>();
         for (PerformedDiagnosis bo : queryList) {
             try {
-                resultList.add(PerformedDiagnosisConverter.convertFromDomainToDto(bo));
+                resultList.add(Converters.get(PerformedDiagnosisConverter.class).convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
                         + " getPerformedDiagnosisByPerformedActivity().", e);
@@ -437,7 +384,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new RemoteException("StudyProtocol must be set.  ");
         }
-        return createOrUpdatePerformedDiagnosis(dto);
+        return createOrUpdateNew(dto, Converters.get(PerformedDiagnosisConverter.class));
     }
 
     /**
@@ -449,34 +396,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.  ");
         }
-        return createOrUpdatePerformedDiagnosis(dto);
-    }
-
-    private PerformedDiagnosisDto createOrUpdatePerformedDiagnosis(
-            PerformedDiagnosisDto dto) throws RemoteException, DataFormatException {
-        PerformedDiagnosis bo = null;
-        PerformedDiagnosisDto resultDto = null;
-        Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
-        bo = PerformedDiagnosisConverter.convertFromDtoToDomain(dto);
-        setAuditValues(bo);    
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo.setUserLastCreated(bo.getUserLastUpdated());
-            bo.setDateLastCreated(bo.getDateLastUpdated());
-        } else {
-            bo = (PerformedDiagnosis) session.load(PerformedDiagnosis.class,
-                    IiConverter.convertToLong(dto.getIdentifier()));
-
-            PerformedDiagnosis delta = PerformedDiagnosisConverter.convertFromDtoToDomain(dto);
-            bo = delta;
-            setAuditValues(bo);
-            session.evict(bo);
-        }
-
-        bo = (PerformedDiagnosis) session.merge(bo);
-        session.flush();
-        resultDto = PerformedDiagnosisConverter.convertFromDomainToDto(bo);
-        return resultDto;
+        return createOrUpdateNew(dto, Converters.get(PerformedDiagnosisConverter.class));
     }
 
     /**
@@ -497,7 +417,7 @@ public class PerformedObservationResultBeanLocal
                     + IiConverter.convertToString(ii));
         }
         try {
-            resultDto = PerformedClinicalResultConverter.convertFromDomainToDto(bo);
+            resultDto = Converters.get(PerformedClinicalResultConverter.class).convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in getPerformedClinicalResult().", e);
         }
@@ -534,7 +454,7 @@ public class PerformedObservationResultBeanLocal
         ArrayList<PerformedClinicalResultDto> resultList = new ArrayList<PerformedClinicalResultDto>();
         for (PerformedClinicalResult bo : queryList) {
             try {
-                resultList.add(PerformedClinicalResultConverter.convertFromDomainToDto(bo));
+                resultList.add(Converters.get(PerformedClinicalResultConverter.class).convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
                         + " getPerformedClinicalResultByPerformedActivity().", e);
@@ -555,7 +475,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new RemoteException("StudyProtocol must be set.  ");
         }
-        return createOrUpdatePerformedClinicalResult(dto);
+        return createOrUpdateNew(dto, Converters.get(PerformedClinicalResultConverter.class));
     }
 
     /**
@@ -567,34 +487,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.  ");
         }
-        return createOrUpdatePerformedClinicalResult(dto);
-    }
-
-    private PerformedClinicalResultDto createOrUpdatePerformedClinicalResult(
-            PerformedClinicalResultDto dto) throws RemoteException, DataFormatException {
-        PerformedClinicalResult bo = null;
-        PerformedClinicalResultDto resultDto = null;
-        Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
-        bo = PerformedClinicalResultConverter.convertFromDtoToDomain(dto);
-        setAuditValues(bo);        
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo.setUserLastCreated(bo.getUserLastUpdated());
-            bo.setDateLastCreated(bo.getDateLastUpdated());
-        } else {
-            bo = (PerformedClinicalResult) session.load(PerformedClinicalResult.class,
-                    IiConverter.convertToLong(dto.getIdentifier()));
-
-            PerformedClinicalResult delta = PerformedClinicalResultConverter.convertFromDtoToDomain(dto);
-            bo = delta;
-            setAuditValues(bo);
-            session.evict(bo);
-        }
-
-        bo = (PerformedClinicalResult) session.merge(bo);
-        session.flush();
-        resultDto = PerformedClinicalResultConverter.convertFromDomainToDto(bo);
-        return resultDto;
+        return createOrUpdateNew(dto, Converters.get(PerformedClinicalResultConverter.class));
     }
 
     /**
@@ -615,7 +508,7 @@ public class PerformedObservationResultBeanLocal
                     + IiConverter.convertToString(ii));
         }
         try {
-            resultDto = PerformedMedicalHistoryResultConverter.convertFromDomainToDto(bo);
+            resultDto = Converters.get(PerformedMedicalHistoryResultConverter.class).convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in getPerformedMedicalHistoryResult().", e);
         }
@@ -653,7 +546,7 @@ public class PerformedObservationResultBeanLocal
         ArrayList<PerformedMedicalHistoryResultDto>();
         for (PerformedMedicalHistoryResult bo : queryList) {
             try {
-                resultList.add(PerformedMedicalHistoryResultConverter.convertFromDomainToDto(bo));
+                resultList.add(Converters.get(PerformedMedicalHistoryResultConverter.class).convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
                         + " getPerformedMedicalHistoryResultByPerformedActivity().", e);
@@ -673,7 +566,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new RemoteException("StudyProtocol must be set.  ");
         }
-        return createOrUpdatePerformedMedicalHistoryResult(dto);
+        return createOrUpdateNew(dto, Converters.get(PerformedMedicalHistoryResultConverter.class));
     }
 
     /**
@@ -685,35 +578,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.  ");
         }
-        return createOrUpdatePerformedMedicalHistoryResult(dto);
-    }
-
-    private PerformedMedicalHistoryResultDto createOrUpdatePerformedMedicalHistoryResult(
-            PerformedMedicalHistoryResultDto dto) throws RemoteException, DataFormatException {
-        PerformedMedicalHistoryResult bo = null;
-        PerformedMedicalHistoryResultDto resultDto = null;
-        Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
-        bo = PerformedMedicalHistoryResultConverter.convertFromDtoToDomain(dto);
-        setAuditValues(bo);        
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo.setUserLastCreated(bo.getUserLastUpdated());
-            bo.setDateLastCreated(bo.getDateLastUpdated());
-        } else {
-            bo = (PerformedMedicalHistoryResult) session.load(PerformedMedicalHistoryResult.class,
-                    IiConverter.convertToLong(dto.getIdentifier()));
-
-            PerformedMedicalHistoryResult delta = PerformedMedicalHistoryResultConverter
-            .convertFromDtoToDomain(dto);
-            bo = delta;
-            setAuditValues(bo);
-            session.evict(bo);
-        }
-
-        bo = (PerformedMedicalHistoryResult) session.merge(bo);
-        session.flush();
-        resultDto = PerformedMedicalHistoryResultConverter.convertFromDomainToDto(bo);
-        return resultDto;
+        return createOrUpdateNew(dto, Converters.get(PerformedMedicalHistoryResultConverter.class));
     }
 
     /**
@@ -734,7 +599,7 @@ public class PerformedObservationResultBeanLocal
                     + IiConverter.convertToString(ii));
         }
         try {
-            resultDto = PerformedLesionDescriptionConverter.convertFromDomainToDto(bo);
+            resultDto = Converters.get(PerformedLesionDescriptionConverter.class).convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
             throw new RemoteException("Iso conversion exception in getPerformedLesionDescription().", e);
         }
@@ -772,7 +637,7 @@ public class PerformedObservationResultBeanLocal
         ArrayList<PerformedLesionDescriptionDto>();
         for (PerformedLesionDescription bo : queryList) {
             try {
-                resultList.add(PerformedLesionDescriptionConverter.convertFromDomainToDto(bo));
+                resultList.add(Converters.get(PerformedLesionDescriptionConverter.class).convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in "
                         + " getPerformedLesionDescriptionByPerformedActivity().", e);
@@ -790,7 +655,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.  ");
         }
-        return createOrUpdatePerformedLesionDescription(dto);
+        return createOrUpdateNew(dto, Converters.get(PerformedLesionDescriptionConverter.class));
     }
 
     /**
@@ -804,35 +669,7 @@ public class PerformedObservationResultBeanLocal
         if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new RemoteException("StudyProtocol must be set.  ");
         }
-        return createOrUpdatePerformedLesionDescription(dto);
-    }
-
-    private PerformedLesionDescriptionDto createOrUpdatePerformedLesionDescription(
-            PerformedLesionDescriptionDto dto) throws RemoteException, DataFormatException {
-        PerformedLesionDescription bo = null;
-        PerformedLesionDescriptionDto resultDto = null;
-        Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
-        bo = PerformedLesionDescriptionConverter.convertFromDtoToDomain(dto);
-        setAuditValues(bo);        
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo.setUserLastCreated(bo.getUserLastUpdated());
-            bo.setDateLastCreated(bo.getDateLastUpdated());
-        } else {
-            bo = (PerformedLesionDescription) session.load(PerformedLesionDescription.class,
-                    IiConverter.convertToLong(dto.getIdentifier()));
-
-            PerformedLesionDescription delta = PerformedLesionDescriptionConverter
-            .convertFromDtoToDomain(dto);
-            bo = delta;
-            setAuditValues(bo);
-            session.evict(bo);
-        }
-
-        bo = (PerformedLesionDescription) session.merge(bo);
-        session.flush();
-        resultDto = PerformedLesionDescriptionConverter.convertFromDomainToDto(bo);
-        return resultDto;
+        return createOrUpdateNew(dto, Converters.get(PerformedLesionDescriptionConverter.class));
     }
 
     /**

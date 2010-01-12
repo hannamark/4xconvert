@@ -84,8 +84,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedImagingDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.dto.PerformedProcedureDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
@@ -289,6 +291,25 @@ public class PerformedActivityServiceTest
     }
     @Test
     public void create() throws Exception {
+        //PerformedActivity
+        PerformedActivityDto padto = new  PerformedActivityDto();
+        padto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
+        
+        PerformedActivityDto pa = bean.create(padto);
+        assertNotNull(pa);
+        assertNotNull(pa.getIdentifier().getExtension());
+        
+        try {
+            bean.create(pa);
+        } catch(RemoteException e){
+            //expected
+        }
+   
+        PerformedActivityDto padto2 = bean.get(pa.getIdentifier());
+        padto2.setName(StConverter.convertToSt("test"));
+        PerformedActivityDto par2 = bean.update(padto2);
+        assertTrue(padto2.getName().getValue().equals(par2.getName().getValue()));
+        
         //PerformedSubjectMilestone
         PerformedSubjectMilestoneDto psmdto = new  PerformedSubjectMilestoneDto();
         psmdto.setInformedConsentDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/7/2009")));

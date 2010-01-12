@@ -88,7 +88,8 @@ import java.util.zip.DataFormatException;
  * @author Kalpana Guthikonda
  * @since 11/09/2009
  */
-public class PerformedImageConverter extends PerformedObservationResultConverter {
+public class PerformedImageConverter extends AbstractConverter
+<PerformedImageDto, PerformedImage> {
 
     /**
      * Convert from domain to dto.
@@ -96,7 +97,7 @@ public class PerformedImageConverter extends PerformedObservationResultConverter
      * @return the performed image dto
      * @throws DataFormatException the data format exception
      */
-    public static PerformedImageDto convertFromDomainToDto(PerformedImage bo)
+    public PerformedImageDto convertFromDomainToDto(PerformedImage bo)
             throws DataFormatException {
         PerformedImageDto dto = (PerformedImageDto)
         PerformedObservationResultConverter.convertFromDomainToDTO(bo, new PerformedImageDto());
@@ -111,7 +112,7 @@ public class PerformedImageConverter extends PerformedObservationResultConverter
      * @return the performed image
      * @throws DataFormatException the data format exception
      */
-    public static PerformedImage convertFromDtoToDomain(PerformedImageDto dto)
+    public PerformedImage convertFromDtoToDomain(PerformedImageDto dto)
             throws DataFormatException {
         PerformedImage bo = (PerformedImage)
         PerformedObservationResultConverter.convertFromDTOToDomain(dto , new PerformedImage());

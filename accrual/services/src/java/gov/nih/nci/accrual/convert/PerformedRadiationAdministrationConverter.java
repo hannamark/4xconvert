@@ -93,7 +93,8 @@ import java.util.zip.DataFormatException;
  * @since 11/10/2009
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
-public class PerformedRadiationAdministrationConverter extends PerformedSubstanceAdministrationConverter {
+public class PerformedRadiationAdministrationConverter extends AbstractConverter
+<PerformedRadiationAdministrationDto, PerformedRadiationAdministration> {
 
     /**
      * Convert from domain to dto.
@@ -101,10 +102,10 @@ public class PerformedRadiationAdministrationConverter extends PerformedSubstanc
      * @return the performed radiation administration dto
      * @throws DataFormatException the data format exception
      */
-    public static PerformedRadiationAdministrationDto convertFromDomainToDto(PerformedRadiationAdministration bo)
+    public PerformedRadiationAdministrationDto convertFromDomainToDto(PerformedRadiationAdministration bo)
             throws DataFormatException {
         PerformedRadiationAdministrationDto dto = (PerformedRadiationAdministrationDto)
-        PerformedSubstanceAdministrationConverter.convertFromDomainToDTO(bo, new PerformedRadiationAdministrationDto());
+        PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedRadiationAdministrationDto());
         Pq dose  = new Pq();
         dose.setValue(bo.getDoseValue());
         if (bo.getDoseUnit() != null) {
@@ -141,10 +142,10 @@ public class PerformedRadiationAdministrationConverter extends PerformedSubstanc
      * @return the performed radiation administration
      * @throws DataFormatException the data format exception
      */
-    public static PerformedRadiationAdministration convertFromDtoToDomain(PerformedRadiationAdministrationDto dto)
+    public PerformedRadiationAdministration convertFromDtoToDomain(PerformedRadiationAdministrationDto dto)
             throws DataFormatException {
         PerformedRadiationAdministration bo = (PerformedRadiationAdministration)
-        PerformedSubstanceAdministrationConverter.convertFromDTOToDomain(dto , new PerformedRadiationAdministration());
+        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedRadiationAdministration());
         if (!PAUtil.isStNull(dto.getDoseDescription())) {
             bo.setDoseDescription(StConverter.convertToString(dto.getDoseDescription()));
         }

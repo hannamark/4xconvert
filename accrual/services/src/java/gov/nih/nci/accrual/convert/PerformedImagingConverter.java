@@ -94,7 +94,8 @@ import java.util.zip.DataFormatException;
  * @author Kalpana Guthikonda
  * @since 11/10/2009
  */
-public class PerformedImagingConverter extends PerformedObservationConverter {
+public class PerformedImagingConverter extends AbstractConverter
+<PerformedImagingDto, PerformedImaging> {
 
     /**
      * Convert from domain to dto.
@@ -102,10 +103,10 @@ public class PerformedImagingConverter extends PerformedObservationConverter {
      * @return the performed Imaging dto
      * @throws DataFormatException the data format exception
      */
-    public static PerformedImagingDto convertFromDomainToDto(PerformedImaging bo)
+    public PerformedImagingDto convertFromDomainToDto(PerformedImaging bo)
             throws DataFormatException {
         PerformedImagingDto dto = (PerformedImagingDto)
-        PerformedObservationConverter.convertFromDomainToDTO(bo, new PerformedImagingDto());
+        PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedImagingDto());
         dto.setTargetSiteCode(CdConverter.convertStringToCd(bo.getTargetSiteCode()));
         // convert to dset
         List<Cd> cds = new ArrayList<Cd>();
@@ -123,10 +124,10 @@ public class PerformedImagingConverter extends PerformedObservationConverter {
      * @return the performed Imaging
      * @throws DataFormatException the data format exception
      */
-    public static PerformedImaging convertFromDtoToDomain(PerformedImagingDto dto)
+    public PerformedImaging convertFromDtoToDomain(PerformedImagingDto dto)
             throws DataFormatException {
         PerformedImaging bo = (PerformedImaging)
-        PerformedObservationConverter.convertFromDTOToDomain(dto , new PerformedImaging());   
+        PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedImaging());   
         List<Cd> cds =  DSetConverter.convertDsetToCdList(dto.getMethodCode());
         if (cds != null) {
             for (Cd cd : cds) {

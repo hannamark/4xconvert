@@ -91,7 +91,8 @@ import java.util.zip.DataFormatException;
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
-public class PerformedSubjectMilestoneConverter extends PerformedActivityConverter {
+public class PerformedSubjectMilestoneConverter extends AbstractConverter
+ <PerformedSubjectMilestoneDto, PerformedSubjectMilestone> {
 
     /**
      * Convert from domain to dto.
@@ -99,7 +100,7 @@ public class PerformedSubjectMilestoneConverter extends PerformedActivityConvert
      * @return the performed subject milestone dto
      * @throws DataFormatException the data format exception
      */
-    public static PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo)
+    public PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo)
             throws DataFormatException {
         PerformedSubjectMilestoneDto dto = (PerformedSubjectMilestoneDto)
         PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedSubjectMilestoneDto());
@@ -115,7 +116,7 @@ public class PerformedSubjectMilestoneConverter extends PerformedActivityConvert
      * @return the performed subject milestone
      * @throws DataFormatException the data format exception
      */
-    public static PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto)
+    public PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto)
             throws DataFormatException {
         PerformedSubjectMilestone bo = (PerformedSubjectMilestone)
         PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedSubjectMilestone());      

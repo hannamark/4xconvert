@@ -110,10 +110,10 @@ import org.hibernate.Session;
  * @param <BO> domain object
  * @param <CONVERTER> converter
  */
+@SuppressWarnings("unchecked")
 public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends AbstractEntity,
         CONVERTER extends AbstractConverter<DTO, BO>> implements BaseAccrualService<DTO> {
 
-    private static final String UNCHECKED = "unchecked";
     private static final String GRID_CONTEXT_NAME = "Gr1DU5er";
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
@@ -127,14 +127,15 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     protected SessionContext getEjbContext() {
         return ejbContext;
     }
+    
     @Resource
     void setSessionContext(SessionContext ctx) {
         this.ejbContext = ctx;
     }
+    
     /**
      * default constructor.
      */
-    @SuppressWarnings(UNCHECKED)
     public AbstractBaseAccrualBean() {
         Class clss = getClass();
         Type type = clss.getGenericSuperclass();
@@ -147,12 +148,14 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         converterArgument = (Class) parameterizedType.getActualTypeArguments()[2];
         logger = Logger.getLogger(typeArgument);
     }
+    
     /**
      * @return log4j Logger
      */
     protected  Logger getLogger() {
         return logger;
     }
+    
     /**
      * @param bo domain object
      * @return DTO iso transfer object
@@ -161,14 +164,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     protected DTO convertFromDomainToDto(BO bo) throws DataFormatException {
         return Converters.get(getConverterArgument()).convertFromDomainToDto(bo);
     }
-    /**
-     * @param dto iso transfer object
-     * @return DTO iso transfer object
-     * @throws DataFormatException exception
-     */
-    protected BO convertFromDtoToDomain(DTO dto) throws DataFormatException {
-        return Converters.get(getConverterArgument()).convertFromDtoToDomain(dto);
-    }
+    
     /**
      * Get class of the implementation.
      *
@@ -177,6 +173,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     protected Class<BO> getTypeArgument() {
         return typeArgument;
     }
+    
     /**
      * Get class of the implementation.
      *
@@ -185,12 +182,12 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     protected Class<CONVERTER> getConverterArgument() {
         return converterArgument;
     }
+    
     /**
      * @param ii index of object
      * @return null
      * @throws RemoteException exception
      */
-    @SuppressWarnings(UNCHECKED)
     public DTO get(Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called get() with Ii == null.");
@@ -221,7 +218,6 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      * @param ii index of object
      * @throws RemoteException exception
      */
-    @SuppressWarnings(UNCHECKED)
     public void delete(Ii ii) throws RemoteException {
         if (PAUtil.isIiNull(ii)) {
             throw new RemoteException("Called delete() with Ii == null.");
@@ -249,7 +245,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Update method should be used to modify existing.");
         }
-        return createOrUpdate(dto);
+        return createOrUpdateNew(dto, Converters.get(getConverterArgument()));
     }
 
     /**
@@ -261,42 +257,8 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.");
         }
-        return createOrUpdate(dto);
+        return createOrUpdateNew(dto, Converters.get(getConverterArgument()));
     }
-
-    @SuppressWarnings(UNCHECKED)
-    private DTO createOrUpdate(DTO dto) throws RemoteException {
-        BO bo = null;
-        try {
-            bo = convertFromDtoToDomain(dto);
-        } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
-        }
-        DTO resultDto = null;
-        Session session = null;
-        try {
-            session = AccrualHibernateUtil.getCurrentSession();
-            setAuditValues(bo);
-            if (PAUtil.isIiNull(dto.getIdentifier())) {
-                bo.setUserLastCreated(bo.getUserLastUpdated());
-                bo.setDateLastCreated(bo.getDateLastUpdated());
-            } else {
-                BO oldBo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
-                session.evict(oldBo);
-            }
-            bo = (BO) session.merge(bo);
-            session.flush();
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in createOrUpdate().", hbe);
-        }
-        try {
-            resultDto = convertFromDomainToDto(bo);
-        } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
-        }
-        return resultDto;
-    }
-
 
     /**
      * @param loginName a passed in login in name to test
@@ -325,6 +287,49 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      */
     protected void setAuditValues(AbstractEntity bo) {
         bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
-        bo.setDateLastUpdated(new Date());     
+        bo.setDateLastUpdated(new Date());    
+        if (bo.getId() == null) {
+            bo.setUserLastCreated(bo.getUserLastUpdated());
+            bo.setDateLastCreated(bo.getDateLastUpdated());
+        } 
+    }
+    
+    /**
+     * Creates the or update new.
+     * 
+     * @param dto the dto
+     * @param conv the converter
+     * @param <DTO2> iso dto
+     * @param <BO2> domain object
+     * @param <CONVERTER2> converter
+     * @return the dTO
+     * 
+     * @throws RemoteException the remote exception
+     */
+    protected <DTO2 extends BaseDTO, BO2 extends AbstractEntity, 
+    CONVERTER2 extends AbstractConverter<DTO2, BO2>> DTO2 
+    createOrUpdateNew(DTO2 dto, AbstractConverter<DTO2, BO2> conv) throws RemoteException {
+        BO2 bo = null;
+        try {
+            bo = conv.convertFromDtoToDomain(dto);
+        } catch (DataFormatException e) {
+            throw new RemoteException("Iso conversion exception in createOrUpdateNew().", e);
+        }
+        DTO2 resultDto = null;
+        Session session = null;
+        try {
+            session = AccrualHibernateUtil.getCurrentSession();
+            setAuditValues(bo);
+            bo = (BO2) session.merge(bo);
+            session.flush();
+        } catch (HibernateException hbe) {
+            throw new RemoteException("Hibernate exception in createOrUpdateNew().", hbe);
+        }
+        try {
+            resultDto = conv.convertFromDomainToDto(bo);
+        } catch (DataFormatException e) {
+            throw new RemoteException("Iso conversion exception in createOrUpdateNew().", e);
+        }
+        return resultDto;
     }
 }

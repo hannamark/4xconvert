@@ -87,7 +87,8 @@ import java.util.zip.DataFormatException;
  * @author Kalpana Guthikonda
  * @since 11/10/2009
  */
-public class PerformedProcedureConverter extends PerformedActivityConverter {
+public class PerformedProcedureConverter extends AbstractConverter
+<PerformedProcedureDto, PerformedProcedure> {
 
     /**
      * Convert from domain to dto.
@@ -95,7 +96,7 @@ public class PerformedProcedureConverter extends PerformedActivityConverter {
      * @return the performed Procedure dto
      * @throws DataFormatException the data format exception
      */
-    public static PerformedProcedureDto convertFromDomainToDto(PerformedProcedure bo)
+    public PerformedProcedureDto convertFromDomainToDto(PerformedProcedure bo)
             throws DataFormatException {
         PerformedProcedureDto dto = (PerformedProcedureDto)
         PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedProcedureDto());
@@ -108,7 +109,7 @@ public class PerformedProcedureConverter extends PerformedActivityConverter {
      * @return the performed Procedure
      * @throws DataFormatException the data format exception
      */
-    public static PerformedProcedure convertFromDtoToDomain(PerformedProcedureDto dto)
+    public PerformedProcedure convertFromDtoToDomain(PerformedProcedureDto dto)
             throws DataFormatException {
         PerformedProcedure bo = (PerformedProcedure)
         PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedProcedure());   
