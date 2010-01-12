@@ -105,6 +105,11 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The sfx of all COPPA-related structural role II roots.
      */
     public static final String STRUCTURAL_ROLE_SFX = ".4";
+    
+    /**
+     * The base of all COPPA-related structural roles.
+     */
+    public static final String STRUCTURAL_ROLE_ROOT = BASE_ROOT + STRUCTURAL_ROLE_SFX;
 
     /**
      * The identifier name for org ii's.
@@ -114,7 +119,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value for orgs.
      */
-    public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
+    public static final String ORG_ROOT = BASE_ROOT + ".2";
 
     /**
      * The identifier name for person ii's.
@@ -124,7 +129,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value for people.
      */
-    public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
+    public static final String PERSON_ROOT = BASE_ROOT + ".1";
 
     /**
      * The identifier name for.
@@ -134,7 +139,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String CLINICAL_RESEARCH_STAFF_ROOT = "2.16.840.1.113883.3.26.4.4.1";
+    public static final String CLINICAL_RESEARCH_STAFF_ROOT = STRUCTURAL_ROLE_ROOT + ".1";
 
     /**
      * The identifier name for.
@@ -144,7 +149,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String HEALTH_CARE_PROVIDER_ROOT = "2.16.840.1.113883.3.26.4.4.2";
+    public static final String HEALTH_CARE_PROVIDER_ROOT = STRUCTURAL_ROLE_ROOT + ".2";
 
     /**
      * The identifier name for.
@@ -154,7 +159,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String HEALTH_CARE_FACILITY_ROOT = "2.16.840.1.113883.3.26.4.4.3";
+    public static final String HEALTH_CARE_FACILITY_ROOT = STRUCTURAL_ROLE_ROOT + ".3";
 
     /**
      * The identifier name for.
@@ -164,7 +169,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String OVERSIGHT_COMMITTEE_ROOT = "2.16.840.1.113883.3.26.4.4.4";
+    public static final String OVERSIGHT_COMMITTEE_ROOT = STRUCTURAL_ROLE_ROOT + ".4";
 
     /**
      * The identifier name for.
@@ -174,7 +179,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String RESEARCH_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.5";
+    public static final String RESEARCH_ORG_ROOT = STRUCTURAL_ROLE_ROOT + ".5";
 
     /**
      * The identifier name for.
@@ -184,7 +189,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String IDENTIFIED_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.6";
+    public static final String IDENTIFIED_ORG_ROOT = STRUCTURAL_ROLE_ROOT + ".6";
 
     /**
      * The identifier name for.
@@ -194,7 +199,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String IDENTIFIED_PERSON_ROOT = "2.16.840.1.113883.3.26.4.4.7";
+    public static final String IDENTIFIED_PERSON_ROOT = STRUCTURAL_ROLE_ROOT + ".7";
     /**
      * The identifier name for.
      */
@@ -203,7 +208,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
+    public static final String ORGANIZATIONAL_CONTACT_ROOT = STRUCTURAL_ROLE_ROOT + ".8";
     /**
      * The identifier name for.
      */
@@ -212,7 +217,7 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
     /**
      * The ii root value.
      */
-    public static final String PATIENT_ROOT = BASE_ROOT + STRUCTURAL_ROLE_SFX + ".9";
+    public static final String PATIENT_ROOT = STRUCTURAL_ROLE_ROOT + ".9";
 
     /**
      * The Patient to Person prefix string.
