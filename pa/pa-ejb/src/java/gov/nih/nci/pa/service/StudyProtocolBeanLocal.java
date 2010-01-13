@@ -214,6 +214,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
+        
         setDefaultValues(sp, spDTO, session, UPDATE);
         session.update(sp);
         spDTO =  StudyProtocolConverter.convertFromDomainToDTO(sp);
@@ -616,6 +617,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                                                                      : ejbContext.getCallerPrincipal().getName());
             sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
         } 
+        
     }
     
 

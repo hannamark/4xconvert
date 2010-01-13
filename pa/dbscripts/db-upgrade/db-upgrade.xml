@@ -352,4 +352,8 @@
                 <comment>execute pa_fr_25186.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_fr_25186.sql"/>
     </changeSet>
+	<changeSet id="87" author="Vrushali">
+                <comment>execute pa_dev_25497.sql</comment>
+                <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_25497.sql"/>
+    </changeSet>
 </databaseChangeLog>

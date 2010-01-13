@@ -1727,8 +1727,8 @@ private boolean isProprietaryTrial(StudyProtocolDTO studyProtocolDto) {
           StudyProtocolDTO spDTO) throws PAException, NullifiedRoleException {
       Ii studyProtocolIi = spDTO.getIdentifier();
       htmldata.append(BR).append(BR);
-      appendIdeIde(htmldata , spDTO);
-      appendNihGrants(htmldata , spDTO);
+      //appendIdeIde(htmldata , spDTO);
+      //appendNihGrants(htmldata , spDTO);
       appendSummary4(spDTO, htmldata);
       appendDisease(studyProtocolIi, htmldata);
       List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(spDTO.getIdentifier());

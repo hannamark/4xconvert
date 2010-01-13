@@ -261,7 +261,21 @@ public class CSMUserService {
      * @return RegistryUserService
      */
     public static CSMUserService getInstance() {
-        return  registryUserService;
+        return  getRegistryUserService();
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public static void setRegistryUserService(CSMUserService registryUserService) {
+        CSMUserService.registryUserService = registryUserService;
+    }
+
+    /**
+     * @return the registryUserService
+     */
+    public static CSMUserService getRegistryUserService() {
+        return registryUserService;
     }
 
 }

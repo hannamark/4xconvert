@@ -27,9 +27,9 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 	  spqAction =  new StudyProtocolQueryAction();	
 	  criteria = new StudyProtocolQueryCriteria();
 	  criteria.setNciIdentifier("NCI-2009-00001");
-	  getRequest().setUserInRole(Constants.ABSTRACTOR, true);
-	  getRequest().setUserPrincipal(new MockPrincipal("abstractor"));
-	  getSession().setAttribute(Constants.USER_ROLE, Constants.ABSTRACTOR);
+	  getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+	  getRequest().setUserPrincipal(new MockPrincipal("suAbstractor"));
+	  getSession().setAttribute(Constants.USER_ROLE, Constants.SUABSTRACTOR);
 	 
 	}
 	/**

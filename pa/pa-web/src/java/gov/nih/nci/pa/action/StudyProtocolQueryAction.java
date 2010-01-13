@@ -136,6 +136,10 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @throws PAException exception
      */
     public String showCriteria() throws PAException {
+        if (ServletActionContext.getRequest().isUserInRole(Constants.SUABSTRACTOR)) {
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.USER_ROLE, Constants.SUABSTRACTOR);
+            return "criteriaProtected";
+        }
         if (ServletActionContext.getRequest().isUserInRole(Constants.ABSTRACTOR)) {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.USER_ROLE, Constants.ABSTRACTOR);
             return "criteriaProtected";
@@ -143,10 +147,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         if (ServletActionContext.getRequest().isUserInRole(Constants.REPORT_VIEWER)) {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.USER_ROLE, Constants.REPORT_VIEWER);
             return "criteriaReport";
-        }
-        if (ServletActionContext.getRequest().isUserInRole(Constants.SUABSTRACTOR)) {
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.USER_ROLE, Constants.SUABSTRACTOR);
-            return "criteriaProtected";
         }
         throw new PAException("User configured improperly.  Use UPT to assign user to a valid group "
                 + "for this application.");

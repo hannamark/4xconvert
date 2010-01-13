@@ -128,6 +128,7 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
         sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
+        sp.setUserLastCreated("user2@mail.nih.gov");
         list.add(sp);
         isplist = new ArrayList<InterventionalStudyProtocol>();
         InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
@@ -137,6 +138,7 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
         isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         isp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
         isp.setOfficialTitle("officialTitle");
+        sp.setUserLastCreated("user1@mail.nih.gov");
         isplist.add(isp);
     }
     public List<StudyProtocolDTO> search(StudyProtocolDTO spDTO) throws PAException{

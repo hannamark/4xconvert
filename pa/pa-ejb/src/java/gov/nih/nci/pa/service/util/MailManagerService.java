@@ -151,5 +151,10 @@ public interface MailManagerService {
      * @throws PAException the PA exception
      */
     void sendCDERequestMail(String mailFrom, String mailBody) throws PAException;
-
+    /**
+     * 
+     * @param prevOwnerMailId id
+     * @param studyProtocolIi ii
+     */
+    void sendChangeOwnershipMail(String prevOwnerMailId, Ii studyProtocolIi);
 }

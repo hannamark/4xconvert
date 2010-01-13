@@ -141,6 +141,7 @@ import gov.nih.nci.service.MockDiseaseService;
 import gov.nih.nci.service.MockDocumentService;
 import gov.nih.nci.service.MockInterventionAlternateNameService;
 import gov.nih.nci.service.MockInterventionService;
+import gov.nih.nci.service.MockMailManagerService;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
 import gov.nih.nci.service.MockPAHealthCareProviderService;
 import gov.nih.nci.service.MockPlannedActivityService;
@@ -215,7 +216,7 @@ public class MockServiceLocator implements ServiceLocator {
     private final TSRReportGeneratorServiceRemote tsrReportGeneratorService = new MockTSRReportGeneratorService();
     private final StudyContactServiceLocal studyContactService = new MockStudyContactService();
     private final DocumentServiceLocal documentService = new MockDocumentService();
-    
+    private final MailManagerServiceLocal mailManagerService = new MockMailManagerService();    
     /**
      * @return mock service
      */
@@ -468,8 +469,7 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public MailManagerServiceLocal getMailManagerService() {
-        // TODO Auto-generated method stub
-        return null;
+        return mailManagerService;
     }
 
     /**

@@ -143,7 +143,7 @@ public class TrialIndideAction extends ActionSupport {
             return QUERY_RESULT;
 
         } catch (Exception e) {
-          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return QUERY_RESULT;
         }
     }
@@ -282,7 +282,7 @@ public class TrialIndideAction extends ActionSupport {
       }
       if (PAUtil.isEmpty(studyIndldeWebDTO.getGrantor())) {
         addFieldError("studyIndldeWebDTO.grantor",
-            getText("error.trialIndide..grantor"));
+            getText("error.trialIndide.grantor"));
       }
       if (PAUtil.isEmpty(studyIndldeWebDTO.getHolderType())) {
         addFieldError("studyIndldeWebDTO.holderType", getText("error.trialIndide.holderType"));

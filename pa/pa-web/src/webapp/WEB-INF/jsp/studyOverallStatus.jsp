@@ -18,9 +18,9 @@
 <c:url value="/protected/studyOverallStatushistorypopup.action" var="lookupUrl" />
 
 <script type="text/javascript">
-    addCalendar("Cal1", "Select Date", "statusDate", "studyOverallStatus");
-    addCalendar("Cal2", "Select Date", "startDate", "studyOverallStatus");
-    addCalendar("Cal3", "Select Date", "completionDate", "studyOverallStatus");
+    addCalendar("Cal1", "Select Date", "statusDate", "studyoverallstatus");
+    addCalendar("Cal2", "Select Date", "startDate", "studyoverallstatus");
+    addCalendar("Cal3", "Select Date", "completionDate", "studyoverallstatus");
     setWidth(90, 1, 15, 1);
     setFormat("mm/dd/yyyy");
 
@@ -65,7 +65,7 @@
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <pa:sucessMessage/>
-<s:form name="studyOverallStatus">
+<s:form name="studyoverallstatus">
     <s:if test="hasActionErrors()">
     <div class="error_msg"><s:actionerror/></div>
     </s:if>
@@ -102,7 +102,7 @@
         <tr>
             <td class="label"><s:label name="statusReasonLabel" for="statusReason">
                 <fmt:message key="trialStatus.current.trial.status.reason"/></s:label></td>
-            <td colspan="2" class="value"><s:textarea name="statusReason" rows="3"
+            <td colspan="2" class="value"><s:textarea name="statusReason" id="statusReason" rows="3"
                 cssStyle="width:280px;float:left" /></td>
         </tr>        
         <tr><td>&nbsp</td></tr>

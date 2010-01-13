@@ -11,7 +11,10 @@ public class LabelValueBean implements Comparable<LabelValueBean> {
     
     /** The name. */
     private String name;
-    
+    /**
+     * 
+     */
+    private String keyValue;
     /**
      * Gets the id.
      * @return the id
@@ -53,5 +56,19 @@ public class LabelValueBean implements Comparable<LabelValueBean> {
 
         return userName1.compareTo(userName2);
 
+    }
+
+    /**
+     * @param keyValue the keyValue to set
+     */
+    public void setKeyValue(String keyValue) {
+        this.keyValue = keyValue;
+    }
+
+    /**
+     * @return the keyValue
+     */
+    public String getKeyValue() {
+        return keyValue;
     }
 }

@@ -76,6 +76,9 @@
 						</c:otherwise>
 					</c:choose>
                      <li><a href="#" onclick="generateTSRWord();" >View TSR</a></li>
+                     <c:if test="${(sessionScope.role == 'SuAbstractor')}">
+                       <li><a href="changeOwnershipview.action">Change Ownership</a></li>
+                     </c:if>
 				</ul>
 			</li>
 			<c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted' 
@@ -358,7 +361,7 @@
 
 function generateTSRWord() {
   document.qForm.target = "TSR";
-   document.qForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSRWord.action";
+   document.qForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSR.action";
    document.qForm.submit();
 
 }

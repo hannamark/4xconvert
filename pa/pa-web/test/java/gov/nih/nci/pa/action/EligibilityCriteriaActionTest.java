@@ -154,7 +154,7 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
     public void testRequestToCreateCDE() {
     	assertEquals("requestToCreateCDE",eligibilityCriteriaAction.requestToCreateCDE());
     }
-    @Test(expected=Exception.class)
+    @Test
     public void testsendCDERequestEmail() {
     	getRequest().setupAddParameter("fromEmail", "a@a.com");
 		getRequest().setupAddParameter("emailMsg", "test");

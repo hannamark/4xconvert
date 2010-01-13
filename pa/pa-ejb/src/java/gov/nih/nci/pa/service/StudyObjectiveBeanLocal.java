@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.StudyObjective;
+import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
 import gov.nih.nci.pa.iso.convert.StudyObjectiveConverter;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -18,7 +19,7 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyObjectiveBeanLocal 
  extends AbstractStudyIsoService<StudyObjectiveDTO, StudyObjective, StudyObjectiveConverter>

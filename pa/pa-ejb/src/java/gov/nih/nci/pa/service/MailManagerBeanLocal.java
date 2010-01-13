@@ -77,7 +77,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
   private static final Logger LOG = Logger.getLogger(MailManagerBeanLocal.class);
   private static final int VAL = 65;
   private static final String TSR = "TSR_";
-  private static final String WORD = ".doc";
+  //private static final String WORD = ".doc";
+  private static final String HTML = ".html";
   private final String currentDate = "${CurrentDate}";
   private final String nciTrialIdentifier = "${nciTrialIdentifier}";
   private final String  submitterName = "${SubmitterName}";
@@ -121,7 +122,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       body = body.replace("${receiptDate}", getFormatedDate(spDTO.getDateLastCreated()));
       body = body.replace("${nciTrialID}", spDTO.getNciIdentifier().toString());
       body = body.replace("${fileName}", TSR
-                                         + spDTO.getNciIdentifier().toString() + WORD);
+                                         + spDTO.getNciIdentifier().toString() + HTML);
       if (PAUtil.isEmpty(spDTO.getIsProprietaryTrial()) 
               || spDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
           body = body.replace("${fileName2}", spDTO.getNciIdentifier().toString() + ".xml");
@@ -144,7 +145,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
       }          
       StringBuffer sb2  = new StringBuffer(folderPath);
       String tsrFile = new String(sb2.append(File.separator).append(TSR).append(
-          spDTO.getNciIdentifier().toString() + WORD));
+          spDTO.getNciIdentifier().toString() + HTML));
 
       //File htmlFile = this.createAttachment(new File(inputFile), new File(outputFile));
       String htmlData = tsrReportGeneratorService.generateTSRHtml(studyProtocolIi);
@@ -524,5 +525,35 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
              LOG.error("Send Mail error", e);
            } // catch
   }
+  /**
+   * 
+   * @param prevOwnerMailId email Id
+   * @param studyProtocolIi Ii
+   */
+  public void sendChangeOwnershipMail(String prevOwnerMailId, Ii studyProtocolIi) {
+      try {
+          StudyProtocolQueryDTO spDTO = protocolQueryService
+          .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
+          
+          String mailBody = lookUpTableService.getPropertyValue("trial.ownership.body");
+          mailBody = mailBody.replace(currentDate, getFormatedCurrentDate());
+          mailBody = mailBody.replace(nciTrialIdentifier, spDTO.getNciIdentifier());
+          mailBody = mailBody.replace("${newOwner}", getSumitterFullName(spDTO.getUserLastCreated()));
+          mailBody = mailBody.replace("${oldOwner}", getSumitterFullName(prevOwnerMailId));
+          String newOwnerMailBody = mailBody;
+          newOwnerMailBody = newOwnerMailBody.replace(submitterName, getSumitterFullName(spDTO.getUserLastCreated()));
 
+          sendMail(spDTO.getUserLastCreated(),
+                  lookUpTableService.getPropertyValue("trial.ownership.subject"),
+                  newOwnerMailBody);
+          
+          String prevOwnerMailBody = mailBody;
+          prevOwnerMailBody = prevOwnerMailBody.replace(submitterName, getSumitterFullName(prevOwnerMailId));
+          sendMail(prevOwnerMailId,
+                  lookUpTableService.getPropertyValue("trial.ownership.subject"),
+                  prevOwnerMailBody);
+    } catch (PAException e) {
+        LOG.error("Send Mail error ChangeOwnership Mail", e);
+    }   
+  }
  }

@@ -331,5 +331,8 @@
             </result>
             <result name="criteriaProtected">/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
         </action> 
+        <action name="changeOwnership*" class="gov.nih.nci.pa.action.ChangeOwnershipAction" method="{1}">
+            <result>/WEB-INF/jsp/changeOwnership.jsp</result>
+        </action>
 	</package>
 </struts>

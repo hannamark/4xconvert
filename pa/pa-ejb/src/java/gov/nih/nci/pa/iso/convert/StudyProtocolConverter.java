@@ -96,6 +96,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 
 /**
@@ -311,6 +312,12 @@ public class StudyProtocolConverter {
        }
        studyProtocol.setProprietaryTrialIndicator(BlConverter.covertToBoolean(
                studyProtocolDTO.getProprietaryTrialIndicator()));
+     //this for change of ownership
+       String isoStUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
+       if (PAUtil.isNotEmpty(isoStUserLastCreated) && PAUtil.isNotEmpty(studyProtocol.getUserLastCreated()) 
+               && !isoStUserLastCreated.equals(studyProtocol.getUserLastCreated())) {
+           studyProtocol.setUserLastCreated(isoStUserLastCreated);
+       }
        return studyProtocol;
    }
     
