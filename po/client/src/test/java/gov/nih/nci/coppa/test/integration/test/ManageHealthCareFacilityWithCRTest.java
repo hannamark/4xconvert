@@ -221,6 +221,9 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         // Copy CR EMail
         copyCRInfo("copy_emailEntry_value0", "cr@example.com", "email-entry-1");
 
+        // set the email entry to a blank value, so that there is no alert/confirmation during form submission.
+        selenium.type("emailEntry_value", "");
+
         // update org role and check for success message.
         updateOrganizationalRole();
     }
