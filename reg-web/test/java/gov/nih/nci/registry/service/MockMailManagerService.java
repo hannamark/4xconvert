@@ -86,5 +86,11 @@ public class MockMailManagerService implements MailManagerServiceLocal {
 		
 	}
 
+    public void sendChangeOwnershipMail(String prevOwnerMailId,
+            Ii studyProtocolIi) {
+        // TODO Auto-generated method stub
+        
+    }
+
 
 }
