@@ -178,6 +178,12 @@ public class BatchUploadAction extends ActionSupport implements
      * @return res
      */
     public String execute() {
+      //check if users accepted the desclaimer if not show one
+        String strDesclaimer = (String) ServletActionContext.getRequest().getSession().getAttribute("disclaimer");
+        if (strDesclaimer == null || !strDesclaimer.equals("accept")) {
+            ServletActionContext.getRequest().getSession().setAttribute("actionName", "batchUpload.action");
+            return "show_Disclaimer_Page";
+        }
         return SUCCESS;
     }
 

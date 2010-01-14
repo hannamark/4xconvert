@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.util.PAUtil;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -109,6 +111,11 @@ public class DisclaimerAction extends ActionSupport {
      */
     public String accept() {
         ServletActionContext.getRequest().getSession().setAttribute("disclaimer", "accept");
+        String strActionName = (String) ServletActionContext.getRequest().getSession().getAttribute("actionName");
+        ServletActionContext.getRequest().getSession().removeAttribute("actionName");
+        if (PAUtil.isNotEmpty(strActionName)) {
+            actionName = strActionName;
+        }
         if ("".equals(actionName)) {
             actionName = "searchTrial.action";
         }

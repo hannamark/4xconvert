@@ -13,7 +13,11 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
+
+import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpSession;
 
 /**
  * @author Vrushali
@@ -81,6 +85,28 @@ public class BatchUploadActionTest extends AbstractRegWebTest {
     @Test 
     public void testExecute(){
         action = new BatchUploadAction();
+        assertEquals("show_Disclaimer_Page",action.execute());
+        action = new BatchUploadAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("disclaimer", "noaccept");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("show_Disclaimer_Page",action.execute());
+        
+        action = new BatchUploadAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("show_Disclaimer_Page",action.execute());
+        
+        action = new BatchUploadAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        session.setAttribute("disclaimer", "accept");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
         assertEquals("success",action.execute());
     }
     @Test 

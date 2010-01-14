@@ -67,7 +67,16 @@
            <result>/WEB-INF/jsp/registryContact.jsp</result>
         </action> 
     </package>
-    <package name="admin" namespace="/admin" extends="default">
+    <package name="global" extends="default">
+        <action name="disClaimerAction*" class="gov.nih.nci.registry.action.DisclaimerAction" method="{1}">
+        <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
+        <result name="redirect_to" type="redirectAction">
+             <param name="actionName">${actionName}</param>
+             <param name="parse">true</param>
+        </result>
+    </action>
+    </package>
+    <package name="admin" namespace="/admin" extends="global">
         <action name="batchUpload*" class="gov.nih.nci.registry.action.BatchUploadAction" method="{1}">
 	        <interceptor-ref name="fileUpload"/>
 	         <interceptor-ref name="params">
@@ -84,7 +93,7 @@
 	        <result name="batch_confirm">/WEB-INF/jsp/batchUploadConfirm.jsp</result>
         </action>
     </package>
-    <package name="protected" namespace="/protected" extends="default">
+    <package name="protected" namespace="/protected" extends="global">
         <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
 		 <interceptor-ref name="params">
           <!--
@@ -173,14 +182,7 @@
         <result name="display_org_created_genericcontact">/WEB-INF/jsp/nodecorate/responsibleGenericContact.jsp</result>
         <result name="create_org_contact_response">/WEB-INF/jsp/nodecorate/displayTitleList.jsp</result>
     </action>      
-	<action name="disClaimerAction*" class="gov.nih.nci.registry.action.DisclaimerAction" method="{1}">
-        <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
-        <result name="redirect_to" type="redirectAction">
-             <param name="actionName">${actionName}</param>
-             <param name="parse">true</param>
-        </result>
-    </action>
-    <action name="ajaxselectTrial*" class="gov.nih.nci.registry.action.SubmitProprietaryTrialAction" method="{1}">
+	<action name="ajaxselectTrial*" class="gov.nih.nci.registry.action.SubmitProprietaryTrialAction" method="{1}">
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
     </action>
     <action name="submitProprietaryTrial*" class="gov.nih.nci.registry.action.SubmitProprietaryTrialAction" method="{1}">
