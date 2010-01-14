@@ -51,6 +51,9 @@
 		</action>
 		<action name="login">
 			<result>/WEB-INF/jsp/login.jsp</result>
+		</action>
+		<action name="about">
+		  <result>/WEB-INF/jsp/aboutpa.jsp</result>
 		</action>	   
     </package>
     

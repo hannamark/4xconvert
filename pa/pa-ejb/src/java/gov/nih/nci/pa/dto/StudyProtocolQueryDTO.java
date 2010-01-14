@@ -135,6 +135,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String studyCheckoutBy;
     private Long studyCheckoutId;
     private String trialCategory;
+    private Date recordVerificationDate;
     
    /**
     * @return the trialCategory
@@ -608,4 +609,19 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setStudyCheckoutId(Long studyCheckoutId) {
         this.studyCheckoutId = studyCheckoutId;
     }
+
+    /**
+     * @return the recordVerificationDate
+     */
+    public Date getRecordVerificationDate() {
+        return recordVerificationDate;
+    }
+
+    /**
+     * @param recordVerificationDate the recordVerificationDate to set
+     */
+    public void setRecordVerificationDate(Date recordVerificationDate) {
+        this.recordVerificationDate = recordVerificationDate;
+    }
+    
 }

@@ -310,6 +310,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                    } else {
                        studyProtocolDto.setIsProprietaryTrial("false");
                    }
+                   studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
                 }
                 if (studyMilestone != null) {
                     studyProtocolDto.setStudyMilsetone(studyMilestone.getMilestoneCode());

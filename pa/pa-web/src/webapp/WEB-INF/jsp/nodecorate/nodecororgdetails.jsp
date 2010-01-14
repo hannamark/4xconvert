@@ -6,7 +6,18 @@
 
 <%@ include file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp" %>
 </div>
-<table class="form">	
+<table class="form">
+				    <tr>
+				        <td scope="row" class="label"><s:label for="local Trial Identifier"><fmt:message key="proprietary.siteidentifier"/></s:label></td>
+				    <td>
+				        <s:textfield name="siteLocalTrialIdentifier" id="siteLocalTrialIdentifier" maxlength="20" size="200" cssStyle="width: 200px" />
+				        <span class="formErrorMsg">
+				        <s:fielderror>
+				            <s:param>siteLocalTrialIdentifier</s:param>
+				        </s:fielderror>                            
+				        </span>
+				    </td>
+				    </tr>	
                		<tr>
 					<td scope="row" class="label"><s:label for="srs">Site Recruitment Status:</s:label><span class="required">*</span></td>
                     <s:set name="recruitmentStatusValues" 

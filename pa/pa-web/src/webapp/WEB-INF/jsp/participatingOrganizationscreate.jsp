@@ -51,11 +51,13 @@
         recStatusDate = document.facility.recStatusDate.value;
         var targetAccrualNumber = document.facility.targetAccrualNumber.value;
         var programCode = document.facility.programCode.value;
-		var div = document.getElementById('loadOrgDetails'); 
+        var localProtocolId = document.facility.siteLocalTrialIdentifier.value
+
+        var div = document.getElementById('loadOrgDetails'); 
 	     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
 	     var url;
 	     url = '/pa/protected/ajaxptpOrgfacilityUpdate.action?recStatus='+recStatus
-            +'&recStatusDate='+recStatusDate+'&targetAccrualNumber='+targetAccrualNumber+'&programCode='+programCode;
+            +'&recStatusDate='+recStatusDate+'&targetAccrualNumber='+targetAccrualNumber+'&programCode='+programCode+'&localProtocolIdenfier='+localProtocolId;
          var aj = new Ajax.Updater(div, url, {
 	        asynchronous: true,
 	        method: 'get',

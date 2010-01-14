@@ -274,6 +274,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         setRecStatusDate(ServletActionContext.getRequest().getParameter(REC_STATUS_DATE));
         setTargetAccrualNumber(ServletActionContext.getRequest().getParameter("targetAccrualNumber"));
         setProgramCode(ServletActionContext.getRequest().getParameter("programCode"));
+        setSiteLocalTrialIdentifier(ServletActionContext.getRequest().getParameter("localProtocolIdenfier"));
         facilitySaveOrUpdate();
         if (hasFieldErrors()) {
             return "error_edit";
@@ -305,6 +306,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
             String prgCode = (getProgramCode() == null) ? null : getProgramCode();
             Integer iTargetAccrual = (targetAccrualNumber == null) ? null : Integer.parseInt(targetAccrualNumber);
+            String localTrialId = (getSiteLocalTrialIdentifier() == null) ? null : getSiteLocalTrialIdentifier();
             boolean spTAUpdated = false;
             boolean spPCUpdated = false;
             if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) != iTargetAccrual) {
@@ -316,6 +318,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     && !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode))) {
                sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
                spPCUpdated = true;
+            }
+            if (PAUtil.isStNull(sp.getLocalStudyProtocolIdentifier()) || (!PAUtil.isStNull(
+                    sp.getLocalStudyProtocolIdentifier()) && !StConverter.convertToString(
+                            sp.getLocalStudyProtocolIdentifier()).equalsIgnoreCase(localTrialId))) {
+                sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localTrialId));
+                spPCUpdated = true;
             }
             if (spTAUpdated || spPCUpdated) {
                 try {
@@ -337,6 +345,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp.setStudyProtocolIdentifier(spIi);
             sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
             sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
+            sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(getSiteLocalTrialIdentifier()));
             try {
                 sp = sPartService.create(sp);
             } catch (PADuplicateException e) {
@@ -404,6 +413,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             setProgramCode(null);
         } else {
             setProgramCode(StConverter.convertToString(spDto.getProgramCodeText()));
+        }
+        if (PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
+            setSiteLocalTrialIdentifier(null);
+        } else {
+            setSiteLocalTrialIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
         }
         setStatusCode(spDto.getStatusCode().getCode());
         setNewParticipation(false);
