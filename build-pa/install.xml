@@ -968,13 +968,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                     <filter token="jboss.jmx-rmi.port" value="@outcomes-grid.jboss.jmx-rmi.port@"/>
                     <filter token="jboss.messaging.port" value="@outcomes-grid.jboss.messaging.port@"/>
                     <filter token="jboss.pooledha.port" value="@outcomes-grid.jboss.pooledha.port@"/>
-                    <filter token="jboss.remoting.port" value="@jboss.grid.remoting.port@"/>
+                    <filter token="jboss.remoting.port" value="@outcomes-grid.jboss.remoting.port@"/>
                     <filter token="jboss.server.bind.port" value="@outcomes-grid.jboss.server.bind.port@"/>
-                    <filter token="jboss.server.rmi.port" value="@jboss.grid.server.rmi.port@"/>
+                    <filter token="jboss.server.rmi.port" value="@outcomes-grid.jboss.server.rmi.port@"/>
                     <filter token="jboss.service.rmiobject.port" value="@outcomes-grid.jboss.service.rmiobject.port@"/>
                     <filter token="jboss.snmp.port" value="@outcomes-grid.jboss.snmp.port@"/>
-                    <filter token="jboss.snmp-trapd.port" value="@jboss.grid.snmp-trapd.port@"/>
-                    <filter token="jboss.web.service.port" value="@jboss.grid.web.service.port@"/>
+                    <filter token="jboss.snmp-trapd.port" value="@outcomes-grid.jboss.snmp-trapd.port@"/>
+                    <filter token="jboss.web.service.port" value="@outcomes-grid.jboss.web.service.port@"/>
                 </filterset>
             </copy>
 
@@ -1279,7 +1279,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             appxml="${temp.dir}/pa-ear/META-INF/application.xml"
             />
     </target>
-    
+
     <target name="install:jboss:pa-grid-legacy:pre-configure" unless="exclude.pa-grid-legacy">
         <mkdir dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
         <delete dir="${temp.dir}/${pa-grid-legacy.dist.relative.dir}"/>
