@@ -187,6 +187,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         assertNotNull(service.getOrgId());
         IdentifiedOrganization io = getByCtepOrgId(service.getOrgId());
         assertEquals(ctep.getId(), io.getScoper().getId());
+        assertEquals(IdentifierReliability.VRF, io.getAssignedIdentifier().getReliability());
         MessageProducerTest.assertMessageCreated(io, (IdentifiedOrganizationServiceBean) importer
                 .getIdentifiedOrgService(), true);
 
@@ -197,8 +198,8 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         if (service.getHcf() != null) {
             List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
             assertEquals(1, hcfs.size());
-
             HealthCareFacility persistedHCF = hcfs.get(0);
+            assertEquals(IdentifierReliability.VRF, ((Ii) persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
             assertEquals(RoleStatus.PENDING, persistedHCF.getStatus());
             MessageProducerTest.assertMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
                     .getHCFService(), true);
@@ -208,6 +209,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             assertEquals(1, ros.size());
 
             ResearchOrganization persistedRO = ros.get(0);
+            assertEquals(IdentifierReliability.VRF, ((Ii) persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
             assertEquals(RoleStatus.PENDING, persistedRO.getStatus());
             MessageProducerTest.assertMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
                     .getROService(), true);
@@ -311,6 +313,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             MessageProducerTest.assertNoMessageCreated(updatedOrg, (OrganizationServiceBean) importer.getOrgService());
         }
         IdentifiedOrganization io = getByCtepOrgId(service.getOrgId());
+        assertEquals(IdentifierReliability.VRF, io.getAssignedIdentifier().getReliability());
         assertEquals(ctep.getId(), io.getScoper().getId());
         MessageProducerTest.assertMessageCreated(io, (IdentifiedOrganizationServiceBean) importer
                 .getIdentifiedOrgService(), false);
@@ -333,6 +336,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             assertEquals(1, hcfs.size());
 
             HealthCareFacility persistedHCF = hcfs.get(0);
+            assertEquals(IdentifierReliability.VRF, ((Ii) persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
             MessageProducerTest.assertMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
                     .getHCFService(), false);
             if (initialOrgStatus.equals(EntityStatus.PENDING)) {
@@ -346,6 +350,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             assertEquals(1, ros.size());
 
             ResearchOrganization persistedRO = ros.get(0);
+            assertEquals(IdentifierReliability.VRF, ((Ii) persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
             MessageProducerTest.assertMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
                     .getROService(), false);
             if (initialOrgStatus.equals(EntityStatus.PENDING)) {
@@ -375,6 +380,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, hcfs.size());
         HealthCareFacility persistedHCF = hcfs.get(0);
+        assertEquals(IdentifierReliability.VRF, ((Ii) persistedHCF.getOtherIdentifiers().iterator().next()).getReliability());
         Ii hcfPOID = new IdConverter.HealthCareFacilityIdConverter().convertToIi(persistedHCF.getId());
 
         MessageProducerTest.assertMessageCreated(persistedHCF,
@@ -399,6 +405,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         importedOrg = importer.importOrganization(org.getIdentifier());
         hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, hcfs.size());
+        assertEquals(IdentifierReliability.VRF, ((Ii) hcfs.get(0).getOtherIdentifiers().iterator().next()).getReliability());
         MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
         MessageProducerTest.assertNoMessageCreated(persistedHCF, (HealthCareFacilityServiceBean) importer
                 .getHCFService());
@@ -437,6 +444,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         List<ResearchOrganization> ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, ros.size());
         ResearchOrganization persistedRO = ros.get(0);
+        assertEquals(IdentifierReliability.VRF, ((Ii) persistedRO.getOtherIdentifiers().iterator().next()).getReliability());
         Ii roPOID = new IdConverter.ResearchOrganizationIdConverter().convertToIi(persistedRO.getId());
 
         MessageProducerTest.assertMessageCreated(persistedRO,
@@ -450,6 +458,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         importedOrg = importer.importOrganization(org.getIdentifier());
         ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, ros.size());
+        assertEquals(IdentifierReliability.VRF, ((Ii) ros.get(0).getOtherIdentifiers().iterator().next()).getReliability());
         MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
         MessageProducerTest.assertNoMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
                 .getROService());
@@ -591,6 +600,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         HealthCareFacility freshHcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().createCriteria(
                 HealthCareFacility.class).uniqueResult();
         Ii ctepIdForHcf = freshHcf.getOtherIdentifiers().iterator().next();
+        assertEquals(IdentifierReliability.VRF, ctepIdForHcf.getReliability());
         assertEquals(CtepOrganizationImporter.CTEP_ORG_ROOT, ctepIdForHcf.getRoot());
         assertEquals("20110", freshHcf.getPostalAddresses().iterator().next().getPostalCode());
     }

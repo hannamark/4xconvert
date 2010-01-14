@@ -107,4 +107,8 @@
        <comment>Ensure all ROs and HCFs are PENDING if they don't have a CTEP ID</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-1478.sql"/>
     </changeSet>
+    <changeSet id="PO-850" author="mshestopalov">
+       <comment>Change all reliability to VRF from ISS where root is CTEP on Org related imports.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-850.sql"/>
+    </changeSet>
 </databaseChangeLog>

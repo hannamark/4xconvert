@@ -85,6 +85,7 @@ package gov.nih.nci.po.service.external;
 import gov.nih.nci.common.exceptions.CTEPEntException;
 import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.IdentifierReliability;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
@@ -126,7 +127,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * @author Scott Miller
- *
+ * 
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class CtepOrganizationImporter extends CtepEntityImporter {
@@ -153,7 +154,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Constructor.
-     *
+     * 
      * @param ctepContext the initial context providing access to ctep services.
      */
     public CtepOrganizationImporter(Context ctepContext) {
@@ -162,7 +163,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Get the organization representing ctep.
-     *
+     * 
      * @return the org
      * @throws JMSException on error
      * @throws EntityValidationException if a validation error occurs anywhere throughout
@@ -180,7 +181,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Imports the given org but will not update an existing entry.
-     *
+     * 
      * @param ctepOrgId the org id.
      * @return the org
      * @throws JMSException on error
@@ -196,7 +197,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Method to import an organization based on its ctep id.
-     *
+     * 
      * @param ctepOrgId the ctep id.
      * @return the organization record.
      * @throws JMSException on error
@@ -209,6 +210,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             OrganizationDTO ctepOrgDto = getCtepOrgService().getOrganizationById(ctepOrgId);
             printOrgDataToDebugLog(ctepOrgDto);
             Ii assignedId = ctepOrgDto.getIdentifier();
+            assignedId.setReliability(IdentifierReliability.VRF);
             Organization ctepOrg = convertToLocalOrg(ctepOrgDto);
             ctepOrg.setStatusCode(EntityStatus.PENDING);
 
@@ -238,9 +240,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
     }
 
-    private boolean isNewCtepOrg(IdentifiedOrganization identifiedOrg,
-                                 HealthCareFacility hcf, ResearchOrganization ro) {
-        return (identifiedOrg == null && (hcf == null || hcf.getPlayer() == null)
+    private boolean isNewCtepOrg(IdentifiedOrganization identifiedOrg, 
+            HealthCareFacility hcf, ResearchOrganization ro) {
+        return (identifiedOrg == null && (hcf == null || hcf.getPlayer() == null) 
                 && (ro == null || ro.getPlayer() == null));
     }
 
@@ -310,6 +312,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
         // create an identified org record
         IdentifiedOrganization identifiedOrg = genIdentifiedOrg(hcf, ro, ctepOrgId, ctepOrg, roleStatus);
+
         this.identifiedOrgService.curate(identifiedOrg);
 
         return ctepOrg;
@@ -376,6 +379,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Either updates a pending local org, or creates a CR for a active org based upon incoming ctep data.
+     * 
      * @param ctep incoming ctep data
      * @param local current local state
      * @throws JMSException unable to publish
@@ -578,13 +582,19 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private HealthCareFacility getCtepHealthCareFacility(Ii ctepOrgId) {
+        // In case ctep does not have the latest version of iso datatypes which
+        // has the VRF reliability, we set it back to ISS before querying and
+        // then change it to VRF for the rest of the import process.
         try {
+            ctepOrgId.setReliability(IdentifierReliability.ISS);
             HealthCareFacilityDTO hcfDto = getCtepOrgService().getHealthCareFacility(ctepOrgId);
             printHcf(hcfDto);
 
             return (HealthCareFacility) PoXsnapshotHelper.createModel(hcfDto);
         } catch (CTEPEntException e) {
             return null;
+        } finally {
+            ctepOrgId.setReliability(IdentifierReliability.VRF);
         }
     }
 
@@ -595,13 +605,18 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private ResearchOrganization getCtepResearchOrganization(Ii ctepOrgId) {
+        // In case ctep does not have the latest version of iso datatypes which
+        // has the VRF reliability, we set it back to ISS before querying and
+        // then change it to VRF for the rest of the import process.
         try {
+            ctepOrgId.setReliability(IdentifierReliability.ISS);
             ResearchOrganizationDTO roDto = getCtepOrgService().getResearchOrganization(ctepOrgId);
             print(roDto);
-
             return (ResearchOrganization) PoXsnapshotHelper.createModel(roDto);
         } catch (CTEPEntException e) {
             return null;
+        } finally {
+            ctepOrgId.setReliability(IdentifierReliability.VRF);
         }
     }
 
@@ -613,7 +628,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Handle the nullification with duplicate of an organization from the ctep system.
-     *
+     * 
      * @param ctepOrgId the ctep org id
      * @param duplicateOfId the ID of the organization of which this is a duplicate
      * @param orgType organization type
