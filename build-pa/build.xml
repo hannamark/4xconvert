@@ -340,15 +340,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <mkdir dir="${outcomes-grid.dist.dir}"/>
         <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
 
-        <!-- Added for builds that require jboss, uses local jboss if present otherwises installs jboss and uses that (for remote deployments) -->
-        <available file="${jboss.home}/lib/commons-httpclient.jar" property="rt.jboss.exists"/>
-        <if>
-            <isset property="rt.jboss.exists"/>
-            <then>
-                <property name="local.jboss.home" location="${jboss.home}"/>
-                <echo message="JBOSS_HOME exists ${jboss.home}"/>
-            </then>
-            <else>
                 <property name="local.jboss.home" location="${pt.dir}/${jboss.binaries.relative.dir}"/>
                 <available file="${local.jboss.home}/lib/commons-httpclient.jar" property="local.jboss.exists"/>
                 <echo message="JBOSS_HOME does not exist checking for LOCAL_JBOSS_HOME ${local.jboss.home}"/>
@@ -370,10 +361,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                     <else>
                         <echo message="LOCAL_JBOSS_HOME found ${local.jboss.home}"/>
                     </else>
-
                 </if>
-            </else>
-        </if>
         <property name="jboss.deploy.dir" location="${local.jboss.home}/server/${jboss.server.name}/deploy"/>
       <echoproperties prefix="env"/>
     </target>
@@ -1194,17 +1182,24 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
             target="test-dynamic-analysis"
             dir="${accrual-ear.base.dir}" >
-            <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
-            <property name="hibernate.dialect" value="${database.dialect}"/>
-            <property name="jdbc.driver" value="${database.driver}"/>
-            <property name="accrual-ear.build.dir" location="${pa-ear.dist.dir}" />
-            <property name="application.url" location="${application.url}" />
-            <property name="database.url" value="${database.url}" />
-            <property name="database.user" value="${database.user}" />
-            <property name="database.password" value="${database.password}" />
-            <property name="po.jnp.url" value="${accrual.po.jnp.url}" />
-            <property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
-            <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
+		<property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+		<property name="hibernate.dialect" value="${database.dialect}"/>
+		<property name="jdbc.driver" value="${database.driver}"/>
+		<property name="accrual-ear.build.dir" location="${pa-ear.dist.dir}" />
+		<property name="application.url" location="${application.url}" />
+		<property name="database.url" value="${database.url}" />
+		<property name="database.user" value="${database.user}" />
+		<property name="database.password" value="${database.password}" />
+		<property name="po.jnp.url" value="${accrual.po.jnp.url}" />
+		<property name="pa.jnp.url" value="${accrual.pa.jnp.url}" />
+		<property name="accrual.jnp.url" value="${accrual.jnp.url}" />
+		<property name="po.port.number" value="${po.port.number}" />
+		<property name="jboss.server.hostname" value="${jboss.server.hostname}" />
+		<property name="outcomes.url" value="${outcomes.url}" />
+		<property name="gridServicePrincipal" value="${outcomes-grid.jndi.principal}"/>
+		<property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
+		<property name="po.username" value="${po.username}"/>
+		<property name="po.pass" value="${po.pass}"/>
         </ant>
     </target>
 
