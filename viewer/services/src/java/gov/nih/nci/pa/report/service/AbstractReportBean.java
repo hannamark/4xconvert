@@ -4,7 +4,7 @@ import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractCriteriaDto;
-import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
 import java.lang.reflect.ParameterizedType;
@@ -74,7 +74,7 @@ public abstract class AbstractReportBean<CRITERIA extends AbstractCriteriaDto, R
         if (studyProtocolIdentifier == null) { return null; }
         LeadOrgInfo result = new LeadOrgInfo();
         try {
-            session = ViewerHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer(
                       "select org.name, spart.local_sp_indentifier "

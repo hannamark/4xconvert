@@ -105,7 +105,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -274,7 +273,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         setRecStatusDate(ServletActionContext.getRequest().getParameter(REC_STATUS_DATE));
         setTargetAccrualNumber(ServletActionContext.getRequest().getParameter("targetAccrualNumber"));
         setProgramCode(ServletActionContext.getRequest().getParameter("programCode"));
-        setSiteLocalTrialIdentifier(ServletActionContext.getRequest().getParameter("localProtocolIdenfier"));
         facilitySaveOrUpdate();
         if (hasFieldErrors()) {
             return "error_edit";
@@ -306,7 +304,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
             String prgCode = (getProgramCode() == null) ? null : getProgramCode();
             Integer iTargetAccrual = (targetAccrualNumber == null) ? null : Integer.parseInt(targetAccrualNumber);
-            String localTrialId = (getSiteLocalTrialIdentifier() == null) ? null : getSiteLocalTrialIdentifier();
             boolean spTAUpdated = false;
             boolean spPCUpdated = false;
             if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) != iTargetAccrual) {
@@ -318,12 +315,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                     && !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode))) {
                sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
                spPCUpdated = true;
-            }
-            if (PAUtil.isStNull(sp.getLocalStudyProtocolIdentifier()) || (!PAUtil.isStNull(
-                    sp.getLocalStudyProtocolIdentifier()) && !StConverter.convertToString(
-                            sp.getLocalStudyProtocolIdentifier()).equalsIgnoreCase(localTrialId))) {
-                sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localTrialId));
-                spPCUpdated = true;
             }
             if (spTAUpdated || spPCUpdated) {
                 try {
@@ -345,7 +336,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp.setStudyProtocolIdentifier(spIi);
             sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
             sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
-            sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(getSiteLocalTrialIdentifier()));
             try {
                 sp = sPartService.create(sp);
             } catch (PADuplicateException e) {
@@ -413,11 +403,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             setProgramCode(null);
         } else {
             setProgramCode(StConverter.convertToString(spDto.getProgramCodeText()));
-        }
-        if (PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
-            setSiteLocalTrialIdentifier(null);
-        } else {
-            setSiteLocalTrialIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
         }
         setStatusCode(spDto.getStatusCode().getCode());
         setNewParticipation(false);
@@ -601,7 +586,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         }
 
         // convert the PO DTO to the pa domain
-        paOrgDTO = EnOnConverter.convertPoOrganizationDTO(selectedOrgDTO, null);
+        paOrgDTO = PAUtil.convertPoOrganizationDTO(selectedOrgDTO, null);
         //paOrgDTO = ISOOrgDisplayConverter.convertPoOrganizationDTO(selectedOrgDTO);
         // store selection
         Organization org = new Organization();
@@ -950,7 +935,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                 personContactWebDTO.setSelectedPersId(Long.valueOf(persId));
             }
             if (selectedPersTO != null && selectedPersTO.getName() != null) {
-                gov.nih.nci.pa.dto.PaPersonDTO personDTO = EnPnConverter.convertToPaPersonDTO(selectedPersTO);
+                gov.nih.nci.pa.dto.PaPersonDTO personDTO = PAUtil.convertToPaPersonDTO(selectedPersTO);
                 personContactWebDTO.setFirstName(personDTO.getFirstName());
                 personContactWebDTO.setLastName(personDTO.getLastName());
                 personContactWebDTO.setMiddleName(personDTO.getMiddleName());
@@ -1017,7 +1002,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             selectedPersTO = PoRegistry.getPersonEntityService().getPerson(
                     EnOnConverter.convertToOrgIi(Long.valueOf(contactPersId)));
             personContactWebDTO.setSelectedPersId(Long.valueOf(selectedPersTO.getIdentifier().getExtension()));
-            gov.nih.nci.pa.dto.PaPersonDTO personDTO = EnPnConverter.convertToPaPersonDTO(selectedPersTO);
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO = PAUtil.convertToPaPersonDTO(selectedPersTO);
             personContactWebDTO.setFirstName(personDTO.getFirstName());
             personContactWebDTO.setLastName(personDTO.getLastName());
             personContactWebDTO.setMiddleName(personDTO.getMiddleName());
@@ -1436,7 +1421,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         try {
             perDTO = PoRegistry.getPersonEntityService().search(criteria, limit).get(0);
             // convert the PO DTO to the pa domain
-            personContactWebDTO = EnPnConverter.convertToPaPersonDTO(perDTO);
+            personContactWebDTO = PAUtil.convertToPaPersonDTO(perDTO);
             personContactWebDTO.setSelectedPersId(personContactWebDTO.getId());
         } catch (PAException e) {
             LOG.error(e);

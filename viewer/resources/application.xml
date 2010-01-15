@@ -20,16 +20,10 @@
         <java>pa-ejb.jar</java>
     </module>
     <module>
-        <java>po-services-client-2.2.0rc1.jar</java>
+        <java>pa-commons.jar</java>
     </module>
     <module>
         <java>xsnapshot-1.1-beta2.jar</java>
-    </module>
-    <module>
-        <java>iso-datatypes-1.2.4.jar</java>
-    </module>
-    <module>
-        <java>coppa-commons-1.2.2.jar</java>
     </module>
     <security-role><role-name>Abstractor</role-name></security-role>
     <security-role><role-name>Submitter</role-name></security-role>

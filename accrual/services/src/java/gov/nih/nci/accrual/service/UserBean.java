@@ -80,8 +80,8 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.UserDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import java.rmi.RemoteException;
 
@@ -98,7 +98,7 @@ import org.jboss.annotation.security.SecurityDomain;
  * @since Dec 9, 2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @SecurityDomain("accrual-outcomes")
 public class UserBean

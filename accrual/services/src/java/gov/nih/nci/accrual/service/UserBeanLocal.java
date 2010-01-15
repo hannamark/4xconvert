@@ -83,7 +83,6 @@ import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.convert.UserConverter;
 import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
@@ -92,6 +91,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.USStateCode;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -116,7 +116,7 @@ import javax.interceptor.Interceptors;
  * @since Dec 9, 2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class UserBeanLocal

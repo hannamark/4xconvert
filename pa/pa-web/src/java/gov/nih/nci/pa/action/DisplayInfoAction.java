@@ -82,12 +82,12 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -151,7 +151,7 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
             Person userInfo = cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO.getPiId()));
             PersonDTO poPerson = PoRegistry.getPersonEntityService().getPerson(
                     IiConverter.convertToPoPersonIi(userInfo.getIdentifier()));
-            persWebDTO = EnPnConverter.convertToPaPersonDTO(poPerson);
+            persWebDTO = PAUtil.convertToPaPersonDTO(poPerson);
             persWebDTO.setTelephone(null);
             return SUCCESS;
         } catch (PAException e) {

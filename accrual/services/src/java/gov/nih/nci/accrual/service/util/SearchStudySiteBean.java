@@ -79,14 +79,14 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -107,7 +107,7 @@ import org.hibernate.Session;
  * @since Aug 17, 2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class SearchStudySiteBean implements SearchStudySiteService {
 
@@ -121,7 +121,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         if (!PAUtil.isIiNull(studyProtocolIi) && !PAUtil.isStNull(authorizedUser)) {
             Session session = null;
             try {
-                session = AccrualHibernateUtil.getCurrentSession();
+                session = HibernateUtil.getCurrentSession();
                 Query query = null;
                 String hql = "select ss.id, org.name, org.identifier "
                     + "from StudyProtocol as sp "
@@ -162,7 +162,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
 
             Session session = null;
             try {
-                session = AccrualHibernateUtil.getCurrentSession();
+                session = HibernateUtil.getCurrentSession();
                 Query query = null;
                 String hql = "select distinct ss.id "
                     + "from StudySiteAccrualAccess ssaa "

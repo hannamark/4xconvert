@@ -80,13 +80,13 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.AbstractConverter;
 import gov.nih.nci.accrual.convert.Converters;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.lang.reflect.ParameterizedType;
@@ -196,7 +196,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         DTO resultDto = null;
         Session session = null;
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             if (bo == null) {
                 logger.error("Object not found using get() for id = "
@@ -225,7 +225,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         getLogger().info("Entering delete().  ");
         Session session = null;
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             BO bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             session.delete(bo);
             session.flush();
@@ -318,7 +318,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         DTO2 resultDto = null;
         Session session = null;
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             setAuditValues(bo);
             bo = (BO2) session.merge(bo);
             session.flush();

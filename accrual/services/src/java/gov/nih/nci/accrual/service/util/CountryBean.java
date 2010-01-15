@@ -79,11 +79,11 @@
 
 package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -103,7 +103,7 @@ import org.hibernate.Session;
  * @since Sep 25, 2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 public class CountryBean implements CountryService {
 
     /**
@@ -116,7 +116,7 @@ public class CountryBean implements CountryService {
         Country bo = null;
         Session session = null;
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             bo = (Country) session.get(Country.class, IiConverter.convertToLong(ii));
         } catch (HibernateException hbe) {
             throw new RemoteException("Hibernate exception in getCountry().", hbe);
@@ -136,7 +136,7 @@ public class CountryBean implements CountryService {
         Session session = null;
         try {
             Set<String> dupCountryFilter = new HashSet<String>();
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             List<Country> results = session.createQuery(
                     "select country from RegulatoryAuthority as ra "
                             + "order by ra.country.name ").list();

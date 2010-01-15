@@ -76,6 +76,8 @@
 */
 package gov.nih.nci.pa.report.util;
 
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+
 import javax.interceptor.InvocationContext;
 
 import org.junit.Before;
@@ -89,7 +91,7 @@ public class ViewerHibernateSessionInterceptorTest {
 
     @Test (expected=NullPointerException.class)
     public void criteriaValidateTest() throws Exception {
-        ViewerHibernateSessionInterceptor i = new ViewerHibernateSessionInterceptor();
+        HibernateSessionInterceptor i = new HibernateSessionInterceptor();
         InvocationContext ctx = new MockInvocationContext();
         i.manageHibernateSession(ctx);
     }

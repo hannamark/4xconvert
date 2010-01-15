@@ -91,7 +91,10 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.util.CtrpHibernateHelper;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.TestHibernateHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -126,7 +129,7 @@ public class TestSchema {
      *
      */
     public static void reset() {
-        ViewerHibernateUtil.testHelper = testHelper;
+        HibernateUtil.testHelper = testHelper;
         if (!dataLoaded) {
             primeData();
         }
@@ -137,7 +140,7 @@ public class TestSchema {
      * @param obj o
      */
     public static <T> void addUpdObject(T obj) {
-        Session session = ViewerHibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(obj);
         transaction.commit();

@@ -22,6 +22,8 @@
     <property name="pa-ear.ear" value="${pa-ear.build.finalName}.ear"/>
     <property name="pa-ejb.output.dir" value="${pa.dir}//pa-ejb/target"/>
     <property name="pa-ejb.package" value="${pa-ejb.output.dir}/pa-ejb.jar"/>
+	<property name="pa-commons.output.dir" value="${pa.dir}//commons/target"/>
+	<property name="pa-commons.package" value="${pa-commons.output.dir}/pa-commons.jar"/>
     <property name="pa-web.output.dir" value="${pa.dir}/pa-web/target"/>
     <property name="pa-web.package" value="${pa-web.output.dir}/pa-web.war"/>   
     <property name="reg-web.output.dir" value="${software.dir}/reg-web/target"/>
@@ -79,6 +81,9 @@
         <fileset dir="${pa-ejb.output.dir}">
             <include name="pa-ejb.jar"/>
         </fileset>
+    	<fileset dir="${pa-commons.output.dir}">
+    	            <include name="pa-commons.jar"/>
+    	</fileset>
     </path>
     
     <!-- ====================================================================== -->
@@ -180,6 +185,8 @@
     <!-- ====================================================================== -->
 
     <target name="package-setup">
+    	<available file="${pa-commons.package}" property="pa-commons.present"/>
+    	<fail unless="pa-commons.present" message="PA Commons jar file not found."/>
         <available file="${pa-ejb.package}" property="pa-ejb.present"/>
         <fail unless="pa-ejb.present" message="EJB jar file not found."/>
         <available file="${pa-web.package}" property="pa-web.present"/>
@@ -213,7 +220,9 @@
     <target name="package-viewer" depends="package-inc-viewer,package-exc-viewer"/>
     
     <target name="package" depends="ivy-get,compile,package-setup,package-viewer" description="Package the application">
-        <copy file="${pa-ejb.package}" 
+    	<copy file="${pa-commons.package}" 
+    	             todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
+    	<copy file="${pa-ejb.package}" 
              todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
         <copy file="${pa-web.package}" 
              todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>

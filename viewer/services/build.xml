@@ -45,7 +45,13 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
-    <path id="ejb.package.classpath">
+	<path id="common.package.classpath">
+		         <fileset dir="${pa.dir}/commons/target">
+		            <include name="*.jar"/>
+		         </fileset>
+	</path>  
+	
+	<path id="ejb.package.classpath">
          <fileset dir="${pa.dir}/pa-ejb/target">
             <include name="*.jar"/>
          </fileset>
@@ -134,6 +140,7 @@
             <classpath>
                 <path refid="compile.classpath"/> 
                 <path refid="ejb.package.classpath"/>
+            	<path refid="common.package.classpath"/>
             </classpath>
         </javac>
         <copy todir="${viewer.build.outputDir}">
@@ -166,6 +173,7 @@
                 <pathelement location="${viewer.build.outputDir}"/> 
                 <path refid="test.classpath"/>
                 <path refid="ejb.package.classpath"/>
+            	<path refid="common.package.classpath"/>
             </classpath>
         </javac>
         <copy todir="${viewer.build.testOutputDir}">
@@ -185,6 +193,7 @@
         <checkstyle config="${checkstyleFile}" failOnViolation="true">
             <classpath>
                 <path refid="ejb.package.classpath"/> 
+            	<path refid="common.package.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain"/>
@@ -301,6 +310,7 @@
             <classpath refid="test.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="ejb.package.classpath"/>
+        	<classpath refid="common.package.classpath"/>
             <batchtest todir="${viewer.test.reports}">
                 <fileset dir="${viewer.build.testDir.0}">
                     <include name="**/*Test.java"/>

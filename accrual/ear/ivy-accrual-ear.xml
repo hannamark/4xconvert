@@ -8,8 +8,8 @@
 
  <dependencies>
 <!-- runtime -->
-<dependency org="ncicb" name="pa-ejb-client" rev="3.1.0" force="true" conf="runtime->default"/>
-
+<dependency org="ncicb" name="pa-ejb-client" rev="3.2-alpha1" force="true" conf="runtime->default"/>
+<dependency org="ncicb" name="pa-commons" rev="3.2-alpha1" force="true" conf="runtime"/>
 </dependencies>
 
 </ivy-module>

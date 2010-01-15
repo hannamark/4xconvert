@@ -93,8 +93,6 @@ import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.PerformedClinicalResult;
 import gov.nih.nci.pa.domain.PerformedDiagnosis;
@@ -104,6 +102,8 @@ import gov.nih.nci.pa.domain.PerformedLesionDescription;
 import gov.nih.nci.pa.domain.PerformedMedicalHistoryResult;
 import gov.nih.nci.pa.domain.PerformedObservationResult;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -124,7 +124,7 @@ import org.hibernate.Session;
  * @since 11/10/2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
  @SuppressWarnings({"unchecked", "PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PerformedObservationResultBeanLocal
@@ -141,7 +141,7 @@ public class PerformedObservationResultBeanLocal
         }
         PerformedHistopathologyDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedHistopathology bo = (PerformedHistopathology) session.get(PerformedHistopathology.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -167,7 +167,7 @@ public class PerformedObservationResultBeanLocal
 
         Session session = null;
         List<PerformedHistopathology> queryList = new ArrayList<PerformedHistopathology>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -230,7 +230,7 @@ public class PerformedObservationResultBeanLocal
         }
         PerformedImageDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedImage bo = (PerformedImage) session.get(PerformedImage.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -256,7 +256,7 @@ public class PerformedObservationResultBeanLocal
 
         Session session = null;
         List<PerformedImage> queryList = new ArrayList<PerformedImage>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -319,7 +319,7 @@ public class PerformedObservationResultBeanLocal
         }
         PerformedDiagnosisDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedDiagnosis bo = (PerformedDiagnosis) session.get(PerformedDiagnosis.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -345,7 +345,7 @@ public class PerformedObservationResultBeanLocal
 
         Session session = null;
         List<PerformedDiagnosis> queryList = new ArrayList<PerformedDiagnosis>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -409,7 +409,7 @@ public class PerformedObservationResultBeanLocal
         }
         PerformedClinicalResultDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedClinicalResult bo = (PerformedClinicalResult) session.get(PerformedClinicalResult.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -435,7 +435,7 @@ public class PerformedObservationResultBeanLocal
 
         Session session = null;
         List<PerformedClinicalResult> queryList = new ArrayList<PerformedClinicalResult>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -500,7 +500,7 @@ public class PerformedObservationResultBeanLocal
         }
         PerformedMedicalHistoryResultDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedMedicalHistoryResult bo = (PerformedMedicalHistoryResult) session.get(
                 PerformedMedicalHistoryResult.class, IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -526,7 +526,7 @@ public class PerformedObservationResultBeanLocal
 
         Session session = null;
         List<PerformedMedicalHistoryResult> queryList = new ArrayList<PerformedMedicalHistoryResult>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -591,7 +591,7 @@ public class PerformedObservationResultBeanLocal
         }
         PerformedLesionDescriptionDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedLesionDescription bo = (PerformedLesionDescription) session.get(
                 PerformedLesionDescription.class, IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -617,7 +617,7 @@ public class PerformedObservationResultBeanLocal
 
         Session session = null;
         List<PerformedLesionDescription> queryList = new ArrayList<PerformedLesionDescription>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -683,7 +683,7 @@ public class PerformedObservationResultBeanLocal
 
         Session session = null;
         List<PerformedObservationResult> queryList = new ArrayList<PerformedObservationResult>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql

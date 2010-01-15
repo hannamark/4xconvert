@@ -44,6 +44,12 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
     
+	<path id="common.package.classpath">
+		    <fileset dir="${pa.dir}/commons/target">
+		            <include name="pa-commons.jar"/>
+		      </fileset>
+	</path>  
+	
     <property name="compile.jar.dir" location="${lib.dir}/pa-web/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
@@ -138,6 +144,7 @@
             <classpath>
                 <path refid="ejb.package.classpath"/>
                 <path refid="compile.classpath"/> 
+            	<path refid="common.package.classpath"/>
             </classpath>
         </javac>
     	<copy file="${pa.resourceDir}/quartz_jobs.xml" 
@@ -216,7 +223,8 @@
                 <path refid="test-junit.classpath"/>
                 <path refid="test-selenium.classpath"/>
                 <path refid="compile.classpath"/>  
-                <path refid="ejb.package.classpath"/>           
+                <path refid="ejb.package.classpath"/> 
+            	<path refid="common.package.classpath"/>
             </classpath>
         </javac>
         <copy todir="${pa-web.build.testOutputDir}">
@@ -282,6 +290,7 @@
             <classpath>
                 <path refid="ejb.package.classpath"/> 
                 <path refid="compile.classpath"/>
+            	<path refid="common.package.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
@@ -411,6 +420,7 @@
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
             <classpath refid="ejb.package.classpath"/>
+        	<classpath refid="common.package.classpath"/>
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>

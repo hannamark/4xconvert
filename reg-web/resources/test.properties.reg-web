@@ -1,5 +1,0 @@
-#
-# Properties for test cases.
-#
-test.schema.showsql=@test.schema.showsql@
-

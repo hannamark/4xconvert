@@ -46,6 +46,12 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
     
+	<path id="common.package.classpath">
+			    <fileset dir="${pa.dir}/commons/target">
+			            <include name="*.jar"/>
+			      </fileset>
+	</path>  
+	
     <property name="compile.jar.dir" location="${lib.dir}/reg-web/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
@@ -145,6 +151,7 @@
             <classpath>
                 <path refid="compile.classpath"/> 
                 <path refid="ejb.package.classpath"/>    
+            	<path refid="common.package.classpath"/>
             </classpath>
         </javac>
         <copy todir="${reg-web.build.outputDir}">
@@ -159,7 +166,7 @@
 	    <!-- Configure test compilation target                                      -->
 	    <!-- ====================================================================== -->
 
-	    <target name="configure-tests">
+	   <!-- <target name="configure-tests">
 	        <copy file="${pa.resourceDir}/test.properties.reg-web" 
 	              tofile="${reg-web.build.testResourceDir.0}/test.properties"
 	              overwrite="true">
@@ -167,13 +174,13 @@
 	                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
 	            </filterset>
 	        </copy>
-	    </target>
+	    </target> -->
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-      depends="compile, configure-tests" 
+      depends="compile" 
       description="Compile the test code"> 
         <mkdir dir="${reg-web.build.testOutputDir}"/>
         <javac destdir="${reg-web.build.testOutputDir}" 
@@ -189,11 +196,12 @@
                 <pathelement location="${reg-web.build.testDir.0}"/>
             </src>
             <classpath>
-                <pathelement location="${reg-web.build.outputDir}"/> 
+                <pathelement location="${reg-web.build.outputDir}"/>
+            	<path refid="common.package.classpath"/> 
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
                 <path refid="compile.classpath"/>  
-                <path refid="ejb.package.classpath"/>  
+                <path refid="ejb.package.classpath"/> 
             </classpath>
         </javac>
         <copy todir="${reg-web.build.testOutputDir}">
@@ -213,6 +221,7 @@
             <classpath>
                 <path refid="ejb.package.classpath"/> 
                 <path refid="compile.classpath"/>
+            	<path refid="common.package.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
@@ -376,6 +385,7 @@
             <classpath refid="test-cobertura.classpath"/>
             <classpath refid="compile.classpath"/>
             <classpath refid="ejb.package.classpath"/>
+        	<classpath refid="common.package.classpath"/>
             <batchtest todir="${reg-web.test.reports}">
                 <fileset dir="${reg-web.build.testDir.0}">
                     <include name="**/*Test.java"/>

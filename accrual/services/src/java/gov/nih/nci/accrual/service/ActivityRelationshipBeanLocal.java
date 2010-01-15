@@ -81,14 +81,14 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.ActivityRelationshipConverter;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.ActivityRelationship;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -109,7 +109,7 @@ import org.hibernate.Session;
  * @since 11/13/2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
        <ActivityRelationshipDto, ActivityRelationship, ActivityRelationshipConverter>
@@ -123,7 +123,7 @@ public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
         Session session = null;
         List<ActivityRelationship> queryList = new ArrayList<ActivityRelationship>();
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = "select ars "
                        + "from ActivityRelationship ars "
@@ -161,7 +161,7 @@ public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
         Session session = null;
         List<ActivityRelationship> queryList = new ArrayList<ActivityRelationship>();
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = "select ars "
                        + "from ActivityRelationship ars "

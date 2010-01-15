@@ -67,9 +67,10 @@
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/mail-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/log4j-4.0.5.GA.jar"/>
     <classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-logging-4.0.5.GA.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.2.2.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-1.2.4.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-3.0-milestone3.jar"/>
+    <classpathentry kind="var" path="PA_LIB/reg-web/compile/coppa-commons-1.2.2.jar"/>
+    <classpathentry kind="var" path="PA_LIB/reg-web/compile/iso-datatypes-1.2.4.jar"/>
+    <classpathentry kind="var" path="PA_LIB/reg-web/compile/po-services-client-3.1rc1.jar"/>
+	<classpathentry kind="var" path="PA_LIB/reg-web/compile/hibernate3-4.0.5.GA.jar"/>
     <classpathentry combineaccessrules="false" kind="src" path="/pa"/>
     <classpathentry kind="output" path="target/classes"/>
 </classpath>

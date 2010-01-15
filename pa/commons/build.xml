@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- commons ant script for COPPA PA                                         -->
+<!-- ====================================================================== -->
+
+<project name="commons" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="software.dir" value="${basedir}/../.."/>
+    <property name="pa.dir" value="${software.dir}/pa"/>
+    <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
+    <property file="${software.dir}/pa/build.properties"/>
+    <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
+
+    <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
+    <property name="pa.checkstyle" value="${pa.resourceDir}/paCheckstyle.xml"/>
+
+    <property name="jboss.server.jndi.port" value="1099" />
+
+    <property name="commons.build.finalName" value="pa-commons"/>
+    <property name="commons.build.dir" value="${pa.dir}/commons/target"/>
+    <property name="commons.build.outputDir" value="${commons.build.dir}/classes"/>
+    <property name="commons.build.srcDir.0" value="${pa.dir}/commons/src/java"/>
+    <property name="commons.build.resourceDir.0" value="${pa.dir}/commons/src/resources"/>
+    <property name="commons.build.testOutputDir" value="${commons.build.dir}/test-classes"/>
+    <property name="commons.build.testDir.0" value="${pa.dir}/commons/test/java"/>
+    <property name="commons.build.testResourceDir.0" value="${pa.dir}/commons/test/resources"/>
+    <property name="commons.test.reports" value="${pa.report.dir}/commons/test-reports"/>
+    <property name="commons.coverage.reports" value="${pa.report.dir}/commons/coverage-reports"/>
+    <property name="commons.reporting.outputDirectory" value="${pa.report.dir}/commons/site"/>
+    <property name="commons.jar" value="${commons.build.finalName}.jar"/>
+	<property name="commons-test.jar" value="${commons.build.finalName}-test.jar"/>
+    <property name="commons.build.coberturaOutputDir" value="${commons.build.dir}/generated-classes"/>
+
+    <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
+    <property name="common.dir" value="${software.dir}/build-pa/common"/>
+    <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
+    <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
+    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
+    <property name="ivy.def.file" location="ivy-commons.xml" />
+    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+
+    <!-- ====================================================================== -->
+    <!-- Defining classpaths                                                    -->
+    <!-- ====================================================================== -->
+
+	 <path id="common.package.classpath">
+	         <fileset dir="${pa.dir}/commons/target">
+	            <include name="*.jar"/>
+	         </fileset>
+	  </path>  
+	
+    <property name="compile.jar.dir" location="${lib.dir}/commons/compile" />
+    <path id="compile.classpath">
+        <fileset dir="${compile.jar.dir}"/>
+    </path>
+
+    <property name="test.jar.dir" location="${lib.dir}/commons/test" />
+    <path id="test.classpath">
+        <fileset dir="${test.jar.dir}"/>
+    </path>
+    
+    <property name="test-simian.jar.dir" location="${lib.dir}/commons/test-simian" />
+    <path id="test-simian.classpath">
+        <fileset dir="${test-simian.jar.dir}"/>
+    </path>
+    
+    <property name="test-junit.jar.dir" location="${lib.dir}/commons/test-junit" />
+    <path id="test-junit.classpath">
+        <fileset dir="${test-junit.jar.dir}"/>
+    </path>
+    
+    <property name="test-cobertura.jar.dir" location="${lib.dir}/commons/test-cobertura" />
+    <path id="test-cobertura.classpath">
+        <fileset dir="${test-cobertura.jar.dir}"/>
+    </path>
+    
+    <property name="test-checkstyle.jar.dir" location="${lib.dir}/commons/test-checkstyle" />
+    <path id="test-checkstyle.classpath">
+        <fileset dir="${test-checkstyle.jar.dir}"/>
+    </path>
+
+    <property name="test-pmd.jar.dir" location="${lib.dir}/commons/test-pmd" />
+    <path id="test-pmd.classpath">
+        <fileset dir="${test-pmd.jar.dir}"/>
+    </path>
+    
+    <property name="test-selenium.jar.dir" location="${lib.dir}/commons/test-selenium" />
+    <path id="test-selenium.classpath">
+        <fileset dir="${test-selenium.jar.dir}"/>
+    </path>
+
+    <path id="ivy.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="${ivy.file}" />
+            <include name="${ivy-core.file}" />
+        </fileset>
+    </path>
+
+    <!-- ====================================================================== -->
+    <!-- Task definitions                                                       -->
+    <!-- ====================================================================== -->
+    <mkdir dir="${lib.dir}"/>
+    <mkdir dir="${pa.report.dir}/commons"/>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
+
+    <!-- ====================================================================== -->
+    <!-- Cleaning up target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="clean" description="Clean the output directory">
+        <delete dir="${commons.build.dir}"/>
+        <delete dir="${pa.report.dir}/commons"/>
+    </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Compilation target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="compile" description="Compile the code">
+        <mkdir dir="${commons.build.outputDir}"/>
+        <javac destdir="${commons.build.outputDir}" 
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5"
+               encoding="Cp1252">
+            <src>
+                <pathelement location="${commons.build.srcDir.0}"/>
+            </src>
+            <classpath>
+                <path refid="compile.classpath"/>
+            </classpath>
+        </javac>
+        
+        <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
+        <filter token="db.username" value="${db.username}"/>
+        <filter token="db.password" value="${db.password}"/>
+        <filter token="jdbc.driver" value="${jdbc.driver}"/>
+        <filter token="jdbc.url" value="${jdbc.url}"/>
+        <copy todir="${commons.build.outputDir}" filtering="true">
+            <fileset dir="${commons.build.resourceDir.0}"/>
+        </copy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Configure test compilation target                                      -->
+    <!-- ====================================================================== -->
+
+   <!-- <target name="configure-tests">
+        <copy file="${pa.resourceDir}/test.properties.commons" 
+              tofile="${commons.build.testResourceDir.0}/test.properties"
+              overwrite="true">
+            <filterset>
+                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
+            </filterset>
+        </copy>
+    </target> -->
+    
+    <!-- ====================================================================== -->
+    <!-- Test-compilation target                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="compile-tests" 
+      depends="compile" 
+      description="Compile the test code"> 
+        <mkdir dir="${commons.build.testOutputDir}"/>
+        <javac destdir="${commons.build.testOutputDir}" 
+               nowarn="false" 
+               debug="true" 
+               optimize="false" 
+               deprecation="true" 
+               target="1.5" 
+               verbose="false" 
+               fork="false" 
+               source="1.5">
+            <src>
+                <pathelement location="${commons.build.testDir.0}"/>
+            </src>
+            <classpath>
+                <pathelement location="${commons.build.outputDir}"/>
+                <path refid="test.classpath"/>
+                <path refid="test-junit.classpath"/>
+                <path refid="test-selenium.classpath"/>
+            </classpath>
+        </javac>
+        <copy todir="${commons.build.testOutputDir}">
+            <fileset dir="${commons.build.testResourceDir.0}"/>
+        </copy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run Cobertura and JUnit                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-cobertura" depends="compile-tests">
+        
+        <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
+
+        <delete file="${commons.build.dir}/cobertura.ser" />
+        
+        <cobertura-instrument datafile="${commons.build.dir}/cobertura.ser"
+                              toDir="${commons.build.coberturaOutputDir}">
+            <fileset dir="${commons.build.outputDir}">
+                <include name="**/*.class" />
+            </fileset>
+        </cobertura-instrument>   
+        
+        <mkdir dir="${commons.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+            <sysproperty key="basedir" value="."/>
+            <sysproperty key="net.sourceforge.cobertura.datafile"
+                    file="${commons.build.dir}/cobertura.ser" />
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${commons.build.coberturaOutputDir}"/>
+            <classpath location="${commons.build.outputDir}"/>
+            <classpath location="${commons.build.testOutputDir}"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="test-junit.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
+        	<classpath refid="common.package.classpath" />
+            <batchtest todir="${commons.test.reports}">
+                <fileset dir="${commons.build.testDir.0}">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        
+        <cobertura-report datafile="${commons.build.dir}/cobertura.ser"
+                          destdir="${commons.coverage.reports}" 
+                          srcdir="${commons.build.srcDir.0}" />
+
+        <cobertura-report datafile="${commons.build.dir}/cobertura.ser"
+                          format="xml"
+                          destdir="${commons.coverage.reports}" 
+                          srcdir="${commons.build.srcDir.0}" />
+        
+        <cobertura-check datafile="${commons.build.dir}/cobertura.ser"
+                         totalbranchrate="70" 
+                         totallinerate="70"
+                         haltonfailure="false"/>
+     </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run checkstyle                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="test-checkstyle">
+        <taskdef resource="checkstyletask.properties" 
+             classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
+        <checkstyle config="${pa.checkstyle}" failOnViolation="true">
+            <classpath>
+                <pathelement location="${commons.build.outputDir}"/>
+            	<path refid="compile.classpath"/>
+            </classpath>
+            <fileset dir="src" includes="**/*.java" />
+            <formatter type="plain"/>
+            <formatter type="plain" toFile="${pa.report.dir}/commons/checkstyle.txt"/>
+            <formatter type="xml"   toFile="${pa.report.dir}/commons/checkstyle.xml"/>
+        </checkstyle>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run PMD                                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-pmd">
+        <taskdef name="pmd" 
+             classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
+             classname="net.sourceforge.pmd.ant.PMDTask"/>
+             
+        <pmd shortFilenames="true" failOnRuleViolation="true" 
+                                   rulesetfiles="${pa.pmd}">
+            <formatter type="text" toConsole="true"/>
+            <formatter type="text" toFile="${pa.report.dir}/commons/pmd.txt"/>
+            <formatter type="xml"  toFile="${pa.report.dir}/commons/pmd.xml"/>
+            <fileset dir="src">
+                <include name="**/*.java"/>
+            </fileset>
+         </pmd>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run Simian                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-simian">
+        <taskdef resource="simiantask.properties" 
+             classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
+
+        <simian>
+            <fileset dir="src" includes="**/*.java"/>
+            <formatter type="plain" toFile="${pa.report.dir}/commons/simian.txt"/>
+            <formatter type="xml"   toFile="${pa.report.dir}/commons/simian.xml"/>
+            <formatter type="plain"/>
+        </simian>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run all tests                                                          -->
+    <!-- ====================================================================== -->
+
+    <target name="test-dynamic-analysis" 
+            depends="ivy-get,compile,jar,compile-tests,test-cobertura" 
+            description="Run dynamic analysis."/>
+    
+    <target name="test-static-analysis" 
+            depends="ivy-get,compile,jar,test-checkstyle,test-pmd,test-simian" 
+            description="Run static analysis."/>
+
+    <target name="test-all" 
+            depends="test-static-analysis,test-dynamic-analysis" 
+            description="Run all tests"/>
+
+    <!-- ====================================================================== -->
+    <!-- Package target                                                         -->
+    <!-- ====================================================================== -->
+ 
+    <target name="jar" depends="jar-test">
+        <jar jarfile="${commons.build.dir}/${commons.jar}" 
+             compress="true" 
+             index="false" 
+             basedir="${commons.build.outputDir}"/>
+    </target>
+
+    <target name="jar-test" depends="compile-tests">
+        <jar jarfile="${commons.build.dir}/${commons-test.jar}"
+             compress="true" 
+             index="false" 
+             basedir="${commons.build.testOutputDir}"
+             includes="**/*.class"
+             excludes="**/enums/*
+			            **/iso/convert/*
+			            **/iso/dto/Regulatory*.class
+            			**/iso/dto/Study*.class
+			            **/iso/util/*
+        "/>
+    </target>
+    
+    <target name="package-notest-noivy" depends="compile,jar"/>
+
+    <target name="package-notest" depends="ivy-get,compile,jar"
+            description="Package the application.  Do not run tests."/> 
+
+    <target name="package" depends="ivy-get,compile,jar,test-all" 
+            description="Package the application"/>
+
+    <target name="package-client" depends="package-notest-noivy" 
+            description="Package the client jar."/>
+    
+    <!-- ====================================================================== -->
+    <!-- Help target                                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="help">
+        <echo message="Please run: $ant -projecthelp"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Ivy Targets                                                            -->
+    <!-- ====================================================================== -->
+    <target name="init:ivy">
+        <mkdir dir="${local.repo.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <property name="ivy.dep.file" value="${ivy.def.file}"/>
+        <ivy:settings file="${ivy.settings.file}" />
+    </target>
+    <target name="ivy-test-cobertura" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-cobertura" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura" />
+    </target>
+    <target name="ivy-test-junit" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-junit" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-junit" />
+    </target>
+    <target name="ivy-test-pmd" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-pmd" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-pmd" />
+    </target>
+    <target name="ivy-test-checkstyle" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-checkstyle" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle" />
+    </target>
+    <target name="ivy-test-simian" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-simian" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-simian" />
+    </target>
+    <target name="ivy-test-selenium" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="test-selenium" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-selenium" />
+    </target>
+    <target name="ivy-compile" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="compile" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="compile" />
+    </target>
+    <target name="ivy-test" 
+            depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-selenium">
+            <ivy:resolve refresh="true" conf="test" />
+            <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test" />
+    </target>
+    <target name="ivy-get" 
+            depends="init:ivy,ivy-compile,ivy-test" 
+            description="Updates the local ivy repository">
+    </target>
+    <target name="ivy-clean" description="Delete jars.">
+        <delete dir="${lib.dir}/commons"/>
+    </target>
+    
+</project>

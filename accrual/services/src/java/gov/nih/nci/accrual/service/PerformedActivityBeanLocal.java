@@ -93,8 +93,6 @@ import gov.nih.nci.accrual.dto.PerformedProcedureDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedImaging;
@@ -105,6 +103,8 @@ import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -126,7 +126,7 @@ import org.hibernate.Session;
  * @since Aug 13, 2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({"unchecked", "PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PerformedActivityBeanLocal extends
@@ -145,7 +145,7 @@ public class PerformedActivityBeanLocal extends
         Session session = null;
         List<PerformedActivity> queryList = new ArrayList<PerformedActivity>();
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             Query query = null;
 
             // step 1: form the hql
@@ -182,7 +182,7 @@ public class PerformedActivityBeanLocal extends
         }
         PerformedSubjectMilestoneDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedSubjectMilestone bo = (PerformedSubjectMilestone) session.get(PerformedSubjectMilestone.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -208,7 +208,7 @@ public class PerformedActivityBeanLocal extends
 
         Session session = null;
         List<PerformedSubjectMilestone> queryList = new ArrayList<PerformedSubjectMilestone>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -271,7 +271,7 @@ public class PerformedActivityBeanLocal extends
         }
         PerformedImagingDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedImaging bo = (PerformedImaging) session.get(PerformedImaging.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -297,7 +297,7 @@ public class PerformedActivityBeanLocal extends
 
         Session session = null;
         List<PerformedImaging> queryList = new ArrayList<PerformedImaging>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -360,7 +360,7 @@ public class PerformedActivityBeanLocal extends
         }
         PerformedObservationDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedObservation bo = (PerformedObservation) session.get(PerformedObservation.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -415,7 +415,7 @@ public class PerformedActivityBeanLocal extends
         }
         PerformedProcedureDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedProcedure bo = (PerformedProcedure) session.get(PerformedProcedure.class
                 , IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -441,7 +441,7 @@ public class PerformedActivityBeanLocal extends
 
         Session session = null;
         List<PerformedProcedure> queryList = new ArrayList<PerformedProcedure>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -506,7 +506,7 @@ public class PerformedActivityBeanLocal extends
         }
         PerformedRadiationAdministrationDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedRadiationAdministration bo = (PerformedRadiationAdministration) session.get(
                 PerformedRadiationAdministration.class, IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -532,7 +532,7 @@ public class PerformedActivityBeanLocal extends
 
         Session session = null;
         List<PerformedRadiationAdministration> queryList = new ArrayList<PerformedRadiationAdministration>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -598,7 +598,7 @@ public class PerformedActivityBeanLocal extends
         }
         PerformedSubstanceAdministrationDto resultDto = null;
         Session session = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         PerformedSubstanceAdministration bo = (PerformedSubstanceAdministration) session.get(
                 PerformedSubstanceAdministration.class, IiConverter.convertToLong(ii));
         if (bo == null) {
@@ -624,7 +624,7 @@ public class PerformedActivityBeanLocal extends
 
         Session session = null;
         List<PerformedSubstanceAdministration> queryList = new ArrayList<PerformedSubstanceAdministration>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -692,7 +692,7 @@ public class PerformedActivityBeanLocal extends
         Session session = null;
         List<PerformedObservation> queryList = new ArrayList<PerformedObservation>();
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             Query query = null;
 
             // step 1: form the hql

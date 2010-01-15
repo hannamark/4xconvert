@@ -81,8 +81,6 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
@@ -96,6 +94,8 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -119,7 +119,7 @@ import org.hibernate.Session;
  */
 
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class SearchTrialBean implements SearchTrialService {
 
@@ -145,7 +145,7 @@ public class SearchTrialBean implements SearchTrialService {
         if (criteria != null && !PAUtil.isStNull(authorizedUser)) {
             Session session = null;
             try {
-                session = AccrualHibernateUtil.getCurrentSession();
+                session = HibernateUtil.getCurrentSession();
                 Query query = null;
                 String hql = generateStudyProtocolQuery(criteria);
                 query = session.createQuery(hql);
@@ -180,7 +180,7 @@ public class SearchTrialBean implements SearchTrialService {
         SearchTrialResultDto result = new SearchTrialResultDto();
         Session session = null;
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql =
                 " select sp.identifier, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
@@ -232,7 +232,7 @@ public class SearchTrialBean implements SearchTrialService {
             Session session = null;
             List<Long> queryList = new ArrayList<Long>();
             try {
-                session = AccrualHibernateUtil.getCurrentSession();
+                session = HibernateUtil.getCurrentSession();
                 Query query = null;
                 String hql = "select sp.id "
                            + "from StudyProtocol sp "
@@ -262,7 +262,7 @@ public class SearchTrialBean implements SearchTrialService {
         if (csmUser != null) {
             Session session = null;
             try {
-                session = AccrualHibernateUtil.getCurrentSession();
+                session = HibernateUtil.getCurrentSession();
                 Query query = null;
                 String hql = "select distinct sp.id "
                     + "from StudySiteAccrualAccess ssaa "

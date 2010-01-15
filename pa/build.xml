@@ -21,6 +21,7 @@
     <!-- ====================================================================== -->
 
     <target name="clean" description="Clean the output directory">
+	        <ant target="clean" dir="commons" inheritAll="false"/>
             <ant target="clean" dir="pa-ejb" inheritAll="false"/>
             <ant target="clean" dir="pa-ear" inheritAll="false"/>
             <ant target="clean" dir="pa-web" inheritAll="false"/>
@@ -31,8 +32,10 @@
     <!-- ====================================================================== -->
 
     <target name="compile" description="Compile the code">
+    	<ant target="compile" dir="commons" inheritAll="false"/>
         <ant target="compile" dir="pa-ejb" inheritAll="false"/>
         <ant target="compile" dir="pa-web" inheritAll="false"/>
+    	<ant target="compile-tests" dir="commons" inheritAll="false"/>
         <ant target="compile-tests" dir="pa-ejb" inheritAll="false"/>
         <ant target="compile-tests" dir="pa-web" inheritAll="false"/>
     </target>
@@ -42,6 +45,7 @@
     <!-- ====================================================================== -->
 
     <target name="test" description="Run all tests">
+    	<ant target="test-all" dir="commons" inheritAll="false"/>
         <ant target="test-all" dir="pa-ejb" inheritAll="false"/>
         <ant target="test-all" dir="pa-web" inheritAll="false"/>
     </target>
@@ -51,6 +55,7 @@
     <!-- ====================================================================== -->
 
     <target name="package" description="Package the application">
+    	<ant target="package" dir="commons" inheritAll="false"/>
         <ant target="package" dir="pa-ejb" inheritAll="false"/>
         <ant target="package" dir="pa-web" inheritAll="false"/>
         <ant target="package" dir="pa-ear" inheritAll="false"/>
@@ -65,6 +70,7 @@
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
+    	<ant target="package-notest-noivy" dir="commons" inheritAll="false"/>
         <ant target="package-notest-noivy" dir="pa-ejb" inheritAll="false"/>
         <ant target="package-notest-noivy" dir="pa-web" inheritAll="false"/>
         <ant target="ear" dir="pa-ear"  inheritAll="false"/>
@@ -75,6 +81,7 @@
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
+    	<ant target="package" dir="commons" inheritAll="false"/>
         <ant target="package" dir="pa-ejb" inheritAll="false"/>
         <ant target="package" dir="pa-web" inheritAll="false"/>
         <ant target="ear" dir="pa-ear" inheritAll="false"/>
@@ -89,6 +96,7 @@
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
+    	<ant target="package" dir="commons" inheritAll="false"/>
         <ant target="package" dir="pa-ejb" inheritAll="false"/>
         <ant target="package" dir="pa-web" inheritAll="false"/>
         <ant target="start_jboss" dir="pa-ear" inheritAll="false"/>
@@ -115,12 +123,14 @@
     <!-- ====================================================================== -->
     
     <target name="ivy-get">
+   	 	 <ant target="ivy-get" dir="./commons" inheritAll="false"/>
          <ant target="ivy-get" dir="./pa-ejb" inheritAll="false"/>
          <ant target="ivy-get" dir="./pa-web" inheritAll="false"/>
          <ant target="ivy-get" dir="./pa-ear" inheritAll="false"/>
     </target>
 
     <target name="ivy-clean">
+    	 <ant target="ivy-clean" dir="commons" inheritAll="false"/>
          <ant target="ivy-clean" dir="pa-ejb" inheritAll="false"/>
          <ant target="ivy-clean" dir="pa-web" inheritAll="false"/>
          <ant target="ivy-clean" dir="pa-ear" inheritAll="false"/>

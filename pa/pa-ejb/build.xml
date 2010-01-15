@@ -42,6 +42,12 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
+	<path id="common.package.classpath">
+		    <fileset dir="${pa.dir}/commons/target">
+		            <include name="*.jar"/>
+		      </fileset>
+	</path>  
+	
     <property name="compile.jar.dir" location="${lib.dir}/pa-ejb/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}"/>
@@ -176,6 +182,7 @@
             </src>
             <classpath>
                 <path refid="compile.classpath"/>
+            	<path refid="common.package.classpath" />
             </classpath>
         </javac>
         
@@ -193,7 +200,7 @@
     <!-- Configure test compilation target                                      -->
     <!-- ====================================================================== -->
 
-    <target name="configure-tests">
+    <!-- <target name="configure-tests">
         <copy file="${pa.resourceDir}/test.properties.pa-ejb" 
               tofile="${pa-ejb.build.testResourceDir.0}/test.properties"
               overwrite="true">
@@ -201,14 +208,14 @@
                 <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
             </filterset>
         </copy>
-    </target>
+    </target> -->
     
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
     <target name="compile-tests" 
-      depends="compile, configure-tests" 
+      depends="compile" 
       description="Compile the test code"> 
         <mkdir dir="${pa-ejb.build.testOutputDir}"/>
         <javac destdir="${pa-ejb.build.testOutputDir}" 
@@ -226,6 +233,7 @@
             <classpath>
                 <pathelement location="${pa-ejb.build.outputDir}"/>
                 <path refid="test.classpath"/>
+            	<path refid="common.package.classpath"/>
                 <path refid="test-junit.classpath"/>
                 <path refid="test-selenium.classpath"/>
             </classpath>
@@ -263,6 +271,7 @@
             <classpath location="${pa-ejb.build.outputDir}"/>
             <classpath location="${pa-ejb.build.testOutputDir}"/>
             <classpath refid="test.classpath"/>
+        	<classpath refid="common.package.classpath"/>
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <batchtest todir="${pa-ejb.test.reports}">
@@ -299,6 +308,7 @@
             <classpath>
                 <pathelement location="${pa-ejb.build.outputDir}"/>
             	<path refid="compile.classpath"/>
+            	<path refid="common.package.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>

@@ -78,14 +78,25 @@
 */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.coppa.iso.AddressPartType;
+import gov.nih.nci.coppa.iso.Adxp;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
+import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
@@ -94,6 +105,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -114,6 +127,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,11 +143,138 @@ import org.hibernate.Session;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({  "PMD.TooManyMethods" , "PMD.ExcessiveClassLength" })
+@SuppressWarnings({  "PMD.TooManyMethods" , "PMD.ExcessiveClassLength",
+    "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PAUtil {
 
     private static final int MAXF = 1024;
-    private static final Logger LOG = Logger.getLogger(PAUtil.class);
+    private static final Logger LOG = Logger.getLogger(PAUtil.class);    
+    private static final int EMAIL_IDX = 7;
+
+    /**
+     *
+     * @param poPerson as arg
+     * @return Person as pa object
+     */
+    public static Person convertToPaPerson(PersonDTO poPerson) {
+        Person person = new Person();
+        List<Enxp> list = poPerson.getName().getPart();
+        Iterator<Enxp> ite = list.iterator();
+        while (ite.hasNext()) {
+            Enxp part = ite.next();
+            if (EntityNamePartType.FAM == part.getType()) {
+                person.setLastName(part.getValue());
+            } else if (EntityNamePartType.GIV == part.getType()) {
+                if (person.getFirstName() == null) {
+                    person.setFirstName(part.getValue());
+                } else {
+                    person.setMiddleName(part.getValue());
+                }
+            }
+        }
+        return person;
+    }
+
+    /**
+     *
+     * @param poPerson as arg
+     * @return PaPersonDTO as pa DTO object
+     */
+    public static PaPersonDTO convertToPaPersonDTO(PersonDTO poPerson) {
+        gov.nih.nci.pa.dto.PaPersonDTO personDTO = new gov.nih.nci.pa.dto.PaPersonDTO();
+        personDTO.setId(Long.valueOf(poPerson.getIdentifier().getExtension()));
+        List<Enxp> nameList = poPerson.getName().getPart();
+        Iterator<Enxp> nameIte = nameList.iterator();
+        while (nameIte.hasNext()) {
+            Enxp part = nameIte.next();
+            if (EntityNamePartType.FAM == part.getType()) {
+                personDTO.setLastName(part.getValue());
+            } else if (EntityNamePartType.GIV == part.getType()) {
+                if (personDTO.getFirstName() == null) {
+                    personDTO.setFirstName(part.getValue());
+                } else {
+                    personDTO.setMiddleName(part.getValue());
+                }
+            }
+        }
+        //TelEmail; I need only EMAIL, So I am not using the DSETCONVERTER Class
+        DSet<Tel> telList = poPerson.getTelecomAddress();
+        Set<Tel> set = telList.getItem();
+        Iterator<Tel> iter = set.iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next();
+            if (obj instanceof TelEmail) {
+                personDTO.setEmail(((TelEmail) obj).getValue().toString().substring(EMAIL_IDX));
+            }
+        }
+        //Populate the address information now!
+        List<Adxp> addressList = poPerson.getPostalAddress().getPart();
+        Iterator<Adxp> addressIte = addressList.iterator();
+        while (addressIte.hasNext()) {
+            Adxp part = addressIte.next();
+            if (AddressPartType.STA == part.getType()) {
+                personDTO.setState(part.getValue());
+            }
+            if (AddressPartType.CTY == part.getType()) {
+                personDTO.setCity(part.getValue());
+            }
+            if (AddressPartType.CNT == part.getType()) {
+                personDTO.setCountry(part.getCode());
+            }
+            if (AddressPartType.ZIP == part.getType()) {
+                personDTO.setZip(part.getValue());
+            }
+        }
+        return personDTO;
+    }
+
+    /**
+     * @return OrganizationWebDTO for display.
+     * @param poOrgDto OrganizationDTO
+     * @param countryList CountryList
+     * @throws PAException on error
+     */
+    public static PaOrganizationDTO convertPoOrganizationDTO(OrganizationDTO poOrgDto, List<Country> countryList)
+            throws PAException {
+        PaOrganizationDTO displayElement = null;
+        displayElement = new PaOrganizationDTO();
+        displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());
+        displayElement.setName(poOrgDto.getName().getPart().get(0).getValue());
+        //
+        List<Adxp> addressList = poOrgDto.getPostalAddress().getPart();
+        Iterator<Adxp> addressIte = addressList.iterator();
+        while (addressIte.hasNext()) {
+            Adxp part = addressIte.next();
+            if (AddressPartType.STA == part.getType()) {
+                displayElement.setState(part.getValue());
+            }
+            if (AddressPartType.CTY == part.getType()) {
+                displayElement.setCity(part.getValue());
+            }
+            if (AddressPartType.CNT == part.getType()) {
+                if (countryList != null) {
+                    displayElement.setCountry(getCountryNameUsingCode(part.getCode(), countryList));
+                } else {
+                    displayElement.setCountry(part.getCode());
+                }
+            }
+            if (AddressPartType.ZIP == part.getType()) {
+                displayElement.setZip(part.getValue());
+            }
+        }
+        return displayElement;
+    }
+
+    private static String getCountryNameUsingCode(String code, List<Country> countryList) {
+        for (int i = 0; i < countryList.size(); i++) {
+            Country country = countryList.get(i);
+            if (country.getAlpha3().toString().equals(code)) {
+                return country.getName();
+            }
+        }
+        return null;
+    }
+    
     /**
      * checks if Ii is null.
      * @param ii ii

@@ -8,23 +8,35 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Bl;
 import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Int;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -434,5 +446,54 @@ public class PAUtilTest {
 	public void testIsTypeIntervention() {
 		assertTrue(PAUtil.isTypeIntervention(CdConverter.convertStringToCd(ActivityCategoryCode.INTERVENTION.getCode())));
 	}
+    
+    @Test
+    public void testConvertPoOrganizationDTO() throws Exception{
+        OrganizationDTO org = new OrganizationDTO(); 
+        org.setName(EnOnConverter.convertToEnOn("org"));
+        org.setIdentifier(IiConverter.convertToPoOrganizationalContactIi("1"));
+        Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
+        org.setPostalAddress(address);
+        TestSchema.reset();
+        List<Country> con = TestSchema.countries;
+        PaOrganizationDTO paOrgDTO = PAUtil.convertPoOrganizationDTO(org, con);
+        assertEquals("Testing org name", "org", paOrgDTO.getName());
+        assertEquals("Testing Country name", "USA", paOrgDTO.getCountry());        
+    }   
+    
+    private PersonDTO setUpPerson() {
+        PersonDTO poPerson = new PersonDTO();  
+        poPerson.setName(EnPnConverter.convertToEnPn("firstName", "middleName", "lastName", "prefix", "suffix"));
+        poPerson.setIdentifier(IiConverter.convertToPoPersonIi("1"));
+         List<String> phones = new ArrayList<String>();
+         String phone="1111111111";
+         String email="a@a.com";
+            phones.add(phone);
+            List<String> emails = new ArrayList<String>();
+            emails.add(email);
+            DSet<Tel> dsetList = null;
+            dsetList =  DSetConverter.convertListToDSet(phones, "PHONE", dsetList);
+            dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
+          poPerson.setTelecomAddress(dsetList);
+          Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
+          poPerson.setPostalAddress(address);
+        return poPerson;
+    }
+
+    @Test
+    public void testConvertToPaPerson() {
+        PersonDTO poPerson = setUpPerson();        
+         Person person = PAUtil.convertToPaPerson(poPerson);
+         assertNotNull(person);
+         assertEquals("Testing first name","firstName",person.getFirstName());
+    }
+    
+    @Test
+    public void testConvertToPaPersonDTO() {
+        PersonDTO poPerson = setUpPerson();
+        PaPersonDTO paPersonDTO = PAUtil.convertToPaPersonDTO(poPerson);
+        assertEquals("testing last name", "lastName",paPersonDTO.getLastName());
+        assertEquals("testing last name","a@a.com",paPersonDTO.getEmail());
+    }
 
 }

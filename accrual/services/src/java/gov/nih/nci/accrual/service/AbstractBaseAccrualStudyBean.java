@@ -80,11 +80,11 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.AbstractConverter;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -121,7 +121,7 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
         Session session = null;
         List<BO> queryList = new ArrayList<BO>();
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             Query query = null;
 
             // step 1: form the hql

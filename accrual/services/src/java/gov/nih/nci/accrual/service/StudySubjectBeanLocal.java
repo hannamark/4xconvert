@@ -82,13 +82,13 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -111,7 +111,7 @@ import org.hibernate.Session;
  * @since Aug 29, 2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
@@ -130,7 +130,7 @@ public class StudySubjectBeanLocal
         Session session = null;
         List<StudySubject> queryList = new ArrayList<StudySubject>();
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = "select ssub "
                        + "from StudySubject ssub "
@@ -177,7 +177,7 @@ public class StudySubjectBeanLocal
         Session session = null;
         List<StudySubject> queryList = new ArrayList<StudySubject>();
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             Query query = null;
             String hql = "select ssub "
                        + "from StudySubject ssub "

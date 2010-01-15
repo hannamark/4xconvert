@@ -79,9 +79,9 @@
 
 package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.pa.domain.AbstractLookUpEntity;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ import org.hibernate.criterion.Restrictions;
  *@since 12/24/2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings("unchecked")
 public class BaseLookUpBean implements BaseLookUpService {
@@ -120,7 +120,7 @@ public class BaseLookUpBean implements BaseLookUpService {
         LOG.info("Entering getByCode ");
         Session session = null;
         BO resultBO = null;
-        session = AccrualHibernateUtil.getCurrentSession();        
+        session = HibernateUtil.getCurrentSession();        
         resultBO = (BO) session.createCriteria(bo.getClass()).add(Restrictions.eq("code", bo.getCode())).list().get(0);
         LOG.info("Leaving getByCode");
         return resultBO;
@@ -134,7 +134,7 @@ public class BaseLookUpBean implements BaseLookUpService {
         LOG.info("Entering getById ");
         Session session = null;
         BO resultBO = null;
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         resultBO = (BO) session.get(bo.getClass(), bo.getId());
         LOG.info("Leaving getById");
         return resultBO;
@@ -148,7 +148,7 @@ public class BaseLookUpBean implements BaseLookUpService {
         LOG.info("Entering search");
         Session session = null;
         List<BO> bos = new ArrayList<BO>();
-        session = AccrualHibernateUtil.getCurrentSession();
+        session = HibernateUtil.getCurrentSession();
         Example example = Example.create(bo).enableLike(MatchMode.ANYWHERE).ignoreCase();
         Criteria criteria = session.createCriteria(bo.getClass()).add(example);
         bos = criteria.list();

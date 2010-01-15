@@ -49,7 +49,7 @@
     <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.3"           conf="runtime->default"/>
 
     <!-- compile -->
-    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.1.0"           conf="compile->master"/>
+    <dependency org="ncicb"                  name="pa-ejb-client"           rev="3.2-alpha1"           conf="compile->master"/>
     <dependency org="ehcache"                name="ehcache"                 rev="1.2.4"           conf="compile->master"/>
     <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="compile->master"/>
@@ -65,7 +65,7 @@
     <dependency org="ncicb"                  name="security"                rev="4.0.1"           conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="compile->master"/>
-
+    <dependency org="ncicb"                  name="pa-commons"                          rev="3.2-alpha1"      conf="compile->test"/>
     <!-- test -->
     <dependency org="mockrunner"             name="mockrunner"              rev="0.4.1"           conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->master"/>

@@ -99,24 +99,24 @@
 
     <target name="get-domain"> 
         <delete dir="${services.build.domainDir}"/>
-        <copy todir="${services.build.domainDir}/domain">
-            <fileset dir="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/domain"/>
-        </copy>
-        <copy todir="${services.build.domainDir}/enums">
-            <fileset dir="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/enums"/>
-        </copy>
-    	<copy todir="${services.build.domainDir}/iso/util">
-    	    <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/iso/util/EnOnConverter.java"/>
-    		<fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/iso/util/EnPnConverter.java"/>
-    	</copy>
+        <!-- <copy todir="${services.build.domainDir}/domain">
+            <fileset dir="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/domain"/>
+        </copy> -->
+    	<!-- <copy todir="${services.build.domainDir}/enums">
+            <fileset dir="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/enums"/>
+        </copy> -->
+    	<!-- <copy todir="${services.build.domainDir}/iso/util">
+    	    <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnOnConverter.java"/>
+    		<fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnPnConverter.java"/>
+    	</copy> -->
     	<copy todir="${services.build.domainDir}/service/util">
     		<fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/LookUpTableServiceRemote.java"/>
     		<fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/RegistryUserServiceRemote.java"/>
     	</copy>
-    	<copy todir="${services.build.domainDir}/util">
-    	    <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/PAAttributeMaxLen.java"/>
-    	</copy>
-    </target>
+    	<!-- <copy todir="${services.build.domainDir}/util">
+    	    <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/util/PAAttributeMaxLen.java"/>
+    	</copy> -->
+     </target>
 
 
     <!-- ====================================================================== -->
@@ -352,7 +352,6 @@
 								    **/service/util/PatientBean.class
 								    **/service/util/PatientServiceBean.class
 								    **/service/util/PatientServiceRemote.class
-    								**/util/AccrualHibernate*
     		"/>
     </target>
     

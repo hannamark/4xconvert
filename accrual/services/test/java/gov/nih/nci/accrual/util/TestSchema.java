@@ -125,7 +125,10 @@ import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.util.CtrpHibernateHelper;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.TestHibernateHelper;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -183,13 +186,13 @@ public class TestSchema {
     @SuppressWarnings("unused")
     public static void reset() throws Exception {
         /* just to exercise the getHibernateHelper with a null value */
-        AccrualHibernateUtil ahu = new AccrualHibernateUtil();
-        AccrualHibernateUtil.testHelper = null;
-        AccrualHibernateUtil.getHibernateHelper();
+        HibernateUtil ahu = new HibernateUtil();
+        HibernateUtil.testHelper = null;
+        HibernateUtil.getHibernateHelper();
         /* end test */
 
-        AccrualHibernateUtil.testHelper = testHelper;
-        Session session = AccrualHibernateUtil.getHibernateHelper().getCurrentSession();
+        HibernateUtil.testHelper = testHelper;
+        Session session = HibernateUtil.getHibernateHelper().getCurrentSession();
         session.flush();
         Connection connection = session.connection();
         Statement statement = connection.createStatement();
@@ -214,7 +217,7 @@ public class TestSchema {
      * @param obj o
      */
     public static <T> void addUpdObject(T obj) {
-        Session session = AccrualHibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(obj);
         transaction.commit();

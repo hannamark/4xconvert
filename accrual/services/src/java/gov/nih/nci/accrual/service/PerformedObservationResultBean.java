@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -93,7 +93,7 @@ import org.jboss.annotation.security.SecurityDomain;
  * @since 11/10/2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("accrual-outcomes")
 @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })

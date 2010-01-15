@@ -82,8 +82,6 @@ import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.convert.PatientConverter;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.util.AccrualHibernateSessionInterceptor;
-import gov.nih.nci.accrual.util.AccrualHibernateUtil;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.coppa.iso.Ad;
 import gov.nih.nci.coppa.iso.Cd;
@@ -99,6 +97,8 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -130,7 +130,7 @@ import org.hibernate.Session;
  * @since Aug 18, 2009
  */
 @Stateless
-@Interceptors(AccrualHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PatientBeanLocal implements PatientService {
 
@@ -185,7 +185,7 @@ public class PatientBeanLocal implements PatientService {
         PatientDto resultDto = null;
         Session session = null;
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             bo = (Patient) session.get(Patient.class, IiConverter.convertToLong(ii));
             if (bo == null) {
                 LOG.error("Object not found using get() for id = "
@@ -231,7 +231,7 @@ public class PatientBeanLocal implements PatientService {
         PatientDto resultDto = null;
         Session session = null;
         try {
-            session = AccrualHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             bo.setUserLastUpdated(ejbContext != null ? ejbContext.getCallerPrincipal().getName() : "not logged");
             bo.setDateLastUpdated(new Date());
             if (PAUtil.isIiNull(dto.getIdentifier())) {

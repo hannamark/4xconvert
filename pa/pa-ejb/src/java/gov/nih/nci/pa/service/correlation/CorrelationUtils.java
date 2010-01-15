@@ -95,7 +95,6 @@ import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -374,7 +373,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         Person per = new Person();
         try {
-            per = EnPnConverter.convertToPaPerson(poPerson);
+            per = PAUtil.convertToPaPerson(poPerson);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOG.error("Error while converting Person ISO " , e);

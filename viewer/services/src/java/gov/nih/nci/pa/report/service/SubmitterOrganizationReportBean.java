@@ -78,8 +78,8 @@ package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
-import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
 import java.sql.Timestamp;
@@ -102,7 +102,7 @@ import org.hibernate.Session;
  * @since 06/11/2009
  */
 @Stateless
-@Interceptors(ViewerHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 public class SubmitterOrganizationReportBean implements SubmitterOrganizationLocal {
 
     private static final long REFRESH_TIME = 1000 * 60 * 10;  // 10 minutes
@@ -116,7 +116,7 @@ public class SubmitterOrganizationReportBean implements SubmitterOrganizationLoc
         if ((lastUpdate == null)
                 || ((lastUpdate.getTime() + REFRESH_TIME) < new Timestamp(new Date().getTime()).getTime())) {
             try {
-                Session session = ViewerHibernateUtil.getCurrentSession();
+                Session session = HibernateUtil.getCurrentSession();
                 SQLQuery query = null;
                 String sql = "SELECT DISTINCT cm.organization "
                            + "FROM study_protocol AS sp "

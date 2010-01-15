@@ -9,10 +9,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.util.CtrpHibernateHelper;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
-import gov.nih.nci.registry.util.TestHibernateHelper;
 
 import java.io.File;
 import java.net.URISyntaxException;

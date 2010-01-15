@@ -93,7 +93,6 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
@@ -253,7 +252,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                 }
             }
             for (gov.nih.nci.services.person.PersonDTO poPersonDTO : poPersonList) {
-                persons.add(EnPnConverter.convertToPaPersonDTO(poPersonDTO));
+                persons.add(PAUtil.convertToPaPersonDTO(poPersonDTO));
             }
         } catch (Exception e) {
             persons = null;
@@ -593,7 +592,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
             Ii id = PoRegistry.getPersonEntityService().createPerson(dto);
-            persons.add(EnPnConverter.convertToPaPersonDTO(PoRegistry.getPersonEntityService().getPerson(
+            persons.add(PAUtil.convertToPaPersonDTO(PoRegistry.getPersonEntityService().getPerson(
                     id)));
         } catch (NullifiedEntityException e) {
             handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);

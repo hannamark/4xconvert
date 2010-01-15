@@ -81,8 +81,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
-import gov.nih.nci.pa.report.util.ViewerHibernateSessionInterceptor;
-import gov.nih.nci.pa.report.util.ViewerHibernateUtil;
+import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
@@ -102,7 +102,7 @@ import org.hibernate.SQLQuery;
 * @since 5/12/2009
 */
 @Stateless
-@Interceptors(ViewerHibernateSessionInterceptor.class)
+@Interceptors(HibernateSessionInterceptor.class)
 public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCriteriaDto, TrialCountsResultDto>
         implements TrialCountsLocal {
 
@@ -114,7 +114,7 @@ public class TrialCountsReportBean extends AbstractStandardReportBean<StandardCr
         AbstractStandardCriteriaDto.validateDatesRequired(criteria);
         Map<String, Count> counts;
         try {
-            session = ViewerHibernateUtil.getCurrentSession();
+            session = HibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = new StringBuffer("SELECT organization, submission_number ");
             sql.append("FROM study_protocol AS sp "
