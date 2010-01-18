@@ -85,7 +85,7 @@ import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.Qty;
 import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.math.BigDecimal;
 
@@ -108,8 +108,8 @@ public class IvlConverterTest {
 
     @Test
     public void convertToStringTest() {
-        String date1 = PAUtil.normalizeDateString("1/1/2000");
-        String date2 = PAUtil.normalizeDateString("1/1/9999");;
+        String date1 = ISOUtil.normalizeDateString("1/1/2000");
+        String date2 = ISOUtil.normalizeDateString("1/1/9999");;
         Ivl<Ts> x = IvlConverter.convertTs().convertToIvl(date1, date2);
         assertEquals(date1, IvlConverter.convertTs().convertLowToString(x));
         assertEquals(date2, IvlConverter.convertTs().convertHighToString(x));

@@ -74,6 +74,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Properties that relate to how to call build targets from sub-projects-->
     <!-- Working directory passed to Ant tasks -->
     <property name="pa-ear.base.dir" location="${software.dir}/pa/pa-ear"/>
+	<property name="pa-commons.base.dir" location="${software.dir}/pa/commons"/>
     <property name="pa-ejb.base.dir" location="${software.dir}/pa/pa-ejb"/>
     <property name="pa-web.base.dir" location="${software.dir}/pa/pa-web"/>
     <property name="reg-web.base.dir" location="${software.dir}/reg-web"/>
@@ -83,6 +84,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
     <property name="pa-ear.build.file" value="build.xml"/>
+	<property name="pa-commons.build.file" value="build.xml"/>
     <property name="pa-ejb.build.file" value="build.xml"/>
     <property name="pa-web.build.file" value="build.xml"/>
     <property name="reg-web.build.file" value="build.xml"/>
@@ -96,6 +98,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="accrual-clean.build.target" value="clean"/>
     <property name="pa-ivy-clean.build.target" value="ivy-clean"/>
     <property name="pa-ear.build.target" value="package"/>
+	<property name="pa-commons.build.target" value="package-notest"/>
     <property name="pa-ejb.build.target" value="package-notest"/>
     <property name="pa-web.build.target" value="package-notest"/>
     <property name="reg-web.build.target" value="package-notest"/>
@@ -111,6 +114,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             Use project.properties relative dir names becasue they are used by install also-->
     <property name="dist.exploded.dir" location="${dist.dir}/exploded" />
     <property name="pa-ear.dist.dir" location="${dist.exploded.dir}/${pa-ear.dist.relative.dir}" />
+	<property name="pa-commons.dist.dir" location="${dist.exploded.dir}/${pa-commons.dist.relative.dir}" />
     <property name="pa-ejb.dist.dir" location="${dist.exploded.dir}/${pa-ejb.dist.relative.dir}" />
     <property name="pa-web.dist.dir" location="${dist.exploded.dir}/${pa-web.dist.relative.dir}" />
     <property name="reg-web.dist.dir" location="${dist.exploded.dir}/${reg-web.dist.relative.dir}" />
@@ -396,6 +400,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${reg-web.base.dir}" >
             <target name="ivy-get"/>
         </ant>
+    	<ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+    	            dir="${pa-commons.base.dir}" >
+    	            <target name="ivy-get"/>
+    	        </ant>
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             dir="${pa-ejb.base.dir}" >
             <target name="ivy-get"/>
@@ -424,7 +432,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         "/>
 
     <!-- Build generic-query-grid sub-project produces project level artifact -->
-    <target name="build:pa-ear" depends="init,build:pa-ejb, build:pa-web, build:reg-web, build:viewer-services, build:viewer-web">
+    <target name="build:pa-ear" depends="init,build:pa-commons,build:pa-ejb, build:pa-web, build:reg-web, build:viewer-services, build:viewer-web">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
             dir="${pa-ear.base.dir}" >
             <property name="exclude.viewer" value="${exclude.viewer}"/>
@@ -544,6 +552,36 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
+	<target name="build:pa-commons" depends="init">
+	        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+	            dir="${pa-commons.base.dir}" >
+	            <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
+	            <property name="jboss.port" value="${jboss.server.port}"/>
+	            <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+	            <property name="db.username" value="${database.user}"/>
+	            <property name="db.password" value="${database.password}"/>
+	            <property name="jdbc.driver" value="${database.driver}"/>
+	            <property name="jdbc.url" value="${database.url}"/>
+	            <property name="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}"/>
+	            <property name="register.mail.body.url" value="${register.mail.body.url}"/>
+	            <property name="po.server.name" value="${po.server.name}"/>
+	            <property name="po.port.number" value="${po.port.number}"/>
+	            <property name="po.username" value="${po.username}"/>
+	            <property name="po.pass" value="${po.pass}"/>
+	            <property name="hibernate.dialect" value="${database.dialect}"/>
+	            <property name="po.topic.serverName" value="${po.topic.serverName}"/>
+	            <property name="po.topic.port" value="${po.topic.port}"/>
+	            <property name="po.topic.userName" value="${po.topic.userName}"/>
+	            <property name="po.topic.password" value="${po.topic.password}"/>
+	            <property name="po.topic.clientId" value="${po.topic.clientId}"/>
+	            <property name="csm.submitter.group" value="${csm.submitter.group}"/>
+
+	            <target name="${pa-clean.build.target}"/>
+	            <target name="${pa-commons.build.target}"/>
+	        </ant>
+	    </target>
+	
     <target name="build:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             dir="${pa-ejb.base.dir}" >
@@ -1130,6 +1168,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="
         clean,
         init,
+    	test:pa-commons,
         test:pa-ejb,
         test:pa-web,
         test:reg-web,
@@ -1163,6 +1202,21 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.url" value="${database.url}"/>
         </ant>
     </target>
+	<target name="test:pa-commons" depends="init">
+	        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+	            target="test-dynamic-analysis"
+	            dir="${pa-commons.base.dir}" >
+	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+	            <property name="jboss.port" value="${jboss.server.port}"/>
+	            <property name="hibernate.dialect" value="${database.dialect}"/>
+	            <property name="db.username" value="${database.user}"/>
+	            <property name="db.password" value="${database.password}"/>
+	            <property name="jdbc.driver" value="${database.dirver}"/>
+	            <property name="jdbc.url" value="${database.url}"/>
+	            <property name="test.schema.showsql" value="false"/>
+	            <property name="test.java.naming.provider" value="localhost"/>
+	        </ant>
+	</target>
     <target name="test:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             target="test-dynamic-analysis"
@@ -1208,6 +1262,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="
         clean,
         init,
+    	static-analysis:pa-commons,
         static-analysis:pa-ejb,
         static-analysis:pa-web,
         static-analysis:reg-web
@@ -1229,6 +1284,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
+	<target name="static-analysis:pa-commons" depends="init">
+	        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+	            target="test-static-analysis"
+	            dir="${pa-commons.base.dir}" >
+	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+	        </ant>
+	</target>
+	
     <target name="static-analysis:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             target="test-static-analysis"

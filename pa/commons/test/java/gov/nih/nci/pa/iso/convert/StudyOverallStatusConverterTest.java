@@ -87,7 +87,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import org.hibernate.Session;
@@ -114,7 +114,7 @@ public class StudyOverallStatusConverterTest {
         StudyOverallStatus bo = new StudyOverallStatus();
         bo.setId(123L);
         bo.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
-        bo.setStatusDate(PAUtil.dateStringToTimestamp("1/1/2008"));
+        bo.setStatusDate(ISOUtil.dateStringToTimestamp("1/1/2008"));
         bo.setStudyProtocol(sp);
 
         StudyOverallStatusDTO dto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
@@ -130,7 +130,7 @@ public class StudyOverallStatusConverterTest {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/11/2002")));
+        dto.setStatusDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp("7/11/2002")));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
 
         StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);

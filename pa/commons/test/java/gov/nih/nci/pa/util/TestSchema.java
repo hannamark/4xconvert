@@ -316,9 +316,9 @@ public class TestSchema {
 
             StudyProtocol sp = new InterventionalStudyProtocol();
             sp.setOfficialTitle("cacncer for THOLA");
-            sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+            sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
             sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-            sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
+            sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
             sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
             sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
             sp.setIdentifier("NCI-2009-00001");
@@ -330,12 +330,12 @@ public class TestSchema {
 
             StudyOverallStatus sos = new StudyOverallStatus();
             sos.setStatusCode(StudyStatusCode.APPROVED);
-            sos.setStatusDate(PAUtil.dateStringToTimestamp("8/1/2008"));
+            sos.setStatusDate(ISOUtil.dateStringToTimestamp("8/1/2008"));
             sos.setStudyProtocol(sp);
             addUpdObject(sos);
             sos = new StudyOverallStatus();
             sos.setStatusCode(StudyStatusCode.ACTIVE);
-            sos.setStatusDate(PAUtil.dateStringToTimestamp("8/15/2008"));
+            sos.setStatusDate(ISOUtil.dateStringToTimestamp("8/15/2008"));
             sos.setStudyProtocol(sp);
             addUpdObject(sos);
 
@@ -379,7 +379,7 @@ public class TestSchema {
             sPart.setHealthCareFacility(hfc);
             sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
             sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-            sPart.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("6/1/2008"));
+            sPart.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));
             sPart.setStudyProtocol(sp);
             addUpdObject(sPart);
             studySiteIds.add(sPart.getId());
@@ -404,7 +404,7 @@ public class TestSchema {
             spc.setRoleCode(StudySiteContactRoleCode.SUBMITTER);
             spc.setState("ZZ");
             spc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-            spc.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/15/2008"));
+            spc.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/15/2008"));
             spc.setStudySite(sPart);
             spc.setStudyProtocol(sp);
             spc.setHealthCareProvider(hcp);
@@ -446,7 +446,7 @@ public class TestSchema {
             inv.setDescriptionText("Oral intervention to improve morale");
             inv.setDateLastUpdated(new Date());
             inv.setStatusCode(ActiveInactivePendingCode.ACTIVE);
-            inv.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+            inv.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
             inv.setTypeCode(InterventionTypeCode.DIETARY_SUPPLEMENT);
             inv.setUserLastUpdated("Joe");
             addUpdObject(inv);
@@ -457,7 +457,7 @@ public class TestSchema {
             invo.setIntervention(inv);
             invo.setName("Hershey");
             invo.setStatusCode(ActiveInactiveCode.ACTIVE);
-            invo.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+            invo.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
             invo.setUserLastUpdated("Joe");
             invo.setNameTypeCode("synonym");
             addUpdObject(invo);
@@ -466,7 +466,7 @@ public class TestSchema {
             invo.setIntervention(inv);
             invo.setName("Nestle");
             invo.setStatusCode(ActiveInactiveCode.ACTIVE);
-            invo.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2000"));
+            invo.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
             invo.setUserLastUpdated("Joe");
             invo.setNameTypeCode("synonym");
             addUpdObject(invo);
