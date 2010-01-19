@@ -461,6 +461,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="gridServicePrincipal" value="${pagrid.jndi.principal}"/>
             <property name="gridServiceCredential" value="${pagrid.jndi.credentials.encrypted}"/>
             <target name="${pa-clean.build.target}"/>
+	        <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ear.build.target}"/>
         </ant>
     </target>
@@ -488,6 +489,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
             <target name="${accrual-clean.build.target}"/>
+	        <target name="${pa-ivy-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
         </ant>
     </target>
@@ -518,6 +520,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
 
             <target name="${pa-clean.build.target}"/>
+	        <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-web.build.target}"/>
         </ant>
     </target>
@@ -548,6 +551,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
 
             <target name="${pa-clean.build.target}"/>
+	        <target name="${pa-ivy-clean.build.target}"/>
             <target name="${reg-web.build.target}"/>
         </ant>
     </target>
@@ -578,6 +582,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	            <property name="csm.submitter.group" value="${csm.submitter.group}"/>
 
 	            <target name="${pa-clean.build.target}"/>
+	        	<target name="${pa-ivy-clean.build.target}"/>
 	            <target name="${pa-commons.build.target}"/>
 	        </ant>
 	    </target>
@@ -608,6 +613,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="csm.submitter.group" value="${csm.submitter.group}"/>
 
             <target name="${pa-clean.build.target}"/>
+	        <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
         </ant>
     </target>
@@ -618,6 +624,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
 
             <target name="${viewer-clean.build.target}"/>
+	        <target name="${pa-ivy-clean.build.target}"/>
             <target name="${viewer-services.build.target}"/>
         </ant>
     </target>
@@ -628,6 +635,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
 
             <target name="${viewer-clean.build.target}"/>
+	        <target name="${pa-ivy-clean.build.target}"/>
             <target name="${viewer-web.build.target}"/>
         </ant>
     </target>
