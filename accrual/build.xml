@@ -154,6 +154,7 @@
     </target>
 
     <target name="ivy-get" depends="ivy-init">
+        <ant target="ivy-get" dir="${accrual-web.dir}"/>
         <ant target="ivy-get" dir="${outcomes-web.dir}"/>
         <ant target="ivy-get" dir="${services.dir}"/>
         <ant target="ivy-get" dir="${ear.dir}"/>
