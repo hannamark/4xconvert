@@ -21,23 +21,16 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/caDSR-client-framework-4.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/clm-4.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/commons-fileupload-1.2.1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/commons-io-1.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/commons-lang-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/displaytag-1.1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/dwr-2.0.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ehcache-1.2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ejb-api-3.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/freemarker-2.3.13.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-annotations-3.2.0.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-commons-annotations-3.3.0.ga.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/hibernate-validator-3.0.0.GA.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/itext-2.0.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jdom-0.9.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jta-1.0.1B.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/persistence-api-1.0.jar"/>
@@ -47,8 +40,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/spring-2.0.5.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/standard-1.1.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-core-2.1.6.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-dojo-plugin-2.1.6.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-sitemesh-plugin-2.1.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/struts2-spring-plugin-2.1.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/xwork-2.1.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/cargo-ant-0.8.jar"/>
@@ -56,7 +47,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/clm-4.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/hsqldb-1.8.0.7.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/test/jdom-0.9.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/mockrunner-0.3.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/postgresql-jdbc3-8.3-603.jar"/>
@@ -84,7 +74,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/hibernate3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.2.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/cglib-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-ear/runtime/quartz-all-1.6.5.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/compile/quartz-all-1.6.5.jar"/>
 	<classpathentry kind="var" path="PA_LIB"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

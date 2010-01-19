@@ -80,10 +80,10 @@
         </session-timeout>
     </session-config>   
 	
-	<!-- Listeners -->
+	<!-- Listeners 
 	<listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
+    </listener>-->
     
     <!-- Servlets -->
     <servlet>
