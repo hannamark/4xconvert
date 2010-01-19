@@ -10,10 +10,4 @@
             <jxb:package name="gov.nih.nci.coppa.common"/>
         </jxb:schemaBindings>
     </jxb:bindings>
-    <jxb:bindings schemaLocation="../xsd/ISO_datatypes_Narrative.xsd" node="/xs:schema">
-        <jxb:schemaBindings>
-            <jxb:package name="org.iso._21090"/>
-        </jxb:schemaBindings>
-    </jxb:bindings>
-    
 </jxb:bindings>

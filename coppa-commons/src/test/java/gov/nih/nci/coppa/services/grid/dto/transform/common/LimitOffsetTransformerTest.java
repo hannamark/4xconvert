@@ -84,7 +84,7 @@ package gov.nih.nci.coppa.services.grid.dto.transform.common;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 
 /**
  * @author smatyas
