@@ -13,6 +13,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Property file related properties and tasks -->
     <property environment="env" />
+    <condition property="env.HOSTNAME" value="${env.COMPUTERNAME}">
+        <os family="windows" />
+    </condition>
+    
+    
     <!-- The project.properties stores properties that are shared between both build.xml and install.xml. Typically properties that are related to the distribution directories, or files. -->
     <property file="local.properties" />
     <property file="project.properties" />
