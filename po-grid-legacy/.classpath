@@ -95,8 +95,8 @@
 	<classpathentry kind="lib" path="build/lib/po-services-3.1-SNAPSHOT-client.jar"/>
 	<classpathentry kind="lib" path="build/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="build/lib/jdom-1.0.jar"/>
-	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.6-tests.jar"/>
-	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.6.jar"/>
+	<classpathentry kind="lib" path="build/test/lib/coppa-commons-1.2.7-SNAPSHOT-tests.jar"/>
+	<classpathentry kind="lib" path="build/lib/coppa-commons-1.2.7-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="build/lib/iso-datatypes-1.2.6.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

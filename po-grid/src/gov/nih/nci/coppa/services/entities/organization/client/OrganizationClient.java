@@ -4,8 +4,11 @@ import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -26,6 +29,10 @@ import org.iso._21090.CD;
  * @created by Introduce Toolkit version 1.2
  */
 public class OrganizationClient extends OrganizationClientBase implements OrganizationI {
+ 
+    private static ClientParameterHelper<OrganizationClient> helper = 
+        new ClientParameterHelper<OrganizationClient>(OrganizationClient.class);
+    
     /**
      * The identifier name for org ii's.
      */
@@ -52,40 +59,32 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
            super(epr,proxy);
     }
 
-    public static void usage(){
-        System.out.println(OrganizationClient.class.getName() + " -url <service url>");
-    }
-
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-        if(!(args.length < 2)){
-            if(args[0].equals("-url")){
-              OrganizationClient client = new OrganizationClient(args[1]);
-              // place client calls here if you want to use this main as a
-              // test....
-              getOrg(client);
-              searchOrganizations(client);
-              queryOrganizations(client);
-            } else {
-                usage();
-                System.exit(1);
+            String[] localArgs = new String[] {"-getId"};          
+            helper.setLocalArgs(localArgs);
+            helper.setupParams(args);
+            
+            OrganizationClient client = new OrganizationClient(helper.getArgument("-url"));
+
+            for (Method method : helper.getRunMethods()) {
+                System.out.println("Running " + method.getName());
+                method.invoke(null, client);
             }
-        } else {
-            usage();
-            System.exit(1);
-        }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
+    @GridTestMethod
     private static void getOrg(OrganizationClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(ORG_ROOT);
         id.setIdentifierName(ORG_IDENTIFIER_NAME);
-        id.setExtension("499");
+        id.setExtension(helper.getArgument("-getId", "1"));
         Organization result = client.getById(id);
         ClientUtils.handleResult(result);
     }
@@ -98,12 +97,14 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         return criteria;
     }
 
+    @GridTestMethod
     private static void searchOrganizations(OrganizationClient client) throws RemoteException {
         Organization criteria = createCriteria();
         Organization[] results = client.search(criteria);
         ClientUtils.handleSearchResults(results);
     }
 
+    @GridTestMethod
     private static void queryOrganizations(OrganizationClient client) throws RemoteException {
         Organization criteria = createCriteria();
 

@@ -5,9 +5,12 @@ import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedOrganization;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.identifiedorganization.common.IdentifiedOrganizationI;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -31,6 +34,9 @@ import org.iso._21090.IdentifierReliability;
  */
 public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBase implements IdentifiedOrganizationI {
 
+    private static ClientParameterHelper<IdentifiedOrganizationClient> helper = 
+        new ClientParameterHelper<IdentifiedOrganizationClient>(IdentifiedOrganizationClient.class);
+
     /**
      * The identifier name for for Identified org.
      */
@@ -42,7 +48,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
     public static final String IDENTIFIED_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.6";
 
     public IdentifiedOrganizationClient(String url) throws MalformedURIException, RemoteException {
-        this(url,null);	
+        this(url,null);
     }
 
     public IdentifiedOrganizationClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
@@ -57,44 +63,32 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
         super(epr,proxy);
     }
 
-    public static void usage(){
-        System.out.println(IdentifiedOrganizationClient.class.getName() + " -url <service url>");
-    }
-
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client idOrg");
         try{
-            if(!(args.length < 2)){
-                if(args[0].equals("-url")){
-                    IdentifiedOrganizationClient client = new IdentifiedOrganizationClient(args[1]);
-                    // place client calls here if you want to use this main as a
-                    // test....
-                    getIdentifiedOrg(client);
-                    searchIdentifiedOrg(client);
-                    queryIdentifiedOrg(client);
-                    System.out.println("---- get by playerids---");
-                    getIdentifiedOrgsByPlayerIds(client);
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            helper.setLocalArgs(localArgs);
+            helper.setupParams(args);
+            
+            IdentifiedOrganizationClient client = new IdentifiedOrganizationClient(helper.getArgument("-url"));
 
-                    testUpdate(client);
-                } else {
-                    usage();
-                    System.exit(1);
-                }
-            } else {
-                usage();
-                System.exit(1);
+            for (Method method : helper.getRunMethods()) {
+                System.out.println("Running " + method.getName());
+                method.invoke(null, client);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
+    @GridTestMethod
     private static void testUpdate(IdentifiedOrganizationClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(IDENTIFIED_ORG_ROOT);
         id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
-        id.setExtension("518");
+        id.setExtension(helper.getArgument("-getId", "1"));
         IdentifiedOrganization result = client.getById(id);
 
         II assignedId = new II();
@@ -107,26 +101,27 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
         client.update(result);
     }
 
-
+    @GridTestMethod
     private static void getIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(IDENTIFIED_ORG_ROOT);
         id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
-        id.setExtension("597");
+        id.setExtension(helper.getArgument("-getId", "1"));
         IdentifiedOrganization result = client.getById(id);
         ClientUtils.handleResult(result);
     }
 
+    @GridTestMethod
     private static void getIdentifiedOrgsByPlayerIds(IdentifiedOrganizationClient client) {
         Id id1 = new Id();
         id1.setRoot(OrganizationClient.ORG_ROOT);
         id1.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
-        id1.setExtension("1847");
+        id1.setExtension(helper.getArgument("-playerId", "1"));
 
         Id id2 = new Id();
         id2.setRoot(OrganizationClient.ORG_ROOT);
         id2.setIdentifierName(OrganizationClient.ORG_IDENTIFIER_NAME);
-        id2.setExtension("2119");
+        id2.setExtension(helper.getArgument("-playerId2", "2"));
 
         try {
             IdentifiedOrganization[] results = client.getByPlayerIds(new Id[] {id1, id2});
@@ -138,12 +133,14 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
         }
     }
 
+    @GridTestMethod
     private static void searchIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
         IdentifiedOrganization criteria = createCriteria();
         IdentifiedOrganization[] results = client.search(criteria);
         ClientUtils.handleSearchResults(results);
     }
 
+    @GridTestMethod
     private static void queryIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);

@@ -2,9 +2,13 @@ package gov.nih.nci.coppa.services.structuralroles.patient.client;
 
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Patient;
+import gov.nih.nci.coppa.po.faults.EntityValidationFault;
+import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETIITransformer;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.patient.common.PatientI;
 
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
@@ -26,6 +30,9 @@ import org.iso._21090.II;
  */
 public class PatientClient extends PatientClientBase implements PatientI {	
 
+    private static ClientParameterHelper<PatientClient> helper = 
+        new ClientParameterHelper<PatientClient>(PatientClient.class);
+    
 	public PatientClient(String url) throws MalformedURIException, RemoteException {
 		this(url,null);	
 	}
@@ -41,58 +48,58 @@ public class PatientClient extends PatientClientBase implements PatientI {
 	public PatientClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
 	   	super(epr,proxy);
 	}
-
-	public static void usage(){
-		System.out.println(PatientClient.class.getName() + " -url <service url>");
-	}
 	
 	public static void main(String [] args){
 	    System.out.println("Running the Grid Service Client");
 		try{
-		if(!(args.length < 2)){
-			if(args[0].equals("-url")){
-			  final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
-			  final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
-			  PatientClient client = new PatientClient(args[1]);
-			  Patient p = new Patient();
-			  
-			  II scoper = new II();
-			  scoper.setIdentifierName(ORG_IDENTIFIER_NAME);
-			  scoper.setRoot(ORG_ROOT);
-			  scoper.setExtension("501");
-			  p.setScoperIdentifier(scoper);
-	 
-			  Id patientId = client.create(p);
-			  
-			  Patient fresh = client.getById(patientId);
-			 
-			  Id playerId = new Id();
-			  playerId.setRoot(fresh.getPlayerIdentifier().getRoot());
-			  playerId.setIdentifierName(fresh.getPlayerIdentifier().getIdentifierName());
-			  playerId.setExtension(fresh.getPlayerIdentifier().getExtension());
-			  
-			  Id[] ids = new Id[1];
-			  ids[0] = playerId;
-			  Patient[] ps = client.getByPlayerIds(ids);
-			  if (ps.length != 1) {
-			      System.out.println("getByPlayerId did not work");
-                  throw new RuntimeException("failed to getByPlayerId id");
-			  }
-			  
-			} else {
-				usage();
-				System.exit(1);
-			}
-		} else {
-			usage();
-			System.exit(1);
-		}
+
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            helper.setLocalArgs(localArgs);
+            helper.setupParams(args);
+            
+            PatientClient client = new PatientClient(helper.getArgument("-url"));
+
+            for (Method method : helper.getRunMethods()) {
+                System.out.println("Running " + method.getName());
+                method.invoke(null, client);
+            }
+               
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
 
+	@GridTestMethod
+	private static void testPatient(PatientClient client) throws EntityValidationFault, RemoteException {
+        final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
+        final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
+        
+        Patient p = new Patient();
+        
+        II scoper = new II();
+        scoper.setIdentifierName(ORG_IDENTIFIER_NAME);
+        scoper.setRoot(ORG_ROOT);
+        scoper.setExtension(helper.getArgument("-getId", "1"));
+        p.setScoperIdentifier(scoper);
+
+        Id patientId = client.create(p);        
+        Patient fresh = client.getById(patientId);
+       
+        Id playerId = new Id();
+        playerId.setRoot(fresh.getPlayerIdentifier().getRoot());
+        playerId.setIdentifierName(fresh.getPlayerIdentifier().getIdentifierName());
+        playerId.setExtension(fresh.getPlayerIdentifier().getExtension());
+        
+        Id[] ids = new Id[1];
+        ids[0] = playerId;
+        Patient[] ps = client.getByPlayerIds(ids);
+        if (ps.length != 1) {
+            System.out.println("getByPlayerId did not work");
+            throw new RuntimeException("failed to getByPlayerId id");
+        }
+	}
+	
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
