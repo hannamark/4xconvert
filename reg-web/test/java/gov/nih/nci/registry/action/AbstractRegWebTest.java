@@ -27,7 +27,9 @@ import gov.nih.nci.registry.test.util.MockPoServiceLocator;
 import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -50,6 +52,7 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  *
  */
 public abstract class AbstractRegWebTest {
+    private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
     /**
      * Set up services.
      */
@@ -99,7 +102,12 @@ public abstract class AbstractRegWebTest {
         trialDTO.setStatusDate("01/20/2008");
         trialDTO.setStatusCode("Active");
         trialDTO.setCompletionDateType("Anticipated");
-        trialDTO.setCompletionDate("01/20/2010");
+        
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String futureDate = dateFormat.format(date.getTime() + MILLIS_IN_DAY);
+        
+        trialDTO.setCompletionDate(futureDate);
         trialDTO.setStartDateType("Actual");
         trialDTO.setStartDate("01/20/2008");
         trialDTO.setReason("");
