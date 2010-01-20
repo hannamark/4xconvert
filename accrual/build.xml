@@ -242,12 +242,19 @@
     <!-- Clean the ear, services and web subprojects                            -->
     <!-- ====================================================================== -->
 
-    <target name="accrual-web-clean">
+    <target name="outcomes-web-clean">
         <ant inheritAll="false" inheritRefs="false" antfile="${outcomes-web.build.file}"
             dir="${outcomes-web.dir}" >
             <target name="${outcomes-web.clean.target}"/>
         </ant>
     </target>
+	
+	<target name="accrual-web-clean">
+	        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-web.build.file}"
+	            dir="${accrual-web.dir}" >
+	            <target name="${accrual-web.clean.target}"/>
+	        </ant>
+	    </target>
 
     <target name="accrual-services-clean">
         <ant inheritAll="false" inheritRefs="false" antfile="${services.build.file}"
@@ -263,7 +270,7 @@
         </ant>
     </target>
 
-    <target name="clean" description="Clean the ear, jar and war" depends="accrual-web-clean, accrual-services-clean, accrual-ear-clean">
+    <target name="clean" description="Clean the ear, jar and war" depends="outcomes-web-clean,accrual-web-clean, accrual-services-clean, accrual-ear-clean">
     </target>
 
 </project>

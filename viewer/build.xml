@@ -69,6 +69,8 @@
         
         <delete file="${viewerEarDir}/pa-web.war"/>
         <delete file="${viewerEarDir}/reg-web.war"/>
+    	<delete file="${viewerEarDir}/jboss-web.xml"/>
+    	<copy file="${resourceDir}/jboss-web.xml" todir="${viewerEarDir}"/>
         <delete file="${viewerEarDir}/META-INF/application.xml"/>
         <ear destfile="${viewerEarFile}" 
              basedir="${viewerEarDir}" 

@@ -25,6 +25,18 @@
     <module>
         <java>xsnapshot-1.1-beta2.jar</java>
     </module>
+	<module>
+		<java>commons-collections-3.2.1.jar</java> 
+	</module>
+	<module>
+	  <java>commons-io-1.4.jar</java> 
+	</module>
+	<module>
+	  <java>commons-fileupload-1.2.1.jar</java> 
+	</module>
+	<module>
+	  <java>commons-lang-2.4.jar</java> 
+	</module>
     <security-role><role-name>Abstractor</role-name></security-role>
     <security-role><role-name>Submitter</role-name></security-role>
     <security-role><role-name>ReportViewer</role-name></security-role>

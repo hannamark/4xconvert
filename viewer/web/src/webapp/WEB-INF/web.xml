@@ -71,30 +71,17 @@
         </session-timeout>
     </session-config>   
     
-    <!-- Listeners -->
+    <!-- Listeners 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
+    </listener>-->
 
     <!-- Servlets -->
-    <servlet>
-        <servlet-name>dwr</servlet-name>
-        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
-        <init-param>
-            <param-name>debug</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </servlet>
     <servlet>
         <servlet-name>jspSupportServlet</servlet-name>
         <servlet-class>org.apache.struts2.views.JspSupportServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>dwr</servlet-name>
-        <url-pattern>/dwr/*</url-pattern>
-    </servlet-mapping>
 
     <!-- Welcome file lists -->
     <welcome-file-list>
