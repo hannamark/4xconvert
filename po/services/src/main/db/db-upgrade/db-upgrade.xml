@@ -111,4 +111,8 @@
        <comment>Change all reliability to VRF from ISS where root is CTEP on Org related imports.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-850.sql"/>
     </changeSet>
+    <changeSet id="PO-657" author="ludetc">
+       <comment>Add missing FK indexes on patient race and ethnicgroup.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-647.sql"/>
+    </changeSet>
 </databaseChangeLog>
