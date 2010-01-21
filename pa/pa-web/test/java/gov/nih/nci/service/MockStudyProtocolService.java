@@ -275,4 +275,10 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
         // TODO Auto-generated method stub
         
     }
+
+    public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 }

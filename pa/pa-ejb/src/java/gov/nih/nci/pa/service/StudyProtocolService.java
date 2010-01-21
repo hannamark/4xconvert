@@ -188,5 +188,10 @@ public interface StudyProtocolService {
      * @throws PAException error on any validation
      */
     void validate(StudyProtocolDTO studyProtocolDTO) throws PAException;
-
+    /**
+     * This method is to use to change the ownership of the studyProtocol.
+     * @param studyProtocolDTO studyProtocolDTO
+     * @throws PAException on error
+     */
+    void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException;
 }

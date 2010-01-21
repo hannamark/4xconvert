@@ -181,7 +181,7 @@ public  class AbstractEntity implements Serializable, Auditable {
      *
      * @return userLastCreated
      */
-    @Column(name = "USER_LAST_CREATED")
+    @Column(name = "USER_LAST_CREATED", updatable = false)
     public String getUserLastCreated() {
         return userLastCreated;
     }

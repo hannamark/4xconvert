@@ -691,6 +691,29 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
         }
         return studyProtocolDTOList;
     }
+    /**
+     *@param studyProtocolDTO studyProtocolDTO
+     *@throws PAException on err.
+     */
+    public void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        if (studyProtocolDTO == null) {
+            LOG.error(" studyProtocolDTO should not be null ");
+            throw new PAException(" studyProtocolDTO should not be null ");
 
-    
+        }
+        Session session = null;
+        session = HibernateUtil.getCurrentSession();
+        StudyProtocol prevStudyProtocol = (StudyProtocol) session.load(StudyProtocol.class,
+                Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
+        String newUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
+        String prevUserLastCreated = prevStudyProtocol.getUserLastCreated();
+        if (PAUtil.isNotEmpty(newUserLastCreated) && PAUtil.isNotEmpty(prevUserLastCreated)
+                && !prevUserLastCreated.equals(newUserLastCreated)) {
+            session = HibernateUtil.getCurrentSession();
+            String sql = "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated 
+                + "' WHERE IDENDITIER=" + prevStudyProtocol.getId();
+            session.createSQLQuery(sql).executeUpdate();
+        }
+
+    }
 }

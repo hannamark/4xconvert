@@ -76,9 +76,9 @@ public class ChangeOwnershipAction extends ActionSupport {
            StudyProtocolDTO dto = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
            String strPrevUserCreated = StConverter.convertToString(dto.getUserLastCreated());
            if (PAUtil.isNotEmpty(csmUserEmailId) && !strPrevUserCreated.equalsIgnoreCase(csmUserEmailId)) {
-               //update the protocol
+               //update only the userlastCreated
                dto.setUserLastCreated(StConverter.convertToSt(csmUserEmailId));
-               PaRegistry.getStudyProtocolService().updateStudyProtocol(dto);
+               PaRegistry.getStudyProtocolService().changeOwnership(dto);
                //send the mail
                PaRegistry.getMailManagerService().sendChangeOwnershipMail(strPrevUserCreated, spIi);
                //PaRegistry.getMailManagerService().sendChangeOwnershipMail(csmUserEmailId);
