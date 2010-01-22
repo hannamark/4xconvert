@@ -713,7 +713,11 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             String sql = "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated 
                 + "' WHERE IDENTIFIER=" + prevStudyProtocol.getId();
             session.createSQLQuery(sql).executeUpdate();
+            session.flush();
         }
+        StudyProtocol newSp = (StudyProtocol) session.load(StudyProtocol.class,
+                Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
+        StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, newSp);
     }
 }

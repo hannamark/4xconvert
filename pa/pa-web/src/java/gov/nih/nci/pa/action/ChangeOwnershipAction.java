@@ -79,12 +79,10 @@ public class ChangeOwnershipAction extends ActionSupport {
                //update only the userlastCreated
                dto.setUserLastCreated(StConverter.convertToSt(csmUserEmailId));
                PaRegistry.getStudyProtocolService().changeOwnership(dto);
+               StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry
+                   .getProtocolQueryService().getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi));
                //send the mail
                PaRegistry.getMailManagerService().sendChangeOwnershipMail(strPrevUserCreated, spIi);
-               //PaRegistry.getMailManagerService().sendChangeOwnershipMail(csmUserEmailId);
-               
-               StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
-                   .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi));
                // put an entry in the session and store StudyProtocolQueryDTO
                ServletActionContext.getRequest().getSession().setAttribute(
                        Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
