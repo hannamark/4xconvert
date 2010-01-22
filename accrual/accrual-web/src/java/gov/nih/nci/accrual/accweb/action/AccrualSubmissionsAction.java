@@ -96,6 +96,8 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -214,6 +216,24 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
                     new Timestamp(new Date().getTime()), null));
             submission.setCreateUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                     getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
+            
+            List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
+            List<String> testList = new ArrayList<String>();
+            for (SubmissionDto sDto : listOfSubmissions) {
+                testList.add(sDto.getIdentifier().getExtension());
+            }
+            String test =  Collections.max(testList);
+            Ts cutOffDate = null;
+            for (SubmissionDto sDto : listOfSubmissions) {
+                if (test.equals(sDto.getIdentifier().getExtension())) {
+                    cutOffDate = sDto.getCutOffDate();
+                }
+            }
+            if (submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
+                addActionError("New Cut-off Date must be same or bigger than"
+                        + " the Cut-off-Date of the previous submission");
+                return super.execute();
+            }
             submissionSvc.create(submission);
             ServletActionContext.getRequest().getSession().
                     setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, Boolean.TRUE);

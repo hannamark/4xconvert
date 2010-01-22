@@ -84,8 +84,11 @@ import gov.nih.nci.accrual.accweb.util.MockSubmissionBean;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -106,6 +109,7 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
     private SearchTrialResultDto trialSummary;
     private List<SubmissionDto> listOfSubmissions;
     private SubmissionDto submission;
+    private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
 
     @Before
     public void initAction() throws Exception {
@@ -147,7 +151,21 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
     }
 
     @Test
+    public void addNewExceptionTest() throws Exception {
+      assertEquals("showNewSubmission", action.addNew());
+    }
+    
+    @Test
     public void addNewTest() throws Exception {
+        submission.setCutOffDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
+        action.setSubmission(submission);
+      assertEquals(ActionSupport.SUCCESS, action.addNew());
+    }
+    
+    @Test
+    public void addNewTest2() throws Exception {
+        submission.setCutOffDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() + MILLIS_IN_DAY)));
+        action.setSubmission(submission);
       assertEquals(ActionSupport.SUCCESS, action.addNew());
     }
 
