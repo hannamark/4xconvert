@@ -711,7 +711,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
                 && !prevUserLastCreated.equals(newUserLastCreated)) {
             session = HibernateUtil.getCurrentSession();
             String sql = "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated 
-                + "' WHERE IDENDITIER=" + prevStudyProtocol.getId();
+                + "' WHERE IDENTIFIER=" + prevStudyProtocol.getId();
             session.createSQLQuery(sql).executeUpdate();
         }
 
