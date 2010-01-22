@@ -239,4 +239,12 @@ public class AbstractAccrualActionTest {
             SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II, IiConverter.convertToIi(participant));
         }
     }
+    
+    public void setCourseIi(String cycle) {
+        if (cycle == null) {
+            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_COURSE_II, null);
+        } else {
+            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_COURSE_II, IiConverter.convertToIi(cycle));
+        }
+    }
 }

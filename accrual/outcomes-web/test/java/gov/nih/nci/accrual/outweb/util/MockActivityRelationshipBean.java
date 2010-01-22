@@ -198,6 +198,13 @@ public class MockActivityRelationshipBean implements ActivityRelationshipService
         dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.COURSEID));
         dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.RADIATIONID));
         arsList.add(dto);
+        
+        dto = new ActivityRelationshipDto();
+        dto.setIdentifier(IiConverter.convertToIi(getKey()));
+        dto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
+        dto.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.COURSEID));
+        dto.setTargetPerformedActivityIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.SURGERYID));
+        arsList.add(dto);
     }
     
     private synchronized String getKey() {

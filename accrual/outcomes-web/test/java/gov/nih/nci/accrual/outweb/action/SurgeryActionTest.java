@@ -109,6 +109,7 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
         action.prepare();
         surgery = new SurgeryWebDto();
         setParticipantIi(PARTICIPANT1);
+        setCourseIi(MockPerformedActivityBean.COURSEID);
     }
 
     @Override

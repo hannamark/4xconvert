@@ -110,6 +110,7 @@ public class DrugBiologicsActionTest extends AbstractAccrualActionTest {
         action.prepare();
         drugBiologic  = new DrugBiologicsWebDto();
         setParticipantIi(PARTICIPANT1);
+        setCourseIi(MockPerformedActivityBean.COURSEID);
     }
 
     @Override

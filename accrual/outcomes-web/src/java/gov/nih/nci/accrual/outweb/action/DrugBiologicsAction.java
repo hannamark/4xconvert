@@ -106,7 +106,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.AvoidDeeplyNestedIfStmts" })
 public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiologicsWebDto> {
 
     private static final long serialVersionUID = 1L;
@@ -130,37 +130,40 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
                         && psaDto.getCategoryCode().getCode().equals(ActivityCategoryCode.DRUG_BIOLOGIC.getCode())) {
                     List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             psaDto.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    arList = activityRelationshipSvc.getBySourcePerformedActivity(
-                            arList.get(0).getTargetPerformedActivityIdentifier(), 
-                            CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    for (ActivityRelationshipDto arDto : arList) {
-                        PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arDto
-                                .getTargetPerformedActivityIdentifier());
-                        if (po.getNameCode().getCode().equals(ActivityNameCode.HEIGHT.getCode())) {
-                            porList = performedObservationResultSvc.
-                            getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                            webDto.setHeight(porList.get(0).getResultQuantity());
-                        } else if (po.getNameCode().getCode().equals(ActivityNameCode.WEIGHT.getCode())) {
-                            porList = performedObservationResultSvc.
-                            getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                            webDto.setWeight(porList.get(0).getResultQuantity());
-                        } else if (po.getNameCode().getCode().equals(ActivityNameCode.BSA.getCode())) {
-                            porList = performedObservationResultSvc.
-                            getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                            webDto.setBsa(porList.get(0).getResultQuantity());
+                    if (arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
+                            .equals(getCourseIi().getExtension())) {
+                        arList = activityRelationshipSvc.getBySourcePerformedActivity(
+                                arList.get(0).getTargetPerformedActivityIdentifier(), 
+                                CdConverter.convertStringToCd(AccrualConstants.COMP));
+                        for (ActivityRelationshipDto arDto : arList) {
+                            PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arDto
+                                    .getTargetPerformedActivityIdentifier());
+                            if (po.getNameCode().getCode().equals(ActivityNameCode.HEIGHT.getCode())) {
+                                porList = performedObservationResultSvc.
+                                getPerformedObservationResultByPerformedActivity(po.getIdentifier());
+                                webDto.setHeight(porList.get(0).getResultQuantity());
+                            } else if (po.getNameCode().getCode().equals(ActivityNameCode.WEIGHT.getCode())) {
+                                porList = performedObservationResultSvc.
+                                getPerformedObservationResultByPerformedActivity(po.getIdentifier());
+                                webDto.setWeight(porList.get(0).getResultQuantity());
+                            } else if (po.getNameCode().getCode().equals(ActivityNameCode.BSA.getCode())) {
+                                porList = performedObservationResultSvc.
+                                getPerformedObservationResultByPerformedActivity(po.getIdentifier());
+                                webDto.setBsa(porList.get(0).getResultQuantity());
+                            }
                         }
-                    }
-                    InterventionDTO dto = interventionSvc.get(psaDto.getInterventionIdentifier());
-                    webDto.setDrugName(dto.getName());
-                    webDto.setInterventionId(dto.getIdentifier());
+                        InterventionDTO dto = interventionSvc.get(psaDto.getInterventionIdentifier());
+                        webDto.setDrugName(dto.getName());
+                        webDto.setInterventionId(dto.getIdentifier());
 
-                    DoseFrequency df = new DoseFrequency();
-                    df.setCode(psaDto.getDoseFrequencyCode().getCode());
-                    
-                    DoseFrequency dfBean = baseLookupSvc.getByCode(df);
-                    webDto.setDoseFreq(CdConverter.convertStringToCd(dfBean.getDisplayName()));
-                    webDto.setDoseFreqId(IiConverter.convertToIi(dfBean.getId()));
-                    getDisplayTagList().add(new DrugBiologicsWebDto(psaDto, webDto));
+                        DoseFrequency df = new DoseFrequency();
+                        df.setCode(psaDto.getDoseFrequencyCode().getCode());
+
+                        DoseFrequency dfBean = baseLookupSvc.getByCode(df);
+                        webDto.setDoseFreq(CdConverter.convertStringToCd(dfBean.getDisplayName()));
+                        webDto.setDoseFreqId(IiConverter.convertToIi(dfBean.getId()));
+                        getDisplayTagList().add(new DrugBiologicsWebDto(psaDto, webDto));
+                    }
                 }
             }
         } catch (RemoteException e) {

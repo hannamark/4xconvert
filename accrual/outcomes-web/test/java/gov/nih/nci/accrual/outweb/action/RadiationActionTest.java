@@ -111,6 +111,7 @@ public class RadiationActionTest extends AbstractAccrualActionTest {
         action.prepare();
         radiation  = new RadiationWebDto();
         setParticipantIi(PARTICIPANT1);
+        setCourseIi(MockPerformedActivityBean.COURSEID);
     }
 
     @Override

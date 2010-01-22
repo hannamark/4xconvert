@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.outweb.action;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.outweb.dto.util.RadiationWebDto;
+import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
@@ -100,6 +101,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Kalpana Guthikonda
  * @since 10/28/2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebDto> {
 
     private static final long serialVersionUID = 1L;
@@ -117,15 +119,19 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
             for (PerformedRadiationAdministrationDto pra : paList) {
                 if (pra.getCategoryCode() != null && pra.getCategoryCode().getCode() != null
                         && pra.getCategoryCode().getCode().equals(ActivityCategoryCode.RADIATION.getCode())) {
-                    
-                    DoseFrequency df = new DoseFrequency();
-                    df.setCode(pra.getDoseFrequencyCode().getCode());
-                    DoseFrequency dfBean = baseLookupSvc.getByCode(df);
-                    RadiationWebDto webDto = new RadiationWebDto();
-                    webDto.setDoseFreq(CdConverter.convertStringToCd(dfBean.getDisplayName()));
-                    webDto.setDoseFreqId(IiConverter.convertToIi(dfBean.getId()));
-                    
-                    getDisplayTagList().add(new RadiationWebDto(pra, webDto));
+                    List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
+                            pra.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
+                    if (arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
+                            .equals(getCourseIi().getExtension())) {                    
+                        DoseFrequency df = new DoseFrequency();
+                        df.setCode(pra.getDoseFrequencyCode().getCode());
+                        DoseFrequency dfBean = baseLookupSvc.getByCode(df);
+                        RadiationWebDto webDto = new RadiationWebDto();
+                        webDto.setDoseFreq(CdConverter.convertStringToCd(dfBean.getDisplayName()));
+                        webDto.setDoseFreqId(IiConverter.convertToIi(dfBean.getId()));
+
+                        getDisplayTagList().add(new RadiationWebDto(pra, webDto));
+                    }
                 }
             }
         } catch (RemoteException e) {

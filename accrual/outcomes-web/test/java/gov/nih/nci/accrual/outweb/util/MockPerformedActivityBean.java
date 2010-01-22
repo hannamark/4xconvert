@@ -331,16 +331,8 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setInterventionIdentifier(IiConverter.convertToIi(1L));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
-        ppList.add(dto);
+        ppList.add(dto);        
         
-        dto = new PerformedProcedureDto();
-        dto.setIdentifier(IiConverter.convertToIi(getKey()));
-        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SURGERY));
-        dto.setTextDescription(StConverter.convertToSt("Surgery Info2"));
-        dto.setActualDateRange(surgeryDate);
-        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT2));
-        ppList.add(dto);
     }
     private List<PerformedSubstanceAdministrationDto> psaList;
     {

@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.outweb.action;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedProcedureDto;
 import gov.nih.nci.accrual.outweb.dto.util.SurgeryWebDto;
+import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
@@ -118,9 +119,14 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
             for (PerformedProcedureDto pp : paList) {
                 if (pp.getCategoryCode() != null && pp.getCategoryCode().getCode() != null
                         && pp.getCategoryCode().getCode().equals(ActivityCategoryCode.SURGERY.getCode())) {
-                    InterventionDTO dto = interventionSvc.get(pp.getInterventionIdentifier());
-                    getDisplayTagList().add(new SurgeryWebDto(pp, dto));
-                }
+                    List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
+                            pp.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
+                    if (arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
+                            .equals(getCourseIi().getExtension())) {
+                        InterventionDTO dto = interventionSvc.get(pp.getInterventionIdentifier());
+                        getDisplayTagList().add(new SurgeryWebDto(pp, dto));
+                    }
+                }  
             }
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
