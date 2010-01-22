@@ -200,7 +200,7 @@ public class CourseWebDto implements Serializable {
      * @return the createDate
      */
     @FieldExpressionValidator(expression = "createDate.value != null",
-            message = "Please provide a Course Date")          
+            message = "Please provide a Cycle Date")          
     public Ts getCreateDate() {
         return createDate;
     }

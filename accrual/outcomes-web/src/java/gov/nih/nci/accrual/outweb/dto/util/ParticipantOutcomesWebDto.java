@@ -189,7 +189,7 @@ public class ParticipantOutcomesWebDto implements Serializable {
                     + AccrualUtil.dateToMDY(deathDate));
         } 
         if (courseDate != null && dto.getBestResponseDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be less than Course Date" 
+            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be less than Cycle Date" 
                     + AccrualUtil.dateToMDY(courseDate));
         }
         
@@ -202,7 +202,7 @@ public class ParticipantOutcomesWebDto implements Serializable {
                     + AccrualUtil.dateToMDY(deathDate));
         } 
         if (courseDate != null && dto.getEvaluationDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Course Date" 
+            action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Cycle Date" 
                     + AccrualUtil.dateToMDY(courseDate));
         }
       
@@ -216,7 +216,7 @@ public class ParticipantOutcomesWebDto implements Serializable {
                         + AccrualUtil.dateToMDY(deathDate));
             } 
             if (courseDate != null && dto.getProgressionDate().getValue().before(courseDate)) {
-                action.addFieldError("targetOutcome.progressionDate", "Date can't be less than Course Date" 
+                action.addFieldError("targetOutcome.progressionDate", "Date can't be less than Cycle Date" 
                         + AccrualUtil.dateToMDY(courseDate));
             }
         }
@@ -231,7 +231,7 @@ public class ParticipantOutcomesWebDto implements Serializable {
                         + AccrualUtil.dateToMDY(deathDate));
             } 
             if (courseDate != null && dto.getRecurrenceDate().getValue().before(courseDate)) {
-                action.addFieldError("targetOutcome.recurrenceDate", "Date can't be less than Course Date" 
+                action.addFieldError("targetOutcome.recurrenceDate", "Date can't be less than Cycle Date" 
                         + AccrualUtil.dateToMDY(courseDate));
             }
         }
@@ -244,7 +244,7 @@ public class ParticipantOutcomesWebDto implements Serializable {
                     + AccrualUtil.dateToMDY(deathDate));
         } 
         if (courseDate != null && dto.getDiseaseStatusDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Course Date" 
+            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Cycle Date" 
                     + AccrualUtil.dateToMDY(courseDate));
         }
         if (dto.getRecurrenceInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())
