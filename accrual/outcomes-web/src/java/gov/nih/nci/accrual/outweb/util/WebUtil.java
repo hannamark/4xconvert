@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * @author Hugh Reinhart
@@ -128,7 +129,7 @@ public class WebUtil {
         if (PAUtil.isEmpty(value)) {
             return false;
         }
-        return value.contains(criteria);
+        return value.toLowerCase(Locale.ENGLISH).contains(criteria.toLowerCase(Locale.ENGLISH));
     }
     /**
      * Null safe implementation of String.equals().

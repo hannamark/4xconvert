@@ -11,7 +11,7 @@
 <script type="text/javascript">
 
 	function handleSaveAction() {
-	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+	if (confirm("Select OK to complete the Save.")) {
 	        document.forms[0].action = "addLesionAssessment.action";
 	        document.forms[0].submit();
         }
@@ -27,7 +27,7 @@
 	}
 	
 	function handleEditAction(){
-	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
+	if (confirm("Select OK to complete the Save.")) {
 		    document.forms[0].action="editLesionAssessment.action";
 		    document.forms[0].submit();
 	    }
