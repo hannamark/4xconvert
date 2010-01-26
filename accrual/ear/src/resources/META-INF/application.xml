@@ -29,19 +29,19 @@
         <java>pa-ejb-client-3.2-alpha1.jar</java>
     </module>
     <module>
-        <java>pa-commons-3.2-alpha1.jar</java>
+        <java>pa-commons-3.2-alpha2.jar</java>
     </module>
 	<module>
-		<java>commons-collections-3.2.1.jar</java> 
+		<java>commons-collections-3.2.1.jar</java>
 	</module>
 	<module>
-	  <java>commons-io-1.4.jar</java> 
+	  <java>commons-io-1.4.jar</java>
 	</module>
 	<module>
-	  <java>commons-fileupload-1.2.1.jar</java> 
+	  <java>commons-fileupload-1.2.1.jar</java>
 	</module>
 	<module>
-	  <java>commons-lang-2.4.jar</java> 
+	  <java>commons-lang-2.4.jar</java>
 	</module>
     <security-role><role-name>Submitter</role-name></security-role>
     <security-role><role-name>Outcomes</role-name></security-role>

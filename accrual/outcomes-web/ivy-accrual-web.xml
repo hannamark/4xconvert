@@ -45,7 +45,8 @@
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="compile->master"/>
     <dependency org="jboss"                  name="mail"                    rev="4.0.5.GA"        conf="compile->master"/>
-	<dependency org="ncicb"                  name="pa-commons"                          rev="3.2-alpha1"      conf="compile->test"/>
+	<dependency org="ncicb"                  name="pa-commons"              rev="3.2-alpha2"      conf="compile->test"/>
+
     <!-- test -->
     <dependency org="mockrunner"             name="mockrunner"              rev="0.4.1"           conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="test->master"/>
@@ -53,7 +54,7 @@
     <!-- other test targets -->
     <dependency org="checkstyle"             name="checkstyle-all"          rev="4.4"             conf="test-checkstyle->runtime"/>
     <dependency org="pmd"                    name="pmd"                     rev="4.2.2"           conf="test-pmd->compile,runtime"/>
-    <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->compile"/>    
-    <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>  
+    <dependency org="redhillconsulting"      name="simian"                  rev="2.2.24"          conf="test-simian->compile"/>
+    <dependency org="cobertura"              name="cobertura"               rev="1.9"             conf="test-cobertura->runtime"/>
   </dependencies>
 </ivy-module>
