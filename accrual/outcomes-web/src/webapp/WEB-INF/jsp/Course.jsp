@@ -30,6 +30,7 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <accrual:sucessMessage /> 
+<label><fmt:message key="course.noteInfo"/></label><br/><br/>
 <s:form name="detailForm">
     <display:table class="data" uid="row" name="displayTagList" sort="list" pagesize="10" requestURI="executeCourse.action">    
             <display:column titleKey="course.name" sortable="true" headerClass="sortable">

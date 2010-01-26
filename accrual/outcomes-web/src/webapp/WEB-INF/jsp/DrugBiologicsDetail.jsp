@@ -110,7 +110,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.dose"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="drugBiologic.dose.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="drugBiologic.dose.value" size="10" />
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.dose.value</s:param></s:fielderror>
         </td>      
     </tr>
@@ -118,7 +118,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.doseUOM"/>:<span class="required">*</span></label></td>
         <td class="value">
-        <s:textfield readonly="true" size="50" name="drugBiologic.dose.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
+        <s:textfield readonly="true" name="drugBiologic.dose.unit" cssStyle="width:120px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupDoseUom();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.dose.unit</s:param></s:fielderror>
         </td>      
@@ -127,7 +127,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.roa"/>:<span class="required">*</span></label></td>
         <td class="value">
-        <s:textfield readonly="true" size="50" name="drugBiologic.doseRoute" cssStyle="width:280px;float:left" cssClass="readonly"/>
+        <s:textfield readonly="true" size="50" name="drugBiologic.doseRoute" cssStyle="width:180px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupDoseRoa();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.doseRoute</s:param></s:fielderror>
         </td>      
@@ -136,7 +136,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.frequency"/>:<span class="required">*</span></label></td>
         <td class="value">
-        <s:textfield readonly="true" size="50" name="drugBiologic.doseFreq" cssStyle="width:280px;float:left" cssClass="readonly"/>
+        <s:textfield readonly="true" size="50" name="drugBiologic.doseFreq" cssStyle="width:180px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupDoseFrequency();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.doseFreq</s:param></s:fielderror>
         </td>      
@@ -145,7 +145,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.duration"/>:</label></td>
         <td class="value">
-            <s:textfield name="drugBiologic.doseDur.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="drugBiologic.doseDur.value" size="10" />
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.doseDur.value</s:param></s:fielderror>
         </td>      
     </tr>
@@ -153,7 +153,7 @@
      <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.durationUOM"/>:</label></td>
         <td class="value">
-        <s:textfield readonly="true" size="50" name="drugBiologic.doseDur.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
+        <s:textfield readonly="true" name="drugBiologic.doseDur.unit" cssStyle="width:120px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupDurationUom();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.doseDur.unit</s:param></s:fielderror>
         </td>      
@@ -162,7 +162,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.height"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="drugBiologic.height.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="drugBiologic.height.value" size="10"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.height.value</s:param></s:fielderror>
         </td>      
     </tr>
@@ -180,7 +180,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.weight"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="drugBiologic.weight.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="drugBiologic.weight.value" size="10" />
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.weight.value</s:param></s:fielderror>
         </td>      
     </tr>
@@ -198,7 +198,7 @@
      <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.bsa"/>:</label></td>
         <td class="value">
-            <s:textfield name="drugBiologic.bsa.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="drugBiologic.bsa.value" size="10"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.bsa.value</s:param></s:fielderror>
         </td>      
     </tr>
@@ -206,7 +206,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.tda"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="drugBiologic.doseTotal.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="drugBiologic.doseTotal.value" size="10"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.doseTotal.value</s:param></s:fielderror>
         </td>      
     </tr>
@@ -214,7 +214,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.tdUOM"/>:<span class="required">*</span></label></td>
         <td class="value">
-        <s:textfield readonly="true" size="50" name="drugBiologic.doseTotal.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
+        <s:textfield readonly="true" name="drugBiologic.doseTotal.unit" cssStyle="width:120px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookupTotalDoseUom();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.doseTotal.unit</s:param></s:fielderror>
         </td>      

@@ -29,6 +29,7 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <accrual:sucessMessage /> 
+<label><fmt:message key="treatPlan.noteInfo"/></label><br/><br/>
 <s:form name="detailForm">
     <display:table class="data" id="row" name="displayTagList" sort="list" pagesize="10" requestURI="executeTreatment.action">    
             <display:column titleKey="treatPlan.name" sortable="true" headerClass="sortable">

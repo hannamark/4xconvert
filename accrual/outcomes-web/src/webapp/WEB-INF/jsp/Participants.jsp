@@ -86,22 +86,22 @@ function handleDelete(rowId){
    <h1><fmt:message key="participant.list.header"/></h1>
    <accrual:sucessMessage /> 
    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
-
+	<label><fmt:message key="participant.noteInfo"/></label><br/><br/>
    <display:table class="data" summary="This table contains your Study Subject search results.  Please use column headers to sort results" 
                   sort="list" pagesize="10" id="row" name="displayTagList" requestURI="executeParticipants.action" export="false"> 
        <display:column titleKey="participant.assignedIdentifierColumnHeader"
-         sortable="true" headerClass="sortable" headerScope="col">
+         sortable="true" headerClass="sortable" headerScope="col" style="width:40%">
             <s:a href="#" onclick="handleRetrieve(%{#attr.row.identifier})">
                    ${row.assignedIdentifier.value}
             </s:a>
        </display:column>
-       <display:column titleKey="participant.update" headerClass="centered" class="action">
+       <display:column titleKey="participant.update" headerClass="centered" class="action" style="width:30%">
             <s:a href="#" onclick="handleUpdate(%{#attr.row.identifier})">
                 <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
                     alt="Update" width="16" height="16" />
             </s:a>
        </display:column>
-       <display:column titleKey="participant.delete" headerClass="centered" class="action">
+       <display:column titleKey="participant.delete" headerClass="centered" class="action" style="width:30%">
            <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
                <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
                    alt="Delete" width="16" height="16" />

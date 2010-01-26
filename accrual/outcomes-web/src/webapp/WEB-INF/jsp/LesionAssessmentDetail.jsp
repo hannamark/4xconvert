@@ -78,14 +78,14 @@
  	<tr>
         <td scope="row" class="label"><label><fmt:message key="lesionAssessment.num"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="lesionAssessment.lesionNum" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="lesionAssessment.lesionNum" size="10"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.lesionNum</s:param></s:fielderror>
         </td>      
     </tr>
     
  	<tr>
         <td scope="row" class="label"><label><fmt:message key="lesionAssessment.site"/>:<span class="required">*</span></label></td>
-        <td>
+        <td class="value">
             <s:textfield readonly="true" size="50" name="lesionAssessment.lesionSite" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.lesionSite</s:param></s:fielderror>
@@ -114,7 +114,7 @@
     
     <tr>
     	<td scope="row" class="label"><label><fmt:message key="lesionAssessment.contrastAgentIndicator"/>:<span class="required">*</span></label></td>
-		<td><s:select  name="lesionAssessment.contrastAgentIndicator" headerKey="" headerValue="--Select--"
+		<td class="value"><s:select  name="lesionAssessment.contrastAgentIndicator" headerKey="" headerValue="--Select--"
                       list="lesionAssessment.contrastAgentInds" listKey="code" listValue="code" value="lesionAssessment.contrastAgentIndicator.code"/>
                     <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.contrastAgentIndicator</s:param></s:fielderror>
          </td>
@@ -123,7 +123,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="lesionAssessment.imageSeriesIdentifier"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="lesionAssessment.imageSeriesIdentifier" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="lesionAssessment.imageSeriesIdentifier" size="20" />
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.imageSeriesIdentifier</s:param></s:fielderror>
         </td>      
     </tr>
@@ -131,7 +131,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="lesionAssessment.imageIdentifier"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="lesionAssessment.imageIdentifier" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="lesionAssessment.imageIdentifier" size="20" />
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.imageIdentifier</s:param></s:fielderror>
         </td>      
     </tr>
@@ -139,14 +139,14 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="lesionAssessment.lesionLongestDiameter"/>:<span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield name="lesionAssessment.lesionLongestDiameter.value" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield name="lesionAssessment.lesionLongestDiameter.value" size="10"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.lesionLongestDiameter.value</s:param></s:fielderror>
         </td>      
     </tr>
                     
     <tr>
         <td scope="row" class="label"><label><fmt:message key="lesionAssessment.clinicalAssessmentDate"/>:<span class="required">*</span></label></td>
-        <td>
+        <td class="value">
         	<s:textfield id="clinicalAssessmentDate" name="lesionAssessment.clinicalAssessmentDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)

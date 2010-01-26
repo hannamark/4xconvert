@@ -33,7 +33,7 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
 <s:hidden name="staging.id"/>
-<fmt:message key="staging.saveMsg"/>
+<label><fmt:message key="staging.saveMsg"/></label>
 <table class="form">
 
     <!-- Staging Method -->
@@ -50,7 +50,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="staging.t.label"/></label></td>
         <td class="value">
-            <s:textfield id="tValue" name="staging.tt" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield id="tValue" name="staging.tt" size="10" cssStyle="width:98%;max-width:100px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>staging.tt</s:param></s:fielderror>
         </td>
     </tr>
@@ -59,7 +59,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="staging.n.label"/></label></td>
         <td class="value">
-            <s:textfield id="nValue" name="staging.nn" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield id="nValue" name="staging.nn" size="10" cssStyle="width:98%;max-width:100px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>staging.nn</s:param></s:fielderror>
         </td>      
     </tr>
@@ -68,7 +68,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="staging.m.label"/></label></td>
         <td class="value">
-            <s:textfield id="mValue" name="staging.mm" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield id="mValue" name="staging.mm" size="10" cssStyle="width:98%;max-width:100px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>staging.mm</s:param></s:fielderror>
         </td>      
     </tr>
@@ -77,7 +77,7 @@
     <tr>
         <td scope="row" class="label"><label><fmt:message key="staging.stage.label"/><span class="required">*</span></label></td>
         <td class="value">
-            <s:textfield id="stage" name="staging.stage" maxlength="400" size="50" cssStyle="width:98%;max-width:250px"/>
+            <s:textfield id="stage" name="staging.stage" size="10" cssStyle="width:98%;max-width:100px"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>staging.stage</s:param></s:fielderror>
         </td>      
     </tr>
@@ -110,8 +110,8 @@
    <del class="btnwrapper">
       <ul class="btnrow">
        <li>        
-            <s:a href="#" cssClass="btn" onclick="handleAddAction()"><span class="btn_img"><span class="add">Add Tumor Marker</span></span></s:a>
             <s:a href="#" cssClass="btn" onclick="handleSaveAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+            <s:a href="#" cssClass="btn" onclick="handleAddAction()"><span class="btn_img"><span class="add">Add Tumor Marker</span></span></s:a>            
         </li>
       </ul>
    </del>

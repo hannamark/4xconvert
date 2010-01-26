@@ -60,7 +60,7 @@
     <!-- Tumor Marker -->
     <tr>
         <td scope="row" class="label"><label><fmt:message key="tumor.marker.label"/><span class="required">*</span></label></td>
-        <td>
+        <td class="value">
             <s:textfield readonly="true" size="50" name="tumorMarker.tumorMarker" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <s:hidden name="tumorMarker.id"/>
             <a href="#" class="btn" onclick="lookup('tumorMarker');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
@@ -80,7 +80,7 @@
     <!-- Tumor Marker Value UOM -->
     <tr>
         <td scope="row" class="label"><label><fmt:message key="tumor.marker.value.uom.label"/></label></td>
-        <td>
+        <td class="value">
             <s:textfield readonly="true" size="50" id="tumorMarker.tmvUom.unit" name="tumorMarker.tmvUom.unit" cssStyle="width:280px;float:left" cssClass="readonly"/>
             <a href="#" class="btn" onclick="lookup('tmvUom');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
             <s:fielderror cssClass="formErrorMsg"><s:param>tumorMarker.tmvUom.unit</s:param></s:fielderror>

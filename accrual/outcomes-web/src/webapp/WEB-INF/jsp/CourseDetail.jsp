@@ -62,8 +62,8 @@
 <table class="form">
 <tr>
         <td scope="row" class="label"><label><fmt:message key="course.name"/>:<span class="required">*</span></label></td>
-        <td>
-            <s:textfield size="50" name="course.name" cssStyle="width:280px;float:left" />
+        <td class="value">
+            <s:textfield size="12" name="course.name" />
             <s:fielderror cssClass="formErrorMsg"><s:param>course.name</s:param></s:fielderror>
         </td>
     </tr>

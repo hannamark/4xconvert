@@ -57,24 +57,24 @@
         </td>      
     </tr>
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.cause"/><span class="required">*</span></label></td>
-<td><s:select name="deathInfo.cause" headerKey="" headerValue="--Select--"
+<td class="value"><s:select name="deathInfo.cause" headerKey="" headerValue="--Select--"
               list="deathInfo.causes" listKey="code" listValue="code" value="deathInfo.cause.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.cause</s:param></s:fielderror></td></tr>
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.date"/><span class="required">*</span></label></td>
-<td><s:textfield id="deathEventDate" name="deathInfo.eventDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+<td class="value"><s:textfield id="deathEventDate" name="deathInfo.eventDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal1')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
                     <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.eventDate</s:param></s:fielderror></td></tr>
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.autopsyInd"/><span class="required">*</span></label></td>
-<td><s:select name="deathInfo.autopsyInd" headerKey="" headerValue="--Select--"
+<td class="value"><s:select name="deathInfo.autopsyInd" headerKey="" headerValue="--Select--"
               list="deathInfo.autopsyInds" listKey="code" listValue="code" value="deathInfo.autopsyInd.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.autopsyInd</s:param></s:fielderror></td></tr>
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.causeByAutopsy"/></label></td>
-<td><s:select name="deathInfo.causeByAutopsy" headerKey="" headerValue="--Select--"
+<td class="value"><s:select name="deathInfo.causeByAutopsy" headerKey="" headerValue="--Select--"
               list="deathInfo.causesByAutopsy" listKey="code" listValue="code" value="deathInfo.causeByAutopsy.code"/>
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.causeByAutopsy</s:param></s:fielderror></td></tr>
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.autopsySite"/></label></td>
-<td><s:textfield readonly="true" size="50" name="deathInfo.autopsySite"
+<td class="value"><s:textfield readonly="true" size="50" name="deathInfo.autopsySite"
                cssStyle="width:280px;float:left" cssClass="readonly"/><s:hidden name="deathInfo.id"/>
                <a href="#" class="btn" onclick="lookup();" /><span class="btn_img"><span class="search">Look Up</span></span></a>
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.autopsySite</s:param></s:fielderror></td></tr>

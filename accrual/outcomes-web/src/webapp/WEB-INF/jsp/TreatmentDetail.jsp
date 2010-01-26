@@ -57,7 +57,7 @@
 <table class="form">
 <tr>
         <td scope="row" class="label"><label><fmt:message key="treatPlan.name"/>:<span class="required">*</span></label></td>
-        <td>
+        <td class="value">
             <s:textfield size="50" name="treatment.name" cssStyle="width:280px;float:left" />
             <s:fielderror cssClass="formErrorMsg"><s:param>treatment.name</s:param></s:fielderror>
         </td>
