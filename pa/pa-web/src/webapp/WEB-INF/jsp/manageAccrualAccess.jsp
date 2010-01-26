@@ -68,7 +68,7 @@ function handleEdit(rowId){
         					|| (sessionScope.role == 'SuAbstractor')}">
         <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
         </c:if>
-        <li><a href="onhold.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+        <%-- <li><a href="onhold.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
         <c:choose>
         <c:when test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
         <li><a href="trialDocumentquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
@@ -76,7 +76,7 @@ function handleEdit(rowId){
         <c:otherwise>
         <li><a href="generalTrialDesignquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
         </c:otherwise>
-        </c:choose>
+        </c:choose>  --%>
     </ul>
     </del></div>
 </s:form></div>
