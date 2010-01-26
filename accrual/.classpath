@@ -57,7 +57,7 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/security-4.0.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/sitemesh-2.3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/standard-1.1.2.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/pa-commons-3.2-alpha1.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/pa-commons-test-3.2-alpha1.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/pa-commons-3.2-alpha2.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/pa-commons-test-3.2-alpha2.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>
