@@ -14,7 +14,6 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -128,6 +127,12 @@ public class MockStudyProtocolService implements StudyProtocolServiceLocal {
     }
 
     public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
+            throws PAException {
         // TODO Auto-generated method stub
         
     }
