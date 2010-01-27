@@ -28,6 +28,8 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegulatoryAuthorityWebDTO;
@@ -847,12 +849,20 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             util.updateStudyProtcolDTO(spDTO, trialDTO);
             spDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser()));
             //set the NCT number 
-            StudySiteDTO ssDto = util.getStudySite(studyProtocolIi, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-            if (ssDto != null) {
-                util.convertToNCTStudySiteDTO(trialDTO, ssDto);
+            StudySiteDTO criteriaNCTStudySite = new StudySiteDTO();
+            criteriaNCTStudySite.setStudyProtocolIdentifier(studyProtocolIi);
+            criteriaNCTStudySite.setFunctionalCode(CdConverter.convertToCd(
+                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+            String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                    PAConstants.NCT_IDENTIFIER_TYPE);
+            criteriaNCTStudySite.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService()
+                .getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(
+                        String.valueOf(poOrgId))));
+            StudySiteDTO ssNctIdDto = PAUtil.getFirstObj(new PAServiceUtils().getStudySite(criteriaNCTStudySite, true));
+            if (ssNctIdDto != null) {
+                util.convertToNCTStudySiteDTO(trialDTO, ssNctIdDto);
             } else {
-                ssDto = new StudySiteDTO();
-                ssDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getNctIdentifier()));
+                ssNctIdDto = util.convertToNCTStudySiteDTO(trialDTO);
             }
             //set the overall status
             StudyOverallStatusDTO sosDto = null;
@@ -925,7 +935,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             populateStudyWithRegualtory(trialDTO.getRegulatoryAuthority(), spDTO);
             
             //update StudyRegulatory 
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO = getStudyRegAuth(studyProtocolIi);
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(studyProtocolIi, trialDTO);
             
             //collaborators update - send the collaborators list
             List<StudySiteDTO> collaboratorsDTOList = getCollaboratorsForUpdate(trialDTO.getCollaborators());
@@ -937,10 +947,12 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
           List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
           
           updateId = studyProtocolIi; 
+          List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+          studyIdentifierDTOs.add(ssNctIdDto);
           //call the service to invoke the update method
           PaRegistry.getTrialRegistrationService().
-                        update(spDTO, sosDto, ssDto, studyIndldeDTOList, studyResourcingDTOs, documentDTOs, 
-                                studyContactDTO, studyParticipationContactDTO,
+                        update(spDTO, sosDto, studyIdentifierDTOs, studyIndldeDTOList, studyResourcingDTOs, 
+                                documentDTOs, studyContactDTO, studyParticipationContactDTO,
                                summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
                               studyRegAuthDTO, collaboratorsDTOList, 
                               pssDTOList, prgCdUpdatedList, BlConverter.convertToBl(Boolean.FALSE));  
@@ -1191,30 +1203,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
           trialFundingWebDTO.getNihInstitutionCode()));
       studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
       return studyResoureDTO;
-  }
-  
-  /**
-   * Gets the study reg auth.
-   * 
-   * @param studyProtocolIi the study protocol ii
-   * 
-   * @return the study reg auth
-   * 
-   * @throws PAException the PA exception
-   */
-  private StudyRegulatoryAuthorityDTO getStudyRegAuth(Ii studyProtocolIi) throws PAException {
-      
-      StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService()
-                                                              .getCurrentByStudyProtocol(studyProtocolIi); 
-      StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();
-      sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
-      sraDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
-      if (sraFromDatabaseDTO == null) {
-           return sraDTO;
-      } else {
-          sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
-          return sraFromDatabaseDTO;
-      }
   }
   
   /**

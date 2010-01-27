@@ -39,12 +39,13 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO,
             StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            StudySiteDTO nctIdentifierSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
-            Ii responsiblePartyContactIi, Bl isBatchMode) throws PAException {
+            Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            Bl isBatchMode) throws PAException {
                 if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
                     throw new PAException("test");
                 }
@@ -61,39 +62,18 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO,
             StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            StudySiteDTO nctIdentifierSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
             OrganizationDTO summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
-            Ii responsiblePartyContactIi, Bl isBatchMode) throws PAException {
+            Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            Bl isBatchMode) throws PAException {
         if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
             throw new PAException("test");
         }
         return IiConverter.convertToIi("3");
     }
-    public void update(
-            StudyProtocolDTO studyProtocolDTO ,
-            StudyOverallStatusDTO overallStatusDTO ,
-            StudySiteDTO ssDto,
-            List<StudyIndldeDTO> studyIndldeDTOs ,
-            List<StudyResourcingDTO> studyResourcingDTOs ,
-            DocumentDTO documentDTO ,
-            OrganizationDTO leadOrgDTO,
-            PersonDTO principalInvestigatorDTO,
-            OrganizationDTO sponsorOrgDTO,
-            StudyContactDTO studyContactDTO ,
-            StudySiteContactDTO studyParticipationContactDTO, 
-            OrganizationDTO summary4organizationDTO ,
-            StudyResourcingDTO summary4studyResourcingDTO ,
-            Ii responsiblePartyContactIi, 
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO, 
-            List<StudySiteDTO> collaborators, 
-            List<StudySiteAccrualStatusDTO> participatingSites,
-            List<StudySiteDTO> pgCdUpdatedList, Bl isBatchMode) throws PAException {
-       
-     }
-    
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         // TODO Auto-generated method stub
         
@@ -117,7 +97,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
     }
 
     public void update(StudyProtocolDTO studyProtocolDTO,
-            StudyOverallStatusDTO overallStatusDTO, StudySiteDTO studySiteDto,
+            StudyOverallStatusDTO overallStatusDTO, List<StudySiteDTO> studyIdentifierDTOs,
             List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, StudyContactDTO studyContactDTO,

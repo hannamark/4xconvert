@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Organization;
@@ -103,6 +102,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -134,7 +135,8 @@ public class SearchTrialAction extends ActionSupport {
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
-
+    PAServiceUtils paServiceUtils = new PAServiceUtils();
+    
     /**
      * @return res
      */
@@ -331,28 +333,26 @@ public class SearchTrialAction extends ActionSupport {
             }
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.STUDY_PARTICIPATION);
-            // query the lead organization study participation site
-            StudySiteDTO leadSiteDTO = getStudySite(studyProtocolIi,
-                    StudySiteFunctionalCode.LEAD_ORGANIZATION);
-            if (leadSiteDTO != null) {
-                // put an entry in the session and store TrialFunding
-                ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,
-                                                                    leadSiteDTO);
-            }            
-            // query the NCT number
-            StudySiteDTO nctSiteDTO = getStudySite(studyProtocolIi,
-                                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-            if (nctSiteDTO != null) {
-                String nctNumber = StConverter.convertToString(nctSiteDTO.getLocalStudyProtocolIdentifier());
-                ServletActionContext.getRequest().setAttribute(Constants.STUDY_NCT_NUMBER, nctNumber);
-            }            
-            
             StudyProtocolQueryDTO queryDTO = PaRegistry.getProtocolQueryService()
                     .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
             // put an entry in the session and avoid conflict using
             // STUDY_PROTOCOL_II for now
             ServletActionContext.getRequest().setAttribute(Constants.STUDY_PROTOCOL_II, queryDTO);
-            
+            // query the lead organization study participation site
+            String leadSiteIdentifier = paServiceUtils.getStudyIdentifier(studyProtocolIi, 
+                    PAConstants.LEAD_IDENTIFER_TYPE);
+            if (leadSiteIdentifier != null) {
+                // put an entry in the session and store TrialFunding
+                ServletActionContext.getRequest().setAttribute(Constants.STUDY_PARTICIPATION,
+                        leadSiteIdentifier);
+            }            
+            // query the NCT number
+            String nctSiteIdentifier = paServiceUtils.getStudyIdentifier(studyProtocolIi,
+                    PAConstants.NCT_IDENTIFIER_TYPE);
+            if (nctSiteIdentifier != null) {
+                ServletActionContext.getRequest().setAttribute(Constants.STUDY_NCT_NUMBER, nctSiteIdentifier);
+            }            
+                        
             // retrieve responsible party info
             getReponsibleParty(studyProtocolIi, maskFields);
             
@@ -397,28 +397,6 @@ public class SearchTrialAction extends ActionSupport {
         }
     }
     
-    private StudySiteDTO getStudySite(Ii studyProtocolIi , StudySiteFunctionalCode spCode)
-    throws PAException {
-        if (studyProtocolIi == null) {
-            throw new PAException(" StudyProtocol Ii is null");
-        }
-        StudySiteDTO spDto = new StudySiteDTO();
-        Cd cd = CdConverter.convertToCd(spCode);
-        spDto.setFunctionalCode(cd);
-
-        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
-            .getByStudyProtocol(studyProtocolIi, spDto);
-        if (spDtos != null && spDtos.size() == 1) {
-            return spDtos.get(0);
-        } else if (spDtos != null && spDtos.size() > 1) {
-            throw new PAException(" Found more than 1 record for a protocol id = "
-                    + studyProtocolIi.getExtension() + " for a given status " + cd.getCode());
-
-        }
-        return null;
-
-    }
-
     /**
      * @return result
      */

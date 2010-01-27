@@ -65,7 +65,7 @@
                         </label>
                 </td>
                 <td class="value">
-                    <c:out value="${requestScope.studyParticipation.localStudyProtocolIdentifier.value }"/> 
+                    <c:out value="${requestScope.studyParticipation}"/> 
                 </td>
           </tr>
           <c:if test="${requestScope.studyNCTNumber != null}">

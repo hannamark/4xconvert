@@ -8,10 +8,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
+import gov.nih.nci.registry.test.util.MockPAServiceUtil;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.ServletActionContext;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -25,12 +27,14 @@ import com.mockrunner.mock.web.MockHttpSession;
 public class SearchTrialActionTest extends AbstractRegWebTest{
     private SearchTrialAction action;
     //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-    /*@Before 
+    @Before 
     public void setup(){
-        HibernateUtil.testHelper = testHelper;
+       /* HibernateUtil.testHelper = testHelper;
         Session session = HibernateUtil.getCurrentSession();
-        session.clear();
-    }*/
+        session.clear();*/
+        action = new SearchTrialAction();
+        action.paServiceUtils = new MockPAServiceUtil();
+    }
 
     @Test
     public void testRecordsProperty(){

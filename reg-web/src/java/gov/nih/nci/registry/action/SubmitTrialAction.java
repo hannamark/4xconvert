@@ -79,18 +79,21 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -148,7 +151,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private File otherDocument = null;
     private String otherDocumentFileName = null;
     private TrialDTO trialDTO;
-
+    private final TrialUtil  trialUtil = new TrialUtil();
 
     /**
      * 
@@ -164,9 +167,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         trialDTO.setResponsiblePartyType("pi");
         trialDTO.setTrialType("Interventional");
         TrialValidator.removeSessionAttributes();
+        trialUtil.populateRegulatoryList(trialDTO);
+        
         return SUCCESS;
     }
 
+    
     /**
      * create protocol.
      * 
@@ -195,6 +201,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
             StudySiteDTO leadOrgSiteIdDTO = util.convertToStudySiteDTO(trialDTO);
             StudySiteDTO nctIdentifierSiteIdDTO = util.convertToNCTStudySiteDTO(trialDTO);
+            List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+            studyIdentifierDTOs.add(nctIdentifierSiteIdDTO);
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
@@ -216,12 +224,14 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
+            
             Ii studyProtocolIi =  PaRegistry.getTrialRegistrationService().           
                 createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs,
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
-                    nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
-                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
+                    studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
+                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
                     BlConverter.convertToBl(Boolean.FALSE));
              TrialValidator.removeSessionAttributes();
              ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
@@ -236,6 +246,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             } else {
                 addActionError("Error occured, please try again");
             }
+            trialUtil.populateRegulatoryList(trialDTO);
             LOG.error("Exception occured while submitting trial: " + e);
             return ERROR;
         }
@@ -551,6 +562,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                         "failureMessage" , "The form has errors and could not be submitted, "
                         + "please check the fields highlighted below");
                 TrialValidator.addSessionAttributes(trialDTO);
+                trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
             List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
@@ -595,5 +607,32 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         TrialValidator.addSessionAttributes(trialDTO);
         return "edit";
     }
-
+    /**
+     * Gets the reg authorities list.
+     * 
+     * @return String success or failure
+     */
+    public String getTrialOversightAuthorityOrganizationNameList() {
+        try {
+            String countryId = ServletActionContext.getRequest().getParameter("countryid");
+            if (trialDTO == null) {
+                trialDTO = new TrialDTO();
+            }
+            if (countryId != null && !("".equals(countryId))) {
+                trialDTO.setRegIdAuthOrgList(PaRegistry.getRegulatoryInformationService()
+                                    .getRegulatoryAuthorityNameId(Long.valueOf(countryId)));
+            } else {
+                RegulatoryAuthOrgDTO defaultVal = new RegulatoryAuthOrgDTO();
+                defaultVal.setName("-Select Country-");
+                List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
+                regIdAuthOrgList.add(defaultVal);
+                trialDTO.setRegIdAuthOrgList(regIdAuthOrgList);
+            }
+            
+        } catch (PAException e) {
+            return SUCCESS;
+        }
+        return SUCCESS;
+    }
+    
 }

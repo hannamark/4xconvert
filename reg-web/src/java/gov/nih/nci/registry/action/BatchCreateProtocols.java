@@ -111,6 +111,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -345,20 +346,30 @@ public class BatchCreateProtocols {
           //set the NCT number 
             StudySiteDTO ssNctIdDto  = null;
             if (PAUtil.isNotEmpty(trialDTO.getNctIdentifier())) {
-                ssNctIdDto = util.getStudySite(studyProtocolIi, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                StudySiteDTO criteriaNCTStudySite = new StudySiteDTO();
+                criteriaNCTStudySite.setStudyProtocolIdentifier(studyProtocolIi);
+                criteriaNCTStudySite.setFunctionalCode(CdConverter.convertToCd(
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+                String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                        PAConstants.NCT_IDENTIFIER_TYPE);
+                criteriaNCTStudySite.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService()
+                    .getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(
+                            String.valueOf(poOrgId))));
+                ssNctIdDto = PAUtil.getFirstObj(new PAServiceUtils().getStudySite(criteriaNCTStudySite, true));
                 if (ssNctIdDto != null) {
                     util.convertToNCTStudySiteDTO(trialDTO, ssNctIdDto);
                 } else {
-                    ssNctIdDto = new StudySiteDTO();
-                    ssNctIdDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getNctIdentifier()));
+                    ssNctIdDto = util.convertToNCTStudySiteDTO(trialDTO);
                 }
             }
+            List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+            studyIdentifierDTOs.add(ssNctIdDto);
             //get the values from db and update only those are needed and then convert
             PaRegistry.getTrialRegistrationService().
-                    update(studyProtocolDTO, overallStatusDTO, ssNctIdDto, studyIndldeDTOs, studyResourcingDTOs, 
-                    documentDTOs, studyContactDTO, studySiteContactDTO, summary4orgDTO, summary4studyResourcingDTO, 
-                    responsiblePartyContactIi, studyRegAuthDTO, null, null, null, 
-                    BlConverter.convertToBl(Boolean.TRUE));
+                    update(studyProtocolDTO, overallStatusDTO, studyIdentifierDTOs, studyIndldeDTOs,
+                    studyResourcingDTOs, documentDTOs, studyContactDTO, studySiteContactDTO, 
+                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
+                    null, null, null, BlConverter.convertToBl(Boolean.TRUE));
                
              return studyProtocolIi;
     }
@@ -571,13 +582,21 @@ public class BatchCreateProtocols {
         }
         List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
         List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
+        List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+        studyIdentifierDTOs.add(nctIdentifierSiteIdDTO);
+        
+        StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
+        Long regAuthId = PaRegistry.getRegulatoryInformationService().
+            getRegulatoryAuthorityId(dto.getOversightOrgName(), dto.getOversightAuthorityCountry());
+        studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regAuthId));
+        
         if (dto.getSubmissionType().equalsIgnoreCase("O") && !PAUtil.isNotEmpty(trialDTO.getAssignedIdentifier())) {
             studyProtocolIi =  PaRegistry.getTrialRegistrationService().
                 createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                         studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO,
-                        leadOrgSiteIdDTO, nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
+                        leadOrgSiteIdDTO, studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
                         summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
-                        BlConverter.convertToBl(Boolean.TRUE));
+                        studyRegAuthDTO, BlConverter.convertToBl(Boolean.TRUE));
         } else if (dto.getSubmissionType().equalsIgnoreCase("A")) {
             //get the Identifier of study protocol by giving nci identifier
             StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
@@ -619,9 +638,9 @@ public class BatchCreateProtocols {
             studyProtocolIi =  PaRegistry.getTrialRegistrationService().
                 amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                     documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
-                    nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO,
+                    studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
                     summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi,
-                    BlConverter.convertToBl(Boolean.TRUE));
+                    studyRegAuthDTO, BlConverter.convertToBl(Boolean.TRUE));
              
         }
         return studyProtocolIi;

@@ -224,6 +224,17 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
     resetValues();
 
 }
+function loadRegAuthoritiesDiv() {   
+    var url = '/registry/protected/ajaxgetOAuthOrgsgetTrialOversightAuthorityOrganizationNameList.action?countryid='+document.getElementById('countries').value;
+    var div = document.getElementById('loadAuthField');
+    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';         
+    var aj = new Ajax.Updater(div, url, {
+        asynchronous: true,
+        method: 'get',
+        evalScripts: false
+    });
+    return false;
+}
 </SCRIPT>
 <script language="javascript">
 function toggledisplay (it, box) {
@@ -253,8 +264,8 @@ function toggledisplay2 (it) {
         <s:hidden name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
         <table class="form"> 
-          <tr>
-                <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
+        <tr>
+            <th colspan="2"><fmt:message key="view.trial.trialIDs"/></th>
           </tr>
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
           <tr>
@@ -277,6 +288,9 @@ function toggledisplay2 (it) {
                 <td>
                     <s:textfield name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>                
+          </tr>
+          <tr>
+                <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
           </tr>
           <tr>
                 <td scope="row" class="label">
@@ -782,6 +796,10 @@ function toggledisplay2 (it) {
             </td>
         </tr>
         </table>
+        <!-- Regulatory page -->
+        <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
+        
+        
         <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>

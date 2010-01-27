@@ -1,6 +1,5 @@
 package gov.nih.nci.registry.util;
 
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.Tel;
@@ -39,6 +38,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegulatoryAuthorityWebDTO;
@@ -72,9 +73,9 @@ public class TrialUtil {
     /** The Constant SPONSOR. */
     private static final String SPONSOR = "sponsor";
     private static final String YES = "Yes";
-    private static final String NO = "No";
     /** The Constant MAXF. */
     private static final int MAXF = 1024;
+    private static final String TRUE = "true";
     
     /**
      * Default constructor.
@@ -241,45 +242,11 @@ public class TrialUtil {
      * @throws PAException ex
      */
     private void copyNctNummber(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-        StudySiteDTO spDto = getStudySite(studyProtocolIi,
-                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-        if (spDto != null) {
-            trialDTO.setNctIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
+        String nctNumber = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
+        if (nctNumber != null) {
+            trialDTO.setNctIdentifier(nctNumber);
         }
     }
-
-    /**
-     * Gets the study site.
-     * 
-     * @param studyProtocolIi ii
-     * @param spCode code
-     * 
-     * @return dto
-     * 
-     * @throws PAException ex
-     */
-    public StudySiteDTO getStudySite(Ii studyProtocolIi , StudySiteFunctionalCode spCode)
-    throws PAException {
-        if (studyProtocolIi == null) {
-            throw new PAException(" StudyProtocol Ii is null");
-        }
-        StudySiteDTO spDto = new StudySiteDTO();
-        Cd cd = CdConverter.convertToCd(spCode);
-        spDto.setFunctionalCode(cd);
-
-        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
-        .getByStudyProtocol(studyProtocolIi, spDto);
-        if (spDtos != null && spDtos.size() == 1) {
-            return spDtos.get(0);
-        } else if (spDtos != null && spDtos.size() > 1) {
-            throw new PAException(" Found more than 1 record for a protocol id = "
-                    + studyProtocolIi.getExtension() + " for a given status " + cd.getCode());
-
-        }
-        return null;
-
-    }
-    
     /**
      * Copy summary four.
      * 
@@ -425,35 +392,41 @@ public class TrialUtil {
                 .getByCode(trialDTO.getCompletionDateType())));
         isoDto.setStudyProtocolType(StConverter.convertToSt(trialDTO.getTrialType()));
         isoDto.setProgramCodeText(StConverter.convertToSt(trialDTO.getProgramCodeText()));
-        boolean fdaRegIndicator = false;
-        if (trialDTO.getFdaRegulatoryInformationIndicator() != null 
-                && (trialDTO.getFdaRegulatoryInformationIndicator().equalsIgnoreCase(YES)
-                    || trialDTO.getFdaRegulatoryInformationIndicator().equalsIgnoreCase("true"))) {
-            fdaRegIndicator = true;
+        if (trialDTO.getFdaRegulatoryInformationIndicator() != null) { 
+               if  (YES.equalsIgnoreCase(trialDTO.getFdaRegulatoryInformationIndicator())
+                    || TRUE.equalsIgnoreCase(trialDTO.getFdaRegulatoryInformationIndicator())) {
+                        isoDto.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+               } else {
+                   isoDto.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.FALSE));
+               }
+        } else {
+            isoDto.setFdaRegulatedIndicator(BlConverter.convertToBl(null));
         }
-        isoDto.setFdaRegulatedIndicator(BlConverter.convertToBl(fdaRegIndicator));
-        boolean section801Indicator = false;
-        if (trialDTO.getSection801Indicator() != null 
-                && (trialDTO.getSection801Indicator().equalsIgnoreCase(YES)
-                    || trialDTO.getSection801Indicator().equalsIgnoreCase("true"))) {
-            section801Indicator = true;
+        if (trialDTO.getSection801Indicator() != null) { 
+                if (YES.equalsIgnoreCase(trialDTO.getSection801Indicator())
+                    || TRUE.equalsIgnoreCase(trialDTO.getSection801Indicator())) {
+                    isoDto.setSection801Indicator(BlConverter.convertToBl(Boolean.TRUE));
+                } else {
+                    isoDto.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
+                }
+        } else {
+            isoDto.setSection801Indicator(BlConverter.convertToBl(null));
         }
-        isoDto.setSection801Indicator(BlConverter.convertToBl(section801Indicator));
         isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
-        
-        
         if (trialDTO.getDelayedPostingIndicator() == null) {
             isoDto.setDelayedpostingIndicator(BlConverter.convertToBl(null));
-        } else if (YES.equalsIgnoreCase(trialDTO.getDelayedPostingIndicator())) {
+        } else if (YES.equalsIgnoreCase(trialDTO.getDelayedPostingIndicator())
+                || TRUE.equalsIgnoreCase(trialDTO.getDelayedPostingIndicator())) {
             isoDto.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        } else if (NO.equalsIgnoreCase(trialDTO.getDelayedPostingIndicator())) {
+        } else {
             isoDto.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }  
         if (trialDTO.getDataMonitoringCommitteeAppointedIndicator() == null) {
             isoDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(null));
-        } else if (YES.equalsIgnoreCase(trialDTO.getDataMonitoringCommitteeAppointedIndicator())) {
+        } else if (YES.equalsIgnoreCase(trialDTO.getDataMonitoringCommitteeAppointedIndicator())
+                || TRUE.equalsIgnoreCase(trialDTO.getDataMonitoringCommitteeAppointedIndicator())) {
             isoDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        } else if (NO.equalsIgnoreCase(trialDTO.getDataMonitoringCommitteeAppointedIndicator())) {
+        } else {
             isoDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }
         return isoDto;
@@ -604,10 +577,18 @@ public class TrialUtil {
      * @param trialDTO dto
      * 
      * @return iso
+     * @throws PAException e 
      */
-    public StudySiteDTO convertToNCTStudySiteDTO(TrialDTO trialDTO) {
+    public StudySiteDTO convertToNCTStudySiteDTO(TrialDTO trialDTO) throws PAException {
         StudySiteDTO isoDto = new StudySiteDTO();
-        isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getNctIdentifier()));
+        if (PAUtil.isNotEmpty(trialDTO.getNctIdentifier())) {
+            isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(trialDTO.getNctIdentifier()));
+            String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                    PAConstants.NCT_IDENTIFIER_TYPE);
+            isoDto.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                    getPoResearchOrganizationByEntityIdentifier(
+                    IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId))));
+        }
         return isoDto;
     }
 
@@ -1180,5 +1161,48 @@ public class TrialUtil {
         convertToStudyProtocolDTO(trialDTO, spdto);
      
     }
-   
+    /**
+     * Gets the study reg auth.
+     * 
+     * @param studyProtocolIi the study protocol ii
+     * @param trialDTO trialDTO
+     * @return the study reg auth
+     * 
+     * @throws PAException the PA exception
+     */
+    public StudyRegulatoryAuthorityDTO getStudyRegAuth(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+        
+        StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = null;
+        StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();        
+        if (PAUtil.isIiNotNull(studyProtocolIi)) {
+            sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService().getCurrentByStudyProtocol(
+                    studyProtocolIi);
+            sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        }
+        if (sraFromDatabaseDTO == null) {
+            sraDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
+            return sraDTO;
+        } else {
+            sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
+            return sraFromDatabaseDTO;
+        }
+    }
+    /**
+     * 
+     * @param trialDTO trialDTO
+     * 
+     */
+    @SuppressWarnings({"PMD" })
+    public void populateRegulatoryList(TrialDTO trialDTO) {
+        try {
+            trialDTO.setCountryList(PaRegistry.getRegulatoryInformationService().getDistinctCountryNames());
+            if (PAUtil.isNotEmpty(trialDTO.getLst()) &&  PAUtil.isNumber(trialDTO.getLst())) {
+                trialDTO.setRegIdAuthOrgList(PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
+                        Long.valueOf(trialDTO.getLst())));
+            }
+        } catch (PAException e) {
+            //do nothing
+        }
+    }
+
 }

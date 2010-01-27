@@ -214,6 +214,12 @@ public class TrialValidator {
                 && RegistryUtil.isValidDate(trialDto.getStartDate())) {
             addFieldError.putAll(validateTrialDates(trialDto));
         }
+        if (PAUtil.isEmpty(trialDto.getSelectedRegAuth())) {
+            addFieldError.put("regulatory.oversight.auth.name", "Select the Oversight authority organization name");
+        }
+        if (PAUtil.isEmpty(trialDto.getLst())) {
+            addFieldError.put("trialDTO.lst", "Select the Oversight authority country");
+        }
         return addFieldError;
     }
     /**

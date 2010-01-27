@@ -8,6 +8,7 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -49,7 +50,8 @@ import com.opensymphony.xwork2.ActionSupport;
  * 
  * @author Vrushali
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "ExcessiveClassLength", "PMD.TooManyFields" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
+    "PMD.TooManyFields" })
 public class AmendmentTrialAction extends ActionSupport implements ServletResponseAware {
     private static final long serialVersionUID = 1L;
     private HttpServletResponse servletResponse;
@@ -70,7 +72,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
     private String trialAction = null;
     private String studyProtocolId = null;
     private static String sessionTrialDTO = "trialDTO";
-
+    private final TrialUtil trialUtil = new TrialUtil();
 
     /**
      * @param response servletResponse
@@ -145,10 +147,12 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                         "failureMessage" , "The form has errors and could not be submitted, "
                         + "please check the fields highlighted below");
                 TrialValidator.addSessionAttributes(trialDTO);
+                trialUtil.populateRegulatoryList(trialDTO);
             return ERROR;
             }
             if (hasActionErrors()) {
                 TrialValidator.addSessionAttributes(trialDTO);
+                trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
          
@@ -267,11 +271,16 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
+            List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+            studyIdentifierDTOs.add(nctIdentifierSiteIdDTO);
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
+            
             amendId = PaRegistry.getTrialRegistrationService().
             amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, 
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO, 
-                    nctIdentifierSiteIdDTO, studyContactDTO, studySiteContactDTO, summary4orgDTO, 
-                    summary4studyResourcingDTO, responsiblePartyContactIi, BlConverter.convertToBl(Boolean.FALSE));  
+                    studyIdentifierDTOs, studyContactDTO, studySiteContactDTO, summary4orgDTO, 
+                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, 
+                    BlConverter.convertToBl(Boolean.FALSE));  
             TrialValidator.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", amendId);
@@ -279,6 +288,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             LOG.error(e.getMessage());
             addActionError(e.getMessage());
             TrialValidator.addSessionAttributes(trialDTO);
+            trialUtil.populateRegulatoryList(trialDTO);
             return ERROR;
         }
         setTrialAction("amend");
