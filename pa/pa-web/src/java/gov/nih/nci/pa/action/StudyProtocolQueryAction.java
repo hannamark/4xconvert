@@ -78,15 +78,22 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -119,6 +126,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private boolean checkoutStatus = false;
     private static final String TSR = "TSR_";
     private static final String WORD = ".doc";
+    private String nctIdentifier = null;
+    private String localTrialIdentifier = null;
     /**
      * @return res
      * @throws PAException exception
@@ -251,6 +260,10 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                     && studyProtocolQueryDTO.getStudyCheckoutBy().equalsIgnoreCase(loginName)) || superUser) {
                 setCheckoutStatus(true);
             }
+            setLocalTrialIdentifier(studyProtocolQueryDTO.getLocalStudyProtocolIdentifier());
+            setNctIdentifier(new PAServiceUtils().getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
+                    studyProtocolId),
+                    PAConstants.NCT_IDENTIFIER_TYPE));
             return "view";
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
@@ -341,6 +354,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @return res
      * @throws PAException exception
      */
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String checkout() throws PAException {        
         try {
             StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry
@@ -354,7 +368,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             scoDTO.setStudyProtocolIdentifier(
                     IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()));
             scoDTO.setUserIdentifier(StConverter.convertToSt(loginName));
-            
             if (checkoutStatus) {
                 PaRegistry.getStudyCheckoutService().create(scoDTO);   
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
@@ -364,6 +377,35 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                         IiConverter.convertToIi(studyProtocolQueryDTO.getStudyCheckoutId()));                      
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                         getText("studyProtocol.trial.checkIn"));
+            }
+            PAServiceUtils serviceUtil = new PAServiceUtils();
+            StudySiteDTO identifierDTO;
+            //save the if Lead Identifier if changed
+            if (!studyProtocolQueryDTO.getLocalStudyProtocolIdentifier().equals(localTrialIdentifier)) {
+                identifierDTO = new StudySiteDTO();
+                identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(localTrialIdentifier));
+                identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+                Organization paOrg = new CorrelationUtils().getPAOrganizationByIi(
+                        IiConverter.convertToPaOrganizationIi(studyProtocolQueryDTO.getLeadOrganizationId()));
+                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                        getPoResearchOrganizationByEntityIdentifier(
+                    IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier())));
+                serviceUtil.manageStudyIdentifiers(identifierDTO);
+            }
+            String dbNctNumber = serviceUtil.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId),
+                    PAConstants.NCT_IDENTIFIER_TYPE);
+            if (!dbNctNumber.equals(nctIdentifier)) {
+                identifierDTO = new StudySiteDTO();
+                identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(nctIdentifier));
+                identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+                String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                        PAConstants.NCT_IDENTIFIER_TYPE);
+                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                        getPoResearchOrganizationByEntityIdentifier(
+                        IiConverter.convertToPoOrganizationIi(poOrgId)));
+                serviceUtil.manageStudyIdentifiers(identifierDTO);
             }
             view(); 
             return "view";
@@ -407,4 +449,33 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     public void setCheckoutStatus(boolean checkoutStatus) {
         this.checkoutStatus = checkoutStatus;
     }
+
+    /**
+     * @return the nctIdentifier
+     */
+    public String getNctIdentifier() {
+        return nctIdentifier;
+    }
+
+    /**
+     * @param nctIdentifier the nctIdentifier to set
+     */
+    public void setNctIdentifier(String nctIdentifier) {
+        this.nctIdentifier = nctIdentifier;
+    }
+
+    /**
+     * @return the localTrialIdentifier
+     */
+    public String getLocalTrialIdentifier() {
+        return localTrialIdentifier;
+    }
+
+    /**
+     * @param localTrialIdentifier the localTrialIdentifier to set
+     */
+    public void setLocalTrialIdentifier(String localTrialIdentifier) {
+        this.localTrialIdentifier = localTrialIdentifier;
+    }
+    
 }

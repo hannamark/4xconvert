@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -279,11 +280,23 @@ public class MockOrganizationCorrelationService implements
     }
     
     /**
-     * returns the id of the Ct.gov Po id.
+     * returns the id of the given type.
+     * @param identiferType identiferType
      * @return po identifier
      * @throws PAException on error
      */
-    public String getCtGovPOIdentifier() throws  PAException {
+    public String getPOOrgIdentifierByIdentifierType(String identifierType) throws  PAException {
+        String poOrgId = "";
+        if (identifierType.equalsIgnoreCase(PAConstants.NCT_IDENTIFIER_TYPE)) {
+            poOrgId = "1";
+        }
+        return poOrgId;
+
+    }
+
+    public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier)
+            throws PAException {
+        // TODO Auto-generated method stub
         return null;
     }
 

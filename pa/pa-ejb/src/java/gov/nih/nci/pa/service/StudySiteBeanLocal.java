@@ -298,8 +298,15 @@ implements StudySiteServiceLocal {
       }
       if (StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equalsIgnoreCase(dto.getFunctionalCode().getCode())
               && PAUtil.isListNotEmpty(queryList)) {
-              throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
-                      + "NCT Trial Identifier.");
+              for (StudySite sp : queryList) {
+                  //When create DTO get Id will be null and if queryList is having value then its duplicate
+                  //When update check if the record is same if not then throw ex
+                  if ((dto.getIdentifier() == null) 
+                          || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
+                  throw new PAException("Duplicate Trial Submission: A trial exists in the system with the same "
+                          + "NCT Trial Identifier.");
+                  }
+              }
       }
 
       getLogger().info("Leaving enforceNoDuplicateTrial..");

@@ -45,7 +45,6 @@
 	<h2>Trial Identification</h2>
 
         <table class="form">
-         
             <tr>
             <td scope="row" class="label">
                 <label for="nciAccessionNumber">                
@@ -63,19 +62,15 @@
                 </label>
             </td>
             <td class="value">
-             <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/> 
+             <s:textfield name="localTrialIdentifier" maxlength="30" cssStyle="width:190px"/> 
             </td>
             </tr>  
             <tr>
-            <td scope="row" class="label">
-                <label for="leadOrg"> 
-                    <fmt:message key="studyProtocol.leadOrganization"/>
-                </label>
+                <td scope="row" class="label"> <label for="nciIdentifier"> NCT Number </label></td>
+                <td class="value">
+                <s:textfield name="nctIdentifier" maxlength="30" cssStyle="width:190px"/> 
             </td>
-            <td class="value">
-                <c:out value="${sessionScope.trialSummary.leadOrganizationName }"/> 
-            </td>
-            </tr> 
+            </tr>
             <tr>
             <td scope="row" class="label">
                 <label for="leadOrg"> 

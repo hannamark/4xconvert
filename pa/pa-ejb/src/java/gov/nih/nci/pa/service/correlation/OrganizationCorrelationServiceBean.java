@@ -79,10 +79,7 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.HealthCareFacility;
@@ -91,7 +88,6 @@ import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -100,6 +96,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
@@ -111,10 +108,7 @@ import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -443,58 +437,63 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     }
 
     /**
-     * returns the id of the Ct.gov Po id.
+     * returns the id of the of give type.
+     * @param identifierType type
      * @return po identifier
      * @throws PAException on error
      */
-    public String getCtGovPOIdentifier() throws  PAException {
+    public String getPOOrgIdentifierByIdentifierType(String identifierType) throws PAException {
         OrganizationDTO poOrgDto = new OrganizationDTO();
-        poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
-        
+        if (identifierType.equalsIgnoreCase(PAConstants.NCT_IDENTIFIER_TYPE)) {
+            poOrgDto.setName(EnOnConverter.convertToEnOn("ClinicalTrials.gov"));
+        }
+        if (identifierType.equalsIgnoreCase(PAConstants.CTEP_IDENTIFIER_TYPE)) {
+            poOrgDto.setName(EnOnConverter.convertToEnOn("Cancer Therapy Evaluation Program"));
+        }
+        if (identifierType.equalsIgnoreCase(PAConstants.DCP_IDENTIFIER_TYPE)) {
+            poOrgDto.setName(EnOnConverter.convertToEnOn("Division of Cancer Control and Population Sciences"));
+        }
+        if (poOrgDto.getName() == null) {
+            throw new PAException("Org name is null");
+        }
+
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         List<OrganizationDTO> poOrgs = null;
         try {
-            poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto, limit);
+            poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto,
+                    limit);
         } catch (TooManyResultsException e) {
             throw new PAException(e);
         }
-        
+
         String identifier = null;
         if (poOrgs == null || poOrgs.isEmpty()) {
-            poOrgDto.setPostalAddress(AddressConverterUtil.create("ct.gov.address", null, "ct.mun", "VA", "20171",
-                    "USA"));
-            DSet<Tel> telco = new DSet<Tel>();
-            telco.setItem(new HashSet<Tel>());
-            Tel t = new Tel();
-            try {
-                t.setValue(new URI("tel", "11111", null));
-            telco.getItem().add(t);
-            TelEmail telemail = new TelEmail();
-            telemail.setValue(new URI("mailto:" + "ct@ct.gov"));
-
-            telco.getItem().add(telemail);
-            } catch (URISyntaxException e) {
-                throw new PAException(e);
-            }
-
-            poOrgDto.setTelecomAddress(telco);
-            try {
-                Ii ii = PoRegistry.getOrganizationEntityService().createOrganization(poOrgDto);
-                identifier = ii.getExtension();
-            } catch (EntityValidationException e) {
-                throw new PAException(e);
-            } catch (CurationException e) {
-                throw new PAException(e);
-            }
+            throw new PAException("No org found");
 
         } else if (poOrgs.size() > 1) {
-            throw new PAException(" there cannot be more than 1 record for ClinicalTrials.gov");
+            throw new PAException(" there cannot be more than 1 record for"
+                    + identifierType);
         } else {
             identifier = poOrgs.get(0).getIdentifier().getExtension();
         }
         return identifier;
-
     }
-
-
+    /**
+     * 
+     * @param orgPoIdentifier id
+     * @return ROId of PO
+     * @throws PAException on error
+     */
+    public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier) throws PAException {
+        Ii poROIi = null;
+        // Step 1 : get correlation if there
+        ResearchOrganizationDTO criteriaRODTO = new ResearchOrganizationDTO();
+        List<ResearchOrganizationDTO> roDTOs = null;
+        criteriaRODTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier.getExtension()));
+        roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(criteriaRODTO);
+        if (PAUtil.isListNotEmpty(roDTOs)) {
+            poROIi = DSetConverter.convertToIi(roDTOs.get(0).getIdentifier());
+        }
+        return poROIi;
+    }
 }

@@ -149,11 +149,18 @@ public interface OrganizationCorrelationServiceRemote {
     Organization getOrganizationByFunctionRole(Ii studyProtocolIi , Cd cd) throws PAException;
 
     /**
-     * returns the id of the Ct.gov Po id.
+     * returns the id of the given type.
+     * @param identiferType identiferType
      * @return po identifier
      * @throws PAException on error
      */
-    String getCtGovPOIdentifier() throws  PAException;
+    String getPOOrgIdentifierByIdentifierType(String identiferType) throws  PAException;
     
-    
+    /**
+     * 
+     * @param orgPoIdentifier id
+     * @return ROId of PO
+     * @throws PAException on error
+     */
+    Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier) throws PAException;   
 }

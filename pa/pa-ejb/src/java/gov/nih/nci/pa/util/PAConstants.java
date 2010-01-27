@@ -139,5 +139,21 @@ public class PAConstants {
      * Responsible Party.
      */
     public static final String RESPONSIBLE_PARTY = "Responsible Party";
+    /**
+     * NCT Identifier.
+     */
+    public static final String NCT_IDENTIFIER_TYPE = "CTGovIdentifier";
+    /**
+     * CETP IDENTIFIER.
+     */
+    public static final String CTEP_IDENTIFIER_TYPE = "CTEPIdentifier";
+    /**
+     * DCP IDENTIFIER.
+     */
+    public static final String DCP_IDENTIFIER_TYPE = "DCPIdentifier";
+    /**
+     * LEAD IDENTIFIER.
+     */
+    public static final String LEAD_IDENTIFER_TYPE = "LeadIdentifier";
     
 }

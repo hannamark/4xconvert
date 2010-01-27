@@ -133,12 +133,13 @@ public interface TrialRegistrationServiceLocal {
      * @param principalInvestigatorDTO Principal Investigator 
      * @param sponsorOrganizationDTO Sponsort Organization
      * @param leadOrganizationSiteIdentifierDTO local protocol identifier
-     * @param nctIdentifierSiteIdentifierDTO nct Identifier
+     * @param studyIdentifierDTOs list of study Identifier
      * @param studyContactDTO phone and email info when Pi is responsible
      * @param studySiteContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi Id of the person when sponsor is responsible
+     * @param studyRegAuthDTO studyRegAuthDTO
      * @param isBatchMode to identify if  batch is caller
      * @return ii of Study Protocol
      * @throws PAException on error
@@ -154,12 +155,13 @@ public interface TrialRegistrationServiceLocal {
             PersonDTO principalInvestigatorDTO , 
             OrganizationDTO sponsorOrganizationDTO , 
             StudySiteDTO leadOrganizationSiteIdentifierDTO ,
-            StudySiteDTO nctIdentifierSiteIdentifierDTO , 
+            List<StudySiteDTO> studyIdentifierDTOs , 
             StudyContactDTO studyContactDTO , 
             StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO , 
             StudyResourcingDTO summary4studyResourcingDTO , 
             Ii responsiblePartyContactIi ,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO , 
             Bl isBatchMode)
     throws PAException;
     
@@ -178,12 +180,13 @@ public interface TrialRegistrationServiceLocal {
      * @param principalInvestigatorDTO Principal Investigator 
      * @param sponsorOrganizationDTO Sponsort Organization
      * @param leadOrganizationSiteIdentifierDTO local protocol identifier
-     * @param nctIdentifierSiteIdentifierDTO nct Identifier
+     * @param studyIdentifierDTOs list of Study Identifier
      * @param studyContactDTO phone and email info when Pi is responsible
      * @param studySiteContactDTO phone and email info when sponsor is responsible
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
      * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param studyRegAuthDTO studyRegAuthDTO
      * @param isBatchMode to identify if  batch is caller
      * @return ii of Study Protocol
      * @throws PAException on error
@@ -199,12 +202,13 @@ public interface TrialRegistrationServiceLocal {
             PersonDTO principalInvestigatorDTO , 
             OrganizationDTO sponsorOrganizationDTO , 
             StudySiteDTO leadOrganizationSiteIdentifierDTO ,
-            StudySiteDTO nctIdentifierSiteIdentifierDTO , 
+            List<StudySiteDTO> studyIdentifierDTOs , 
             StudyContactDTO studyContactDTO , 
             StudySiteContactDTO studySiteContactDTO ,
             OrganizationDTO summary4organizationDTO , 
             StudyResourcingDTO summary4studyResourcingDTO , 
             Ii responsiblePartyContactIi ,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO , 
             Bl isBatchMode)
     throws PAException;
 
@@ -218,7 +222,7 @@ public interface TrialRegistrationServiceLocal {
      *
      * @param studyProtocolDTO StudyProtocolDTO
      * @param overallStatusDTO OverallStatusDTO
-     * @param studySiteDto StudySiteDTO
+     * @param studyIdentifierDTOs List of Study Identifier
      * @param studyIndldeDTOs list of Study Ind/ides
      * @param studyResourcingDTOs list of nih grants
      * @param documentDTOs List of documents IRB and Participating doc
@@ -239,7 +243,7 @@ public interface TrialRegistrationServiceLocal {
    void update(
         StudyProtocolDTO studyProtocolDTO ,
         StudyOverallStatusDTO overallStatusDTO ,
-        StudySiteDTO studySiteDto,
+        List<StudySiteDTO> studyIdentifierDTOs,
         List<StudyIndldeDTO> studyIndldeDTOs ,
         List<StudyResourcingDTO> studyResourcingDTOs ,
         List<DocumentDTO> documentDTOs ,

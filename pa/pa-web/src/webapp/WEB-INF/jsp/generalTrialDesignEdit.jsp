@@ -130,17 +130,7 @@
         <s:hidden name="gtdDTO.centralContactEmail" id="gtdDTO.centralContactEmail"></s:hidden>
         <s:hidden name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone"></s:hidden>
     </c:if>
-    <tr>
-        <td scope="row" class="label">
-           <label for="nciIdentifier">
-                    <fmt:message key="studyProtocol.nciIdentifier"/>
-           </label>
-         </td>
-         <td class="value">
-            <c:out value="${sessionScope.trialSummary.nciIdentifier}"/>
-        </td>
-    </tr>
-      <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
+    <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
       <tr>
         <td scope="row" class="label"><label for="studyPhase">
             <label for="officialTitle">
@@ -171,32 +161,6 @@
         </td>
     </tr>
     </c:if>
-    <tr>
-        <td scope="row" class="label">
-           <label for="nciIdentifier">
-                    NCT Number
-           </label>
-         </td>
-         <td class="value">
-            <s:textfield name="gtdDTO.nctIdentifier" maxlength="30" cssStyle="width:106px" /> 
-        </td>
-    </tr>
-
-    <tr>
-        <td scope="row" class="label">
-           <label for="nciIdentifier">
-                    Lead Organization Trial Identifier <span class="required">*</span>
-           </label>
-         </td>
-         <td class="value">
-            <s:textfield name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" /> 
-            <span class="formErrorMsg"> 
-                    <s:fielderror>
-                    <s:param>gtdDTO.localProtocolIdentifier</s:param>
-                   </s:fielderror>                            
-                 </span>
-        </td>
-    </tr>
     <tr>
         <th colspan="2"> Title</th>
     </tr>

@@ -138,7 +138,9 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -308,10 +310,10 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
       enforceTrialFunding(studyProtocolIi, abstractionList);
       enforceDisease(studyProtocolIi, abstractionList);
       //check duplicate for IND
-      List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolIi);
+      /*List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolIi);
       if (!(siList.isEmpty())) {
           checkDuplicateINDIDE(siList, abstractionList);
-      }
+      }*/
       enforceStudySiteRuleForProprietary(abstractionList, studyProtocolIi);    
       if (studyProtocolDTO.getPhaseCode().getCode() == null) {
           abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
@@ -332,8 +334,15 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
       }
       PAServiceUtils paServiceUtils = new PAServiceUtils();
-      List<StudySiteDTO> studySites = paServiceUtils.getStudySite(studyProtocolIi, 
-                  StudySiteFunctionalCode.IDENTIFIER_ASSIGNER, true);
+      StudySiteDTO nctDto = new StudySiteDTO();
+      nctDto.setStudyProtocolIdentifier(studyProtocolIi);
+      nctDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+      String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+              PAConstants.NCT_IDENTIFIER_TYPE);
+      nctDto.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+              getPoResearchOrganizationByEntityIdentifier(
+              IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId))));
+      List<StudySiteDTO> studySites = paServiceUtils.getStudySite(nctDto, true);
           StudySiteDTO studySite = PAUtil.getFirstObj(studySites);
       if (protocolDoc == null && studySite == null) {
           abstractionList.add(createError("Error", "Select Trial Related Documents from Administrative Data menu. "

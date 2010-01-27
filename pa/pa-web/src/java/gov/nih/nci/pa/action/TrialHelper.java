@@ -4,7 +4,6 @@ import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
@@ -37,6 +36,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -112,11 +112,15 @@ public class TrialHelper {
         NullifiedEntityException, NullifiedRoleException   {
         updateStudyProtocol(studyProtocolIi, gtdDTO);
         PAServiceUtils paServUtil = new PAServiceUtils();
-        OrganizationDTO leadOrgDto = new OrganizationDTO();
-        leadOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getLeadOrganizationIdentifier()));
-        St localStudyProtocolIdentifier = StConverter.convertToSt(gtdDTO.getLocalProtocolIdentifier());
-        paServUtil.manageLeadOrganization(studyProtocolIi, leadOrgDto, 
-                localStudyProtocolIdentifier);
+        Ii poROId = PaRegistry.getOrganizationCorrelationService().getPoResearchOrganizationByEntityIdentifier(
+                IiConverter.convertToPoOrganizationIi(gtdDTO.getLeadOrganizationIdentifier()));
+        StudySiteDTO leadOrgSiteIdentifierDTO = new StudySiteDTO();
+        leadOrgSiteIdentifierDTO.setResearchOrganizationIi(poROId);
+        leadOrgSiteIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        leadOrgSiteIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(
+                gtdDTO.getLocalProtocolIdentifier()));
+        leadOrgSiteIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        paServUtil.manageStudyIdentifiers(leadOrgSiteIdentifierDTO);
         if (gtdDTO.getProprietarytrialindicator() == null 
                || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE)) {
             OrganizationDTO sponsorOrgDto = new OrganizationDTO();
@@ -125,6 +129,9 @@ public class TrialHelper {
           //Pi
             PersonDTO principalInvestigatorDto = new PersonDTO();
             principalInvestigatorDto.setIdentifier(IiConverter.convertToPoPersonIi(gtdDTO.getPiIdentifier()));
+            OrganizationDTO leadOrgDto = new OrganizationDTO();
+            leadOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(
+                    gtdDTO.getLeadOrganizationIdentifier()));
             paServUtil.managePrincipalInvestigator(studyProtocolIi, leadOrgDto,
                     principalInvestigatorDto, StudyTypeCode.INTERVENTIONAL);
             paServUtil.removeResponsibleParty(studyProtocolIi);
@@ -151,7 +158,13 @@ public class TrialHelper {
         //nct
         StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
         nctIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getNctIdentifier()));
-        paServUtil.manageNCTIdentifier(studyProtocolIi, nctIdentifierDTO);
+        nctIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        nctIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+        String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                PAConstants.NCT_IDENTIFIER_TYPE);
+        nctIdentifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId)));
+        paServUtil.manageStudyIdentifiers(nctIdentifierDTO);
 
     }
     /**
@@ -294,10 +307,9 @@ public class TrialHelper {
      * @throws PAException e
      */
     private void copyNctNummber(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
-        StudySiteDTO spDto = PAUtil.getFirstObj(new PAServiceUtils().getStudySite(studyProtocolIi,
-                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER, true));
-        if (spDto != null) {
-            gtdDTO.setNctIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
+        String nctNumber = new PAServiceUtils().getStudyIdentifier(studyProtocolIi, PAConstants.NCT_IDENTIFIER_TYPE);
+        if (PAUtil.isNotEmpty(nctNumber)) {
+            gtdDTO.setNctIdentifier(nctNumber);
         }
     }
     /**

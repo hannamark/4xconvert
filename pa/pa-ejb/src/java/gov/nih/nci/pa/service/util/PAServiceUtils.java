@@ -84,6 +84,8 @@ import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalStructuralRole;
@@ -143,6 +145,7 @@ import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -169,6 +172,7 @@ import org.hibernate.Session;
     "PMD.TooManyMethods" , "PMD.ExcessiveParameterList" , "PMD.ExcessiveMethodLength" })
 public class PAServiceUtils {
     
+    private static final String ORGANIZATION_IDENTIFIER_IS_NULL = "Organization Identifier is null";
     private static final String UNCHECKED = "unchecked";
     /**
      * Executes an sql.
@@ -222,7 +226,7 @@ public class PAServiceUtils {
         executeCopy(getRemoteService(IiConverter.convertToStudyRegulatoryAuthorityIi(null))
             , fromStudyProtocolIi, toIi);
         executeCopy(getRemoteService(IiConverter.convertToDocumentIi(null)) , fromStudyProtocolIi, toIi);
-        
+        executeCopy(getRemoteService(IiConverter.convertToStudyRegulatoryAuthorityIi(null)), fromStudyProtocolIi, toIi);
         return toIi;
         
     }
@@ -390,41 +394,6 @@ public class PAServiceUtils {
         }
         new PARelationServiceBean().createSponsorAsPrimaryContactRelations(contactDto);
     }
-
-    
-    /**
-     * 
-     * @param studyProtocolIi study Protocol Ii
-     * @param nctIdentifierDTO study site identifier
-     * @throws PAException on error
-     */
-    public void manageNCTIdentifier(Ii studyProtocolIi , StudySiteDTO nctIdentifierDTO) throws PAException {
-        List<StudySiteDTO> studySites = getStudySite(studyProtocolIi,
-                                StudySiteFunctionalCode.IDENTIFIER_ASSIGNER, true);
-        StudySiteDTO studySite = PAUtil.getFirstObj(studySites);
-        StudyPaService<StudySiteDTO>  spService = getRemoteService(IiConverter.convertToStudySiteIi(null));
-        if (nctIdentifierDTO != null  && !PAUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
-             
-            if (studySite == null) {
-                // user is creating for the first time
-                studySite = createNCTidentifierObj(studyProtocolIi, nctIdentifierDTO);
-                spService.create(studySite);
-                
-            } else {
-                // check if both is same, then there is no reason to update as its not changed
-                if (!StConverter.convertToString(studySite.getLocalStudyProtocolIdentifier())
-                        .equals(StConverter.convertToString(nctIdentifierDTO.getLocalStudyProtocolIdentifier()))) {
-                    studySite.setLocalStudyProtocolIdentifier(nctIdentifierDTO.getLocalStudyProtocolIdentifier());
-                    spService.update(studySite);
-                }
-            }
-        } else {
-            if (studySite != null) {
-                // user is deleting
-                spService.delete(studySite.getIdentifier());
-            }
-        }
-    }    
     /**
      * 
      * @param studyProtocolIi study protocol identifier
@@ -495,46 +464,6 @@ public class PAServiceUtils {
     /**
      * 
      * @param studyProtocolIi Study Protocol Identifier
-     * @param leadOrganizationDto Lead Organization Dto
-     * @param localStudyProtocolIdentifier local sp Identifier
-     * @throws PAException on error
-     */
-    public void manageLeadOrganization(Ii studyProtocolIi , OrganizationDTO leadOrganizationDto ,
-            St localStudyProtocolIdentifier)
-    throws PAException {
-        OrganizationCorrelationServiceBean ocsr = new OrganizationCorrelationServiceBean();
-        String orgPoIdentifier = leadOrganizationDto.getIdentifier().getExtension();
-        if (orgPoIdentifier  == null) {
-            throw new PAException("Organization Identifier is null");
-        }
-        if (studyProtocolIi == null) {
-            throw new PAException("Protocol Identifier is Null");
-        }
-        if (PAUtil.isStNull(localStudyProtocolIdentifier)) {
-            throw new PAException("Local StudyProtocol Identifer is null");
-        }
-        Long roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
-        List<StudySiteDTO> studySiteDtos = 
-            getStudySite(studyProtocolIi, StudySiteFunctionalCode.LEAD_ORGANIZATION, true);
-        StudySiteDTO studySiteDTO = null;
-        if (PAUtil.getFirstObj(studySiteDtos) != null) {
-            studySiteDTO = PAUtil.getFirstObj(studySiteDtos);
-        } else {
-            studySiteDTO = new StudySiteDTO();
-        }
-        studySiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-        studySiteDTO.setLocalStudyProtocolIdentifier(localStudyProtocolIdentifier);
-        studySiteDTO.setResearchOrganizationIi(IiConverter.convertToIi(roId));
-        studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        studySiteDtos  = new ArrayList<StudySiteDTO>();
-        studySiteDtos.add(studySiteDTO);
-        createOrUpdate(studySiteDtos, IiConverter.convertToStudySiteIi(null), studyProtocolIi);
-        
-    }
-    
-    /**
-     * 
-     * @param studyProtocolIi Study Protocol Identifier
      * @param sponsorDto Lead Organization Dto
      * @throws PAException on error
      */
@@ -543,14 +472,16 @@ public class PAServiceUtils {
         OrganizationCorrelationServiceBean ocsr = new OrganizationCorrelationServiceBean();
         String orgPoIdentifier = sponsorDto.getIdentifier().getExtension();
         if (orgPoIdentifier  == null) {
-            throw new PAException("Organization Identifier is null");
+            throw new PAException(ORGANIZATION_IDENTIFIER_IS_NULL);
         }
         if (studyProtocolIi == null) {
             throw new PAException("Protocol Identifier is Null");
         }
         Long roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
-        List<StudySiteDTO> studySiteDtos = 
-            getStudySite(studyProtocolIi, StudySiteFunctionalCode.SPONSOR, true);
+        StudySiteDTO ssCriteriaDTO = new StudySiteDTO();
+        ssCriteriaDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+        ssCriteriaDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        List<StudySiteDTO> studySiteDtos = getStudySite(ssCriteriaDTO, true);
         StudySiteDTO studySiteDTO = null;
         if (PAUtil.getFirstObj(studySiteDtos) != null) {
             studySiteDTO = PAUtil.getFirstObj(studySiteDtos);
@@ -643,27 +574,32 @@ public class PAServiceUtils {
 
     /**
      * 
-     * @param studyProtocolIi StudyProtocol Identifier
-     * @param spCode functional code
+     * @param spDto functional code, StudyProtocol Identifier
      * @param isUnique determines if the result is unique
      * @return list of StudySiteDtos
      * @throws PAException on error
      */
-    public List<StudySiteDTO> getStudySite(Ii studyProtocolIi , StudySiteFunctionalCode spCode , boolean isUnique)
+    @SuppressWarnings({"PMD" })
+    public List<StudySiteDTO> getStudySite(StudySiteDTO spDto, boolean isUnique)
     throws PAException {
-        if (studyProtocolIi == null) {
+        if (PAUtil.isIiNull(spDto.getStudyProtocolIdentifier())) {
             throw new PAException(" StudyProtocol Ii is null");
         }
-        StudySiteDTO spDto = new StudySiteDTO();
-        Cd cd = CdConverter.convertToCd(spCode);
-        spDto.setFunctionalCode(cd);
-
-        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, spDto);
+        LimitOffset pagingParams = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<StudySiteDTO> spDtos;
+        try {
+            spDtos = PaRegistry.getStudySiteService().search(spDto, pagingParams);
+        } catch (TooManyResultsException e) {
+            throw new PAException(" Found more than 1 record for a protocol id = "
+                    + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status " 
+                    + spDto.getFunctionalCode().getCode());
+        }
         if (spDtos != null && spDtos.size() == 1) {
             return spDtos;
         } else if (spDtos != null && spDtos.size() > 1 && isUnique) {
             throw new PAException(" Found more than 1 record for a protocol id = "
-                    + studyProtocolIi.getExtension() + " for a given status " + cd.getCode());
+                    + spDto.getStudyProtocolIdentifier().getExtension() + " for a given status " 
+                    + spDto.getFunctionalCode().getCode());
 
         }
         return spDtos;
@@ -698,29 +634,7 @@ public class PAServiceUtils {
         return spDtos;
 
     }   
-    /**
-     * 
-     * @param studyProtocolIi study protocol identifier
-     * @param nctIdentifierDTO study site dto
-     * @return nct identifier obj 
-     * @throws PAException on error
-     */
-    public StudySiteDTO createNCTidentifierObj(Ii studyProtocolIi , StudySiteDTO nctIdentifierDTO)
-    throws PAException {
-        if (nctIdentifierDTO == null || nctIdentifierDTO.getLocalStudyProtocolIdentifier() == null
-                ||  PAUtil.isEmpty(nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue())) {
-            return null;
-        }
-        StudySiteDTO spDto =  new StudySiteDTO();
-        String poOrgId = PaRegistry.getOrganizationCorrelationService().getCtGovPOIdentifier();
-        long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(poOrgId);
-        spDto.setStudyProtocolIdentifier(studyProtocolIi);
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-        spDto.setLocalStudyProtocolIdentifier(nctIdentifierDTO.getLocalStudyProtocolIdentifier());
-        spDto.setResearchOrganizationIi(IiConverter.convertToIi(roId));
-        return spDto;
-    }
-    
+        
     /**
      * 
      * @param studyIndldeDTOs list of dtos
@@ -882,7 +796,7 @@ public class PAServiceUtils {
      * @param isoDocWrkStatus the iso doc wrk status
      * @param paList the pa list
      * @param regulatoryInfoBean the regulatory info bean
-     * 
+     * @param operation operation
      * @throws PAException the PA exception
      */
     @SuppressWarnings({"PMD" })
@@ -891,7 +805,8 @@ public class PAServiceUtils {
                                       List<StudyIndldeDTO> studyIndldeDTOs,
                                       DocumentWorkflowStatusDTO isoDocWrkStatus ,
                                       List<PlannedActivityDTO> paList ,
-                                      RegulatoryInformationServiceRemote regulatoryInfoBean) throws PAException {
+                                      RegulatoryInformationServiceRemote regulatoryInfoBean,
+                                      String operation) throws PAException {
         StringBuffer errMsg = new StringBuffer();
         if (studyRegAuthDTO == null) {
             errMsg.append("Regulatory Information fields must be Entered.\n");
@@ -919,7 +834,7 @@ public class PAServiceUtils {
                   + " if study includes at least one intervention with type \'device\'.");
           }
 
-        if (PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode()) 
+        if ("Update".equalsIgnoreCase(operation) && PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode()) 
              && PAUtil.isListNotEmpty(studyIndldeDTOs)) { 
                 /*if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
                         studyProtocolDTO.getFdaRegulatedIndicator()))) {
@@ -1191,7 +1106,7 @@ public class PAServiceUtils {
        * @return StucturalRole class for an correspondong iso ii
        * @throws PAException on error
        */
-
+      
       public <T extends StructuralRole> T getStructuralRole(Ii isoIi) throws PAException {
           
           StringBuffer hql = new StringBuffer("select role from ");
@@ -1346,5 +1261,98 @@ public class PAServiceUtils {
           }
           return srDTO;
       }
+      
+     /**
+       * 
+       * @param studyProtocolIi ii
+       * @param identifierType type
+       * @return str
+       * @throws PAException e 
+       */
+      public String getStudyIdentifier(Ii studyProtocolIi, String identifierType) throws PAException {
+          String retIdentifier = "";
+          StudySiteDTO identifierDto = new StudySiteDTO();
+          identifierDto.setStudyProtocolIdentifier(studyProtocolIi);
+          if (identifierType.equalsIgnoreCase(PAConstants.LEAD_IDENTIFER_TYPE)) {
+              identifierDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+          } else {
+              identifierDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+              String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                      identifierType);
+              identifierDto.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                      getPoResearchOrganizationByEntityIdentifier(
+                      IiConverter.convertToPoOrganizationIi(poOrgId)));
+          }
+         StudySiteDTO spDto = PAUtil.getFirstObj(getStudySite(identifierDto, true));
+         if (spDto != null && !PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
+             retIdentifier = StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier());
+         }
+         return retIdentifier; 
+      }
 
- }
+      /**
+       * Create or update of Identifiers.
+       * @param identifierDTO study site identifier
+       * @throws PAException on error
+       */
+      @SuppressWarnings({"PMD" })
+      public void manageStudyIdentifiers(StudySiteDTO identifierDTO) throws PAException {
+          if (identifierDTO == null) {
+              throw new PAException("Identifier DTO cannot be null");
+          }
+          if (PAUtil.isIiNull(identifierDTO.getResearchOrganizationIi())) {
+              throw new PAException("Research Org Identifier cannot be null");
+          }
+          if (PAUtil.isIiNull(identifierDTO.getStudyProtocolIdentifier())) {
+              throw new PAException("Study Protocol Identifier cannot be null");
+          }
+          if (PAUtil.isCdNull(identifierDTO.getFunctionalCode())) {
+              throw new PAException("Functional Code cannot be null");
+          }
+          if (identifierDTO != null && PAUtil.isIiNotNull(identifierDTO.getResearchOrganizationIi())) {
+              StructuralRole srRO = new CorrelationUtils().getStructuralRoleByIi(
+                      identifierDTO.getResearchOrganizationIi());
+              if (srRO == null) {
+                   ResearchOrganizationDTO  poSrDto = (ResearchOrganizationDTO) getCorrelationByIi(
+                           IiConverter.convertToPoResearchOrganizationIi(
+                      identifierDTO.getResearchOrganizationIi().getExtension()));
+                 if (poSrDto == null) {
+                     throw new PAException("Structral Role is not found in PO" 
+                             + identifierDTO.getResearchOrganizationIi());
+                 }
+                 Long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(
+                          poSrDto.getPlayerIdentifier().getExtension());
+                 srRO = getStructuralRole(IiConverter.convertToPoResearchOrganizationIi(String.valueOf(roId)));
+              }
+              //here only using pa ro id but expecting allways po ro id
+              identifierDTO.setResearchOrganizationIi(IiConverter.convertToIi(srRO.getId()));              
+          }
+          //check if any record is there in db
+          LimitOffset pagingParams = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+          List<StudySiteDTO> spDtos;
+          try {
+              StudySiteDTO criteriaDTO = new StudySiteDTO();
+              criteriaDTO.setFunctionalCode(identifierDTO.getFunctionalCode());
+              criteriaDTO.setStudyProtocolIdentifier(identifierDTO.getStudyProtocolIdentifier());
+              if (identifierDTO.getFunctionalCode().getCode().equalsIgnoreCase(
+                      StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode())) {
+                  criteriaDTO.setResearchOrganizationIi(identifierDTO.getResearchOrganizationIi());
+              }
+              spDtos = PaRegistry.getStudySiteService().search(criteriaDTO, pagingParams);
+          } catch (TooManyResultsException e) {
+              throw new PAException(" Found more than 1 record for a protocol id = "
+                      + identifierDTO.getStudyProtocolIdentifier().getExtension() + " for a given status " 
+                      + identifierDTO.getFunctionalCode().getCode());
+          }
+          StudySiteDTO studySiteDB = PAUtil.getFirstObj(spDtos);
+          if (studySiteDB != null && PAUtil.isIiNotNull(studySiteDB.getIdentifier())) {
+              identifierDTO.setIdentifier(studySiteDB.getIdentifier());
+          }
+          List<StudySiteDTO> newSiteDTOS = new ArrayList<StudySiteDTO>();
+          newSiteDTOS.add(identifierDTO);
+          createOrUpdate(newSiteDTOS, IiConverter.convertToStudySiteIi(null),
+                      identifierDTO.getStudyProtocolIdentifier());
+      }
+      
+      
+}
