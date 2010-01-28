@@ -16,8 +16,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <condition property="env.HOSTNAME" value="${env.COMPUTERNAME}">
         <os family="windows" />
     </condition>
-    
-    
+
+
     <!-- The project.properties stores properties that are shared between both build.xml and install.xml. Typically properties that are related to the distribution directories, or files. -->
     <property file="local.properties" />
     <property file="project.properties" />
@@ -256,7 +256,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <isset property="env.ANT_OPTS"/>
         </not>
         <then>
-            <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator} set  ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m'  # for windows."/>
+            <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator}SET ANT_OPTS=-Xms256m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=512m # for windows."/>
         </then>
     </if>
     <!-- Targets -->
@@ -591,7 +591,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	            <target name="${pa-commons.build.target}"/>
 	        </ant>
 	    </target>
-	
+
     <target name="build:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             dir="${pa-ejb.base.dir}" >
@@ -1304,7 +1304,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 	            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
 	        </ant>
 	</target>
-	
+
     <target name="static-analysis:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
             target="test-static-analysis"
