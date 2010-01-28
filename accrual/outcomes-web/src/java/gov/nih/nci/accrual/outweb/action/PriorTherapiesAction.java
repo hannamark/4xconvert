@@ -192,31 +192,6 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     }
 
     /**
-     * Apply the Therapy Type selection. After performing a lookup the selection is
-     * applied immediately to the target item.
-     *
-     * @param db the memory buffer containing the persisted data
-     */
-    @SuppressWarnings("PMD")
-    private void applyTypeSelection(PriorTherapiesWebDto db) {
-        if (priorTherapy.getId().getExtension() != null && lookupItem != null) {
-            if (lookupItem.equals(newPrior.getId().getExtension())) {
-                newPrior.setType(priorTherapy.getType());
-            } else {
-                for (PriorTherapiesItemWebDto item : db.getList()) {
-                    if (lookupItem.equals(item.getId().getExtension())) {
-                        item.setType(priorTherapy.getType());
-                        calcTotals(db);
-                        break;
-                    }
-                }
-            }
-            priorTherapy = new PriorTherapyTypesWebDto();
-            lookupItem = null;
-        }
-    }
-
-    /**
      * @return result for next action
      */
     public String cancel() {

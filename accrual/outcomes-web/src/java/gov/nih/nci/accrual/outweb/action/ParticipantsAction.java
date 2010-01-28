@@ -115,12 +115,6 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
 
     private static final long serialVersionUID = -6820189447703204634L;
     private static String deletedStatusCode = FunctionalRoleStatusCode.TERMINATED.getCode();
-    private static List<String> validStatusCodes;
-    static {
-        validStatusCodes = new ArrayList<String>();
-        validStatusCodes.add(FunctionalRoleStatusCode.PENDING.getCode());
-        validStatusCodes.add(FunctionalRoleStatusCode.ACTIVE.getCode());
-    }
     private static List<Country> listOfCountries = null;
     static Long unitedStatesId = null;
 
@@ -287,7 +281,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
             List<StudySubjectDto> subList = studySubjectSvc.getOutcomes(getAuthorizedUser());
             for (StudySubjectDto sub : subList) {
                 String statusCode = CdConverter.convertCdToString(sub.getStatusCode());
-                if (!validStatusCodes.contains(statusCode)) {
+                if (!AccrualConstants.validStatusCodes.contains(statusCode)) {
                     continue;
                 }
                 PatientDto pat = patientSvc.get(sub.getPatientIdentifier());

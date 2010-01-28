@@ -12,23 +12,31 @@
 
     <script type="text/javascript">
         function handleAction(){
-            document.forms[0].action="userAccountcreate.action";
-            document.forms[0].submit();
+			<s:if test="!patients">
+					if (confirm("Once patients have been entered the associated Treatment Site and Physician can no longer be changed.")){
+						document.forms[0].action="userAccountcreate.action";
+						document.forms[0].submit();
+				}
+			</s:if>
+			<s:else>
+				document.forms[0].action="userAccountcreate.action";
+				document.forms[0].submit();
+			</s:else>            
         }
         
         function lookupTreatmentSite(action){
             if (action == 'activateAccount') {
-                showPopWinOutsideContext('${treatmentSiteLookupUrl}', 900, 400, '', 'Select Treatment Site');
+                showPopWinOutsideContext('${treatmentSiteLookupUrl}', '', 'Select Treatment Site');
             } else {
-                showPopWin('${treatmentSiteLookupUrl}', 900, 400, '', 'Select Treatment Site');
+                showPopup('${treatmentSiteLookupUrl}', '', 'Select Treatment Site');
             }
         }
         
         function lookupPhysician(action){
             if (action == 'activateAccount') {
-                showPopWinOutsideContext('${physicianLookupUrl}', 900, 400, '', 'Select Physician');
+                showPopWinOutsideContext('${physicianLookupUrl}', '', 'Select Physician');
             } else {
-                showPopWin('${physicianLookupUrl}', 900, 400, '', 'Select Physician');
+                showPopup('${physicianLookupUrl}', '', 'Select Physician');
             }
         }
     </script>
@@ -171,18 +179,22 @@
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.treatmentSite.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield readonly="true" size="30" name="userAccount.treatmentSite" cssStyle="float:left; width:350px" cssClass="readonly"/>                       
+                        <s:textfield readonly="true" size="30" name="userAccount.treatmentSite" cssStyle="float:left; width:250px" cssClass="readonly"/>                       
                         <s:hidden name="userAccount.treatmentSiteId"/>
+                        <s:if test="!patients">
                         <a href="#" class="btn" onclick="lookupTreatmentSite('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        </s:if>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.treatmentSite</s:param></s:fielderror>
                     </td>
                 </tr>                
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.physician.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield readonly="true" size="30" name="userAccount.physician" cssStyle="float:left; width:350px" cssClass="readonly"/>
+                        <s:textfield readonly="true" size="30" name="userAccount.physician" cssStyle="float:left; width:250px" cssClass="readonly"/>
                         <s:hidden name="userAccount.physicianId"/>
+                        <s:if test="!patients">
                         <a href="#" class="btn" onclick="lookupPhysician('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+                        </s:if>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.physician</s:param></s:fielderror>
                     </td>
                 </tr>                               

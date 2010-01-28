@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
+import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.UserDto;
-import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.outweb.dto.util.PhysicianWebDTO;
 import gov.nih.nci.accrual.outweb.dto.util.TreatmentSiteWebDTO;
 import gov.nih.nci.accrual.outweb.dto.util.UserAccountWebDTO;
@@ -87,24 +87,36 @@ import gov.nih.nci.accrual.outweb.mail.MailManager;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.accrual.outweb.util.EncoderDecoder;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
+import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.EnPn;
 import gov.nih.nci.coppa.iso.EntityNamePartType;
 import gov.nih.nci.coppa.iso.Enxp;
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -130,6 +142,7 @@ public class UserAccountAction extends AbstractAccrualAction {
     private List<PhysicianWebDTO> physicians = new ArrayList<PhysicianWebDTO>();
     private static final String UNAVAIL_ORG_MSG = "This Organization is no longer available. Please select another.";
     private static final String UNAVAIL_PERSON_MSG = "This Person is no longer available. Please select another.";
+    private boolean patients = false;
 
     /**
      * @return success
@@ -318,6 +331,7 @@ public class UserAccountAction extends AbstractAccrualAction {
                         
                     userAction = "updateAccount";
                     actionResult = CREATE;
+                    checkPatients();
                 }
             }
         } catch (Exception e) {
@@ -346,6 +360,7 @@ public class UserAccountAction extends AbstractAccrualAction {
                 if (physician == null || physician.equals(UNAVAIL_PERSON_MSG)) {
                     user.setPoPersonIdentifier(null);
                 }
+                checkPatients();
                 userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
             }
         } catch (Exception e) {
@@ -354,6 +369,21 @@ public class UserAccountAction extends AbstractAccrualAction {
         }
 
         return CREATE;
+    }
+
+    private void checkPatients() throws RemoteException {
+        List<StudySubjectDto> subList = studySubjectSvc.getOutcomes(getAuthorizedUser());
+        List<StudySubjectDto> patientsList = new ArrayList<StudySubjectDto>();
+        for (StudySubjectDto sub : subList) {
+            String statusCode = CdConverter.convertCdToString(sub.getStatusCode());
+            if (!AccrualConstants.validStatusCodes.contains(statusCode)) {
+                continue;
+            }
+            patientsList.add(sub);
+        }
+        if (!patientsList.isEmpty()) {
+            setPatients(true);
+        }
     }
     
     /**
@@ -503,6 +533,271 @@ public class UserAccountAction extends AbstractAccrualAction {
 
         return SUCCESS;
     }
+    
+    private static final String PERS_CREATE_RESPONSE = "create_pers_response";
+    private static final String ORG_CREATE_RESPONSE = "create_org_response";
+    private final int ausStateCodeLen = 3;
+    
+    /**
+     * 
+     * @return String result
+     */
+    public String lookupCreatePerson() {
+        String firstName = ServletActionContext.getRequest().getParameter("firstName");
+        if (firstName != null && !PAUtil.isNotEmpty(firstName)) {
+            addActionError("First Name is a required field");
+        }
+        String lastName = ServletActionContext.getRequest().getParameter("lastName");
+        if (lastName != null && !PAUtil.isNotEmpty(lastName)) {
+            addActionError("Last Name is a required field");
+        }
+        String email = ServletActionContext.getRequest().getParameter("email");
+        if (email != null && !PAUtil.isNotEmpty(email)) {
+            addActionError("Email is a required field");
+        } else if (!PAUtil.isValidEmail(email)) {
+            addActionError("Email address is invalid");
+        }
+        String streetAddr = ServletActionContext.getRequest().getParameter("streetAddr");
+        if (streetAddr != null && !PAUtil.isNotEmpty(streetAddr)) {
+            addActionError("Street address is a required field");
+        }
+        String city = ServletActionContext.getRequest().getParameter("city");
+        if (city != null && !PAUtil.isNotEmpty(city)) {
+            addActionError("City is a required field");
+        }
+        String zip = ServletActionContext.getRequest().getParameter("zip");
+        if (zip != null && !PAUtil.isNotEmpty(zip)) {
+            addActionError("Zip is a required field");
+        }
+        String country = ServletActionContext.getRequest().getParameter("country");
+        if (country != null && country.equals("aaa")) {
+            addActionError("Country is a required field");
+        }
+        String state = ServletActionContext.getRequest().getParameter("state");
+        if (country != null && (country.equalsIgnoreCase("USA")
+                            || country.equalsIgnoreCase("CAN"))) {
+            if (PAUtil.isEmpty(state) || state.trim().length() > 2) {
+                addActionError("2-letter State/Province Code required for USA/Canada");
+            }            
+        }        
+        if (country != null && country.equalsIgnoreCase("AUS")) {
+            if (PAUtil.isEmpty(state) || state.trim().length() > ausStateCodeLen) {
+                addActionError("2/3-letter State/Province Code required for Australia");
+            }            
+        }        
+
+        if (hasActionErrors()) {
+            StringBuffer sb = new StringBuffer();
+            Iterator<String> i = getActionErrors().iterator();
+            while (i.hasNext()) {
+                sb.append(" - " + i.next().toString());
+            }
+            ServletActionContext.getRequest().setAttribute("failureMessage", sb.toString());
+            return PERS_CREATE_RESPONSE;
+        }
+        
+        String preFix = ServletActionContext.getRequest().getParameter("preFix");
+        String midName = ServletActionContext.getRequest().getParameter("midName");        
+        String phone = ServletActionContext.getRequest().getParameter("phone");
+        String tty = ServletActionContext.getRequest().getParameter("tty");
+        String fax = ServletActionContext.getRequest().getParameter("fax");
+        String url = ServletActionContext.getRequest().getParameter("url");
+        String suffix = ServletActionContext.getRequest().getParameter("suffix");
+        //
+        gov.nih.nci.services.person.PersonDTO dto = new gov.nih.nci.services.person.PersonDTO();
+        dto.setName(new EnPn());
+        Enxp part = new Enxp(EntityNamePartType.GIV);
+        part.setValue(firstName);
+        dto.getName().getPart().add(part);
+        // if middel name exists stick it in here!
+        if (midName != null && PAUtil.isNotEmpty(midName)) {
+            Enxp partMid = new Enxp(EntityNamePartType.GIV);
+            partMid.setValue(midName);
+            dto.getName().getPart().add(partMid);
+        }
+        Enxp partFam = new Enxp(EntityNamePartType.FAM);
+        partFam.setValue(lastName);
+        dto.getName().getPart().add(partFam);
+        if (preFix != null && PAUtil.isNotEmpty(preFix)) {
+            Enxp partPfx = new Enxp(EntityNamePartType.PFX);
+            partPfx.setValue(preFix);
+            dto.getName().getPart().add(partPfx);
+        }
+        if (suffix != null && PAUtil.isNotEmpty(suffix)) {
+            Enxp partSfx = new Enxp(EntityNamePartType.SFX);
+            partSfx.setValue(suffix);
+            dto.getName().getPart().add(partSfx);
+        }
+       // dto.getName().getPart().add(part);
+        DSet<Tel> list = new DSet<Tel>();
+        list.setItem(new HashSet<Tel>());
+        try {
+            if (phone != null && phone.length() > 0) {
+                Tel t = new Tel();
+                t.setValue(new URI("tel", phone, null));
+                list.getItem().add(t);
+            }
+            if (fax != null && fax.length() > 0) {
+                Tel faxTel = new Tel();
+                faxTel.setValue(new URI("x-text-fax", fax, null));
+                list.getItem().add(faxTel);
+            }
+            if (tty != null && tty.length() > 0) {
+                Tel ttyTel = new Tel();
+                ttyTel.setValue(new URI("x-text-tel", tty, null));
+                list.getItem().add(ttyTel);
+            }
+            if (url != null && url.length() > 0) {
+                TelUrl telurl = new TelUrl();
+                telurl.setValue(new URI(url));
+                list.getItem().add(telurl);
+            }
+            TelEmail telemail = new TelEmail();
+            telemail.setValue(new URI("mailto:" + email));
+            list.getItem().add(telemail);
+            dto.setTelecomAddress(list);
+            //PO Service requires upper case state codes for US and Canada
+            if (PAUtil.isNotEmpty(state)) {
+                state = state.trim().toUpperCase();            
+            }
+            dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
+            PoRegistry.getPersonEntityService().createPerson(dto);
+            physicianSearchCriteria.setFirstName(firstName);
+            physicianSearchCriteria.setLastName(lastName);            
+            physicianSearchCriteria.setCity(city); 
+            physicianSearchCriteria.setState(state); 
+            physicianSearchCriteria.setZipCode(zip); 
+            physicianSearchCriteria.setCountry(country);
+            lookupPhysician();
+            physicianSearchCriteria = new PhysicianWebDTO();
+        } catch (EntityValidationException e) {
+            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
+        } catch (RemoteException e) {
+            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
+        } catch (URISyntaxException e) {
+            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
+        } catch (CurationException e) {
+            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);        
+        }
+        return PERS_CREATE_RESPONSE;
+    }
+
+    /**
+     * @return result
+     */
+    public String lookupCreateOrganization() {
+        OrganizationDTO orgDto = new OrganizationDTO();
+        String orgName = ServletActionContext.getRequest().getParameter("orgName");
+        if (orgName != null && !PAUtil.isNotEmpty(orgName)) {
+            addActionError("Organization is a required field");
+        }
+        String orgStAddress = ServletActionContext.getRequest().getParameter("orgStAddress");
+        if (orgStAddress != null && !PAUtil.isNotEmpty(orgStAddress)) {
+            addActionError("Street address is a required field");
+        }
+        String countryName = ServletActionContext.getRequest().getParameter("countryName");
+        if (countryName != null && countryName.equals("aaa")) {
+            addActionError("Country is a required field");
+        }
+        String cityName = ServletActionContext.getRequest().getParameter("cityName");
+        if (cityName != null && !PAUtil.isNotEmpty(cityName)) {
+            addActionError("City is a required field");
+        }
+        String zipCode = ServletActionContext.getRequest().getParameter("zipCode");
+        if (zipCode != null && !PAUtil.isNotEmpty(zipCode)) {
+            addActionError("Zip is a required field");
+        }
+        String stateName = ServletActionContext.getRequest().getParameter("stateName");
+        if (countryName != null && (countryName.equalsIgnoreCase("USA")
+                                || countryName.equalsIgnoreCase("CAN"))) {
+            if (PAUtil.isEmpty(stateName) || stateName.trim().length() > 2) {
+                addActionError("2-letter State/Province Code required for USA/Canada");
+            }           
+        }
+        if (countryName != null && countryName.equalsIgnoreCase("AUS")) {
+            if (PAUtil.isEmpty(stateName) || stateName.trim().length() > ausStateCodeLen) {
+                addActionError("2/3-letter State/Province Code required for Australia");
+            }           
+        }
+
+        String email = ServletActionContext.getRequest().getParameter("email");
+        if (email != null && !PAUtil.isNotEmpty(email)) {
+            addActionError("Email is a required field");
+        } else if (!PAUtil.isValidEmail(email)) {
+            addActionError("Email address is invalid");
+        }
+        String phoneNumer = ServletActionContext.getRequest().getParameter("phoneNumber");
+        String faxNumber = ServletActionContext.getRequest().getParameter("fax");
+        String ttyNumber = ServletActionContext.getRequest().getParameter("tty");
+        String url = ServletActionContext.getRequest().getParameter("url");
+        if (hasActionErrors()) {
+            StringBuffer sb = new StringBuffer();
+            Iterator<String> i = getActionErrors().iterator();
+            while (i.hasNext()) {
+                sb.append(" - " + i.next().toString());
+            }
+            ServletActionContext.getRequest().setAttribute("failureMessage", sb.toString());
+            return "create_org_response";
+        }
+        orgDto.setName(EnOnConverter.convertToEnOn(orgName));
+        //PO Service requires upper case state codes for US and Canada
+        if (PAUtil.isNotEmpty(stateName)) {
+            stateName = stateName.trim().toUpperCase();            
+        }
+        orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, null, cityName, stateName, zipCode,
+                countryName));
+        DSet<Tel> telco = new DSet<Tel>();
+        telco.setItem(new HashSet<Tel>());
+        try {
+            if (phoneNumer != null && phoneNumer.length() > 0) {
+                Tel t = new Tel();
+                t.setValue(new URI("tel", phoneNumer, null));
+                telco.getItem().add(t);
+            }
+            if (faxNumber != null && faxNumber.length() > 0) {
+                Tel fax = new Tel();
+                fax.setValue(new URI("x-text-fax", faxNumber, null));
+                telco.getItem().add(fax);
+            }
+            if (ttyNumber != null && ttyNumber.length() > 0) {
+                Tel tty = new Tel();
+                tty.setValue(new URI("x-text-tel", ttyNumber, null));
+                telco.getItem().add(tty);
+            }
+            if (url != null && url.length() > 0) {
+                TelUrl telurl = new TelUrl();
+                telurl.setValue(new URI(url));
+                telco.getItem().add(telurl);
+            }
+            TelEmail telemail = new TelEmail();
+            telemail.setValue(new URI("mailto:" + email));
+            telco.getItem().add(telemail);
+            orgDto.setTelecomAddress(telco);
+            PoRegistry.getOrganizationEntityService().createOrganization(orgDto);
+            treatmentSiteSearchCriteria.setName(orgName);
+            treatmentSiteSearchCriteria.setCity(cityName);
+            treatmentSiteSearchCriteria.setState(stateName);
+            treatmentSiteSearchCriteria.setZipCode(zipCode);
+            treatmentSiteSearchCriteria.setCountry(countryName);            
+            lookupTreatmentSite();
+            treatmentSiteSearchCriteria = new TreatmentSiteWebDTO();
+        } catch (URISyntaxException e) {
+            handleExceptions(e.getMessage(), ORG_CREATE_RESPONSE);
+        } catch (EntityValidationException e) {
+            handleExceptions(e.getMessage(), ORG_CREATE_RESPONSE);
+        } catch (CurationException e) {
+            handleExceptions(e.getMessage(), ORG_CREATE_RESPONSE);
+        } catch (RemoteException e) {
+            handleExceptions(e.getMessage(), ORG_CREATE_RESPONSE);
+        }
+        return ORG_CREATE_RESPONSE;
+    }
+    
+    private String handleExceptions(String message, String returnString) {
+        addActionError(message);
+        ServletActionContext.getRequest().setAttribute("failureMessage", message);
+        return returnString;
+    }
 
     /**
      * @return the userAccount
@@ -600,5 +895,19 @@ public class UserAccountAction extends AbstractAccrualAction {
      */
     public void setPhysicians(List<PhysicianWebDTO> physicians) {
         this.physicians = physicians;
+    }
+
+    /**
+     * @return patients
+     */
+    public boolean isPatients() {
+        return patients;
+    }
+
+    /**
+     * @param patients patients
+     */
+    public void setPatients(boolean patients) {
+        this.patients = patients;
     }
 }

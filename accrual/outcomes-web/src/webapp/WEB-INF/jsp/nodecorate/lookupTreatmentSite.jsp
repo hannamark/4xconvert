@@ -11,7 +11,7 @@
 	
 	function formReset(){
         document.getElementById("treatmentSiteName").value = '';
-        document.getElementById("treatmentSiteCountry").value = 'United States';        
+        document.getElementById("treatmentSiteCountry").value = 'USA';        
         document.getElementById("treatmentSiteCity").value = '';
         document.getElementById("treatmentSiteState").value = '';
         document.getElementById("treatmentSiteZip").value = '';
@@ -22,6 +22,31 @@
         window.top.document.getElementsByName("userAccount.treatmentSite")[0].value = name.replace(/&apos;/g,"'");       
         window.top.hidePopWin(false); 
     }
+	function setSearchFormVisible(){
+		document.getElementById("searchOrgJsp").style.display="";
+		document.getElementById("createOrgJsp").style.display="none";
+	}
+
+	function setCreateFormVisible(){
+		document.getElementById("searchOrgJsp").style.display="none";
+		document.getElementById("createOrgJsp").style.display="";
+	}	
+	function createOrg(){
+		var orgName = document.getElementById("orgName").value;
+		var stAddress = document.getElementById("orgAddress").value;
+		var city = document.getElementById("orgCity").value;
+		var state = document.getElementById("orgState").value;
+		var zip = document.getElementById("orgZip").value;
+		var country = document.getElementById("orgCountry").value;
+		var phone = document.getElementById("orgPhone").value;
+		var email = document.getElementById("orgEmail").value;
+		var orgUrl = document.getElementById("orgUrl").value;
+		var tty = document.getElementById("orgTty").value;
+		var fax = document.getElementById("orgFax").value;
+		var reqProperties = 'orgName='+orgName+'&orgStAddress='+stAddress+'&countryName='+country+'&cityName='+city+'&zipCode='+zip+'&stateName='+state+'&phoneNumber='+phone+'&email='+email+'&tty='+tty+'&url='+orgUrl+'&fax='+fax;
+		document.forms[0].action="lookupCreateOrganization.action?" + reqProperties;
+        document.forms[0].submit();
+	}
 </SCRIPT>
 
 </head>
@@ -30,7 +55,7 @@
     <div class="box">
         <s:form>
             <s:label name="orgErrorMessage"/>
-            <div>
+            <div id="searchOrgJsp">
                 <table class="form">
                     <tr>
                         <td scope="row" class="label"><label>Name</label></td>
@@ -56,12 +81,16 @@
                         <ul class="btnrow">
                             <li>            
                                 <s:a href="#" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                                <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();"><span class="btn_img"><span class="add">Add Org</span></span></s:a>
                                 <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
                             </li>
                         </ul>   
                     </del>
                 </div>
             </div>
+            <div id="createOrgJsp" style="display:none">
+				<jsp:include page="/WEB-INF/jsp/nodecorate/createOrg.jsp"/>
+			</div>
             <div align="center">
                 <s:if test="treatmentSites != null">
                     <s:set name="treatmentSites" value="treatmentSites" scope="request"/>

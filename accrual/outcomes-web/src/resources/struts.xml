@@ -79,6 +79,8 @@
         </action>
         <action name="lookup*" class="gov.nih.nci.accrual.outweb.action.UserAccountAction" method="lookup{1}">
             <result>/WEB-INF/jsp/nodecorate/lookup{1}.jsp</result>
+            <result name="create_pers_response">/WEB-INF/jsp/nodecorate/lookupPhysician.jsp</result>
+            <result name="create_org_response">/WEB-INF/jsp/nodecorate/lookupTreatmentSite.jsp</result>
         </action>
     </package>
 

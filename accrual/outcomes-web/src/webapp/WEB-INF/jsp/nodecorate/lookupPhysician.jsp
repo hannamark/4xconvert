@@ -14,7 +14,7 @@
         document.getElementById("physicianLastName").value = '';                
         document.getElementById("physicianCity").value = '';
         document.getElementById("physicianState").value = '';
-        document.getElementById("physicianCountry").value = 'United States';
+        document.getElementById("physicianCountry").value = 'USA';
         document.getElementById("physicianZip").value = '';
     }
     
@@ -23,6 +23,35 @@
         window.top.document.getElementsByName("userAccount.physician")[0].value = name.replace(/&apos;/g,"'");       
         window.top.hidePopWin(false); 
     }
+	function setSearchFormVisible(){
+		document.getElementById("searchPersJsp").style.display="";
+		document.getElementById("createPersJsp").style.display="none";
+	}
+
+	function setCreateFormVisible(){
+		document.getElementById("searchPersJsp").style.display="none";
+		document.getElementById("createPersJsp").style.display="";
+	}
+	function createPerson() {
+		var fname = document.getElementById("firstName").value;	
+		var lname = document.getElementById("lastName").value;		
+		var prefx = document.getElementById("preFix").value;		
+		var mname = document.getElementById("middleName").value;		
+		var stadd = document.getElementById("streetAddress").value;		
+		var city = document.getElementById("city").value;		
+		var st = document.getElementById("state").value;		
+		var zip = document.getElementById("zip").value;		
+		var ct = document.getElementById("country").value;		
+		var email = document.getElementById("email").value;		
+		var phone = document.getElementById("phone").value;		
+		var url = document.getElementById("url").value;		
+		var tty = document.getElementById("tty").value;		
+		var fax = document.getElementById("fax").value;		
+		var suffix = document.getElementById("suffix").value;
+		var reqProperties = 'firstName='+fname+'&lastName='+lname+'&preFix='+prefx+'&midName='+mname+'&streetAddr='+stadd+'&city='+city+'&state='+st+'&zip='+zip+'&country='+ct+'&email='+email+'&phone='+phone+'&tty='+tty+'&fax='+fax+'&url='+url+'&suffix='+suffix;
+		document.forms[0].action="lookupCreatePerson.action?" + reqProperties;
+        document.forms[0].submit();
+	}
 </SCRIPT>
 
 </head>
@@ -31,7 +60,7 @@
     <div class="box">
         <s:form>
             <s:label name="orgErrorMessage"/>
-            <div>
+            <div id="searchPersJsp">
                 <table class="form">
                     <tr>
                         <td scope="row" class="label"><label>First Name</label></td>
@@ -59,12 +88,16 @@
                         <ul class="btnrow">
                             <li>            
                                 <s:a href="#" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                                <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();"><span class="btn_img"><span class="add">Add Person</span></span></s:a>
                                 <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
                             </li>
                         </ul>   
                     </del>
                 </div>
             </div>
+            <div id="createPersJsp" style="display:none">
+				<jsp:include page="/WEB-INF/jsp/nodecorate/addPerson.jsp"/>
+			</div>
             <div align="center">
                 <s:if test="physicians != null">
                     <s:set name="physicians" value="physicians" scope="request"/>
