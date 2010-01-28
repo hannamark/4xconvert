@@ -42,9 +42,11 @@ function handleMyAction(){
 	        if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {	            
 	            document.getElementById("Lead").style.display = "none";
 	            document.getElementById("Site").style.display = "";
+	            document.getElementById("organizationId").value="";
 	        }else {
 	               document.getElementById("Lead").style.display = "";
                    document.getElementById("Site").style.display = "none";
+                   document.getElementById("participatingSiteId").value="";
 	        }
     }
 </SCRIPT>
