@@ -107,6 +107,7 @@ import org.apache.struts2.ServletActionContext;
  * @author Rajani Kumar
  * @since  Aug 31, 2009
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<SubmissionDto> {
 
     private static final long serialVersionUID = -6859130106987908815L;
@@ -218,21 +219,23 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
                     getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
             
             List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
-            List<String> testList = new ArrayList<String>();
-            for (SubmissionDto sDto : listOfSubmissions) {
-                testList.add(sDto.getIdentifier().getExtension());
-            }
-            String test =  Collections.max(testList);
-            Ts cutOffDate = null;
-            for (SubmissionDto sDto : listOfSubmissions) {
-                if (test.equals(sDto.getIdentifier().getExtension())) {
-                    cutOffDate = sDto.getCutOffDate();
+            if (!listOfSubmissions.isEmpty()) {
+                List<String> testList = new ArrayList<String>();
+                for (SubmissionDto sDto : listOfSubmissions) {
+                    testList.add(sDto.getIdentifier().getExtension());
                 }
-            }
-            if (submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
-                addActionError("New Cut-off Date must be same or bigger than"
-                        + " the Cut-off-Date of the previous submission");
-                return super.execute();
+                String test =  Collections.max(testList);
+                Ts cutOffDate = null;
+                for (SubmissionDto sDto : listOfSubmissions) {
+                    if (test.equals(sDto.getIdentifier().getExtension())) {
+                        cutOffDate = sDto.getCutOffDate();
+                    }
+                }
+                if (submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
+                    addActionError("New Cut-off Date must be same or bigger than"
+                            + " the Cut-off-Date of the previous submission");
+                    return super.execute();
+                }
             }
             submissionSvc.create(submission);
             ServletActionContext.getRequest().getSession().
