@@ -72,6 +72,18 @@
             </td>
             </tr>
             <tr>
+                <td scope="row" class="label"> <label for="ctepIdentifier"> CTEP Identifier</label></td>
+                <td class="value">
+                <s:textfield name="ctepIdentifier" maxlength="30" cssStyle="width:190px"/> 
+            </td>
+            </tr>
+            <tr>
+                <td scope="row" class="label"> <label for="dcpIdentifier"> DCP Identifier</label></td>
+                <td class="value">
+                <s:textfield name="dcpIdentifier" maxlength="30" cssStyle="width:190px"/> 
+            </td>
+            </tr>
+            <tr>
             <td scope="row" class="label">
                 <label for="leadOrg"> 
                     <fmt:message key="studyProtocol.proprietaryTrial"/>

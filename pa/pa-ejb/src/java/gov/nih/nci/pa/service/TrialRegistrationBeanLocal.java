@@ -550,6 +550,7 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
       
         if (leadOrganizationStudySiteDTO != null) {
             leadOrganizationStudySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            ocsr.createResearchOrganizationCorrelations(leadOrganizationDTO.getIdentifier().getExtension());
             leadOrganizationStudySiteDTO.setResearchOrganizationIi(ocsr.
                     getPoResearchOrganizationByEntityIdentifier(leadOrganizationDTO.getIdentifier()));
             leadOrganizationStudySiteDTO.setFunctionalCode(CdConverter.convertToCd(
@@ -808,9 +809,13 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
     
     //list of study identifiers like NCT,DCP, CTEP
     for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
-        studyIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        studyIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-        paServiceUtils.manageStudyIdentifiers(studyIdentifierDTO);    
+        if (studyIdentifierDTO != null 
+                && !PAUtil.isStNull(studyIdentifierDTO.getLocalStudyProtocolIdentifier())
+                && PAUtil.isIiNotNull(studyIdentifierDTO.getResearchOrganizationIi())) {
+            studyIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            studyIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+            paServiceUtils.manageStudyIdentifiers(studyIdentifierDTO);    
+        }
     }
     paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null) , studyProtocolIi);
     paServiceUtils.createOrUpdate(studyResourcingDTOs, 

@@ -94,6 +94,8 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 		spqAction.setCheckoutStatus(false);
 		spqAction.setLocalTrialIdentifier("localStudyProtocolIdentifier");
 		spqAction.setNctIdentifier("");
+		spqAction.setDcpIdentifier("");
+		spqAction.setCtepIdentifier("");
 		assertEquals("view", spqAction.checkout());
 	}
    
