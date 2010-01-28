@@ -37,14 +37,14 @@
      <tr>
          <td scope="row"  class="label">
          <fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span> </td>
-         <td class="value"><s:select  name="trialDTO.fdaRegulatoryInformationIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkFDADropDown();" value="trialDTO.fdaRegulatoryInformationIndicator"/>
+         <td class="value"><s:select  id ="trialDTO.fdaRegulatoryInformationIndicator" name="trialDTO.fdaRegulatoryInformationIndicator" list="#{'':'', 'No':'No', 'Yes':'Yes'}" onchange="checkFDADropDown();" value="trialDTO.fdaRegulatoryInformationIndicator"/>
          <span class="formErrorMsg"><s:fielderror><s:param>trialDTO.fdaRegulatoryInformationIndicator</s:param></s:fielderror></span>
          </td>
      </tr>
      <!--   Section 801 Indicator-->
      <tr id="sec801row">
          <td scope="row" class="label"><fmt:message key="regulatory.section801.ind"/><span class="required">*</span></td>
-         <td class="value"><s:select name="trialDTO.section801Indicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkSection108DropDown();" value="trialDTO.section801Indicator"/>
+         <td class="value"><s:select id="trialDTO.section801Indicator" name="trialDTO.section801Indicator" list="#{'':'', 'No':'No', 'Yes':'Yes'}" onchange="checkSection108DropDown();" value="trialDTO.section801Indicator"/>
          <span class="formErrorMsg"><s:fielderror><s:param>trialDTO.section801Indicator</s:param></s:fielderror></span>
          </td>
      </tr>
@@ -52,14 +52,14 @@
      <!--   Delayed Posting Indicator-->
      <tr id="delpostindrow">
          <td scope="row" class="label"><fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></td>
-         <td class="value"><s:select name="trialDTO.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" value="trialDTO.delayedPostingIndicator" />
+         <td class="value"><s:select id="trialDTO.delayedPostingIndicator" name="trialDTO.delayedPostingIndicator" list="#{'':'', 'No':'No', 'Yes':'Yes'}" value="trialDTO.delayedPostingIndicator" />
          <span class="formErrorMsg"><s:fielderror><s:param>trialDTO.delayedPostingIndicator</s:param></s:fielderror></span>
          </td>       
      </tr>
      <!--   Data Monitoring Committee Appointed Indicator -->
      <tr id="datamonrow">
          <td scope="row" class="label"><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
-         <td class="value"><s:select name="trialDTO.dataMonitoringCommitteeAppointedIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" value="trialDTO.dataMonitoringCommitteeAppointedIndicator" />      
+         <td class="value"><s:select id="trialDTO.dataMonitoringCommitteeAppointedIndicator" name="trialDTO.dataMonitoringCommitteeAppointedIndicator" list="#{'':'', 'No':'No', 'Yes':'Yes'}" value="trialDTO.dataMonitoringCommitteeAppointedIndicator" />      
          </td>       
      </tr>
           </table>

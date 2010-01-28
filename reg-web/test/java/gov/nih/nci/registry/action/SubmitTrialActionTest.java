@@ -43,7 +43,27 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     @Test
     public void testEdit() throws Exception {
         submitAction = new SubmitTrialAction();
+        HttpSession session = new MockHttpSession();
+        session.setAttribute("trialDTO", getMockTrialDTO());
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
         assertEquals("edit", submitAction.edit());
+        submitAction = new SubmitTrialAction();
+        request = new MockHttpServletRequest();
+        submitAction = new SubmitTrialAction();
+        session.setAttribute("protocolId", "1");
+        session.setAttribute("disclaimer", "noaccept");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("show_Disclaimer_Page",submitAction.execute());
+        submitAction = new SubmitTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        session.setAttribute("protocolId", "1");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("show_Disclaimer_Page",submitAction .execute());
     }
     @Test 
     public void testCancle() {
@@ -510,5 +530,24 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         dto.setStartDate("01/22/2008");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
+    }
+    @Test
+    public void testGetTrialOversightAuthorityOrganizationNameList() {
+        submitAction = new SubmitTrialAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("success", submitAction.getTrialOversightAuthorityOrganizationNameList());
+        session = new MockHttpSession();
+        request.setupAddParameter("countryid", "");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("success", submitAction.getTrialOversightAuthorityOrganizationNameList());
+        session = new MockHttpSession();
+        request.setupAddParameter("countryid", "1");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("success", submitAction.getTrialOversightAuthorityOrganizationNameList());
     }
 }

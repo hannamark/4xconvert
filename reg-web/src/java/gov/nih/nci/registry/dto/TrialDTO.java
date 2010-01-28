@@ -77,7 +77,8 @@ public class TrialDTO {
     private String section801Indicator;
     private String delayedPostingIndicator;
     private String dataMonitoringCommitteeAppointedIndicator;
-
+    private String ctepIdentifier;
+    private String dcpIdentifier;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     /**
      * 
@@ -780,6 +781,30 @@ public class TrialDTO {
     public void setDataMonitoringCommitteeAppointedIndicator(
             String dataMonitoringCommitteeAppointedIndicator) {
         this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
+    }
+    /**
+     * @param ctepIdentifier the ctepIdentifier to set
+     */
+    public void setCtepIdentifier(String ctepIdentifier) {
+        this.ctepIdentifier = ctepIdentifier;
+    }
+    /**
+     * @return the ctepIdentifier
+     */
+    public String getCtepIdentifier() {
+        return ctepIdentifier;
+    }
+    /**
+     * @param dcpIdentifier the dcpIdentifier to set
+     */
+    public void setDcpIdentifier(String dcpIdentifier) {
+        this.dcpIdentifier = dcpIdentifier;
+    }
+    /**
+     * @return the dcpIdentifier
+     */
+    public String getDcpIdentifier() {
+        return dcpIdentifier;
     }
    
 }

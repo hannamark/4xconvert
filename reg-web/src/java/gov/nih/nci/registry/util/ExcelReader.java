@@ -277,7 +277,8 @@ public class ExcelReader {
         case BatchConstants.DELAYED_POSTING_INDICATOR:batchDto.setDelayedPostingIndicator(cellValue); break;
         case BatchConstants.DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR:
                 batchDto.setDataMonitoringCommitteeAppointedIndicator(cellValue); break;
-        
+        case BatchConstants.DCP_IDENTIFIER:batchDto.setDcpIdentifier(cellValue); break;
+        case BatchConstants.CTEP_IDENTIFIER : batchDto.setCtepIdentifier(cellValue); break;
         default: throw new PAException(" Unknown coloumn #" + col + "to map ");
         }
         return batchDto;

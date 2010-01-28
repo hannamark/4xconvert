@@ -2,9 +2,7 @@ package gov.nih.nci.registry.action;
 
 
 import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
@@ -28,11 +26,8 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.registry.dto.RegulatoryAuthorityWebDTO;
 import gov.nih.nci.registry.dto.StudyIndldeWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
@@ -97,7 +92,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     
     /** The session trial dto. */
     private static String sessionTrialDTO = "trialDTO";
-
+    
+    private final TrialUtil trialUtil = new TrialUtil();
     
     //for update
     /** The collaborators. */
@@ -109,17 +105,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> participatingSites = new ArrayList<PaOrganizationDTO>();
-   
-   /** The country list. */
-   @CreateIfNull(value = true)
-    @Element (value = gov.nih.nci.pa.dto.CountryRegAuthorityDTO.class)
-    private List<CountryRegAuthorityDTO> countryList = new ArrayList<CountryRegAuthorityDTO>();
-    
-    /** The reg id auth org list. */
-    @CreateIfNull(value = true)
-    @Element (value = gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO.class)
-    private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
-    
+
     /** The ind ide update dtos. */
     @CreateIfNull(value = true)
     @Element (value = gov.nih.nci.registry.dto.StudyIndldeWebDTO.class)
@@ -140,11 +126,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     @Element (value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
     private List<TrialFundingWebDTO> fundingDtos = new ArrayList<TrialFundingWebDTO>();
     
-    /** The lst. */
-    private String lst = null;
-    
-    /** The selected reg auth. */
-    private String selectedRegAuth = null;
     
     /** The programcodenihselectedvalue. */
     private String programcodenihselectedvalue;
@@ -155,12 +136,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     /** The pa organization dto. */
     private PaOrganizationDTO paOrganizationDTO;
     
-    /** The country reg authority dto. */
-    private CountryRegAuthorityDTO countryRegAuthorityDTO;
-    
-    /** The regulatory auth org dto. */
-    private RegulatoryAuthOrgDTO regulatoryAuthOrgDTO;
-    
     /** The study indlde web dto. */
     private StudyIndldeWebDTO studyIndldeWebDTO;
     
@@ -170,47 +145,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     /** The trial ind ide dto. */
     private TrialIndIdeDTO trialIndIdeDTO;
     
-    /** The regulatory authority. */
-    private RegulatoryAuthorityWebDTO regulatoryAuthority;
-   
     private int indIdeUpdateDtosLen = 0; 
-    /**
-     * Gets the country reg authority dto.
-     * 
-     * @return the countryRegAuthorityDTO
-     */
-    public CountryRegAuthorityDTO getCountryRegAuthorityDTO() {
-        return countryRegAuthorityDTO;
-    }
-
-    /**
-     * Sets the country reg authority dto.
-     * 
-     * @param countryRegAuthorityDTO the countryRegAuthorityDTO to set
-     */
-    public void setCountryRegAuthorityDTO(
-            CountryRegAuthorityDTO countryRegAuthorityDTO) {
-        this.countryRegAuthorityDTO = countryRegAuthorityDTO;
-    }
-
-    /**
-     * Gets the regulatory auth org dto.
-     * 
-     * @return the regulatoryAuthOrgDTO
-     */
-    public RegulatoryAuthOrgDTO getRegulatoryAuthOrgDTO() {
-        return regulatoryAuthOrgDTO;
-    }
-
-    /**
-     * Sets the regulatory auth org dto.
-     * 
-     * @param regulatoryAuthOrgDTO the regulatoryAuthOrgDTO to set
-     */
-    public void setRegulatoryAuthOrgDTO(RegulatoryAuthOrgDTO regulatoryAuthOrgDTO) {
-        this.regulatoryAuthOrgDTO = regulatoryAuthOrgDTO;
-    }
-
     /**
      * Gets the study indlde web dto.
      * 
@@ -428,60 +363,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
    }
 
    /**
-    * Gets the regulatory authority.
-    * 
-    * @return the regulatoryAuthority
-    */
-   public RegulatoryAuthorityWebDTO getRegulatoryAuthority() {
-       return regulatoryAuthority;
-   }
-
-   /**
-    * Sets the regulatory authority.
-    * 
-    * @param regulatoryAuthority the regulatoryAuthority to set
-    */
-   public void setRegulatoryAuthority(RegulatoryAuthorityWebDTO regulatoryAuthority) {
-       this.regulatoryAuthority = regulatoryAuthority;
-   }
-
-   /**
-    * Gets the country list.
-    * 
-    * @return the countryList
-    */
-   public List<CountryRegAuthorityDTO> getCountryList() {
-       return countryList;
-   }
-
-   /**
-    * Sets the country list.
-    * 
-    * @param countryList the countryList to set
-    */
-   public void setCountryList(List<CountryRegAuthorityDTO> countryList) {
-       this.countryList = countryList;
-   }
-
-   /**
-    * Gets the reg id auth org list.
-    * 
-    * @return the regIdAuthOrgList
-    */
-   public List<RegulatoryAuthOrgDTO> getRegIdAuthOrgList() {
-       return regIdAuthOrgList;
-   }
-
-   /**
-    * Sets the reg id auth org list.
-    * 
-    * @param regIdAuthOrgList the regIdAuthOrgList to set
-    */
-   public void setRegIdAuthOrgList(List<RegulatoryAuthOrgDTO> regIdAuthOrgList) {
-       this.regIdAuthOrgList = regIdAuthOrgList;
-   }
-
-   /**
     * Gets the ind ide update dtos.
     * 
     * @return the indIdeUpdateDtos
@@ -534,43 +415,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
    public void setIndIdeAddDtos(List<TrialIndIdeDTO> indIdeAddDtos) {
        this.indIdeAddDtos = indIdeAddDtos;
    }
-
-   /**
-    * Gets the lst.
-    * 
-    * @return the lst
-    */
-   public String getLst() {
-       return lst;
-   }
-
-   /**
-    * Sets the lst.
-    * 
-    * @param lst the lst to set
-    */
-   public void setLst(String lst) {
-       this.lst = lst;
-   }
-
-   /**
-    * Gets the selected reg auth.
-    * 
-    * @return the selectedRegAuth
-    */
-   public String getSelectedRegAuth() {
-       return selectedRegAuth;
-   }
-
-   /**
-    * Sets the selected reg auth.
-    * 
-    * @param selectedRegAuth the selectedRegAuth to set
-    */
-   public void setSelectedRegAuth(String selectedRegAuth) {
-       this.selectedRegAuth = selectedRegAuth;
-   }
-
    /**
     * Gets the programcodenihselectedvalue.
     * 
@@ -664,19 +508,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
       if (trialDTO.getParticipatingSites() != null && !trialDTO.getParticipatingSites().isEmpty()) { 
        setParticipatingSites(trialDTO.getParticipatingSites());
       }
-      setCountryList(trialDTO.getCountryList());
-      if (trialDTO.getRegIdAuthOrgList() != null && !trialDTO.getRegIdAuthOrgList().isEmpty()) {
-       setRegIdAuthOrgList(trialDTO.getRegIdAuthOrgList());
-      }
-      if (trialDTO.getRegulatoryAuthority() != null) {
-          setRegulatoryAuthority(trialDTO.getRegulatoryAuthority());
-      }
-      if (trialDTO.getSelectedRegAuth() != null) {
-          setSelectedRegAuth(trialDTO.getSelectedRegAuth());
-      }    
-      if (trialDTO.getLst() != null) {
-          setLst(trialDTO.getLst());
-      } 
       if (trialDTO.getIndIdeUpdateDtos() != null && !trialDTO.getIndIdeUpdateDtos().isEmpty()) {
           setIndIdeUpdateDtos(trialDTO.getIndIdeUpdateDtos());
       }    
@@ -699,11 +530,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
       
       trialDTO.setCollaborators(getCollaborators());
       trialDTO.setParticipatingSites(getParticipatingSites());
-      setRegAuthorityDetails(getRegulatoryAuthority());
-      trialDTO.setRegulatoryAuthority(getRegulatoryAuthority());
-      trialDTO.setSelectedRegAuth(getSelectedRegAuth());
       trialDTO.setIndIdeUpdateDtos(getIndIdeUpdateDtos());
-      trialDTO.setLst(getLst());
       trialDTO.setFundingDtos(getFundingDtos());
        
    }
@@ -729,24 +556,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String reviewUpdate() {
         try {
-            //needed to populate the drop downs when error occurs.
-            List<CountryRegAuthorityDTO> countriesList = 
-                (List<CountryRegAuthorityDTO>) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.COUNTRY_LIST);
-            if (countriesList != null) {
-                trialDTO.setCountryList(countriesList);
-                setCountryList(countriesList);
-            }
-       
-          List<RegulatoryAuthOrgDTO> regAuthList = (List<RegulatoryAuthOrgDTO>) ServletActionContext.getRequest()
-                .getSession().getAttribute(Constants.REG_AUTH_LIST);
-            if (regAuthList != null) {
-                trialDTO.setRegIdAuthOrgList(regAuthList);
-                setRegIdAuthOrgList(regAuthList);
-            }
-            if (regulatoryAuthority != null) {
-              trialDTO.setRegulatoryAuthority(regulatoryAuthority);
-            }
             clearErrorsAndMessages();
             enforceBusinessRules();
             
@@ -755,6 +564,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                         "failureMessage" , "The form has errors and could not be submitted, "
                         + "please check the fields highlighted below");
                 TrialValidator.addSessionAttributes(trialDTO);
+                trialUtil.populateRegulatoryList(trialDTO);
                 synchActionWithDTO();
             return ERROR;
             }
@@ -762,6 +572,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             if (hasActionErrors()) {
                 TrialValidator.addSessionAttributes(trialDTO);
                 synchActionWithDTO();
+                trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
            List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
@@ -786,10 +597,12 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         } catch (IOException e) {
             LOG.error(e.getMessage());
             synchActionWithDTO();
+            trialUtil.populateRegulatoryList(trialDTO);
             return ERROR;
         } catch (PAException e) {
             LOG.error(e.getMessage());
             synchActionWithDTO();
+            trialUtil.populateRegulatoryList(trialDTO);
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();
@@ -824,6 +637,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
     public String edit() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         synchActionWithDTO();
+        trialUtil.populateRegulatoryList(trialDTO);
         TrialValidator.addSessionAttributes(trialDTO);
         return "edit";
     }
@@ -848,22 +662,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
             spDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser()));
-            //set the NCT number 
-            StudySiteDTO criteriaNCTStudySite = new StudySiteDTO();
-            criteriaNCTStudySite.setStudyProtocolIdentifier(studyProtocolIi);
-            criteriaNCTStudySite.setFunctionalCode(CdConverter.convertToCd(
-                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-            String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                    PAConstants.NCT_IDENTIFIER_TYPE);
-            criteriaNCTStudySite.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService()
-                .getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(
-                        String.valueOf(poOrgId))));
-            StudySiteDTO ssNctIdDto = PAUtil.getFirstObj(new PAServiceUtils().getStudySite(criteriaNCTStudySite, true));
-            if (ssNctIdDto != null) {
-                util.convertToNCTStudySiteDTO(trialDTO, ssNctIdDto);
-            } else {
-                ssNctIdDto = util.convertToNCTStudySiteDTO(trialDTO);
-            }
+
             //set the overall status
             StudyOverallStatusDTO sosDto = null;
             sosDto = getOverallStatusForUpdate(util);
@@ -874,13 +673,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                  documentDTOs.add(documentDTO);
              }
            //summary4 info
-            StudyResourcingDTO summary4studyResourcingDTO = PaRegistry.getStudyResourcingService()
-                                              .getsummary4ReportedResource(studyProtocolIi); 
-            if (summary4studyResourcingDTO != null) {
-                util.convertToSummary4StudyResourcingDTO(trialDTO, summary4studyResourcingDTO);
-            } else {
-                summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO); 
-            }
+            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(
+                    trialDTO, studyProtocolIi);
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
           
             StudyContactDTO studyContactDTO = null;
@@ -931,8 +725,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                          util.convertISOGrantsList(trialDTO.getFundingAddDtos(), studyProtocolIi);
              studyResourcingDTOs.addAll(studyResourcingAddDTOs);
             }
-            //Regulatory auth update
-            populateStudyWithRegualtory(trialDTO.getRegulatoryAuthority(), spDTO);
             
             //update StudyRegulatory 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(studyProtocolIi, trialDTO);
@@ -948,7 +740,9 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
           
           updateId = studyProtocolIi; 
           List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-          studyIdentifierDTOs.add(ssNctIdDto);
+          studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
+          studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
+          studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
           //call the service to invoke the update method
           PaRegistry.getTrialRegistrationService().
                         update(spDTO, sosDto, studyIdentifierDTOs, studyIndldeDTOList, studyResourcingDTOs, 
@@ -963,6 +757,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             LOG.error(e.getMessage());
             addActionError(e.getMessage());
             TrialValidator.addSessionAttributes(trialDTO);
+            trialUtil.populateRegulatoryList(trialDTO);
             synchActionWithDTO();
             return ERROR;
         }
@@ -996,13 +791,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
             }
         }
          //Add other validation rules
-        //Regulatory information validation
-        if (PAUtil.isEmpty(getSelectedRegAuth())) {
-            addFieldError("regulatory.oversight.auth.name", "Select the Oversight authority organization name");
-        }
-        if (PAUtil.isEmpty(getLst())) {
-            addFieldError("lst", "Select the Oversight authority country");
-        }
+        //Regulatory information validation moved to validator
+        
         if (getCollaborators() != null && !getCollaborators().isEmpty()) {
             for (PaOrganizationDTO coll : getCollaborators()) {
                 if (coll.getFunctionalRole() == null) {
@@ -1095,54 +885,7 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
         }
     }
    
-    /**
-     * Gets the reg authorities list.
-     * 
-     * @return String success or failure
-     */
-    public String getRegAuthoritiesList() {
-        try {
-            String countryId = ServletActionContext.getRequest().getParameter("countryid");
-            if (countryId != null && !("".equals(countryId))) {
-                regIdAuthOrgList = PaRegistry.getRegulatoryInformationService()
-                                    .getRegulatoryAuthorityNameId(Long.valueOf(countryId));
-            } else {
-                RegulatoryAuthOrgDTO defaultVal = new RegulatoryAuthOrgDTO();
-                defaultVal.setName("-Select Country-");
-                regIdAuthOrgList.add(defaultVal);
-            }
-            if (!regIdAuthOrgList.isEmpty()) {
-               ServletActionContext.getRequest().getSession().setAttribute(Constants.REG_AUTH_LIST,
-                       regIdAuthOrgList);
-           }
-        } catch (PAException e) {
-            return SUCCESS;
-        }
-        return SUCCESS;
-    }
     
-  /**
-   * Sets the reg authority details.
-   * 
-   * @param webDTO the new reg authority details
-   */
-  private void setRegAuthorityDetails(RegulatoryAuthorityWebDTO webDTO) {
-     try {
-      if (getSelectedRegAuth() != null  && !"".equals(getSelectedRegAuth())
-              && getLst() != null && !"".equals(getLst())) {   
-                  String orgName = PaRegistry.getRegulatoryInformationService()
-                         .getCountryOrOrgName(Long.valueOf(getSelectedRegAuth()), "RegulatoryAuthority");
-                  String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-                             Long.valueOf(getLst()), "Country");
-                  webDTO.setTrialOversgtAuthOrgName(orgName);
-                  webDTO.setTrialOversgtAuthCountry(countryName);
-      }
-              } catch (PAException e) {
-         LOG.error(e.getLocalizedMessage());
-     }
-  }
-  
-  
   /**
    * Convet to ind ide web dto.
    * 
@@ -1203,38 +946,6 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
           trialFundingWebDTO.getNihInstitutionCode()));
       studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
       return studyResoureDTO;
-  }
-  
-  /**
-   * Populate study with regualtory.
-   * 
-   * @param webDTO the web dto
-   * @param spDTO the sp dto
-   */
-  private void populateStudyWithRegualtory(RegulatoryAuthorityWebDTO webDTO, StudyProtocolDTO spDTO) {
-      if (webDTO.getSection801Indicator() == null) {
-          spDTO.setSection801Indicator(BlConverter.convertToBl(null));
-      } else {
-          spDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.valueOf(webDTO.getSection801Indicator())));
-      }
-      if (webDTO.getFdaRegulatedInterventionIndicator() == null) {
-          spDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(null));
-      } else {
-          spDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
-                  .getFdaRegulatedInterventionIndicator())));
-      }
-      if (webDTO.getDelayedPostingIndicator() == null) {
-          spDTO.setDelayedpostingIndicator(BlConverter.convertToBl(null));
-      } else {
-          spDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
-                  .getDelayedPostingIndicator())));
-      }
-      if (webDTO.getDataMonitoringIndicator() == null) {
-          spDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(null));
-      } else {
-          spDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.valueOf(webDTO
-                  .getDataMonitoringIndicator())));
-      }
   }
   
   /**

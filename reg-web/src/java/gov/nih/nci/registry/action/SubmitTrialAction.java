@@ -200,13 +200,16 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
             OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
             StudySiteDTO leadOrgSiteIdDTO = util.convertToStudySiteDTO(trialDTO);
-            StudySiteDTO nctIdentifierSiteIdDTO = util.convertToNCTStudySiteDTO(trialDTO);
+
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-            studyIdentifierDTOs.add(nctIdentifierSiteIdDTO);
+            studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
+            studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
+            studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO , null));
+            
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
+            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
             Ii responsiblePartyContactIi = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);
@@ -605,6 +608,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     public String edit() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
         TrialValidator.addSessionAttributes(trialDTO);
+        trialUtil.populateRegulatoryList(trialDTO);
         return "edit";
     }
     /**

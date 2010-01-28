@@ -218,42 +218,46 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
 
 }
 
-function checkFDADropDown(){
-        if (document.getElementById('fdaindid').value == '' | document.getElementById('fdaindid').value == 'false'){            
-            input_box=confirm("Section 801 and Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
-            if (input_box==true){
-                document.getElementById('sec801id').value ='';
-                document.getElementById('delpostindid').value ='';
-                hideRow(document.getElementById('sec801row'));
-            } else {
-                document.getElementById('fdaindid').value = 'true';
-            }
-        } else {
-            showRow(document.getElementById('sec801row'));
-        }
-    }
+	function checkFDADropDown(){
+	    if (document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value == '' 
+	        | document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value == 'No'){            
+	        input_box=confirm("Section 801 and Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+	        if (input_box==true){
+	            document.getElementById('trialDTO.section801Indicator').value ='';
+	            document.getElementById('trialDTO.delayedPostingIndicator').value ='';
+	            hideRow(document.getElementById('sec801row'));
+	            hideRow(document.getElementById('delpostindrow'));
+	        } else {
+	            document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value = 'Yes';
+	        }
+	    } else {
+	        showRow(document.getElementById('sec801row'));
+	        showRow(document.getElementById('delpostindrow'));
+	    }
+	}
 
-    function checkSection108DropDown(){
-        if (document.getElementById('sec801id').value == '' | document.getElementById('sec801id').value == 'false') {   
-            input_box=confirm("Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
-            if (input_box==true){
-                hideRow(document.getElementById('delpostindrow'));
-                document.getElementById('delpostindid').value ='';
-            } else {
-                document.getElementById('sec801id').value = 'true';
-            }
-        } else {
-            showRow(document.getElementById('delpostindrow'));
-        }    
-    }
-     function hideRow(row){          
+	function checkSection108DropDown(){
+	    if (document.getElementById('trialDTO.section801Indicator').value == '' 
+	        | document.getElementById('trialDTO.section801Indicator').value == 'No') {   
+	        input_box=confirm("Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+	        if (input_box==true){
+	            hideRow(document.getElementById('delpostindrow'));
+	            document.getElementById('trialDTO.delayedPostingIndicator').value ='';
+	        } else {
+	            document.getElementById('trialDTO.section801Indicator').value = 'Yes';
+	        }
+	    } else {
+	        showRow(document.getElementById('delpostindrow'));
+	    }    
+	}
+    function hideRow(row){          
         row.style.display = 'none'; 
     }
     function showRow(row){
         row.style.display = '';
     }
-        function loadDiv() {   
-        var url = '/registry/protected/ajaxgetAuthOrgsgetRegAuthoritiesList.action?countryid='+document.getElementById('countries').value;
+    function loadRegAuthoritiesDiv() {   
+        var url = '/registry/protected/ajaxgetOAuthOrgsgetTrialOversightAuthorityOrganizationNameList.action?countryid='+document.getElementById('countries').value;
         var div = document.getElementById('loadAuthField');
         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';         
         var aj = new Ajax.Updater(div, url, {
@@ -302,7 +306,7 @@ function toggledisplay2 (it) {
     <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
     <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
     <s:hidden name="trialDTO.localProtocolIdentifier" id="trialDTO.localProtocolIdentifier"/>
-    
+    <s:hidden name="trialDTO.phaseOtherText" id="trialDTO.phaseOtherText" />
         <s:hidden name="page" />
         <s:hidden name="uuidhidden"/>  
     <p>Update trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
@@ -331,6 +335,23 @@ function toggledisplay2 (it) {
                 </td>
                 <td>
                     <s:textfield name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                </td>                
+          </tr>
+          <tr>
+                <td scope="row" class="label">
+                    <label for="submitTrial_CTEP_Identifier"> <fmt:message key="submit.trial.ctepIdentifier"/></label>
+                </td>
+                <td>
+                    <s:textfield name="trialDTO.ctepIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+                </td>                
+          </tr>
+          
+          <tr>
+                <td scope="row" class="label">
+                    <label for="submitTrial_DCP_Identifier"> <fmt:message key="submit.trial.dcpIdentifier"/></label>
+                </td>
+                <td>
+                    <s:textfield name="trialDTO.dcpIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>                
           </tr>
           <tr>
@@ -763,72 +784,7 @@ function toggledisplay2 (it) {
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>          
         <tr><td>  
-        <table class="data2">
-        <tr>
-              <th colspan="2">Regulatory Information</th>
-          </tr>
-        <tr>
-                <td colspan="2" class="space">&nbsp;</td>
-          </tr>
-         <!--  Trial Oversight Authority Country -->
-        <tr>
-        <td scope="row" class="label">
-        <fmt:message key="regulatory.oversight.country.name"/><span class="required">*</span></td>
-          <td class="value"><s:select id="countries" headerValue="-Select-" headerKey=""
-                      name="lst"                   
-                      list="countryList"  
-                      listKey="id" listValue="name"                    
-                      onchange="loadDiv();"  
-                      />
-                    <span class="formErrorMsg"> 
-                       <s:fielderror>
-                       <s:param>lst</s:param>
-                      </s:fielderror>                            
-                    </span>
-         </td>
-       </tr>
-       <!--  Trial Oversignt Authority Organization Name -->
-     <tr>
-         <td scope="row" class="label">
-           <fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span></td>
-                     <td class="value">
-                         <div id="loadAuthField">
-                         <%@ include file="/WEB-INF/jsp/nodecorate/authorityname.jsp" %>
-                         </div>
-                                                         
-                     </td>
-                    
-     </tr>   
-     <!--   FDA Regulated Intervention Indicator-->
-     <tr>
-         <td scope="row"  class="label">
-         <fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span> </td>
-         <td class="value"><s:select  id="fdaindid" name="regulatoryAuthority.fdaRegulatedInterventionIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkFDADropDown();" value="regulatoryAuthority.fdaRegulatedInterventionIndicator"/>
-         <span class="formErrorMsg"><s:fielderror><s:param>regulatoryAuthority.fdaRegulatedInterventionIndicator</s:param></s:fielderror></span>
-         </td>
-     </tr>
-     <!--   Section 801 Indicator-->
-     <tr id="sec801row">
-         <td scope="row" class="label"><fmt:message key="regulatory.section801.ind"/><span class="required">*</span></td>
-         <td class="value"><s:select id="sec801id" name="regulatoryAuthority.section801Indicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkSection108DropDown();" value="regulatoryAuthority.section801Indicator"/>
-         <span class="formErrorMsg"><s:fielderror><s:param>regulatoryAuthority.section801Indicator</s:param></s:fielderror></span>
-         </td>
-     </tr>
-     
-     <!--   Delayed Posting Indicator-->
-     <tr id="delpostindrow">
-         <td scope="row" class="label"><fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></td>
-         <td class="value"><s:select id="delpostindid" name="regulatoryAuthority.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" value="regulatoryAuthority.delayedPostingIndicator" />
-         <span class="formErrorMsg"><s:fielderror><s:param>regulatoryAuthority.delayedPostingIndicator</s:param></s:fielderror></span>
-         </td>       
-     </tr>
-     <!--   Data Monitoring Committee Appointed Indicator -->
-     <tr id="datamonrow">
-         <td scope="row" class="label"><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
-         <td class="value"><s:select id="datamonid" name="regulatoryAuthority.dataMonitoringIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" value="regulatoryAuthority.dataMonitoringIndicator" />      
-         </td>       
-     </tr>
-     </table>
+        <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
       </td></tr>
          <tr>
                 <td colspan="2" class="space">&nbsp;</td>

@@ -143,7 +143,8 @@ public class StudyProtocolBatchDTO {
     private String dataMonitoringCommitteeAppointedIndicator;
     private static final int ORG_NAME_MAX_LENGTH = 160;
     private static final int PCTL = 200;
-       
+    private String ctepIdentifier;
+    private String dcpIdentifier;
     /**
      * . Default Constructor
      */
@@ -1798,6 +1799,34 @@ public class StudyProtocolBatchDTO {
     public void setDataMonitoringCommitteeAppointedIndicator(
             String dataMonitoringCommitteeAppointedIndicator) {
         this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
+    }
+
+    /**
+     * @param ctepIdentifier the ctepIdentifier to set
+     */
+    public void setCtepIdentifier(String ctepIdentifier) {
+        this.ctepIdentifier = ctepIdentifier;
+    }
+
+    /**
+     * @return the ctepIdentifier
+     */
+    public String getCtepIdentifier() {
+        return ctepIdentifier;
+    }
+
+    /**
+     * @param dcpIdentifier the dcpIdentifier to set
+     */
+    public void setDcpIdentifier(String dcpIdentifier) {
+        this.dcpIdentifier = dcpIdentifier;
+    }
+
+    /**
+     * @return the dcpIdentifier
+     */
+    public String getDcpIdentifier() {
+        return dcpIdentifier;
     }
     
 

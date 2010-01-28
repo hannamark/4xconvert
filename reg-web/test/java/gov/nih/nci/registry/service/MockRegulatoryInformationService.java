@@ -43,7 +43,7 @@ public class MockRegulatoryInformationService implements
     public List<CountryRegAuthorityDTO> getDistinctCountryNames()
             throws PAException {
         // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<CountryRegAuthorityDTO>();
     }
 
     /* (non-Javadoc)

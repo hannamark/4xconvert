@@ -235,6 +235,44 @@ function loadRegAuthoritiesDiv() {
     });
     return false;
 }
+	function checkFDADropDown(){
+	    if (document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value == '' 
+	        | document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value == 'No'){            
+	        input_box=confirm("Section 801 and Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+	        if (input_box==true){
+	            document.getElementById('trialDTO.section801Indicator').value ='';
+	            document.getElementById('trialDTO.delayedPostingIndicator').value ='';
+	            hideRow(document.getElementById('sec801row'));
+	            hideRow(document.getElementById('delpostindrow'));
+	        } else {
+	            document.getElementById('trialDTO.fdaRegulatoryInformationIndicator').value = 'Yes';
+	        }
+	    } else {
+	        showRow(document.getElementById('sec801row'));
+	        showRow(document.getElementById('delpostindrow'));
+	    }
+	}
+	
+	function checkSection108DropDown(){
+	    if (document.getElementById('trialDTO.section801Indicator').value == '' 
+	        | document.getElementById('trialDTO.section801Indicator').value == 'No') {   
+	        input_box=confirm("Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
+	        if (input_box==true){
+	            hideRow(document.getElementById('delpostindrow'));
+	            document.getElementById('trialDTO.delayedPostingIndicator').value ='';
+	        } else {
+	            document.getElementById('trialDTO.section801Indicator').value = 'Yes';
+	        }
+	    } else {
+	        showRow(document.getElementById('delpostindrow'));
+	    }    
+	}
+	function hideRow(row){          
+	    row.style.display = 'none'; 
+	}
+	function showRow(row){
+	    row.style.display = '';
+	}
 </SCRIPT>
 <script language="javascript">
 function toggledisplay (it, box) {
@@ -264,31 +302,7 @@ function toggledisplay2 (it) {
         <s:hidden name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
         <table class="form"> 
-        <tr>
-            <th colspan="2"><fmt:message key="view.trial.trialIDs"/></th>
-          </tr>
-          <tr><td colspan="2" class="space">&nbsp;</td></tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="submitTrial_participationWebDTO_localProtocolIdentifier"> <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span></label>
-                </td>
-                <td>
-                    <s:textfield name="trialDTO.localProtocolIdentifier"  maxlength="200" size="100"  cssStyle="width:200px"  />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                        <s:param>trialDTO.localProtocolIdentifier</s:param>
-                       </s:fielderror>                            
-                     </span>
-                </td>                
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="submitTrial_participationWebDTO_nctNumber"> <fmt:message key="submit.trial.nctNumber"/></label>
-                </td>
-                <td>
-                    <s:textfield name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>                
-          </tr>
+            <%@ include file="/WEB-INF/jsp/nodecorate/trialIdentifiers.jsp" %>      
           <tr>
                 <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
           </tr>

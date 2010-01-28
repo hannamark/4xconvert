@@ -15,6 +15,8 @@ import gov.nih.nci.registry.util.Constants;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.http.HttpSession;
 
@@ -65,6 +67,11 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testEdit() throws Exception {
         trialAction = new AmendmentTrialAction();
+        HttpSession sess = new MockHttpSession();
+        sess.setAttribute("trialDTO", getMockTrialDTO());
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(sess);
+        ServletActionContext.setRequest(request);
         assertEquals("edit", trialAction.edit());
     }
     @Test
@@ -576,6 +583,28 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction = new AmendmentTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusCode("In Review");
+        trialAction.setTrialDTO(dto);
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setChangeMemoDoc(f);
+        
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setChangeMemoDocFileName(FILE_NAME);
+        assertEquals("error", trialAction.review());
+    }
+    @Test
+    public void testAmdendFutureDate() throws URISyntaxException {
+        int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        String nextDate = dateFormat.format(date.getTime() + MILLIS_IN_DAY);
+        trialAction = new AmendmentTrialAction();
+        TrialDTO dto = getMockTrialDTO();
+        dto.setAmendmentDate(nextDate);
         trialAction.setTrialDTO(dto);
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
         File f = new File(fileUrl.toURI());

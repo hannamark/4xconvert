@@ -102,6 +102,30 @@ var winprint=window.open("","",sOption);
                     </td>
               </tr>
           </c:if>
+          <c:if test="${trialDTO.ctepIdentifier != null}">
+              <tr>     
+                    <td scope="row" class="label">
+                        <label for="CTEP Identifier">
+                            <fmt:message key="submit.trial.ctepIdentifier"/>                
+                            </label>
+                    </td>
+                    <td class="value">
+                        <c:out value="${trialDTO.ctepIdentifier }"/> 
+                    </td>
+              </tr>
+          </c:if>
+          <c:if test="${trialDTO.dcpIdentifier != null}">
+              <tr>     
+                    <td scope="row" class="label">
+                        <label for="DCP Identifier">
+                            <fmt:message key="submit.trial.dcpIdentifier"/>                
+                            </label>
+                    </td>
+                    <td class="value">
+                        <c:out value="${trialDTO.dcpIdentifier }"/> 
+                    </td>
+              </tr>
+          </c:if>
         <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
           <tr>
             <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
@@ -405,6 +429,48 @@ var winprint=window.open("","",sOption);
      <c:if test="${trialDTO.fundingDtos != null}">  
         <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
      </c:if>
+     <table class="form">
+     <tr>
+              <th colspan="2">Regulatory Information</th>
+          </tr>
+        <tr>
+                <td colspan="2" class="space">&nbsp;</td>
+          </tr>
+<!--  Trial Oversight Authority Country -->
+        <tr>
+        <td scope="row" class="label">
+        <fmt:message key="regulatory.oversight.country.name"/></td>
+          <td class="value"> <c:out value="${trialDTO.lst }"/> </td>
+       </tr>
+       <tr>
+         <td scope="row" class="label">
+           <fmt:message key="regulatory.oversight.auth.name"/></td>
+                <td class="value"> <c:out value="${trialDTO.selectedRegAuth }"/> </td>
+         </tr>   
+    
+ <!--   FDA Regulated Intervention Indicator-->
+     <tr>
+         <td scope="row"  class="label">
+         <fmt:message key="regulatory.FDA.regulated.interv.ind"/></td>
+         <td class="value"><c:out value="${trialDTO.fdaRegulatoryInformationIndicator}" /> </td>
+     </tr>
+     <!--   Section 801 Indicator-->
+     <tr id="sec801row">
+         <td scope="row" class="label"><fmt:message key="regulatory.section801.ind"/></td>
+         <td class="value"><c:out value="${trialDTO.section801Indicator}" /> </td>
+     </tr>
+     
+     <!--   Delayed Posting Indicator-->
+     <tr id="delpostindrow">
+         <td scope="row" class="label"><fmt:message key="regulatory.delayed.posting.ind"/></td>
+         <td class="value"><c:out value="${trialDTO.delayedPostingIndicator}" /></td>       
+     </tr>
+     <!--   Data Monitoring Committee Appointed Indicator -->
+     <tr id="datamonrow">
+         <td scope="row" class="label"><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
+         <td class="value"><c:out value="${trialDTO.dataMonitoringCommitteeAppointedIndicator}" /></td>       
+     </tr>
+      </table>
         <c:if test="${fn:length(trialDTO.docDtos) >0}">          
             <div class="box">
                <display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"

@@ -147,9 +147,6 @@
              <param name="trialAction">${trialAction}</param>
         </result>
         </action>
-        <action name="ajaxgetAuthOrgs*" class="gov.nih.nci.registry.action.UpdateTrialAction" method="{1}">
-            <result>/WEB-INF/jsp/nodecorate/authorityname.jsp</result>
-        </action> 
     <action name="ajaxManageGrantsAction*" class="gov.nih.nci.registry.action.ManageGrantsAction" method="{1}"> 
         <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result> 
         <result name="display_grants">/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp</result>

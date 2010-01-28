@@ -224,6 +224,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      */
     public String edit() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
+        trialUtil.populateRegulatoryList(trialDTO);
         TrialValidator.addSessionAttributes(trialDTO);
         return "edit";
     }
@@ -249,11 +250,11 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
             OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
             StudySiteDTO leadOrgSiteIdDTO = util.convertToStudySiteDTO(trialDTO);
-            StudySiteDTO nctIdentifierSiteIdDTO = util.convertToNCTStudySiteDTO(trialDTO);
+
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
+            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
             Ii responsiblePartyContactIi = null;
             if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);
@@ -271,8 +272,12 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos());
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
+            
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-            studyIdentifierDTOs.add(nctIdentifierSiteIdDTO);
+            studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
+            studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
+            studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, null));
+            
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
             
             amendId = PaRegistry.getTrialRegistrationService().
