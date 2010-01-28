@@ -79,6 +79,10 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -138,4 +142,12 @@ public final class AccrualConstants {
     public static final String PERT = ActivityRelationshipTypeCode.PERT.getCode();    
     /** The Constant COMP. */
     public static final String COMP = ActivityRelationshipTypeCode.COMP.getCode();
+
+    /** The Constant validStatusCodes. */
+    public static List<String> validStatusCodes;
+    static {
+        validStatusCodes = new ArrayList<String>();
+        validStatusCodes.add(FunctionalRoleStatusCode.PENDING.getCode());
+        validStatusCodes.add(FunctionalRoleStatusCode.ACTIVE.getCode());
+    }
 }
