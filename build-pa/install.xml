@@ -1035,7 +1035,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
 
     <target name="install:jboss:stop:pa-ear" unless="exclude.pa-ear">
-        <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
+        <!-- using a longer timeout of the 3 attempts to shutdown the jboss instance. bumping up the seconds from 10 to 30 seconds.-->
+        <jboss-stop-jboss-longer-timeout jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
     </target>
     <target name="install:jboss:stop:pa-grid" unless="exclude.pa-grid">
         <jboss-stop-jboss jboss.server.jndi.port="${pagrid.jboss.server.jndi.port}" jboss.server.name="${pagrid.jboss.server.name}"/>
@@ -1538,4 +1539,73 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:validation:post-install
         ">
     </target>
+	
+	<macrodef name="jboss-stop-jboss-longer-timeout">
+	        <attribute name="jboss.home" default="${jboss.home}" />
+	        <attribute name="jboss.server.hostname" default="${jboss.server.hostname}" />
+	        <attribute name="jboss.server.jndi.port" default="${jboss.server.jndi.port}" />
+	        <attribute name="jboss.server.name" default="${jboss.server.name}" />
+	        <attribute name="jboss.web.user" default="${jboss.web.user}" />
+	        <attribute name="jboss.web.password" default="${jboss.web.password}" />
+	        <sequential>
+	            <if>
+	                <socket server="@{jboss.server.hostname}" port="@{jboss.server.jndi.port}" />
+	                <then>
+	                    <available file="@{jboss.home}/server/@{jboss.server.name}/bin" property="jboss.bin.exists"/>
+	                    <if>
+	                        <isset property="jboss.bin.exists"/>
+	                        <then>
+	                            <echo message="Shutting down jboss with stop_jboss"/>
+	                            <exec executable="@{jboss.home}/server/@{jboss.server.name}/bin/stop_jboss" osfamily="unix"/>
+	                        </then>
+	                        <else>
+	                            <echo message="Shutting down jboss with shutdown.jar with user/password"/>
+	                            <java classname="org.jboss.Shutdown" fork="true" spawn="false">
+	                                <arg line="-s @{jboss.server.hostname}:@{jboss.server.jndi.port} -u @{jboss.web.user} -p @{jboss.web.password} -S" />
+	                                <classpath>
+	                                    <pathelement location="@{jboss.home}/bin/shutdown.jar" />
+	                                </classpath>
+	                            </java>
+	                        </else> 
+	                    </if>
+	                </then>
+	                <else>
+	                    <echo message="JBoss is not running on @{jboss.server.jndi.port}"/> 
+	                </else> 
+	            </if>   
+	            <sleep seconds="30" />
+	            <if>
+	                <socket server="@{jboss.server.hostname}" port="@{jboss.server.jndi.port}" />
+	                <then>
+	                    <echo message="Shutting down jboss with no user/password."/>
+	                    <java classname="org.jboss.Shutdown" fork="true" spawn="false">
+	                        <arg line="-s @{jboss.server.hostname}:@{jboss.server.jndi.port} -S" />
+	                        <classpath>
+	                            <pathelement location="@{jboss.home}/bin/shutdown.jar" />
+	                        </classpath>
+	                    </java>
+	                </then>
+	            </if>
+	            <sleep seconds="30" />
+	            <if>
+	                <socket server="@{jboss.server.hostname}" port="@{jboss.server.jndi.port}" />
+	                <then>
+	                    <echo message="Shutting down jboss with default user/password."/>
+	                    <java classname="org.jboss.Shutdown" fork="true" spawn="false">
+	                        <arg line="-s @{jboss.server.hostname}:@{jboss.server.jndi.port} -u admin -p admin -S" />
+	                        <classpath>
+	                            <pathelement location="@{jboss.home}/bin/shutdown.jar" />
+	                        </classpath>
+	                    </java>
+	                </then>
+	            </if>
+	            <sleep seconds="30" />
+	            <if>
+	                <socket server="@{jboss.server.hostname}" port="@{jboss.server.jndi.port}" />
+	                <then>
+	                    <fail message="Failed to shutdown jboss server at @{jboss.server.hostname}:@{jboss.server.jndi.port}"/>
+	                </then>
+	            </if>
+	        </sequential>
+	    </macrodef>
 </project>
