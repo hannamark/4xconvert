@@ -6,7 +6,7 @@
 <c:if test="${not empty messages}">
     <div class="message" id="successMessages">
         <c:forEach var="msg" items="${messages}">
-            <c:out value="${msg}" escapeXml="false"/><br/>
+            <c:out value="${msg}"/><br/>
         </c:forEach>
     </div>
     <c:remove var="messages" scope="session"/>
