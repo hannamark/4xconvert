@@ -860,17 +860,17 @@ private void populateList() throws PAException {
     }
     if (PAUtil.isNotEmpty(webDTO.getStructuredType())) {
         if (STRUCTURED.equalsIgnoreCase(webDTO.getStructuredType())) {
-           if (PAUtil.isEmpty(webDTO.getTextDescription()) && isBuildCriterionEmpty()) {
+           if (PAUtil.isEmpty(webDTO.getTextDescription()) || isBuildCriterionEmpty()) {
                addFieldError("webDTO.buldcriterion", getText("error.mandatory"));
             }
-           if (!isBuildCriterionEmpty()) {
+           if (isBuildCriterionEmpty()) {
                addFieldError("webDTO.buldcriterion", getText("error.buldcriterion"));
             }
            if (PAUtil.isNotEmpty(webDTO.getValueIntegerMax()) && PAUtil.isEmpty(webDTO.getValueIntegerMin())) {
                addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
             }
         } else if (PAUtil.isEmpty(webDTO.getTextDescription())) {
-            addFieldError("webDTO.buldcriterion",  getText("error.buldcriterion"));
+            addFieldError("webDTO.buldcriterion",  getText("error.unstructured.description"));
         }     
     }
      
@@ -882,7 +882,6 @@ private void populateList() throws PAException {
     }
   }
   private boolean isBuildCriterionEmpty() {
-
       int emptyCount = 0;
       boolean retVal = false;
       if (PAUtil.isEmpty(webDTO.getCriterionName())) {
@@ -894,7 +893,7 @@ private void populateList() throws PAException {
       if (PAUtil.isEmpty(webDTO.getValueIntegerMin()) && PAUtil.isEmpty(webDTO.getValueText())) {
           emptyCount++;
       }
-      if (emptyCount == TOTAL_COUNT || emptyCount == 0) {
+      if (emptyCount != 0 && emptyCount <= TOTAL_COUNT) {
           retVal = true;
       }
       return retVal;
