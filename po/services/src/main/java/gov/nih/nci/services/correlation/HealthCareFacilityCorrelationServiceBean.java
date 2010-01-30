@@ -165,10 +165,10 @@ public class HealthCareFacilityCorrelationServiceBean extends
     @Override
     protected void preUpdateValidation(HealthCareFacility target) {
         if (target.isCtepOwned()) {
-            throw new IllegalArgumentException("Updates to CTEP-owned data is restricted!");
+            throw new IllegalArgumentException("Updates to CTEP-owned data are restricted!");
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
