@@ -102,9 +102,6 @@ public enum PathologyGrades implements CodedEnum<String> {
     /** The LOw_ grade. */
     LOW_GRADE("Low grade"),
     
-    /** The MODERATE. */
-    MODERATE("Moderate"),
-    
     /** The MODERATEL y_ diiferentiated. */
     MODERATELY_DIIFERENTIATED("Moderately differentiated"),
     
@@ -112,10 +109,7 @@ public enum PathologyGrades implements CodedEnum<String> {
     NOT_ASSESSED("Not assessed"),
     
     /** The OTHER. */
-    OTHER("Other"),   
-    
-    /** The POOR. */
-    POOR("Poor"),
+    OTHER("Other"),  
     
     /** The POORL y_ diffrentiated. */
     POORLY_DIFFRENTIATED("Poorly differentiated"),
@@ -128,9 +122,6 @@ public enum PathologyGrades implements CodedEnum<String> {
     
     /** The UNDETERMINE d_ grade. */
     UNDETERMINED_GRADE("Undetermined grade"),
-    
-    /** The WELL. */
-    WELL("Well"),
     
     /** The GX. */
     GX("GX"), 

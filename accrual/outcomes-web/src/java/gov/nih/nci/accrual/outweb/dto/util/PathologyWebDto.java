@@ -178,8 +178,6 @@ public class PathologyWebDto implements Serializable {
     /**
      * @param description the description to set
      */
-    @FieldExpressionValidator(expression = "description.value != null && description.value.length() > 0",
-            message = "Please provide a Pathology Description")
     public void setDescription(St description) {
         this.description = description;
     }
