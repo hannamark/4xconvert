@@ -109,10 +109,6 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
 
     private PerformanceStatusWebDto performance = new PerformanceStatusWebDto();
     
-    private static final String ECOG = "ECOG";
-    private static final String LANSKY = "Lansky";
-    private static final String KARNOFSKY = "Karnofsky";
-    
     /**
      * Had to break logic into small enough pieces to keep PMD happy.
      * 
@@ -226,17 +222,8 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
          */
         public void moveDtoToWeb() throws ExecutionException {
             // Set the display appropriately.
-            if (ECOG.equals(method.getCode())) {
-                performance.setEcogStatus(rCode);
-            } else if (LANSKY.equals(method.getCode())) {
-                performance.setLanskyStatus(rCode);
-            } else if (KARNOFSKY.equals(method.getCode())) {
-                performance.setKarnofskyStatus(rCode);
-            } else {
-                addActionError("A Performance Method other than ECOG, Lansky or Karnofsky has been recorded. "
-                        + "Can not display the current value.");
-                throw new ExecutionException(INPUT, null);
-            }
+            performance.setPerformanceSystem(method);
+            performance.setPerformanceStatus(rCode);
         }
     }
     
@@ -384,19 +371,8 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Object> {
         public void moveWebToDto() {
             po.setNameCode(CdConverter.convertStringToCd(ActivityNameCode.PERFORMANCE_STATUS.getCode()));
             List<Cd> cds = new ArrayList<Cd>();
-            String type = null;
-
-            if (!PAUtil.isCdNull(performance.getEcogStatus())) {
-                type = ECOG;
-                cr.setResultCode(performance.getEcogStatus());
-            } else if (!PAUtil.isCdNull(performance.getLanskyStatus())) {
-                type = LANSKY;
-                cr.setResultCode(performance.getLanskyStatus());
-            } else {
-                type = KARNOFSKY;
-                cr.setResultCode(performance.getKarnofskyStatus());
-            }
-            cds.add(CdConverter.convertStringToCd(type));
+            cr.setResultCode(performance.getPerformanceStatus());
+            cds.add(performance.getPerformanceSystem());
             po.setMethodCode(DSetConverter.convertCdListToDSet(cds));
         }
     }

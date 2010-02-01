@@ -84,34 +84,26 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * The Class EcogPerformanceStatusCode.
+ * The Class PerformanceSystemCode.
  * 
  * @author Kalpana Guthikonda
- * @since 11/5/2009
+ * @since 1/29/2010
  */
-public enum EcogPerformanceStatusCode implements CodedEnum<String> {
+public enum PerformanceSystemCode implements CodedEnum<String> {
 
-    /** 5. */
-    FIVE("5 - Dead"),
-    /** 4. */
-    FOUR("4 - Completely disabled. Cannot carry on any selfcare. Totally confined to bed or chair."),
-    /** 3. */
-    THREE("3 - Capable of only limited selfcare, confined to bed or chair more than 50% of waking hours."),
-    /** 2. */
-    TWO("2 - Ambulatory and capable of all selfcare but unable to carry out any work activities."
-            + " Up and about more than 50% of waking hours."),
-    /** 1. */
-    ONE("1 - Restricted in physically strenuous activity but ambulatory and able"
-                    + " to carry out work of a light or sedentary nature"),
-    /** 0. */
-    ZERO("0 - Fully active, able to carry on all pre-disease performance without restriction.");
+    /** ECOG. */
+    ECOG("ECOG"),
+    /** Karnofsky. */
+    Karnofsky("Karnofsky"),
+    /** Lansky. */
+    Lansky("Lansky");
 
     private String code;
     /**
      *
      * @param code
      */
-    private EcogPerformanceStatusCode(String code) {
+    private PerformanceSystemCode(String code) {
         this.code = code;
         register(this);
     }
@@ -142,15 +134,15 @@ public enum EcogPerformanceStatusCode implements CodedEnum<String> {
      * @param code code
      * @return PatientGenderCode
      */
-    public static EcogPerformanceStatusCode getByCode(String code) {
-        return getByClassAndCode(EcogPerformanceStatusCode.class, code);
+    public static PerformanceSystemCode getByCode(String code) {
+        return getByClassAndCode(PerformanceSystemCode.class, code);
     }
 
     /**
      * @return String[] display names of enums
      */
     public static String[]  getDisplayNames() {
-        EcogPerformanceStatusCode[] l = EcogPerformanceStatusCode.values();
+        PerformanceSystemCode[] l = PerformanceSystemCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();

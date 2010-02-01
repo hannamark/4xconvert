@@ -77,15 +77,10 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.pa.enums.EcogPerformanceStatusCode;
-import gov.nih.nci.pa.enums.KarnoskyPerformanceStatusCode;
-import gov.nih.nci.pa.enums.LanskyPerformanceStatusCode;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -93,7 +88,6 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PerformanceStatusWebDto implements Serializable {
 
     private static final long serialVersionUID = -5148496195378850252L;
@@ -102,28 +96,8 @@ public class PerformanceStatusWebDto implements Serializable {
     private Cd ecogStatus;
     private Cd karnofskyStatus;
     private Cd lanskyStatus;
-
-    /**
-     * @return false if the page has errors
-     */
-    public boolean validate() {
-        if (lanskyStatus.getCode() != null && lanskyStatus.getCode().length() > 0
-            && (ecogStatus.getCode() == null || ecogStatus.getCode().length() == 0)
-            && (karnofskyStatus.getCode() == null || karnofskyStatus.getCode().length() == 0)) {
-                return true;
-        }
-        if (ecogStatus.getCode() != null && ecogStatus.getCode().length() > 0
-            && (lanskyStatus.getCode() == null || lanskyStatus.getCode().length() == 0)
-            && (karnofskyStatus.getCode() == null || karnofskyStatus.getCode().length() == 0)) {
-                return true;
-        }
-        if (karnofskyStatus.getCode() != null && karnofskyStatus.getCode().length() > 0
-            && (ecogStatus.getCode() == null || ecogStatus.getCode().length() == 0)
-            && (lanskyStatus.getCode() == null || lanskyStatus.getCode().length() == 0)) {
-                return true;
-        }
-        return false;
-    }
+    private Cd performanceSystem;
+    private Cd performanceStatus;   
     
     /**
      * @param id the id to set
@@ -146,7 +120,6 @@ public class PerformanceStatusWebDto implements Serializable {
     /**
      * @return the ecogStatus
      */
-    @FieldExpressionValidator(expression = "validate()", message = "Please select exactly ONE Status Code.")
     public Cd getEcogStatus() {
         return ecogStatus;
     }
@@ -159,7 +132,6 @@ public class PerformanceStatusWebDto implements Serializable {
     /**
      * @return the karnofskyStatus
      */
-    @FieldExpressionValidator(expression = "validate()", message = "Please select exactly ONE Status Code.")
     public Cd getKarnofskyStatus() {
         return karnofskyStatus;
     }
@@ -172,29 +144,39 @@ public class PerformanceStatusWebDto implements Serializable {
     /**
      * @return the lanskyStatus
      */
-    @FieldExpressionValidator(expression = "validate()", message = "Please select exactly ONE Status Code.")
     public Cd getLanskyStatus() {
         return lanskyStatus;
     }
 
     /**
-     * @return the Ecog statuses
+     * @return performanceSystem
      */
-    public List<EcogPerformanceStatusCode> getEcogStatuses() {
-        return Arrays.asList(EcogPerformanceStatusCode.values());
+    @FieldExpressionValidator(expression = "performanceSystem.code != null && performanceSystem.code.length() > 0",
+            message = "Please select a Performance System")
+    public Cd getPerformanceSystem() {
+        return performanceSystem;
     }
 
     /**
-     * @return the Karnofsky statuses
+     * @param performanceSystem performanceSystem
      */
-    public List<KarnoskyPerformanceStatusCode> getKarnofskyStatuses() {
-        return Arrays.asList(KarnoskyPerformanceStatusCode.values());
+    public void setPerformanceSystem(Cd performanceSystem) {
+        this.performanceSystem = performanceSystem;
     }
 
     /**
-     * @return the Lansky statuses
+     * @return performanceStatus
      */
-    public List<LanskyPerformanceStatusCode> getLanskyStatuses() {
-        return Arrays.asList(LanskyPerformanceStatusCode.values());
+    @FieldExpressionValidator(expression = "performanceStatus.code != null && performanceStatus.code.length() > 0",
+            message = "Please select a Performance Status")
+    public Cd getPerformanceStatus() {
+        return performanceStatus;
+    }
+
+    /**
+     * @param performanceStatus performanceStatus
+     */
+    public void setPerformanceStatus(Cd performanceStatus) {
+        this.performanceStatus = performanceStatus;
     }
 }

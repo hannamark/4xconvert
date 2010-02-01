@@ -91,18 +91,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum KarnoskyPerformanceStatusCode implements CodedEnum<String> {
 
-    /** 0. */
-    ZERO("0 - Dead"),  
-    /** 50. */
-    FIFTY("50 - Requires considerable assistance and frequent medical care."),
-    /** 40. */
-    FORTY("40 - Disabled, requires special care and assistance"),    
-    /** 30. */
-    THIRTY("30 - Severely disabled, hospitalization indicated. Death not imminent"),     
-    /** 20. */
-    TWENTY("20 - Very sick, hospitalization indicated. Death not imminent"),       
-    /** 10. */
-    TEN("10 - Moribund, fatal processes progressing rapidly"),      
+    
     /** 100. */
     HUNDRED("100 - Normal, no complaints, no evidence of disease"),
     /** 90. */
@@ -112,7 +101,19 @@ public enum KarnoskyPerformanceStatusCode implements CodedEnum<String> {
     /** 70. */
     SEVENTY("70 - Cares for self, unable to carry on normal activity or to do active work"),
     /** 60. */
-    SIXTY("60 - Requires occasional assistance, but is able to care for most of his/her needs");
+    SIXTY("60 - Requires occasional assistance, but is able to care for most of his/her needs"),
+    /** 50. */
+    FIFTY("50 - Requires considerable assistance and frequent medical care."),
+    /** 40. */
+    FORTY("40 - Disabled, requires special care and assistance"),    
+    /** 30. */
+    THIRTY("30 - Severely disabled, hospitalization indicated. Death not imminent"),     
+    /** 20. */
+    TWENTY("20 - Very sick, hospitalization indicated. Death not imminent"),       
+    /** 10. */
+    TEN("10 - Moribund, fatal processes progressing rapidly"),
+    /** 0. */
+    ZERO("0 - Dead");
 
     private String code;
     /**

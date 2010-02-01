@@ -91,6 +91,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum LanskyPerformanceStatusCode implements CodedEnum<String> {
 
+    /** 100. */
+    HUNDRED("100 - Fully active, normal"),
     /** 90. */
     NINETY("90 - Minor restrictions in physically strenuous activity"),
     /** 80. */
@@ -107,13 +109,11 @@ public enum LanskyPerformanceStatusCode implements CodedEnum<String> {
    /** 30. */
    THIRTY("30 - In bed; needs assistance even for quiet play."),      
    /** 20. */
-   TWENTY("20 - Often sleeping; play entirely limited to very passive activities. "),       
+   TWENTY("20 - Often sleeping; play entirely limited to very passive activities."),       
    /** 10. */
    TEN("10 - No play; does not get out of bed."),       
    /** 0. */
-   ZERO("0 - Unresponsive"),       
-   /** 100. */
-   HUNDRED("100 - Fully active, normal");
+   ZERO("0 - Unresponsive");
 
     private String code;
     /**

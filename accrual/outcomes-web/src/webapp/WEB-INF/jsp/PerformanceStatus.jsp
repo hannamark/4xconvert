@@ -9,7 +9,16 @@
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript">
     function handleSaveAction() {
-        document.forms[0].action = "savePerformanceStatus.action";
+		if (document.getElementById('performance.performanceSystem').value == 'Karnofsky'){
+			document.forms[0].elements["performance.performanceStatus"].value = document.forms[0].elements["performance.karnofskyStatus"].value
+		} else if (document.getElementById('performance.performanceSystem').value == 'ECOG'){
+			document.forms[0].elements["performance.performanceStatus"].value = document.forms[0].elements["performance.ecogStatus"].value
+		} else if (document.getElementById('performance.performanceSystem').value == 'Lansky'){
+			document.forms[0].elements["performance.performanceStatus"].value = document.forms[0].elements["performance.lanskyStatus"].value
+		} else {
+			document.forms[0].elements["performance.performanceStatus"].value ="";
+		}
+		document.forms[0].action = "savePerformanceStatus.action";
         document.forms[0].submit();
     }
 
@@ -17,6 +26,58 @@
         document.forms[0].action = "executePerformanceStatus.action";
         document.forms[0].submit();
     }
+    function setPerformanceStatusCodes(ref){	
+		if (ref.value == 'Karnofsky') {
+			document.getElementById('karnofskyStatusid').style.display = '';
+			document.getElementById('ecogStatusid').style.display = 'none';
+			document.getElementById('lanskyStatusid').style.display = 'none';
+			document.getElementById('performanceStatusid').style.display = 'none';
+		} else if (ref.value == 'ECOG') {
+			document.getElementById('karnofskyStatusid').style.display = 'none';
+			document.getElementById('ecogStatusid').style.display = '';
+			document.getElementById('lanskyStatusid').style.display = 'none';
+			document.getElementById('performanceStatusid').style.display = 'none';
+		} else if (ref.value == 'Lansky') {
+			document.getElementById('karnofskyStatusid').style.display = 'none';
+			document.getElementById('ecogStatusid').style.display = 'none';
+			document.getElementById('lanskyStatusid').style.display = '';
+			document.getElementById('performanceStatusid').style.display = 'none';
+		} else {
+			document.getElementById('karnofskyStatusid').style.display = 'none';
+			document.getElementById('ecogStatusid').style.display = 'none';
+			document.getElementById('lanskyStatusid').style.display = 'none';
+			document.getElementById('performanceStatusid').style.display = '';
+		}
+	}
+	function checkStatus(){
+		if (document.getElementById('performance.performanceSystem').value == 'Karnofsky'){
+			showRow(document.getElementById('karnofskyStatusid'));
+			hideRow(document.getElementById('ecogStatusid'));
+			hideRow(document.getElementById('lanskyStatusid'));
+			hideRow(document.getElementById('performanceStatusid'));
+		} else if (document.getElementById('performance.performanceSystem').value == 'ECOG'){
+			hideRow(document.getElementById('karnofskyStatusid'));
+			showRow(document.getElementById('ecogStatusid'));
+			hideRow(document.getElementById('lanskyStatusid'));
+			hideRow(document.getElementById('performanceStatusid'));
+		} else if (document.getElementById('performance.performanceSystem').value == 'Lansky'){
+			hideRow(document.getElementById('karnofskyStatusid'));
+			hideRow(document.getElementById('ecogStatusid'));
+			showRow(document.getElementById('lanskyStatusid'));
+			hideRow(document.getElementById('performanceStatusid'));
+		} else {
+			showRow(document.getElementById('performanceStatusid'));
+		}
+	}
+	function hideRow(row){			
+			row.style.display = 'none';	
+	}
+	function showRow(row){
+			row.style.display = '';
+	}
+	window.onload = checkStatus;
+	
+
 </script>
 <title>
         <c:set var="topic" scope="request" value="performance"/> 
@@ -34,20 +95,37 @@
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if><s:else><accrual:sucessMessage /></s:else>
 <s:form name="detailForm">
 <s:hidden name="performance.id" />
-<label><fmt:message key="perfStatus.label.onlyOne"/></label>
+<s:hidden name="performance.performanceStatus" />
 <table class="form">
-<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.ecog"/></label></td>
-<td><s:select id="performance.ecogStatus" name="performance.ecogStatus" headerKey="" headerValue="--Select--"
-               list="performance.ecogStatuses" listKey="code" listValue="code" value="performance.ecogStatus.code"/>
-               <s:fielderror cssClass="formErrorMsg"><s:param>performance.ecogStatus</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.karn"/></label></td>
-<td><s:select id="performance.karnofskyStatus" name="performance.karnofskyStatus" headerKey="" headerValue="--Select--"
-               list="performance.karnofskyStatuses" listKey="code" listValue="code" value="performance.karnofskyStatus.code"/>
-               <s:fielderror cssClass="formErrorMsg"><s:param>performance.karnofskyStatus</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.lans"/></label></td>
-<td><s:select id="performance.lanskyStatus" name="performance.lanskyStatus" headerKey="" headerValue="--Select--"
-               list="performance.lanskyStatuses" listKey="code" listValue="code" value="performance.lanskyStatus.code"/>
-               <s:fielderror cssClass="formErrorMsg"><s:param>performance.lanskyStatus</s:param></s:fielderror></td></tr>
+<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.system"/><span class="required">*</span></label></td>
+<td><s:set name="performanceSystems" value="@gov.nih.nci.pa.enums.PerformanceSystemCode@getDisplayNames()" />
+		<s:select id="performance.performanceSystem" name="performance.performanceSystem" headerKey="" headerValue="--Select--"
+               list="#performanceSystems" value="performance.performanceSystem.code" onclick="setPerformanceStatusCodes(this);"/>
+               <s:fielderror cssClass="formErrorMsg"><s:param>performance.performanceSystem</s:param></s:fielderror></td></tr>
+               
+<tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.status"/><span class="required">*</span></label></td>
+<td>
+		<div id="performanceStatusid" style="display:''">
+				<select name="" id="performanceStatusnoneselected" style="width:150px">
+    					<option value="-Select-">-Select-</option>
+    			</select>
+    	</div>
+    	<div id="ecogStatusid" style="display:none">
+    			<s:set name="ecogStatuses" value="@gov.nih.nci.pa.enums.EcogPerformanceStatusCode@getDisplayNames()" />
+				<s:select id="performance.ecogStatus" name="performance.ecogStatus" headerKey="" headerValue="--Select--"
+               list="#ecogStatuses" value="performance.performanceStatus.code"/>
+        </div> 
+		<div id="karnofskyStatusid" style="display:none">
+				<s:set name="karnofskyStatuses" value="@gov.nih.nci.pa.enums.KarnoskyPerformanceStatusCode@getDisplayNames()" />
+				<s:select id="performance.karnofskyStatus" name="performance.karnofskyStatus" headerKey="" headerValue="--Select--"
+	               list="#karnofskyStatuses" value="performance.performanceStatus.code"/>
+	     </div>
+		<div id="lanskyStatusid" style="display:none">
+				<s:set name="lanskyStatuses" value="@gov.nih.nci.pa.enums.LanskyPerformanceStatusCode@getDisplayNames()" />
+				<s:select id="performance.lanskyStatus" name="performance.lanskyStatus" headerKey="" headerValue="--Select--"
+               list="#lanskyStatuses" value="performance.performanceStatus.code"/>
+        </div>
+         <s:fielderror cssClass="formErrorMsg"><s:param>performance.performanceStatus</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
 
