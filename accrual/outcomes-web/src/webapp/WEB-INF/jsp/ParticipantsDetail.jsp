@@ -34,10 +34,10 @@ function handleEditAction(){
         <fmt:message key="participant.create.title" /></s:if>
     <s:elseif test="%{currentAction == 'update'}">
         <c:set var="topic" scope="request" value="update_patient"/> 
-        <fmt:message key="participant.retrieve.title" /></s:elseif>
+        <fmt:message key="participant.update.title" /></s:elseif>
     <s:elseif test="%{currentAction == 'retrieve'}">
         <c:set var="topic" scope="request" value="view_patient"/> 
-        <fmt:message key="participant.update.title" /></s:elseif>
+        <fmt:message key="participant.retrieve.title" /></s:elseif>
 </title>        
     <s:head/>
 </head>
