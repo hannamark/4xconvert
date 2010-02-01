@@ -20,10 +20,8 @@
     }   
 	
 	function handleEditAction(){
-	if (confirm("Select OK to complete the Save. Once saved can not be Deleted!")) {
-		    document.forms[0].action="editTreatment.action";
-		    document.forms[0].submit();
-	    }
+		document.forms[0].action="editTreatment.action";
+		document.forms[0].submit();
 	}
     
 
