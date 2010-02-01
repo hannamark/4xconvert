@@ -9,7 +9,7 @@
  <dependencies>
 <!-- runtime -->
 <dependency org="ncicb" name="pa-ejb-client" rev="3.2-alpha1" force="true" conf="runtime->default"/>
-<dependency org="ncicb" name="pa-commons" rev="3.2-alpha2" force="true" conf="runtime"/>
+<dependency org="ncicb" name="pa-commons" rev="3.2-alpha3" force="true" conf="runtime"/>
 <dependency org="jakarta" name="commons-collections" rev="3.2.1" conf="runtime->master"/>
 <dependency org="jakarta" name="commons-fileupload" rev="1.2.1" conf="runtime->master"/>
 <dependency org="jakarta" name="commons-io" rev="1.4"  conf="runtime->master"/>

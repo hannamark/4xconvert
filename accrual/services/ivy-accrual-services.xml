@@ -43,7 +43,7 @@
     <dependency org="org.jdom"               name="jdom"                    rev="0.9"             conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql-jdbc3"        rev="8.3-603"         conf="compile->master"/>
     <dependency org="springsource"           name="spring"                  rev="2.0.5"           conf="compile->master"/>
-    <dependency org="ncicb"                  name="pa-commons"              rev="3.2-alpha2"      conf="compile->test"/>
+    <dependency org="ncicb"                  name="pa-commons"              rev="3.2-alpha3"      conf="compile->test"/>
 
     <!-- unit test target -->
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>

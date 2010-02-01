@@ -29,7 +29,7 @@
     <property name="ivy.file" value="ivy-2.0.0-beta2.jar" />
     <property name="ivy-cacore.file" value="ivy-cacore-2.0.0-beta2.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
-    <property name="ivy.def.file" location="ivy-accrual-web.xml" />
+    <property name="ivy.def.file" location="ivy-accrual-outcomes-web.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
 
@@ -82,7 +82,7 @@
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
-    
+
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${web.report.dir}"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
@@ -110,20 +110,20 @@
     <target name="compile"  depends="pre-clean" description="Compiles the subproject">
         <fail unless="jboss.deploy.dir" message="Property jboss.deploy.dir not set.  Check build.properties file."/>
         <mkdir dir="${web.build.outputDir}"/>
-        <javac destdir="${web.build.outputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${web.build.outputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${web.build.srcDir}"/>
             </src>
             <classpath>
-                <path refid="compile.classpath"/> 
+                <path refid="compile.classpath"/>
             </classpath>
         </javac>
         <fail unless="application.url" message="Property application.url not set.  Check build.properties file."/>
@@ -144,25 +144,25 @@
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests" 
-      depends="compile" 
-      description="Compile the test code"> 
+    <target name="compile-tests"
+      depends="compile"
+      description="Compile the test code">
         <mkdir dir="${web.build.testOutputDir}"/>
-        <javac destdir="${web.build.testOutputDir}" 
-               nowarn="false" 
-               debug="true" 
-               optimize="false" 
-               deprecation="true" 
-               target="1.5" 
-               verbose="false" 
-               fork="false" 
+        <javac destdir="${web.build.testOutputDir}"
+               nowarn="false"
+               debug="true"
+               optimize="false"
+               deprecation="true"
+               target="1.5"
+               verbose="false"
+               fork="false"
                source="1.5">
             <src>
                 <pathelement location="${web.build.testSrcDir}"/>
             </src>
             <classpath>
-                <pathelement location="${web.build.outputDir}"/> 
-                <path refid="compile.classpath"/> 
+                <pathelement location="${web.build.outputDir}"/>
+                <path refid="compile.classpath"/>
                 <path refid="test.classpath"/>
             </classpath>
         </javac>
@@ -206,18 +206,18 @@
                 </fileset>
             </batchtest>
         </junit>
-        
+
         <cobertura-report datafile="${web.build.dir}/cobertura.ser"
-                          destdir="${web.test.reports}" 
+                          destdir="${web.test.reports}"
                           srcdir="${web.build.srcDir}"/>
-        
+
         <cobertura-report datafile="${web.build.dir}/cobertura.ser"
                           format="xml"
-                          destdir="${web.test.reports}" 
+                          destdir="${web.test.reports}"
                           srcdir="${web.build.srcDir}"/>
 
         <cobertura-check datafile="${web.build.dir}/cobertura.ser"
-                         totalbranchrate="10" 
+                         totalbranchrate="10"
                          totallinerate="10"
                          haltonfailure="true"/>
      </target>
@@ -228,9 +228,9 @@
     <!-- ====================================================================== -->
 
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" 
+        <taskdef resource="checkstyletask.properties"
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
-             
+
         <checkstyle config="${checkstyleFile}" failOnViolation="true">
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain"/>
@@ -245,11 +245,11 @@
     <!-- ====================================================================== -->
 
     <target name="test-pmd">
-        <taskdef name="pmd" 
+        <taskdef name="pmd"
              classpath="${test-pmd.jar.dir}/pmd-4.2.2.jar"
              classname="net.sourceforge.pmd.ant.PMDTask"/>
-             
-        <pmd shortFilenames="true" failOnRuleViolation="true" 
+
+        <pmd shortFilenames="true" failOnRuleViolation="true"
                                    rulesetfiles="${pmdFile}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${web.report.dir}/pmd.txt"/>
@@ -266,7 +266,7 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties" 
+       <taskdef resource="simiantask.properties"
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
             <fileset dir="src" includes="**/*.java"/>
@@ -293,7 +293,7 @@
     <target name="test" depends="test-cobertura"
             description="Runs various tests in the subproject">
     </target>
-    
+
     <target name="test-dynamic-analysis" depends="inspect, test"
         description="Runs full analysis and test">
     </target>
@@ -308,8 +308,8 @@
         <copy todir="${web.build.dir}/${web.build.finalName}/WEB-INF/lib">
             <fileset dir="${lib.dir}/outcomes-web/runtime"/>
         </copy>
-        <war destfile="${web.build.dir}/${web.war}" 
-             compress="false" 
+        <war destfile="${web.build.dir}/${web.war}"
+             compress="false"
              webxml="${web.build.webappDir}/WEB-INF/web.xml">
             <lib dir="${web.build.dir}/${web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${web.build.outputDir}"/>
@@ -380,7 +380,7 @@
             depends="ivy-compile, ivy-runtime, ivy-test"
             description="Updates the local ivy repository">
     </target>
-    
+
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}/outcomes-web"/>
     </target>
@@ -402,15 +402,15 @@
                         <include name="WEB-INF/jsp/*.jsp"/>
                         <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
                         <include name="WEB-INF/jsp/common/*.jsp"/>
-                        <include name="WEB-INF/tags/*.tag"/>    
+                        <include name="WEB-INF/tags/*.tag"/>
                         <include name="styles/*.css"/>
-                        <include name="scripts/js/*.js"/>     
-                        <include name="scripts/ajax/*.js"/>   
+                        <include name="scripts/js/*.js"/>
+                        <include name="scripts/ajax/*.js"/>
                     </fileset>
                 </copy>
             </sequential>
         </for>
-    </target> 
+    </target>
 
 </project>
 
