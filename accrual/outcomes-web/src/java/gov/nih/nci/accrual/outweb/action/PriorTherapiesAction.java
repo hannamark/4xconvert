@@ -83,7 +83,6 @@ import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.outweb.dto.util.PriorTherapiesItemWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.PriorTherapiesWebDto;
-import gov.nih.nci.accrual.outweb.dto.util.PriorTherapyTypesWebDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.Ii;
@@ -122,11 +121,6 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     private PriorTherapiesWebDto priors = new PriorTherapiesWebDto();
     private PriorTherapiesItemWebDto newPrior = new PriorTherapiesItemWebDto();
     private String delItem = null;
-    private String lookupItem = null;
-
-    private List<PriorTherapyTypesWebDto> disWebList = new ArrayList<PriorTherapyTypesWebDto>();
-    private PriorTherapyTypesWebDto priorTherapy = new PriorTherapyTypesWebDto();
-    private String searchTherapy = null;
 
     /**
      * {@inheritDoc}
@@ -166,7 +160,6 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
         priors.setChemoRegimenNum(db.getChemoRegimenNum());
         priors.setTotalRegimenNum(db.getTotalRegimenNum());
         delItem = null;
-        lookupItem = null;
         
     }
     /**
@@ -449,62 +442,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     public String getDelItem() {
         return delItem;
     }
-
-    /**
-     * @param disWebList the disWebList to set
-     */
-    public void setDisWebList(List<PriorTherapyTypesWebDto> disWebList) {
-        this.disWebList = disWebList;
-    }
-
-    /**
-     * @return the disWebList
-     */
-    public List<PriorTherapyTypesWebDto> getDisWebList() {
-        return disWebList;
-    }
-
-    /**
-     * @param searchTherapy the searchTherapy to set
-     */
-    public void setSearchTherapy(String searchTherapy) {
-        this.searchTherapy = searchTherapy;
-    }
-
-    /**
-     * @return the searchTherapy
-     */
-    public String getSearchTherapy() {
-        return searchTherapy;
-    }
-
-    /**
-     * @param priorTherapy the priorTherapy to set
-     */
-    public void setPriorTherapy(PriorTherapyTypesWebDto priorTherapy) {
-        this.priorTherapy = priorTherapy;
-    }
-
-    /**
-     * @return the priorTherapy
-     */
-    public PriorTherapyTypesWebDto getPriorTherapy() {
-        return priorTherapy;
-    }
-
-    /**
-     * @param lookupItem the lookupItem to set
-     */
-    public void setLookupItem(String lookupItem) {
-        this.lookupItem = lookupItem;
-    }
-
-    /**
-     * @return the lookupItem
-     */
-    public String getLookupItem() {
-        return lookupItem;
-    }
+    
     @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     private PriorTherapiesWebDto getData() {
         PriorTherapiesWebDto dbPriors = new PriorTherapiesWebDto();      

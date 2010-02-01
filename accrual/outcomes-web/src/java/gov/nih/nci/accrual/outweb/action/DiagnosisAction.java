@@ -81,9 +81,8 @@ package gov.nih.nci.accrual.outweb.action;
 
 import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.accrual.outweb.dto.util.DiagnosisItemWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.DiagnosisWebDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.coppa.iso.Ivl;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Ts;
@@ -92,7 +91,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -112,7 +110,6 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     private static final long serialVersionUID = 1L;
 
     private DiagnosisWebDto diagnosis = new DiagnosisWebDto();
-    private List<DiagnosisItemWebDto> disWebList = new ArrayList<DiagnosisItemWebDto>();
     private St searchDiagnosis = null;
 
     /**
@@ -255,20 +252,6 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     @VisitorFieldValidator(message = "> ")
     public DiagnosisWebDto getDiagnosis() {
         return diagnosis;
-    }
-
-    /**
-     * @param disWebList the disWebList to set
-     */
-    public void setDisWebList(List<DiagnosisItemWebDto> disWebList) {
-        this.disWebList = disWebList;
-    }
-
-    /**
-     * @return the disWebList
-     */
-    public List<DiagnosisItemWebDto> getDisWebList() {
-        return disWebList;
     }
 
     /**
