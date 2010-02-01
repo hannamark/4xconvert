@@ -276,7 +276,7 @@ public class PDQIntervention extends AbstractPDQProcessor {
             try {
                 cd = InterventionTypeCode.getByCode(value);
             } catch (Exception e) {
-                LOG.info("CtGov value " + value + "converted to OTHER");
+                LOG.debug("CtGov value " + value + "converted to OTHER");
             }
         }
         return cd;

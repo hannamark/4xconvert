@@ -122,8 +122,8 @@ public class DiseaseScript extends BaseScript {
             new FileOutputStream(fName);
             out = new PrintStream(new BufferedOutputStream(new FileOutputStream(fName, true)));
             out.println("UPDATE disease SET status_code = '" + ActiveInactivePendingCode.INACTIVE.getName() + "';");
-            out.println("TRUNCATE disease_altername;");
-            out.println("TRUNCATE disease_parent;");
+            out.println("DELETE FROM disease_altername;");
+            out.println("DELETE FROM disease_parent;");
           }
           catch (IOException iox)
           {
@@ -181,7 +181,7 @@ public class DiseaseScript extends BaseScript {
 
     private void parentsAdd() {
         for (DisPar dp : parents) {
-            LOG.info(dp.childCode + " - " + dp.parentCode + " - " + dp.parentType);
+            LOG.debug(dp.childCode + " - " + dp.parentCode + " - " + dp.parentType);
             if (codeMap.containsKey(dp.childCode) && codeMap.containsKey(dp.parentCode)) {
                 out.println("INSERT INTO disease_parent (disease_identifier,parent_disease_identifier,parent_disease_code,status_code,status_date_range_low)"
                         + " VALUES (" + codeMap.get(dp.childCode) + "," + codeMap.get(dp.parentCode) + "," + fixString(dp.parentType) + ",'"

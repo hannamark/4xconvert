@@ -85,6 +85,7 @@ import gov.nih.nci.pa.pdq.xml.Rule;
 import gov.nih.nci.pa.pdq.xml.XMLFileParser;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -102,8 +103,11 @@ public class Loader {
 
     /**
      * @param args
+     * @throws IOException 
      */
-    public static void main(String[] args) throws PDQException {
+    public static void main(String[] args) throws PDQException, IOException {
+        
+        DownloadTerminology.process();
         ArrayList<String> invalid = new ArrayList<String>();
         SortedMap<Rule, Integer> counts = new TreeMap<Rule, Integer>();
         for (Rule r : Rule.values()) {
@@ -128,7 +132,7 @@ public class Loader {
                 doc = XMLFileParser.getParser().parseFile(PDQConstants.DIRECTORY_NAME + "/"+ filename);
                 try {
                     Rule rule = Interpret.getInterpreter().process(doc);
-                    LOG.info("file = " + filename + "  rule = " + rule);
+                    LOG.debug("file = " + filename + "  rule = " + rule);
                     counts.put(rule, counts.get(rule) + 1);
                     if (rule.equals(Rule.INVALID)) {
                         invalid.add(filename);

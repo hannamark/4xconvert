@@ -157,10 +157,10 @@ public class Interpret {
                     }
                 }
             } else {
-                LOG.warn("Invalid file.  ");
+                LOG.debug("Invalid file.  "+ " term "+term);
             }
         }
-        LOG.info("term = " + term + "  semantic = " + semanticList + "  pn = " + preferredName);
+        LOG.debug("term = " + term + "  semantic = " + semanticList + "  pn = " + preferredName);
         return result;
     }
 }

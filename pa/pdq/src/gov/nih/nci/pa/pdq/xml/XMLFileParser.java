@@ -159,10 +159,10 @@ public class XMLFileParser {
         String nodeValue = getElementValue(node);
         // get attributes of element
         NamedNodeMap attributes = node.getAttributes();
-        LOG.info(getIndentSpaces(indent) + "NodeName: " + nodeName + ", NodeValue: " + nodeValue);
+        LOG.debug(getIndentSpaces(indent) + "NodeName: " + nodeName + ", NodeValue: " + nodeValue);
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
-            LOG.info(getIndentSpaces(indent + 2) + "AttributeName: " + attribute.getNodeName() + ", attributeValue: " + attribute.getNodeValue());
+            LOG.debug(getIndentSpaces(indent + 2) + "AttributeName: " + attribute.getNodeName() + ", attributeValue: " + attribute.getNodeValue());
         }
         // write all child nodes recursively
         NodeList children = node.getChildNodes();
