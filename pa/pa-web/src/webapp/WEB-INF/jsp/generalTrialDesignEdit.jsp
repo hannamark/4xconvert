@@ -122,6 +122,7 @@
         <s:hidden name="gtdDTO.phaseOtherText" id= "gtdDTO.phaseOtherText"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeCode" id= "gtdDTO.primaryPurposeCode"></s:hidden>
         <s:hidden name="gtdDTO.primaryPurposeOtherText" id= "gtdDTO.primaryPurposeOtherText"></s:hidden>
+        <s:hidden name="gtdDTO.localProtocolIdentifier" id="gtdDTO.localProtocolIdentifier"></s:hidden>
     </c:if>
     <c:if test="${sessionScope.trialSummary.isProprietaryTrial == 'true'}">
         <s:hidden name="gtdDTO.centralContactName" id="gtdDTO.centralContactName"></s:hidden>
