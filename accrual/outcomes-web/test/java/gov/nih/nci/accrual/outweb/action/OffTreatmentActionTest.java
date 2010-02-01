@@ -117,6 +117,7 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
         assertEquals(ActionSupport.ERROR, action.execute());
         setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertNotNull(action.getOffTreat().getOffTreatmentReasons());
     }
 
     @Override

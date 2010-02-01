@@ -78,8 +78,6 @@
 package gov.nih.nci.accrual.outweb.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.accrual.outweb.dto.util.DiagnosisItemWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.DiagnosisWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
 import gov.nih.nci.coppa.iso.St;
@@ -88,7 +86,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 
 import org.junit.Before;
@@ -131,16 +128,12 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
         assertEquals(ActionSupport.ERROR, dAction.execute());
         setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
-
-        assertNotNull(dAction.getDisWebList());
     }
 
     @Test
     public void execute2ndTest() {
         setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
-        dAction.setDisWebList(new ArrayList<DiagnosisItemWebDto>());
-        assertNotNull(dAction.getDisWebList());
     }
 
     /**

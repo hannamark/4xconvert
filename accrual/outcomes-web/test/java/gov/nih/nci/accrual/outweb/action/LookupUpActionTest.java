@@ -188,6 +188,11 @@ public class LookupUpActionTest extends AbstractAccrualActionTest {
       assertNotNull(action.getLookUpList());
       assertEquals(ActionSupport.SUCCESS, action.unitOfMeasurement());  
       assertNotNull(action.getLookUpList());
+      assertNotNull(action.getLookUpList().get(0).getCode());
+      assertNotNull(action.getLookUpList().get(0).getId());
+      assertNotNull(action.getLookUpList().get(0).getDisplayName());
+      assertNotNull(action.getLookUpList().get(0).getDescription());
+      assertNotNull(action.getLookUpList().get(0).getType());
     }
 
     @Test

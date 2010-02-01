@@ -148,7 +148,7 @@ public class PriorTherapiesActionTest extends AbstractAccrualActionTest {
         action.setDelItem("1");
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.delete());
         assertNotNull(action.getPriors());
-        assertNotNull(action.getPriorTherapy());
+        //assertNotNull(action.getPriorTherapy());
         assertNotNull(action.getNewPrior());
         assertNotNull(action.getDelItem());
     }

@@ -80,7 +80,6 @@ package gov.nih.nci.accrual.outweb.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.PerformanceStatusWebDto;
-import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
 import org.junit.Before;
@@ -106,29 +105,8 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
         dAction.prepare();
         dAction.setPerformance(new PerformanceStatusWebDto());
         PerformanceStatusWebDto temp = dAction.getPerformance();
-        temp.setKarnofskyStatus(CdConverter.convertStringToCd("100"));
-    }
-    
-    @Test
-    public void webDtoTest() {
-        dAction.getPerformance().setLanskyStatus(CdConverter.convertStringToCd("300"));
-        dAction.getPerformance().setKarnofskyStatus(new Cd());
-        dAction.getPerformance().setEcogStatus(new Cd());
-        assertEquals(true, dAction.getPerformance().validate());
-        
-        dAction.getPerformance().setEcogStatus(CdConverter.convertStringToCd("300"));
-        dAction.getPerformance().setKarnofskyStatus(new Cd());
-        dAction.getPerformance().setLanskyStatus(new Cd());
-        assertEquals(true, dAction.getPerformance().validate());
-        
-        dAction.getPerformance().setKarnofskyStatus(CdConverter.convertStringToCd("300"));
-        dAction.getPerformance().setEcogStatus(new Cd());
-        dAction.getPerformance().setLanskyStatus(new Cd());
-        assertEquals(true, dAction.getPerformance().validate());
-        
-        dAction.getPerformance().setEcogStatus(CdConverter.convertStringToCd("200"));
-        dAction.getPerformance().setLanskyStatus(CdConverter.convertStringToCd("300"));
-        assertEquals(false, dAction.getPerformance().validate());
+        temp.setPerformanceSystem(CdConverter.convertStringToCd("Karnofsky"));
+        temp.setPerformanceStatus(CdConverter.convertStringToCd("100"));
     }
 
     /**
@@ -193,16 +171,13 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
     }
     
     @Test
-    public void lanskyTest() {
+    public void webDTOPropertiesTest() {
         PerformanceStatusWebDto temp = dAction.getPerformance();
         temp.setLanskyStatus(CdConverter.convertStringToCd("0"));
-        assertEquals(ActionSupport.SUCCESS, dAction.save());
-    }
-    
-    @Test
-    public void ecogTest() {
-        PerformanceStatusWebDto temp = dAction.getPerformance();
+        assertNotNull(dAction.getPerformance().getLanskyStatus());
         temp.setEcogStatus(CdConverter.convertStringToCd("2"));
-        assertEquals(ActionSupport.SUCCESS, dAction.save());
+        assertNotNull(dAction.getPerformance().getEcogStatus());
+        temp.setKarnofskyStatus(CdConverter.convertStringToCd("100"));
+        assertNotNull(dAction.getPerformance().getKarnofskyStatus());
     }
 }
