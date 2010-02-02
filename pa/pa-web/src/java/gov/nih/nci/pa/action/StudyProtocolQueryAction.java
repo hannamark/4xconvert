@@ -265,16 +265,19 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                 setCheckoutStatus(true);
             }
             setLocalTrialIdentifier(studyProtocolQueryDTO.getLocalStudyProtocolIdentifier());
+            if (studyProtocolQueryDTO.getIsProprietaryTrial() == null 
+                    || studyProtocolQueryDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
             setNctIdentifier(paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
                     studyProtocolId), PAConstants.NCT_IDENTIFIER_TYPE));
             setDcpIdentifier(paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
                     studyProtocolId), PAConstants.DCP_IDENTIFIER_TYPE));
             setCtepIdentifier(paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
                     studyProtocolId), PAConstants.CTEP_IDENTIFIER_TYPE));
+            }
             return "view";
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
-            return ERROR;
+            return "view";
         }
     }
     
@@ -401,45 +404,51 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                 serviceUtil.manageStudyIdentifiers(identifierDTO);
             }
             Ii studyProtocolIi  = IiConverter.convertToStudyProtocolIi(studyProtocolId);
-            String dbNctNumber = serviceUtil.getStudyIdentifier(studyProtocolIi ,
-                    PAConstants.NCT_IDENTIFIER_TYPE);
-            if (!dbNctNumber.equals(nctIdentifier)) {
-                identifierDTO = new StudySiteDTO();
-                identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
-                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(nctIdentifier));
-                identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+            if (studyProtocolQueryDTO.getIsProprietaryTrial() == null 
+                    || studyProtocolQueryDTO.getIsProprietaryTrial().equalsIgnoreCase("false")) {
+                String dbNctNumber = serviceUtil.getStudyIdentifier(studyProtocolIi ,
                         PAConstants.NCT_IDENTIFIER_TYPE);
-                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                        getPoResearchOrganizationByEntityIdentifier(
-                        IiConverter.convertToPoOrganizationIi(poOrgId)));
-                serviceUtil.manageStudyIdentifiers(identifierDTO);
-            }
-            String dbCtepId =  serviceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
-            if (!dbCtepId.equals(ctepIdentifier)) {
-                identifierDTO = new StudySiteDTO();
-                identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
-                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(ctepIdentifier));
-                identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                        PAConstants.CTEP_IDENTIFIER_TYPE);
-                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                        getPoResearchOrganizationByEntityIdentifier(
-                        IiConverter.convertToPoOrganizationIi(poOrgId)));
-                serviceUtil.manageStudyIdentifiers(identifierDTO);   
-            }
-            String dbDcpId = serviceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
-            if (!dbDcpId.equals(dcpIdentifier)) {
-                identifierDTO = new StudySiteDTO();
-                identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
-                identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(dcpIdentifier));
-                identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-                        PAConstants.DCP_IDENTIFIER_TYPE);
-                identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                        getPoResearchOrganizationByEntityIdentifier(
-                        IiConverter.convertToPoOrganizationIi(poOrgId)));
-                serviceUtil.manageStudyIdentifiers(identifierDTO);   
+                if (!dbNctNumber.equals(nctIdentifier)) {
+                    identifierDTO = new StudySiteDTO();
+                    identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+                    identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(nctIdentifier));
+                    identifierDTO.setFunctionalCode(CdConverter.convertToCd(
+                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+                    String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                            PAConstants.NCT_IDENTIFIER_TYPE);
+                    identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                            getPoResearchOrganizationByEntityIdentifier(
+                            IiConverter.convertToPoOrganizationIi(poOrgId)));
+                    serviceUtil.manageStudyIdentifiers(identifierDTO);
+                }
+                String dbCtepId =  serviceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
+                if (!dbCtepId.equals(ctepIdentifier)) {
+                    identifierDTO = new StudySiteDTO();
+                    identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+                    identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(ctepIdentifier));
+                    identifierDTO.setFunctionalCode(CdConverter.convertToCd(
+                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+                    String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                            PAConstants.CTEP_IDENTIFIER_TYPE);
+                    identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                            getPoResearchOrganizationByEntityIdentifier(
+                            IiConverter.convertToPoOrganizationIi(poOrgId)));
+                    serviceUtil.manageStudyIdentifiers(identifierDTO);   
+                }
+                String dbDcpId = serviceUtil.getStudyIdentifier(studyProtocolIi, PAConstants.CTEP_IDENTIFIER_TYPE);
+                if (!dbDcpId.equals(dcpIdentifier)) {
+                    identifierDTO = new StudySiteDTO();
+                    identifierDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+                    identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(dcpIdentifier));
+                    identifierDTO.setFunctionalCode(CdConverter.convertToCd(
+                            StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+                    String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                            PAConstants.DCP_IDENTIFIER_TYPE);
+                    identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                            getPoResearchOrganizationByEntityIdentifier(
+                            IiConverter.convertToPoOrganizationIi(poOrgId)));
+                    serviceUtil.manageStudyIdentifiers(identifierDTO);   
+                }
             }
             view(); 
             return "view";

@@ -155,5 +155,12 @@ public class PAConstants {
      * LEAD IDENTIFIER.
      */
     public static final String LEAD_IDENTIFER_TYPE = "LeadIdentifier";
-    
+    /**
+     * USA.
+     */
+    public static final String USA = "USA";
+    /**
+     * Canada.
+     */
+    public static final String CANADA = "CAN";
 }

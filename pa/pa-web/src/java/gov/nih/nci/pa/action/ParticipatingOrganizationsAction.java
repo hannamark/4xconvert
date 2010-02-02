@@ -657,7 +657,12 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         try {
             createStudyParticationContactRecord(tab, isPrimaryContact, roleCode, null);
         } catch (PAException e) {
-            addActionError("Exception:Investigator can not be added to the Nullified Org" + e.getLocalizedMessage());
+            if (PAUtil.isNotEmpty(e.getLocalizedMessage())) {
+                addActionError(e.getLocalizedMessage());
+            } else {
+                addActionError("Exception:Investigator can not be added to the Nullified Org" 
+                        + e.getLocalizedMessage());
+            }
             return DISPLAY_SPART_CONTACTS;
         }
         // This makes a fresh db call to show the result on the JSP

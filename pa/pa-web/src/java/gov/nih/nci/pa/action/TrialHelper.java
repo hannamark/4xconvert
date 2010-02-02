@@ -63,6 +63,7 @@ public class TrialHelper {
     private static final String FALSE = "FALSE";
     private static final String ABSTRACTION = "Abstraction";
     private static final String VALIDATION = "Validation";
+    private PAUtil paUtil = new PAUtil();
     /**
      * 
      * @param studyProtocolIi Ii
@@ -275,7 +276,8 @@ public class TrialHelper {
         List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
         List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
         if (phones != null && !phones.isEmpty()) {
-            gtdDTO.setContactPhone(phones.get(0));
+           gtdDTO.setContactPhone(paUtil.getPhone(phones.get(0)));
+           gtdDTO.setContactPhoneExtn(paUtil.getPhoneExtn(phones.get(0))); 
         }
         if (emails != null && !emails.isEmpty()) {
             gtdDTO.setContactEmail(emails.get(0));
@@ -342,7 +344,8 @@ public class TrialHelper {
             List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
             List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
             if (phones != null && !phones.isEmpty()) {
-                gtdDTO.setCentralContactPhone(phones.get(0));
+                gtdDTO.setCentralContactPhone(paUtil.getPhone(phones.get(0)));
+                gtdDTO.setCentralContactPhoneExtn(paUtil.getPhoneExtn(phones.get(0)));
             }
             if (emails != null && !emails.isEmpty()) {
                 gtdDTO.setCentralContactEmail(emails.get(0));
@@ -415,6 +418,11 @@ public class TrialHelper {
 
         ClinicalResearchStaffCorrelationServiceBean crbb = new ClinicalResearchStaffCorrelationServiceBean();
         String phone = gtdDTO.getCentralContactPhone().trim();
+        if (PAUtil.isNotEmpty(gtdDTO.getCentralContactPhoneExtn())) {
+            StringBuffer phoneWithExtn = new StringBuffer();
+            phoneWithExtn.append(phone).append("extn").append(gtdDTO.getCentralContactPhoneExtn());
+            phone = phoneWithExtn.toString();
+        }
         Ii selectedCenteralContactIi  = null;
         if (PAUtil.isNotEmpty(gtdDTO.getCentralContactIdentifier())) {
             PersonDTO isoPerDTO = PoRegistry.getPersonEntityService().getPerson(
@@ -497,6 +505,11 @@ public class TrialHelper {
             GeneralTrialDesignWebDTO gtdDTO) throws PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
         String phone = gtdDTO.getContactPhone().trim();
+        if (PAUtil.isNotEmpty(gtdDTO.getContactPhoneExtn())) {
+            StringBuffer phoneWithExtn = new StringBuffer();
+            phoneWithExtn.append(phone).append("extn").append(gtdDTO.getContactPhoneExtn());
+            phone = phoneWithExtn.toString();
+        }
         if (gtdDTO.getResponsiblePartyType() == null || gtdDTO.getResponsiblePartyType().equals("pi")) {
             parb.createPIAsResponsiblePartyRelations(
                     gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier(),

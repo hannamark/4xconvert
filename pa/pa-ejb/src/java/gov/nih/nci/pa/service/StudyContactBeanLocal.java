@@ -20,6 +20,7 @@ import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,10 +152,44 @@ implements StudyContactServiceLocal {
      */
     @Override
     public StudyContactDTO update(StudyContactDTO dto) throws PAException {
+        validate(dto);
         getStatusCode(dto);
         return super.update(dto);
     }
-
+    /**
+     * validates the dto.
+     * @param dto dto to validate.
+     * @throws PAException e
+     */
+    @Override
+    public void validate(StudyContactDTO dto) throws PAException {
+        PAServiceUtils paServiceUtil = new PAServiceUtils();
+        if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
+            StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(
+                    dto.getClinicalResearchStaffIi().getExtension()));
+            if (sr != null) {
+                ClinicalResearchStaffDTO  poSrDto = (ClinicalResearchStaffDTO) paServiceUtil.getCorrelationByIi(
+                        IiConverter.convertToPoClinicalResearchStaffIi(sr.getIdentifier()));
+                if (paServiceUtil.isEntityCountryUSAOrCanada(poSrDto.getPlayerIdentifier())
+                        && !PAUtil.isPhoneValidForUSA(DSetConverter.convertDSetToList(
+                                dto.getTelecomAddresses(), PAConstants.PHONE).get(0))) {
+                    throw new PAException("Please enter phone in xxx-xxx-xxxx format for USA or CANADA");
+                }
+            }
+        }
+        
+        
+    }
+    /**
+     * @param dto dto to validate
+     * @throws PAException e
+     * @return dto
+     */
+    @Override
+    public StudyContactDTO create(StudyContactDTO dto) throws PAException {
+        validate(dto);
+        return super.create(dto);
+    }
     private void getStatusCode(StudyContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         StructuralRole sr =  null;

@@ -4,14 +4,20 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteContactConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +86,66 @@ public class StudySiteContactBeanLocal extends
      LOG.info("Leaving getByStudySite");
      return resultList;
  }
+ /**
+  *@param dto dto
+  *@throws PAException e
+  *@return dto
+  */
+ @Override
+    public StudySiteContactDTO create(StudySiteContactDTO dto)
+            throws PAException {
+     validate(dto);   
+     return super.create(dto);
+    }
+ /**
+  * @param dto to update
+  * @throws PAException on err
+  * @return dto
+  */
+ @Override
+    public StudySiteContactDTO update(StudySiteContactDTO dto)
+            throws PAException {
+        validate(dto);
+        return super.update(dto);
+    }
+ /**
+  * validates the dto.
+  * @param dto dto to validate.
+  * @throws PAException e
+  */
+ @Override
+ @SuppressWarnings({"PMD" })
+ public void validate(StudySiteContactDTO dto) throws PAException {
+     PAServiceUtils paServiceUtil = new PAServiceUtils();
+     if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
+         StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(
+                 dto.getClinicalResearchStaffIi().getExtension()));
+         if (sr != null) {
+             ClinicalResearchStaffDTO  poSrDto = (ClinicalResearchStaffDTO) paServiceUtil.getCorrelationByIi(
+                     IiConverter.convertToPoClinicalResearchStaffIi(sr.getIdentifier()));
+             if (paServiceUtil.isEntityCountryUSAOrCanada(poSrDto.getScoperIdentifier())
+                     && !PAUtil.isPhoneValidForUSA(DSetConverter.convertDSetToList(
+                             dto.getTelecomAddresses(), PAConstants.PHONE).get(0))) {
+                 throw new PAException("Please enter phone in xxx-xxx-xxxx format for USA or CANADA");
+             }    
+         }
 
+         
+     }
+     if (!PAUtil.isIiNull(dto.getOrganizationalContactIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
+         StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoOrganizationalContactIi(
+                 dto.getOrganizationalContactIi().getExtension()));
+         if (sr != null) {
+             OrganizationalContactDTO  poSrDto = (OrganizationalContactDTO) paServiceUtil.getCorrelationByIi(
+                     IiConverter.convertToPoOrganizationalContactIi(sr.getIdentifier()));
+             if (paServiceUtil.isEntityCountryUSAOrCanada(poSrDto.getScoperIdentifier())
+                     && !PAUtil.isPhoneValidForUSA(DSetConverter.convertDSetToList(
+                             dto.getTelecomAddresses(), PAConstants.PHONE).get(0))) {
+                 throw new PAException("Please enter phone in xxx-xxx-xxxx format for USA or CANADA");
+             }
+         }
+     }
+ }
 
 
 

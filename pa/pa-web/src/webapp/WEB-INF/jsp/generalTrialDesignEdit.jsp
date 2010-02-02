@@ -260,12 +260,14 @@
         <tr>
             <td scope="row" class="label">Phone Number:</td>
             <td class="value">
-                <s:textfield name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone" maxlength="200" size="100"  cssStyle="width:200px" />
+                <s:textfield name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone" maxlength="200" size="15"  cssStyle="width:100px" />
+                Extn:<s:textfield name="gtdDTO.centralContactPhoneExtn" id="gtdDTO.centralContactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>gtdDTO.centralContactPhone</s:param>
                    </s:fielderror>                            
                  </span>
+                
             </td>           
         </tr>             
     </c:if>

@@ -92,6 +92,7 @@ import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelPhone;
 import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Person;
@@ -112,7 +113,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -150,6 +153,9 @@ public class PAUtil {
     private static final int MAXF = 1024;
     private static final Logger LOG = Logger.getLogger(PAUtil.class);    
     private static final int EMAIL_IDX = 7;
+    private static final String EXTN = "extn";
+    private static final int EXTN_COUNT = 4;
+
 
     /**
      *
@@ -1109,4 +1115,86 @@ public class PAUtil {
           }
        return true; 
     }
+    /**
+     * 
+     * @param phoneNumber no
+     * @return s
+     */
+    public static boolean isPhoneValidForUSA(String phoneNumber) {
+        boolean isValidPhoneNumber = false;
+        if (phoneNumber != null) {
+            Pattern numberPattern = Pattern.compile("^[0-9]{3}[-][0-9]{3}[-][0-9]{4}([e][x][t][n][0-9]{1,10})?$");
+            Matcher fit = numberPattern.matcher(phoneNumber);
+            if (fit.matches()) {
+                isValidPhoneNumber = true;
+            }
+        }
+        return isValidPhoneNumber;
+    }
+    /**
+     * 
+     * @param telecomAddresses tel
+     * @return boolean
+     */
+    public static boolean isDSetTelNull(DSet<Tel> telecomAddresses) {
+        boolean isNull = true;
+        if (telecomAddresses == null || telecomAddresses.getItem() == null) {
+            isNull = true;
+        } else {
+            for (Tel t : telecomAddresses.getItem()) {
+                if (t.getNullFlavor() != null) {
+                    continue;
+                }
+                String phone = "";
+                if (t instanceof TelPhone) {
+                    try {
+                        phone = URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        continue;
+                    }
+                } else {
+                    String url = t.getValue().toString();
+                    if (url != null && url.startsWith("tel")) {
+                        try {
+                            phone = URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            continue;
+                        }
+                    }
+                }
+                if (isNotEmpty(phone)) {
+                    isNull = false;
+                }
+            }
+        
+        }
+        return isNull;
+    }
+    /**
+     * 
+     * @param phone phone with ex
+     * @return extn
+     */
+    public String getPhoneExtn(String phone) {
+        String strExtn = "";
+        if (phone.contains(EXTN)) {
+            strExtn = phone.substring(phone.indexOf(EXTN) + EXTN_COUNT);
+        }
+        return strExtn;
+    }
+    /**
+     * 
+     * @param phone phone
+     * @return phone
+     */
+    public String getPhone(String phone) {
+        String strPhone = "";
+        if (phone.contains(EXTN)) {
+            strPhone = phone.substring(0, phone.indexOf(EXTN));
+        } else {
+            strPhone = phone;
+        }
+        return strPhone;
+    }
+
 }

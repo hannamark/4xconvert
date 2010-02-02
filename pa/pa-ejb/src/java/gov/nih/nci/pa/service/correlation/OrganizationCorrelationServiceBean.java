@@ -486,6 +486,9 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      */
     public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier) throws PAException {
         Ii poROIi = null;
+        if (PAUtil.isIiNull(orgPoIdentifier)) {
+            throw new PAException("Ii Cannot be null");
+        }
         // Step 1 : get correlation if there
         ResearchOrganizationDTO criteriaRODTO = new ResearchOrganizationDTO();
         List<ResearchOrganizationDTO> roDTOs = null;

@@ -202,7 +202,8 @@ function manageRespPartyLookUp(){
         <tr>
             <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
             <td class="value">
-                <s:textfield name="gtdDTO.contactPhone" id="gtdDTO.contactPhone" maxlength="199" size="100"  cssStyle="width:200px" />
+                <s:textfield name="gtdDTO.contactPhone" id="gtdDTO.contactPhone" maxlength="199" size="100"  cssStyle="width:100px" />
+                Extn:<s:textfield name="gtdDTO.contactPhoneExtn" id="gtdDTO.contactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>gtdDTO.contactPhone</s:param>

@@ -79,6 +79,8 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.coppa.iso.AddressPartType;
 import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.coppa.iso.DSet;
 import gov.nih.nci.coppa.iso.Ii;
@@ -899,32 +901,19 @@ public class PAServiceUtils {
             return retValue;
         }
         if (IiConverter.ORG_IDENTIFIER_NAME.equals(poIi.getIdentifierName())) {  
-            OrganizationDTO poOrg = null;
-            try {
-                poOrg = PoRegistry.getOrganizationEntityService().
-                    getOrganization(IiConverter.convertToPoOrganizationIi(poIi.getExtension()));
-                if (poOrg != null) {
-                    retValue = true;
-                }
-
-            } catch (NullifiedEntityException e) {
-                retValue = false;
-            } catch (PAException e) {
+            OrganizationDTO poOrg = getPOOrganizationEntity(IiConverter.convertToPoOrganizationIi(poIi.getExtension()));
+            if (poOrg != null) {
+                retValue = true;
+            } else {
                 retValue = false;
             }
         }
         if (IiConverter.PERSON_IDENTIFIER_NAME.equalsIgnoreCase(poIi.getIdentifierName())
                 || IiConverter.PERSON_ROOT.equalsIgnoreCase(poIi.getRoot())) {
-            PersonDTO poPerson = null;
-            try {
-               poPerson = PoRegistry.getPersonEntityService().getPerson(IiConverter.
-                       convertToPoPersonIi(poIi.getExtension())); 
-               if (poPerson != null) {
-                   retValue = true;
-               } 
-            } catch (NullifiedEntityException e) {
-                retValue = false;
-            } catch (PAException e) {
+            PersonDTO poPerson = getPoPersonEntity(IiConverter.convertToPoPersonIi(poIi.getExtension())); 
+            if (poPerson != null) {
+                retValue = true;
+            } else {
                 retValue = false;
             }
         }
@@ -1352,6 +1341,84 @@ public class PAServiceUtils {
           createOrUpdate(newSiteDTOS, IiConverter.convertToStudySiteIi(null),
                       identifierDTO.getStudyProtocolIdentifier());
       }
+      /**
+       * 
+       * @param entityIi ii
+       * @return s
+       */
       
+      public boolean isEntityCountryUSAOrCanada(Ii entityIi) {
+          boolean countryUsaOrCan = false;
+          if (PAUtil.isIiNull(entityIi)) {
+              return countryUsaOrCan;
+          }
+          String countryName = "";
+          if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {  
+              OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi); 
+              countryName = getCountryName(orgDTO.getPostalAddress());
+          }
+          if (IiConverter.PERSON_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
+              PersonDTO perDTO = getPoPersonEntity(entityIi);
+              countryName = getCountryName(perDTO.getPostalAddress());
+          }
+          if (PAConstants.USA.equalsIgnoreCase(countryName) 
+                  || PAConstants.CANADA.equalsIgnoreCase(countryName)) {
+              countryUsaOrCan = true;
+          }
+          return countryUsaOrCan;
+      }
+
+    /**
+     * @param orgDTO
+     */
+    private String getCountryName(Ad postalAddress) {
+        int partSize = postalAddress.getPart().size();
+        String countryName = "";
+          AddressPartType type = null;
+          for (int k = 0; k < partSize; k++) {
+              type = postalAddress.getPart().get(k).getType();
+              if (type.name().equals("CNT")) {
+                  countryName = postalAddress.getPart()
+                          .get(k).getCode();
+              }
+          }
+          return countryName;
+    }
+      /**
+       * 
+       * @param entityIi Ii
+       * @return poEntity
+       */
+      public OrganizationDTO getPOOrganizationEntity(Ii entityIi) {
+          OrganizationDTO poOrg = null;
+          try {
+              poOrg = PoRegistry.getOrganizationEntityService().
+                  getOrganization(IiConverter.convertToPoOrganizationIi(entityIi.getExtension()));
+              
+          } catch (NullifiedEntityException e) {
+              poOrg = null;
+          } catch (PAException e) {
+              poOrg = null;
+          }
+          return poOrg;
+      }
+      /**
+       * 
+       * @param entityIi Ii
+       * @return personDto
+       */
+      public PersonDTO getPoPersonEntity(Ii entityIi) {
+          PersonDTO poPerson = null;
+          try {
+              poPerson = PoRegistry.getPersonEntityService().getPerson(IiConverter.
+                         convertToPoPersonIi(entityIi.getExtension())); 
+               
+              } catch (NullifiedEntityException e) {
+                  poPerson = null;
+              } catch (PAException e) {
+                  poPerson = null;
+              }
+          return poPerson;
+      }
       
 }
