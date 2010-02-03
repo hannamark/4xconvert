@@ -115,4 +115,8 @@
        <comment>Add missing FK indexes on patient race and ethnicgroup.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-647.sql"/>
     </changeSet>
+    <changeSet id="PO-1492" author="mshestopalov">
+       <comment>Add function for filling in unknown person emails.</comment>
+       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1492.sql"/>
+    </changeSet>
 </databaseChangeLog>
