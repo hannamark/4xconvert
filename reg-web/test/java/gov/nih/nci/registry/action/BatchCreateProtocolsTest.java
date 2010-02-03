@@ -37,12 +37,14 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto.setChangeRequestDocFileName(null);
           dto.setPiPersonCTEPPersonNo("1");
           dto.setLeadOrgCTEPOrgNo("1");
+          dto.setSponsorContactPhone("1234567");
           dtoList.add(dto);
           dto =  getBatchDto();
           getBatchGrants(dto);
           getBatchIndIde(dto);
           dto.setNihGrantNCIDivisionCode("CCR");
           dto.setResponsibleParty("pi");
+          dto.setSponsorContactPhone("1234567");
           dto.setProtcolDocumentFileName("ProtocolDoc.doc");
           dto.setIrbApprovalDocumentFileName("ProtocolDoc.doc");
           dto.setParticipatinSiteDocumentFileName("ProtocolDoc.doc");

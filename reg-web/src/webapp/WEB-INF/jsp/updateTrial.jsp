@@ -471,7 +471,8 @@ function toggledisplay2 (it) {
                  <label for="updateTrial_contactPhone"> <fmt:message key="update.trial.responsiblePartyPhone"/><span class="required">*</span></label>
                 </td>
                 <td class="value">
-                    <s:textfield name="trialDTO.contactPhone"  id="trialDTO.contactPhone" maxlength="200" size="100"  cssStyle="width:200px" />
+                    <s:textfield name="trialDTO.contactPhone"  id="trialDTO.contactPhone" maxlength="200" size="100"  cssStyle="width:100px" />
+                    Extn:<s:textfield name="trialDTO.contactPhoneExtn"  id="trialDTO.contactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>trialDTO.contactPhone</s:param>

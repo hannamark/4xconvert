@@ -79,6 +79,7 @@ public class TrialDTO {
     private String dataMonitoringCommitteeAppointedIndicator;
     private String ctepIdentifier;
     private String dcpIdentifier;
+    private String contactPhoneExtn;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     /**
      * 
@@ -805,6 +806,18 @@ public class TrialDTO {
      */
     public String getDcpIdentifier() {
         return dcpIdentifier;
+    }
+    /**
+     * @return the contactPhoneExtn
+     */
+    public String getContactPhoneExtn() {
+        return contactPhoneExtn;
+    }
+    /**
+     * @param contactPhoneExtn the contactPhoneExtn to set
+     */
+    public void setContactPhoneExtn(String contactPhoneExtn) {
+        this.contactPhoneExtn = contactPhoneExtn;
     }
    
 }

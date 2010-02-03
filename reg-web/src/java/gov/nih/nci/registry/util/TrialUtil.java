@@ -202,7 +202,9 @@ public class TrialUtil {
         List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
         List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
         if (phones != null && !phones.isEmpty()) {
-            trialDTO.setContactPhone(phones.get(0));
+            PAUtil paUtil = new PAUtil();
+            trialDTO.setContactPhone(paUtil.getPhone(phones.get(0)));
+            trialDTO.setContactPhoneExtn(paUtil.getPhoneExtn(phones.get(0)));
         }
         if (emails != null && !emails.isEmpty()) {
             trialDTO.setContactEmail(emails.get(0));
@@ -652,7 +654,13 @@ public class TrialUtil {
     */
    private DSet<Tel> getTelecomAddress(TrialDTO trialDTO) {
        List<String> phones = new ArrayList<String>();
-       phones.add(trialDTO.getContactPhone());
+       String phone = trialDTO.getContactPhone().trim();
+       if (PAUtil.isNotEmpty(trialDTO.getContactPhoneExtn())) {
+           StringBuffer phoneWithExtn = new StringBuffer();
+           phoneWithExtn.append(phone).append("extn").append(trialDTO.getContactPhoneExtn());
+           phone = phoneWithExtn.toString();
+       }
+       phones.add(phone);
        List<String> emails = new ArrayList<String>();
        emails.add(trialDTO.getContactEmail());
        DSet<Tel> dsetList = null;
