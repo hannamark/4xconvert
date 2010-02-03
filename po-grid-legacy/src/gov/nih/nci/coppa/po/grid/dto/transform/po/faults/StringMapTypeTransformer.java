@@ -2,9 +2,9 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po.faults;
 
 import gov.nih.nci.coppa.po.faults.StringMapType;
 import gov.nih.nci.coppa.po.faults.StringMapTypeEntry;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.organizationalcontact.service
 
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.grid.services.GenericCorrelationGridServiceImpl;
+import gov.nih.nci.iso21090.Constants;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.rmi.RemoteException;
@@ -23,7 +24,7 @@ public class OrganizationalContactImpl extends OrganizationalContactImplBase {
     /**
      * The ii root value.
      */
-    public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
+    public static final String ORGANIZATIONAL_CONTACT_ROOT = Constants.NCI_OID + ".4.8";
     
     private static org.apache.log4j.Logger logger = LogManager.getLogger(OrganizationalContactImpl.class);
 	

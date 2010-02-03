@@ -1,17 +1,18 @@
 package gov.nih.nci.coppa.services.entities.person.service;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
+import gov.nih.nci.coppa.po.grid.dto.transform.util.TransformUtils;
 import gov.nih.nci.coppa.po.grid.remote.InvokePersonEjb;
 import gov.nih.nci.coppa.po.grid.remote.Utils;
 import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.rmi.RemoteException;
@@ -48,7 +49,7 @@ public class PersonImpl extends PersonImplBase {
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             PersonDTO dto = PersonTransformer.INSTANCE.toDto(person);
-            return IdTransformer.INSTANCE.toXml(personService.createPerson(dto));
+            return TransformUtils.convertToOldId(IdTransformer.INSTANCE.toXml(personService.createPerson(dto)));
         } catch (Exception e) {
             logger.error("Error in creating Person.", e);
             throw FaultUtil.reThrowRemote(e);

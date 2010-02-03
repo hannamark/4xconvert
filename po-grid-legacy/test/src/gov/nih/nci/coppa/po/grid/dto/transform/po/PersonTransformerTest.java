@@ -1,21 +1,21 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Person;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.ADTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENPNTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETCDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ENPNTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.services.person.PersonDTO;
 
 import org.iso._21090.II;
 
-public class PersonTransformerTest extends 
-AbstractTransformerTestBase <PersonTransformer, Person, PersonDTO> {
+public class PersonTransformerTest extends AbstractTransformerTestBase<PersonTransformer, Person, PersonDTO> {
 	 /**
      * The identifier name for person ii's.
      */
@@ -24,7 +24,7 @@ AbstractTransformerTestBase <PersonTransformer, Person, PersonDTO> {
     /**
      * The ii root value for people.
      */
-    public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
+    public static final String PERSON_ROOT = Constants.NCI_OID + ".1";
     
 	@Override
 	public PersonDTO makeDtoSimple() {

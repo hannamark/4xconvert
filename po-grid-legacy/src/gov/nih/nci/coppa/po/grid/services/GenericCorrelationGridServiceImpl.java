@@ -1,21 +1,22 @@
 package gov.nih.nci.coppa.po.grid.services;
 
 import gov.nih.nci.coppa.common.LimitOffset;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.coppa.po.grid.dto.transform.TransformerRegistry;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.IdArrayTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
+import gov.nih.nci.coppa.po.grid.dto.transform.util.TransformUtils;
 import gov.nih.nci.coppa.po.grid.remote.InvokeCorrelationService;
 import gov.nih.nci.coppa.po.grid.remote.Utils;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdArrayTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
 
@@ -81,7 +82,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
         try {
             DTO dto = (DTO) getTransformer().toDto(object);
             Ii ii = getService().createCorrelation(dto);
-            Id id = IdTransformer.INSTANCE.toXml(ii);
+            Id id = TransformUtils.convertToOldId(IdTransformer.INSTANCE.toXml(ii));
             return id;
         } catch (Exception e) {
             throw FaultUtil.reThrowRemote(e);
@@ -109,7 +110,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     @SuppressWarnings("unchecked")
     public XML[] getByIds(Id[] id) throws RemoteException {
         try {
-            Ii[] iis = IdArrayTransformer.INSTANCE.toDto(id);
+            Ii[] iis = IdArrayTransformer.INSTANCE.toDto(TransformUtils.convertToNewIds(id));
             List<DTO> dtos = getService().getCorrelations(iis);
             List<XML> results = new ArrayList<XML>();
             for (DTO dto : dtos) {
@@ -129,7 +130,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     @SuppressWarnings("unchecked")
     public XML[] getByPlayerIds(Id[] pid) throws RemoteException {
         try {
-            Ii[] iis = IdArrayTransformer.INSTANCE.toDto(pid);
+            Ii[] iis = IdArrayTransformer.INSTANCE.toDto(TransformUtils.convertToNewIds(pid));
             List<DTO> dtos = getService().getCorrelationsByPlayerIds(iis);
             List<XML> results = new ArrayList<XML>();
             for (DTO dto : dtos) {
@@ -173,7 +174,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     public void updateStatus(gov.nih.nci.coppa.po.Id targetId, gov.nih.nci.coppa.po.Cd statusCode)
             throws RemoteException {
         try {
-            Ii iiDto = IdTransformer.INSTANCE.toDto(targetId);
+            Ii iiDto = IdTransformer.INSTANCE.toDto(TransformUtils.convertToNewId(targetId));
             Cd cdDto = CDTransformer.INSTANCE.toDto(statusCode);
             getService().updateCorrelationStatus(iiDto, cdDto);
         } catch (Exception e) {

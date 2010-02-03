@@ -1,19 +1,20 @@
 package gov.nih.nci.coppa.services.entities.organization.service;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.StringMap;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
+import gov.nih.nci.coppa.po.grid.dto.transform.util.TransformUtils;
 import gov.nih.nci.coppa.po.grid.remote.InvokeOrganizationEjb;
 import gov.nih.nci.coppa.po.grid.remote.Utils;
 import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.rmi.RemoteException;
@@ -52,7 +53,7 @@ public class OrganizationImpl extends OrganizationImplBase {
         try {
             OrganizationDTO organizationDTO = OrganizationTransformer.INSTANCE.toDto(organization);
             Ii ii = service.createOrganization(organizationDTO);
-            return IdTransformer.INSTANCE.toXml(ii);
+            return TransformUtils.convertToOldId(IdTransformer.INSTANCE.toXml(ii));
         } catch (Exception e) {
             logger.error("CREATE:ORGANIZATION", e);
             throw FaultUtil.reThrowRemote(e);
@@ -79,7 +80,7 @@ public class OrganizationImpl extends OrganizationImplBase {
 
   public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
-            Ii iiDto = IdTransformer.INSTANCE.toDto(targetId);
+            Ii iiDto = IdTransformer.INSTANCE.toDto(TransformUtils.convertToNewId(targetId));
             Cd cdDto = CDTransformer.INSTANCE.toDto(statusCode);
             service.updateOrganizationStatus(iiDto, cdDto);
         } catch (Exception e) {

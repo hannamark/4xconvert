@@ -9,6 +9,7 @@ import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.identifiedperson.common.IdentifiedPersonI;
+import gov.nih.nci.iso21090.Constants;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -43,7 +44,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     /**
      * The ii root value for Identified person.
      */
-    public static final String IDENTIFIED_PERSON_ROOT = "2.16.840.1.113883.3.26.4.4.7";
+    public static final String IDENTIFIED_PERSON_ROOT = Constants.NCI_OID + ".4.7";
 
     public IdentifiedPersonClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
@@ -139,116 +140,116 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         }
     }
 
-    public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"create");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequestIdentifiedPerson();
-            identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
-            params.setIdentifiedPerson(identifiedPersonContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse boxedResult = portType.create(params);
-            return boxedResult.getId();
-        }
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"create");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateRequestIdentifiedPerson();
+    identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
+    params.setIdentifiedPerson(identifiedPersonContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.CreateResponse boxedResult = portType.create(params);
+    return boxedResult.getId();
     }
+  }
 
-    public gov.nih.nci.coppa.po.IdentifiedPerson getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"getById");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdResponse boxedResult = portType.getById(params);
-            return boxedResult.getIdentifiedPerson();
-        }
+  public gov.nih.nci.coppa.po.IdentifiedPerson getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getById");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdResponse boxedResult = portType.getById(params);
+    return boxedResult.getIdentifiedPerson();
     }
+  }
 
-    public gov.nih.nci.coppa.po.IdentifiedPerson[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"getByIds");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsResponse boxedResult = portType.getByIds(params);
-            return boxedResult.getIdentifiedPerson();
-        }
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByIds");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsResponse boxedResult = portType.getByIds(params);
+    return boxedResult.getIdentifiedPerson();
     }
+  }
 
-    public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"search");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequestIdentifiedPerson();
-            identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
-            params.setIdentifiedPerson(identifiedPersonContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchResponse boxedResult = portType.search(params);
-            return boxedResult.getIdentifiedPerson();
-        }
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"search");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequestIdentifiedPerson();
+    identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
+    params.setIdentifiedPerson(identifiedPersonContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchResponse boxedResult = portType.search(params);
+    return boxedResult.getIdentifiedPerson();
     }
+  }
 
-    public void update(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"update");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequestIdentifiedPerson();
-            identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
-            params.setIdentifiedPerson(identifiedPersonContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateResponse boxedResult = portType.update(params);
-        }
+  public void update(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"update");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateRequestIdentifiedPerson();
+    identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
+    params.setIdentifiedPerson(identifiedPersonContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateResponse boxedResult = portType.update(params);
     }
+  }
 
-    public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"updateStatus");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequestTargetId targetIdContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequestTargetId();
-            targetIdContainer.setId(targetId);
-            params.setTargetId(targetIdContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequestStatusCode statusCodeContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequestStatusCode();
-            statusCodeContainer.setCd(statusCode);
-            params.setStatusCode(statusCodeContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusResponse boxedResult = portType.updateStatus(params);
-        }
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"updateStatus");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequestTargetId targetIdContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequestTargetId();
+    targetIdContainer.setId(targetId);
+    params.setTargetId(targetIdContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequestStatusCode statusCodeContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusRequestStatusCode();
+    statusCodeContainer.setCd(statusCode);
+    params.setStatusCode(statusCodeContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.UpdateStatusResponse boxedResult = portType.updateStatus(params);
     }
+  }
 
-    public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"validate");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequestIdentifiedPerson();
-            identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
-            params.setIdentifiedPerson(identifiedPersonContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateResponse boxedResult = portType.validate(params);
-            return boxedResult.getStringMap();
-        }
+  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"validate");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateRequestIdentifiedPerson();
+    identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
+    params.setIdentifiedPerson(identifiedPersonContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.ValidateResponse boxedResult = portType.validate(params);
+    return boxedResult.getStringMap();
     }
+  }
 
-    public gov.nih.nci.coppa.po.IdentifiedPerson[] query(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"query");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestIdentifiedPerson();
-            identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
-            params.setIdentifiedPerson(identifiedPersonContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestLimitOffset();
-            limitOffsetContainer.setLimitOffset(limitOffset);
-            params.setLimitOffset(limitOffsetContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryResponse boxedResult = portType.query(params);
-            return boxedResult.getIdentifiedPerson();
-        }
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] query(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestIdentifiedPerson();
+    identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
+    params.setIdentifiedPerson(identifiedPersonContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getIdentifiedPerson();
     }
+  }
 
-    public gov.nih.nci.coppa.po.IdentifiedPerson[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"getByPlayerIds");
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest();
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
-            return boxedResult.getIdentifiedPerson();
-        }
+  public gov.nih.nci.coppa.po.IdentifiedPerson[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getByPlayerIds");
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequest();
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequestId idContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByPlayerIdsResponse boxedResult = portType.getByPlayerIds(params);
+    return boxedResult.getIdentifiedPerson();
     }
+  }
 
 }

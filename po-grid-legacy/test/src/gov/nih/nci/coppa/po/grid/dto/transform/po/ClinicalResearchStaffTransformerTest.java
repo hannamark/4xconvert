@@ -1,17 +1,19 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.ClinicalResearchStaff;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformerTest;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
 import org.iso._21090.II;
 
 public class ClinicalResearchStaffTransformerTest extends
-     AbstractTransformerTestBase <ClinicalResearchStaffTransformer , ClinicalResearchStaff ,ClinicalResearchStaffDTO> {
+     AbstractTransformerTestBase<ClinicalResearchStaffTransformer , ClinicalResearchStaff ,ClinicalResearchStaffDTO> {
     /**
      * The identifier name for ClinicalResearchStaff.
      */
@@ -20,7 +22,7 @@ public class ClinicalResearchStaffTransformerTest extends
     /**
      * The ii root value for ClinicalResearchStaff.
      */
-    public static final String CLINICAL_RESEARCH_STAFF_ROOT = "2.16.840.1.113883.3.26.4.4.1";
+    public static final String CLINICAL_RESEARCH_STAFF_ROOT = Constants.NCI_OID + ".4.1";
     /**
      * Player root.
      */

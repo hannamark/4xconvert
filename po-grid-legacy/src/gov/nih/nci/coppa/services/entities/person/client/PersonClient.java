@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.common.PersonI;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
+import gov.nih.nci.iso21090.Constants;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -45,7 +46,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
     /**
      * The ii root value for people.
      */
-    public static final String PERSON_ROOT = "2.16.840.1.113883.3.26.4.1";
+    public static final String PERSON_ROOT = Constants.NCI_OID + ".1";
 
     public PersonClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
@@ -141,92 +142,92 @@ public class PersonClient extends PersonClientBase implements PersonI {
         return id;
     }
 
-    public gov.nih.nci.coppa.po.Person getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"getById");
-            gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequest();
-            gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequestId idContainer = new gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequestId();
-            idContainer.setId(id);
-            params.setId(idContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.GetByIdResponse boxedResult = portType.getById(params);
-            return boxedResult.getPerson();
-        }
+  public gov.nih.nci.coppa.po.Person getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getById");
+    gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequest();
+    gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequestId idContainer = new gov.nih.nci.coppa.services.entities.person.stubs.GetByIdRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.GetByIdResponse boxedResult = portType.getById(params);
+    return boxedResult.getPerson();
     }
+  }
 
-    public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"create");
-            gov.nih.nci.coppa.services.entities.person.stubs.CreateRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.CreateRequest();
-            gov.nih.nci.coppa.services.entities.person.stubs.CreateRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.CreateRequestPerson();
-            personContainer.setPerson(person);
-            params.setPerson(personContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.CreateResponse boxedResult = portType.create(params);
-            return boxedResult.getId();
-        }
+  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"create");
+    gov.nih.nci.coppa.services.entities.person.stubs.CreateRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.CreateRequest();
+    gov.nih.nci.coppa.services.entities.person.stubs.CreateRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.CreateRequestPerson();
+    personContainer.setPerson(person);
+    params.setPerson(personContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.CreateResponse boxedResult = portType.create(params);
+    return boxedResult.getId();
     }
+  }
 
-    public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Person person) throws RemoteException {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"validate");
-            gov.nih.nci.coppa.services.entities.person.stubs.ValidateRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.ValidateRequest();
-            gov.nih.nci.coppa.services.entities.person.stubs.ValidateRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.ValidateRequestPerson();
-            personContainer.setPerson(person);
-            params.setPerson(personContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.ValidateResponse boxedResult = portType.validate(params);
-            return boxedResult.getStringMap();
-        }
+  public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Person person) throws RemoteException {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"validate");
+    gov.nih.nci.coppa.services.entities.person.stubs.ValidateRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.ValidateRequest();
+    gov.nih.nci.coppa.services.entities.person.stubs.ValidateRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.ValidateRequestPerson();
+    personContainer.setPerson(person);
+    params.setPerson(personContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.ValidateResponse boxedResult = portType.validate(params);
+    return boxedResult.getStringMap();
     }
+  }
 
-    public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"search");
-            gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest();
-            gov.nih.nci.coppa.services.entities.person.stubs.SearchRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.SearchRequestPerson();
-            personContainer.setPerson(person);
-            params.setPerson(personContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse boxedResult = portType.search(params);
-            return boxedResult.getPerson();
-        }
+  public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"search");
+    gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest();
+    gov.nih.nci.coppa.services.entities.person.stubs.SearchRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.SearchRequestPerson();
+    personContainer.setPerson(person);
+    params.setPerson(personContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse boxedResult = portType.search(params);
+    return boxedResult.getPerson();
     }
+  }
 
-    public void update(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"update");
-            gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequest();
-            gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequestPerson();
-            personContainer.setPerson(person);
-            params.setPerson(personContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.UpdateResponse boxedResult = portType.update(params);
-        }
+  public void update(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"update");
+    gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequest();
+    gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequestPerson();
+    personContainer.setPerson(person);
+    params.setPerson(personContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.UpdateResponse boxedResult = portType.update(params);
     }
+  }
 
-    public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"updateStatus");
-            gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequest();
-            gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequestTargetId targetIdContainer = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequestTargetId();
-            targetIdContainer.setId(targetId);
-            params.setTargetId(targetIdContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequestStatusCode statusCodeContainer = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequestStatusCode();
-            statusCodeContainer.setCd(statusCode);
-            params.setStatusCode(statusCodeContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusResponse boxedResult = portType.updateStatus(params);
-        }
+  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"updateStatus");
+    gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequest();
+    gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequestTargetId targetIdContainer = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequestTargetId();
+    targetIdContainer.setId(targetId);
+    params.setTargetId(targetIdContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequestStatusCode statusCodeContainer = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusRequestStatusCode();
+    statusCodeContainer.setCd(statusCode);
+    params.setStatusCode(statusCodeContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.UpdateStatusResponse boxedResult = portType.updateStatus(params);
     }
+  }
 
-    public gov.nih.nci.coppa.po.Person[] query(gov.nih.nci.coppa.po.Person person,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-        synchronized(portTypeMutex){
-            configureStubSecurity((Stub)portType,"query");
-            gov.nih.nci.coppa.services.entities.person.stubs.QueryRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.QueryRequest();
-            gov.nih.nci.coppa.services.entities.person.stubs.QueryRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.QueryRequestPerson();
-            personContainer.setPerson(person);
-            params.setPerson(personContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.entities.person.stubs.QueryRequestLimitOffset();
-            limitOffsetContainer.setLimitOffset(limitOffset);
-            params.setLimitOffset(limitOffsetContainer);
-            gov.nih.nci.coppa.services.entities.person.stubs.QueryResponse boxedResult = portType.query(params);
-            return boxedResult.getPerson();
-        }
+  public gov.nih.nci.coppa.po.Person[] query(gov.nih.nci.coppa.po.Person person,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"query");
+    gov.nih.nci.coppa.services.entities.person.stubs.QueryRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.QueryRequest();
+    gov.nih.nci.coppa.services.entities.person.stubs.QueryRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.QueryRequestPerson();
+    personContainer.setPerson(person);
+    params.setPerson(personContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.QueryRequestLimitOffset limitOffsetContainer = new gov.nih.nci.coppa.services.entities.person.stubs.QueryRequestLimitOffset();
+    limitOffsetContainer.setLimitOffset(limitOffset);
+    params.setLimitOffset(limitOffsetContainer);
+    gov.nih.nci.coppa.services.entities.person.stubs.QueryResponse boxedResult = portType.query(params);
+    return boxedResult.getPerson();
     }
+  }
 
 }

@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
+import gov.nih.nci.iso21090.Constants;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -42,7 +43,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     /**
      * The ii root value for orgs.
      */
-    public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
+    public static final String ORG_ROOT = Constants.NCI_OID + ".2";
 
     public OrganizationClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);

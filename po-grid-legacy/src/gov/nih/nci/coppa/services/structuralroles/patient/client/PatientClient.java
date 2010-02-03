@@ -4,9 +4,9 @@ import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Patient;
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.patient.common.PatientI;
+import gov.nih.nci.iso21090.Constants;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -73,7 +73,7 @@ public class PatientClient extends PatientClientBase implements PatientI {
 	@GridTestMethod
 	private static void testPatient(PatientClient client) throws EntityValidationFault, RemoteException {
         final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
-        final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
+        final String ORG_ROOT = Constants.NCI_OID + ".2";
         
         Patient p = new Patient();
         
@@ -100,6 +100,7 @@ public class PatientClient extends PatientClientBase implements PatientI {
         }
 	}
 	
+
   public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");

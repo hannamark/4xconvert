@@ -88,8 +88,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -99,6 +97,8 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 
 public class HealthCareFacilityServiceStub implements HealthCareFacilityCorrelationServiceRemote {
 

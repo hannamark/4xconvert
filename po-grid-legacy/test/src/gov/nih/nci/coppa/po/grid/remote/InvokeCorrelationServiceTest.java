@@ -97,8 +97,8 @@ import gov.nih.nci.coppa.po.grid.remote.stubs.InvokeCorrelationServiceWithStubLo
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 
 public class InvokeCorrelationServiceTest {
     InvokeCorrelationServiceWithStubLocator<HealthCareFacilityDTO> service = new InvokeCorrelationServiceWithStubLocator<HealthCareFacilityDTO>

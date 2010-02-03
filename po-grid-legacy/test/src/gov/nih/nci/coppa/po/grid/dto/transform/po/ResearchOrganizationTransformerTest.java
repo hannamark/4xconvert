@@ -1,13 +1,15 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.ResearchOrganization;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.ENONTransformerTest;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ENONTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformerTest;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import org.iso._21090.II;
@@ -23,7 +25,7 @@ public class ResearchOrganizationTransformerTest extends
     /**
      * The ii root value for Research org.
      */
-    public static final String Research_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.6";
+    public static final String Research_ORG_ROOT = Constants.NCI_OID + ".4.6";
     /**
      * Player root.
      */

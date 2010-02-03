@@ -1,22 +1,24 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Patient;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformerTest;
 import gov.nih.nci.services.correlation.PatientDTO;
 
 import org.iso._21090.II;
 
 public class PatientTransformerTest extends
-     AbstractTransformerTestBase <PatientTransformer , Patient ,PatientDTO> {
+     AbstractTransformerTestBase<PatientTransformer , Patient ,PatientDTO> {
     
     /**
      * The base of all COPPA-related II roots.
      */
-    public static final String BASE_ROOT = "2.16.840.1.113883.3.26.4";
+    public static final String BASE_ROOT = Constants.NCI_OID;
     /**
      * The sfx of all COPPA-related structural role II roots.
      */

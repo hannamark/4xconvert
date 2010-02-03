@@ -91,6 +91,7 @@ import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.researchorganization.common.ResearchOrganizationI;
+import gov.nih.nci.iso21090.Constants;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -128,7 +129,7 @@ public class ResearchOrganizationClient extends ResearchOrganizationClientBase i
     /**
      * The ii root value for Research org.
      */
-    public static final String RESEARCH_ORG_ROOT = "2.16.840.1.113883.3.26.4.4.6";
+    public static final String RESEARCH_ORG_ROOT = Constants.NCI_OID + ".4.6";
 
     public ResearchOrganizationClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);

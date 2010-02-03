@@ -83,13 +83,15 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.HealthCareProvider;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 
 import org.iso._21090.II;
@@ -108,7 +110,7 @@ public class HealthCareProviderTransformerTest extends AbstractTransformerTestBa
     /**
      * The ii root value for healthCare Provider.
      */
-    public static final String HEALTH_CARE_PROVIDER_ROOT = "2.16.840.1.113883.3.26.4.5.3";
+    public static final String HEALTH_CARE_PROVIDER_ROOT = Constants.NCI_OID + ".5.3";
 
     /**
      * Player root.

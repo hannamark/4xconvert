@@ -2,16 +2,18 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
 import gov.nih.nci.coppa.po.OrganizationalContact;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETADTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETADTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETCDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformerTest;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.util.HashSet;
@@ -28,7 +30,7 @@ public class OrganizationalContactTransformerTest extends
     /**
      * The ii root value.
      */
-    public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
+    public static final String ORGANIZATIONAL_CONTACT_ROOT = Constants.NCI_OID + ".4.8";
     /**
      * Player root.
      */
