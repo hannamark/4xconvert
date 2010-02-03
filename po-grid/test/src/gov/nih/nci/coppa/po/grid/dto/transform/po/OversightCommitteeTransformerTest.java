@@ -1,10 +1,12 @@
 package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.po.OversightCommittee;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformerTest;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 
 import org.iso._21090.II;
@@ -19,7 +21,7 @@ public class OversightCommitteeTransformerTest extends
     /**
      * The ii root value for OversightCommittee.
      */
-    public static final String OVERSIGHT_COMMITTEE_ROOT = "2.16.840.1.113883.3.26.4.4.4";
+    public static final String OVERSIGHT_COMMITTEE_ROOT = Constants.NCI_OID + ".4.4";
     /**
      * Player root.
      */

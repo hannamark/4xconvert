@@ -38,30 +38,6 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:element name="Id">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="ISO:II" />
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Cd">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="ISO:CD" />
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Bl">
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="ISO:BL" />
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-
     <!--  At some point, we'll move Entities over to DSET_II, too, so we can recombine Entity and Correlation
           back into one BaseType abstract type -->
     <xs:complexType name="Entity" abstract="true">

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.coppa.common.faults.TooManyResultsFault;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 
 import org.junit.Test;
 

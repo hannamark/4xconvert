@@ -12,13 +12,13 @@ import java.rmi.RemoteException;
  */
 public interface PatientI {
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
+  public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
 
-  public gov.nih.nci.coppa.po.Patient getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
+  public gov.nih.nci.coppa.po.Patient getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
 
-  public gov.nih.nci.coppa.po.Patient[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
+  public gov.nih.nci.coppa.po.Patient[] getByIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
 
-  public gov.nih.nci.coppa.po.Patient[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException ;
+  public gov.nih.nci.coppa.po.Patient[] getByPlayerIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException ;
 
   public gov.nih.nci.coppa.po.Patient[] query(gov.nih.nci.coppa.po.Patient patient,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
 
@@ -26,7 +26,7 @@ public interface PatientI {
 
   public void update(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
+  public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId,gov.nih.nci.iso21090.extensions.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
 
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.Patient patient) throws RemoteException ;
 

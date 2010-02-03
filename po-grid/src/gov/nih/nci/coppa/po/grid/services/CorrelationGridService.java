@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.po.grid.services;
 
 import gov.nih.nci.coppa.common.LimitOffset;
-import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.StringMap;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.services.PoDto;
 
 import java.rmi.RemoteException;
@@ -78,7 +78,8 @@ public interface CorrelationGridService<DTO extends PoDto, XML extends Object> {
      * @throws gov.nih.nci.coppa.po.faults.EntityValidationFault when any validation errors occur
      */
     // CHECKSTYLE:ON
-    void updateStatus(gov.nih.nci.coppa.po.Id targetId, gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException;
+    void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId, gov.nih.nci.iso21090.extensions.Cd statusCode) 
+        throws RemoteException;
 
     /**
      * @param correlation the correlation's data

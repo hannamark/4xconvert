@@ -25,15 +25,15 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(ResearchOrg
         super();
     }
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       return impl.create(researchOrganization);
   }
 
-  public gov.nih.nci.coppa.po.ResearchOrganization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.ResearchOrganization getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       return impl.getById(id);
   }
 
-  public gov.nih.nci.coppa.po.ResearchOrganization[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.ResearchOrganization[] getByIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       return impl.getByIds(id);
   }
 
@@ -49,7 +49,7 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(ResearchOrg
       impl.update(researchOrganization);
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId,gov.nih.nci.iso21090.extensions.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.updateStatus(targetId, statusCode);
   }
 
@@ -57,7 +57,7 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(ResearchOrg
       return impl.query(researchOrganization, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.ResearchOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.ResearchOrganization[] getByPlayerIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException {
       return impl.getByPlayerIds(id);
   }
 

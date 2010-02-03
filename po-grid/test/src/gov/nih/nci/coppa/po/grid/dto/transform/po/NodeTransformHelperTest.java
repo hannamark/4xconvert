@@ -85,13 +85,13 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.Correlation;
 import gov.nih.nci.coppa.po.CorrelationType;
 import gov.nih.nci.coppa.po.EntityType;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.services.CorrelationDto;
 
 import java.util.ArrayList;

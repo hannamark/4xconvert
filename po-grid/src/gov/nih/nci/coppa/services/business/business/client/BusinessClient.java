@@ -1,19 +1,19 @@
 package gov.nih.nci.coppa.services.business.business.client;
 
 import gov.nih.nci.coppa.common.LimitOffset;
-import gov.nih.nci.coppa.po.Bl;
-import gov.nih.nci.coppa.po.Cd;
 import gov.nih.nci.coppa.po.CorrelationNode;
 import gov.nih.nci.coppa.po.CorrelationType;
 import gov.nih.nci.coppa.po.EntityNode;
 import gov.nih.nci.coppa.po.EntityType;
 import gov.nih.nci.coppa.po.HealthCareProvider;
-import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.business.business.common.BusinessI;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client.HealthCareProviderClient;
+import gov.nih.nci.iso21090.extensions.Bl;
+import gov.nih.nci.iso21090.extensions.Cd;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.services.RoleList;
 
 import java.rmi.RemoteException;
@@ -258,7 +258,82 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
         return criteria;
     }
 
-  public gov.nih.nci.coppa.po.CorrelationNode[] searchCorrelationsWithEntities(gov.nih.nci.coppa.po.CorrelationNode correlationNode,gov.nih.nci.coppa.po.Bl players,gov.nih.nci.coppa.po.Bl scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.EntityNode getEntityByIdWithCorrelations(gov.nih.nci.iso21090.extensions.Id id,gov.nih.nci.iso21090.extensions.Cd[] players,gov.nih.nci.iso21090.extensions.Cd[] scopers) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getEntityByIdWithCorrelations");
+    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequest params = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequest();
+    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestId idContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestPlayers playersContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestPlayers();
+    playersContainer.setCd(players);
+    params.setPlayers(playersContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestScopers scopersContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestScopers();
+    scopersContainer.setCd(scopers);
+    params.setScopers(scopersContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsResponse boxedResult = portType.getEntityByIdWithCorrelations(params);
+    return boxedResult.getEntityNode();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.CorrelationNode getCorrelationByIdWithEntities(gov.nih.nci.iso21090.extensions.Id id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getCorrelationByIdWithEntities");
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequest params = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequest();
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestId idContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestPlayer playerContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestPlayer();
+    playerContainer.setBl(player);
+    params.setPlayer(playerContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestScoper scoperContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestScoper();
+    scoperContainer.setBl(scoper);
+    params.setScoper(scoperContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesResponse boxedResult = portType.getCorrelationByIdWithEntities(params);
+    return boxedResult.getCorrelationNode();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByIdsWithEntities(gov.nih.nci.iso21090.extensions.Id[] id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getCorrelationsByIdsWithEntities");
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequest params = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequest();
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestId idContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestPlayer playerContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestPlayer();
+    playerContainer.setBl(player);
+    params.setPlayer(playerContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestScoper scoperContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestScoper();
+    scoperContainer.setBl(scoper);
+    params.setScoper(scoperContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesResponse boxedResult = portType.getCorrelationsByIdsWithEntities(params);
+    return boxedResult.getCorrelationNode();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByPlayerIdsWithEntities(gov.nih.nci.iso21090.extensions.Cd cd,gov.nih.nci.iso21090.extensions.Id[] id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"getCorrelationsByPlayerIdsWithEntities");
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequest params = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequest();
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestCd cdContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestCd();
+    cdContainer.setCd(cd);
+    params.setCd(cdContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestId idContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestId();
+    idContainer.setId(id);
+    params.setId(idContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestPlayer playerContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestPlayer();
+    playerContainer.setBl(player);
+    params.setPlayer(playerContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestScoper scoperContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestScoper();
+    scoperContainer.setBl(scoper);
+    params.setScoper(scoperContainer);
+    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesResponse boxedResult = portType.getCorrelationsByPlayerIdsWithEntities(params);
+    return boxedResult.getCorrelationNode();
+    }
+  }
+
+  public gov.nih.nci.coppa.po.CorrelationNode[] searchCorrelationsWithEntities(gov.nih.nci.coppa.po.CorrelationNode correlationNode,gov.nih.nci.iso21090.extensions.Bl players,gov.nih.nci.iso21090.extensions.Bl scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"searchCorrelationsWithEntities");
     gov.nih.nci.coppa.services.business.business.stubs.SearchCorrelationsWithEntitiesRequest params = new gov.nih.nci.coppa.services.business.business.stubs.SearchCorrelationsWithEntitiesRequest();
@@ -279,7 +354,7 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
     }
   }
 
-  public gov.nih.nci.coppa.po.EntityNode[] searchEntitiesWithCorrelations(gov.nih.nci.coppa.po.EntityNode entityNode,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.EntityNode[] searchEntitiesWithCorrelations(gov.nih.nci.coppa.po.EntityNode entityNode,gov.nih.nci.iso21090.extensions.Cd[] players,gov.nih.nci.iso21090.extensions.Cd[] scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"searchEntitiesWithCorrelations");
     gov.nih.nci.coppa.services.business.business.stubs.SearchEntitiesWithCorrelationsRequest params = new gov.nih.nci.coppa.services.business.business.stubs.SearchEntitiesWithCorrelationsRequest();
@@ -297,81 +372,6 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.business.business.stubs.SearchEntitiesWithCorrelationsResponse boxedResult = portType.searchEntitiesWithCorrelations(params);
     return boxedResult.getEntityNode();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.EntityNode getEntityByIdWithCorrelations(gov.nih.nci.coppa.po.Id id,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getEntityByIdWithCorrelations");
-    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequest params = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequest();
-    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestId idContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestPlayers playersContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestPlayers();
-    playersContainer.setCd(players);
-    params.setPlayers(playersContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestScopers scopersContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsRequestScopers();
-    scopersContainer.setCd(scopers);
-    params.setScopers(scopersContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetEntityByIdWithCorrelationsResponse boxedResult = portType.getEntityByIdWithCorrelations(params);
-    return boxedResult.getEntityNode();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.CorrelationNode getCorrelationByIdWithEntities(gov.nih.nci.coppa.po.Id id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getCorrelationByIdWithEntities");
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequest params = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequest();
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestId idContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestPlayer playerContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestPlayer();
-    playerContainer.setBl(player);
-    params.setPlayer(playerContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestScoper scoperContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesRequestScoper();
-    scoperContainer.setBl(scoper);
-    params.setScoper(scoperContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationByIdWithEntitiesResponse boxedResult = portType.getCorrelationByIdWithEntities(params);
-    return boxedResult.getCorrelationNode();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByIdsWithEntities(gov.nih.nci.coppa.po.Id[] id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getCorrelationsByIdsWithEntities");
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequest params = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequest();
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestId idContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestPlayer playerContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestPlayer();
-    playerContainer.setBl(player);
-    params.setPlayer(playerContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestScoper scoperContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesRequestScoper();
-    scoperContainer.setBl(scoper);
-    params.setScoper(scoperContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByIdsWithEntitiesResponse boxedResult = portType.getCorrelationsByIdsWithEntities(params);
-    return boxedResult.getCorrelationNode();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByPlayerIdsWithEntities(gov.nih.nci.coppa.po.Cd cd,gov.nih.nci.coppa.po.Id[] id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"getCorrelationsByPlayerIdsWithEntities");
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequest params = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequest();
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestCd cdContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestCd();
-    cdContainer.setCd(cd);
-    params.setCd(cdContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestId idContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestId();
-    idContainer.setId(id);
-    params.setId(idContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestPlayer playerContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestPlayer();
-    playerContainer.setBl(player);
-    params.setPlayer(playerContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestScoper scoperContainer = new gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesRequestScoper();
-    scoperContainer.setBl(scoper);
-    params.setScoper(scoperContainer);
-    gov.nih.nci.coppa.services.business.business.stubs.GetCorrelationsByPlayerIdsWithEntitiesResponse boxedResult = portType.getCorrelationsByPlayerIdsWithEntities(params);
-    return boxedResult.getCorrelationNode();
     }
   }
 

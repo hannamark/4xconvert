@@ -96,7 +96,7 @@ import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.OversightCommittee;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.ResearchOrganization;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;

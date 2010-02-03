@@ -82,13 +82,14 @@
  */
 package gov.nih.nci.coppa.po.grid.services.stubs;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationalContactTransformerTest;
 import gov.nih.nci.coppa.po.grid.remote.InvokeCorrelationService;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -105,7 +106,7 @@ import java.util.Map;
  */
 public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorrelationService<DTO> {
 
-    public static final String ORG_CONTACT_ROOT_VALUE = "2.16.840.1.113883.3.26.4.4.8";
+    public static final String ORG_CONTACT_ROOT_VALUE = Constants.NCI_OID + ".4.8";
     public static final String ORG_CONTACT_IDENT_VALUE = "OrganizationalContactal contact identifier";
     public static final String EXT_VALUE = "111";
     

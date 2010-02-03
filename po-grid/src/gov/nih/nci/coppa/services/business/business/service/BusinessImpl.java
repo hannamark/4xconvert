@@ -1,18 +1,18 @@
 package gov.nih.nci.coppa.services.business.business.service;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.CorrelationNodeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.EntityNodeTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokeBusinessEjb;
 import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.services.EntityNodeDto;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 
@@ -35,7 +35,7 @@ public class BusinessImpl extends BusinessImplBase {
 		super();
 	}
 	
-  public gov.nih.nci.coppa.po.EntityNode getEntityByIdWithCorrelations(gov.nih.nci.coppa.po.Id id,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
+  public gov.nih.nci.coppa.po.EntityNode getEntityByIdWithCorrelations(gov.nih.nci.iso21090.extensions.Id id,gov.nih.nci.iso21090.extensions.Cd[] players,gov.nih.nci.iso21090.extensions.Cd[] scopers) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
       try {
             Ii ii = IITransformer.INSTANCE.toDto(id);
             Cd[] playerArray = transformFromPoCd(players);
@@ -50,7 +50,7 @@ public class BusinessImpl extends BusinessImplBase {
         }
   }
 
-  public gov.nih.nci.coppa.po.CorrelationNode getCorrelationByIdWithEntities(gov.nih.nci.coppa.po.Id id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.CorrelationNode getCorrelationByIdWithEntities(gov.nih.nci.iso21090.extensions.Id id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       try {
           Ii ii = IITransformer.INSTANCE.toDto(id);
           Bl myPlayer = BLTransformer.INSTANCE.toDto(player);
@@ -65,7 +65,7 @@ public class BusinessImpl extends BusinessImplBase {
       }
   }
 
-  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByIdsWithEntities(gov.nih.nci.coppa.po.Id[] id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByIdsWithEntities(gov.nih.nci.iso21090.extensions.Id[] id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       try {       
           List<Ii> ids = IITransformer.INSTANCE.convert(id);
           Ii[] idsArray = null;
@@ -86,7 +86,7 @@ public class BusinessImpl extends BusinessImplBase {
       }
   }
 
-  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByPlayerIdsWithEntities(gov.nih.nci.coppa.po.Cd cd,gov.nih.nci.coppa.po.Id[] id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByPlayerIdsWithEntities(gov.nih.nci.iso21090.extensions.Cd cd,gov.nih.nci.iso21090.extensions.Id[] id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       try {       
           List<Ii> ids = IITransformer.INSTANCE.convert(id);
           Ii[] idsArray = null;
@@ -108,7 +108,7 @@ public class BusinessImpl extends BusinessImplBase {
       }
   }
 
-  public gov.nih.nci.coppa.po.CorrelationNode[] searchCorrelationsWithEntities(gov.nih.nci.coppa.po.CorrelationNode correlationNode,gov.nih.nci.coppa.po.Bl players,gov.nih.nci.coppa.po.Bl scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.CorrelationNode[] searchCorrelationsWithEntities(gov.nih.nci.coppa.po.CorrelationNode correlationNode,gov.nih.nci.iso21090.extensions.Bl players,gov.nih.nci.iso21090.extensions.Bl scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
       try {
           LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
           Bl myPlayer = BLTransformer.INSTANCE.toDto(players);
@@ -128,7 +128,7 @@ public class BusinessImpl extends BusinessImplBase {
       }
   }
   
-  private Cd[] transformFromPoCd(gov.nih.nci.coppa.po.Cd[] items) throws DtoTransformException {
+  private Cd[] transformFromPoCd(gov.nih.nci.iso21090.extensions.Cd[] items) throws DtoTransformException {
       Cd[] returnArray = null; 
       List<Cd> myItems = CDTransformer.INSTANCE.convert(items);
       if (myItems != null) {
@@ -138,7 +138,7 @@ public class BusinessImpl extends BusinessImplBase {
       return returnArray;
   }
 
-  public gov.nih.nci.coppa.po.EntityNode[] searchEntitiesWithCorrelations(gov.nih.nci.coppa.po.EntityNode entityNode,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
+  public gov.nih.nci.coppa.po.EntityNode[] searchEntitiesWithCorrelations(gov.nih.nci.coppa.po.EntityNode entityNode,gov.nih.nci.iso21090.extensions.Cd[] players,gov.nih.nci.iso21090.extensions.Cd[] scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
       try {
           LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(limitOffset);
           Cd[] playerArray = transformFromPoCd(players);

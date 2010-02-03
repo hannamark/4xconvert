@@ -25,15 +25,15 @@ public class IdentifiedOrganizationImpl extends IdentifiedOrganizationImplBase {
 		super();
 	}
 	
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       return impl.create(identifiedOrganization);
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedOrganization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.IdentifiedOrganization getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
 	  return impl.getById(id);
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedOrganization[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.IdentifiedOrganization[] getByIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       return impl.getByIds(id);
   }
 
@@ -45,7 +45,7 @@ public class IdentifiedOrganizationImpl extends IdentifiedOrganizationImplBase {
     impl.update(identifiedOrganization);
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId,gov.nih.nci.iso21090.extensions.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     impl.updateStatus(targetId, statusCode);
   }
 
@@ -57,7 +57,7 @@ public class IdentifiedOrganizationImpl extends IdentifiedOrganizationImplBase {
       return impl.query(identifiedOrganization, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedOrganization[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.IdentifiedOrganization[] getByPlayerIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException {
       return impl.getByPlayerIds(id);
   }
 

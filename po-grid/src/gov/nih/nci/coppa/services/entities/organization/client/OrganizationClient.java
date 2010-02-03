@@ -1,12 +1,13 @@
 package gov.nih.nci.coppa.services.entities.organization.client;
 
 import gov.nih.nci.coppa.common.LimitOffset;
-import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -41,7 +42,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     /**
      * The ii root value for orgs.
      */
-    public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
+    public static final String ORG_ROOT = Constants.NCI_OID + ".2";
 
     public OrganizationClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
@@ -115,7 +116,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         ClientUtils.handleSearchResults(results);
     }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId,gov.nih.nci.iso21090.extensions.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.UpdateStatusRequest();
@@ -164,7 +165,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     }
   }
 
-  public gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
+  public gov.nih.nci.coppa.po.Organization getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.GetByIdRequest();
@@ -176,7 +177,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     }
   }
 
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.entities.organization.stubs.CreateRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.CreateRequest();

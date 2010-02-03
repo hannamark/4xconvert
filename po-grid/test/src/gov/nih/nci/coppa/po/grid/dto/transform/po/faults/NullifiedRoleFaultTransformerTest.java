@@ -2,9 +2,9 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po.faults;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.util.HashMap;

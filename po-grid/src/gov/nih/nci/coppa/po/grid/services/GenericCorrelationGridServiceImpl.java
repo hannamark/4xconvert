@@ -1,21 +1,21 @@
 package gov.nih.nci.coppa.po.grid.services;
 
 import gov.nih.nci.coppa.common.LimitOffset;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.coppa.po.grid.dto.transform.TransformerRegistry;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.IdArrayTransformer;
-import gov.nih.nci.coppa.po.grid.dto.transform.po.IdTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.FaultUtil;
 import gov.nih.nci.coppa.po.grid.remote.InvokeCorrelationService;
 import gov.nih.nci.coppa.po.grid.remote.Utils;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.common.LimitOffsetTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.extensions.Id;
+import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdArrayTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
 
@@ -174,7 +174,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     /**
      * {@inheritDoc}
      */
-    public void updateStatus(gov.nih.nci.coppa.po.Id targetId, gov.nih.nci.coppa.po.Cd statusCode)
+    public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId, gov.nih.nci.iso21090.extensions.Cd statusCode)
             throws RemoteException {
         try {
             Ii iiDto = IdTransformer.INSTANCE.toDto(targetId);

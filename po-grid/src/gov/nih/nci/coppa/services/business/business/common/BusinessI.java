@@ -13,30 +13,6 @@ import java.rmi.RemoteException;
 public interface BusinessI {
 
   /**
-   * searchCorrelationsWithEntities
-   *
-   * @param correlationNode
-   * @param players
-   * @param scopers
-   * @param limitOffset
-   * @throws TooManyResultsFault
-   *	
-   */
-  public gov.nih.nci.coppa.po.CorrelationNode[] searchCorrelationsWithEntities(gov.nih.nci.coppa.po.CorrelationNode correlationNode,gov.nih.nci.coppa.po.Bl players,gov.nih.nci.coppa.po.Bl scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
-
-  /**
-   * searchEntitiesWithCorrelations
-   *
-   * @param entityNode
-   * @param players
-   * @param scopers
-   * @param limitOffset
-   * @throws TooManyResultsFault
-   *	
-   */
-  public gov.nih.nci.coppa.po.EntityNode[] searchEntitiesWithCorrelations(gov.nih.nci.coppa.po.EntityNode entityNode,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
-
-  /**
    * getEntityByIdWithCorrelations
    *
    * @param id
@@ -45,7 +21,7 @@ public interface BusinessI {
    * @throws NullifiedEntityFault
    *	
    */
-  public gov.nih.nci.coppa.po.EntityNode getEntityByIdWithCorrelations(gov.nih.nci.coppa.po.Id id,gov.nih.nci.coppa.po.Cd[] players,gov.nih.nci.coppa.po.Cd[] scopers) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault ;
+  public gov.nih.nci.coppa.po.EntityNode getEntityByIdWithCorrelations(gov.nih.nci.iso21090.extensions.Id id,gov.nih.nci.iso21090.extensions.Cd[] players,gov.nih.nci.iso21090.extensions.Cd[] scopers) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedEntityFault ;
 
   /**
    * getCorrelationByIdWithEntities
@@ -56,7 +32,7 @@ public interface BusinessI {
    * @throws NullifiedRoleFault
    *	
    */
-  public gov.nih.nci.coppa.po.CorrelationNode getCorrelationByIdWithEntities(gov.nih.nci.coppa.po.Id id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
+  public gov.nih.nci.coppa.po.CorrelationNode getCorrelationByIdWithEntities(gov.nih.nci.iso21090.extensions.Id id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
 
   /**
    * getCorrelationsByIdsWithEntities
@@ -67,7 +43,7 @@ public interface BusinessI {
    * @throws NullifiedRoleFault
    *	
    */
-  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByIdsWithEntities(gov.nih.nci.coppa.po.Id[] id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
+  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByIdsWithEntities(gov.nih.nci.iso21090.extensions.Id[] id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
 
   /**
    * getCorrelationsByPlayerIdsWithEntities
@@ -79,7 +55,31 @@ public interface BusinessI {
    * @throws NullifiedRoleFault
    *	
    */
-  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByPlayerIdsWithEntities(gov.nih.nci.coppa.po.Cd cd,gov.nih.nci.coppa.po.Id[] id,gov.nih.nci.coppa.po.Bl player,gov.nih.nci.coppa.po.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
+  public gov.nih.nci.coppa.po.CorrelationNode[] getCorrelationsByPlayerIdsWithEntities(gov.nih.nci.iso21090.extensions.Cd cd,gov.nih.nci.iso21090.extensions.Id[] id,gov.nih.nci.iso21090.extensions.Bl player,gov.nih.nci.iso21090.extensions.Bl scoper) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault ;
+
+  /**
+   * searchCorrelationsWithEntities
+   *
+   * @param correlationNode
+   * @param players
+   * @param scopers
+   * @param limitOffset
+   * @throws TooManyResultsFault
+   *	
+   */
+  public gov.nih.nci.coppa.po.CorrelationNode[] searchCorrelationsWithEntities(gov.nih.nci.coppa.po.CorrelationNode correlationNode,gov.nih.nci.iso21090.extensions.Bl players,gov.nih.nci.iso21090.extensions.Bl scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
+
+  /**
+   * searchEntitiesWithCorrelations
+   *
+   * @param entityNode
+   * @param players
+   * @param scopers
+   * @param limitOffset
+   * @throws TooManyResultsFault
+   *	
+   */
+  public gov.nih.nci.coppa.po.EntityNode[] searchEntitiesWithCorrelations(gov.nih.nci.coppa.po.EntityNode entityNode,gov.nih.nci.iso21090.extensions.Cd[] players,gov.nih.nci.iso21090.extensions.Cd[] scopers,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
 
 }
 

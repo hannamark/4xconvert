@@ -1,12 +1,12 @@
 package gov.nih.nci.coppa.services.structuralroles.patient.client;
 
-import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Patient;
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.patient.common.PatientI;
+import gov.nih.nci.iso21090.Constants;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -73,7 +73,7 @@ public class PatientClient extends PatientClientBase implements PatientI {
     @GridTestMethod
     private static void testPatient(PatientClient client) throws EntityValidationFault, RemoteException {
         final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
-        final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
+        final String ORG_ROOT = Constants.NCI_OID + ".2";
         
         Patient p = new Patient();
         
@@ -100,7 +100,8 @@ public class PatientClient extends PatientClientBase implements PatientI {
         }
     }
     
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+
+  public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"create");
     gov.nih.nci.coppa.services.structuralroles.patient.stubs.CreateRequest params = new gov.nih.nci.coppa.services.structuralroles.patient.stubs.CreateRequest();
@@ -112,7 +113,7 @@ public class PatientClient extends PatientClientBase implements PatientI {
     }
   }
 
-  public gov.nih.nci.coppa.po.Patient getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.Patient getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.structuralroles.patient.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.structuralroles.patient.stubs.GetByIdRequest();
@@ -124,7 +125,7 @@ public class PatientClient extends PatientClientBase implements PatientI {
     }
   }
 
-  public gov.nih.nci.coppa.po.Patient[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.Patient[] getByIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByIds");
     gov.nih.nci.coppa.services.structuralroles.patient.stubs.GetByIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.patient.stubs.GetByIdsRequest();
@@ -136,7 +137,7 @@ public class PatientClient extends PatientClientBase implements PatientI {
     }
   }
 
-  public gov.nih.nci.coppa.po.Patient[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.Patient[] getByPlayerIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByPlayerIds");
     gov.nih.nci.coppa.services.structuralroles.patient.stubs.GetByPlayerIdsRequest params = new gov.nih.nci.coppa.services.structuralroles.patient.stubs.GetByPlayerIdsRequest();
@@ -186,7 +187,7 @@ public class PatientClient extends PatientClientBase implements PatientI {
     }
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId,gov.nih.nci.iso21090.extensions.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"updateStatus");
     gov.nih.nci.coppa.services.structuralroles.patient.stubs.UpdateStatusRequest params = new gov.nih.nci.coppa.services.structuralroles.patient.stubs.UpdateStatusRequest();

@@ -7,8 +7,8 @@ import gov.nih.nci.coppa.po.EntityNode;
 import gov.nih.nci.coppa.po.EntityType;
 import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.coppa.po.Organization;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.EntityNodeDto;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityNodeTransformerTest extends 
-    AbstractTransformerTestBase <EntityNodeTransformer, EntityNode , EntityNodeDto> {
+    AbstractTransformerTestBase<EntityNodeTransformer, EntityNode , EntityNodeDto> {
     
     private EntityNode createNode() {
         EntityNode corr = new EntityNode();

@@ -6,14 +6,14 @@ import gov.nih.nci.coppa.po.EntityType;
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.Person;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 public class CorrelationNodeTransformerTest  extends 
-AbstractTransformerTestBase <CorrelationNodeTransformer, CorrelationNode , CorrelationNodeDTO> {
+AbstractTransformerTestBase<CorrelationNodeTransformer, CorrelationNode , CorrelationNodeDTO> {
     
   
     private void verifyNode(CorrelationNode x) {

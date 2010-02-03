@@ -24,15 +24,15 @@ public class ClinicalResearchStaffImpl extends ClinicalResearchStaffImplBase {
 		super();
 	}
 	
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       return impl.create(clinicalResearchStaff);
   }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       return impl.getById(id);
   }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       return impl.getByIds(id);
   }
 
@@ -44,7 +44,7 @@ public class ClinicalResearchStaffImpl extends ClinicalResearchStaffImplBase {
       impl.update(clinicalResearchStaff);
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId,gov.nih.nci.iso21090.extensions.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.updateStatus(targetId, statusCode);
   }
 
@@ -56,7 +56,7 @@ public class ClinicalResearchStaffImpl extends ClinicalResearchStaffImplBase {
       return impl.query(clinicalResearchStaff, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] getByPlayerIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException {
     return impl.getByPlayerIds(id);
   }
 

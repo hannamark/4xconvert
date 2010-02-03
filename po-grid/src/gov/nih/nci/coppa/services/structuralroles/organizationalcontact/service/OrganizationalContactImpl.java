@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.services.structuralroles.organizationalcontact.service
 
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.grid.services.GenericCorrelationGridServiceImpl;
+import gov.nih.nci.iso21090.Constants;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.rmi.RemoteException;
@@ -23,7 +24,7 @@ public class OrganizationalContactImpl extends OrganizationalContactImplBase {
     /**
      * The ii root value.
      */
-    public static final String ORGANIZATIONAL_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.4.8";
+    public static final String ORGANIZATIONAL_CONTACT_ROOT = Constants.NCI_OID + ".4.8";
     
     private static org.apache.log4j.Logger logger = LogManager.getLogger(OrganizationalContactImpl.class);
 	
@@ -34,15 +35,15 @@ public class OrganizationalContactImpl extends OrganizationalContactImplBase {
 		super();
 	}
 	
-  public gov.nih.nci.coppa.po.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       return impl.create(organizationalContact);
   }
 
-  public gov.nih.nci.coppa.po.OrganizationalContact getById(gov.nih.nci.coppa.po.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.OrganizationalContact getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
 	  return impl.getById(id);
   }
 
-  public gov.nih.nci.coppa.po.OrganizationalContact[] getByIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
+  public gov.nih.nci.coppa.po.OrganizationalContact[] getByIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException, gov.nih.nci.coppa.po.faults.NullifiedRoleFault {
       return impl.getByIds(id);
   }
 
@@ -54,7 +55,7 @@ public class OrganizationalContactImpl extends OrganizationalContactImplBase {
       impl.update(organizationalContact);
   }
 
-  public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
+  public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId,gov.nih.nci.iso21090.extensions.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.updateStatus(targetId, statusCode);
   }
 
@@ -67,7 +68,7 @@ public class OrganizationalContactImpl extends OrganizationalContactImplBase {
       return impl.query(organizationalContact, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.OrganizationalContact[] getByPlayerIds(gov.nih.nci.coppa.po.Id[] id) throws RemoteException {
+  public gov.nih.nci.coppa.po.OrganizationalContact[] getByPlayerIds(gov.nih.nci.iso21090.extensions.Id[] id) throws RemoteException {
       return impl.getByPlayerIds(id);
   }
 
