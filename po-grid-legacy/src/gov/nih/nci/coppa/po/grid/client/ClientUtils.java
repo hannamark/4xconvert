@@ -104,7 +104,9 @@ public final class ClientUtils {
      * @param identifier the ISO II information
      */
     public static void print(II... identifier) {
-        System.out.println(ToStringBuilder.reflectionToString(identifier));
+        for (II ii : identifier) {
+            System.out.println(ToStringBuilder.reflectionToString(ii));
+        }
     }
 
     /**
