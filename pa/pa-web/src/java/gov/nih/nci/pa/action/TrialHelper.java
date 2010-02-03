@@ -63,7 +63,7 @@ public class TrialHelper {
     private static final String FALSE = "FALSE";
     private static final String ABSTRACTION = "Abstraction";
     private static final String VALIDATION = "Validation";
-    private PAUtil paUtil = new PAUtil();
+    private final PAUtil  paUtil = new PAUtil();
     /**
      * 
      * @param studyProtocolIi Ii
