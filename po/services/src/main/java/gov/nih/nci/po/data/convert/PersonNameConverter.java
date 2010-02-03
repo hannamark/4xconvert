@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 

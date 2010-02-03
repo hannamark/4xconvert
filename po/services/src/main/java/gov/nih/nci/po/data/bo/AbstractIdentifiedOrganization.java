@@ -120,7 +120,7 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
 
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="playerIdentifier"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */

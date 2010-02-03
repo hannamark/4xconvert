@@ -84,12 +84,12 @@ package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;

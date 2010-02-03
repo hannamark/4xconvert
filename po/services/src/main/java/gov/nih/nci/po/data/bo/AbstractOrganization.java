@@ -141,7 +141,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
     /**
      * @return database identity
      * @xsnapshot.property match="iso"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *                     type="gov.nih.nci.iso21090.Ii" name="identifier"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$OrgIdConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
@@ -161,7 +161,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
 
     /**
      * @return name
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.EnOn"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.EnOn"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
@@ -182,7 +182,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
 
     /**
      * @return mail address
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ad"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ad"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter$SimpleConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter$SimpleConverter"
      */
@@ -287,7 +287,7 @@ public abstract class AbstractOrganization implements PersistentObject, Contacta
 
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$CdConverter"
      */

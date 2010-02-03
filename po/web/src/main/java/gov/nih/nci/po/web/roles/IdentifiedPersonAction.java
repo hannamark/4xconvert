@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.po.web.roles;
 
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.data.bo.Organization;

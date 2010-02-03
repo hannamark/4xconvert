@@ -1,15 +1,15 @@
 package gov.nih.nci.po.service.external.stubs;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.services.OrganizationService;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.EntityNamePartType;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.external.CtepOrganizationImporterTest;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;

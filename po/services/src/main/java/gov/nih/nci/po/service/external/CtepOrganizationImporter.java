@@ -83,11 +83,11 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.common.exceptions.CTEPEntException;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.iso21090.Adxp;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Correlation;
@@ -207,7 +207,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     public Organization importOrganization(Ii ctepOrgId) throws JMSException, EntityValidationException {
         try {
             // get org from ctep and convert to local data model
-            OrganizationDTO ctepOrgDto = getCtepOrgService().getOrganizationById(ctepOrgId);
+            OrganizationDTO ctepOrgDto = getCtepOrgService().getOrganizationById(CtepUtils.convertToOldIi(ctepOrgId));
             printOrgDataToDebugLog(ctepOrgDto);
             Ii assignedId = ctepOrgDto.getIdentifier();
             assignedId.setReliability(IdentifierReliability.VRF);
@@ -587,7 +587,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             ctepOrgId.setReliability(IdentifierReliability.ISS);
-            HealthCareFacilityDTO hcfDto = getCtepOrgService().getHealthCareFacility(ctepOrgId);
+            HealthCareFacilityDTO hcfDto = 
+                getCtepOrgService().getHealthCareFacility(CtepUtils.convertToOldIi(ctepOrgId));
             printHcf(hcfDto);
 
             return (HealthCareFacility) PoXsnapshotHelper.createModel(hcfDto);
@@ -610,7 +611,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             ctepOrgId.setReliability(IdentifierReliability.ISS);
-            ResearchOrganizationDTO roDto = getCtepOrgService().getResearchOrganization(ctepOrgId);
+            ResearchOrganizationDTO roDto = 
+                getCtepOrgService().getResearchOrganization(CtepUtils.convertToOldIi(ctepOrgId));
             print(roDto);
             return (ResearchOrganization) PoXsnapshotHelper.createModel(roDto);
         } catch (CTEPEntException e) {

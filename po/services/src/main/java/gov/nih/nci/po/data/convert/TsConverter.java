@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Ts;
 
 import java.util.Date;
 

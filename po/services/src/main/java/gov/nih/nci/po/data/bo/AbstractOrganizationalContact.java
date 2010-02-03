@@ -113,7 +113,7 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
     /**
      * Get org contact type.
      *
-     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property name="typeCode" match="iso" type="gov.nih.nci.iso21090.Cd"
      *   snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
      *   model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      *
@@ -133,7 +133,7 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
 
     /**
      * @return the title
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.St"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */

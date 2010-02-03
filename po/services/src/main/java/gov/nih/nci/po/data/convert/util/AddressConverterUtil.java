@@ -1,13 +1,13 @@
 package gov.nih.nci.po.data.convert.util;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.AdxpAdl;
-import gov.nih.nci.coppa.iso.AdxpAl;
-import gov.nih.nci.coppa.iso.AdxpCnt;
-import gov.nih.nci.coppa.iso.AdxpCty;
-import gov.nih.nci.coppa.iso.AdxpSta;
-import gov.nih.nci.coppa.iso.AdxpZip;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Adxp;
+import gov.nih.nci.iso21090.AdxpAdl;
+import gov.nih.nci.iso21090.AdxpAl;
+import gov.nih.nci.iso21090.AdxpCnt;
+import gov.nih.nci.iso21090.AdxpCty;
+import gov.nih.nci.iso21090.AdxpSta;
+import gov.nih.nci.iso21090.AdxpZip;
 
 import java.util.ArrayList;
 import java.util.List;

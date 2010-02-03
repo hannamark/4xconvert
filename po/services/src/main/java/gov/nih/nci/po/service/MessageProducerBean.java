@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.services.SubscriberUpdateMessage;

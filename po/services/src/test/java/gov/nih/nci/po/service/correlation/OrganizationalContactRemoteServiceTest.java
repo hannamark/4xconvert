@@ -84,8 +84,8 @@ package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
 import gov.nih.nci.po.data.convert.GenericTypeCodeConverter;
@@ -95,7 +95,6 @@ import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
-import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
 import java.util.List;
 import java.util.Map;

@@ -5,19 +5,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.AdxpAdl;
-import gov.nih.nci.coppa.iso.AdxpSta;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Adxp;
+import gov.nih.nci.iso21090.AdxpAdl;
+import gov.nih.nci.iso21090.AdxpSta;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.EntityNamePartType;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.CurationException;
@@ -114,9 +114,9 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         patIi.setExtension("PT" + patIi.getExtension());
         PersonDTO result = remote.getPerson(patIi);
         // everything other than the status and 4 bio fields should be masked nullflavor
-        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, result.getName().getNullFlavor());
-        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, result.getPostalAddress().getNullFlavor());
-        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, ((Tel) result.getTelecomAddress().getItem().iterator()
+        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, result.getName().getNullFlavor());
+        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, result.getPostalAddress().getNullFlavor());
+        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, ((Tel) result.getTelecomAddress().getItem().iterator()
                 .next()).getNullFlavor());
         assertEquals(RoleStatus.ACTIVE, CdConverter.convertToRoleStatus(result.getStatusCode()));
 

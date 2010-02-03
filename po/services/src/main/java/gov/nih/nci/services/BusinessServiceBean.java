@@ -1,11 +1,11 @@
 package gov.nih.nci.services;
 
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Entity;
 import gov.nih.nci.po.data.bo.Organization;
@@ -249,8 +249,7 @@ public class BusinessServiceBean implements BusinessServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
-    public List<CorrelationNodeDTO> getCorrelationsByIdsWithEntities(Ii[] ids, Bl player,
-            Bl scoper) 
+    public List<CorrelationNodeDTO> getCorrelationsByIdsWithEntities(Ii[] ids, Bl player, Bl scoper) 
         throws NullifiedRoleException {
         List<CorrelationNodeDTO> nodeList = new ArrayList<CorrelationNodeDTO>();
         if (ids.length > 0) {

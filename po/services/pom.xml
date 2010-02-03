@@ -99,14 +99,21 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.coppa</groupId>
+            <groupId>gov.nih.nci.iso21090</groupId>
             <artifactId>iso-datatypes</artifactId>
-            <version>1.2.6</version>
+            <version>${iso-datatypes.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>coppa-commons</artifactId>
+            <version>${coppa-commons.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Remove -->
+        <dependency>
+            <groupId>gov.nih.nci.coppa</groupId>
+            <artifactId>iso-datatypes</artifactId>
             <version>1.2.6</version>
             <scope>compile</scope>
         </dependency>

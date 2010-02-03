@@ -86,8 +86,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.convert.EnPnConverter;
 

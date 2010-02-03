@@ -83,10 +83,10 @@
 
 package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.AddressPartType;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.AddressPartType;
+import gov.nih.nci.iso21090.Adxp;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.State;
 import gov.nih.nci.po.util.PoRegistry;

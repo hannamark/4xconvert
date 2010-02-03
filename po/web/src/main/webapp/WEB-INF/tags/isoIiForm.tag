@@ -2,7 +2,7 @@
 <%@ attribute name="formNameBase" type="java.lang.String" required="true" %>
 <%@ attribute name="iiKeyBase" type="java.lang.String" required="true" %>
 <%@ attribute name="iiLabelKeyBase" type="java.lang.String" required="true" %>
-<%@ attribute name="ii" type="gov.nih.nci.coppa.iso.Ii" required="true" %>
+<%@ attribute name="ii" type="gov.nih.nci.iso21090.Ii" required="true" %>
 <%@ attribute name="required" type="java.lang.Boolean" required="false" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -33,7 +33,7 @@
 	size="55" maxlength="255"
 	label="%{getText(#attr.iiLabelKeyBase + '.identifierName')}"
 	id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.identifierName'}"/>
-<s:set name="reliabilityValues" value="@gov.nih.nci.coppa.iso.IdentifierReliability@values()" />
+<s:set name="reliabilityValues" value="@gov.nih.nci.iso21090.IdentifierReliability@values()" />
 <s:select 
     name="%{#attr.iiKeyBase + '.reliability'}" 
     label="%{getText(#attr.iiLabelKeyBase + '.reliability')}"
@@ -61,7 +61,7 @@
 	size="55" maxlength="255"
 	label="%{getText(#attr.iiLabelKeyBase + '.root')}" 
 	id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.root'}"/>
-<s:set name="scopeValues" value="@gov.nih.nci.coppa.iso.IdentifierScope@values()" />
+<s:set name="scopeValues" value="@gov.nih.nci.iso21090.IdentifierScope@values()" />
 <s:select 
     name="%{#attr.iiKeyBase + '.scope'}" 
     label="%{getText(#attr.iiLabelKeyBase + '.scope')}"

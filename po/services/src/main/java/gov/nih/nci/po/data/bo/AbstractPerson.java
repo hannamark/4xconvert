@@ -157,7 +157,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
     /**
      * @return database id
      * @xsnapshot.property match="iso"
-     *                     type="gov.nih.nci.coppa.iso.Ii" name="identifier"
+     *                     type="gov.nih.nci.iso21090.Ii" name="identifier"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$PersonIdConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
@@ -264,7 +264,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
 
     /**
      * @return mail address
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ad"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ad"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter$SimpleConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter$SimpleConverter"
      */
@@ -402,7 +402,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
 
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StatusCodeConverter$CdConverter"
      */
@@ -417,7 +417,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
 
     /**
      * @return the sex code
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.SexCodeConverter$CdConverter"
      */
@@ -431,7 +431,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
 
     /**
      * @return the race code
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.DSet"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.DSet"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.RaceCodeConverter$DSetConverter"
      */
@@ -442,7 +442,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
 
     /**
      * @return the ethnic code
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.DSet"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.DSet"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.EthnicGroupCodeConverter$EnumConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EthnicGroupCodeConverter$DSetConverter"
      */
@@ -453,7 +453,7 @@ public abstract class AbstractPerson implements PersistentObject, Contactable {
 
     /**
      * @return name birthDate
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ts"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ts"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.DateConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.TsConverter"
      */

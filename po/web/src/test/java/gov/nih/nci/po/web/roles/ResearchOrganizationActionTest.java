@@ -172,7 +172,7 @@ public class ResearchOrganizationActionTest extends AbstractRoleActionTest {
         role.setId(1L);
         PrivateAccessor.invokePrivateMethod(role, AbstractRole.class, "setPriorAsString",
                 new Object[] { roleStatus.name() });
-        Collection<RoleStatus> allowedTransitions = new ArrayList(roleStatus.getAllowedTransitions());
+        Collection<RoleStatus> allowedTransitions = new ArrayList<RoleStatus>(roleStatus.getAllowedTransitions());
         allowedTransitions.remove(RoleStatus.ACTIVE);
         assertTrue(allowedTransitions.containsAll(getAction().getAvailableStatus()));
         assertTrue(getAction().getAvailableStatus().containsAll(allowedTransitions));

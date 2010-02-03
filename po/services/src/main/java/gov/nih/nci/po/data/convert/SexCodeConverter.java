@@ -83,8 +83,7 @@
 
 package gov.nih.nci.po.data.convert;
 
-
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.po.data.bo.PersonSex;
 import gov.nih.nci.services.PoIsoConstraintException;
 

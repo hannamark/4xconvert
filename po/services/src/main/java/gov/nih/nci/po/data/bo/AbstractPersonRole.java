@@ -128,7 +128,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
 
     /**
      * @return the person
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="playerIdentifier"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentPersonConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
@@ -147,7 +147,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
 
     /**
      * @return the organization
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="scoperIdentifier"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
@@ -172,7 +172,7 @@ public abstract class AbstractPersonRole extends AbstractRole implements Contact
      * @return the postalAddresses
      *
      @xsnapshot.property name="postalAddress"
-     *                     match="iso" type="gov.nih.nci.coppa.iso.DSet"
+     *                     match="iso" type="gov.nih.nci.iso21090.DSet"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter$SetConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter$DSetConverter"
      */

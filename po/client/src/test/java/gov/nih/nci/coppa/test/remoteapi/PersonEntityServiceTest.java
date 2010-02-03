@@ -87,17 +87,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelPhone;
-import gov.nih.nci.coppa.iso.TelUrl;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.EntityNamePartType;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelPhone;
+import gov.nih.nci.iso21090.TelUrl;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.data.bo.PersonEthnicGroup;
 import gov.nih.nci.po.data.bo.PersonRace;
@@ -351,9 +351,9 @@ public class PersonEntityServiceTest extends AbstractPersonEntityService {
         
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         // everything other than the status and 4 bio fields should be masked nullflavor
-        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, dto.getName().getNullFlavor());
-        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, dto.getPostalAddress().getNullFlavor());
-        assertEquals(gov.nih.nci.coppa.iso.NullFlavor.MSK, ((Tel) dto.getTelecomAddress().getItem()
+        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, dto.getName().getNullFlavor());
+        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, dto.getPostalAddress().getNullFlavor());
+        assertEquals(gov.nih.nci.iso21090.NullFlavor.MSK, ((Tel) dto.getTelecomAddress().getItem()
                 .iterator().next()).getNullFlavor());
         assertEquals(RoleStatus.PENDING, CdConverter.convertToRoleStatus(dto.getStatusCode()));
         

@@ -120,7 +120,7 @@ public abstract class AbstractOversightCommittee extends AbstractOrganizationRol
 
     /**
      * @return the type
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.GenericTypeCodeConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */

@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.services.organization;
 
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.services.EntityDto;
 
 /**

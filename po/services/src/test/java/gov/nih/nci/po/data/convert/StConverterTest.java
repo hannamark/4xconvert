@@ -2,8 +2,8 @@ package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.St;
 
 import org.junit.Test;
 

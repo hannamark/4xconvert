@@ -41,7 +41,7 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
 
     /**
      * @return the name
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.EnOn"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.EnOn"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
@@ -78,7 +78,7 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
      * @return the postalAddresses
      *
      @xsnapshot.property name="postalAddress"
-     *                     match="iso" type="gov.nih.nci.coppa.iso.DSet"
+     *                     match="iso" type="gov.nih.nci.iso21090.DSet"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.AddressConverter$SetConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.AdConverter$DSetConverter"
      */

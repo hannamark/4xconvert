@@ -83,8 +83,8 @@
 
 package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.En;
-import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.iso21090.En;
+import gov.nih.nci.iso21090.Enxp;
 import gov.nih.nci.services.PoIsoConstraintException;
 
 /**

@@ -83,10 +83,10 @@
 package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.EntityNamePartQualifier;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.EntityNamePartQualifier;
+import gov.nih.nci.iso21090.EntityNamePartType;
+import gov.nih.nci.iso21090.Enxp;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.services.PoIsoConstraintException;
 

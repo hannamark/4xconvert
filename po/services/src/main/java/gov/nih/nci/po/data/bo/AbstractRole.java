@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.Date;
@@ -155,7 +155,7 @@ public abstract class AbstractRole implements PersistentObject {
 
     /**
      * @return the status
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Cd"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Cd"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.RoleStatusConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.CdConverter"
      */

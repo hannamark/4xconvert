@@ -82,11 +82,11 @@
  */
 package gov.nih.nci.coppa.test.remoteapi;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;

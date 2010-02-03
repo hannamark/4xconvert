@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.IdentifierScope;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.IdentifierScope;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 

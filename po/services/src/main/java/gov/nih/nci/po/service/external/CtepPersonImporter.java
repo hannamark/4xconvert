@@ -83,13 +83,13 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.common.exceptions.CTEPEntException;
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Adxp;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -176,7 +176,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     public Person importPerson(Ii ctepPersonId) throws JMSException, EntityValidationException {
         try {
             // get org from ctep and convert to local data model
-            PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
+            PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(CtepUtils.convertToOldIi(ctepPersonId));
             printPersonDataToDebugLog(ctepPersonDto);
             Ii assignedId = ctepPersonDto.getIdentifier();
             assignedId.setReliability(IdentifierReliability.VRF);
@@ -290,7 +290,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             assignedId.setReliability(IdentifierReliability.ISS);
-            return getCtepPersonService().getIdentifiedPersonById(assignedId);
+            return getCtepPersonService().getIdentifiedPersonById(CtepUtils.convertToOldIi(assignedId));
         } catch (CTEPEntException e) {
             return null;
         } finally {
@@ -510,7 +510,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             personIi.setReliability(IdentifierReliability.ISS);
-            return getCtepPersonService().getHealthCareProviderByPlayerId(personIi);
+            return getCtepPersonService().getHealthCareProviderByPlayerId(CtepUtils.convertToOldIi(personIi));
         } catch (CTEPEntException e) {
             return null;
         } finally {
@@ -546,7 +546,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // then change it to VRF for the rest of the import process.
         try {
             personIi.setReliability(IdentifierReliability.ISS);
-            return getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
+            return getCtepPersonService().getClinicalResearchStaffByPlayerId(CtepUtils.convertToOldIi(personIi));
         } catch (CTEPEntException e) {
             return null;
         } finally {

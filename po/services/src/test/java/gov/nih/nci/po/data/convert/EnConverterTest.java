@@ -4,11 +4,11 @@ package gov.nih.nci.po.data.convert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import gov.nih.nci.coppa.iso.EnOn;
-import gov.nih.nci.coppa.iso.EntityNamePartQualifier;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.iso21090.EnOn;
+import gov.nih.nci.iso21090.EntityNamePartQualifier;
+import gov.nih.nci.iso21090.EntityNamePartType;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.services.PoIsoConstraintException;
 
 import java.util.Collections;

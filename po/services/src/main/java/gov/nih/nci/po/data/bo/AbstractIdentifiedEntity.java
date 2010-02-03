@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.PoRegistry;
@@ -136,7 +136,7 @@ public abstract class AbstractIdentifiedEntity<T extends CuratableEntity<?, ?>> 
 
     /**
      * @return the scoper
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="scoperIdentifier"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="scoperIdentifier"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */

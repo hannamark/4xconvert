@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.RoleStatusChange;
@@ -149,7 +149,7 @@ public class OversightCommittee extends AbstractOversightCommittee implements Co
 
     /**
      * {@inheritDoc}
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="duplicateOf"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="duplicateOf"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOvCConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter$CorrelationIiConverter"
      */

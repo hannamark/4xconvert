@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.services.correlation;
 
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.services.CorrelationDto;
 
 /**

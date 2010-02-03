@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoRegistry;
 
@@ -114,7 +114,7 @@ public abstract class AbstractOrganizationRole extends AbstractRole implements P
 
     /**
      * @return the player.  never null.
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.Ii" name="playerIdentifier"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="playerIdentifier"
      *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
      *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */

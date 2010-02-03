@@ -1,7 +1,7 @@
 package gov.nih.nci.services;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Entity;
 import gov.nih.nci.po.data.bo.HealthCareFacility;

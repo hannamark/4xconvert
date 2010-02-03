@@ -83,8 +83,8 @@
 package gov.nih.nci.coppa.test.remoteapi;
 
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.service.BusinessServiceTestHelper;
 import gov.nih.nci.po.service.TestConvertHelper;

@@ -82,14 +82,15 @@
  */
 package gov.nih.nci.services.person;
 
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.Patient;
@@ -232,14 +233,14 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
         
         pDto.setIdentifier(id);
         EnPn enPn = new EnPn();
-        enPn.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.MSK);
+        enPn.setNullFlavor(NullFlavor.MSK);
         pDto.setName(enPn);
         Ad ad = new Ad();
-        ad.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.MSK);
+        ad.setNullFlavor(NullFlavor.MSK);
         pDto.setPostalAddress(ad);
         pDto.setStatusCode(RoleStatusConverter.convertToCd(patBO.getStatus()));
         Tel tel = new Tel();
-        tel.setNullFlavor(gov.nih.nci.coppa.iso.NullFlavor.MSK);
+        tel.setNullFlavor(NullFlavor.MSK);
         DSet<Tel> tels = new DSet<Tel>();
         tels.setItem(new HashSet<Tel>());
         tels.getItem().add(tel);

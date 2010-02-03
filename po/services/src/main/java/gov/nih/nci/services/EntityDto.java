@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.services;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 
 /**
  * Base DTO for entities.

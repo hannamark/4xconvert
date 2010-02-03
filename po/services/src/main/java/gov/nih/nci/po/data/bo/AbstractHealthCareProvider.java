@@ -116,7 +116,7 @@ public abstract class AbstractHealthCareProvider extends AbstractPersonRole impl
 
     /**
      * @return the certificateLicenseText
-     * @xsnapshot.property match="iso" type="gov.nih.nci.coppa.iso.St"
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.St"
      *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
      *                     model-transformer="gov.nih.nci.po.data.convert.StConverter"
      */

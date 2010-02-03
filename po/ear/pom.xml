@@ -100,6 +100,11 @@
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
+                            <groupId>gov.nih.nci.iso21090</groupId>
+                            <artifactId>iso-datatypes</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
                             <groupId>gov.nih.nci.coppa</groupId>
                             <artifactId>iso-datatypes</artifactId>
                             <includeInApplicationXml>true</includeInApplicationXml>

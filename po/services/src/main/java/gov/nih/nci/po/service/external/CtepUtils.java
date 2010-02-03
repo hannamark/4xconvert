@@ -1,8 +1,8 @@
 package gov.nih.nci.po.service.external;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
@@ -167,5 +167,29 @@ public final class CtepUtils {
         CollectionUtils.transform(transformedList1, valueTransformer);
         CollectionUtils.transform(transformedList2, valueTransformer);
         return CollectionUtils.isEqualCollection(transformedList1, transformedList2);
+    }
+    
+    /**
+     * Converts the given 2.0 Ii to the 1.2.6 version. This is needed to support the ctep importers until they
+     * are upgraded to use the iso-datatypes 2.0.
+     * @param ii The Ii to convert
+     * @return The Ii from 1.2.6
+     */
+    public static gov.nih.nci.coppa.iso.Ii convertToOldIi(Ii ii) {
+        gov.nih.nci.coppa.iso.Ii oldIi = null;
+        if (ii != null) {
+            oldIi = new gov.nih.nci.coppa.iso.Ii();
+            oldIi.setIdentifierName(ii.getIdentifierName());
+            oldIi.setExtension(ii.getExtension());
+            oldIi.setRoot(ii.getRoot());
+            oldIi.setDisplayable(ii.getDisplayable());
+            oldIi.setReliability(ii.getReliability() == null 
+                    ? null : gov.nih.nci.coppa.iso.IdentifierReliability.valueOf(ii.getReliability().name()));
+            oldIi.setNullFlavor(ii.getNullFlavor() == null 
+                    ? null : gov.nih.nci.coppa.iso.NullFlavor.valueOf(ii.getNullFlavor().name()));
+            oldIi.setScope(ii.getScope() == null 
+                    ? null : gov.nih.nci.coppa.iso.IdentifierScope.valueOf(ii.getScope().name()));
+        } 
+        return oldIi;
     }
 }
