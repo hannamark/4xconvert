@@ -32,7 +32,7 @@ public class TrialHelperTest  extends AbstractPaActionTest {
 	     }
 	 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#getTrialDTO(gov.nih.nci.coppa.iso.Ii, java.lang.String)}.
+	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#getTrialDTO(gov.nih.nci.iso21090.Ii, java.lang.String)}.
 	 */
     @Test(expected=Exception.class)
 	public void testGetTrialDTO() throws PAException, NullifiedRoleException {
@@ -40,7 +40,7 @@ public class TrialHelperTest  extends AbstractPaActionTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#saveTrial(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO, java.lang.String)}.
+	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#saveTrial(gov.nih.nci.iso21090.Ii, gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO, java.lang.String)}.
 	 */
     @Test(expected=Exception.class)
 	public void testSaveTrial() throws NullifiedEntityException, NullifiedRoleException, PAException {
@@ -57,7 +57,7 @@ public class TrialHelperTest  extends AbstractPaActionTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#createOrUpdateCentralContact(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO)}.
+	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#createOrUpdateCentralContact(gov.nih.nci.iso21090.Ii, gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO)}.
 	 */
 	@Test
 	public void testCreateOrUpdateCentralContact() throws PAException, NullifiedEntityException, NullifiedRoleException {
@@ -73,7 +73,7 @@ public class TrialHelperTest  extends AbstractPaActionTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#createStudyContactObj(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.pa.iso.dto.StudyContactDTO, gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO)}.
+	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#createStudyContactObj(gov.nih.nci.iso21090.Ii, gov.nih.nci.pa.iso.dto.StudyContactDTO, gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO)}.
 	 */
 	@Test
 	public void testCreateStudyContactObj() throws PAException, NullifiedEntityException, NullifiedRoleException {
@@ -90,7 +90,7 @@ public class TrialHelperTest  extends AbstractPaActionTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#createSponorContact(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO)}.
+	 * Test method for {@link gov.nih.nci.pa.action.TrialHelper#createSponorContact(gov.nih.nci.iso21090.Ii, gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO)}.
 	 */
 	@Test(expected=Exception.class)
 	public void testCreateSponorContact() throws PAException {

@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyObjectiveServiceLocal;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class MockStudyObjectiveService extends MockAbstractBaseIsoService <StudyObjectiveDTO> implements StudyObjectiveServiceLocal {
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
      */
     public Map<Ii, Ii>  copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
@@ -29,7 +29,7 @@ public class MockStudyObjectiveService extends MockAbstractBaseIsoService <Study
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public List<StudyObjectiveDTO> getByStudyProtocol(Ii ii) throws PAException {
         // TODO Auto-generated method stub
@@ -37,7 +37,7 @@ public class MockStudyObjectiveService extends MockAbstractBaseIsoService <Study
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public StudyObjectiveDTO getCurrentByStudyProtocol(Ii studyProtocolIi)
             throws PAException {
@@ -54,7 +54,7 @@ public class MockStudyObjectiveService extends MockAbstractBaseIsoService <Study
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.iso21090.Ii)
      */
     public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub
@@ -62,7 +62,7 @@ public class MockStudyObjectiveService extends MockAbstractBaseIsoService <Study
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.iso21090.Ii)
      */
     public StudyObjectiveDTO get(Ii ii) throws PAException {
         // TODO Auto-generated method stub

@@ -78,17 +78,17 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;

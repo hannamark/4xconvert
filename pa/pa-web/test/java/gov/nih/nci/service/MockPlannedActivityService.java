@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
@@ -264,7 +264,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
     }
    
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public PlannedActivityDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<PlannedActivityDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
@@ -365,7 +365,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService <Plan
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
      */
     public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
             throws PAException {

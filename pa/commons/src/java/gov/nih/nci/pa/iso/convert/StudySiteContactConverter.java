@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.OrganizationalContact;

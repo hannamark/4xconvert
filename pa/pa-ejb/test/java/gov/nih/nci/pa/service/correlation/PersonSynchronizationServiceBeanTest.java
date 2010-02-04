@@ -1,8 +1,8 @@
 package gov.nih.nci.pa.service.correlation;
 
 import static org.junit.Assert.assertNotNull;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Organization;

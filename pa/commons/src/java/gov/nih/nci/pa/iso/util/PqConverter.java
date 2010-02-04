@@ -79,7 +79,7 @@
 
 package gov.nih.nci.pa.iso.util;
 
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Pq;
 
 import java.math.BigDecimal;
 

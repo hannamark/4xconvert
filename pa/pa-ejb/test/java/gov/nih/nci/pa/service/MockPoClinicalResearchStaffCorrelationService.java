@@ -3,9 +3,9 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -35,7 +35,7 @@ public class MockPoClinicalResearchStaffCorrelationService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.iso21090.Ii)
      */
     public ClinicalResearchStaffDTO getCorrelation(Ii ii)
             throws NullifiedRoleException {
@@ -53,7 +53,7 @@ public class MockPoClinicalResearchStaffCorrelationService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#getCorrelations(gov.nih.nci.coppa.iso.Ii[])
+     * @see gov.nih.nci.services.CorrelationService#getCorrelations(gov.nih.nci.iso21090.Ii[])
      */
     public List<ClinicalResearchStaffDTO> getCorrelations(Ii[] arg0)
             throws NullifiedRoleException {
@@ -79,7 +79,7 @@ public class MockPoClinicalResearchStaffCorrelationService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#updateCorrelationStatus(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Cd)
+     * @see gov.nih.nci.services.CorrelationService#updateCorrelationStatus(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Cd)
      */
     public void updateCorrelationStatus(Ii arg0, Cd arg1)
             throws EntityValidationException {

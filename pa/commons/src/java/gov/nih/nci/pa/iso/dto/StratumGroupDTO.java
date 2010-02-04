@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 
 /**
 *

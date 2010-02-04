@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.pa.service.correlation;
 
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;

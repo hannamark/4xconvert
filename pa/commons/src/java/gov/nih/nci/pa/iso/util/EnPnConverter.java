@@ -78,10 +78,10 @@
 */
 package gov.nih.nci.pa.iso.util;
 
-import static gov.nih.nci.coppa.iso.EntityNamePartType.SFX;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
+import static gov.nih.nci.iso21090.EntityNamePartType.SFX;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.EntityNamePartType;
+import gov.nih.nci.iso21090.Enxp;
 
 import org.apache.commons.lang.StringUtils;
 

@@ -78,12 +78,12 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Ts;
 
 /**
  * StudySiteDTO for transferring StudySite object .

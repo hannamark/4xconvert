@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.pa.iso.util;
 
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.iso21090.NullFlavor;
 
 
 /**

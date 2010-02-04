@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.pa.iso.util;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.CodedEnum;
 
 

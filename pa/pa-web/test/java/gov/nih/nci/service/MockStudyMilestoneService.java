@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -35,7 +35,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
         mileList.add(dto);
     }
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
      */
     public Map<Ii, Ii>  copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
@@ -45,7 +45,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public List<StudyMilestoneDTO> getByStudyProtocol(Ii ii) throws PAException {
         List<StudyMilestoneDTO> returnList = new ArrayList<StudyMilestoneDTO>();
@@ -58,7 +58,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public StudyMilestoneDTO getCurrentByStudyProtocol(Ii studyProtocolIi)
             throws PAException {
@@ -77,7 +77,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.iso21090.Ii)
      */
     public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub
@@ -85,7 +85,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.iso21090.Ii)
      */
     public StudyMilestoneDTO get(Ii ii) throws PAException {
         // TODO Auto-generated method stub

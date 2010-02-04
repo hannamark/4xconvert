@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.pa.iso.util;
 
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.util.ISOUtil;
 
 import java.sql.Timestamp;

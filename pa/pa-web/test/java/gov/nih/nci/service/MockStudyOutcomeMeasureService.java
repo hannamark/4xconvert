@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -42,7 +42,7 @@ public class MockStudyOutcomeMeasureService  extends MockAbstractBaseIsoService 
             list.add(dto);
         }
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
      */
     public Map<Ii, Ii>  copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
@@ -52,7 +52,7 @@ public class MockStudyOutcomeMeasureService  extends MockAbstractBaseIsoService 
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public List<StudyOutcomeMeasureDTO> getByStudyProtocol(Ii ii)
             throws PAException {
@@ -66,7 +66,7 @@ public class MockStudyOutcomeMeasureService  extends MockAbstractBaseIsoService 
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public StudyOutcomeMeasureDTO getCurrentByStudyProtocol(Ii studyProtocolIi)
             throws PAException {
@@ -84,7 +84,7 @@ public class MockStudyOutcomeMeasureService  extends MockAbstractBaseIsoService 
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.iso21090.Ii)
      */
     public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub
@@ -92,7 +92,7 @@ public class MockStudyOutcomeMeasureService  extends MockAbstractBaseIsoService 
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.iso21090.Ii)
      */
     public StudyOutcomeMeasureDTO get(Ii ii) throws PAException {
         for (StudyOutcomeMeasureDTO dto: list){

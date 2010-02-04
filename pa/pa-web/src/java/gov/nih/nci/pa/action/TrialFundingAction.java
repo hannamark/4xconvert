@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.TrialFundingWebDTO;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;

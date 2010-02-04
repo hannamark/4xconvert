@@ -78,11 +78,11 @@
 */
 package gov.nih.nci.pa.iso.util;
 
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.coppa.iso.Qty;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.iso21090.Qty;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.util.ISOUtil;
 
 import java.math.BigDecimal;

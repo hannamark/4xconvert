@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.coppa.iso.IdentifierReliability;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;

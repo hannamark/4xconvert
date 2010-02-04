@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -128,7 +128,7 @@ public class MockStudyOverallStatusService   extends MockAbstractBaseIsoService 
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusService#getCurrentStudyOverallStatusByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyOverallStatusService#getCurrentStudyOverallStatusByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public StudyOverallStatusDTO getCurrentByStudyProtocol(
             Ii studyProtocolId) throws PAException {
@@ -142,7 +142,7 @@ public class MockStudyOverallStatusService   extends MockAbstractBaseIsoService 
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusService#getStudyOverallStatusByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyOverallStatusService#getStudyOverallStatusByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public List<StudyOverallStatusDTO> getByStudyProtocol(
             Ii studyProtocolId) throws PAException {
@@ -166,7 +166,7 @@ public class MockStudyOverallStatusService   extends MockAbstractBaseIsoService 
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceRemote#getStudyOverallStatus(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceRemote#getStudyOverallStatus(gov.nih.nci.iso21090.Ii)
      */
     public StudyOverallStatusDTO get(Ii ii)
             throws PAException {
@@ -184,7 +184,7 @@ public class MockStudyOverallStatusService   extends MockAbstractBaseIsoService 
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.iso21090.Ii)
      */
     public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub

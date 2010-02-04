@@ -78,13 +78,13 @@
 */
 package gov.nih.nci.pa.service.correlation;
 
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.AdxpCnt;
-import gov.nih.nci.coppa.iso.AdxpCty;
-import gov.nih.nci.coppa.iso.AdxpSta;
-import gov.nih.nci.coppa.iso.AdxpZip;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Adxp;
+import gov.nih.nci.iso21090.AdxpCnt;
+import gov.nih.nci.iso21090.AdxpCty;
+import gov.nih.nci.iso21090.AdxpSta;
+import gov.nih.nci.iso21090.AdxpZip;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;

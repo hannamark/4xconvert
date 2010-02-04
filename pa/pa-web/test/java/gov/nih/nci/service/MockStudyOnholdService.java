@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.service;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;

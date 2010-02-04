@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -169,7 +169,7 @@ public class MockStudyProtocolService    implements StudyProtocolServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#getInterventionalStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyProtocolService#getInterventionalStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii)
             throws PAException {

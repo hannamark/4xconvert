@@ -6,7 +6,7 @@ package gov.nih.nci.pa.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DiseaseAltername;
 import gov.nih.nci.pa.iso.convert.DiseaseAlternameConverter;
 import gov.nih.nci.pa.iso.dto.DiseaseAlternameDTO;

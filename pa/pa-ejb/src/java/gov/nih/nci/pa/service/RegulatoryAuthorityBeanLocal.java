@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.iso.convert.RegulatoryAuthorityConverter;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;

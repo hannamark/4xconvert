@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;

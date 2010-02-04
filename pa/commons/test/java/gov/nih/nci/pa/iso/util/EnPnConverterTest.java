@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.iso.util;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.EnPn;
+import gov.nih.nci.iso21090.EnPn;
 
 import org.junit.Test;
 

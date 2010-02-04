@@ -8,17 +8,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.Ad;
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
@@ -54,7 +54,7 @@ import org.junit.Test;
 public class PAUtilTest {
  
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNull(gov.nih.nci.coppa.iso.Ii)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNull(gov.nih.nci.iso21090.Ii)}.
 	 */
 	@Test
 	public void testIsIiNull() {
@@ -64,7 +64,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNotNull(gov.nih.nci.coppa.iso.Ii)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNotNull(gov.nih.nci.iso21090.Ii)}.
 	 */
 	@Test
 	public void testIsIiNotNull() {
@@ -72,14 +72,14 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidIi(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidIi(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)}.
 	 */
 	@Test
 	public void testIsValidIi() throws  PAException {
 		assertTrue(PAUtil.isValidIi(IiConverter.convertToStudyProtocolIi(1L) , IiConverter.convertToStudyProtocolIi(null)));
 	}
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCdNull(gov.nih.nci.coppa.iso.Cd)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCdNull(gov.nih.nci.iso21090.Cd)}.
 	 */
 	@Test
 	public void testIsCdNull() {
@@ -88,7 +88,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isStNull(gov.nih.nci.coppa.iso.St)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isStNull(gov.nih.nci.iso21090.St)}.
 	 */
 	@Test
 	public void testIsStNull() {
@@ -97,7 +97,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTsNull(gov.nih.nci.coppa.iso.Ts)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTsNull(gov.nih.nci.iso21090.Ts)}.
 	 */
 	@Test
 	public void testIsTsNull() {
@@ -106,7 +106,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isBlNull(gov.nih.nci.coppa.iso.Bl)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isBlNull(gov.nih.nci.iso21090.Bl)}.
 	 */
 	@Test
 	public void testIsBlNull() {
@@ -115,7 +115,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIntNull(gov.nih.nci.coppa.iso.Int)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIntNull(gov.nih.nci.iso21090.Int)}.
 	 */
 	@Test
 	public void testIsIntNull() {
@@ -124,7 +124,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqValueNull(gov.nih.nci.coppa.iso.Pq)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqValueNull(gov.nih.nci.iso21090.Pq)}.
 	 */
 	@Test
 	public void testIsPqValueNull() {
@@ -133,7 +133,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqUnitNull(gov.nih.nci.coppa.iso.Pq)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqUnitNull(gov.nih.nci.iso21090.Pq)}.
 	 */
 	@Test
 	public void testIsPqUnitNull() {
@@ -142,7 +142,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlHighNull(gov.nih.nci.coppa.iso.Ivl)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlHighNull(gov.nih.nci.iso21090.Ivl)}.
 	 */
 	@Test
 	public void testIsIvlHighNull() {
@@ -155,7 +155,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlLowNull(gov.nih.nci.coppa.iso.Ivl)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlLowNull(gov.nih.nci.iso21090.Ivl)}.
 	 */
 	@Test
 	public void testIsIvlLowNull() {
@@ -168,7 +168,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlUnitNull(gov.nih.nci.coppa.iso.Ivl)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlUnitNull(gov.nih.nci.iso21090.Ivl)}.
 	 */
 	@Test
 	public void testIsIvlUnitNull() {
@@ -182,7 +182,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertTsToFormarttedDate(gov.nih.nci.coppa.iso.Ts, java.lang.String)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#convertTsToFormarttedDate(gov.nih.nci.iso21090.Ts, java.lang.String)}.
 	 */
 	@Test
 	public void testConvertTsToFormarttedDate() {
@@ -283,7 +283,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isGreatenThan(gov.nih.nci.coppa.iso.St, int)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isGreatenThan(gov.nih.nci.iso21090.St, int)}.
 	 */
 	@Test
 	public void testIsGreatenThan() {
@@ -291,7 +291,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isWithinRange(gov.nih.nci.coppa.iso.St, int, int)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isWithinRange(gov.nih.nci.iso21090.St, int, int)}.
 	 */
 	@Test
 	public void testIsWithinRange() {
@@ -299,7 +299,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getIiExtension(gov.nih.nci.coppa.iso.Ii)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#getIiExtension(gov.nih.nci.iso21090.Ii)}.
 	 */
 	@Test
 	public void testGetIiExtension() {
@@ -316,7 +316,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#containsIi(java.util.Map, gov.nih.nci.coppa.iso.Ii)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#containsIi(java.util.Map, gov.nih.nci.iso21090.Ii)}.
 	 */
 	@Test
 	public void testContainsIi() {
@@ -367,7 +367,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isAbstractedAndAbove(gov.nih.nci.coppa.iso.Cd)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isAbstractedAndAbove(gov.nih.nci.iso21090.Cd)}.
 	 */
 	@Test
 	public void testIsAbstractedAndAbove() {
@@ -440,7 +440,7 @@ public class PAUtilTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTypeIntervention(gov.nih.nci.coppa.iso.Cd)}.
+	 * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTypeIntervention(gov.nih.nci.iso21090.Cd)}.
 	 */
 	@Test
 	public void testIsTypeIntervention() {

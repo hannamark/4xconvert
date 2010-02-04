@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.pa.domain.DoseForm;
 import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.domain.MethodCode;

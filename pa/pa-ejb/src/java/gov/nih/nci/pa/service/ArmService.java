@@ -83,7 +83,7 @@ package gov.nih.nci.pa.service;
 import java.util.List;
 import java.util.Map;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 /**
  * @author Hugh Reinhart

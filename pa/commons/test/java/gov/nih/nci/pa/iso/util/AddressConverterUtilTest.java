@@ -4,7 +4,7 @@
 package gov.nih.nci.pa.iso.util;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ad;
+import gov.nih.nci.iso21090.Ad;
 
 import org.junit.Test;
 /**
@@ -14,7 +14,7 @@ import org.junit.Test;
 public class AddressConverterUtilTest {
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.iso.util.AddressConverterUtil#convertToAddress(gov.nih.nci.coppa.iso.Ad)}.
+	 * Test method for {@link gov.nih.nci.pa.iso.util.AddressConverterUtil#convertToAddress(gov.nih.nci.iso21090.Ad)}.
 	 */
 	@Test
 	public void testConvertToAddress() {

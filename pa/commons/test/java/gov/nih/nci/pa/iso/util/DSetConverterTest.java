@@ -82,9 +82,9 @@ package gov.nih.nci.pa.iso.util;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelPhone;
 
 import java.util.ArrayList;
 import java.util.Iterator;

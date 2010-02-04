@@ -78,15 +78,15 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.coppa.iso.Adxp;
-import gov.nih.nci.coppa.iso.AdxpAl;
-import gov.nih.nci.coppa.iso.AdxpCnt;
-import gov.nih.nci.coppa.iso.AdxpCty;
-import gov.nih.nci.coppa.iso.AdxpSta;
-import gov.nih.nci.coppa.iso.AdxpZip;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelPhone;
+import gov.nih.nci.iso21090.Adxp;
+import gov.nih.nci.iso21090.AdxpAl;
+import gov.nih.nci.iso21090.AdxpCnt;
+import gov.nih.nci.iso21090.AdxpCty;
+import gov.nih.nci.iso21090.AdxpSta;
+import gov.nih.nci.iso21090.AdxpZip;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.ContactWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;

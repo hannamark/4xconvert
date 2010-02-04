@@ -62,8 +62,8 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-coreless-1.0-beta-1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-sources-1.0-beta-1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test-selenium/selenium-server-tests-1.0-beta-1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-1.2.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-3.1rc1.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/iso-datatypes-2.0.0-alpha1.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/po-services-client-3.2.0-alpha1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/activation-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/mail-4.0.5.GA.jar"/>

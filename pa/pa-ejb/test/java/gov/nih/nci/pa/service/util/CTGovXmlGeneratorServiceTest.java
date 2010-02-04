@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmBeanLocal;
 import gov.nih.nci.pa.service.ArmServiceLocal;

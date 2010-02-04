@@ -11,13 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
@@ -76,7 +76,7 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.person.PersonEntityServiceRemote#getPerson(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.services.person.PersonEntityServiceRemote#getPerson(gov.nih.nci.iso21090.Ii)
      */
     public PersonDTO getPerson(Ii arg0) throws NullifiedEntityException {
         if (NullFlavor.NA.equals(arg0.getNullFlavor())) {
@@ -117,7 +117,7 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.person.PersonEntityServiceRemote#updatePersonStatus(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Cd)
+     * @see gov.nih.nci.services.person.PersonEntityServiceRemote#updatePersonStatus(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Cd)
      */
     public void updatePersonStatus(Ii arg0, Cd arg1)
             throws EntityValidationException {
