@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<pa:failureMessage/>
+<accrual:failureMessage/>
 <c:if test="${disWebList != null}">
 <display:table class="data" decorator="gov.nih.nci.accrual.accweb.decorator.SubmissionDecorator" sort="list" uid="row" 
     name="disWebList" export="false">

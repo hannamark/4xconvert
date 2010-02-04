@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<pa:failureMessage/>
+<accrual:failureMessage/>
 <s:if test="interWebList != null">
 <display:table class="data" sort="list" uid="row" name="interWebList" export="false">
     <display:column title="Name" property="name.value"  headerClass="sortable"/>

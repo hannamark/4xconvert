@@ -59,6 +59,7 @@
 <body onload="window.top.centerPopWin();" class="submodal">
     <div class="box">
         <s:form>
+        <accrual:failureMessage/>
             <s:label name="orgErrorMessage"/>
             <div id="searchPersJsp">
                 <table class="form">

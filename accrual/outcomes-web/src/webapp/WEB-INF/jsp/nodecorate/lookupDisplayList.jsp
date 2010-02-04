@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<pa:failureMessage/>
+<accrual:failureMessage/>
 <display:table class="data" sort="list" uid="row" name="lookUpList" export="false">
     <display:column title="Code" property="code.value"  headerClass="sortable"/>
 	<display:column title="Display Name" property="displayName.value"  headerClass="sortable"/> 

@@ -20,7 +20,9 @@
 			document.forms[0].action="lookUprouteOfAdministration.action";
 			document.getElementById("type").value = 'doseRoa';
 		}else if(type == 'doseFrequency') {
-			document.forms[0].action="lookUpdoseFrequency.action";
+			var description = document.getElementById("descriptionSearch").value;
+	        var displayName = document.getElementById("displayNameSearch").value;
+			document.forms[0].action="lookUpdoseFrequency.action?description="+description+"&displayName="+displayName;
 			document.getElementById("type").value = 'doseFrequency';
 		}else if(type == 'doseDurationUom') {
 			document.forms[0].action="lookUpunitOfMeasurement.action";
@@ -47,7 +49,9 @@
 			document.forms[0].action="lookUpunitOfMeasurement.action";
 			document.getElementById("type").value = 'radiationDoseUom';
 		}else if(type == 'radiationFrequency') {
-			document.forms[0].action="lookUpdoseFrequency.action";
+			var description = document.getElementById("descriptionSearch").value;
+	        var displayName = document.getElementById("displayNameSearch").value;
+			document.forms[0].action="lookUpdoseFrequency.action?description="+description+"&displayName="+displayName;
 			document.getElementById("type").value = 'radiationFrequency';
 		}else if(type == 'progressionSite') {
 			document.forms[0].action="lookUplesionLocationAnatomicSite.action";
@@ -65,8 +69,7 @@
 		}else if(type == 'doseRoa') {
 			window.top.document.getElementsByName("drugBiologic.doseRoute")[0].value = name;
 		}else if(type == 'doseFrequency') {
-			window.top.document.getElementsByName("drugBiologic.doseFreq")[0].value = displayName;
-			window.top.document.getElementsByName("drugBiologic.doseFreqId")[0].value = id;
+			window.top.document.getElementsByName("drugBiologic.doseFreq")[0].value = name;
 		}else if(type == 'doseDurationUom') {
 			window.top.document.getElementsByName("drugBiologic.doseDur.unit")[0].value = name;
 		}else if(type == 'totalDoseUom') {
@@ -84,8 +87,7 @@
         }else if(type == 'radiationDoseUom') {
 			window.top.document.getElementsByName("radiation.dose.unit")[0].value = name;
 		}else if(type == 'radiationFrequency') {
-			window.top.document.getElementsByName("radiation.doseFreq")[0].value = displayName;			
-			window.top.document.getElementsByName("radiation.doseFreqId")[0].value = id;
+			window.top.document.getElementsByName("radiation.doseFreq")[0].value = name;		
 		}else if(type == 'progressionSite') {
 			window.top.document.getElementsByName("targetOutcome.progressionSite")[0].value = name;
 		}
@@ -112,7 +114,7 @@
 			Route Of Administration
 			</s:elseif>
 			<s:elseif test="(type == 'doseFrequency') || (type == 'radiationFrequency')">
-			Frequency
+			Frequency Code
 			</s:elseif>
 			<s:elseif test="type == 'lesionSite'">
 			Lesion Site
@@ -132,6 +134,18 @@
 		</label></td>
 		<td><s:textfield size="50" name="searchText"
 		               cssStyle="width:280px;float:left"/></td></tr>
+		<s:if test="(type == 'doseFrequency') || (type == 'radiationFrequency')">
+			<tr> 
+		        <td scope="row" class="label"><label for="displayName"> Display Name</label></td>
+		        <td>            
+		            <input type="text" name="lookupSearchCriteria.displayName" size="100" maxlength="200" value="" id="displayNameSearch" style="width:200px"/>
+		        </td> 
+		         <td scope="row" class="label"><label for="description"> Description</label></td>
+		        <td>            
+		            <input type="text" name="lookupSearchCriteria.description" size="100" maxlength="200" value="" id="descriptionSearch" style="width:200px"/>
+		        </td>
+			</tr>
+		</s:if>		               
 		</table>
 
     <div class="actionsrow">
