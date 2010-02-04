@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.pa.domain.PerformedObservation;
 import gov.nih.nci.pa.domain.PerformedObservationResult;
 import gov.nih.nci.pa.domain.StudyProtocol;

@@ -76,9 +76,9 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.PAException;

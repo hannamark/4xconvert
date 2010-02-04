@@ -81,7 +81,7 @@ package gov.nih.nci.accrual.accweb.converter;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Ts;
 
 import org.junit.Test;
 

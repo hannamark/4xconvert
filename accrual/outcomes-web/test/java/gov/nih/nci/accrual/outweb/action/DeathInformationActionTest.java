@@ -85,7 +85,7 @@ import gov.nih.nci.accrual.outweb.dto.util.DeathInfoWebDto;
 import gov.nih.nci.accrual.outweb.enums.AutopsyPerformed;
 import gov.nih.nci.accrual.outweb.enums.ResponseInds;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -138,7 +138,7 @@ public class DeathInformationActionTest extends AbstractAccrualActionTest {
         deathInformation.setEventDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         deathInformation.setAutopsyInd(CdConverter.convertToCd(AutopsyPerformed.YES));
         deathInformation.setAutopsySite(CdConverter.convertStringToCd("Liver and intrahepatic duct"));
-        deathInformation.setCauseByAutopsy(CdConverter.convertToCd(AutopsyDeathCause.CURRENT_DISEASE));
+        deathInformation.setCauseByAutopsy(CdConverter.convertToCd(AutopsyDeathCause.TOXICITY));
         action.setDeathInfo(deathInformation);
         assertEquals(ActionSupport.SUCCESS, action.save());
     }
@@ -149,7 +149,7 @@ public class DeathInformationActionTest extends AbstractAccrualActionTest {
         deathInformation.setEventDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         deathInformation.setAutopsyInd(CdConverter.convertToCd(AutopsyPerformed.YES));
         deathInformation.setAutopsySite(CdConverter.convertStringToCd("Liver and intrahepatic duct2"));
-        deathInformation.setCauseByAutopsy(CdConverter.convertToCd(AutopsyDeathCause.PROTOCOL_TREATMENT));
+        deathInformation.setCauseByAutopsy(CdConverter.convertToCd(AutopsyDeathCause.INFECTION));
         deathInformation.setId(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
         deathInformation.setOldTreatmentPlanId(MockPerformedActivityBean.TPID);
         deathInformation.setTreatmentPlanId("TestTP2");

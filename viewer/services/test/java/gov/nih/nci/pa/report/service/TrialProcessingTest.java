@@ -79,7 +79,7 @@ package gov.nih.nci.pa.report.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AssignedIdentifierCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;

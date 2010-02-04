@@ -79,13 +79,13 @@
 
 package gov.nih.nci.accrual.accweb.action;
 
+import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import gov.nih.nci.accrual.accweb.util.WebUtil;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.accweb.util.AccrualConstants;
-import gov.nih.nci.accrual.accweb.util.WebUtil;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;

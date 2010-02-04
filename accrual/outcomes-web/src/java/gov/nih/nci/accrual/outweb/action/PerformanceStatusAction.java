@@ -79,6 +79,15 @@
 
 package gov.nih.nci.accrual.outweb.action;
 
+import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
+import gov.nih.nci.accrual.dto.PerformedObservationDto;
+import gov.nih.nci.accrual.outweb.dto.util.PerformanceStatusWebDto;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.pa.enums.ActivityNameCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.util.PAUtil;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,15 +95,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.zip.DataFormatException;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-
-import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.outweb.dto.util.PerformanceStatusWebDto;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 

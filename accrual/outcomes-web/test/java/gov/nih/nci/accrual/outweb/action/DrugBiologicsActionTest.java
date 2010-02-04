@@ -84,7 +84,7 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.DrugBiologicsWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPaInterventionBean;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.pa.enums.DoseModificationType;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;

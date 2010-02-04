@@ -91,7 +91,7 @@ import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;

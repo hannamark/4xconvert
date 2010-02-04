@@ -80,7 +80,7 @@ package gov.nih.nci.accrual.outweb.action;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.accrual.outweb.dto.util.DiagnosisWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;

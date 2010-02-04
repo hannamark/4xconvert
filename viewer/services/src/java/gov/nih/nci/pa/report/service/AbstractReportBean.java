@@ -1,11 +1,11 @@
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractCriteriaDto;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.math.BigInteger;

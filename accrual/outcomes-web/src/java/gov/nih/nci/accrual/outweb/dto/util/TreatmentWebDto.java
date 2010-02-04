@@ -82,8 +82,8 @@ package gov.nih.nci.accrual.outweb.dto.util;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 

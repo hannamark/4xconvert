@@ -81,9 +81,9 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;

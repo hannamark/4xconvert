@@ -76,7 +76,7 @@
 */
 package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;

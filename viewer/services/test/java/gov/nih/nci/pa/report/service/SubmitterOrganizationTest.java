@@ -77,7 +77,7 @@
 package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.report.util.TestSchema;
 import gov.nih.nci.pa.report.util.TestUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;

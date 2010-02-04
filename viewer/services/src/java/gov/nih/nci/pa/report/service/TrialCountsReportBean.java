@@ -81,9 +81,9 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.Collections;

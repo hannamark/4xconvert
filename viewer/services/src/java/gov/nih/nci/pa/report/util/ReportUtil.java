@@ -76,8 +76,8 @@
 */
 package gov.nih.nci.pa.report.util;
 
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.sql.Timestamp;

@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.outweb.action;
 
 import gov.nih.nci.accrual.outweb.dto.util.LookUpWebDto;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.AnatomicSites;
 import gov.nih.nci.pa.domain.AssessmentType;
 import gov.nih.nci.pa.domain.DoseFrequency;

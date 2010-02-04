@@ -83,7 +83,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.OffTreatmentWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -129,7 +129,7 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
     @Override
     public void addTest() throws Exception {
         setParticipantIi(PARTICIPANT1);
-        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.ELEVEN));
+        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.LOST_TO_FOLLOWUP));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         offTreatment.setId(new Ii());
         action.setOffTreat(offTreatment);
@@ -139,7 +139,7 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
     @Override
     public void editTest() throws Exception { 
         setParticipantIi(PARTICIPANT1);
-        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.EIGHT));
+        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.ADVERSEEVENT_SIDEEFFECTS_COMPLICATIONS));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         offTreatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.OFFTREATMENTID));
         action.setOffTreat(offTreatment);
@@ -149,7 +149,7 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
     
     @Test
     public void editExceptionTest() throws Exception {
-        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.EIGHT));
+        offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.DEATH));
         Date test = new Date();
         int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));

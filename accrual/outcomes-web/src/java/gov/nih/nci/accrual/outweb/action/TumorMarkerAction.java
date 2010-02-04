@@ -82,7 +82,7 @@ import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.outweb.dto.util.TumorMarkerWebDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;

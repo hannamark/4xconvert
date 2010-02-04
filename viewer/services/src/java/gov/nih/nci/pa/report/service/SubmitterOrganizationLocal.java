@@ -76,7 +76,7 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;

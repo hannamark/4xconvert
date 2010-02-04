@@ -1,14 +1,14 @@
 package gov.nih.nci.accrual.outweb.util;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.NullFlavor;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;

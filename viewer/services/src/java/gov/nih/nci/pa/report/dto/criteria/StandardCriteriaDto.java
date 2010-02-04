@@ -76,7 +76,7 @@
 */
 package gov.nih.nci.pa.report.dto.criteria;
 
-import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.pa.iso.util.BlConverter;
 
 

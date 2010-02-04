@@ -1,8 +1,8 @@
 package gov.nih.nci.accrual.outweb.mail;
 
-import gov.nih.nci.accrual.util.PoPropertyReader;
 import gov.nih.nci.accrual.outweb.util.EncoderDecoder;
 import gov.nih.nci.accrual.outweb.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.PoPropertyReader;
 
 import java.text.MessageFormat;
 import java.util.Properties;

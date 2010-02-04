@@ -91,11 +91,11 @@ import gov.nih.nci.accrual.outweb.enums.PathologyGradeSystems;
 import gov.nih.nci.accrual.outweb.enums.PathologyGrades;
 import gov.nih.nci.accrual.outweb.enums.ResponseInds;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
 import gov.nih.nci.pa.enums.DiseaseStatusCode;
@@ -166,7 +166,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY));
-        dto.setResultCode(CdConverter.convertToCd(AutopsyDeathCause.PROTOCOL_TREATMENT));
+        dto.setResultCode(CdConverter.convertToCd(AutopsyDeathCause.INFECTION));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);     
         
@@ -315,7 +315,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.T));
         dto.setResultText(StConverter.convertToSt("T"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
         pcrList.add(dto);
         
         dto = new PerformedClinicalResultDto();
@@ -324,7 +324,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.N));
         dto.setResultText(StConverter.convertToSt("N"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
         pcrList.add(dto);
         
         dto = new PerformedClinicalResultDto();
@@ -333,7 +333,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.M));
         dto.setResultText(StConverter.convertToSt("M"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
         pcrList.add(dto);
         
         dto = new PerformedClinicalResultDto();
@@ -342,7 +342,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.STAGE));
         dto.setResultText(StConverter.convertToSt("STAGE"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.SEER));
+        dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
         pcrList.add(dto);        
     }
     

@@ -80,8 +80,8 @@ package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.service.UserService;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 

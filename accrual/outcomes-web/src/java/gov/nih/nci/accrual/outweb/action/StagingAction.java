@@ -84,7 +84,7 @@ import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.outweb.dto.util.StagingWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.TumorMarkerWebDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;

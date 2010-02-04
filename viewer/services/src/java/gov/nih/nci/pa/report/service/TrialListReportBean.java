@@ -89,9 +89,9 @@ import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.service.PAException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

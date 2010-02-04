@@ -1,7 +1,7 @@
 package gov.nih.nci.pa.report.dto.result;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 

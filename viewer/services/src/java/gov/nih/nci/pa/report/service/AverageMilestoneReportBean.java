@@ -76,8 +76,8 @@
 */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.coppa.iso.Int;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -86,9 +86,9 @@ import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.service.PAException;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
