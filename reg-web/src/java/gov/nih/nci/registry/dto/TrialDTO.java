@@ -80,6 +80,7 @@ public class TrialDTO {
     private String ctepIdentifier;
     private String dcpIdentifier;
     private String contactPhoneExtn;
+    private String nciDesignedCancerCenter;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     /**
      * 
@@ -818,6 +819,18 @@ public class TrialDTO {
      */
     public void setContactPhoneExtn(String contactPhoneExtn) {
         this.contactPhoneExtn = contactPhoneExtn;
+    }
+    /**
+     * @param nciDesignedCancerCenter the nciDesignedCancerCenter to set
+     */
+    public void setNciDesignedCancerCenter(String nciDesignedCancerCenter) {
+        this.nciDesignedCancerCenter = nciDesignedCancerCenter;
+    }
+    /**
+     * @return the nciDesignedCancerCenter
+     */
+    public String getNciDesignedCancerCenter() {
+        return nciDesignedCancerCenter;
     }
    
 }

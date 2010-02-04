@@ -1,7 +1,7 @@
 package gov.nih.nci.registry.action;
 
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;

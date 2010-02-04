@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;

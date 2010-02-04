@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.registry.decorator;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;

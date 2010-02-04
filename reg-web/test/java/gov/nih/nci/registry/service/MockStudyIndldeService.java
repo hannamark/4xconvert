@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.registry.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -38,7 +38,7 @@ public class MockStudyIndldeService extends MockAbstractBaseIsoService<StudyIndl
         listLndDtos.add(indDto);
     }
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
      */
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
@@ -48,7 +48,7 @@ public class MockStudyIndldeService extends MockAbstractBaseIsoService<StudyIndl
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public List<StudyIndldeDTO> getByStudyProtocol(Ii ii) throws PAException {
        List<StudyIndldeDTO> matchIndList = new ArrayList<StudyIndldeDTO>();

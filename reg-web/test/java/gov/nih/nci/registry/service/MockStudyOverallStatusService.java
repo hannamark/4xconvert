@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.registry.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -36,7 +36,7 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         list.add(statusDTO);
     }
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
      */
     public Map<Ii , Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
             throws PAException {
@@ -46,7 +46,7 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public List<StudyOverallStatusDTO> getByStudyProtocol(Ii ii)
             throws PAException {
@@ -55,7 +55,7 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public StudyOverallStatusDTO getCurrentByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
@@ -78,7 +78,7 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.iso21090.Ii)
      */
     public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub
@@ -86,7 +86,7 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.BasePaService#get(gov.nih.nci.iso21090.Ii)
      */
     public StudyOverallStatusDTO get(Ii ii) throws PAException {
         // TODO Auto-generated method stub

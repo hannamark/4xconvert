@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -45,7 +45,7 @@ public class MockIdentifiedPersonCorrelationService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.iso21090.Ii)
      */
     public IdentifiedPersonDTO getCorrelation(Ii arg0)
             throws NullifiedRoleException {
@@ -54,7 +54,7 @@ public class MockIdentifiedPersonCorrelationService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#getCorrelations(gov.nih.nci.coppa.iso.Ii[])
+     * @see gov.nih.nci.services.CorrelationService#getCorrelations(gov.nih.nci.iso21090.Ii[])
      */
     public List<IdentifiedPersonDTO> getCorrelations(Ii[] arg0)
             throws NullifiedRoleException {
@@ -85,7 +85,7 @@ public class MockIdentifiedPersonCorrelationService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.CorrelationService#updateCorrelationStatus(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Cd)
+     * @see gov.nih.nci.services.CorrelationService#updateCorrelationStatus(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Cd)
      */
     public void updateCorrelationStatus(Ii arg0, Cd arg1)
             throws EntityValidationException {

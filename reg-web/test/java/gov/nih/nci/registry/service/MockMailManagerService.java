@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.registry.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -15,7 +15,7 @@ import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 public class MockMailManagerService implements MailManagerServiceLocal {
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.MailManagerService#sendAmendAcceptEmail(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendAmendAcceptEmail(gov.nih.nci.iso21090.Ii)
      */
     public void sendAmendAcceptEmail(Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
@@ -23,7 +23,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.MailManagerService#sendAmendNotificationMail(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendAmendNotificationMail(gov.nih.nci.iso21090.Ii)
      */
     public void sendAmendNotificationMail(Ii studyProtocolIi)
             throws PAException {
@@ -32,7 +32,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.MailManagerService#sendAmendRejectEmail(gov.nih.nci.coppa.iso.Ii, java.lang.String)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendAmendRejectEmail(gov.nih.nci.iso21090.Ii, java.lang.String)
      */
     public void sendAmendRejectEmail(Ii studyProtocolIi, String rejectReason)
             throws PAException {
@@ -41,7 +41,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.MailManagerService#sendNotificationMail(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendNotificationMail(gov.nih.nci.iso21090.Ii)
      */
     public void sendNotificationMail(Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
@@ -49,7 +49,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.MailManagerService#sendRejectionEmail(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendRejectionEmail(gov.nih.nci.iso21090.Ii)
      */
     public void sendRejectionEmail(Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
@@ -57,7 +57,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.MailManagerService#sendTSREmail(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendTSREmail(gov.nih.nci.iso21090.Ii)
      */
     public void sendTSREmail(Ii studyProtocolIi) throws PAException {
         // TODO Auto-generated method stub
@@ -69,7 +69,7 @@ public class MockMailManagerService implements MailManagerServiceLocal {
         
     }
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.MailManagerService#sendUpdateNotificationMail(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendUpdateNotificationMail(gov.nih.nci.iso21090.Ii)
      */
     public void sendUpdateNotificationMail(Ii studyProtocolIi)
             throws PAException {

@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -636,6 +636,14 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         } catch (PAException e) {
             return SUCCESS;
         }
+        return SUCCESS;
+    }
+    /**
+     * 
+     * @return success or fail
+     */
+    public String partialSave() {
+        
         return SUCCESS;
     }
     

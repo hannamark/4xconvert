@@ -78,15 +78,15 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.iso.AddressPartType;
-import gov.nih.nci.coppa.iso.DSet;
-import gov.nih.nci.coppa.iso.EnPn;
-import gov.nih.nci.coppa.iso.EntityNamePartType;
-import gov.nih.nci.coppa.iso.Enxp;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Tel;
-import gov.nih.nci.coppa.iso.TelEmail;
-import gov.nih.nci.coppa.iso.TelUrl;
+import gov.nih.nci.iso21090.AddressPartType;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.EnPn;
+import gov.nih.nci.iso21090.EntityNamePartType;
+import gov.nih.nci.iso21090.Enxp;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;

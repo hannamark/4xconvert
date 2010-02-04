@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -61,7 +61,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#getStudyResourceByID(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyResourcingService#getStudyResourceByID(gov.nih.nci.iso21090.Ii)
      */
     public StudyResourcingDTO getStudyResourceByID(Ii studyResourceIi)
             throws PAException {
@@ -75,7 +75,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#getstudyResourceByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyResourcingService#getstudyResourceByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public List<StudyResourcingDTO> getstudyResourceByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
@@ -89,7 +89,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyResourcingService#getsummary4ReportedResource(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudyResourcingService#getsummary4ReportedResource(gov.nih.nci.iso21090.Ii)
      */
     public StudyResourcingDTO getsummary4ReportedResource(Ii studyProtocolIi)
             throws PAException {

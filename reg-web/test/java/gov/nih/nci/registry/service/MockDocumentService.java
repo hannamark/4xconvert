@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -54,7 +54,7 @@ public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.DocumentService#get(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.DocumentService#get(gov.nih.nci.iso21090.Ii)
      */
     public DocumentDTO get(Ii id) throws PAException {
         DocumentDTO  matchingDto = new DocumentDTO();
@@ -67,7 +67,7 @@ public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.DocumentService#getDocumentsByStudyProtocol(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.DocumentService#getDocumentsByStudyProtocol(gov.nih.nci.iso21090.Ii)
      */
     public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi)
             throws PAException {
@@ -89,7 +89,7 @@ public class MockDocumentService  extends MockAbstractBaseIsoService<DocumentDTO
     }
 
 	/* (non-Javadoc)
-	 * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Ii)
+	 * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
 	 */
 	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
 			throws PAException {

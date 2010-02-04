@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.registry.service;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -68,7 +68,7 @@ public class MockStudySiteService extends MockAbstractRoleIsoService<StudySiteDT
      }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.RolePaService#getByStudyProtocol(gov.nih.nci.coppa.iso.Ii, java.lang.Object)
+     * @see gov.nih.nci.pa.service.RolePaService#getByStudyProtocol(gov.nih.nci.iso21090.Ii, java.lang.Object)
      */
      @Override
     public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi,

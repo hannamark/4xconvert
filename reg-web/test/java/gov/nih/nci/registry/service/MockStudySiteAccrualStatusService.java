@@ -6,7 +6,7 @@ package gov.nih.nci.registry.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -43,7 +43,7 @@ public class MockStudySiteAccrualStatusService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.iso21090.Ii)
      */
     public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(
             Ii studySiteIi) throws PAException {
@@ -58,7 +58,7 @@ public class MockStudySiteAccrualStatusService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getStudySiteAccrualStatus(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getStudySiteAccrualStatus(gov.nih.nci.iso21090.Ii)
      */
     public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii)
             throws PAException {
@@ -67,7 +67,7 @@ public class MockStudySiteAccrualStatusService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getStudySiteAccrualStatusByStudySite(gov.nih.nci.iso21090.Ii)
      */
     public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(
             Ii studySiteIi) throws PAException {

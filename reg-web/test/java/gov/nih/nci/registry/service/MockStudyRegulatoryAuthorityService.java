@@ -6,7 +6,7 @@ package gov.nih.nci.registry.service;
 import java.util.List;
 import java.util.Map;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
