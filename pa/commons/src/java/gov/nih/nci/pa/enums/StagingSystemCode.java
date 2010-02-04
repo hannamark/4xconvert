@@ -93,8 +93,10 @@ public enum StagingSystemCode implements CodedEnum<String> {
 
     /** AJCC. */
     AJCC("AJCC"),
-    /** SEER. */
-    SEER("SEER");
+    /** FIGO. */
+    FIGO("FIGO"),
+    /** Whitmore-Jewett. */
+    WHITMORE_JEWETT("Whitmore-Jewett");
 
     private String code;
     /**

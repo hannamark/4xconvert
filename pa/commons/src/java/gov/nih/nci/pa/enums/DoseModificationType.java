@@ -90,20 +90,16 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum DoseModificationType implements CodedEnum<String> {
     
-    /** Dose Delayed. */ 
-    DOSE_DELAYED("Dose Delayed"), 
-    /** Dose Dis-continued. */
-    DOSE_DISCONTINUED("Dose Dis-continued"),
     /** Dose Increased. */
     DOSE_INCREASED("Dose Increased"),
+    /** Dose not changed,. */
+    DOSE_NOT_CHANGED("Dose Not Changed"), 
     /** Dose Reduced. */
     DOSE_REDUCED("Dose Reduced"), 
-    /** Dose Missed. */
-    DOSE_MISSED("Dose Missed"), 
-    /** Dose Modified. */
-    DOSE_MODIFIED("Dose Modified"), 
-    /**Dose Restarted. */
-    DOSE_RESTARTED("Dose Restarted");
+    /** Dose Withdrawn,. */
+    DOSE_WITHDRAWN("Dose Withdrawn"), 
+    /**Not applicable. */
+    NOT_APPLICABLE("Not Applicable");
      
     private String code;
     /**

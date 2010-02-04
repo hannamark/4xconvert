@@ -90,33 +90,19 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 11/5/2009
  */
 public enum OffTreatmentReasonCode implements CodedEnum<String> {
-
-    /** 01. */
-    ONE("01 - Treatment completed per protocol criteria"),
-    /** 02. */
-    TWO("02 - Disease progression, relapse during active treatment"),
-    /** 03. */
-    THREE("03 - Adverse event/side effects/complications"),
-     /** 05. */
-    FIVE("05 - Patient withdrawal/refusal after beginning protocol therapy"),
-    /** 12. */
-    TWELVE("12 - Disease progression before active treatment"),
-    /** 13. */
-    THIRTEEN("13 - No treatment, per protocol criteria"),
-    /** 06. */
-    SIX("06 - Patient withdrawal/refusal prior to beginning a protocol therapy"),
-    /** 07. */
-    SEVEN("07 - Alternative Therapy"),
-    /** 10. */
-    TEN("10 - LOST TO FOLLOW-UP"),
-    /** 11. */
-    ELEVEN("11 - Cytogenetic resistance"),
-    /** 04. */
-    FOUR("04 - DEATH ON STUDY"),
-    /** 08. */
-    EIGHT("08 - PATIENT OFF-TREATMENT FOR OTHER COMPLICATING DISEASE"),
-    /** 98. */
-    NINETY_EIGHT("98 - Other");
+    
+    /** Death. */
+    DEATH("Death"),
+    /** Adverse event/side effects/complications. */
+    ADVERSEEVENT_SIDEEFFECTS_COMPLICATIONS("Adverse Event/Side Effects/Complications"),
+    /** Lost to followup. */
+    LOST_TO_FOLLOWUP("Lost to Followup"),
+     /** Refused followup. */
+    REFUSED_FOLLOWUP("Refused Followup"),
+    /** Followup completed. */
+    FOLLOWUP_COMPLETED("Followup Completed"),
+    /** Other. */
+    OTHER("Other");
 
     private String code;
     /**

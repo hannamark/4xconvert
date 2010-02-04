@@ -91,12 +91,14 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum AutopsyDeathCause implements CodedEnum<String> {
 
-    /** Current Disease. */
-    CURRENT_DISEASE("Current Disease"),
-    /** Protocol Treatment. */
-    PROTOCOL_TREATMENT("Protocol Treatment"),
-    /** Other Cause. */
-    OTHER_CAUSE("Other Cause");
+    /** Infection. */
+    INFECTION("Infection"),
+    /** Malignant disease. */
+    MALIGNANT_DISEASE("Malignant disease"),
+    /** Toxicity. */
+    TOXICITY("Toxicity"),
+    /** Other. */
+    OTHER("Other");
 
     private String code;
     /**
