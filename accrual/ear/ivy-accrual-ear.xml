@@ -6,14 +6,14 @@
     <conf name="container"/>
   </configurations>
 
- <dependencies>
-<!-- runtime -->
-<dependency org="ncicb" name="pa-ejb-client" rev="3.2.0-alpha2" force="true" conf="runtime->default"/>
-<dependency org="ncicb" name="pa-commons" rev="3.2.0-alpha4" force="true" conf="runtime"/>
-<dependency org="jakarta" name="commons-collections" rev="3.2.1" conf="runtime->master"/>
-<dependency org="jakarta" name="commons-fileupload" rev="1.2.1" conf="runtime->master"/>
-<dependency org="jakarta" name="commons-io" rev="1.4"  conf="runtime->master"/>
-<dependency org="jakarta"   name="commons-lang" rev="2.4" conf="runtime->master"/>
-</dependencies>
+  <dependencies>
+    <!-- runtime -->
+    <dependency org="ncicb"   name="pa-ejb-client"       rev="3.2.0-alpha3" force="true" conf="runtime->master"/>
+    <dependency org="ncicb"   name="pa-commons"          rev="3.2.0-alpha4" force="true" conf="runtime->master"/>
+    <dependency org="jakarta" name="commons-collections" rev="3.2.1"        force="true" conf="runtime->master"/>
+    <dependency org="jakarta" name="commons-fileupload"  rev="1.2.1"        force="true" conf="runtime->master"/>
+    <dependency org="jakarta" name="commons-io"          rev="1.4"          force="true" conf="runtime->master"/>
+    <dependency org="jakarta" name="commons-lang"        rev="2.4"          force="true" conf="runtime->master"/>
+  </dependencies>
 
 </ivy-module>
