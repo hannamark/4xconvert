@@ -99,7 +99,7 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
     public String AFFILIATE_ORG_FOR_PERSON_CRS_OLD = "org_for_person_crs_original";
     public String AFFILIATE_ORG_FOR_PERSON_CRS_NEW = "org_for_person_crs_new";
 
-    public void testCreateActivePersonWithPendingCRS() throws Exception {
+    public void testCreateActivePersonWithActiveCRS() throws Exception {
         loginAsCurator();
         //create an ACTIVE ORG for later
         createOrganization("ACTIVE", ORG_WITH_APOS, getAddress(), "test1@example.com", "703-111-2345",
@@ -142,7 +142,14 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         assertTrue(selenium.isTextPresent("Clinical Research Staff Role Information"));
         //ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
+        
+        waitForTelecomFormsToLoad();
+        Thread.sleep(60000);
+        assertFalse(selenium.isVisible("id=onload_phone_number_required"));
+        
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
+        
+        assertTrue(selenium.isVisible("id=onload_phone_number_required"));
 
         //verify validation messages
         clickAndWaitSaveButton();
@@ -167,7 +174,6 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         assertFalse(selenium.isTextPresent("Affiliated Organization ID must be set"));
 
         //add Contact Information
-        waitForTelecomFormsToLoad();
         checkContactInformation();
 
         addUSPostalAddress();
@@ -256,16 +262,19 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         assertTrue(selenium.isTextPresent("Affiliated Organization ID must be set"));
 
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
+        assertTrue(selenium.isVisible("id=onload_phone_number_required"));
+        
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("Role status not compatible with associated entity's status."));
+        waitForTelecomFormsToLoad();
         selenium.select("curateRoleForm.role.status", "label=PENDING");
-
+        assertFalse(selenium.isVisible("id=onload_phone_number_required"));  
         selectOrganizationScoper(orgId.getExtension(), ORG_WITH_APOS);
 
         addPostalAddressUsingPopup("456 jik ", "suite xyz", "phoenix", "AZ", "67890", "United States", 1);
         addPostalAddressUsingPopup("123 abc", "suite def", "mycity", "AK", "12345", "United Kingdom", 2);
         selenium.selectFrame("relative=parent");
-        waitForTelecomFormsToLoad();
+        
         inputContactInfo("abc@example.com", "1234567890", "2345678901", "3456789012", "http://www.example.com");
         clickAndWaitSaveButton();
     }

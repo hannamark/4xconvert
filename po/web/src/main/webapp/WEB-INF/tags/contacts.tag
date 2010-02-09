@@ -14,10 +14,10 @@
 </s:else>
 
 <s:if test="%{#attr.phoneRequired == null || #attr.phoneRequired == false}">
-<s:set name="phoneRequiredBool" value="false"/>
+<s:set name="phoneRequiredStyle" value="'display:none'"/>
 </s:if>
 <s:else>
-<s:set name="phoneRequiredBool" value="true"/>
+<s:set name="phoneRequiredStyle" value=""/>
 </s:else>
 
 <s:if test="%{#attr.readonly == true}">
@@ -84,7 +84,10 @@ function isTelecomFieldsBlank() {
 </fieldset>
 
 <fieldset>
-    <legend><s:if test="%{phoneRequiredBool}"><span class="required">*</span>&nbsp;</s:if>Phone Numbers</legend>
+    <legend>
+        <span id="onload_phone_number_required" class="required" style="${phoneRequiredStyle}">*&nbsp;</span>         
+        Phone Numbers
+    </legend>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.phone'}"/>
    </s:fielderror>

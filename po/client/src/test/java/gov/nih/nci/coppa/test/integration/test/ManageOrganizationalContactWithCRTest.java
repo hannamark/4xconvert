@@ -155,7 +155,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         assertTrue(selenium.isTextPresent("exact:Edit Organizational Contact - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
-        
+        assertTrue(selenium.isVisible("id=onload_phone_number_required"));
         // old values
         assertEquals("original OC title", selenium.getValue("curateRoleForm_role_title").trim());
         assertEquals("1", selenium.getValue("curateRoleForm.role.type").trim());
@@ -214,20 +214,24 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         accessManageOrganizationalContactScreen();
         // add OC
         clickAndWait("add_button");
-        assertTrue(selenium.isTextPresent("Organizational Contact Role Information"));
+        assertTrue(selenium.isTextPresent("Organizational Contact Role Information"));     
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
          
         // select a ACTIVE Scoper
         selectOrganizationScoper(activeOrgId.trim(), AFFILIATE_ORG_FOR_PERSON_OC_OLD);
+        
+        waitForTelecomFormsToLoad();
+        
         selenium.select("curateRoleForm.role.status", "label=ACTIVE"); 
-     
+        
         selenium.select("curateRoleForm.role.type", "label=IRB"); 
+        
+        assertTrue(selenium.isVisible("id=onload_phone_number_required"));
         clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
-        //add Contact Information
-        waitForTelecomFormsToLoad();
+        //add Contact Information  
         checkContactInformation();
 
         addUSPostalAddress();

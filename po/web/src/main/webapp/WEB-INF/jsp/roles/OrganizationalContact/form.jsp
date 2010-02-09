@@ -17,6 +17,7 @@
 </s:else>
 
 <%@include file="../roleStatusOnChange_handleDuplicateOf.jsp" %>
+<%@include file="../roleStatusOnChange_handlePhoneReq.jsp" %>
 </head>
 <body>
 
@@ -75,7 +76,7 @@
                        value="role.status"
                        headerKey="" headerValue="--Select a Role Status--"
                        required="true" cssClass="required"
-                       onchange="handleDuplicateOf();"
+                       onchange="handlePhoneReq();handleDuplicateOf();"
                        />
                     <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
                         <c:if test="${fn:length(availableDuplicateOfs) > 0}">
@@ -132,10 +133,10 @@
         </div>
 
         <div class="boxouter_nobottom">
-        <h2>Contact Information</h2>
+        <h2>Contact Information ${role.status == 'ACTIVE'}</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false" />
+                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="${role.status == 'ACTIVE'}" />
             </div>
         </div>
     </div>

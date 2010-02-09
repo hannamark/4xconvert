@@ -134,15 +134,17 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("Health Care Provider Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
+        
+        waitForTelecomFormsToLoad();
+        
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
+        
+        assertTrue(selenium.isElementPresent("id=onload_phone_number_required"));
         selenium.type("curateRoleForm.role.certificateLicenseText", "CR Original");
         clickAndWaitSaveButton();
         // assert validation messages
         assertEquals("ACTIVE", selenium.getSelectedLabel("curateRoleForm.role.status"));
-        // assertTrue(selenium.isTextPresent("exact:Affiliated Organization ID must be set"));
-        // assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
-        // assertFalse(selenium.isTextPresent("exact:Role status not compatible with associated entity's status."));
-
+        
         // select a ACTIVE Scoper
         selectOrganizationScoper(activeOrgId.trim(), AFFILIATE_ORG_FOR_PERSON);
         clickAndWaitSaveButton();
@@ -152,7 +154,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         // add postal addresses
         addPostalAddressUsingPopup("456 jik", "suite xyz", "phoenix", "AZ", "67890", "United States", 1);
         selenium.selectFrame("relative=parent");
-        waitForTelecomFormsToLoad();
+      
         // add Contact Information
         inputContactInfoForUSAndCan("abc@example.com", new String[] {"123", "456", "7890"}, new String[] {"234", "567",
                 "8901"}, new String[] {"345", "678", "9012"}, "http://www.example.com");
