@@ -1,0 +1,3 @@
+As of 2/1/2010, the ISO 21090 Datatypes jar (iso-datatypes.jar) has been broken out from the CTRP/COPPA project and is now hosted on its own at https://ncisvn.nci.nih.gov/svn/ISO21090/trunk/.
+
+This project remains here for historical reasons but will not be updated.
