@@ -34,7 +34,7 @@
         </menu>                                               
     </ul>
     <p class="padme2">
-        Want to learn more about NCI's Patient Outcomes Reporting? Visit the <a href="https://wiki.nci.nih.gov/display/CTMS/Patient+Outcomes">Outcomes Reporting</a> website.
+        Want to learn more about NCI's Patient Outcomes Reporting? Visit the <a href="https://wiki.nci.nih.gov/display/CTMS/Patient+Outcomes+Service">Outcomes Reporting</a> website.
         <br>You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance.
     </p>
 </div>
