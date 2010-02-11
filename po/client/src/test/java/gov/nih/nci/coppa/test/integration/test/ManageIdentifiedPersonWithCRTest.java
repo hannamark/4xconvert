@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -218,9 +218,32 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully updated!".trim()));
+        
+        updateRemoteOcOrgWithISSAssignedReliability(ocId.trim(), activeNewOrgId);
+        
+        // Goto Manage IP Page.... should see CR with ISS reliability
+        openAndWait("/po-web/protected/roles/person/IdentifiedPerson/start.action?person=" + personIdExt);
+        clickAndWait("edit_identifiedPerson_id_" + ocId.trim());
+        assertTrue(selenium.isTextPresent("exact:Edit Other Person Identifier - Comparison"));
+        
+        assertEquals("ISS", selenium.getText("wwctrl_curateCrForm.role.assignedIdentifier.reliability").trim());       
+        selenium.click("copy_curateCrForm_role_assignedIdentifier");
+        assertTrue(selenium.getAlert().matches("^ISS not found!$"));
+        clickAndWaitSaveButton();
+        assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully updated!".trim()));
     }
 
     private void updateRemoteOcOrg(String ext, String affOrgId) throws EntityValidationException, NamingException, URISyntaxException,
+    NullifiedEntityException, NullifiedRoleException {
+        helperUpdateRemoteOcOrg(ext, affOrgId, IdentifierReliability.UNV);
+    }
+    
+    private void updateRemoteOcOrgWithISSAssignedReliability(String ext, String affOrgId) throws EntityValidationException, NamingException, URISyntaxException,
+    NullifiedEntityException, NullifiedRoleException {
+        helperUpdateRemoteOcOrg(ext, affOrgId, IdentifierReliability.ISS);
+    }
+    
+    private void helperUpdateRemoteOcOrg(String ext, String affOrgId, IdentifierReliability rel) throws EntityValidationException, NamingException, URISyntaxException,
     NullifiedEntityException, NullifiedRoleException {
         Ii id = new Ii();
         id.setExtension(ext);
@@ -232,7 +255,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assignedIdentifier.setRoot("9.9.9.9");
         assignedIdentifier.setDisplayable(Boolean.FALSE);
         assignedIdentifier.setScope(IdentifierScope.VER);
-        assignedIdentifier.setReliability(IdentifierReliability.UNV);
+        assignedIdentifier.setReliability(rel);
         assignedIdentifier.setIdentifierName("newIdentifierNameValue");
         dto.setAssignedId(assignedIdentifier);  
         if (affOrgId != null) {

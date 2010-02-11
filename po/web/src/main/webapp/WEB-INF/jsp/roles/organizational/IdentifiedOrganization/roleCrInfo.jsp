@@ -38,7 +38,8 @@
                 id="copy_curateCrForm_role_assignedIdentifier" 
                 onclick="copyIsoIIFields();" 
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <po:isoIiForm formNameBase="curateRoleForm" ii="${cr.assignedIdentifier}" iiKeyBase="cr.assignedIdentifier" iiLabelKeyBase="role.assignedIdentifier" required="true"/>
+                <po:isoIiForm formNameBase="curateCrForm" ii="${cr.assignedIdentifier}" iiKeyBase="cr.assignedIdentifier" 
+                    iiLabelKeyBase="role.assignedIdentifier" required="true" showAllReliabilities="true"/>
             </po:copyButton>
             </fieldset>
             <div class="clear"></div>

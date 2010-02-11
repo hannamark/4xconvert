@@ -196,10 +196,34 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertEquals("UNV", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully updated!".trim()));
+        
+        updateRemoteIoOrgWithAssignedIdReliabilityISS(ioId.trim());
+        
+        // Goto Manage IO Page.... should see CR with ISS
+        openAndWait("/po-web/protected/roles/organizational/IdentifiedOrganization/start.action?organization=" + activeOrgId);
+        clickAndWait("edit_identifiedOrganization_id_" + ioId.trim());
+        assertTrue(selenium.isTextPresent("exact:Edit Identified Organization - Comparison"));
+        
+        assertEquals("ISS", selenium.getText("wwctrl_curateCrForm.role.assignedIdentifier.reliability").trim());
+        
+        selenium.click("copy_curateCrForm_role_assignedIdentifier");
+        assertTrue(selenium.getAlert().matches("^ISS not found!$"));
+        clickAndWaitSaveButton();
+        assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully updated!".trim()));
     }
 
     private void updateRemoteIoOrg(String ext) throws EntityValidationException, NamingException, URISyntaxException,
             NullifiedEntityException, NullifiedRoleException {
+        helpUpdateRemoteIoOrg(ext, IdentifierReliability.UNV);
+    }
+    
+    private void updateRemoteIoOrgWithAssignedIdReliabilityISS(String ext) throws EntityValidationException, NamingException, URISyntaxException,
+    NullifiedEntityException, NullifiedRoleException {
+        helpUpdateRemoteIoOrg(ext, IdentifierReliability.ISS);
+    }
+    
+    private void helpUpdateRemoteIoOrg(String ext, IdentifierReliability rel) throws EntityValidationException, NamingException, URISyntaxException,
+    NullifiedEntityException, NullifiedRoleException {
         Ii id = new Ii();
         id.setExtension(ext);
         id.setRoot("2.16.840.1.113883.3.26.4.4.6");
@@ -210,10 +234,10 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assignedIdentifier.setRoot("9.9.9.9");
         assignedIdentifier.setDisplayable(Boolean.FALSE);
         assignedIdentifier.setScope(IdentifierScope.VER);
-        assignedIdentifier.setReliability(IdentifierReliability.UNV);
+        assignedIdentifier.setReliability(rel);
         assignedIdentifier.setIdentifierName("newIdentifierNameValue");
         dto.setAssignedId(assignedIdentifier);
-
+        
         RemoteServiceHelper.getIdentifiedOrganizationCorrelationServiceRemote().updateCorrelation(dto);
     }
     
