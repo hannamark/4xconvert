@@ -80,7 +80,6 @@
 package gov.nih.nci.accrual.outweb.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedImageDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
@@ -124,7 +123,6 @@ public class LesionAssessmentWebDto implements Serializable {
     private Cd lesionSite;
     private Cd measurableEvaluableDiseaseType;
     private Cd lesionMeasurementMethod;
-    private Cd contrastAgentIndicator;
     private Ii imageSeriesIdentifier;
     private Ii imageIdentifier;
     private Pq lesionLongestDiameter;
@@ -143,13 +141,12 @@ public class LesionAssessmentWebDto implements Serializable {
     /**
      * Instantiates a new lesion assessment web dto.
      * @param po the po
-     * @param pi the pi
      * @param pldList the pld list
      * @param imageList the image list
      * @param sourceTreatmentPlanId thetreatment plan id
      */
     public LesionAssessmentWebDto(PerformedObservationDto po,
-            PerformedImagingDto pi, List<PerformedLesionDescriptionDto> pldList,
+            List<PerformedLesionDescriptionDto> pldList,
             List<PerformedImageDto> imageList, Ii sourceTreatmentPlanId) {        
         lesionSite = po.getTargetSiteCode();
         List<Cd> cds = new ArrayList<Cd>();
@@ -170,11 +167,6 @@ public class LesionAssessmentWebDto implements Serializable {
             measurableEvaluableDiseaseType = CdConverter.convertStringToCd(
                     MeasurableEvaluableDiseaseTypeCode.BOTH.getCode());
         }
-        if (pi.getContrastAgentEnhancementIndicator().getValue().equals(true)) {
-            contrastAgentIndicator = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
-        } else if (pi.getContrastAgentEnhancementIndicator().getValue().equals(false)) {
-            contrastAgentIndicator = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
-        }
         imageIdentifier = imageList.get(0).getImageIdentifier();
         imageSeriesIdentifier = imageList.get(0).getSeriesIdentifier();
         clinicalAssessmentDate = imageList.get(0).getResultDateRange().getLow();
@@ -191,10 +183,6 @@ public class LesionAssessmentWebDto implements Serializable {
      * @throws RemoteException remote exception
      */
     public static void validate(LesionAssessmentWebDto dto, AbstractAccrualAction action) throws RemoteException {
-        if (dto.getLesionLongestDiameter() == null || dto.getLesionLongestDiameter().getValue() == null) {
-            action.addFieldError("lesionAssessment.lesionLongestDiameter.value", 
-                    "Please enter Lesion Longest Diameter Value.");
-        }
         if (dto.getLesionLongestDiameter() != null && dto.getLesionLongestDiameter().getValue() != null 
                 && !PAUtil.isNumber(dto.getLesionLongestDiameter().getValue().toString())) {
             action.addFieldError("lesionAssessment.lesionLongestDiameter.value", NUMERICMESSAGE);
@@ -312,32 +300,10 @@ public class LesionAssessmentWebDto implements Serializable {
     }
 
     /**
-     * Gets the contrast agent indicator.
-     * @return the contrast agent indicator
-     */
-    @FieldExpressionValidator(
-            expression = "contrastAgentIndicator.code != null && contrastAgentIndicator.code.length() > 0", 
-            message = "Please select a Contrast Agent Indicator")
-    public Cd getContrastAgentIndicator() {
-        return contrastAgentIndicator;
-    }
-
-    /**
-     * Sets the contrast agent indicator.
-     * @param contrastAgentIndicator the new contrast agent indicator
-     */
-    public void setContrastAgentIndicator(Cd contrastAgentIndicator) {
-        this.contrastAgentIndicator = contrastAgentIndicator;
-    }
-
-    /**
      * Gets the image series identifier.
      * @return the image series identifier
      */
-    @FieldExpressionValidator(
-            expression = "imageSeriesIdentifier.extension != null && imageSeriesIdentifier.extension.length() > 0", 
-            message = "Please enter Image Series Identifier")
-    public Ii getImageSeriesIdentifier() {
+   public Ii getImageSeriesIdentifier() {
         return imageSeriesIdentifier;
     }
 
@@ -353,10 +319,7 @@ public class LesionAssessmentWebDto implements Serializable {
      * Gets the image identifier.
      * @return the image identifier
      */
-    @FieldExpressionValidator(
-            expression = "imageIdentifier.extension != null && imageIdentifier.extension.length() > 0", 
-            message = "Please enter Image Identifier")
-    public Ii getImageIdentifier() {
+   public Ii getImageIdentifier() {
         return imageIdentifier;
     }
 

@@ -91,7 +91,6 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.DiseaseStatusCode;
 import gov.nih.nci.pa.enums.PatientVitalStatus;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -119,16 +118,10 @@ public class ParticipantOutcomesWebDto implements Serializable {
     private Cd responseInd;
     private Cd diseaseStatus;
     private Cd assessmentType;
-    private Cd recurrenceInd;
-    private Cd progressionInd;
     private Ts diseaseStatusDate;
-    private Ts recurrenceDate;
-    private Ts progressionDate;
     private Ts evaluationDate;
-    private Cd progressionSite;
     private Cd bestResponse;
     private Ts bestResponseDate;
-    private Cd diseaseEvidence;
     private String treatmentPlanId;
 
 
@@ -157,18 +150,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
             boolean validDate = WebUtil.checkValidDate(dto.getEvaluationDate().getValue());
             if (!validDate) {
                 action.addFieldError("targetOutcome.evaluationDate", VALIDDATEMESSAGE);
-            }
-        }
-        if (!PAUtil.isTsNull(dto.getProgressionDate())) {
-            boolean validDate = WebUtil.checkValidDate(dto.getProgressionDate().getValue());
-            if (!validDate) {
-                action.addFieldError("targetOutcome.progressionDate", VALIDDATEMESSAGE);
-            }
-        }
-        if (!PAUtil.isTsNull(dto.getRecurrenceDate())) {
-            boolean validDate = WebUtil.checkValidDate(dto.getRecurrenceDate().getValue());
-            if (!validDate) {
-                action.addFieldError("targetOutcome.recurrenceDate", VALIDDATEMESSAGE);
             }
         }
         if (dto.getDiseaseStatusDate() != null) {
@@ -205,36 +186,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
             action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Cycle Date" 
                     + AccrualUtil.dateToMDY(courseDate));
         }
-      
-        if (!PAUtil.isTsNull(dto.getProgressionDate())) {
-            if (diagnosisDate != null && dto.getProgressionDate().getValue().before(diagnosisDate)) {
-                action.addFieldError("targetOutcome.progressionDate", "Date can't be less than Diagnosis Date" 
-                        + AccrualUtil.dateToMDY(diagnosisDate));
-            } 
-            if (deathDate != null && dto.getProgressionDate().getValue().after(deathDate)) {
-                action.addFieldError("targetOutcome.progressionDate", "Date can't be greater than Death Date" 
-                        + AccrualUtil.dateToMDY(deathDate));
-            } 
-            if (courseDate != null && dto.getProgressionDate().getValue().before(courseDate)) {
-                action.addFieldError("targetOutcome.progressionDate", "Date can't be less than Cycle Date" 
-                        + AccrualUtil.dateToMDY(courseDate));
-            }
-        }
-        
-        if (!PAUtil.isTsNull(dto.getRecurrenceDate())) {
-            if (diagnosisDate != null && dto.getRecurrenceDate().getValue().before(diagnosisDate)) {
-                action.addFieldError("targetOutcome.recurrenceDate", "Date can't be less than Diagnosis Date" 
-                        + AccrualUtil.dateToMDY(diagnosisDate));
-            } 
-            if (deathDate != null && dto.getRecurrenceDate().getValue().after(deathDate)) {
-                action.addFieldError("targetOutcome.recurrenceDate", "Date can't be greater than Death Date" 
-                        + AccrualUtil.dateToMDY(deathDate));
-            } 
-            if (courseDate != null && dto.getRecurrenceDate().getValue().before(courseDate)) {
-                action.addFieldError("targetOutcome.recurrenceDate", "Date can't be less than Cycle Date" 
-                        + AccrualUtil.dateToMDY(courseDate));
-            }
-        }
         if (diagnosisDate != null && dto.getDiseaseStatusDate().getValue().before(diagnosisDate)) {
             action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Diagnosis Date" 
                     + AccrualUtil.dateToMDY(diagnosisDate));
@@ -247,20 +198,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
             action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Cycle Date" 
                     + AccrualUtil.dateToMDY(courseDate));
         }
-        if (dto.getRecurrenceInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())
-                && PAUtil.isTsNull(dto.getRecurrenceDate())) {
-                action.addFieldError("targetOutcome.recurrenceDate", "Please provide a Recurrence Date");            
-        }
-        if (dto.getProgressionInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())
-                && PAUtil.isCdNull(dto.getProgressionSite())) {
-                action.addFieldError("targetOutcome.progressionSite", 
-                        "Please provide a Disease Progression Anatomic Site");
-            }
-            if (dto.getProgressionInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())
-                   && PAUtil.isTsNull(dto.getProgressionDate())) {
-                action.addFieldError("targetOutcome.progressionDate", "Please provide a Disease Progression Date");
-            
-        }
     } 
 
     /**
@@ -268,14 +205,12 @@ public class ParticipantOutcomesWebDto implements Serializable {
      * 
      * @param participantOutcomesList the participant outcomes list
      * @param diseaseStatusList the disease status list
-     * @param diseaseProgressionIndicatorList the disease progression indicator list
      * @param bestResponseList the best response list
      * @param webdto the webdto
      */
     public ParticipantOutcomesWebDto(
             List<PerformedObservationResultDto> participantOutcomesList,
             List<PerformedObservationResultDto> diseaseStatusList,
-            List<PerformedObservationResultDto> diseaseProgressionIndicatorList,
             List<PerformedObservationResultDto> bestResponseList,
             ParticipantOutcomesWebDto webdto) {
         for (PerformedObservationResultDto por : participantOutcomesList) {
@@ -287,23 +222,14 @@ public class ParticipantOutcomesWebDto implements Serializable {
                 } else if (por.getResultIndicator().getValue().equals(false)) {
                     responseInd = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
                 }
-            } else  if (por.getTypeCode().getCode().equalsIgnoreCase("Disease Recurrence Indicator")) {
-                recurrenceInd = por.getResultCode();
-                if (getRecurrenceInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-                recurrenceDate = por.getResultDateRange().getLow();
-                }
-            }            
+            }
         }
         diseaseStatus = diseaseStatusList.get(0).getResultCode();
         bestResponse = bestResponseList.get(0).getResultCode();
-        progressionInd = diseaseProgressionIndicatorList.get(0).getResultCode();
-        progressionDate = webdto.getProgressionDate();
         evaluationDate = webdto.getEvaluationDate();
         diseaseStatusDate = webdto.getDiseaseStatusDate();
         assessmentType = webdto.getAssessmentType();
-        progressionSite = webdto.getProgressionSite();
         bestResponseDate = webdto.getBestResponseDate();
-        diseaseEvidence = webdto.getDiseaseEvidence();
         
     }
 
@@ -400,81 +326,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
     public void setAssessmentType(Cd assessmentType) {
         this.assessmentType = assessmentType;
     }
-
-    /**
-     * @return the recurrenceInd
-     */
-    @FieldExpressionValidator(expression = "recurrenceInd.code != null && recurrenceInd.code.length() > 0",
-            message = "Please provide a Disease Recurrence Indicator")
-    public Cd getRecurrenceInd() {
-        return recurrenceInd;
-    }
-
-    /**
-     * @param recurrenceInd the recurrenceInd to set
-     */
-    public void setRecurrenceInd(Cd recurrenceInd) {
-        this.recurrenceInd = recurrenceInd;
-    }
-
-    /**
-     * @return the recurrenceDate
-     */
-    public Ts getRecurrenceDate() {
-        return recurrenceDate;
-    }
-
-    /**
-     * @param recurrenceDate the recurrenceDate to set
-     */
-    public void setRecurrenceDate(Ts recurrenceDate) {
-        this.recurrenceDate = recurrenceDate;
-    }
-
-    /**
-     * @return the progressionInd
-     */
-    @FieldExpressionValidator(expression = "progressionInd.code != null && progressionInd.code.length() > 0",
-            message = "Please provide a Disease Progression Indicator")
-    public Cd getProgressionInd() {
-        return progressionInd;
-    }
-
-    /**
-     * @param progressionInd the progressionInd to set
-     */
-    public void setProgressionInd(Cd progressionInd) {
-        this.progressionInd = progressionInd;
-    }
-
-    /**
-     * @return the progressionSite
-     */
-    public Cd getProgressionSite() {
-        return progressionSite;
-    }
-
-    /**
-     * @param progressionSite the progressionSite to set
-     */
-    public void setProgressionSite(Cd progressionSite) {
-        this.progressionSite = progressionSite;
-    }
-
-    /**
-     * @return the progressionDate
-     */
-    public Ts getProgressionDate() {
-        return progressionDate;
-    }
-
-    /**
-     * @param progressionDate the progressionDate to set
-     */
-    public void setProgressionDate(Ts progressionDate) {
-        this.progressionDate = progressionDate;
-    }
-
     /**
      * @param evaluationDate the evaluationDate to set
      */
@@ -556,24 +407,6 @@ public class ParticipantOutcomesWebDto implements Serializable {
      */
     public void setBestResponseDate(Ts bestResponseDate) {
         this.bestResponseDate = bestResponseDate;
-    }
-
-    /**
-     * Gets the disease evidence.
-     * @return the disease evidence
-     */
-    @FieldExpressionValidator(expression = "diseaseEvidence.code != null && diseaseEvidence.code.length() > 0",
-            message = "Please select Evidence of Disease")
-    public Cd getDiseaseEvidence() {
-        return diseaseEvidence;
-    }
-
-    /**
-     * Sets the disease evidence.
-     * @param diseaseEvidence the new disease evidence
-     */
-    public void setDiseaseEvidence(Cd diseaseEvidence) {
-        this.diseaseEvidence = diseaseEvidence;
     }
 
     /**

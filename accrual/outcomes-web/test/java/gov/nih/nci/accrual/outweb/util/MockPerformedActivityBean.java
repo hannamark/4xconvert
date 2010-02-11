@@ -353,6 +353,9 @@ public class MockPerformedActivityBean implements PerformedActivityService {
         dto.setDoseModificationType(CdConverter.convertToCd(DoseModificationType.DOSE_INCREASED));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySubjectIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        Ivl<Ts> startDate = new Ivl<Ts>();
+        startDate.setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setActualDateRange(startDate);
         psaList.add(dto);
     }
     private List<PerformedRadiationAdministrationDto> praList;

@@ -32,6 +32,9 @@
 <s:form name="detailForm">
     <display:table class="data" id="row" name="displayTagList" sort="list" pagesize="10" requestURI="executeDrugBiologics.action">    
             <display:column titleKey="drugBiologic.name" property="drugName.value" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="drugBiologic.date" sortable="true" headerClass="sortable">
+            	<s:property value="%{#attr.row.startDate}"/>
+            </display:column>
             <display:column titleKey="drugBiologic.dose" property="dose.value" sortable="true" headerClass="sortable"/>
             <display:column titleKey="drugBiologic.doseUOM" property="dose.unit" sortable="true" headerClass="sortable"/>
             <display:column titleKey="drugBiologic.roa" property="doseRoute.code" sortable="true" headerClass="sortable"/>

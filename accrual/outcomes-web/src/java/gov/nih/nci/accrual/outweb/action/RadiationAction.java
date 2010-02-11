@@ -82,11 +82,9 @@ import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.outweb.dto.util.RadiationWebDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -122,15 +120,8 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
                     List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             pra.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
                     if (arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
-                            .equals(getCourseIi().getExtension())) {                    
-                        DoseFrequency df = new DoseFrequency();
-                        df.setCode(pra.getDoseFrequencyCode().getCode());
-                        DoseFrequency dfBean = baseLookupSvc.getByCode(df);
-                        RadiationWebDto webDto = new RadiationWebDto();
-                        webDto.setDoseFreq(CdConverter.convertStringToCd(dfBean.getDisplayName()));
-                        webDto.setDoseFreqId(IiConverter.convertToIi(dfBean.getId()));
-
-                        getDisplayTagList().add(new RadiationWebDto(pra, webDto));
+                            .equals(getCourseIi().getExtension())) {  
+                        getDisplayTagList().add(new RadiationWebDto(pra));
                     }
                 }
             }
@@ -151,11 +142,6 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
         }
         try {
             PerformedRadiationAdministrationDto dto = radiation.getPerformedRadiationAdministrationDto();
-            
-            DoseFrequency df = new DoseFrequency();
-            df.setId(IiConverter.convertToLong(radiation.getDoseFreqId()));
-            DoseFrequency dfBean = baseLookupSvc.getById(df);
-            dto.setDoseFrequencyCode(CdConverter.convertStringToCd(dfBean.getCode()));            
             dto = performedActivitySvc.createPerformedRadiationAdministration(dto);
 
             ActivityRelationshipDto arDto = new ActivityRelationshipDto();
@@ -211,11 +197,6 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
         }
         try {
             PerformedRadiationAdministrationDto dto = radiation.getPerformedRadiationAdministrationDto();
-            
-            DoseFrequency df = new DoseFrequency();
-            df.setId(IiConverter.convertToLong(radiation.getDoseFreqId()));
-            DoseFrequency dfBean = baseLookupSvc.getById(df);
-            dto.setDoseFrequencyCode(CdConverter.convertStringToCd(dfBean.getCode()));
             dto = performedActivitySvc.updatePerformedRadiationAdministration(dto);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());

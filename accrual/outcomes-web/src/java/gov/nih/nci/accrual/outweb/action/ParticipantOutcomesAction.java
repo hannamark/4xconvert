@@ -140,9 +140,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
                                                                getParticipantIi());
             List<PerformedObservationResultDto> participantOutcomesList = null;
             List<PerformedObservationResultDto> diseaseStatusList = null;
-            List<PerformedObservationResultDto> diseaseProgressionList = null;
             List<PerformedObservationResultDto> bestResponseList = null;
-            List<PerformedObservationResultDto> evidenceofDiseaseList = null;
             List<ActivityRelationshipDto> arList = null;
             ParticipantOutcomesWebDto webdto = new ParticipantOutcomesWebDto();
             for (PerformedObservationDto poBean : poList) {
@@ -167,18 +165,6 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
                     webdto.setAssessmentType(cds.get(0));
                     diseaseStatusList = performedObservationResultSvc.getPerformedObservationResultByPerformedActivity(
                             po.getIdentifier());
-
-                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
-                        && poBean.getNameCode().getCode().equals(
-                        ActivityNameCode.DISEASE_PROGRESSION.getCode())) {
-                    arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
-                            .getTargetPerformedActivityIdentifier());
-                    webdto.setProgressionSite(po.getTargetSiteCode());
-                    webdto.setProgressionDate(po.getActualDateRange().getLow());
-                    diseaseProgressionList = performedObservationResultSvc.
-                                   getPerformedObservationResultByPerformedActivity(po.getIdentifier());
                 } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
                         && poBean.getNameCode().getCode().equals(ActivityNameCode.BEST_RESPONSE.getCode())) {
                     arList = activityRelationshipSvc.getByTargetPerformedActivity(
@@ -187,31 +173,17 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
                             .getTargetPerformedActivityIdentifier());
                     webdto.setBestResponseDate(po.getActualDateRange().getLow());
                     bestResponseList = performedObservationResultSvc.getPerformedObservationResultByPerformedActivity(
-                            po.getIdentifier());
-                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
-                        && poBean.getNameCode().getCode().equals(ActivityNameCode.EVIDENCE_OF_DISEASE.getCode())) {
-                    arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
-                            .getTargetPerformedActivityIdentifier());
-                    evidenceofDiseaseList = performedObservationResultSvc.
-                                   getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                    webdto.setDiseaseEvidence(evidenceofDiseaseList.get(0).getResultCode());
-                    webdto.setTreatmentPlanId(arList.get(0).getSourcePerformedActivityIdentifier().getExtension());
+                            po.getIdentifier());               
                 }
 
                 if (participantOutcomesList != null && !participantOutcomesList.isEmpty() 
                         && diseaseStatusList != null && !diseaseStatusList.isEmpty()
-                        && diseaseProgressionList != null && !diseaseProgressionList.isEmpty()
-                        && bestResponseList != null && !bestResponseList.isEmpty()
-                        && evidenceofDiseaseList != null && !evidenceofDiseaseList.isEmpty()) {
+                        && bestResponseList != null && !bestResponseList.isEmpty()) {
                     getDisplayTagList().add(new ParticipantOutcomesWebDto(
-                            participantOutcomesList, diseaseStatusList, diseaseProgressionList, 
-                            bestResponseList, webdto));
+                            participantOutcomesList, diseaseStatusList, bestResponseList, webdto));
                     
                     participantOutcomesList = null;
                     diseaseStatusList = null;
-                    diseaseProgressionList = null;
                     bestResponseList = null;
                 }
 
@@ -246,31 +218,6 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
             
             createDiseaseStatus();
             
-            PerformedObservationDto dto3 = new PerformedObservationDto();
-            dto3.setNameCode(CdConverter.convertToCd(ActivityNameCode.getByCode("Disease Progression")));
-            if (targetOutcome.getProgressionInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-                dto3.setTargetSiteCode(targetOutcome.getProgressionSite());
-                Ivl<Ts> diseaseProgressionDate = new Ivl<Ts>();
-                diseaseProgressionDate.setLow(targetOutcome.getProgressionDate());
-                dto3.setActualDateRange(diseaseProgressionDate);
-            }            
-            dto3.setStudyProtocolIdentifier(getSpIi());
-            dto3.setStudySubjectIdentifier(getParticipantIi());
-
-            dto3 = performedActivitySvc.createPerformedObservation(dto3);
-
-            PerformedObservationResultDto porDto5 = new PerformedObservationResultDto();
-            porDto5.setPerformedObservationIdentifier(dto3.getIdentifier());
-            porDto5.setResultCode(targetOutcome.getProgressionInd());
-            porDto5.setStudyProtocolIdentifier(getSpIi());
-            performedObservationResultSvc.create(porDto5);
-            
-            ActivityRelationshipDto arDto3 = new ActivityRelationshipDto();
-            arDto3.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
-            arDto3.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(targetOutcome.getTreatmentPlanId()));
-            arDto3.setTargetPerformedActivityIdentifier(dto3.getIdentifier());
-            activityRelationshipSvc.create(arDto3);
-            
             PerformedObservationDto dto5 = new PerformedObservationDto();
             Ivl<Ts> bestResponseDate = new Ivl<Ts>();
             bestResponseDate.setLow(targetOutcome.getBestResponseDate());
@@ -291,27 +238,8 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
             arDto5.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
             arDto5.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(targetOutcome.getTreatmentPlanId()));
             arDto5.setTargetPerformedActivityIdentifier(dto5.getIdentifier());
-            activityRelationshipSvc.create(arDto5);
-            
-            PerformedObservationDto dto6 = new PerformedObservationDto();
-            dto6.setNameCode(CdConverter.convertToCd(ActivityNameCode.getByCode("Evidence of Disease")));
-            dto6.setStudyProtocolIdentifier(getSpIi());
-            dto6.setStudySubjectIdentifier(getParticipantIi());
-
-            dto6 = performedActivitySvc.createPerformedObservation(dto6);
-
-            PerformedObservationResultDto porDto8 = new PerformedObservationResultDto();
-            porDto8.setPerformedObservationIdentifier(dto6.getIdentifier());
-            porDto8.setResultCode(targetOutcome.getDiseaseEvidence());
-            porDto8.setStudyProtocolIdentifier(getSpIi());
-            performedObservationResultSvc.create(porDto8);
-
-            ActivityRelationshipDto arDto6 = new ActivityRelationshipDto();
-            arDto6.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
-            arDto6.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(targetOutcome.getTreatmentPlanId()));
-            arDto6.setTargetPerformedActivityIdentifier(dto6.getIdentifier());
-            activityRelationshipSvc.create(arDto6);
-
+            activityRelationshipSvc.create(arDto5);            
+           
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             return super.create();
@@ -368,20 +296,6 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
                                         getByCode("Evaluable for Response")));
         porDto2.setStudyProtocolIdentifier(getSpIi());
         performedObservationResultSvc.create(porDto2);
-
-        PerformedObservationResultDto porDto3 = new PerformedObservationResultDto();
-        porDto3.setPerformedObservationIdentifier(dto.getIdentifier());
-        porDto3.setResultCode(targetOutcome.getRecurrenceInd());
-        porDto3.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.
-                                    getByCode("Disease Recurrence Indicator")));
-        porDto3.setStudyProtocolIdentifier(getSpIi());
-
-        if (targetOutcome.getRecurrenceInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-            Ivl<Ts> resultDateRange = new Ivl<Ts>();
-            resultDateRange.setLow(targetOutcome.getRecurrenceDate());
-            porDto3.setResultDateRange(resultDateRange);
-        }
-        performedObservationResultSvc.create(porDto3);
 
         ActivityRelationshipDto arDto1 = new ActivityRelationshipDto();
         arDto1.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));

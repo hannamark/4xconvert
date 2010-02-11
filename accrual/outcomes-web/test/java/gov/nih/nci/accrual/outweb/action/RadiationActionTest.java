@@ -84,7 +84,6 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.RadiationWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
 import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -166,7 +165,6 @@ public class RadiationActionTest extends AbstractAccrualActionTest {
         radiation.setDuration(dose);
         radiation.setTotalDose(dose);
         radiation.setType(CdConverter.convertStringToCd("radiation"));
-        radiation.setMachineType(CdConverter.convertToCd(RadiationMachineTypeCode.BONE_DENSITOMETER));
         action.setRadiation(radiation);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
@@ -183,12 +181,11 @@ public class RadiationActionTest extends AbstractAccrualActionTest {
        radiation.setDuration(dose);
        radiation.setTotalDose(dose);
        radiation.setType(CdConverter.convertStringToCd("radiation"));
-       radiation.setMachineType(CdConverter.convertToCd(RadiationMachineTypeCode.BONE_DENSITOMETER));
        action.setRadiation(radiation);
-        action.setSelectedRowIdentifier(MockPerformedActivityBean.RADIATIONID);
-        assertEquals(ActionSupport.SUCCESS, action.edit());
-        assertNotNull(action.getRadiation());
-    }
+       action.setSelectedRowIdentifier(MockPerformedActivityBean.RADIATIONID);
+       assertEquals(ActionSupport.SUCCESS, action.edit());
+       assertNotNull(action.getRadiation());
+   }
     
     @Test
     public void editExceptionTest() throws Exception {

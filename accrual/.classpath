@@ -39,7 +39,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/commons-logging-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/coppa-commons-1.3.0-alpha1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/ehcache-1.2.4.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/ejb-api-3.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/freemarker-2.3.13.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/hibernate-annotations-3.2.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/hibernate3-4.0.5.GA.jar"/>
@@ -47,7 +46,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/log4j-1.2.8.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/log4j-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/mail-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/nci-commons-struts2-1.2.3.jar"/>
@@ -58,6 +56,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/sitemesh-2.3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/standard-1.1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/pa-commons-3.2.0-alpha4.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/compile/pa-commons-test-3.2.0-alpha4.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/outcomes-web/test/pa-commons-test-3.2.0-alpha4.jar"/>
 	<classpathentry kind="output" path="target"/>
 </classpath>

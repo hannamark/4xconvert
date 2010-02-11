@@ -84,7 +84,8 @@ import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.outweb.dto.util.DrugBiologicsWebDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.pa.domain.DoseFrequency;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
@@ -155,13 +156,6 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
                         InterventionDTO dto = interventionSvc.get(psaDto.getInterventionIdentifier());
                         webDto.setDrugName(dto.getName());
                         webDto.setInterventionId(dto.getIdentifier());
-
-                        DoseFrequency df = new DoseFrequency();
-                        df.setCode(psaDto.getDoseFrequencyCode().getCode());
-
-                        DoseFrequency dfBean = baseLookupSvc.getByCode(df);
-                        webDto.setDoseFreq(CdConverter.convertStringToCd(dfBean.getDisplayName()));
-                        webDto.setDoseFreqId(IiConverter.convertToIi(dfBean.getId()));
                         getDisplayTagList().add(new DrugBiologicsWebDto(psaDto, webDto));
                     }
                 }
@@ -189,17 +183,17 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
             psaDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.DRUG_BIOLOGIC));
             psaDto.setDose(drugBiologic.getDose());
             psaDto.setRouteOfAdministrationCode(drugBiologic.getDoseRoute());
-            
-            DoseFrequency df = new DoseFrequency();
-            df.setId(IiConverter.convertToLong(drugBiologic.getDoseFreqId()));
-            DoseFrequency dfBean = baseLookupSvc.getById(df);
-            psaDto.setDoseFrequencyCode(CdConverter.convertStringToCd(dfBean.getCode()));
+            psaDto.setDoseFrequencyCode(drugBiologic.getDoseFreq());
             
             psaDto.setDoseDuration(drugBiologic.getDoseDur());
             psaDto.setDoseTotal(drugBiologic.getDoseTotal());
             psaDto.setDoseModificationType(drugBiologic.getDoseModType());
             psaDto.setStudyProtocolIdentifier(getSpIi());
             psaDto.setStudySubjectIdentifier(getParticipantIi());
+            if (psaDto.getActualDateRange() == null) {
+                psaDto.setActualDateRange(new Ivl<Ts>());
+            }
+            psaDto.getActualDateRange().setLow(drugBiologic.getStartDate());
             
             psaDto = performedActivitySvc.createPerformedSubstanceAdministration(psaDto);
             
@@ -346,15 +340,15 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
             psa.setInterventionIdentifier(drugBiologic.getInterventionId());            
             psa.setDose(drugBiologic.getDose());
             psa.setRouteOfAdministrationCode(drugBiologic.getDoseRoute());
-            DoseFrequency df = new DoseFrequency();
-            df.setId(IiConverter.convertToLong(drugBiologic.getDoseFreqId()));
-            DoseFrequency dfBean = baseLookupSvc.getById(df);
-            psa.setDoseFrequencyCode(CdConverter.convertStringToCd(dfBean.getCode()));
+            psa.setDoseFrequencyCode(drugBiologic.getDoseFreq());
             
             psa.setDoseDuration(drugBiologic.getDoseDur());
             psa.setDoseTotal(drugBiologic.getDoseTotal());
             psa.setDoseModificationType(drugBiologic.getDoseModType());
-            
+            if (psa.getActualDateRange() == null) {
+                psa.setActualDateRange(new Ivl<Ts>());
+            }
+            psa.getActualDateRange().setLow(drugBiologic.getStartDate());
             performedActivitySvc.updatePerformedSubstanceAdministration(psa);
             }
             

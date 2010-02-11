@@ -108,13 +108,12 @@ public class DeathInfoWebDto implements Serializable {
     private static final long serialVersionUID = 7839457372215390511L;
     
     private Ii id;
+    private Ii autopsyId;
     private Cd cause;
     private Ts eventDate;
     private Cd autopsyInd;
     private Cd causeByAutopsy;
     private Cd autopsySite;
-    private String treatmentPlanId;
-    private String oldTreatmentPlanId;
 
     /**
      * Instantiates a new death info web dto.
@@ -159,6 +158,20 @@ public class DeathInfoWebDto implements Serializable {
      */
     public void setId(Ii id) {
         this.id = id;
+    }
+
+    /**
+     * @return autopsyId
+     */
+    public Ii getAutopsyId() {
+        return autopsyId;
+    }
+
+    /**
+     * @param autopsyId autopsyId
+     */
+    public void setAutopsyId(Ii autopsyId) {
+        this.autopsyId = autopsyId;
     }
 
     /**
@@ -256,39 +269,5 @@ public class DeathInfoWebDto implements Serializable {
      */
     public List<AutopsyDeathCause> getCausesByAutopsy() {
         return Arrays.asList(AutopsyDeathCause.values());
-    }
-
-    /**
-     * Gets the treatment plan id.
-     * @return the treatment plan id
-     */
-    @FieldExpressionValidator(
-            expression = "treatmentPlanId != null && treatmentPlanId.length() > 0", 
-            message = "Please Select TreatmentPlan")
-    public String getTreatmentPlanId() {
-        return treatmentPlanId;
-    }
-
-    /**
-     * Sets the treatment plan id.
-     * @param treatmentPlanId the new treatment plan id
-     */
-    public void setTreatmentPlanId(String treatmentPlanId) {
-        this.treatmentPlanId = treatmentPlanId;
-    }
-    /**
-     * Gets the old treatment plan id.
-     * @return the old treatment plan id
-     */
-    public String getOldTreatmentPlanId() {
-        return oldTreatmentPlanId;
-    }
-
-    /**
-     * Sets the old treatment plan id.
-     * @param oldTreatmentPlanId the new old treatment plan id
-     */
-    public void setOldTreatmentPlanId(String oldTreatmentPlanId) {
-        this.oldTreatmentPlanId = oldTreatmentPlanId;
     }
 }

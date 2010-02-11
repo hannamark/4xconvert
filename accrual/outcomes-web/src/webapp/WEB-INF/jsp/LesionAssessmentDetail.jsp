@@ -113,15 +113,7 @@
     </tr>
     
     <tr>
-    	<td scope="row" class="label"><label><fmt:message key="lesionAssessment.contrastAgentIndicator"/>:<span class="required">*</span></label></td>
-		<td class="value"><s:select  name="lesionAssessment.contrastAgentIndicator" headerKey="" headerValue="--Select--"
-                      list="lesionAssessment.contrastAgentInds" listKey="code" listValue="code" value="lesionAssessment.contrastAgentIndicator.code"/>
-                    <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.contrastAgentIndicator</s:param></s:fielderror>
-         </td>
-    </tr>
-    
-    <tr>
-        <td scope="row" class="label"><label><fmt:message key="lesionAssessment.imageSeriesIdentifier"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="lesionAssessment.imageSeriesIdentifier"/>:</label></td>
         <td class="value">
             <s:textfield name="lesionAssessment.imageSeriesIdentifier" size="20" />
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.imageSeriesIdentifier</s:param></s:fielderror>
@@ -129,7 +121,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="lesionAssessment.imageIdentifier"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="lesionAssessment.imageIdentifier"/>:</label></td>
         <td class="value">
             <s:textfield name="lesionAssessment.imageIdentifier" size="20" />
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.imageIdentifier</s:param></s:fielderror>
@@ -137,7 +129,7 @@
     </tr>
     
     <tr>
-        <td scope="row" class="label"><label><fmt:message key="lesionAssessment.lesionLongestDiameter"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="lesionAssessment.lesionLongestDiameter"/>:</label></td>
         <td class="value">
             <s:textfield name="lesionAssessment.lesionLongestDiameter.value" size="10"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.lesionLongestDiameter.value</s:param></s:fielderror>

@@ -356,4 +356,8 @@
                 <comment>execute pa_dev_25497.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_25497.sql"/>
     </changeSet>
+    <changeSet id="88" author="Kalpana">
+                <comment>execute accrual_dev_26144.sql</comment>
+                <sqlFile path="@db-upgrade.run.dir@/3.2/accrual_dev_26144.sql"/>
+    </changeSet>
 </databaseChangeLog>

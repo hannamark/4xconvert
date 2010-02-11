@@ -151,10 +151,21 @@ public class DeathInformationActionTest extends AbstractAccrualActionTest {
         deathInformation.setAutopsySite(CdConverter.convertStringToCd("Liver and intrahepatic duct2"));
         deathInformation.setCauseByAutopsy(CdConverter.convertToCd(AutopsyDeathCause.INFECTION));
         deathInformation.setId(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
-        deathInformation.setOldTreatmentPlanId(MockPerformedActivityBean.TPID);
-        deathInformation.setTreatmentPlanId("TestTP2");
+        deathInformation.setAutopsyId(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
         action.setDeathInfo(deathInformation);
         assertEquals(ActionSupport.SUCCESS, action.save());
         assertNotNull(action.getDeathInfo());
+    }
+    
+    @Test
+    public void editExceptionTest() throws Exception {
+        deathInformation.setCause(CdConverter.convertToCd(DeathCause.INFECTION));
+        deathInformation.setEventDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        deathInformation.setAutopsyInd(CdConverter.convertToCd(AutopsyPerformed.YES));
+        deathInformation.setAutopsySite(CdConverter.convertStringToCd("Liver and intrahepatic duct2"));
+        deathInformation.setCauseByAutopsy(CdConverter.convertToCd(AutopsyDeathCause.INFECTION));
+        deathInformation.setId(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
+        action.setDeathInfo(deathInformation);
+        assertEquals(ActionSupport.INPUT, action.save());
     }
 }

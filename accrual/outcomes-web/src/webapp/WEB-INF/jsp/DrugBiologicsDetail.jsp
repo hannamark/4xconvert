@@ -58,6 +58,13 @@
 	}
 
 </script>
+<script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<script type="text/javascript">
+        addCalendar("Cal1", "Select Date", "drugBiologicDate", "detailForm");
+        setWidth(90, 1, 15, 1);
+        setFormat("mm/dd/yyyy");
+</script>
 <title>
     <s:if test="%{currentAction == 'create'}">
         <c:set var="topic" scope="request" value="add_biologics"/> 
@@ -84,7 +91,6 @@
 <s:hidden name = "selectedRowIdentifier"/>
 <s:hidden name = "drugBiologic.id"/>
 <s:hidden name = "drugBiologic.interventionId" />
-<s:hidden name = "drugBiologic.doseFreqId" />
 <table class="form">
  	<tr>
 		        <th colspan="3"><fmt:message key="drugBiologic.subHeading1"/></th>
@@ -104,6 +110,15 @@
 		        <th colspan="3"><fmt:message key="drugBiologic.subHeading2"/></th>
 	</tr>
 	<tr><td></td></tr>
+    <tr>
+        <td scope="row" class="label"><label><fmt:message key="drugBiologic.date"/>:<span class="required">*</span></label></td>
+        <td class="value">
+        	<s:textfield id="drugBiologicDate" name="drugBiologic.startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                <a href="javascript:showCal('Cal1')">
+                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
+             <s:fielderror cssClass="formErrorMsg"><s:param>drugBiologic.startDate</s:param></s:fielderror>
+        </td>
+    </tr>
     
     <tr>
         <td scope="row" class="label"><label><fmt:message key="drugBiologic.dose"/>:<span class="required">*</span></label></td>

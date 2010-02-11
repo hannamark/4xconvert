@@ -82,7 +82,6 @@ package gov.nih.nci.accrual.outweb.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.LesionAssessmentWebDto;
-import gov.nih.nci.accrual.outweb.enums.ResponseInds;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Pq;
@@ -161,7 +160,6 @@ public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
         lesionLongestDiameter.setUnit("Years");
         lesionAssessment.setId(new Ii());
         lesionAssessment.setClinicalAssessmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        lesionAssessment.setContrastAgentIndicator(CdConverter.convertToCd(ResponseInds.YES));
         lesionAssessment.setImageIdentifier(IiConverter.convertToIi(1L));
         lesionAssessment.setImageSeriesIdentifier(IiConverter.convertToIi(1L));
         lesionAssessment.setLesionLongestDiameter(lesionLongestDiameter);
@@ -198,7 +196,6 @@ public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
         lesionAssessment.setImageIdentifier(IiConverter.convertToIi(2L));
         lesionAssessment.setLesionLongestDiameter(lesionLongestDiameter);
         lesionAssessment.setClinicalAssessmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
-        lesionAssessment.setContrastAgentIndicator(CdConverter.convertToCd(ResponseInds.NO));
         action.setLesionAssessment(lesionAssessment);
         action.setSelectedRowIdentifier(MockPerformedActivityBean.LESION_ASSESSMENTID);
         assertEquals(ActionSupport.SUCCESS, action.edit());

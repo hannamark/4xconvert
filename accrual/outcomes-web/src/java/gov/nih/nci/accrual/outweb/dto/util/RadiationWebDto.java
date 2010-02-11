@@ -116,10 +116,8 @@ public class RadiationWebDto implements Serializable {
     private Ts radDate;
     private Pq totalDose;
     private Pq duration;
-    private Cd machineType;
     private Pq dose; 
     private Cd doseFreq;  
-    private Ii doseFreqId;
 
     /**
      * Instantiates a new radiation web dto.
@@ -130,21 +128,16 @@ public class RadiationWebDto implements Serializable {
     
     /**
      * Instantiates a new radiation web dto.
-     * 
      * @param pra the pra
-     * @param webDto the web dto
      */
-    public RadiationWebDto(PerformedRadiationAdministrationDto pra, RadiationWebDto webDto) {
+    public RadiationWebDto(PerformedRadiationAdministrationDto pra) {
         id = pra.getIdentifier();
         type = CdConverter.convertStringToCd(pra.getName().getValue());
         radDate = pra.getActualDateRange().getLow();
         totalDose = pra.getDoseTotal();
         duration = pra.getDoseDuration();
-        machineType = pra.getMachineTypeCode();
         dose = pra.getDose();
-        //doseFreq = pra.getDoseFrequencyCode();
-        doseFreq = webDto.getDoseFreq();
-        doseFreqId = webDto.getDoseFreqId();
+        doseFreq = pra.getDoseFrequencyCode();
     }
     
     /**
@@ -162,9 +155,8 @@ public class RadiationWebDto implements Serializable {
         praDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.RADIATION));
         praDto.setDoseDuration(getDuration());
         praDto.setDoseTotal(getTotalDose());
-        praDto.setMachineTypeCode(getMachineType());
         praDto.setDose(getDose());
-        //praDto.setDoseFrequencyCode(getDoseFreq());
+        praDto.setDoseFrequencyCode(getDoseFreq());
         praDto.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
                 AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
         praDto.setStudySubjectIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
@@ -290,22 +282,6 @@ public class RadiationWebDto implements Serializable {
     }
 
     /**
-     * @return the machineType
-     */
-    @FieldExpressionValidator(expression = "machineType.code != null && machineType.code.length() > 0", 
-            message = "Please select a Radiation Machine Type")
-    public Cd getMachineType() {
-        return machineType;
-    }
-
-    /**
-     * @param machineType the machineType to set
-     */
-    public void setMachineType(Cd machineType) {
-        this.machineType = machineType;
-    }
-
-    /**
      * Gets the dose.
      * @return the dose
      */
@@ -337,21 +313,5 @@ public class RadiationWebDto implements Serializable {
      */
     public void setDoseFreq(Cd doseFreq) {
         this.doseFreq = doseFreq;
-    }
-
-    /**
-     * Gets the dose freq id.
-     * @return the dose freq id
-     */
-    public Ii getDoseFreqId() {
-        return doseFreqId;
-    }
-
-    /**
-     * Sets the dose freq id.
-     * @param doseFreqId the new dose freq id
-     */
-    public void setDoseFreqId(Ii doseFreqId) {
-        this.doseFreqId = doseFreqId;
     }
 }

@@ -47,15 +47,9 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if><accrual:sucessMessage />
 <s:form name="detailForm">
-    <s:hidden name = "deathInfo.oldTreatmentPlanId" />
+	<s:hidden name="deathInfo.id"/>
+    <s:hidden name = "deathInfo.autopsyId" />
 <table class="form">
-<tr>
-        <td scope="row" class="label"><label><fmt:message key="outcomes.summary.treatmentPlan"/>:<span class="required">*</span></label></td>
-        <td class="value">
-            <s:select  name="deathInfo.treatmentPlanId" headerKey="" headerValue="--Select--" list="%{#session.treatmentPlans}"/>
-            <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.treatmentPlanId</s:param></s:fielderror>
-        </td>      
-    </tr>
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.cause"/><span class="required">*</span></label></td>
 <td class="value"><s:select name="deathInfo.cause" headerKey="" headerValue="--Select--"
               list="deathInfo.causes" listKey="code" listValue="code" value="deathInfo.cause.code"/>
@@ -75,7 +69,7 @@
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.causeByAutopsy</s:param></s:fielderror></td></tr>
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.autopsySite"/></label></td>
 <td class="value"><s:textfield readonly="true" size="50" name="deathInfo.autopsySite"
-               cssStyle="width:280px;float:left" cssClass="readonly"/><s:hidden name="deathInfo.id"/>
+               cssStyle="width:280px;float:left" cssClass="readonly"/>
                <a href="#" class="btn" onclick="lookup();" /><span class="btn_img"><span class="search">Look Up</span></span></a>
                <s:fielderror cssClass="formErrorMsg"><s:param>deathInfo.autopsySite</s:param></s:fielderror></td></tr>
 </table>

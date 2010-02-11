@@ -60,24 +60,6 @@
         <display:column titleKey="partOutEdit.label.bestResponseDate" headerClass="left" sortable="true">
             <s:property value="%{#attr.row.bestResponseDate}"/>
         </display:column>
-        <display:column titleKey="partOutEdit.label.diseaseEvidence" headerClass="left" sortable="true">
-            <s:property value="%{#attr.row.diseaseEvidence}"/>
-        </display:column>
-        <display:column titleKey="partOut.label.recInd" headerClass="left" sortable="true">
-            <s:property value="%{#attr.row.recurrenceInd}"/>
-        </display:column>
-        <display:column titleKey="partOut.label.recIndDate" headerClass="left" sortable="true">
-            <s:property value="%{#attr.row.recurrenceDate}"/>
-        </display:column>
-        <display:column titleKey="partOut.label.progInd" headerClass="left" sortable="true">
-            <s:property value="%{#attr.row.progressionInd}"/>
-        </display:column>
-        <display:column titleKey="partOut.label.progIndDate" headerClass="left" sortable="true">
-            <s:property value="%{#attr.row.progressionDate}"/>
-        </display:column>
-        <display:column titleKey="partOut.label.site" headerClass="left" sortable="true">
-            <s:property value="%{#attr.row.progressionSite}"/>
-        </display:column>
     </display:table>
 </s:form>
 

@@ -79,7 +79,6 @@
 <s:hidden name = "currentAction"/>
 <s:hidden name = "selectedRowIdentifier"/>
 <s:hidden name = "radiation.id"/>
-<s:hidden name = "radiation.doseFreqId" />
 <table class="form"> 
  	<tr>
         <td scope="row" class="label"><label><fmt:message key="radiation.name"/>:<span class="required">*</span></label></td>
@@ -160,18 +159,7 @@
             <s:fielderror cssClass="formErrorMsg"><s:param>radiation.duration.unit</s:param></s:fielderror>
         </td>      
     </tr>
-    
-    <tr>
-        <td scope="row" class="label"><label><fmt:message key="radiation.machineType"/>:<span class="required">*</span></label></td>
-        <td class="value">
-            <s:set name="radiationMachineTypeCodeValues" value="@gov.nih.nci.pa.enums.RadiationMachineTypeCode@getDisplayNames()" />
-            <s:select id ="radiationCode" name="radiation.machineType" headerKey="" headerValue="--Select--"
-                      list="#radiationMachineTypeCodeValues" value="radiation.machineType.code"/>
-            <s:fielderror cssClass="formErrorMsg"><s:param>radiation.machineType</s:param></s:fielderror>
-        </td>      
-    </tr>
-
-</table>
+    </table>
 </s:form>
 
 <div class="actionsrow">

@@ -76,7 +76,6 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
@@ -395,12 +394,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         if (poBean.getNameCode() != null
                 && poBean.getNameCode().getCode() != null
                 && poBean.getNameCode().getCode().equals(ActivityNameCode.DEATH_INFORMATION.getCode())) {
-            List<ActivityRelationshipDto> arList =
-                activityRelationshipSvc.getByTargetPerformedActivity(poBean.getIdentifier(),
-                        CdConverter.convertStringToCd(AccrualConstants.COMP));
-            PerformedObservationDto po =
-                performedActivitySvc.getPerformedObservation(arList.get(0).getTargetPerformedActivityIdentifier());
-            return getEarliestRdrResultDate(po);
+            return getEarliestRdrResultDate(poBean);
         }
         return null;
     }

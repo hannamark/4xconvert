@@ -235,13 +235,27 @@ public class LookUpAction extends AbstractAccrualAction {
         }
 
         String sTxt = searchText.getValue();
-        if (sTxt == null || sTxt.length() == 0) {
-            addActionError(seacrhMsg);
+        String description = ServletActionContext.getRequest().getParameter("description");
+        String displayName = ServletActionContext.getRequest().getParameter("displayName");
+        if ((sTxt == null || sTxt.length() == 0)
+                && ("".equals(description) || description == null) 
+                && ("".equals(displayName) || displayName == null)) {
+                String message = "Please enter at least one search criteria";
+                addActionError(message);
             return INPUT;
         }
 
         DoseFrequency criteria = new DoseFrequency();
-        criteria.setCode(sTxt);
+        if (!"".equals(sTxt)) {
+            criteria.setCode(sTxt);
+          }
+          if (!"".equals(description)) {
+            criteria.setDescription(description);
+          } 
+          if (!"".equals(displayName)) {
+            criteria.setDisplayName(displayName);
+          }
+        //criteria.setCode(sTxt);
         List<DoseFrequency> list = new ArrayList<DoseFrequency>();
         list.addAll(baseLookupSvc.search(criteria));
         for (DoseFrequency bean :  list) {

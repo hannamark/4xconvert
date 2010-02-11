@@ -81,10 +81,12 @@ package gov.nih.nci.accrual.outweb.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
+import gov.nih.nci.accrual.outweb.util.WebUtil;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
@@ -116,7 +118,7 @@ public class DrugBiologicsWebDto implements Serializable {
     private Pq doseTotal;    
     private Cd doseModType;
     private Ii interventionId;
-    private Ii doseFreqId;
+    private Ts startDate;
 
     /**
      * Instantiates a new drug biologics web dto.
@@ -137,16 +139,15 @@ public class DrugBiologicsWebDto implements Serializable {
         drugName = webDto.getDrugName();
         dose = psaDto.getDose();
         doseRoute = psaDto.getRouteOfAdministrationCode();
-        //doseFreq = psaDto.getDoseFrequencyCode();    
-        doseFreq = webDto.getDoseFreq();
-        doseFreqId = webDto.getDoseFreqId();
+        doseFreq = psaDto.getDoseFrequencyCode();  
         doseDur = psaDto.getDoseDuration();
         height = webDto.getHeight();
         weight = webDto.getWeight();
         bsa = webDto.getBsa();
         doseTotal = psaDto.getDoseTotal();
         doseModType = psaDto.getDoseModificationType();
-        interventionId = webDto.getInterventionId();        
+        interventionId = webDto.getInterventionId();   
+        startDate = psaDto.getActualDateRange().getLow();
     }
 
     /**
@@ -205,6 +206,12 @@ public class DrugBiologicsWebDto implements Serializable {
         }
         if (dto.getDoseTotal() == null || dto.getDoseTotal().getUnit().equals("")) {
             action.addFieldError("drugBiologic.doseTotal.unit", "Please select Dose Total UOM.");
+        }
+        if (dto.getStartDate() != null) {
+            boolean validDate = WebUtil.checkValidDate(dto.getStartDate().getValue());
+            if (!validDate) {
+                action.addFieldError("drugBiologic.startDate", "Please Enter Current or Past Date.");
+            }
         }
     }
 
@@ -407,18 +414,17 @@ public class DrugBiologicsWebDto implements Serializable {
     }
 
     /**
-     * Gets the dose freq id.
-     * @return the dose freq id
+     * @return startDate
      */
-    public Ii getDoseFreqId() {
-        return doseFreqId;
+    @FieldExpressionValidator(expression = "startDate.value != null", message = "Please provide a Start Date.")     
+    public Ts getStartDate() {
+        return startDate;
     }
 
     /**
-     * Sets the dose freq id.
-     * @param doseFreqId the new dose freq id
+     * @param startDate startDate
      */
-    public void setDoseFreqId(Ii doseFreqId) {
-        this.doseFreqId = doseFreqId;
+    public void setStartDate(Ts startDate) {
+        this.startDate = startDate;
     }
 }

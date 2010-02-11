@@ -53,9 +53,6 @@
 	        var displayName = document.getElementById("displayNameSearch").value;
 			document.forms[0].action="lookUpdoseFrequency.action?description="+description+"&displayName="+displayName;
 			document.getElementById("type").value = 'radiationFrequency';
-		}else if(type == 'progressionSite') {
-			document.forms[0].action="lookUplesionLocationAnatomicSite.action";
-			document.getElementById("type").value = 'progressionSite';
 		}
 	    document.forms[0].submit();
 	}
@@ -88,8 +85,6 @@
 			window.top.document.getElementsByName("radiation.dose.unit")[0].value = name;
 		}else if(type == 'radiationFrequency') {
 			window.top.document.getElementsByName("radiation.doseFreq")[0].value = name;		
-		}else if(type == 'progressionSite') {
-			window.top.document.getElementsByName("targetOutcome.progressionSite")[0].value = name;
 		}
         window.top.hidePopWin(false); 
 	}
@@ -127,9 +122,6 @@
 			</s:elseif>
 			<s:elseif test="type == 'tumorMarker'">
 			Tumor Marker
-			</s:elseif>
-			<s:elseif test="type == 'progressionSite'">
-			Progression Site
 			</s:elseif>
 		</label></td>
 		<td><s:textfield size="50" name="searchText"

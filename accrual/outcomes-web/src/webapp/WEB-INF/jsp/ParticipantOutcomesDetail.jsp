@@ -5,7 +5,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <c:url value="/outcomes/lookUpassessmentType.action?type=assessmentType" var="lookupUrl" />
-<c:url value="/outcomes/lookUplesionLocationAnatomicSite.action?type=progressionSite" var="anatomicLookupUrl" />
 <head>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
@@ -40,12 +39,6 @@
         addCalendar("Cal2", "Select Date", "targetOutcome.diseaseStatusDate", "detailForm");
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
-        addCalendar("Cal3", "Select Date", "targetOutcome.recurrenceDate", "detailForm");
-        setWidth(90, 1, 15, 1);
-        setFormat("mm/dd/yyyy");
-        addCalendar("Cal4", "Select Date", "targetOutcome.progressionDate", "detailForm");
-        setWidth(90, 1, 15, 1);
-        setFormat("mm/dd/yyyy");        
         addCalendar("Cal5", "Select Date", "targetOutcome.bestResponseDate", "detailForm");
         setWidth(90, 1, 15, 1);
         setFormat("mm/dd/yyyy");
@@ -111,34 +104,7 @@
 <td class="value"><s:textfield id="targetOutcome.bestResponseDate" name="targetOutcome.bestResponseDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                 <a href="javascript:showCal('Cal5')">
                     <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.bestResponseDate</s:param></s:fielderror></td></tr>                     
-<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.diseaseEvidence"/>:<span class="required">*</span></label></td>
-<td class="value"><s:set name="evidenceOfDiseaseCodeValues" value="@gov.nih.nci.pa.enums.EvidenceOfDiseaseCode@getDisplayNames()" />
-			<s:select id="targetOutcome.diseaseEvidence" name="targetOutcome.diseaseEvidence" headerKey="" headerValue="--Select--"
-                    list="#evidenceOfDiseaseCodeValues" value="targetOutcome.diseaseEvidence.code"/>
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.diseaseEvidence</s:param></s:fielderror></td></tr>                                                                    
-<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.recInd"/><span class="required">*</span></label></td>
-<td class="value"><s:select id="targetOutcome.recurrenceInd" name="targetOutcome.recurrenceInd" headerKey="" headerValue="--Select--"
-                    list="targetOutcome.recurrenceInds" listKey="code" listValue="code" value="targetOutcome.recurrenceInd.code"/>
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.recurrenceInd</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.recIndDate"/></label></td>
-<td class="value"><s:textfield id="targetOutcome.recurrenceDate" name="targetOutcome.recurrenceDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                <a href="javascript:showCal('Cal3')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.recurrenceDate</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.progInd"/><span class="required">*</span></label></td>
-<td class="value"><s:select id="targetOutcome.progressionInd" name="targetOutcome.progressionInd" headerKey="" headerValue="--Select--"
-                    list="targetOutcome.progressionInds" listKey="code" listValue="code" value="targetOutcome.progressionInd.code"/>
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.progressionInd</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.site"/></label></td>
-<td class="value"><s:textfield readonly="true" size="50" name="targetOutcome.progressionSite" cssStyle="width:280px;float:left" cssClass="readonly"/>
-            <a href="#" class="btn" onclick="anatomicLookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.progressionSite</s:param></s:fielderror></td></tr>
-<tr><td scope="row" class="label"><label><fmt:message key="partOutEdit.label.progIndDate"/></label></td>
-<td class="value"><s:textfield id="targetOutcome.progressionDate" name="targetOutcome.progressionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                <a href="javascript:showCal('Cal4')">
-                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a> (mm/dd/yyyy)
-                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.progressionDate</s:param></s:fielderror></td></tr>
+                    <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.bestResponseDate</s:param></s:fielderror></td></tr>
 </table>
 </s:form>
 

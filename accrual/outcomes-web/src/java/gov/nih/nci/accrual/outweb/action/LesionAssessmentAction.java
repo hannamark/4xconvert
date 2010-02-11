@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -165,7 +166,7 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
                             List<PerformedImageDto> imageList = performedObservationResultSvc.
                             getPerformedImageByPerformedActivity(pi.getIdentifier());
                             getDisplayTagList().add(
-                                    new LesionAssessmentWebDto(po, pi, pldList, imageList, sourceTreatmentPlanId));
+                                    new LesionAssessmentWebDto(po, pldList, imageList, sourceTreatmentPlanId));
                         }
                     }
                 }
@@ -252,10 +253,12 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
                 pldDto1.setMeasurableIndicator(BlConverter.convertToBl(true));
                 pldDto1.setEvaluableIndicator(BlConverter.convertToBl(true));
             }
-            Pq longestDiameter = new Pq();
-            longestDiameter.setUnit("mm");
-            longestDiameter.setValue(lesionAssessment.getLesionLongestDiameter().getValue());
-            pldDto1.setLongestDiameter(longestDiameter);
+            if (!PAUtil.isPqValueNull(lesionAssessment.getLesionLongestDiameter())) {
+                Pq longestDiameter = new Pq();
+                longestDiameter.setUnit("mm");
+                longestDiameter.setValue(lesionAssessment.getLesionLongestDiameter().getValue());
+                pldDto1.setLongestDiameter(longestDiameter);
+            }
             Ivl<Ts> clinicalAssessmentDate = new Ivl<Ts>();
             clinicalAssessmentDate.setLow(lesionAssessment.getClinicalAssessmentDate());
             pldDto1.setResultDateRange(clinicalAssessmentDate);
@@ -264,11 +267,11 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
 
             PerformedImagingDto dto2 = new PerformedImagingDto();
             dto2.setNameCode(CdConverter.convertToCd(ActivityNameCode.getByCode("Lesion Assessment")));
-            if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("Yes")) {
+            /*if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("Yes")) {
                 dto2.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(true));
             } else if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("No")) {
                 dto2.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(false));
-            }
+            }*/
             dto2.setStudyProtocolIdentifier(getSpIi());
             dto2.setStudySubjectIdentifier(getParticipantIi());
 
@@ -329,13 +332,13 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
             if (piDto.getNameCode().getCode().equals(ActivityNameCode.LESION_ASSESSMENT.getCode())) {
                 arList = activityRelationshipSvc.getByTargetPerformedActivity(
                         piDto.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.PERT));
-                if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("Yes")) {
+                /*if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("Yes")) {
                     piDto.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(true));
                 } else if (lesionAssessment.getContrastAgentIndicator().getCode().equalsIgnoreCase("No")) {
                     piDto.setContrastAgentEnhancementIndicator(BlConverter.convertToBl(false));
                 }
 
-                piDto = performedActivitySvc.updatePerformedImaging(piDto);
+                piDto = performedActivitySvc.updatePerformedImaging(piDto);*/
 
                 PerformedObservationDto po = performedActivitySvc.getPerformedObservation(
                         arList.get(0).getSourcePerformedActivityIdentifier());
@@ -370,10 +373,12 @@ public class LesionAssessmentAction extends AbstractListEditAccrualAction<Lesion
                             pldList.get(0).setMeasurableIndicator(BlConverter.convertToBl(true));
                             pldList.get(0).setEvaluableIndicator(BlConverter.convertToBl(true));
                         }
-                        Pq longestDiameter = new Pq();
-                        longestDiameter.setUnit("mm");
-                        longestDiameter.setValue(lesionAssessment.getLesionLongestDiameter().getValue());
-                        pldList.get(0).setLongestDiameter(longestDiameter);
+                        if (!PAUtil.isPqValueNull(lesionAssessment.getLesionLongestDiameter())) {
+                            Pq longestDiameter = new Pq();
+                            longestDiameter.setUnit("mm");
+                            longestDiameter.setValue(lesionAssessment.getLesionLongestDiameter().getValue());
+                            pldList.get(0).setLongestDiameter(longestDiameter);
+                        }
                         Ivl<Ts> clinicalAssessmentDate = new Ivl<Ts>();
                         clinicalAssessmentDate.setLow(lesionAssessment.getClinicalAssessmentDate());
                         pldList.get(0).setResultDateRange(clinicalAssessmentDate);
