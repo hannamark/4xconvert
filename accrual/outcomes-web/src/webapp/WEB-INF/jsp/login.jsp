@@ -23,7 +23,7 @@
             </div>
         </c:when>
         <c:otherwise>
-            <p style="margin:0; padding:0">Please log in to report outcomes information on patient outcomes.
+            <p style="margin:0; padding:0">Log in to record patient outcome information.
                 If you do not have an account, you may <a title="To Create an Account" href="${createAccountUrl}">create an account</a>. 
             </p>
         </c:otherwise>

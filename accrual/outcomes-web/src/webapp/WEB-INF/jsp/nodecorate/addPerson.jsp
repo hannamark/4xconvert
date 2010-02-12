@@ -41,7 +41,7 @@
    </tr>        
 </table>
  <div align="center">
- <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
+ <p><b><I>Contact information is required for internal administrative use only; it is not revealed to the public.</I></b></p>
  </div>
  <div class="actionsrow">
  <del class="btnwrapper">

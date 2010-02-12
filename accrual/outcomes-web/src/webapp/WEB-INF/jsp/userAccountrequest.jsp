@@ -43,7 +43,7 @@
                    Passwords must have a minimum of 8 characters and contain at least one special character and one digit.</p>
             </s:if>
             <s:else>
-                <p>Create account to report outcomes information on patient outcomes. <br>
+                <p>Create an account for enabling patient's outcome reporting. <br>
                    Passwords must have a minimum of 8 characters and contain at least one special character and one digit.</p>
             </s:else>
             <table class="form"> 

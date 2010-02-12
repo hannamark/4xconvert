@@ -162,40 +162,40 @@ public class ParticipantOutcomesWebDto implements Serializable {
         Date diagnosisDate = action.getDiagnosisDate();
         Date deathDate = action.getEarliestDeathDate();
         if (diagnosisDate != null && dto.getBestResponseDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be less than Diagnosis Date" 
+            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be less than Diagnosis Date " 
                     + AccrualUtil.dateToMDY(diagnosisDate));
         } 
         if (deathDate != null && dto.getBestResponseDate().getValue().after(deathDate)) {
-            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be greater than Death Date" 
+            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be greater than Death Date " 
                     + AccrualUtil.dateToMDY(deathDate));
         } 
         if (courseDate != null && dto.getBestResponseDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be less than Cycle Date" 
+            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be less than Cycle Date " 
                     + AccrualUtil.dateToMDY(courseDate));
         }
         
         if (diagnosisDate != null && dto.getEvaluationDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Diagnosis Date" 
+            action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Diagnosis Date " 
                     + AccrualUtil.dateToMDY(diagnosisDate));
         } 
         if (deathDate != null && dto.getEvaluationDate().getValue().after(deathDate)) {
-            action.addFieldError("targetOutcome.evaluationDate", "Date can't be greater than Death Date" 
+            action.addFieldError("targetOutcome.evaluationDate", "Date can't be greater than Death Date " 
                     + AccrualUtil.dateToMDY(deathDate));
         } 
         if (courseDate != null && dto.getEvaluationDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Cycle Date" 
+            action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Cycle Date " 
                     + AccrualUtil.dateToMDY(courseDate));
         }
         if (diagnosisDate != null && dto.getDiseaseStatusDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Diagnosis Date" 
+            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Diagnosis Date " 
                     + AccrualUtil.dateToMDY(diagnosisDate));
         } 
         if (deathDate != null && dto.getDiseaseStatusDate().getValue().after(deathDate)) {
-            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be greater than Death Date" 
+            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be greater than Death Date " 
                     + AccrualUtil.dateToMDY(deathDate));
         } 
         if (courseDate != null && dto.getDiseaseStatusDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Cycle Date" 
+            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Cycle Date " 
                     + AccrualUtil.dateToMDY(courseDate));
         }
     } 

@@ -137,15 +137,15 @@ public class CourseWebDto implements Serializable {
         Date diagnosisDate = action.getDiagnosisDate();
         Date deathDate = action.getEarliestDeathDate();
         if (diagnosisDate != null && dto.getCreateDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("course.createDate", "Date can't be less than Diagnosis Date" 
+            action.addFieldError("course.createDate", "Date can't be less than Diagnosis Date " 
                     + AccrualUtil.dateToMDY(diagnosisDate));
         } 
         if (deathDate != null && dto.getCreateDate().getValue().after(deathDate)) {
-            action.addFieldError("course.createDate", "Date can't be greater than Death Date" 
+            action.addFieldError("course.createDate", "Date can't be greater than Death Date " 
                     + AccrualUtil.dateToMDY(deathDate));
         } 
         if (offTreatDate != null && dto.getCreateDate().getValue().after(offTreatDate)) {
-            action.addFieldError("course.createDate", "Date can't be greater than Offtreatment Date" 
+            action.addFieldError("course.createDate", "Date can't be greater than Offtreatment Date " 
                     + AccrualUtil.dateToMDY(offTreatDate));
         }
     }
