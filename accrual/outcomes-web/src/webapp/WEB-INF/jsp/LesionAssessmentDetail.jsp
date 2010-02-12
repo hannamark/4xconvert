@@ -11,10 +11,8 @@
 <script type="text/javascript">
 
 	function handleSaveAction() {
-	if (confirm("Select OK to complete the Save.")) {
-	        document.forms[0].action = "addLesionAssessment.action";
-	        document.forms[0].submit();
-        }
+	    document.forms[0].action = "addLesionAssessment.action";
+	    document.forms[0].submit();
     }
 
     function handleCancelAction() {
@@ -27,10 +25,8 @@
 	}
 	
 	function handleEditAction(){
-	if (confirm("Select OK to complete the Save.")) {
 		    document.forms[0].action="editLesionAssessment.action";
 		    document.forms[0].submit();
-	    }
 	}
 
 </script>

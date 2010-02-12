@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.outweb.dto.util.TreatmentWebDto;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
             List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(
                                                           getParticipantIi());
             for (PerformedActivityDto pa : paList) {
-                if (pa.getCategoryCode() != null && pa.getCategoryCode().getCode() != null
+                if (!PAUtil.isCdNull(pa.getCategoryCode())
                         && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.TREATMENT_PLAN.getCode())) {
                     getDisplayTagList().add(new TreatmentWebDto(pa));
                 }

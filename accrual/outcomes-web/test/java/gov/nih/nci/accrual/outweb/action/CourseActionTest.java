@@ -109,6 +109,7 @@ public class CourseActionTest extends AbstractAccrualActionTest {
         action = new CourseAction();
         action.prepare();
         course = new CourseWebDto();
+        setTpIi(MockPerformedActivityBean.TPID);
     }
 
     @Override

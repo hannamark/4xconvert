@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -97,6 +98,7 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
  * @author Hugh Reinhart
  * @since Nov 5, 2009
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
 
     private static final long serialVersionUID = -3007738923753747925L;
@@ -111,9 +113,14 @@ public class CourseAction extends AbstractListEditAccrualAction<CourseWebDto> {
         try {
             List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(getParticipantIi());
             for (PerformedActivityDto pa : paList) {
-                if (pa.getCategoryCode() != null && pa.getCategoryCode().getCode() != null
+                if (!PAUtil.isCdNull(pa.getCategoryCode())
                         && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.COURSE.getCode())) {
-                    getDisplayTagList().add(new CourseWebDto(pa));
+                    List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
+                            pa.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
+                    if (!arList.isEmpty() && arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
+                            .equals(getTpIi().getExtension())) {
+                        getDisplayTagList().add(new CourseWebDto(pa));
+                    }
                 }
             }
         } catch (RemoteException e) {

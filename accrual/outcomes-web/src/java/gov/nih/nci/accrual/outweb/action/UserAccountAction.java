@@ -207,6 +207,7 @@ public class UserAccountAction extends AbstractAccrualAction {
                     user.setPoPersonIdentifier(null);
                 }
                 userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
+                checkPatients(loginName);
             }
         } catch (Exception e) {
             LOG.error("error while activating user :" + loginName, e);
@@ -331,7 +332,7 @@ public class UserAccountAction extends AbstractAccrualAction {
                         
                     userAction = "updateAccount";
                     actionResult = CREATE;
-                    checkPatients();
+                    checkPatients(StConverter.convertToString(user.getLoginName()));
                 }
             }
         } catch (Exception e) {
@@ -360,7 +361,7 @@ public class UserAccountAction extends AbstractAccrualAction {
                 if (physician == null || physician.equals(UNAVAIL_PERSON_MSG)) {
                     user.setPoPersonIdentifier(null);
                 }
-                checkPatients();
+                checkPatients(loginName);
                 userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
             }
         } catch (Exception e) {
@@ -371,8 +372,9 @@ public class UserAccountAction extends AbstractAccrualAction {
         return CREATE;
     }
 
-    private void checkPatients() throws RemoteException {
-        List<StudySubjectDto> subList = studySubjectSvc.getOutcomes(getAuthorizedUser());
+    private void checkPatients(String loginName) throws RemoteException {
+        //List<StudySubjectDto> subList = studySubjectSvc.getOutcomes(getAuthorizedUser());
+        List<StudySubjectDto> subList = studySubjectSvc.getOutcomes(StConverter.convertToSt(loginName));
         List<StudySubjectDto> patientsList = new ArrayList<StudySubjectDto>();
         for (StudySubjectDto sub : subList) {
             String statusCode = CdConverter.convertCdToString(sub.getStatusCode());

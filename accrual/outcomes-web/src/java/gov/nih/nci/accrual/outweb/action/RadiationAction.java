@@ -85,6 +85,7 @@ import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -115,11 +116,11 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
             List<PerformedRadiationAdministrationDto> paList = performedActivitySvc.
             getPerformedRadiationAdministrationByStudySubject(getParticipantIi());
             for (PerformedRadiationAdministrationDto pra : paList) {
-                if (pra.getCategoryCode() != null && pra.getCategoryCode().getCode() != null
+                if (!PAUtil.isCdNull(pra.getCategoryCode())
                         && pra.getCategoryCode().getCode().equals(ActivityCategoryCode.RADIATION.getCode())) {
                     List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             pra.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    if (arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
+                    if (!arList.isEmpty() && arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
                             .equals(getCourseIi().getExtension())) {  
                         getDisplayTagList().add(new RadiationWebDto(pra));
                     }

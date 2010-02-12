@@ -247,4 +247,12 @@ public class AbstractAccrualActionTest {
             SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_COURSE_II, IiConverter.convertToIi(cycle));
         }
     }
+    
+    public void setTpIi(String treatment) {
+        if (treatment == null) {
+            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II, null);
+        } else {
+            SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II, IiConverter.convertToIi(treatment));
+        }
+    }
 }

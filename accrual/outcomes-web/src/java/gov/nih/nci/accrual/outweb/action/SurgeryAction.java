@@ -87,6 +87,7 @@ import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -117,11 +118,11 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
             List<PerformedProcedureDto> paList = performedActivitySvc.getPerformedProcedureByStudySubject(
                                                                             getParticipantIi());
             for (PerformedProcedureDto pp : paList) {
-                if (pp.getCategoryCode() != null && pp.getCategoryCode().getCode() != null
+                if (!PAUtil.isCdNull(pp.getCategoryCode())
                         && pp.getCategoryCode().getCode().equals(ActivityCategoryCode.SURGERY.getCode())) {
                     List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
                             pp.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    if (arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
+                    if (!arList.isEmpty() && arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
                             .equals(getCourseIi().getExtension())) {
                         InterventionDTO dto = interventionSvc.get(pp.getInterventionIdentifier());
                         getDisplayTagList().add(new SurgeryWebDto(pp, dto));
