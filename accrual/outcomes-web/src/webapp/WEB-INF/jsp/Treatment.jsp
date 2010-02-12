@@ -39,7 +39,7 @@
 				</s:a>
             </display:column>
             <display:column titleKey="treatPlan.description" property="description.value" sortable="true" headerClass="sortable"/>
-            <display:column title="Edit" class="action">
+            <display:column title="Edit" headerClass="centered" class="action">
     		<s:url id="url" action="updateTreatment"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>   

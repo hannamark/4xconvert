@@ -35,7 +35,7 @@
             <display:column titleKey="surgery.startDate" sortable="true" headerClass="sortable">
             	<s:property value="%{#attr.row.createDate}"/>
             </display:column>
-            <display:column title="Edit" class="action">
+            <display:column title="Edit" headerClass="centered" class="action">
     		<s:url id="url" action="updateSurgery"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>   

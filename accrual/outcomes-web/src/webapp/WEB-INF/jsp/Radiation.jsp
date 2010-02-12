@@ -38,7 +38,7 @@
             <display:column titleKey="radiation.dose" property="dose.value" sortable="true" headerClass="sortable"/>
             <display:column titleKey="drugBiologic.doseUOM" property="dose.unit" sortable="true" headerClass="sortable"/>
             <display:column titleKey="drugBiologic.frequency" property="doseFreq.code" sortable="true" headerClass="sortable"/>
-            <display:column title="Edit" class="action">
+            <display:column title="Edit" headerClass="centered" class="action">
     		<s:url id="url" action="updateRadiation"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>   
