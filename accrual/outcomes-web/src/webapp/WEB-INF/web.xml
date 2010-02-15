@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app id="Outcomes" version="2.4" 
-         xmlns="http://java.sun.com/xml/ns/j2ee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<web-app id="Outcomes" version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-        
+
     <display-name>Outcomes</display-name>
 
     <!-- Define the basename for a resource bundle for I18N -->
@@ -31,7 +31,7 @@
     <filter>
         <filter-name>action2</filter-name>
         <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
-    </filter> 
+    </filter>
     <filter>
         <filter-name>sessionFixation</filter-name>
         <filter-class>com.fiveamsolutions.nci.commons.web.filter.SessionFixationProtectionFilter</filter-class>
@@ -46,7 +46,7 @@
         <url-pattern>/*</url-pattern>
                 <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-        
+
     </filter-mapping>
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
@@ -55,23 +55,23 @@
     <filter-mapping>
         <filter-name>action2</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher> 
+        <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!-- Registry session-timeout-->
+    <!-- session-timeout-->
     <session-config>
         <session-timeout>
             240
         </session-timeout>
-    </session-config>   
-    
-    <!-- Listeners 
+    </session-config>
+
+    <!-- Listeners
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>-->
 
-    <!-- Servlets -->    
+    <!-- Servlets -->
     <servlet>
         <servlet-name>jspSupportServlet</servlet-name>
         <servlet-class>org.apache.struts2.views.JspSupportServlet</servlet-class>
@@ -104,7 +104,7 @@
             <role-name>Outcomes</role-name>
         </auth-constraint>
     </security-constraint>
-    
+
     <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
@@ -114,7 +114,7 @@
     </login-config>
 
     <security-role>
-        <description>Role for users who have created an id through Protocol Registry for submitting oucomes data.</description>
+        <description>Role for users who have created an id through Outcomes self-registration service.</description>
         <role-name>Outcomes</role-name>
     </security-role>
 </web-app>
