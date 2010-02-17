@@ -84,6 +84,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 
 import java.util.Date;
@@ -131,8 +132,15 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getStudyStatusCode();
         
-        if (isProprietaryTrial.equalsIgnoreCase("true")) {
+        if (PAUtil.isNotEmpty(isProprietaryTrial) 
+                && isProprietaryTrial.equalsIgnoreCase("true")) {
           return "";
+        }
+        if (dwfs == null) {
+            return "";
+        }
+        if (statusCode == null) {
+            return "";
         }
         if ((dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE))
@@ -162,9 +170,16 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
                 this.getCurrentRowObject()).getDocumentWorkflowStatusCode();
         StudyStatusCode statusCode = ((StudyProtocolQueryDTO) 
                 this.getCurrentRowObject()).getStudyStatusCode();
-        if (isProprietaryTrial.equalsIgnoreCase("true")) {
+        if (PAUtil.isNotEmpty(isProprietaryTrial) 
+                && isProprietaryTrial.equalsIgnoreCase("true")) {
             return "";
           }
+        if (dwfs == null) {
+            return "";
+        }
+        if (statusCode == null) {
+            return "";
+        }
         if ((dwfs.equals(DocumentWorkflowStatusCode.ACCEPTED)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED)
                 || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
@@ -260,5 +275,33 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
            typeCode = "Proprietary Template";
        } 
         return typeCode;
+    }
+    /**
+     * 
+     * @return st
+     */
+    public String getCompletePartialSubmission() {
+        String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
+        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
+        String nciNumber =  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getNciIdentifier();
+        String retComplete = "";
+        if (loginUser.equalsIgnoreCase(userCreated) && PAUtil.isEmpty(nciNumber)) {
+            retComplete = "Complete";
+        }
+        return retComplete;
+    }
+    /**
+     * 
+     * @return st
+     */
+    public String getDeletePartialSubmission() {
+        String userCreated = ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getUserLastCreated();
+        String loginUser = ((HttpServletRequest) getPageContext().getRequest()).getRemoteUser();
+        String nciNumber =  ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getNciIdentifier();
+        String retComplete = "";
+        if (loginUser.equalsIgnoreCase(userCreated) && PAUtil.isEmpty(nciNumber)) {
+            retComplete = "Delete";
+        }
+        return retComplete;
     }
 }

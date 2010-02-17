@@ -34,6 +34,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -72,6 +73,7 @@ import gov.nih.nci.registry.service.MockStudyResourcingService;
 import gov.nih.nci.registry.service.MockStudySiteAccrualStatusService;
 import gov.nih.nci.registry.service.MockStudySiteContactService;
 import gov.nih.nci.registry.service.MockStudySiteService;
+import gov.nih.nci.registry.service.MockTempStudyProtocolService;
 import gov.nih.nci.registry.service.MockTrialRegistrationService;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
@@ -103,7 +105,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final RegistryUserServiceRemote registryUserService = new MockRegistryUserService();
     private final RegulatoryInformationServiceRemote regulatoryInfoService = new MockRegulatoryInformationService();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatorAuthService = new MockStudyRegulatoryAuthorityService();
-    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();    
+    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
+    private final TempStudyProtocolServiceLocal tempStudyProtocolService = new MockTempStudyProtocolService(); 
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -385,6 +388,10 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
             throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public TempStudyProtocolServiceLocal getTempStudyProtocolService() {
+        return tempStudyProtocolService;
     }
     
     }

@@ -63,6 +63,11 @@ var winprint=window.open("","",sOption);
 <div class="box">
     <s:form > <s:actionerror/>
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>          
+    <c:if test="${requestScope.protocolId != null && requestScope.partialSubmission != null}">
+        <div class="confirm_msg">
+          <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.protocolId}</strong>
+        </div>
+     </c:if>
     <div id="contentprint">        
     <table class="form">
          <tr>
@@ -481,6 +486,7 @@ var winprint=window.open("","",sOption);
             </div>
         </c:if>
         </div>
+        <c:if test="${requestScope.partialSubmission == null}">
         <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
@@ -493,6 +499,7 @@ var winprint=window.open("","",sOption);
             </ul>   
         </del>
         </div>
+        </c:if>
     </s:form>
    </div>
    </div>

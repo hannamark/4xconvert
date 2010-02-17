@@ -32,6 +32,11 @@ function handleMyAction(){
     document.forms[0].action="searchTrialquery.action";
     document.forms[0].submit(); 
 }
+function getMyPartialTrial() {
+	document.forms[0].myTrialsOnly.value="true";
+    document.forms[0].action="searchTrialgetMyPartiallySavedTrial.action";
+    document.forms[0].submit(); 
+}
 	function viewProtocol(pId,user) {		
 		document.forms[0].action="searchTrialview.action?studyProtocolId="+pId+"&usercreated="+user;
 		document.forms[0].submit(); 
@@ -179,6 +184,7 @@ function handleMyAction(){
                 <s:a href="#" cssClass="btn" onclick="handleMyAction()"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>       
                 <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
                 <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick="getMyPartialTrial()"><span class="btn_img"><span class="search">Search Partial Submission</span></span></s:a>
                 </li>                
                </ul>
             </del>
@@ -187,6 +193,8 @@ function handleMyAction(){
             Search My Trials: Search the trials I have submitted.
             <br>
             Search All Trials: Search all trials I have submitted as well as those registered by others.
+            <br>
+            Search Partial Submissions: Search my saved partial submissions.
         </p>
        </s:form>
      </div>

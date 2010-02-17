@@ -90,6 +90,9 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.dto.TempStudyFundingDTO;
+import gov.nih.nci.pa.iso.dto.TempStudyIndIdeDTO;
+import gov.nih.nci.pa.iso.dto.TempStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -102,6 +105,7 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.TrialUtil;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -127,7 +131,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * 
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength",
-    "PMD.TooManyFields"  })
+    "PMD.TooManyFields", "PMD.TooManyMethods", "PMD.ExcessiveMethodLength"  })
 public class SubmitTrialAction extends ActionSupport implements ServletResponseAware {
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
     private Long cbValue;
@@ -152,7 +156,6 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
     private String otherDocumentFileName = null;
     private TrialDTO trialDTO;
     private final TrialUtil  trialUtil = new TrialUtil();
-
     /**
      * 
      * @return res
@@ -239,7 +242,9 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
              TrialValidator.removeSessionAttributes();
              ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
              ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
-            
+             if (PAUtil.isNotEmpty(trialDTO.getStudyProtocolId())) {
+                PaRegistry.getTempStudyProtocolService().delete(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+             }
         } catch (Exception e) {
             TrialValidator.addSessionAttributes(trialDTO);
             if (e != null && e.getMessage() != null) {
@@ -642,9 +647,121 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      * 
      * @return success or fail
      */
+    @SuppressWarnings("unchecked")
     public String partialSave() {
-        
-        return SUCCESS;
+        //lead org local id and lead org is mandatory
+        if (PAUtil.isEmpty(trialDTO.getLocalProtocolIdentifier())) {
+            addActionError("Lead Organization Trial Identifier is required.");
+            return ERROR;
+        }
+        if (PAUtil.isEmpty(trialDTO.getLeadOrganizationIdentifier())) {
+            addActionError("Lead Organization is required.");
+            return ERROR;
+        }
+        try {
+            Ii tempStudyProtocolIi = null;
+            if (PAUtil.isNotEmpty(trialDTO.getStudyProtocolId())) {
+                TempStudyProtocolDTO dto = PaRegistry.getTempStudyProtocolService().updateTempStudyProtocol(
+                        trialUtil.convertToTempStudyProtocolDTO(trialDTO));
+                tempStudyProtocolIi =  dto.getIdentifier();
+            } else {
+                tempStudyProtocolIi = PaRegistry.getTempStudyProtocolService().createTempStudyProtocol(
+                        trialUtil.convertToTempStudyProtocolDTO(trialDTO));
+            }
+            List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
+                .getSession().getAttribute(Constants.GRANT_LIST);
+            if (PAUtil.isIiNotNull(tempStudyProtocolIi)) {
+                //first delete grants and recreate
+                PaRegistry.getTempStudyProtocolService().deleteGrantsForTempStudyProtocol(tempStudyProtocolIi);
+                if (PAUtil.isListNotEmpty(grantList)) {
+                    for (TrialFundingWebDTO fundingDto : grantList) {
+                        PaRegistry.getTempStudyProtocolService().createGrant(trialUtil.convertToTempStudyFunding(
+                                fundingDto, tempStudyProtocolIi));
+                    }
+                }
+                //inds
+                List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
+                    .getSession().getAttribute(Constants.INDIDE_LIST);
+                PaRegistry.getTempStudyProtocolService().deleteIndIdeForTempStudyProtocol(tempStudyProtocolIi);
+                if (PAUtil.isListNotEmpty(indList)) {
+                    for (TrialIndIdeDTO indDto : indList) {
+                        PaRegistry.getTempStudyProtocolService().createIndIde(trialUtil.convertToTempStudyIndIde(
+                                indDto, tempStudyProtocolIi));
+                    }
+                }
+                ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
+                ServletActionContext.getRequest().getSession().removeAttribute("grantList");
+                if (indList != null) {
+                    trialDTO.setIndIdeDtos(indList);
+                }
+                if (grantList != null) {
+                    trialDTO.setFundingDtos(grantList);
+                }
+            }
+            ServletActionContext.getRequest().setAttribute("protocolId", tempStudyProtocolIi.getExtension());
+            ServletActionContext.getRequest().setAttribute("partialSubmission", "yes");
+            ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
+        } catch (PAException e) {
+            LOG.error(e.getLocalizedMessage());
+            addActionError(e.getMessage());
+        }
+        return "review";
     }
-    
+    /**
+     * 
+     * @return s
+     */
+    public String completePartialSubmission() {
+        TrialValidator.removeSessionAttributes();
+        String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+        if (PAUtil.isEmpty(pId)) {
+            addActionError("study protocol id cannot null.");
+            return ERROR;
+        }
+        trialDTO = new TrialDTO();
+        try {
+            trialDTO =  trialUtil.convertToTrialDTO(PaRegistry.getTempStudyProtocolService()
+                    .getTempStudyProtocol(IiConverter.convertToIi(pId)));
+            List<TempStudyFundingDTO> fundingIsoDtos  = PaRegistry.getTempStudyProtocolService()
+                .getGrantsByTempStudyProtocol(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+            List<TrialFundingWebDTO> webDTOs = new ArrayList<TrialFundingWebDTO>();
+            for (TempStudyFundingDTO fundingDto : fundingIsoDtos) {
+                webDTOs.add(trialUtil.convertToTrialFundingWebDTO(fundingDto));    
+            }
+            trialDTO.setFundingDtos(webDTOs);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, webDTOs);
+            List<TrialIndIdeDTO> webIndDtos = new ArrayList<TrialIndIdeDTO>();
+            List <TempStudyIndIdeDTO> indIdeIsoDtos = PaRegistry.getTempStudyProtocolService().
+                getIndIdeByTempStudyProtocol(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+            for (TempStudyIndIdeDTO isoIndDto : indIdeIsoDtos) {
+                webIndDtos.add(trialUtil.convertToTrialIndIdeDTO(isoIndDto));
+            }
+            trialDTO.setIndIdeDtos(webIndDtos);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, webIndDtos);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        } catch (NullifiedRoleException e) {
+            addActionError(e.getMessage());
+        }
+        trialUtil.populateRegulatoryList(trialDTO);
+       return SUCCESS; 
+    }
+    /**
+     * 
+     * @return string
+     */
+    public String deletePartialSubmission() {
+        String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+        if (PAUtil.isEmpty(pId)) {
+            addActionError("study protocol id cannot null.");
+            return ERROR;
+        }
+        try {
+            PaRegistry.getTempStudyProtocolService().delete(IiConverter.convertToIi(pId));
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
+        setTrialAction("deletePartialSubmission");
+        return "redirect_to_search";
+    }
 }

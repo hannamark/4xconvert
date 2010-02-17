@@ -278,4 +278,50 @@ public class RegistryDisplayTagDecoratorTest {
         decorator.initRow(dto, currentViewIndex, currentListIndex);
         assertEquals("Type Code", decorator.getProprietaryTypeCode());
     }
+    @Test
+    public void testGetCompletePartialSubmission() {
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setUserLastCreated("userLastCreated");
+        dto.setIsProprietaryTrial("");
+        dto.setNciIdentifier("");
+        decorator.initRow(dto, currentViewIndex, currentListIndex);
+        assertEquals("Complete",decorator.getCompletePartialSubmission());
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setUserLastCreated("muserLastCreated");
+        dto.setIsProprietaryTrial("");
+        dto.setNciIdentifier("");
+        decorator.initRow(dto, currentViewIndex, currentListIndex);
+        assertEquals("",decorator.getCompletePartialSubmission());
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setUserLastCreated("muserLastCreated");
+        dto.setIsProprietaryTrial("");
+        dto.setNciIdentifier("NCI-2010-00001");
+        decorator.initRow(dto, currentViewIndex, currentListIndex);
+        assertEquals("",decorator.getCompletePartialSubmission());
+    }
+    @Test
+    public void testGetDeletePartialSubmission() {
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setUserLastCreated("userLastCreated");
+        dto.setIsProprietaryTrial("");
+        dto.setNciIdentifier("");
+        decorator.initRow(dto, currentViewIndex, currentListIndex);
+        assertEquals("Delete",decorator.getDeletePartialSubmission());
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setUserLastCreated("muserLastCreated");
+        dto.setIsProprietaryTrial("");
+        dto.setNciIdentifier("");
+        decorator.initRow(dto, currentViewIndex, currentListIndex);
+        assertEquals("",decorator.getDeletePartialSubmission());
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setUserLastCreated("muserLastCreated");
+        dto.setIsProprietaryTrial("");
+        dto.setNciIdentifier("NCI-2010-00001");
+        decorator.initRow(dto, currentViewIndex, currentListIndex);
+        assertEquals("",decorator.getDeletePartialSubmission());
+    }
 }

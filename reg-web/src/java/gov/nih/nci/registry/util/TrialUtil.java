@@ -17,6 +17,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -28,10 +29,14 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.dto.TempStudyFundingDTO;
+import gov.nih.nci.pa.iso.dto.TempStudyIndIdeDTO;
+import gov.nih.nci.pa.iso.dto.TempStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -49,6 +54,7 @@ import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -62,12 +68,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.struts2.ServletActionContext;
+
 /**
  * The Class TrialUtil.
  * 
  * @author vrushali
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods", 
+    "PMD.ExcessiveClassLength", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class TrialUtil {
     
     /** The Constant SPONSOR. */
@@ -1298,5 +1307,292 @@ public class TrialUtil {
         if (PAUtil.isNotEmpty(ctepId)) {
             trialDTO.setCtepIdentifier(ctepId);
         }
+    }
+    /**
+     * 
+     * @param trialDto dot
+     * @return isoDto
+     */
+    public TempStudyProtocolDTO convertToTempStudyProtocolDTO(TrialDTO trialDto) {
+        TempStudyProtocolDTO tempSpDTO = new TempStudyProtocolDTO();
+        tempSpDTO.setIdentifier(IiConverter.convertToIi(trialDto.getStudyProtocolId()));
+        tempSpDTO.setNctIdentifier(StConverter.convertToSt(trialDto.getNctIdentifier()));
+        tempSpDTO.setCtepIdentifier(StConverter.convertToSt(trialDto.getCtepIdentifier()));
+        tempSpDTO.setDcpIdentifier(StConverter.convertToSt(trialDto.getDcpIdentifier()));
+        tempSpDTO.setOfficialTitle(StConverter.convertToSt(trialDto.getOfficialTitle()));
+        tempSpDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDto.getPhaseCode())));
+        tempSpDTO.setPhaseOtherText(StConverter.convertToSt(trialDto.getPhaseOtherText()));
+        tempSpDTO.setPrimaryPurposeCode(CdConverter.convertToCd(
+                PrimaryPurposeCode.getByCode(trialDto.getPrimaryPurposeCode())));
+        tempSpDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDto.getPrimaryPurposeOtherText()));
+        tempSpDTO.setLocalProtocolIdentifier(StConverter.convertToSt(trialDto.getLocalProtocolIdentifier()));
+        tempSpDTO.setLeadOrganizationIdentifier(IiConverter.convertToIi(trialDto.getLeadOrganizationIdentifier()));
+        tempSpDTO.setPiIdentifier(IiConverter.convertToIi(trialDto.getPiIdentifier()));
+        tempSpDTO.setSponsorIdentifier(IiConverter.convertToIi(trialDto.getSponsorIdentifier()));
+        tempSpDTO.setResponsiblePartyType(StConverter.convertToSt(trialDto.getResponsiblePartyType()));
+        tempSpDTO.setResponsibleIdentifier(IiConverter.convertToIi(trialDto.getResponsiblePersonIdentifier()));
+        tempSpDTO.setContactEmail(StConverter.convertToSt(trialDto.getContactEmail()));
+        tempSpDTO.setContactPhone(StConverter.convertToSt(trialDto.getContactPhone()));
+        tempSpDTO.setSummaryFourOrgIdentifier(IiConverter.convertToIi(trialDto.getSummaryFourOrgIdentifier()));
+        tempSpDTO.setSummaryFourFundingCategoryCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.getByCode(
+                trialDto.getSummaryFourFundingCategoryCode())));
+        tempSpDTO.setProgramCodeText(StConverter.convertToSt(trialDto.getProgramCodeText()));
+        tempSpDTO.setTrialStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(trialDto.getStatusCode())));
+        tempSpDTO.setTrialStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getStatusDate())));
+        tempSpDTO.setStatusReason(StConverter.convertToSt(trialDto.getReason()));
+        tempSpDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(
+                trialDto.getCompletionDate())));
+        tempSpDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(
+                ActualAnticipatedTypeCode.getByCode(trialDto.getCompletionDateType())));
+        tempSpDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getStartDate())));
+        tempSpDTO.setStartDateTypeCode(CdConverter.convertToCd(
+                ActualAnticipatedTypeCode.getByCode(trialDto.getStartDateType())));
+        tempSpDTO.setTrialType(StConverter.convertToSt(trialDto.getTrialType()));
+        
+        if (trialDto.getFdaRegulatoryInformationIndicator() == null) {
+            tempSpDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(null));
+        } else if  (CommonsConstant.YES.equalsIgnoreCase(trialDto.getFdaRegulatoryInformationIndicator())) {
+            tempSpDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            tempSpDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
+        if (trialDto.getSection801Indicator() == null) { 
+            tempSpDTO.setSection801Indicator(BlConverter.convertToBl(null));
+        } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getSection801Indicator())) {
+            tempSpDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            tempSpDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
+        if (trialDto.getDelayedPostingIndicator() == null) {
+            tempSpDTO.setDelayedpostingIndicator(BlConverter.convertToBl(null));
+        } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getDelayedPostingIndicator())) {
+            tempSpDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            tempSpDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }  
+        if (trialDto.getDataMonitoringCommitteeAppointedIndicator() == null) {
+            tempSpDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(null));
+        } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getDataMonitoringCommitteeAppointedIndicator())) {
+            tempSpDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            tempSpDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
+        tempSpDTO.setOversightAuthorityCountryId(IiConverter.convertToIi(trialDto.getLst()));
+        tempSpDTO.setOversightAuthorityOrgId(IiConverter.convertToIi(trialDto.getSelectedRegAuth()));
+        tempSpDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext
+                .getRequest().getRemoteUser()));
+        return tempSpDTO;
+    }
+    /**
+     * 
+     * @param tempSpDTO isoDto
+     * @return webDto
+     * @throws NullifiedRoleException on err
+     * @throws PAException on err
+     */
+    public TrialDTO convertToTrialDTO(TempStudyProtocolDTO tempSpDTO) 
+        throws NullifiedRoleException, PAException {
+        TrialDTO trialDto = new TrialDTO(); 
+        trialDto.setStudyProtocolId(IiConverter.convertToString(tempSpDTO.getIdentifier()));
+        trialDto.setNctIdentifier(StConverter.convertToString(tempSpDTO.getNctIdentifier()));
+        trialDto.setCtepIdentifier(StConverter.convertToString(tempSpDTO.getCtepIdentifier()));
+        trialDto.setDcpIdentifier(StConverter.convertToString(tempSpDTO.getDcpIdentifier()));
+        trialDto.setOfficialTitle(StConverter.convertToString(tempSpDTO.getOfficialTitle()));
+        if (!PAUtil.isCdNull(tempSpDTO.getPhaseCode())) {
+            trialDto.setPhaseCode(PhaseCode.getByCode(
+                    CdConverter.convertCdToString(tempSpDTO.getPhaseCode())).getCode());
+        }
+        trialDto.setPhaseOtherText(StConverter.convertToString(tempSpDTO.getPhaseOtherText()));
+        if (!PAUtil.isCdNull(tempSpDTO.getPrimaryPurposeCode())) {
+            trialDto.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
+                tempSpDTO.getPrimaryPurposeCode())).getCode());
+        }
+        trialDto.setPrimaryPurposeOtherText(StConverter.convertToString(tempSpDTO.getPrimaryPurposeOtherText()));
+        trialDto.setLocalProtocolIdentifier(StConverter.convertToString(tempSpDTO.getLocalProtocolIdentifier()));
+        trialDto.setLeadOrganizationIdentifier(IiConverter.convertToString(tempSpDTO.getLeadOrganizationIdentifier()));
+        trialDto.setPiIdentifier(IiConverter.convertToString(tempSpDTO.getPiIdentifier()));
+        trialDto.setSponsorIdentifier(IiConverter.convertToString(tempSpDTO.getSponsorIdentifier()));
+        trialDto.setResponsiblePartyType(StConverter.convertToString(tempSpDTO.getResponsiblePartyType()));
+
+        trialDto.setResponsiblePersonIdentifier(IiConverter.convertToString(tempSpDTO.getResponsibleIdentifier()));
+        trialDto.setContactEmail(StConverter.convertToString(tempSpDTO.getContactEmail()));
+        trialDto.setContactPhone(StConverter.convertToString(tempSpDTO.getContactPhone()));
+        trialDto.setSummaryFourOrgIdentifier(IiConverter.convertToString(tempSpDTO.getSummaryFourOrgIdentifier()));
+        trialDto.setSummaryFourFundingCategoryCode(CdConverter.convertCdToString(
+                tempSpDTO.getSummaryFourFundingCategoryCode()));
+        trialDto.setProgramCodeText(StConverter.convertToString(tempSpDTO.getProgramCodeText()));
+        if (!PAUtil.isCdNull(tempSpDTO.getTrialStatusCode())) {
+            trialDto.setStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(
+                    tempSpDTO.getTrialStatusCode())).getCode());
+        }
+        trialDto.setStatusDate(TsConverter.convertToString(tempSpDTO.getTrialStatusDate()));
+        trialDto.setReason(StConverter.convertToString(tempSpDTO.getStatusReason()));
+        trialDto.setCompletionDate(TsConverter.convertToString(
+                tempSpDTO.getPrimaryCompletionDate()));
+        trialDto.setCompletionDateType(CdConverter.convertCdToString(
+                tempSpDTO.getPrimaryCompletionDateTypeCode()));
+        trialDto.setStartDate(TsConverter.convertToString(tempSpDTO.getStartDate()));
+        trialDto.setStartDateType(CdConverter.convertCdToString(tempSpDTO.getStartDateTypeCode()));
+        trialDto.setTrialType(StConverter.convertToString(tempSpDTO.getTrialType()));
+                
+        trialDto.setLst(IiConverter.convertToString(tempSpDTO.getOversightAuthorityCountryId()));
+        trialDto.setSelectedRegAuth(IiConverter.convertToString(tempSpDTO.getOversightAuthorityOrgId()));
+        
+        Boolean fdaRegIndicator  = BlConverter.covertToBoolean(tempSpDTO.getFdaRegulatedIndicator());
+        if (fdaRegIndicator == null) {
+            trialDto.setFdaRegulatoryInformationIndicator("");
+        } else if (fdaRegIndicator) {
+            trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.YES);    
+        } else {
+            trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.NO);
+        }
+        Boolean sec801Indicator = BlConverter.covertToBoolean(tempSpDTO.getSection801Indicator());
+        if (sec801Indicator == null) {
+            trialDto.setSection801Indicator("");
+        } else if (sec801Indicator) {
+            trialDto.setSection801Indicator(CommonsConstant.YES);
+        } else {
+            trialDto.setSection801Indicator(CommonsConstant.NO);
+        }
+        Boolean delayedPostIndicator  = BlConverter.covertToBoolean(tempSpDTO.getDelayedpostingIndicator());
+        if (delayedPostIndicator == null) {
+            trialDto.setDelayedPostingIndicator("");
+        } else if (delayedPostIndicator) {
+            trialDto.setDelayedPostingIndicator(CommonsConstant.YES);    
+        } else {
+        trialDto.setDelayedPostingIndicator(CommonsConstant.NO);
+        }
+        Boolean dataMonitoringIndicator = BlConverter.covertToBoolean(
+                tempSpDTO.getDataMonitoringCommitteeAppointedIndicator());
+        if (dataMonitoringIndicator == null) {
+            trialDto.setDataMonitoringCommitteeAppointedIndicator("");
+        } else if (dataMonitoringIndicator) {
+            trialDto.setDataMonitoringCommitteeAppointedIndicator(CommonsConstant.YES);    
+        } else {
+        trialDto.setDataMonitoringCommitteeAppointedIndicator(CommonsConstant.NO);
+        }
+        if (PAUtil.isIiNotNull(tempSpDTO.getLeadOrganizationIdentifier())) {
+            OrganizationDTO orgDto = paServiceUtil.getPOOrganizationEntity(
+                    tempSpDTO.getLeadOrganizationIdentifier());
+            trialDto.setLeadOrganizationName(EnOnConverter.convertEnOnToString(
+                    orgDto.getName()));
+        }
+        if (PAUtil.isIiNotNull(tempSpDTO.getPiIdentifier())) {
+            PersonDTO perDto = paServiceUtil.getPoPersonEntity(
+                    tempSpDTO.getPiIdentifier());
+            trialDto.setPiName(PAUtil.convertToPaPersonDTO(perDto).getFullName());
+        }
+        if (PAUtil.isIiNotNull(tempSpDTO.getSponsorIdentifier())) {
+            OrganizationDTO orgDto = paServiceUtil.getPOOrganizationEntity(
+                    tempSpDTO.getSponsorIdentifier());
+            trialDto.setSponsorName(EnOnConverter.convertEnOnToString(
+                    orgDto.getName()));
+        }
+        if (PAUtil.isIiNotNull(tempSpDTO.getSummaryFourOrgIdentifier())) {
+            OrganizationDTO orgDto = paServiceUtil.getPOOrganizationEntity(
+                    tempSpDTO.getSummaryFourOrgIdentifier());
+            trialDto.setSummaryFourOrgName(EnOnConverter.convertEnOnToString(
+                    orgDto.getName()));
+        }
+        if (PAUtil.isIiNotNull(tempSpDTO.getResponsibleIdentifier())) {
+            PersonDTO perDto = paServiceUtil.getPoPersonEntity(IiConverter.convertToPoPersonIi(
+                    tempSpDTO.getResponsibleIdentifier().getExtension()));
+            if (perDto != null) {
+                trialDto.setResponsiblePersonName(PAUtil.convertToPaPersonDTO(perDto).getFullName());
+            } else {
+               OrganizationalContactDTO orgContactDTO = (OrganizationalContactDTO) paServiceUtil.getCorrelationByIi(
+                 IiConverter.convertToPoOrganizationalContactIi(tempSpDTO.getResponsibleIdentifier().getExtension()));
+                  trialDto.setResponsibleGenericContactName(StConverter.convertToString(orgContactDTO.getTitle()));
+            }
+        }
+        return trialDto;
+    }
+    /**
+     * 
+     * @param grant webDto
+     * @param tempSpIi ii
+     * @return isoDto
+     */
+    public TempStudyFundingDTO convertToTempStudyFunding(TrialFundingWebDTO grant, Ii tempSpIi) {
+        TempStudyFundingDTO tempFundingDTO = new TempStudyFundingDTO();
+        tempFundingDTO.setFundingMechanismCode(CdConverter.convertStringToCd(grant.getFundingMechanismCode()));
+        tempFundingDTO.setNciDivisionProgramCode(CdConverter.convertStringToCd(grant.getNciDivisionProgramCode()));
+        tempFundingDTO.setNihInstitutionCode(CdConverter.convertStringToCd(grant.getNihInstitutionCode()));
+        tempFundingDTO.setSerialNumber(StConverter.convertToSt(grant.getSerialNumber()));
+        tempFundingDTO.setTempStudyProtocolIi(tempSpIi);
+        return tempFundingDTO;
+    }
+    /**
+     * 
+     * @param isoDTO isoDto
+     * @return webDto
+     */
+    public TrialFundingWebDTO  convertToTrialFundingWebDTO(TempStudyFundingDTO isoDTO) {
+        TrialFundingWebDTO  retDTO = new TrialFundingWebDTO();
+        retDTO.setFundingMechanismCode(CdConverter.convertCdToString(isoDTO.getFundingMechanismCode()));
+        retDTO.setNciDivisionProgramCode(CdConverter.convertCdToString(isoDTO.getNciDivisionProgramCode()));
+        retDTO.setNihInstitutionCode(CdConverter.convertCdToString(isoDTO.getNihInstitutionCode()));
+        retDTO.setSerialNumber(StConverter.convertToString(isoDTO.getSerialNumber()));
+        retDTO.setRowId(UUID.randomUUID().toString());
+        return retDTO;
+    }
+    /**
+     * 
+     * @param indDto indIdedto
+     * @param tempStudyProtocolIi ii
+     * @return tempStudyIndIdeDto
+     */
+    public TempStudyIndIdeDTO convertToTempStudyIndIde(TrialIndIdeDTO indDto,
+            Ii tempStudyProtocolIi) {
+        
+        TempStudyIndIdeDTO isoDTO = new TempStudyIndIdeDTO();
+        isoDTO.setIndldeTypeCode(CdConverter.convertStringToCd(indDto.getIndIde()));
+        isoDTO.setIndldeNumber(StConverter.convertToSt(indDto.getNumber()));
+        isoDTO.setGrantorCode(CdConverter.convertStringToCd(indDto.getGrantor()));
+        isoDTO.setHolderTypeCode(CdConverter.convertStringToCd(indDto.getHolderType()));
+        if (indDto.getHolderType().equalsIgnoreCase("NIH")) {
+            isoDTO.setNihInstHolderCode(CdConverter.convertStringToCd(indDto.getProgramCode()));
+        }
+        if (indDto.getHolderType().equalsIgnoreCase("NCI")) {
+            isoDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(indDto.getProgramCode()));
+        }
+        if (indDto.getExpandedAccess().equalsIgnoreCase(CommonsConstant.YES)) {
+            isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            isoDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
+        if (!"-".equalsIgnoreCase(indDto.getExpandedAccessType())) {
+            isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(indDto.getExpandedAccessType()));
+        }
+        isoDTO.setTempStudyProtocolIi(tempStudyProtocolIi);
+        return isoDTO;
+    }
+    /**
+     * 
+     * @param isoDto isoDto
+     * @return webDto
+     */
+    public TrialIndIdeDTO convertToTrialIndIdeDTO(TempStudyIndIdeDTO isoDto) {
+        TrialIndIdeDTO webDto = new TrialIndIdeDTO();
+        webDto.setExpandedAccessType(CdConverter.convertCdToString(isoDto.getExpandedAccessStatusCode()));
+        if (isoDto.getExpandedAccessIndicator().getValue() != null) {
+            if (isoDto.getExpandedAccessIndicator().getValue().toString().equalsIgnoreCase("true")) {
+                webDto.setExpandedAccess("Yes");
+            } else {
+                webDto.setExpandedAccess("No");
+            } 
+          }
+        webDto.setGrantor(CdConverter.convertCdToString(isoDto.getGrantorCode()));
+        webDto.setHolderType(CdConverter.convertCdToString(isoDto.getHolderTypeCode()));       
+        if (!PAUtil.isCdNull(isoDto.getNihInstHolderCode())) {
+            webDto.setProgramCode(CdConverter.convertCdToString(isoDto.getNihInstHolderCode()));
+        }
+        if (!PAUtil.isCdNull(isoDto.getNciDivProgHolderCode())) {
+            webDto.setProgramCode(CdConverter.convertCdToString(isoDto.getNciDivProgHolderCode()));
+        }
+        webDto.setNumber(StConverter.convertToString(isoDto.getIndldeNumber()));
+        webDto.setIndIde(CdConverter.convertCdToString(isoDto.getIndldeTypeCode()));
+        webDto.setRowId(UUID.randomUUID().toString());
+        return webDto;
     }
 }

@@ -117,6 +117,12 @@ function reviewProtocol (){
     document.forms[0].submit();
     showPopWin('${reviewProtocol}', 600, 200, '', 'Review Register Trial');
 }
+function partialSave() {
+	var action = "submitTrialpartialSave.action"; 
+    document.forms[0].action=action;
+    document.forms[0].submit();
+    showPopWin('${partialSave}', 600, 200, '', 'Partial Saving Trial');
+}
 function cancelProtocol (){   
     var action = "submitTrialcancel.action";   
     document.forms[0].page.value = "Submit";
@@ -298,7 +304,7 @@ function toggledisplay2 (it) {
         <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
         <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
         <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
-    
+        <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>    
         <s:hidden name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
         <table class="form"> 
@@ -918,6 +924,7 @@ function toggledisplay2 (it) {
                 <ul class="btnrow">         
                         <li>
                         <li>            
+                            <s:a href="#" cssClass="btn" onclick="partialSave()"><span class="btn_img"><span class="save">Partial Save</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="reviewProtocol()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>  
                         </li>

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
 
@@ -549,5 +550,139 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("success", submitAction.getTrialOversightAuthorityOrganizationNameList());
+    }
+    @Test
+    public void testPartialSave() {
+        submitAction = new SubmitTrialAction();
+        submitAction.setTrialDTO(new TrialDTO());
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("error", submitAction.partialSave());
+        
+        submitAction = new SubmitTrialAction();
+        TrialDTO  trialDto = getMockTrialDTO();
+        trialDto.setLeadOrganizationIdentifier("");
+        submitAction.setTrialDTO(trialDto);
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("error", submitAction.partialSave());
+        
+        submitAction = new SubmitTrialAction();
+        submitAction.setTrialDTO(getMockTrialDTO());
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("review", submitAction.partialSave());
+        
+        submitAction = new SubmitTrialAction();
+        trialDto = getMockTrialDTO();
+        trialDto.setStudyProtocolId("1");
+        trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.NO);
+        trialDto.setSection801Indicator(CommonsConstant.NO);
+        trialDto.setDelayedPostingIndicator(CommonsConstant.NO);
+        trialDto.setDataMonitoringCommitteeAppointedIndicator(CommonsConstant.NO);
+        submitAction.setTrialDTO(trialDto);
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("review", submitAction.partialSave());
+        
+        submitAction = new SubmitTrialAction();
+        trialDto = getMockTrialDTO();
+        trialDto.setStudyProtocolId("1");
+        trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.YES);
+        trialDto.setSection801Indicator(CommonsConstant.YES);
+        trialDto.setDelayedPostingIndicator(CommonsConstant.YES);
+        trialDto.setDataMonitoringCommitteeAppointedIndicator(CommonsConstant.YES);
+        submitAction.setTrialDTO(trialDto);
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        session.setAttribute(Constants.GRANT_LIST, getfundingDtos());
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("review", submitAction.partialSave());
+        
+        submitAction = new SubmitTrialAction();
+        trialDto = getMockTrialDTO();
+        trialDto.setStudyProtocolId("1");
+        trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.YES);
+        trialDto.setSection801Indicator(CommonsConstant.YES);
+        trialDto.setDelayedPostingIndicator(CommonsConstant.YES);
+        trialDto.setDataMonitoringCommitteeAppointedIndicator(CommonsConstant.YES);
+        submitAction.setTrialDTO(trialDto);
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        session.setAttribute(Constants.INDIDE_LIST, getIndDtos());
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("review", submitAction.partialSave());
+    }
+    @Test 
+    public void testComplete() {
+        submitAction = new SubmitTrialAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("error", submitAction.completePartialSubmission());
+        
+        submitAction = new SubmitTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setupAddParameter("studyProtocolId", "1");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("success", submitAction.completePartialSubmission());
+        submitAction = new SubmitTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setupAddParameter("studyProtocolId", "2");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("success", submitAction.completePartialSubmission());
+        submitAction = new SubmitTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setupAddParameter("studyProtocolId", "3");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("success", submitAction.completePartialSubmission());
+    }
+    @Test 
+    public void testDelete() {
+        submitAction = new SubmitTrialAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("error", submitAction.deletePartialSubmission());
+        
+        submitAction = new SubmitTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setupAddParameter("studyProtocolId", "1");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("redirect_to_search", submitAction.deletePartialSubmission());
+        submitAction = new SubmitTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setupAddParameter("studyProtocolId", "2");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("redirect_to_search", submitAction.deletePartialSubmission());
+        submitAction = new SubmitTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setupAddParameter("studyProtocolId", "3");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("redirect_to_search", submitAction.deletePartialSubmission());
     }
 }
