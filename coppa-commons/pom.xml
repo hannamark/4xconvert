@@ -20,7 +20,7 @@
         <maven-surefire-plugin.version>2.4.2</maven-surefire-plugin.version>
         <maven-source-plugin.version>2.1.1</maven-source-plugin.version>
         <cobertura-maven-plugin.version>2.0</cobertura-maven-plugin.version>
-        <maven-javadoc-plugin.version>2.6.1</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>2.4</maven-javadoc-plugin.version>
         <jdepend-maven-plugin.version>2.0-beta-2</jdepend-maven-plugin.version>
         <maven-surefire-report-plugin.version>2.4.2</maven-surefire-report-plugin.version>
         <maven-project-info-reports-plugin.version>2.1.2</maven-project-info-reports-plugin.version>
