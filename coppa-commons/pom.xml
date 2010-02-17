@@ -14,7 +14,7 @@
         <compileSource>1.5</compileSource>
         <generatedStubsSrcDir>target/generated-sources/stubs</generatedStubsSrcDir>
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
-        <maven-compiler-plugin.version>2.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>2.0</maven-compiler-plugin.version>
         <maven-checkstyle-plugin.version>2.4</maven-checkstyle-plugin.version>
         <maven-pmd-plugin.version>2.4</maven-pmd-plugin.version>
         <maven-surefire-plugin.version>2.4.2</maven-surefire-plugin.version>
