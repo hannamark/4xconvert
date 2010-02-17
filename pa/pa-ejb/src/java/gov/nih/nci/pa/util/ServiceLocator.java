@@ -109,6 +109,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -376,5 +377,10 @@ public interface ServiceLocator {
      * @return the study relationship service
      */
     StudyRelationshipServiceLocal getStudyRelationshipService();
+    /**
+     * 
+     * @return service for partial save
+     */
+    TempStudyProtocolServiceLocal getTempStudyProtocolService();
 }
 

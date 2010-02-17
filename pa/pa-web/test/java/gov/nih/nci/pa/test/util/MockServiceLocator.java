@@ -117,6 +117,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -545,6 +546,11 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public StudyRelationshipServiceLocal getStudyRelationshipService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public TempStudyProtocolServiceLocal getTempStudyProtocolService() {
         // TODO Auto-generated method stub
         return null;
     }

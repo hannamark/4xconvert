@@ -360,4 +360,16 @@
                 <comment>execute accrual_dev_26144.sql</comment>
                 <sqlFile path="@db-upgrade.run.dir@/3.2/accrual_dev_26144.sql"/>
     </changeSet>
+	<changeSet id="89" author="Vrushali">
+                <comment>execute pa_dev_26510_1.sql</comment>
+                <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_26510_1.sql"/>
+    </changeSet>
+	<changeSet id="90" author="Vrushali">
+                <comment>execute pa_dev_26510_2.sql</comment>
+                <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_26510_2.sql"/>
+    </changeSet>
+	<changeSet id="91" author="Vrushali">
+                <comment>execute pa_dev_26510_3.sql</comment>
+                <sqlFile path="@db-upgrade.run.dir@/3.2/pa_dev_26510_3.sql"/>
+    </changeSet>
 </databaseChangeLog>

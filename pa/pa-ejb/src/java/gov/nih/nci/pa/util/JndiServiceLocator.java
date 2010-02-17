@@ -109,6 +109,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -450,5 +451,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public StudyRelationshipServiceLocal getStudyRelationshipService() {
         return (StudyRelationshipServiceLocal) JNDIUtil.lookup("pa/StudyRelationshipBeanLocal/local");
+    }
+
+    /**
+     * @return service for partial save
+     */
+    public TempStudyProtocolServiceLocal getTempStudyProtocolService() {
+        return (TempStudyProtocolServiceLocal) JNDIUtil.lookup("pa/TempStudyProtocolBeanLocal/local");
     }
 }

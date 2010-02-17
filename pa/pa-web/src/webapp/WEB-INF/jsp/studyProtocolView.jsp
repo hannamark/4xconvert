@@ -71,6 +71,7 @@
                 <s:textfield name="nctIdentifier" maxlength="30" cssStyle="width:190px"/> 
             </td>
             </tr>
+            <c:if test="${sessionScope.trialSummary.isProprietaryTrial == null || sessionScope.trialSummary.isProprietaryTrial == 'false'}">
             <tr>
                 <td scope="row" class="label"> <label for="ctepIdentifier"> CTEP Identifier</label></td>
                 <td class="value">
@@ -83,6 +84,7 @@
                 <s:textfield name="dcpIdentifier" maxlength="30" cssStyle="width:190px"/> 
             </td>
             </tr>
+            </c:if>
             <tr>
             <td scope="row" class="label">
                 <label for="leadOrg"> 
