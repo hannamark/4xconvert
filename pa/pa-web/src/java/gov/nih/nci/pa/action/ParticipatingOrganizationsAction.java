@@ -78,11 +78,11 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
@@ -273,6 +273,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         setRecStatusDate(ServletActionContext.getRequest().getParameter(REC_STATUS_DATE));
         setTargetAccrualNumber(ServletActionContext.getRequest().getParameter("targetAccrualNumber"));
         setProgramCode(ServletActionContext.getRequest().getParameter("programCode"));
+        setSiteLocalTrialIdentifier(ServletActionContext.getRequest().getParameter("localProtocolIdenfier"));
         facilitySaveOrUpdate();
         if (hasFieldErrors()) {
             return "error_edit";
@@ -304,19 +305,25 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
             String prgCode = (getProgramCode() == null) ? null : getProgramCode();
             Integer iTargetAccrual = (targetAccrualNumber == null) ? null : Integer.parseInt(targetAccrualNumber);
-            boolean spTAUpdated = false;
-            boolean spPCUpdated = false;
+            String localId = (getSiteLocalTrialIdentifier() == null) ? null : getSiteLocalTrialIdentifier();
+            boolean spUpdated = false;
             if (IntConverter.convertToInteger(sp.getTargetAccrualNumber()) != iTargetAccrual) {
                 sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
-                spTAUpdated = true;
+                spUpdated = true;
             } 
             if (PAUtil.isStNull(sp.getProgramCodeText()) 
                 || (!PAUtil.isStNull(sp.getProgramCodeText()) 
                     && !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode))) {
                sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
-               spPCUpdated = true;
+               spUpdated = true;
             }
-            if (spTAUpdated || spPCUpdated) {
+            if (PAUtil.isStNull(sp.getLocalStudyProtocolIdentifier()) || (!PAUtil.isStNull(
+                    sp.getLocalStudyProtocolIdentifier()) && !StConverter.convertToString(
+                    sp.getLocalStudyProtocolIdentifier()).equalsIgnoreCase(localId))) {
+                sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(getSiteLocalTrialIdentifier()));
+                spUpdated = true;
+            }
+            if (spUpdated) {
                 try {
                     sp = sPartService.update(sp);
                 } catch (PADuplicateException e) {
@@ -336,6 +343,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp.setStudyProtocolIdentifier(spIi);
             sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
             sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
+            sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(siteLocalTrialIdentifier));
             try {
                 sp = sPartService.create(sp);
             } catch (PADuplicateException e) {
@@ -403,6 +411,11 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             setProgramCode(null);
         } else {
             setProgramCode(StConverter.convertToString(spDto.getProgramCodeText()));
+        }
+        if (!PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
+            setSiteLocalTrialIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
+        } else {
+            setSiteLocalTrialIdentifier(null);
         }
         setStatusCode(spDto.getStatusCode().getCode());
         setNewParticipation(false);

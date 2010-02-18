@@ -94,6 +94,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
@@ -1732,7 +1733,16 @@ private boolean isProprietaryTrial(StudyProtocolDTO studyProtocolDto) {
       appendSummary4(spDTO, htmldata);
       appendDisease(studyProtocolIi, htmldata);
       List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(spDTO.getIdentifier());
-      appendInterventions(htmldata, paList);
+      List<PlannedActivityDTO> interventionList = new ArrayList<PlannedActivityDTO>();
+      for (PlannedActivityDTO dto : paList) {
+          if (dto.getCategoryCode().getCode().equalsIgnoreCase(ActivityCategoryCode.INTERVENTION.getCode())
+             || dto.getCategoryCode().getCode().equalsIgnoreCase(ActivityCategoryCode.PLANNED_PROCEDURE.getCode())
+             || dto.getCategoryCode().getCode().equalsIgnoreCase(
+                     ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.getCode())) {
+              interventionList.add(dto);
+          }
+      }
+      appendInterventions(htmldata, interventionList);
       appendParticipatingSites(htmldata, spDTO);
   }
 }
