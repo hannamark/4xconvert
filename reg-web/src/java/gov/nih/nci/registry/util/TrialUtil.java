@@ -382,15 +382,24 @@ public class TrialUtil {
             isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));
         } 
         isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDTO.getPhaseCode())));
-        if (PAUtil.isNotEmpty(trialDTO.getPhaseOtherText())) {
-            isoDto.setPhaseOtherText(StConverter.convertToSt(trialDTO.getPhaseOtherText()));
+        if (PAUtil.isNotEmpty(trialDTO.getPhaseCode()) 
+             && PhaseCode.OTHER.getCode().equals(trialDTO.getPhaseCode())
+             && PAUtil.isNotEmpty(trialDTO.getPhaseOtherText())) {
+                isoDto.setPhaseOtherText(StConverter.convertToSt(trialDTO.getPhaseOtherText()));
+        } else {
+            isoDto.setPhaseOtherText(StConverter.convertToSt(null));
         }
         isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(
                 PrimaryPurposeCode.getByCode(trialDTO.getPrimaryPurposeCode())));
         
-        if (PAUtil.isNotEmpty(trialDTO.getPrimaryPurposeOtherText())) {
+        if (PAUtil.isNotEmpty(trialDTO.getPrimaryPurposeCode()) 
+                && PrimaryPurposeCode.OTHER.getCode().equals(trialDTO.getPrimaryPurposeCode())
+                && PAUtil.isNotEmpty(trialDTO.getPrimaryPurposeOtherText())) {
             isoDto.setPrimaryPurposeOtherText(
                     StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
+        } else {
+            isoDto.setPrimaryPurposeOtherText(
+                    StConverter.convertToSt(null));
         }
         isoDto.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO.getStartDate())));
         isoDto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(trialDTO

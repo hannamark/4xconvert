@@ -46,14 +46,6 @@
         href="amendTrialview.action" property="amend"
         paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/>     
-    <display:column titleKey="search.trial.complete" 
-        href="submitTrialcompletePartialSubmission.action" property="completePartialSubmission"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"
-        sortable="true" headerClass="sortable"/> 
-    <display:column titleKey="search.trial.delete" 
-        href="submitTrialdeletePartialSubmission.action" property="deletePartialSubmission"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"
-        sortable="true" headerClass="sortable"/>
 </display:table>
 </c:otherwise>
  </c:choose>
