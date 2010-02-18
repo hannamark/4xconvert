@@ -31,7 +31,7 @@
 1.2 Development Environment Setup
 
   * Install maven (if needed)
-    PO is not compatible with maven 2.1.0+, so you'll need to use 2.0.10 or earlier.
+    PO is not compatible with maven 2.1.0+, so you'll need to use 2.0.10 (or a later version of 2.0.x).
 
   * Install postgres (if needed)
     Postgres 8.3 should work with no issues.  With Postgres 8.4, you'll have to set max_prepared_transactions to 5 in postgresql.conf (on a Mac, that file is located in /Library/PostgreSQL/8.4/data/);
