@@ -115,7 +115,9 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
+import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -145,6 +147,7 @@ public class SearchTrialAction extends ActionSupport {
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
     PAServiceUtils paServiceUtils = new PAServiceUtils();
+    TrialUtil trialUtil = new TrialUtil();
     
     /**
      * @return res
@@ -587,6 +590,40 @@ public class SearchTrialAction extends ActionSupport {
         }
         ServletActionContext.getRequest().setAttribute("partialSubmission", "yes");
         return SUCCESS;
+    }
+    /**
+     * 
+     * @return view
+     */
+    public String partiallySubmittedView() {
+        String pId = (String) ServletActionContext.getRequest().getParameter("studyProtocolId");
+        if (PAUtil.isEmpty(pId)) {
+            addActionError("study protocol id cannot null.");
+            return ERROR;
+        }
+        TrialDTO trialDTO = new TrialDTO();
+        try {
+            trialDTO =  trialUtil.getTrialDTOForPartiallySumbissionById(pId);
+            if (PAUtil.isNotEmpty(trialDTO.getSelectedRegAuth())) {
+                String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+                        trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
+                trialDTO.setTrialOversgtAuthOrgName(orgName);
+            }
+            if (PAUtil.isNotEmpty(trialDTO.getLst())) {
+                String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+                        Long.valueOf(trialDTO.getLst()), "Country");
+                trialDTO.setTrialOversgtAuthCountryName(countryName);
+            }
+            
+            ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
+            ServletActionContext.getRequest().setAttribute("partialSubmission", "search");
+            ServletActionContext.getRequest().setAttribute("protocolId", pId);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        } catch (NullifiedRoleException e) {
+            addActionError(e.getMessage());
+        }
+     return "partialView";   
     }
     private List<StudyProtocolQueryDTO> convertToSpQueryDTO(List<TempStudyProtocolDTO> tempSpDTOs) {
         StudyProtocolQueryDTO spQueryDTO;

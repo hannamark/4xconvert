@@ -90,8 +90,6 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.TempStudyFundingDTO;
-import gov.nih.nci.pa.iso.dto.TempStudyIndIdeDTO;
 import gov.nih.nci.pa.iso.dto.TempStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -588,9 +586,22 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
            if (grantList != null) {
                trialDTO.setFundingDtos(grantList);
            }
-
+           String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+                   trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
+           String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+           Long.valueOf(trialDTO.getLst()), "Country");
+           trialDTO.setTrialOversgtAuthCountryName(countryName);
+           trialDTO.setTrialOversgtAuthOrgName(orgName);
         } catch (IOException e) {
             LOG.error(e.getMessage());
+            return ERROR;
+        } catch (NumberFormatException e) {
+            LOG.error(e.getMessage());
+            addActionError(e.getMessage());
+            return ERROR;
+        } catch (PAException e) {
+            LOG.error(e.getMessage());
+            addActionError(e.getMessage());
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();
@@ -699,7 +710,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 }
             }
             ServletActionContext.getRequest().setAttribute("protocolId", tempStudyProtocolIi.getExtension());
-            ServletActionContext.getRequest().setAttribute("partialSubmission", "yes");
+            ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
         } catch (PAException e) {
             LOG.error(e.getLocalizedMessage());
@@ -720,30 +731,17 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }
         trialDTO = new TrialDTO();
         try {
-            trialDTO =  trialUtil.convertToTrialDTO(PaRegistry.getTempStudyProtocolService()
-                    .getTempStudyProtocol(IiConverter.convertToIi(pId)));
-            List<TempStudyFundingDTO> fundingIsoDtos  = PaRegistry.getTempStudyProtocolService()
-                .getGrantsByTempStudyProtocol(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
-            List<TrialFundingWebDTO> webDTOs = new ArrayList<TrialFundingWebDTO>();
-            for (TempStudyFundingDTO fundingDto : fundingIsoDtos) {
-                webDTOs.add(trialUtil.convertToTrialFundingWebDTO(fundingDto));    
-            }
-            trialDTO.setFundingDtos(webDTOs);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, webDTOs);
-            List<TrialIndIdeDTO> webIndDtos = new ArrayList<TrialIndIdeDTO>();
-            List <TempStudyIndIdeDTO> indIdeIsoDtos = PaRegistry.getTempStudyProtocolService().
-                getIndIdeByTempStudyProtocol(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
-            for (TempStudyIndIdeDTO isoIndDto : indIdeIsoDtos) {
-                webIndDtos.add(trialUtil.convertToTrialIndIdeDTO(isoIndDto));
-            }
-            trialDTO.setIndIdeDtos(webIndDtos);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST, webIndDtos);
+            trialDTO =  trialUtil.getTrialDTOForPartiallySumbissionById(pId);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST,
+                    trialDTO.getIndIdeDtos());
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
+                    trialDTO.getFundingDtos());
         } catch (PAException e) {
             addActionError(e.getMessage());
         } catch (NullifiedRoleException e) {
             addActionError(e.getMessage());
         }
-        trialUtil.populateRegulatoryList(trialDTO);
+        //trialUtil.populateRegulatoryList(trialDTO);
        return SUCCESS; 
     }
     /**

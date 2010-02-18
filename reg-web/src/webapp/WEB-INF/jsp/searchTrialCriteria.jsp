@@ -54,6 +54,10 @@ function getMyPartialTrial() {
                    document.getElementById("participatingSiteId").value="";
 	        }
     }
+    function viewPartialProtocol(pId,user) {       
+        document.forms[0].action="searchTrialpartiallySubmittedView.action?studyProtocolId="+pId+"&usercreated="+user;
+        document.forms[0].submit(); 
+    }
 </SCRIPT>
 <body>
 <!-- main content begins-->

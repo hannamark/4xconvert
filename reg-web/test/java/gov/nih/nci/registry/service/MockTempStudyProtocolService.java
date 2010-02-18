@@ -26,7 +26,9 @@ import gov.nih.nci.pa.iso.convert.TempStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.TempStudyFundingDTO;
 import gov.nih.nci.pa.iso.dto.TempStudyIndIdeDTO;
 import gov.nih.nci.pa.iso.dto.TempStudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
@@ -60,6 +62,8 @@ public class MockTempStudyProtocolService implements TempStudyProtocolServiceLoc
         sp.setSponsorIdentifier("1");
         sp.setSummaryFourFundingCategoryCode(SummaryFourFundingCategoryCode.NATIONAL);
         sp.setSummaryFourOrgIdentifier("1");
+        sp.setOversightAuthorityCountryId("1");
+        sp.setOversightAuthorityOrgId("1");
         list.add(sp);
         sp = new TempStudyProtocol();
         sp.setId(2L);
@@ -81,6 +85,8 @@ public class MockTempStudyProtocolService implements TempStudyProtocolServiceLoc
         sp.setSection801Indicator(Boolean.TRUE);
         sp.setDelayedpostingIndicator(Boolean.TRUE);
         sp.setDataMonitoringCommitteeAppointedIndicator(Boolean.TRUE);
+        sp.setOversightAuthorityCountryId("1");
+        sp.setOversightAuthorityOrgId("1");
         list.add(sp);
         sp = new TempStudyProtocol();
         sp.setId(3L);
@@ -96,6 +102,8 @@ public class MockTempStudyProtocolService implements TempStudyProtocolServiceLoc
         sp.setDelayedpostingIndicator(Boolean.FALSE);
         sp.setDataMonitoringCommitteeAppointedIndicator(Boolean.FALSE);
         sp.setResponsibleIdentifier("1");
+        sp.setOversightAuthorityCountryId("1");
+        sp.setOversightAuthorityOrgId("1");
         list.add(sp);
         tempStudyFundingList = new ArrayList<TempStudyFunding>();
         TempStudyFunding studyFunding = new TempStudyFunding();
@@ -203,8 +211,21 @@ public class MockTempStudyProtocolService implements TempStudyProtocolServiceLoc
     public List<TempStudyProtocolDTO> search(TempStudyProtocolDTO dto,
             LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+        List<TempStudyProtocolDTO> returnList = new ArrayList<TempStudyProtocolDTO>();
+        if(dto.getOfficialTitle() != null && dto.getOfficialTitle().getValue().equalsIgnoreCase("ThrowException")) {
+            throw new PAException("Test");
+        }
+        for (TempStudyProtocol tempSp : list) {
+            String phaseCode = CdConverter.convertCdToString(dto.getPhaseCode());
+            if(PAUtil.isNotEmpty(phaseCode) && tempSp.getPhaseCode().getCode().equalsIgnoreCase(phaseCode)) {
+                returnList.add(TempStudyProtocolConverter.convertFromDomainToDTO(tempSp));
+            }
+            if(!PAUtil.isStNull(dto.getOfficialTitle()) && tempSp.getOfficialTitle().equalsIgnoreCase(
+                    StConverter.convertToString(dto.getOfficialTitle()))) {
+                returnList.add(TempStudyProtocolConverter.convertFromDomainToDTO(tempSp));
+            }    
+        }
+        return returnList;
     }
 
     /* (non-Javadoc)

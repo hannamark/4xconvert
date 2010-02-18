@@ -9,7 +9,6 @@ import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
-import gov.nih.nci.registry.dto.RegulatoryAuthorityWebDTO;
 import gov.nih.nci.registry.dto.StudyIndldeWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -236,6 +235,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute(Constants.REG_AUTH_LIST, new ArrayList<RegulatoryAuthOrgDTO>());
         session.setAttribute(Constants.GRANT_ADD_LIST, new ArrayList<TrialFundingWebDTO>());
         session.setAttribute(Constants.INDIDE_ADD_LIST, new ArrayList<TrialIndIdeDTO>());
+        action.setTrialDTO(getMockTrialDTO());
         action.getTrialDTO().setDataMonitoringCommitteeAppointedIndicator("dataMonitoringIndicator");
         action.getTrialDTO().setDelayedPostingIndicator("delayedPostingIndicator");
         action.getTrialDTO().setFdaRegulatoryInformationIndicator("fdaRegulatedInterventionIndicator");
@@ -248,7 +248,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setIrbApproval(f);
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        action.setTrialDTO(getMockTrialDTO());
         assertEquals("review", action.reviewUpdate());
         request = new MockHttpServletRequest();
         session = new MockHttpSession();

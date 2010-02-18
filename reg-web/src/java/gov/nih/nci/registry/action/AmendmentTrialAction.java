@@ -139,7 +139,6 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
 
     public String review() {
         try {
-            
             clearErrorsAndMessages();
             enforceBusinessRules();
             if (hasFieldErrors()) {
@@ -155,28 +154,32 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
-         
             List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
            trialDTO.setDocDtos(docDTOList);
-           //get the document and put in list
-           //add the IndIde,FundingList
+           //get the document and put in list add the IndIde,FundingList
            List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.INDIDE_LIST);
            if (indList != null) {
                trialDTO.setIndIdeDtos(indList);
            }
-           
            List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
            .getSession().getAttribute(Constants.GRANT_LIST);
            if (grantList != null) {
                trialDTO.setFundingDtos(grantList);
            }
-
+           String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+                   trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
+           String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+           Long.valueOf(trialDTO.getLst()), "Country");
+           trialDTO.setTrialOversgtAuthCountryName(countryName);
+           trialDTO.setTrialOversgtAuthOrgName(orgName);
         } catch (IOException e) {
             LOG.error(e.getMessage());
+            addActionError(e.getMessage());
             return ERROR;
         } catch (PAException e) {
             LOG.error(e.getMessage());
+            addActionError(e.getMessage());
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();

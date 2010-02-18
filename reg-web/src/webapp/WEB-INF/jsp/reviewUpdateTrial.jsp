@@ -274,14 +274,13 @@ var winprint=window.open("","",sOption);
         </td>
       </tr> 
      </table>
-     <c:if test="${trialDTO.regulatoryAuthority != null}">
      <h3>Regulatory Information</h3> 
      <table>
      <tr>
         <td scope="row" class="label">
         <fmt:message key="regulatory.oversight.country.name"/></td>
           <td class="value">
-           <s:property value="regulatoryAuthority.trialOversgtAuthCountry"/>
+           <s:property value="trialDTO.trialOversgtAuthCountryName"/>
          </td>
        </tr>
        <!--  Trial Oversignt Authority Organization Name -->
@@ -289,7 +288,7 @@ var winprint=window.open("","",sOption);
          <td scope="row" class="label">
            <fmt:message key="regulatory.oversight.auth.name"/></td>
                      <td class="value">
-                     <s:property value="regulatoryAuthority.trialOversgtAuthOrgName"/>
+                     <s:property value="trialDTO.trialOversgtAuthOrgName"/>
                                                          
                      </td>
      </tr>   
@@ -298,14 +297,14 @@ var winprint=window.open("","",sOption);
          <td scope="row"  class="label">
          <fmt:message key="regulatory.FDA.regulated.interv.ind"/></td>
          <td class="value">
-              <s:property value="regulatoryAuthority.fdaRegulatedInterventionIndicator"/>
+              <s:property value="trialDTO.fdaRegulatoryInformationIndicator"/>
          </td>
      </tr>
      <!--   Section 801 Indicator-->
      <tr id="sec801row">
          <td scope="row" class="label"><fmt:message key="regulatory.section801.ind"/></td>
          <td class="value">
-         <s:property value="regulatoryAuthority.section801Indicator"/>
+         <s:property value="trialDTO.delayedPostingIndicator"/>
          </td>
      </tr>
      
@@ -313,18 +312,17 @@ var winprint=window.open("","",sOption);
      <tr id="delpostindrow">
          <td scope="row" class="label"><fmt:message key="regulatory.delayed.posting.ind"/></td>
          <td class="value">
-         <s:property value="regulatoryAuthority.delayedPostingIndicator"/>
+         <s:property value="trialDTO.delayedPostingIndicator"/>
          </td>       
      </tr>
      <!--   Data Monitoring Committee Appointed Indicator -->
      <tr id="datamonrow">
          <td scope="row" class="label"><fmt:message key="regulatory.data.monitoring.committee.ind"/></td>
          <td class="value">  
-                  <s:property value="regulatoryAuthority.dataMonitoringIndicator"/>    
+                  <s:property value="trialDTO.dataMonitoringCommitteeAppointedIndicator"/>    
          </td>       
      </tr>
      </table>
-     </c:if>
      <c:if test="${trialDTO.indIdeUpdateDtos != null && fn:length(trialDTO.indIdeUpdateDtos) > 0}">
        <div class="box">
        <h3>Updated FDA IND/IDE </h3> 

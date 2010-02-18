@@ -257,4 +257,46 @@ public class SearchTrialActionTest extends AbstractRegWebTest{
         ServletActionContext.setResponse(response);
         action.viewDoc();
     }
+    @Test
+    public void testGetMyPartiallySavedTrial() {
+        action = new SearchTrialAction();
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setOfficialTitle("officialTitle");
+        action.setCriteria(criteria );
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setupAddParameter("usercreated", "1");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("success",action.getMyPartiallySavedTrial());
+        
+        action = new SearchTrialAction();
+        criteria = new SearchProtocolCriteria();
+        criteria.setOfficialTitle("ThrowException");
+        action.setCriteria(criteria );
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setupAddParameter("usercreated", "1");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("success",action.getMyPartiallySavedTrial());
+        assertNotNull(action.getActionErrors());
+    }
+    @Test
+    public void testPartiallySubmittedView() {
+        action = new SearchTrialAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setupAddParameter("studyProtocolId", "1");
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("partialView",action.partiallySubmittedView());
+        
+        action = new SearchTrialAction();
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("error",action.partiallySubmittedView());
+    }
 }

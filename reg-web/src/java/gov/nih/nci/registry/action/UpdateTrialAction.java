@@ -591,7 +591,12 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
                trialDTO.setFundingAddDtos(grantAddList);
                setFundingAddDtos(grantAddList);
            }
-          
+           String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+                   trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
+           String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+           Long.valueOf(trialDTO.getLst()), "Country");
+           trialDTO.setTrialOversgtAuthCountryName(countryName);
+           trialDTO.setTrialOversgtAuthOrgName(orgName);
            synchDTOWithAction();
 
         } catch (IOException e) {

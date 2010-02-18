@@ -63,9 +63,9 @@ var winprint=window.open("","",sOption);
 <div class="box">
     <s:form > <s:actionerror/>
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>          
-    <c:if test="${requestScope.protocolId != null && requestScope.partialSubmission != null}">
+    <c:if test="${requestScope.protocolId != null && requestScope.partialSubmission != null && requestScope.partialSubmission == 'submit'}">
         <div class="confirm_msg">
-          <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.protocolId}</strong>
+          <strong>The trial has been successfully submitted and assigned the Identifier ${requestScope.protocolId}</strong>
         </div>
      </c:if>
     <div id="contentprint">        
@@ -82,6 +82,16 @@ var winprint=window.open("","",sOption);
                 </td>
                 <td class="value">
                     <strong><c:out value="${trialDTO.assignedIdentifier}"/></strong> 
+                </td>
+          </tr>
+          </c:if>
+          <c:if test="${requestScope.protocolId != null}" >
+            <tr>     
+                <td scope="row" class="label">
+                    <label for="Assigned Identifier">Record Identifier</label>
+                </td>
+                <td class="value">
+                    <strong><c:out value="${requestScope.protocolId}"/></strong> 
                 </td>
           </tr>
           </c:if>
@@ -445,12 +455,12 @@ var winprint=window.open("","",sOption);
         <tr>
         <td scope="row" class="label">
         <fmt:message key="regulatory.oversight.country.name"/></td>
-          <td class="value"> <c:out value="${trialDTO.lst }"/> </td>
+          <td class="value"> <c:out value="${trialDTO.trialOversgtAuthCountryName }"/> </td>
        </tr>
        <tr>
          <td scope="row" class="label">
            <fmt:message key="regulatory.oversight.auth.name"/></td>
-                <td class="value"> <c:out value="${trialDTO.selectedRegAuth }"/> </td>
+                <td class="value"> <c:out value="${trialDTO.trialOversgtAuthOrgName }"/> </td>
          </tr>   
     
  <!--   FDA Regulated Intervention Indicator-->

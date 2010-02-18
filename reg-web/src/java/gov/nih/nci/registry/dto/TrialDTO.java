@@ -63,7 +63,7 @@ public class TrialDTO {
     //required for updating a trial
     private List<PaOrganizationDTO> collaborators;
     private List<PaOrganizationDTO> participatingSites;
-    private RegulatoryAuthorityWebDTO regulatoryAuthority;
+    //private RegulatoryAuthorityWebDTO regulatoryAuthority;
     private List<CountryRegAuthorityDTO> countryList = new ArrayList<CountryRegAuthorityDTO>();
     private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
     private List <StudyIndldeWebDTO> indIdeUpdateDtos;
@@ -82,6 +82,8 @@ public class TrialDTO {
     private String contactPhoneExtn;
     private String nciDesignedCancerCenter;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
+    private String trialOversgtAuthCountryName;
+    private String trialOversgtAuthOrgName;
     /**
      * 
      */
@@ -93,7 +95,7 @@ public class TrialDTO {
         
         collaborators = new ArrayList<PaOrganizationDTO>();
         participatingSites = new ArrayList<PaOrganizationDTO>();
-        regulatoryAuthority = new RegulatoryAuthorityWebDTO();
+        //regulatoryAuthority = new RegulatoryAuthorityWebDTO();
         indIdeUpdateDtos = new ArrayList<StudyIndldeWebDTO>();
         fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
         indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
@@ -615,18 +617,6 @@ public class TrialDTO {
         this.participatingSites = participatingSites;
     }
     /**
-     * @return the regulatoryAuthority
-     */
-    public RegulatoryAuthorityWebDTO getRegulatoryAuthority() {
-        return regulatoryAuthority;
-    }
-    /**
-     * @param regulatoryAuthority the regulatoryAuthority to set
-     */
-    public void setRegulatoryAuthority(RegulatoryAuthorityWebDTO regulatoryAuthority) {
-        this.regulatoryAuthority = regulatoryAuthority;
-    }
-    /**
      * @return the countryList
      */
     public List<CountryRegAuthorityDTO> getCountryList() {
@@ -831,6 +821,30 @@ public class TrialDTO {
      */
     public String getNciDesignedCancerCenter() {
         return nciDesignedCancerCenter;
+    }
+    /**
+     * @param trialOversgtAuthCountry the trialOversgtAuthCountry to set
+     */
+    public void setTrialOversgtAuthCountryName(String trialOversgtAuthCountry) {
+        this.trialOversgtAuthCountryName = trialOversgtAuthCountry;
+    }
+    /**
+     * @return the trialOversgtAuthCountry
+     */
+    public String getTrialOversgtAuthCountryName() {
+        return trialOversgtAuthCountryName;
+    }
+    /**
+     * @param trialOversgtAuthOrgName the trialOversgtAuthOrgName to set
+     */
+    public void setTrialOversgtAuthOrgName(String trialOversgtAuthOrgName) {
+        this.trialOversgtAuthOrgName = trialOversgtAuthOrgName;
+    }
+    /**
+     * @return the trialOversgtAuthOrgName
+     */
+    public String getTrialOversgtAuthOrgName() {
+        return trialOversgtAuthOrgName;
     }
    
 }

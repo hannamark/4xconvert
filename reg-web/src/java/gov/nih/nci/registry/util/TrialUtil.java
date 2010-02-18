@@ -1595,4 +1595,33 @@ public class TrialUtil {
         webDto.setRowId(UUID.randomUUID().toString());
         return webDto;
     }
+    /**
+     * 
+     * @param tempStudyProtocolId ii
+     * @return trialDTO
+     * @throws NullifiedRoleException on err
+     * @throws PAException on err
+     */
+    public TrialDTO getTrialDTOForPartiallySumbissionById(String tempStudyProtocolId) throws NullifiedRoleException, 
+        PAException {
+            TrialDTO trialDTO = new TrialDTO();
+            trialDTO =  convertToTrialDTO(PaRegistry.getTempStudyProtocolService()
+                    .getTempStudyProtocol(IiConverter.convertToIi(tempStudyProtocolId)));
+            List<TempStudyFundingDTO> fundingIsoDtos  = PaRegistry.getTempStudyProtocolService()
+                .getGrantsByTempStudyProtocol(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+            List<TrialFundingWebDTO> webDTOs = new ArrayList<TrialFundingWebDTO>();
+            for (TempStudyFundingDTO fundingDto : fundingIsoDtos) {
+                webDTOs.add(convertToTrialFundingWebDTO(fundingDto));    
+            }
+            trialDTO.setFundingDtos(webDTOs);
+            List<TrialIndIdeDTO> webIndDtos = new ArrayList<TrialIndIdeDTO>();
+            List <TempStudyIndIdeDTO> indIdeIsoDtos = PaRegistry.getTempStudyProtocolService().
+                getIndIdeByTempStudyProtocol(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+            for (TempStudyIndIdeDTO isoIndDto : indIdeIsoDtos) {
+                webIndDtos.add(convertToTrialIndIdeDTO(isoIndDto));
+            }
+            trialDTO.setIndIdeDtos(webIndDtos);
+            populateRegulatoryList(trialDTO);
+        return trialDTO;
+    }
 }

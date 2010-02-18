@@ -32,8 +32,9 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="opensymphony"           name="sitemesh"                rev="2.3"             conf="runtime->default"/>
     <dependency org="opensymphony"           name="xwork"                   rev="2.1.2"           conf="runtime->default"/>
     <dependency org="sun"                    name="jstl"                    rev="1.1.2"           conf="runtime->master"/>
-
-    <!-- compile -->
+	<dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.GA"        conf="runtime->master"/>
+    <dependency org="org.hibernate"          name="hibernate-commons-annotations" rev="3.3.0.GA" conf="runtime->master"/>
+	<!-- compile -->
     <dependency org="jakarta"                name="commons-lang"            rev="2.4"             conf="compile->master"/>
     <dependency org="jakarta"                name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="javax.ejb"              name="api"                     rev="3.0"             conf="compile->master"/>
