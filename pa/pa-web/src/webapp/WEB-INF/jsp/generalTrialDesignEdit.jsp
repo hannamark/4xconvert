@@ -130,6 +130,7 @@
         <s:hidden name="gtdDTO.centralContactIdentifier" id="gtdDTO.centralContactIdentifier"></s:hidden>
         <s:hidden name="gtdDTO.centralContactEmail" id="gtdDTO.centralContactEmail"></s:hidden>
         <s:hidden name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone"></s:hidden>
+        <s:hidden name="gtdDTO.localProtocolIdentifier" id="gtdDTO.localProtocolIdentifier"></s:hidden>
     </c:if>
     <c:if test="${sessionScope.trialSummary.isProprietaryTrial != null && sessionScope.trialSummary.isProprietaryTrial == 'true'}">
       <tr>
