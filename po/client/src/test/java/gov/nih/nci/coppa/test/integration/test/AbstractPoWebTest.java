@@ -82,12 +82,12 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;
@@ -689,5 +689,53 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     private boolean isRequiredIndicatorPresent(String labelFor) {
         String xpath = "//label[@for='" + labelFor + "']/span[@class='required' and ./text()='*']";
         return selenium.isElementPresent(xpath);
+    }
+
+    protected void verifyReliabilityChange() {
+        String confirmationMessagePattern = "^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$";
+        String elementId = "curateRoleForm.role.assignedIdentifier.reliability";
+        String labelVRF = "label=VRF";
+        String labelUNV = "label=UNV";
+        String labelSelectReliability = "label=--Select a Reliability--";
+
+        /*
+         * 1. Set value to Select A Reliability.
+         * 2. Select VRF. Verify that there was no confirmation message.
+         * 3. Switch value to UNF. Verify the presence of a confirmation message.
+         * 4. Switch value to Select A Reliability. Verify the presence of a confirmation message.
+         * 5. Switch value to UNV. Verify the absence of a confirmation message.
+         * 6. Switch back to Select A Reliability.
+         * 7. Test that the Cancel button behaves as expected.
+         * 8. Test that the OK button behaves as expected.
+         */
+
+        selenium.select(elementId, labelSelectReliability);
+        selenium.select(elementId, labelVRF);
+        assertFalse(selenium.isConfirmationPresent());
+        selenium.select(elementId, labelUNV);
+        assertTrue(selenium.isConfirmationPresent());
+        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        selenium.select(elementId, labelSelectReliability);
+        assertTrue(selenium.isConfirmationPresent());
+        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        selenium.select(elementId, labelUNV);
+        assertFalse(selenium.isConfirmationPresent());
+        selenium.select(elementId, labelSelectReliability);
+        assertTrue(selenium.isConfirmationPresent());
+        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+
+        selenium.select(elementId, labelUNV);
+        //handle pressing cancel on confirmation for changing reliability
+        //press cancel to abort the value change
+        selenium.chooseCancelOnNextConfirmation();
+        selenium.select(elementId, labelVRF);
+        assertTrue(selenium.isConfirmationPresent());
+        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        assertEquals("UNV", selenium.getValue(elementId).trim());
+        //press OK to accept the change
+        selenium.select(elementId, labelVRF);
+        assertTrue(selenium.isConfirmationPresent());
+        assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
+        assertEquals("VRF", selenium.getValue(elementId).trim());
     }
 }

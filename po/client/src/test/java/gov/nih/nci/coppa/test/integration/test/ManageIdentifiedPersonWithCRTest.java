@@ -103,22 +103,22 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
     public String ORG_FOR_TEST = "org_for_test";
     public String AFFILIATE_ORG_FOR_PERSON_IP_OLD = "org_for_person_ip_original";
     public String AFFILIATE_ORG_FOR_PERSON_IP_NEW = "org_for_person_ip_new";
- 
+
     public void testCreateActivePersonWithActiveIP() throws Exception {
         loginAsCurator();
-        
+
         // create an ACTIVE ORG for later original affiliation
         createOrganization("ACTIVE", AFFILIATE_ORG_FOR_PERSON_IP_OLD, getAddress(), "sample@example.com", "703-111-2345",
                 "703-111-1234", "703-111-1234", "http://www.example.com");
         String activeOrgId = selenium.getText("wwctrl_organization.id");
         assertNotEquals("null", activeOrgId.trim());
-        
+
         // create an ACTIVE ORG for later new affiliation
         createOrganization("ACTIVE", AFFILIATE_ORG_FOR_PERSON_IP_NEW, getAddress(), "sample@example.com", "703-111-2345",
                 "703-111-1234", "703-111-1234", "http://www.example.com");
         String activeNewOrgId = selenium.getText("wwctrl_organization.id");
         assertNotEquals("null", activeOrgId.trim());
-        
+
         // create the ACTIVE Person
         openCreatePerson();
         createPerson("ACTIVE", "Dr", "po-1178", "L", "po-1178", "III", getAddress(), "sample@example.com",
@@ -129,7 +129,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         savePersonAsActive(personId);
         // open Person Curate page
         openAndWait("po-web/protected/person/curate/start.action?person.id=" + personIdExt);
-  
+
         // Goto Manage IP Page
         accessManageIdentifiedPersonScreen();
         // add IP
@@ -137,44 +137,35 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assertTrue(selenium.isTextPresent("Other Person Identifier Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
-         
+
         // select a ACTIVE Scoper
         selectOrganizationScoper(activeOrgId.trim(), AFFILIATE_ORG_FOR_PERSON_IP_OLD);
-        selenium.select("curateRoleForm.role.status", "label=ACTIVE"); 
-        
+        selenium.select("curateRoleForm.role.status", "label=ACTIVE");
+
         selenium.type("curateRoleForm.role.assignedIdentifier.extension", "1234");
         selenium.type("curateRoleForm.role.assignedIdentifier.root", "1.2.3.4");
 
-        //handle pressing cancel on confirmation for changing reliability
-        //press cancel to abort the value change
-        selenium.chooseCancelOnNextConfirmation();
-        selenium.select("curateRoleForm.role.assignedIdentifier.reliability", "label=VRF");
-        assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
-        assertEquals("", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
-        //press OK to accept the change
-        selenium.select("curateRoleForm.role.assignedIdentifier.reliability", "label=VRF");
-        assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
-        assertEquals("VRF", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
+        // Test the Reliability Dropdown value changes.
+        verifyReliabilityChange();
 
-        
         selenium.select("curateRoleForm.role.assignedIdentifier.displayable", "label=TRUE");
         selenium.type("curateRoleForm.role.assignedIdentifier.identifierName", "identifierNameValue");
         selenium.select("curateRoleForm.role.assignedIdentifier.scope", "label=BUSN");
-     
+
         clickAndWaitSaveButton();
-        
+
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully created!"));
         String ocId = selenium.getTable("row.1.0");
         assertNotEquals("null", ocId.trim());
         selenium.click("link=" + getSortFieldTestColumnName());
         ocId = selenium.getTable("row.1.0");
         assertNotEquals("null", ocId.trim());
-        
+
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
         clickAndWaitSaveButton();
-        
+
         updateRemoteOcOrg(ocId.trim(), activeNewOrgId);
 
         // Goto Manage IP Page.... should see CR
@@ -183,15 +174,15 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assertTrue(selenium.isTextPresent("exact:Edit Other Person Identifier - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
-        
+
         // old values
         assertEquals(AFFILIATE_ORG_FOR_PERSON_IP_OLD + " (" + activeOrgId.trim() + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id").trim());
-        
+
         // copy over new affiliated org and check new value
         selenium.click("copy_curateCrForm_role_typeCode");
         waitForElementById("wwctrl_curateRoleForm_role_scoper_id", 5);
         assertEquals(AFFILIATE_ORG_FOR_PERSON_IP_NEW + " (" + activeNewOrgId.trim() + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id").trim());
-        
+
         // old values
         assertEquals("1234", selenium.getValue("curateRoleForm.role.assignedIdentifier.extension").trim());
         assertEquals("1.2.3.4", selenium.getValue("curateRoleForm.role.assignedIdentifier.root").trim());
@@ -199,7 +190,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assertEquals("identifierNameValue", selenium.getValue("curateRoleForm.role.assignedIdentifier.identifierName").trim());
         assertEquals("BUSN", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
         assertEquals("VRF", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
-        
+
         // copy over new ext
         selenium.click("copy_curateCrForm_role_assignedIdentifier");
         assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
@@ -215,18 +206,18 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assertEquals("newIdentifierNameValue", selenium.getValue("curateRoleForm.role.assignedIdentifier.identifierName").trim());
         assertEquals("VER", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
         assertEquals("UNV", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
-        
+
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully updated!".trim()));
-        
+
         updateRemoteOcOrgWithISSAssignedReliability(ocId.trim(), activeNewOrgId);
-        
+
         // Goto Manage IP Page.... should see CR with ISS reliability
         openAndWait("/po-web/protected/roles/person/IdentifiedPerson/start.action?person=" + personIdExt);
         clickAndWait("edit_identifiedPerson_id_" + ocId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Other Person Identifier - Comparison"));
-        
-        assertEquals("ISS", selenium.getText("wwctrl_curateCrForm.role.assignedIdentifier.reliability").trim());       
+
+        assertEquals("ISS", selenium.getText("wwctrl_curateCrForm.role.assignedIdentifier.reliability").trim());
         selenium.click("copy_curateCrForm_role_assignedIdentifier");
         assertTrue(selenium.getAlert().matches("^ISS not found!$"));
         clickAndWaitSaveButton();
@@ -237,12 +228,12 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
     NullifiedEntityException, NullifiedRoleException {
         helperUpdateRemoteOcOrg(ext, affOrgId, IdentifierReliability.UNV);
     }
-    
+
     private void updateRemoteOcOrgWithISSAssignedReliability(String ext, String affOrgId) throws EntityValidationException, NamingException, URISyntaxException,
     NullifiedEntityException, NullifiedRoleException {
         helperUpdateRemoteOcOrg(ext, affOrgId, IdentifierReliability.ISS);
     }
-    
+
     private void helperUpdateRemoteOcOrg(String ext, String affOrgId, IdentifierReliability rel) throws EntityValidationException, NamingException, URISyntaxException,
     NullifiedEntityException, NullifiedRoleException {
         Ii id = new Ii();
@@ -257,7 +248,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assignedIdentifier.setScope(IdentifierScope.VER);
         assignedIdentifier.setReliability(rel);
         assignedIdentifier.setIdentifierName("newIdentifierNameValue");
-        dto.setAssignedId(assignedIdentifier);  
+        dto.setAssignedId(assignedIdentifier);
         if (affOrgId != null) {
             Ii aff = new Ii();
             aff.setExtension(affOrgId);
@@ -265,7 +256,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
             aff.setIdentifierName("NCI organization entity identifier");
             dto.setScoperIdentifier(aff);
         }
-        
+
         RemoteServiceHelper.getIdentifiedPersonCorrelationServiceRemote().updateCorrelation(dto);
     }
 

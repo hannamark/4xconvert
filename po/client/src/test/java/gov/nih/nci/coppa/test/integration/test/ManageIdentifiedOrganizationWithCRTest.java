@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -110,13 +110,13 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
                 "703-111-1234", "703-111-1234", "http://www.example.com");
         String ioAffOrgId = selenium.getText("wwctrl_organization.id");
         assertNotEquals("null", ioAffOrgId.trim());
-        
+
         // create ACTIVE org we are using now.
         createOrganization("ACTIVE", ORG_FOR_TEST, getAddress(), "sample@example.com", "703-111-2345",
                 "703-111-1234", "703-111-1234", "http://www.example.com");
         String activeOrgId = selenium.getText("wwctrl_organization.id");
         assertNotEquals("null", activeOrgId.trim());
-  
+
         // Goto Manage IO Page
         accessManageIdentifiedOrganizationScreen();
         // add IO
@@ -126,40 +126,31 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
         // select a ACTIVE Scoper
         selectOrganizationScoper(ioAffOrgId.trim(), AFFILIATE_ORG_FOR_IO);
-        selenium.select("curateRoleForm.role.status", "label=ACTIVE"); 
+        selenium.select("curateRoleForm.role.status", "label=ACTIVE");
         selenium.type("curateRoleForm.role.assignedIdentifier.extension", "1234");
         selenium.type("curateRoleForm.role.assignedIdentifier.root", "1.2.3.4");
 
-        //handle pressing cancel on confirmation for changing reliability
-        //press cancel to abort the value change
-        selenium.chooseCancelOnNextConfirmation();
-        selenium.select("curateRoleForm.role.assignedIdentifier.reliability", "label=VRF");
-        assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
-        assertEquals("", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
-        //press OK to accept the change
-        selenium.select("curateRoleForm.role.assignedIdentifier.reliability", "label=VRF");
-        assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
-        assertEquals("VRF", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
+        // Test the Reliability Dropdown value changes.
+        verifyReliabilityChange();
 
-        
         selenium.select("curateRoleForm.role.assignedIdentifier.displayable", "label=TRUE");
         selenium.type("curateRoleForm.role.assignedIdentifier.identifierName", "identifierNameValue");
         selenium.select("curateRoleForm.role.assignedIdentifier.scope", "label=BUSN");
 
         clickAndWaitSaveButton();
-        
+
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully created!"));
         String ioId = selenium.getTable("row.1.0");
         assertNotEquals("null", ioId.trim());
         selenium.click("link=" + getSortFieldTestColumnName());
         ioId = selenium.getTable("row.1.0");
         assertNotEquals("null", ioId.trim());
-        
+
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
         clickAndWaitSaveButton();
-        
+
         updateRemoteIoOrg(ioId.trim());
 
         // Goto Manage IO Page.... should see CR
@@ -178,7 +169,7 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertEquals("identifierNameValue", selenium.getValue("curateRoleForm.role.assignedIdentifier.identifierName").trim());
         assertEquals("BUSN", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
         assertEquals("VRF", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
-        
+
         // copy over new ext
         selenium.click("copy_curateCrForm_role_assignedIdentifier");
         assertTrue(selenium.getConfirmation().matches("^Changing the reliability is usually not recommended\\. Are you sure you want to continue[\\s\\S]$"));
@@ -196,16 +187,16 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertEquals("UNV", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully updated!".trim()));
-        
+
         updateRemoteIoOrgWithAssignedIdReliabilityISS(ioId.trim());
-        
+
         // Goto Manage IO Page.... should see CR with ISS
         openAndWait("/po-web/protected/roles/organizational/IdentifiedOrganization/start.action?organization=" + activeOrgId);
         clickAndWait("edit_identifiedOrganization_id_" + ioId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Identified Organization - Comparison"));
-        
+
         assertEquals("ISS", selenium.getText("wwctrl_curateCrForm.role.assignedIdentifier.reliability").trim());
-        
+
         selenium.click("copy_curateCrForm_role_assignedIdentifier");
         assertTrue(selenium.getAlert().matches("^ISS not found!$"));
         clickAndWaitSaveButton();
@@ -216,12 +207,12 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
             NullifiedEntityException, NullifiedRoleException {
         helpUpdateRemoteIoOrg(ext, IdentifierReliability.UNV);
     }
-    
+
     private void updateRemoteIoOrgWithAssignedIdReliabilityISS(String ext) throws EntityValidationException, NamingException, URISyntaxException,
     NullifiedEntityException, NullifiedRoleException {
         helpUpdateRemoteIoOrg(ext, IdentifierReliability.ISS);
     }
-    
+
     private void helpUpdateRemoteIoOrg(String ext, IdentifierReliability rel) throws EntityValidationException, NamingException, URISyntaxException,
     NullifiedEntityException, NullifiedRoleException {
         Ii id = new Ii();
@@ -237,10 +228,10 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assignedIdentifier.setReliability(rel);
         assignedIdentifier.setIdentifierName("newIdentifierNameValue");
         dto.setAssignedId(assignedIdentifier);
-        
+
         RemoteServiceHelper.getIdentifiedOrganizationCorrelationServiceRemote().updateCorrelation(dto);
     }
-    
+
     protected String getSortFieldTestColumnName() {
         return "Affiliated Organization Name";
     }

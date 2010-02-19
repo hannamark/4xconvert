@@ -17,40 +17,40 @@
 <s:set name="cssClass" value=""/>
 </s:else>
 <s:set name="displayableValues" value="#{'true':'TRUE', 'false':'FALSE'}" />
-<s:select 
-    name="%{#attr.iiKeyBase + '.displayable'}" 
+<s:select
+    name="%{#attr.iiKeyBase + '.displayable'}"
     label="%{getText(#attr.iiLabelKeyBase + '.displayable')}"
-    list="#displayableValues" 
+    list="#displayableValues"
     headerKey="" headerValue="--Is Displayable?--"
-    value="#attr.ii.displayable" 
+    value="#attr.ii.displayable"
     id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.displayable'}">
 </s:select>
-<s:textfield name="%{#attr.iiKeyBase + '.extension'}" required="%{#attr.required}" cssClass="%{cssClass}" 
+<s:textfield name="%{#attr.iiKeyBase + '.extension'}" required="%{#attr.required}" cssClass="%{cssClass}"
     size="55" maxlength="255"
-    label="%{getText(#attr.iiLabelKeyBase + '.extension')}" 
+    label="%{getText(#attr.iiLabelKeyBase + '.extension')}"
     id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.extension'}"/>
-<s:textfield name="%{#attr.iiKeyBase + '.identifierName'}" 
+<s:textfield name="%{#attr.iiKeyBase + '.identifierName'}"
 	size="55" maxlength="255"
 	label="%{getText(#attr.iiLabelKeyBase + '.identifierName')}"
 	id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.identifierName'}"/>
 <s:set name="reliabilityValues" value="@gov.nih.nci.iso21090.IdentifierReliability@values()" />
 <s:if test="%{#attr.showAllReliabilities == true}">
-<s:select 
-    name="%{#attr.iiKeyBase + '.reliability'}" 
+<s:select
+    name="%{#attr.iiKeyBase + '.reliability'}"
     label="%{getText(#attr.iiLabelKeyBase + '.reliability')}"
-    list="reliabilityValues" 
-    listKey="name()" listValue="name()" 
+    list="reliabilityValues"
+    listKey="name()" listValue="name()"
     headerKey="" headerValue="--Select a Reliability--"
     value="#attr.ii.reliability"
     id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.reliability'}">
 </s:select>
 </s:if>
 <s:else>
-<s:select 
-    name="%{#attr.iiKeyBase + '.reliability'}" 
+<s:select
+    name="%{#attr.iiKeyBase + '.reliability'}"
     label="%{getText(#attr.iiLabelKeyBase + '.reliability')}"
-    list="availableReliability" 
-    listKey="name()" listValue="name()" 
+    list="availableReliability"
+    listKey="name()" listValue="name()"
     headerKey="" headerValue="--Select a Reliability--"
     value="#attr.ii.reliability"
     id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.reliability'}"
@@ -58,28 +58,36 @@
 </s:select>
 <script type="text/javascript" language="javascript">
     var ${fn:replace(formNameBase, ".", "_")}_${fn:replace(iiKeyBase, ".", "_")}_reliability = '${ii.reliability}';
+    var reliabilityPreviousValue = '${ii.reliability}';
     function confirmReliability(elem) {
-        var r = confirm('<s:text name="ii.reliability.confirmation"/>');
-        if (r == true) {
-            ${fn:replace(formNameBase, ".", "_")}_${fn:replace(iiKeyBase, ".", "_")}_reliability = $F(elem)
-            return true;
+        if (reliabilityPreviousValue != "") {
+            var r = confirm('<s:text name="ii.reliability.confirmation"/>');
+            if (r == true) {
+                ${fn:replace(formNameBase, ".", "_")}_${fn:replace(iiKeyBase, ".", "_")}_reliability = $F(elem);
+                reliabilityPreviousValue = $F(elem);
+                return true;
+            } else {
+                $(elem).value = ${fn:replace(formNameBase, ".", "_")}_${fn:replace(iiKeyBase, ".", "_")}_reliability;
+                return false;
+            }
         } else {
-            $(elem).value = ${fn:replace(formNameBase, ".", "_")}_${fn:replace(iiKeyBase, ".", "_")}_reliability;
-            return false;
+            ${fn:replace(formNameBase, ".", "_")}_${fn:replace(iiKeyBase, ".", "_")}_reliability = $F(elem);
+            reliabilityPreviousValue = $F(elem);
+            return true;
         }
     }
 </script>
 </s:else>
 <s:textfield name="%{#attr.iiKeyBase + '.root'}" required="%{#attr.required}" cssClass="%{cssClass}"
 	size="55" maxlength="255"
-	label="%{getText(#attr.iiLabelKeyBase + '.root')}" 
+	label="%{getText(#attr.iiLabelKeyBase + '.root')}"
 	id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.root'}"/>
 <s:set name="scopeValues" value="@gov.nih.nci.iso21090.IdentifierScope@values()" />
-<s:select 
-    name="%{#attr.iiKeyBase + '.scope'}" 
+<s:select
+    name="%{#attr.iiKeyBase + '.scope'}"
     label="%{getText(#attr.iiLabelKeyBase + '.scope')}"
-    list="#scopeValues" 
-    listKey="name()" listValue="name()" 
+    list="#scopeValues"
+    listKey="name()" listValue="name()"
     headerKey="" headerValue="--Select a Scope--"
     value="#attr.ii.scope"
     id="%{#attr.formNameBase + '.' +  #attr.iiLabelKeyBase + '.scope'}">
