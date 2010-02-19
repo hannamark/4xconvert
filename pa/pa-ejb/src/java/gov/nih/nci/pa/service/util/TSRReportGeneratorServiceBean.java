@@ -343,6 +343,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
   /** The correlation utils. */
   private final CorrelationUtils correlationUtils = new CorrelationUtils();
   
+  private final PAServiceUtils paServiceUtils = new PAServiceUtils();
+  
   /**
    * Generate tsr html. 
    * @param studyProtocolIi ii of studyprotocol 
@@ -1245,20 +1247,20 @@ private String getInterventionAltNames(InterventionDTO i) throws PAException {
       html.append(BR);
       html.append(appendData("NCI Identifier" , studyProtocolDto.getAssignedIdentifier().getExtension() , true , true));
       if (!sParts.isEmpty()) {
-      for (StudySiteDTO spart : sParts) {
-          html.append(appendData("Lead Organization Identifier" , 
-                  getInfo(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
-          break;
+          for (StudySiteDTO spart : sParts) {
+              html.append(appendData("Lead Organization Identifier" , 
+                      getInfo(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
+              break;
+          }
       }
-      spartDTO = new StudySiteDTO();
-      spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-      sParts = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
-      for (StudySiteDTO spart : sParts) {
-          html.append(appendData("NCT Number" ,
-                  getInfo(spart.getLocalStudyProtocolIdentifier() , true) , true, true));
-          break;
-       }
-      } 
+      html.append(appendData("NCT Number" , getInfo(paServiceUtils.getStudyIdentifier(
+              studyProtocolDto.getIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE), true) , true, true));
+      if (!isProprietaryTrial(studyProtocolDto)) {
+          html.append(appendData("DCP Identifier", getInfo(paServiceUtils.getStudyIdentifier(
+              studyProtocolDto.getIdentifier(), PAConstants.DCP_IDENTIFIER_TYPE), true) , true, true));
+          html.append(appendData("CTEP Identifier", getInfo(paServiceUtils.getStudyIdentifier(
+              studyProtocolDto.getIdentifier(), PAConstants.CTEP_IDENTIFIER_TYPE), true) , true, true));
+      }
       if (isProprietaryTrial(studyProtocolDto)) {
           Organization lead = ocsr.getOrganizationByFunctionRole(
                   studyProtocolDto.getIdentifier(), CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
