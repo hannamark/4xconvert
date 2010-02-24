@@ -100,6 +100,7 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -155,7 +156,6 @@ public class PAUtil {
     private static final int EMAIL_IDX = 7;
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;
-
 
     /**
      *
@@ -1117,6 +1117,19 @@ public class PAUtil {
     }
     /**
      * 
+     * @param strNumber str
+     * @return valid
+     */
+    public static boolean isNumeric(String strNumber) {
+        try {
+            Double.parseDouble(strNumber);
+          } catch (NumberFormatException e) {
+            return false;
+          }
+       return true; 
+    }
+    /**
+     * 
      * @param phoneNumber no
      * @return s
      */
@@ -1196,5 +1209,56 @@ public class PAUtil {
         }
         return strPhone;
     }
-
+    /**
+     * 
+     * @param minUnit min
+     * @param maxUnit max
+     * @return true
+     */
+    public static boolean isUnitLessOrSame(String minUnit, String maxUnit) {
+        boolean isSameorLess = false;
+        if (minUnit.equalsIgnoreCase(maxUnit)) {
+            isSameorLess = true;
+        }
+        if (maxUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
+            isSameorLess = true;
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode()) 
+                && !minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
+            isSameorLess = true;
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode()) 
+                && !(minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
+            isSameorLess = true;
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode()) 
+                && !(minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode()) 
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
+            isSameorLess = true;
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode()) 
+                && !(minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode()) 
+                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode()) 
+                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
+            isSameorLess = true;
+        } else if (maxUnit.equalsIgnoreCase(UnitsCode.MINUTES.getCode()) 
+                && !(minUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode()) 
+                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode()) 
+                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
+            isSameorLess = true;
+        }
+        return isSameorLess;
+    }
+    /**
+     * @param age age
+     * @return s
+     */
+    public static String getAge(BigDecimal age) {
+        String retAge = age.toString();
+        if (retAge.endsWith(".0")) {
+            retAge = retAge.replace(".0", "");   
+        }
+        return retAge;
+    }
 }

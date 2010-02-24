@@ -130,6 +130,24 @@ BubbleTips.activateTipOn("dfn");
                    </s:fielderror>                            
                 </span> 
           </td>
+           <td scope="row" class="label" >
+         <label for="typeCode">
+                <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">*</span>
+         </label>
+         </td> 
+        <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
+       <td class="value" colspan="2">   
+            <s:select headerKey="" headerValue="" 
+                    name="minValueUnit" 
+                    list="#unitsValues"  
+                    cssStyle="width:76px" /> 
+            <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>minValueUnit</s:param>
+                   </s:fielderror>                            
+             </span></td>
+          </tr>
+          <tr>
           <td scope="row" class="label" >
          <label for="typeCode">
                 <fmt:message key="isdesign.eligibilitycriteria.maximumAge"/><span class="required">*</span>
@@ -150,12 +168,12 @@ BubbleTips.activateTipOn("dfn");
         <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
        <td class="value" colspan="2">   
             <s:select headerKey="" headerValue="" 
-                    name="valueUnit" 
+                    name="maxValueUnit" 
                     list="#unitsValues"  
                     cssStyle="width:76px" /> 
             <span class="formErrorMsg"> 
                     <s:fielderror>
-                    <s:param>valueUnit</s:param>
+                    <s:param>maxValueUnit</s:param>
                    </s:fielderror>                            
              </span>
              <s:hidden name="valueId"/>

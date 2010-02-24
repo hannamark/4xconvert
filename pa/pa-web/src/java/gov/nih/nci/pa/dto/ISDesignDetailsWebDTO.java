@@ -129,7 +129,8 @@ public class ISDesignDetailsWebDTO {
     private String subject;
     private String message;
     
-    
+    private String minUOM;
+    private String maxUOM;
     
     /**
      * @return the cdePublicIdentifier
@@ -517,5 +518,29 @@ public class ISDesignDetailsWebDTO {
      public void setMessage(String message) {
        this.message = message;
      }
+    /**
+     * @return the minUOM
+     */
+    public String getMinUOM() {
+        return minUOM;
+    }
+    /**
+     * @param minUOM the minUOM to set
+     */
+    public void setMinUOM(String minUOM) {
+        this.minUOM = minUOM;
+    }
+    /**
+     * @return the maxUOM
+     */
+    public String getMaxUOM() {
+        return maxUOM;
+    }
+    /**
+     * @param maxUOM the maxUOM to set
+     */
+    public void setMaxUOM(String maxUOM) {
+        this.maxUOM = maxUOM;
+    }
     
 }

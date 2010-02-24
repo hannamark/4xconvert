@@ -269,10 +269,6 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
     private static final String TEXT_BLOCK = "textblock";
     private static final String YES = "Yes";
     private static final String NO = "No";
-    private static final int DAYS = 365;
-    private static final int MONTHS = 12;
-    private static final int HOURS = 24;
-    private static final int MINUTES = 60;
     private static final int MAX_AGE = 999;
     private static final int ERROR_COUNT = 5;
     private static final String FIRST_NAME = "first_name";
@@ -799,33 +795,20 @@ public class CTGovXmlGeneratorServiceBean implements  CTGovXmlGeneratorServiceRe
         appendElement(eligibility,
                 createElement("healthy_volunteers", spDTO.getAcceptHealthyVolunteersIndicator(), doc));
         appendElement(eligibility, createElement("gender", genderCode, doc));
-        appendElement(eligibility, createElement("minimum_age", convertToYears(minAge , minUnit) , doc));
-        appendElement(eligibility, createElement("maximum_age", convertToYears(maxAge , maxUnit) , doc));
+        appendElement(eligibility, createElement("minimum_age", getAgeUnit(minAge , minUnit) , doc));
+        appendElement(eligibility, createElement("maximum_age", getAgeUnit(maxAge , maxUnit) , doc));
         if (eligibility.hasChildNodes()) {
             appendElement(root , eligibility);
         }
     }
    
-    private static String convertToYears(BigDecimal b , String unit) {
-        int age = 0;
+    private static String getAgeUnit(BigDecimal b , String unit) {
         if (b.intValue() == 0 || b.intValue() ==  MAX_AGE) {
             return "N/A";
         } else if (unit == null) {
             return null;
-        } else if (unit.equalsIgnoreCase("Years")) {
-            age = b.intValue();
-        } else if (unit.equalsIgnoreCase("months")) {
-            age = b.intValue() / MONTHS;
-        } else if (unit.equalsIgnoreCase("days")) {
-            age = b.intValue() / DAYS;
-        } else if (unit.equalsIgnoreCase("hours")) {
-            age = b.intValue() / DAYS / HOURS;
-        } else if (unit.equalsIgnoreCase("minutes")) {
-            age = b.intValue() / DAYS / HOURS / MINUTES;
-        } else {
-            age = b.intValue();
         }
-        return Integer.valueOf(age).toString() + " years";
+        return PAUtil.getAge(b) + " " + unit.toLowerCase(Locale.US);
     }
     private void createArmGroup(StudyProtocolDTO spDTO , Document doc , Element root) throws PAException {
         List<ArmDTO> arms = armService.getByStudyProtocol(spDTO.getIdentifier());

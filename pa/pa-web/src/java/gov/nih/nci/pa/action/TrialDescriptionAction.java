@@ -154,6 +154,7 @@ public class TrialDescriptionAction extends ActionSupport {
           return RESULT;
         }
         save();
+        query();
         return RESULT;
     }
 

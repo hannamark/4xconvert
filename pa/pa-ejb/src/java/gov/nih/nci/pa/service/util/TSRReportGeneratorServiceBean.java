@@ -94,7 +94,6 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.PAContactDTO;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
@@ -789,7 +788,7 @@ private String getInterventionAltNames(InterventionDTO i) throws PAException {
                if (pq.getLow().getValue().intValue() == 0) {
                   html.append(appendData("Minimum Age", "N/A" , true , true));
                } else {
-                  html.append(appendData("Minimum Age", pq.getLow().getValue().intValue()  
+                  html.append(appendData("Minimum Age", PAUtil.getAge(pq.getLow().getValue())
                   + " " + pq.getLow().getUnit(), true , true));
                }
              } 
@@ -797,7 +796,7 @@ private String getInterventionAltNames(InterventionDTO i) throws PAException {
                if (pq.getHigh().getValue().intValue() == MAX_AGE) {
                   html.append(appendData("Maximum Age", "N/A" , true , true));
                } else {
-                  html.append(appendData("Maximum Age", pq.getHigh().getValue().intValue()  
+                  html.append(appendData("Maximum Age", PAUtil.getAge(pq.getHigh().getValue())  
                   + " " + pq.getHigh().getUnit(), true , true));
                }
              }  
@@ -1737,10 +1736,7 @@ private boolean isProprietaryTrial(StudyProtocolDTO studyProtocolDto) {
       List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(spDTO.getIdentifier());
       List<PlannedActivityDTO> interventionList = new ArrayList<PlannedActivityDTO>();
       for (PlannedActivityDTO dto : paList) {
-          if (dto.getCategoryCode().getCode().equalsIgnoreCase(ActivityCategoryCode.INTERVENTION.getCode())
-             || dto.getCategoryCode().getCode().equalsIgnoreCase(ActivityCategoryCode.PLANNED_PROCEDURE.getCode())
-             || dto.getCategoryCode().getCode().equalsIgnoreCase(
-                     ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.getCode())) {
+          if (PAUtil.isTypeIntervention(dto.getCategoryCode())) {
               interventionList.add(dto);
           }
       }

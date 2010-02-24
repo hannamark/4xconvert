@@ -96,6 +96,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
+import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -180,7 +181,17 @@ public class EligibilityCriteriaAction extends ActionSupport {
     private static String cdeRequestSubject;
     private static String cdeRequestText;
     private static final int TOTAL_COUNT = 3;    
-  
+    private String minValueUnit;
+    private String maxValueUnit;
+    private static final int DAYS = 365;
+    private static final int MONTHS_DAYS = 30;
+    private static final int HOURS = 24;
+    private static final int MINUTES = 60;
+    private static final int WEEKS_IN_YEAR  = 52;
+    private static final int WEEKS_IN_MONTH  = 4;
+    private static final int WEEKS_DAYS = 7;
+    private static final int MONTHS = 12;
+
     /**
      * 
      * @return String
@@ -470,7 +481,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
       if (minimumValue != null || maximumValue != null) {
         pecDTOAge.setStudyProtocolIdentifier(studyProtocolIi);
         pecDTOAge.setCriterionName(StConverter.convertToSt("AGE"));
-        pecDTOAge.setValue(convertToIvlPq(valueUnit, minimumValue, maximumValue));
+        pecDTOAge.setValue(convertToIvlPq(minValueUnit, minimumValue, maxValueUnit, maximumValue));
         pecDTOAge.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
         pecDTOAge.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
         if (PAUtil.isNotEmpty(valueId)) {
@@ -493,13 +504,13 @@ public class EligibilityCriteriaAction extends ActionSupport {
   }
   
   @SuppressWarnings({"PMD" })   
-  private Ivl<Pq> convertToIvlPq(String uom, String minValue, String maxValue) {
-   if (uom == null && minValue == null && maxValue == null) {
+  private Ivl<Pq> convertToIvlPq(String minUom, String minValue, String maxUom, String maxValue) {
+   if (minUom == null && minValue == null && maxValue == null && maxUom == null) {
      return null; 
    }
-   IvlConverter.JavaPq low  = new IvlConverter.JavaPq(uom ,
+   IvlConverter.JavaPq low  = new IvlConverter.JavaPq(minUom ,
       PAUtil.convertStringToDecimal(minValue), null);
-   IvlConverter.JavaPq high  = new IvlConverter.JavaPq(uom , 
+   IvlConverter.JavaPq high  = new IvlConverter.JavaPq(maxUom , 
       PAUtil.convertStringToDecimal(maxValue), null);
    Ivl<Pq> ivl = IvlConverter.convertPq().convertToIvl(low, high);  
    return ivl;
@@ -705,7 +716,8 @@ private void populateList() throws PAException {
       pecDTO.setIdentifier(IiConverter.convertToIi(identifier));
       pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
       pecDTO.setCriterionName(StConverter.convertToSt(dtoWeb.getCriterionName()));
-      pecDTO.setValue(convertToIvlPq(dtoWeb.getUnit(), dtoWeb.getValueIntegerMin(), dtoWeb.getValueIntegerMax()));
+      pecDTO.setValue(convertToIvlPq(
+              dtoWeb.getMinUOM(), dtoWeb.getValueIntegerMin(), dtoWeb.getMaxUOM(), dtoWeb.getValueIntegerMax()));
       if (dtoWeb.getInclusionIndicator() == null) {
           pecDTO.setInclusionIndicator(BlConverter.convertToBl(null));
       } else  if (dtoWeb.getInclusionIndicator().equalsIgnoreCase("Inclusion")) {
@@ -741,11 +753,12 @@ private void populateList() throws PAException {
       if (dto.getCriterionName().getValue() != null
           && dto.getCriterionName().getValue().equals("AGE")) {
         if (dto.getValue().getHigh().getValue() != null) {  
-          maximumValue = String.valueOf(dto.getValue().getHigh().getValue().intValue());
+          maximumValue = String.valueOf(dto.getValue().getHigh().getValue());
+          maxValueUnit = dto.getValue().getHigh().getUnit();
         }
-        valueUnit = dto.getValue().getLow().getUnit();
         if (dto.getValue().getLow().getValue() != null) { 
-          minimumValue = String.valueOf(dto.getValue().getLow().getValue().intValue());
+          minimumValue = String.valueOf(dto.getValue().getLow().getValue());
+          minValueUnit = dto.getValue().getLow().getUnit();
         }
         valueId = dto.getIdentifier().getExtension();
       }
@@ -823,29 +836,104 @@ private void populateList() throws PAException {
     if (PAUtil.isEmpty(this.maximumValue)) {
       addFieldError("maximumValue", getText("error.maximumValue"));
     }
-    if (PAUtil.isNotEmpty(this.maximumValue) && !PAUtil.isValidNumber(this.maximumValue)) {
+    if (PAUtil.isNotEmpty(this.maximumValue) && !PAUtil.isNumeric(this.maximumValue)) {
         addFieldError("maximumValue", getText("error.numeric"));
     }
-    if (PAUtil.isEmpty(this.valueUnit)) {
-      addFieldError("valueUnit", getText("error.valueUnit"));
+    if (PAUtil.isEmpty(this.minValueUnit)) {
+      addFieldError("minValueUnit", getText("error.valueUnit"));
     }
+    if (PAUtil.isEmpty(this.maxValueUnit)) {
+        addFieldError("maxValueUnit", getText("error.valueUnit"));
+      }
+    String strMinVal = "minimumValue";
     if (PAUtil.isEmpty(this.minimumValue)) {
-      addFieldError("minimumValue", getText("error.minimumValue"));
+      addFieldError(strMinVal, getText("error.minimumValue"));
     }
-    if (PAUtil.isNotEmpty(this.minimumValue) && !PAUtil.isValidNumber(this.minimumValue)) {
-        addFieldError("minimumValue", getText("error.numeric"));
+    if (PAUtil.isNotEmpty(this.minimumValue) && !PAUtil.isNumeric(this.minimumValue)) {
+        addFieldError(strMinVal, getText("error.numeric"));
     }
     if (PAUtil.isNotEmpty(this.minimumValue) && PAUtil.isNotEmpty(this.maximumValue)
-            && PAUtil.isValidNumber(this.minimumValue) && PAUtil.isValidNumber(this.maximumValue)) {
-        long lminVal = Long.parseLong(minimumValue);
-        long lmaxVal = Long.parseLong(maximumValue);
-        if (lminVal > lmaxVal) {
-            addFieldError("minimumValue", "Minimum age should not be greater than maximum age.");
+            && PAUtil.isNotEmpty(minValueUnit)  && PAUtil.isNotEmpty(maxValueUnit)
+            && PAUtil.isNumeric(this.minimumValue) && PAUtil.isNumeric(this.maximumValue)) {
+        double minVal = Double.parseDouble(minimumValue);
+        double maxVal = Double.parseDouble(maximumValue);
+        if (minValueUnit.equalsIgnoreCase(maxValueUnit) && minVal > maxVal) {
+            addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");    
+        }        
+        if (!PAUtil.isUnitLessOrSame(minValueUnit, maxValueUnit)) {
+            addFieldError("minValueUnit", "Minimum UOM should not be greater than maximum UOM.");
+        }
+        if (PAUtil.isUnitLessOrSame(minValueUnit, maxValueUnit)) {
+            double maxValUOM = getMaxValueInMinUOM(minValueUnit, maxValueUnit, maximumValue);
+            if (minVal > maxValUOM) {
+                addFieldError(strMinVal, "Minimum age should not be greater than maximum age.");
+            }
         }
     }
   }
-  
-  private void enforceEligibilityBusinessRules() throws PAException {
+  @SuppressWarnings ({"PMD" })
+  private double getMaxValueInMinUOM(String minValueUnit2, String maxValueUnit2,
+        String maximumValue2) {
+      double retMaxVal = 0;
+      if (minValueUnit2.equalsIgnoreCase(UnitsCode.MINUTES.getCode())) {
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * MINUTES * HOURS * DAYS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * MINUTES * HOURS * MONTHS_DAYS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.WEEKS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * MINUTES * HOURS * WEEKS_DAYS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.DAYS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * MINUTES * HOURS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.HOURS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * MINUTES;
+          }
+      }
+      if (minValueUnit2.equalsIgnoreCase(UnitsCode.HOURS.getCode())) {
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * HOURS * DAYS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * HOURS * MONTHS_DAYS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.WEEKS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * HOURS * WEEKS_DAYS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.DAYS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * HOURS;
+          }
+      }
+      if (minValueUnit2.equalsIgnoreCase(UnitsCode.DAYS.getCode())) {
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * DAYS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * MONTHS_DAYS;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.WEEKS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * WEEKS_DAYS;
+          }
+      }
+      if (minValueUnit2.equalsIgnoreCase(UnitsCode.WEEKS.getCode())) {
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * WEEKS_IN_YEAR;
+          }
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * WEEKS_IN_MONTH;
+          }
+      }
+      if (minValueUnit2.equalsIgnoreCase(UnitsCode.MONTHS.getCode())) {
+          if (maxValueUnit2.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
+              retMaxVal = Double.valueOf(maximumValue2) * MONTHS;
+          }
+      }
+    return retMaxVal;
+}
+
+private void enforceEligibilityBusinessRules() throws PAException {
    
    if (PAUtil.isEmpty(webDTO.getStructuredType())) {
     addFieldError("webDTO.structuredType", getText("error.structuredType.mandatory"));
@@ -1254,6 +1342,32 @@ private void populateList() throws PAException {
     public void setCdeCategoryCode(String cdeCategoryCode) {
       this.cdeCategoryCode = cdeCategoryCode;
     }
-  
-  
+
+    /**
+     * @return the minValueUnit
+     */
+    public String getMinValueUnit() {
+        return minValueUnit;
+    }
+    
+    /**
+     * @param minValueUnit the minValueUnit to set
+     */
+    public void setMinValueUnit(String minValueUnit) {
+        this.minValueUnit = minValueUnit;
+    }
+    
+    /**
+     * @return the maxValueUnit
+     */
+    public String getMaxValueUnit() {
+        return maxValueUnit;
+    }
+    
+    /**
+     * @param maxValueUnit the maxValueUnit to set
+     */
+    public void setMaxValueUnit(String maxValueUnit) {
+        this.maxValueUnit = maxValueUnit;
+    }
  }

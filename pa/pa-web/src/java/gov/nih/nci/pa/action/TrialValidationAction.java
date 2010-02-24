@@ -294,6 +294,7 @@ public class TrialValidationAction extends ActionSupport {
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
+            query(); 
     }
     @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     private void enforceBusinessRules(String operation) {   

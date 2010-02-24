@@ -168,6 +168,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
                 Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         ServletActionContext.getRequest().getSession().setAttribute(
                 Constants.DOC_WFS_MENU, helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
+        query(); 
     }
     /**
      * Removes/Deletes the Central Contact from General Trial Details when the user click on the remove button.

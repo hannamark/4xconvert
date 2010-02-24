@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.iso.convert;
 
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -238,7 +240,8 @@ public class StudyProtocolConverter {
        studyProtocol.setMaximumTargetAccrualNumber(
                IvlConverter.convertInt().convertHigh(studyProtocolDTO.getTargetAccrualNumber()));
        }
-       studyProtocol.setOfficialTitle(StConverter.convertToString(studyProtocolDTO.getOfficialTitle()));
+       studyProtocol.setOfficialTitle(StringEscapeUtils.unescapeHtml(
+               StConverter.convertToString(studyProtocolDTO.getOfficialTitle())));
        if (studyProtocolDTO.getPhaseCode() != null) {
            studyProtocol.setPhaseCode(PhaseCode.getByCode(studyProtocolDTO.getPhaseCode().getCode()));
        }
@@ -257,9 +260,10 @@ public class StudyProtocolConverter {
        }
        studyProtocol.setPrimaryPurposeOtherText(StConverter.convertToString(
                studyProtocolDTO.getPrimaryPurposeOtherText()));
-       studyProtocol.setPublicDescription(StConverter.convertToString(
-               studyProtocolDTO.getPublicDescription()));
-       studyProtocol.setPublicTitle(StConverter.convertToString(studyProtocolDTO.getPublicTitle()));
+       studyProtocol.setPublicDescription(StringEscapeUtils.unescapeHtml(StConverter.convertToString(
+               studyProtocolDTO.getPublicDescription())));
+       studyProtocol.setPublicTitle(StringEscapeUtils.unescapeHtml(
+               StConverter.convertToString(studyProtocolDTO.getPublicTitle())));
        if (studyProtocolDTO.getRecordVerificationDate() != null) {
            studyProtocol.setRecordVerificationDate(
                    TsConverter.convertToTimestamp(studyProtocolDTO.getRecordVerificationDate()));
@@ -267,8 +271,8 @@ public class StudyProtocolConverter {
        
        studyProtocol.setSection801Indicator(BlConverter.covertToBoolean(studyProtocolDTO.getSection801Indicator()));
        
-       studyProtocol.setScientificDescription(StConverter.convertToString(
-               studyProtocolDTO.getScientificDescription()));
+       studyProtocol.setScientificDescription(StringEscapeUtils.unescapeHtml(StConverter.convertToString(
+               studyProtocolDTO.getScientificDescription())));
        if (studyProtocolDTO.getStartDate() != null) {
            studyProtocol.setStartDate(
                    TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate()));
@@ -279,7 +283,7 @@ public class StudyProtocolConverter {
 
        }
        if (studyProtocolDTO.getKeywordText() != null) {
-       studyProtocol.setKeywordText(studyProtocolDTO.getKeywordText().getValue());
+       studyProtocol.setKeywordText(StringEscapeUtils.unescapeHtml(studyProtocolDTO.getKeywordText().getValue()));
        }
        studyProtocol.setAcceptHealthyVolunteersIndicator(BlConverter.covertToBoolean(
                studyProtocolDTO.getAcceptHealthyVolunteersIndicator()));
