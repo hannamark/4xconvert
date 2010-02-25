@@ -33,7 +33,7 @@ import org.iso._21090.CD;
  */
 public class IdentifiedPersonClient extends IdentifiedPersonClientBase implements IdentifiedPersonI {
 
-    private static ClientParameterHelper<IdentifiedPersonClient> helper = 
+    private static ClientParameterHelper<IdentifiedPersonClient> helper =
         new ClientParameterHelper<IdentifiedPersonClient>(IdentifiedPersonClient.class);
 
     /**
@@ -66,10 +66,10 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         System.out.println("Running the Grid Service Client");
         try{
 
-            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
-            
+
             IdentifiedPersonClient client = new IdentifiedPersonClient(helper.getArgument("-url"));
 
             for (Method method : helper.getRunMethods()) {
@@ -91,13 +91,6 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         id.setExtension(helper.getArgument("-getId", "1"));
         IdentifiedPerson result = client.getById(id);
         ClientUtils.handleResult(result);
-    }
-
-    @GridTestMethod
-    private static void searchIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
-        IdentifiedPerson criteria = createCriteria();
-        IdentifiedPerson[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
     }
 
     @GridTestMethod
@@ -172,18 +165,6 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
     idContainer.setId(id);
     params.setId(idContainer);
     gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.GetByIdsResponse boxedResult = portType.getByIds(params);
-    return boxedResult.getIdentifiedPerson();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequestIdentifiedPerson identifiedPersonContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchRequestIdentifiedPerson();
-    identifiedPersonContainer.setIdentifiedPerson(identifiedPerson);
-    params.setIdentifiedPerson(identifiedPersonContainer);
-    gov.nih.nci.coppa.services.structuralroles.identifiedperson.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getIdentifiedPerson();
     }
   }

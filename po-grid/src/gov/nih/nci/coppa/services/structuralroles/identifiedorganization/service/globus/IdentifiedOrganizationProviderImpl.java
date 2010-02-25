@@ -44,12 +44,6 @@ public class IdentifiedOrganizationProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchResponse();
-    boxedResult.setIdentifiedOrganization(impl.search(params.getIdentifiedOrganization().getIdentifiedOrganization()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.UpdateResponse();
     impl.update(params.getIdentifiedOrganization().getIdentifiedOrganization());

@@ -44,12 +44,6 @@ public class HealthCareProviderProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchResponse();
-    boxedResult.setHealthCareProvider(impl.search(params.getHealthCareProvider().getHealthCareProvider()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.UpdateResponse();
     impl.update(params.getHealthCareProvider().getHealthCareProvider());

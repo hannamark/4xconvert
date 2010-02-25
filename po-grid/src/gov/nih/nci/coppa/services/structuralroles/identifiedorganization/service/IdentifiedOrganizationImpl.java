@@ -37,10 +37,6 @@ public class IdentifiedOrganizationImpl extends IdentifiedOrganizationImplBase {
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedOrganization[] search(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-      return impl.search(identifiedOrganization);
-  }
-
   public void update(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     impl.update(identifiedOrganization);
   }

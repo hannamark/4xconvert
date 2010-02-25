@@ -35,7 +35,7 @@ import org.iso._21090.EntityNamePartType;
  */
 public class PersonClient extends PersonClientBase implements PersonI {
 
-    private static ClientParameterHelper<PersonClient> helper = 
+    private static ClientParameterHelper<PersonClient> helper =
         new ClientParameterHelper<PersonClient>(PersonClient.class);
 
     /**
@@ -67,10 +67,10 @@ public class PersonClient extends PersonClientBase implements PersonI {
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-            String[] localArgs = new String[] {"-getId"};          
+            String[] localArgs = new String[] {"-getId"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
-            
+
             PersonClient client = new PersonClient(helper.getArgument("-url"));
 
             for (Method method : helper.getRunMethods()) {
@@ -85,16 +85,9 @@ public class PersonClient extends PersonClientBase implements PersonI {
     }
 
     @GridTestMethod
-    private static void searchPersons(PersonClient client) throws RemoteException {
-        Person criteria = createCriteria();
-        gov.nih.nci.coppa.po.Person[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
-    }
-
-    @GridTestMethod
     private static void queryPersons(PersonClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
-        limitOffset.setLimit(2);
+        limitOffset.setLimit(1);
         limitOffset.setOffset(0);
         Person criteria = createCriteria();
         gov.nih.nci.coppa.po.Person[] results = client.query(criteria, limitOffset);
@@ -175,18 +168,6 @@ public class PersonClient extends PersonClientBase implements PersonI {
     params.setPerson(personContainer);
     gov.nih.nci.coppa.services.entities.person.stubs.ValidateResponse boxedResult = portType.validate(params);
     return boxedResult.getStringMap();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest params = new gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.entities.person.stubs.SearchRequestPerson personContainer = new gov.nih.nci.coppa.services.entities.person.stubs.SearchRequestPerson();
-    personContainer.setPerson(person);
-    params.setPerson(personContainer);
-    gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse boxedResult = portType.search(params);
-    return boxedResult.getPerson();
     }
   }
 

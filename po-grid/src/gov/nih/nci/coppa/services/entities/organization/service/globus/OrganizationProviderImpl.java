@@ -38,12 +38,6 @@ public class OrganizationProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.entities.organization.stubs.SearchResponse search(gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    gov.nih.nci.coppa.services.entities.organization.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.entities.organization.stubs.SearchResponse();
-    boxedResult.setOrganization(impl.search(params.getOrganization().getOrganization()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.entities.organization.stubs.ValidateResponse validate(gov.nih.nci.coppa.services.entities.organization.stubs.ValidateRequest params) throws RemoteException {
     gov.nih.nci.coppa.services.entities.organization.stubs.ValidateResponse boxedResult = new gov.nih.nci.coppa.services.entities.organization.stubs.ValidateResponse();
     boxedResult.setStringMap(impl.validate(params.getOrganization().getOrganization()));

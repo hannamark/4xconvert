@@ -35,7 +35,7 @@ import org.iso._21090.IdentifierReliability;
  */
 public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBase implements IdentifiedOrganizationI {
 
-    private static ClientParameterHelper<IdentifiedOrganizationClient> helper = 
+    private static ClientParameterHelper<IdentifiedOrganizationClient> helper =
         new ClientParameterHelper<IdentifiedOrganizationClient>(IdentifiedOrganizationClient.class);
 
     /**
@@ -67,10 +67,10 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client idOrg");
         try{
-            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
-            
+
             IdentifiedOrganizationClient client = new IdentifiedOrganizationClient(helper.getArgument("-url"));
 
             for (Method method : helper.getRunMethods()) {
@@ -135,13 +135,6 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
     }
 
     @GridTestMethod
-    private static void searchIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
-        IdentifiedOrganization criteria = createCriteria();
-        IdentifiedOrganization[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
-    }
-
-    @GridTestMethod
     private static void queryIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);
@@ -194,18 +187,6 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
     idContainer.setId(id);
     params.setId(idContainer);
     gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.GetByIdsResponse boxedResult = portType.getByIds(params);
-    return boxedResult.getIdentifiedOrganization();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.IdentifiedOrganization[] search(gov.nih.nci.coppa.po.IdentifiedOrganization identifiedOrganization) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchRequestIdentifiedOrganization identifiedOrganizationContainer = new gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchRequestIdentifiedOrganization();
-    identifiedOrganizationContainer.setIdentifiedOrganization(identifiedOrganization);
-    params.setIdentifiedOrganization(identifiedOrganizationContainer);
-    gov.nih.nci.coppa.services.structuralroles.identifiedorganization.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getIdentifiedOrganization();
     }
   }

@@ -28,12 +28,12 @@ import org.iso._21090.CD;
  *
  * On construction the class instance will contact the remote service and retrieve it's security
  * metadata description which it will use to configure the Stub specifically for each method call.
- * 
+ *
  * @created by Introduce Toolkit version 1.2
  */
-public class HealthCareFacilityClient extends HealthCareFacilityClientBase implements HealthCareFacilityI { 
+public class HealthCareFacilityClient extends HealthCareFacilityClientBase implements HealthCareFacilityI {
 
-    private static ClientParameterHelper<HealthCareFacilityClient> helper = 
+    private static ClientParameterHelper<HealthCareFacilityClient> helper =
         new ClientParameterHelper<HealthCareFacilityClient>(HealthCareFacilityClient.class);
 
     /**
@@ -47,7 +47,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     public static final String HEALTH_CARE_FACILITY_ROOT = Constants.NCI_OID + ".4.3";
 
     public HealthCareFacilityClient(String url) throws MalformedURIException, RemoteException {
-        this(url,null);	
+        this(url,null);
     }
 
     public HealthCareFacilityClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
@@ -65,7 +65,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
 
@@ -105,7 +105,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     }
 
     @GridTestMethod
-    private static void getHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {	    
+    private static void getHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
         Id id = new Id();
         id.setRoot(HEALTH_CARE_FACILITY_ROOT);
         id.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
@@ -113,13 +113,6 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
 
         HealthCareFacility result = client.getById(id);
         ClientUtils.handleResult(result);
-    }
-
-    @GridTestMethod
-    private static void searchHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
-        HealthCareFacility criteria = createCriteria();
-        HealthCareFacility[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
     }
 
     @GridTestMethod
@@ -188,18 +181,6 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
     params.setHealthCareFacility(healthCareFacilityContainer);
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.ValidateResponse boxedResult = portType.validate(params);
     return boxedResult.getStringMap();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.HealthCareFacility[] search(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequestHealthCareFacility healthCareFacilityContainer = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequestHealthCareFacility();
-    healthCareFacilityContainer.setHealthCareFacility(healthCareFacility);
-    params.setHealthCareFacility(healthCareFacilityContainer);
-    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchResponse boxedResult = portType.search(params);
-    return boxedResult.getHealthCareFacility();
     }
   }
 

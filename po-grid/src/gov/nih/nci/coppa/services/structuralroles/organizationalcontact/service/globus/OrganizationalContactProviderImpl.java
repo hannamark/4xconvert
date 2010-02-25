@@ -44,12 +44,6 @@ public class OrganizationalContactProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchResponse();
-    boxedResult.setOrganizationalContact(impl.search(params.getOrganizationalContact().getOrganizationalContact()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.UpdateResponse();
     impl.update(params.getOrganizationalContact().getOrganizationalContact());

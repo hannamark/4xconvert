@@ -66,12 +66,12 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         System.out.println("Running the Grid Service Client");
         try{
 
-            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
 
             HealthCareProviderClient client = new HealthCareProviderClient(helper.getArgument("-url"));
-            
+
             for (Method method : helper.getRunMethods()) {
                 System.out.println("Running " + method.getName());
                 method.invoke(null, client);
@@ -91,13 +91,6 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         id.setExtension(helper.getArgument("-getId", "1"));
         HealthCareProvider result = client.getById(id);
         ClientUtils.handleResult(result);
-    }
-
-    @GridTestMethod
-    private static void searchHealthCareProvider(HealthCareProviderClient client) throws RemoteException {
-        HealthCareProvider criteria = createCriteria();
-        HealthCareProvider[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
     }
 
     @GridTestMethod
@@ -175,18 +168,6 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
     idContainer.setId(id);
     params.setId(idContainer);
     gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.GetByIdsResponse boxedResult = portType.getByIds(params);
-    return boxedResult.getHealthCareProvider();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.HealthCareProvider[] search(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchRequestHealthCareProvider healthCareProviderContainer = new gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchRequestHealthCareProvider();
-    healthCareProviderContainer.setHealthCareProvider(healthCareProvider);
-    params.setHealthCareProvider(healthCareProviderContainer);
-    gov.nih.nci.coppa.services.structuralroles.healthcareprovider.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getHealthCareProvider();
     }
   }

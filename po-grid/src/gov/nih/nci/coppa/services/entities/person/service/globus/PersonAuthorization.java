@@ -80,13 +80,6 @@ public class PersonAuthorization implements PDP {
 		 	  
 	}
 	   				
-	public void authorizeSearch(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
-		
-		// authorization using service authorization from the enforce_auth extension
-		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
-		 	  
-	}
-	   				
 	public void authorizeUpdate(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
 		
 		// authorization using service authorization from the enforce_auth extension
@@ -126,9 +119,6 @@ public class PersonAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("validate")){
 			authorizeValidate(peerSubject, context, operation);
-			return true;
-		} else if(operation.getLocalPart().equals("search")){
-			authorizeSearch(peerSubject, context, operation);
 			return true;
 		} else if(operation.getLocalPart().equals("update")){
 			authorizeUpdate(peerSubject, context, operation);

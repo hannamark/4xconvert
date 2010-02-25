@@ -1,7 +1,9 @@
 package gov.nih.nci.coppa.services.structuralroles.patient.client;
 
+import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Patient;
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
+import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.patient.common.PatientI;
@@ -15,6 +17,7 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.CD;
 import org.iso._21090.II;
 
 /**
@@ -25,45 +28,45 @@ import org.iso._21090.II;
  *
  * On construction the class instance will contact the remote service and retrieve it's security
  * metadata description which it will use to configure the Stub specifically for each method call.
- * 
+ *
  * @created by Introduce Toolkit version 1.3
  */
-public class PatientClient extends PatientClientBase implements PatientI {  
+public class PatientClient extends PatientClientBase implements PatientI {
 
-    private static ClientParameterHelper<PatientClient> helper = 
+    private static ClientParameterHelper<PatientClient> helper =
         new ClientParameterHelper<PatientClient>(PatientClient.class);
-    
+
     public PatientClient(String url) throws MalformedURIException, RemoteException {
-        this(url,null); 
+        this(url,null);
     }
 
     public PatientClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
         super(url,proxy);
     }
-    
+
     public PatientClient(EndpointReferenceType epr) throws MalformedURIException, RemoteException {
         this(epr,null);
     }
-    
+
     public PatientClient(EndpointReferenceType epr, GlobusCredential proxy) throws MalformedURIException, RemoteException {
         super(epr,proxy);
     }
-    
+
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
 
-            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
-            
+
             PatientClient client = new PatientClient(helper.getArgument("-url"));
 
             for (Method method : helper.getRunMethods()) {
                 System.out.println("Running " + method.getName());
                 method.invoke(null, client);
             }
-               
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -74,23 +77,23 @@ public class PatientClient extends PatientClientBase implements PatientI {
     private static void testPatient(PatientClient client) throws EntityValidationFault, RemoteException {
         final String ORG_IDENTIFIER_NAME = "NCI organization entity identifier";
         final String ORG_ROOT = Constants.NCI_OID + ".2";
-        
+
         Patient p = new Patient();
-        
+
         II scoper = new II();
         scoper.setIdentifierName(ORG_IDENTIFIER_NAME);
         scoper.setRoot(ORG_ROOT);
         scoper.setExtension(helper.getArgument("-getId", "1"));
         p.setScoperIdentifier(scoper);
 
-        Id patientId = client.create(p);        
+        Id patientId = client.create(p);
         Patient fresh = client.getById(patientId);
-       
+
         Id playerId = new Id();
         playerId.setRoot(fresh.getPlayerIdentifier().getRoot());
         playerId.setIdentifierName(fresh.getPlayerIdentifier().getIdentifierName());
         playerId.setExtension(fresh.getPlayerIdentifier().getExtension());
-        
+
         Id[] ids = new Id[1];
         ids[0] = playerId;
         Patient[] ps = client.getByPlayerIds(ids);
@@ -99,7 +102,27 @@ public class PatientClient extends PatientClientBase implements PatientI {
             throw new RuntimeException("failed to getByPlayerId id");
         }
     }
-    
+
+    /**
+     * @return
+     */
+    private static Patient createCriteria() {
+        Patient criteria = new Patient();
+        CD statusCode = new CD();
+        statusCode.setCode("active");
+        criteria.setStatus(statusCode);
+        return criteria;
+    }
+
+    @GridTestMethod
+    private static void queryPatient(PatientClient client) throws RemoteException {
+        LimitOffset limitOffset = new LimitOffset();
+        limitOffset.setLimit(1);
+        limitOffset.setOffset(0);
+        Patient criteria = createCriteria();
+        Patient[] results = client.query(criteria, limitOffset);
+        ClientUtils.handleSearchResults(results);
+    }
 
   public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     synchronized(portTypeMutex){
@@ -160,18 +183,6 @@ public class PatientClient extends PatientClientBase implements PatientI {
     limitOffsetContainer.setLimitOffset(limitOffset);
     params.setLimitOffset(limitOffsetContainer);
     gov.nih.nci.coppa.services.structuralroles.patient.stubs.QueryResponse boxedResult = portType.query(params);
-    return boxedResult.getPatient();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.Patient[] search(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.structuralroles.patient.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.patient.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.structuralroles.patient.stubs.SearchRequestPatient patientContainer = new gov.nih.nci.coppa.services.structuralroles.patient.stubs.SearchRequestPatient();
-    patientContainer.setPatient(patient);
-    params.setPatient(patientContainer);
-    gov.nih.nci.coppa.services.structuralroles.patient.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getPatient();
     }
   }

@@ -37,10 +37,6 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(ResearchOrg
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.ResearchOrganization[] search(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-      return impl.search(researchOrganization);
-  }
-
   public gov.nih.nci.coppa.po.StringMap validate(gov.nih.nci.coppa.po.ResearchOrganization researchOrganization) throws RemoteException {
       return impl.validate(researchOrganization);
   }

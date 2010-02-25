@@ -96,26 +96,6 @@
           </sequence>
         </complexType>
       </element>
-      <element name="SearchRequest">
-        <complexType>
-          <sequence>
-            <element name="person">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:Person" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="SearchResponse">
-        <complexType>
-          <sequence>
-            <element ref="ns0:Person" minOccurs="1" maxOccurs="unbounded" />
-          </sequence>
-        </complexType>
-      </element>
       <element name="UpdateRequest">
         <complexType>
           <sequence>
@@ -212,12 +192,6 @@
   <message name="ValidateResponse">
     <part name="parameters" element="tns:ValidateResponse" />
   </message>
-  <message name="SearchRequest">
-    <part name="parameters" element="tns:SearchRequest" />
-  </message>
-  <message name="SearchResponse">
-    <part name="parameters" element="tns:SearchResponse" />
-  </message>
   <message name="UpdateRequest">
     <part name="parameters" element="tns:UpdateRequest" />
   </message>
@@ -264,11 +238,6 @@
     <operation name="validate">
       <input message="tns:ValidateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/ValidateRequest" />
       <output message="tns:ValidateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/ValidateResponse" />
-    </operation>
-    <operation name="search">
-      <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/SearchRequest" />
-      <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/SearchResponse" />
-      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/TooManyResultsFaultFaultMessage" />
     </operation>
     <operation name="update">
       <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Person/UpdateRequest" />

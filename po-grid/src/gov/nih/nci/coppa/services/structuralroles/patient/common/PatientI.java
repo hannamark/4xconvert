@@ -22,8 +22,6 @@ public interface PatientI {
 
   public gov.nih.nci.coppa.po.Patient[] query(gov.nih.nci.coppa.po.Patient patient,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
 
-  public gov.nih.nci.coppa.po.Patient[] search(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault ;
-
   public void update(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;
 
   public void updateStatus(gov.nih.nci.iso21090.extensions.Id targetId,gov.nih.nci.iso21090.extensions.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault ;

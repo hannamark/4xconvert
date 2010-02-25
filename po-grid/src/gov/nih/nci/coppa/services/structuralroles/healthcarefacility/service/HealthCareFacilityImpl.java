@@ -40,10 +40,6 @@ public class HealthCareFacilityImpl extends HealthCareFacilityImplBase {
       return impl.validate(healthCareFacility);
   }
 
-  public gov.nih.nci.coppa.po.HealthCareFacility[] search(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-      return impl.search(healthCareFacility);
-  }
-
   public void update(gov.nih.nci.coppa.po.HealthCareFacility healthCareFacility) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.update(healthCareFacility);
   }

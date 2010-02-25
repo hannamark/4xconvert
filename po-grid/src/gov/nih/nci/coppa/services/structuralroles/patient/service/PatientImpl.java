@@ -41,10 +41,6 @@ public class PatientImpl extends PatientImplBase {
     return impl.query(patient, limitOffset);
   }
 
-  public gov.nih.nci.coppa.po.Patient[] search(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    return impl.search(patient);
-  }
-
   public void update(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     impl.update(patient);
   }

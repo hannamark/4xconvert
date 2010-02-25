@@ -143,26 +143,6 @@
           </sequence>
         </complexType>
       </element>
-      <element name="SearchRequest">
-        <complexType>
-          <sequence>
-            <element name="patient">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:Patient" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="SearchResponse">
-        <complexType>
-          <sequence>
-            <element ref="ns0:Patient" minOccurs="1" maxOccurs="unbounded" />
-          </sequence>
-        </complexType>
-      </element>
       <element name="UpdateRequest">
         <complexType>
           <sequence>
@@ -264,12 +244,6 @@
   <message name="QueryResponse">
     <part name="parameters" element="tns:QueryResponse" />
   </message>
-  <message name="SearchRequest">
-    <part name="parameters" element="tns:SearchRequest" />
-  </message>
-  <message name="SearchResponse">
-    <part name="parameters" element="tns:SearchResponse" />
-  </message>
   <message name="UpdateRequest">
     <part name="parameters" element="tns:UpdateRequest" />
   </message>
@@ -325,11 +299,6 @@
     <operation name="query">
       <input message="tns:QueryRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/QueryRequest" />
       <output message="tns:QueryResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/QueryResponse" />
-      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/TooManyResultsFaultFaultMessage" />
-    </operation>
-    <operation name="search">
-      <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/SearchRequest" />
-      <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/SearchResponse" />
       <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/Patient/TooManyResultsFaultFaultMessage" />
     </operation>
     <operation name="update">

@@ -44,12 +44,6 @@ public class PersonProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse search(gov.nih.nci.coppa.services.entities.person.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.entities.person.stubs.SearchResponse();
-    boxedResult.setPerson(impl.search(params.getPerson().getPerson()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.entities.person.stubs.UpdateResponse update(gov.nih.nci.coppa.services.entities.person.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.entities.person.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.entities.person.stubs.UpdateResponse();
     impl.update(params.getPerson().getPerson());

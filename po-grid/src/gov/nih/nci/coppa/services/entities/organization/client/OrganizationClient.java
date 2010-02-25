@@ -30,10 +30,10 @@ import org.iso._21090.CD;
  * @created by Introduce Toolkit version 1.2
  */
 public class OrganizationClient extends OrganizationClientBase implements OrganizationI {
- 
-    private static ClientParameterHelper<OrganizationClient> helper = 
+
+    private static ClientParameterHelper<OrganizationClient> helper =
         new ClientParameterHelper<OrganizationClient>(OrganizationClient.class);
-    
+
     /**
      * The identifier name for org ii's.
      */
@@ -63,10 +63,10 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-            String[] localArgs = new String[] {"-getId"};          
+            String[] localArgs = new String[] {"-getId"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
-            
+
             OrganizationClient client = new OrganizationClient(helper.getArgument("-url"));
 
             for (Method method : helper.getRunMethods()) {
@@ -99,18 +99,11 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     }
 
     @GridTestMethod
-    private static void searchOrganizations(OrganizationClient client) throws RemoteException {
-        Organization criteria = createCriteria();
-        Organization[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
-    }
-
-    @GridTestMethod
     private static void queryOrganizations(OrganizationClient client) throws RemoteException {
         Organization criteria = createCriteria();
 
         LimitOffset limitOffset = new LimitOffset();
-        limitOffset.setLimit(2);
+        limitOffset.setLimit(1);
         limitOffset.setOffset(0);
         Organization[] results = client.query(criteria, limitOffset);
         ClientUtils.handleSearchResults(results);
@@ -138,18 +131,6 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     organizationContainer.setOrganization(organization);
     params.setOrganization(organizationContainer);
     gov.nih.nci.coppa.services.entities.organization.stubs.UpdateResponse boxedResult = portType.update(params);
-    }
-  }
-
-  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequest params = new gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequestOrganization organizationContainer = new gov.nih.nci.coppa.services.entities.organization.stubs.SearchRequestOrganization();
-    organizationContainer.setOrganization(organization);
-    params.setOrganization(organizationContainer);
-    gov.nih.nci.coppa.services.entities.organization.stubs.SearchResponse boxedResult = portType.search(params);
-    return boxedResult.getOrganization();
     }
   }
 

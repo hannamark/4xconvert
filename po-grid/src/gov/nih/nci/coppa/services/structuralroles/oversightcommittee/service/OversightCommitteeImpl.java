@@ -38,10 +38,6 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(IdentifiedO
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.OversightCommittee[] search(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-	  return impl.search(oversightCommittee);
-  }
-
   public void update(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.update(oversightCommittee);
   }

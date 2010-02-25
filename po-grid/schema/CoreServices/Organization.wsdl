@@ -79,26 +79,6 @@
           <sequence />
         </complexType>
       </element>
-      <element name="SearchRequest">
-        <complexType>
-          <sequence>
-            <element name="organization">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="SearchResponse">
-        <complexType>
-          <sequence>
-            <element ref="ns0:Organization" minOccurs="1" maxOccurs="unbounded" />
-          </sequence>
-        </complexType>
-      </element>
       <element name="ValidateRequest">
         <complexType>
           <sequence>
@@ -206,12 +186,6 @@
   <message name="UpdateResponse">
     <part name="parameters" element="tns:UpdateResponse" />
   </message>
-  <message name="SearchRequest">
-    <part name="parameters" element="tns:SearchRequest" />
-  </message>
-  <message name="SearchResponse">
-    <part name="parameters" element="tns:SearchResponse" />
-  </message>
   <message name="ValidateRequest">
     <part name="parameters" element="tns:ValidateRequest" />
   </message>
@@ -239,11 +213,11 @@
   <message name="EntityValidationFaultFaultMessage">
     <part name="fault" element="ns12:EntityValidationFault" />
   </message>
-  <message name="TooManyResultsFaultFaultMessage">
-    <part name="fault" element="ns12:TooManyResultsFault" />
-  </message>
   <message name="NullifiedEntityFaultFaultMessage">
     <part name="fault" element="ns12:NullifiedEntityFault" />
+  </message>
+  <message name="TooManyResultsFaultFaultMessage">
+    <part name="fault" element="ns12:TooManyResultsFault" />
   </message>
   <!--============================================================
 
@@ -260,11 +234,6 @@
       <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Organization/UpdateRequest" />
       <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Organization/UpdateResponse" />
       <fault name="EntityValidationFault" message="tns:EntityValidationFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Organization/EntityValidationFaultFaultMessage" />
-    </operation>
-    <operation name="search">
-      <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Organization/SearchRequest" />
-      <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Organization/SearchResponse" />
-      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Organization/TooManyResultsFaultFaultMessage" />
     </operation>
     <operation name="validate">
       <input message="tns:ValidateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/entities/Organization/ValidateRequest" />

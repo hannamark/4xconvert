@@ -65,14 +65,6 @@ public class PersonImpl extends PersonImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.po.Person[] search(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-      try {
-          return this.query(person, LimitOffsetTransformer.INSTANCE.toXml(Utils.DEFAULT_PAGING));
-      } catch (Exception e) {
-          throw FaultUtil.reThrowRemote(e);
-      }
-    }
-
   public void update(gov.nih.nci.coppa.po.Person person) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             PersonDTO dto = PersonTransformer.INSTANCE.toDto(person);

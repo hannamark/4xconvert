@@ -36,10 +36,6 @@ public class ClinicalResearchStaffImpl extends ClinicalResearchStaffImplBase {
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] search(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-      return impl.search(clinicalResearchStaff);
-  }
-
   public void update(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.update(clinicalResearchStaff);
   }

@@ -38,10 +38,6 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(HealthCareF
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.HealthCareProvider[] search(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-      return impl.search(healthCareProvider);
-  }
-
   public void update(gov.nih.nci.coppa.po.HealthCareProvider healthCareProvider) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.update(healthCareProvider);
   }

@@ -44,12 +44,6 @@ public class OversightCommitteeProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchResponse();
-    boxedResult.setOversightCommittee(impl.search(params.getOversightCommittee().getOversightCommittee()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.UpdateResponse();
     impl.update(params.getOversightCommittee().getOversightCommittee());

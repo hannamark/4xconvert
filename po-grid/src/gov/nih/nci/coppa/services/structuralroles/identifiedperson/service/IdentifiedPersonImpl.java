@@ -37,10 +37,6 @@ private static org.apache.log4j.Logger logger = LogManager.getLogger(IdentifiedP
       return impl.getByIds(id);
   }
 
-  public gov.nih.nci.coppa.po.IdentifiedPerson[] search(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-      return impl.search(identifiedPerson);
-  }
-
   public void update(gov.nih.nci.coppa.po.IdentifiedPerson identifiedPerson) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
       impl.update(identifiedPerson);
   }

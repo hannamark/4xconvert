@@ -59,14 +59,6 @@ public class OrganizationImpl extends OrganizationImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.po.Organization[] search(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-      try {
-          return this.query(organization, LimitOffsetTransformer.INSTANCE.toXml(Utils.DEFAULT_PAGING));
-      } catch (Exception e) {
-          throw FaultUtil.reThrowRemote(e);
-      }
-    }
-
   public void update(gov.nih.nci.coppa.po.Organization organization) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
         try {
             OrganizationDTO organizationDTO = OrganizationTransformer.INSTANCE.toDto(organization);

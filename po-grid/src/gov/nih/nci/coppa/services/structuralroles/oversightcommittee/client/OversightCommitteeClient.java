@@ -28,12 +28,12 @@ import org.iso._21090.CD;
  *
  * On construction the class instance will contact the remote service and retrieve it's security
  * metadata description which it will use to configure the Stub specifically for each method call.
- * 
+ *
  * @created by Introduce Toolkit version 1.2
  */
-public class OversightCommitteeClient extends OversightCommitteeClientBase implements OversightCommitteeI { 
+public class OversightCommitteeClient extends OversightCommitteeClientBase implements OversightCommitteeI {
 
-    private static ClientParameterHelper<OversightCommitteeClient> helper = 
+    private static ClientParameterHelper<OversightCommitteeClient> helper =
         new ClientParameterHelper<OversightCommitteeClient>(OversightCommitteeClient.class);
 
     /**
@@ -47,7 +47,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     public static final String OVERSIGHT_COMMITTEE_ROOT = Constants.NCI_OID + ".4.4";
 
     public OversightCommitteeClient(String url) throws MalformedURIException, RemoteException {
-        this(url,null); 
+        this(url,null);
     }
 
     public OversightCommitteeClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
@@ -66,10 +66,10 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
         System.out.println("Running the Grid Service Client");
         try{
 
-            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
-            
+
             OversightCommitteeClient client = new OversightCommitteeClient(helper.getArgument("-url"));
 
             for (Method method : helper.getRunMethods()) {
@@ -115,13 +115,6 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
         }
     }
 
-    @GridTestMethod
-    private static void searchOversightCommittee(OversightCommitteeClient client) throws RemoteException {
-        OversightCommittee criteria = createCriteria();
-        OversightCommittee[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
-    }
-
     private static OversightCommittee createCriteria() {
         OversightCommittee criteria = new OversightCommittee();
         CD statusCode = new CD();
@@ -134,7 +127,7 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     private static void queryOversightCommittee(OversightCommitteeClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
         limitOffset.setLimit(1);
-        limitOffset.setOffset(0);        
+        limitOffset.setOffset(0);
         OversightCommittee criteria = createCriteria();
         OversightCommittee[] results = client.query(criteria, limitOffset);
         ClientUtils.handleSearchResults(results);
@@ -172,18 +165,6 @@ public class OversightCommitteeClient extends OversightCommitteeClientBase imple
     idContainer.setId(id);
     params.setId(idContainer);
     gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.GetByIdsResponse boxedResult = portType.getByIds(params);
-    return boxedResult.getOversightCommittee();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.OversightCommittee[] search(gov.nih.nci.coppa.po.OversightCommittee oversightCommittee) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequestOversightCommittee oversightCommitteeContainer = new gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchRequestOversightCommittee();
-    oversightCommitteeContainer.setOversightCommittee(oversightCommittee);
-    params.setOversightCommittee(oversightCommitteeContainer);
-    gov.nih.nci.coppa.services.structuralroles.oversightcommittee.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getOversightCommittee();
     }
   }

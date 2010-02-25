@@ -96,26 +96,6 @@
           </sequence>
         </complexType>
       </element>
-      <element name="SearchRequest">
-        <complexType>
-          <sequence>
-            <element name="oversightCommittee">
-              <complexType>
-                <sequence>
-                  <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="1" />
-                </sequence>
-              </complexType>
-            </element>
-          </sequence>
-        </complexType>
-      </element>
-      <element name="SearchResponse">
-        <complexType>
-          <sequence>
-            <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="unbounded" />
-          </sequence>
-        </complexType>
-      </element>
       <element name="UpdateRequest">
         <complexType>
           <sequence>
@@ -252,12 +232,6 @@
   <message name="GetByIdsResponse">
     <part name="parameters" element="tns:GetByIdsResponse" />
   </message>
-  <message name="SearchRequest">
-    <part name="parameters" element="tns:SearchRequest" />
-  </message>
-  <message name="SearchResponse">
-    <part name="parameters" element="tns:SearchResponse" />
-  </message>
   <message name="UpdateRequest">
     <part name="parameters" element="tns:UpdateRequest" />
   </message>
@@ -317,11 +291,6 @@
       <input message="tns:GetByIdsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByIdsRequest" />
       <output message="tns:GetByIdsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByIdsResponse" />
       <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/NullifiedRoleFaultFaultMessage" />
-    </operation>
-    <operation name="search">
-      <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/SearchRequest" />
-      <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/SearchResponse" />
-      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/TooManyResultsFaultFaultMessage" />
     </operation>
     <operation name="update">
       <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/UpdateRequest" />

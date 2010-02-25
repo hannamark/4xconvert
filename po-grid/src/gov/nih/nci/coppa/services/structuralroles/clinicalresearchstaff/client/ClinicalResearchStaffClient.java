@@ -28,12 +28,12 @@ import org.iso._21090.CD;
  *
  * On construction the class instance will contact the remote service and retrieve it's security
  * metadata description which it will use to configure the Stub specifically for each method call.
- * 
+ *
  * @created by Introduce Toolkit version 1.2
  */
-public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase implements ClinicalResearchStaffI {    
+public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase implements ClinicalResearchStaffI {
 
-    private static ClientParameterHelper<ClinicalResearchStaffClient> helper = 
+    private static ClientParameterHelper<ClinicalResearchStaffClient> helper =
         new ClientParameterHelper<ClinicalResearchStaffClient>(ClinicalResearchStaffClient.class);
 
     /**
@@ -47,7 +47,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     public static final String CLINICAL_RESEARCH_STAFF_ROOT = Constants.NCI_OID + ".4.1";
 
     public ClinicalResearchStaffClient(String url) throws MalformedURIException, RemoteException {
-        this(url,null); 
+        this(url,null);
     }
 
     public ClinicalResearchStaffClient(String url, GlobusCredential proxy) throws MalformedURIException, RemoteException {
@@ -65,12 +65,12 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     public static void main(String [] args){
         System.out.println("Running the Grid Service Client");
         try{
-            String[] localArgs = new String[] {"-getId", "-getId2", "-playerId", "-playerId2"};          
+            String[] localArgs = new String[] {"-getId", "-getId2", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
-            
+
             ClinicalResearchStaffClient client = new ClinicalResearchStaffClient(helper.getArgument("-url"));
-            
+
             for (Method method : helper.getRunMethods()) {
                 System.out.println("Running " + method.getName());
                 method.invoke(null, client);
@@ -123,7 +123,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     }
 
     @GridTestMethod
-    private static void getClinicalResearchStaffsByPlayerIds(ClinicalResearchStaffClient client) {        
+    private static void getClinicalResearchStaffsByPlayerIds(ClinicalResearchStaffClient client) {
         Id id1 = new Id();
         id1.setRoot(PersonClient.PERSON_ROOT);
         id1.setIdentifierName(PersonClient.PERSON_IDENTIFIER_NAME);
@@ -144,20 +144,6 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         }
     }
 
-    @GridTestMethod
-    private static void searchClinicalResearchStaff(ClinicalResearchStaffClient client) {
-        ClinicalResearchStaff criteria = new ClinicalResearchStaff();
-        CD statusCode = new CD();
-        statusCode.setCode("pending");
-        criteria.setStatus(statusCode);
-        try {
-            ClinicalResearchStaff[] results = client.search(criteria);
-            ClientUtils.handleSearchResults(results);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-    
     @GridTestMethod
     private static void queryClinicalResearchStaff(ClinicalResearchStaffClient client) {
         ClinicalResearchStaff criteria = new ClinicalResearchStaff();
@@ -207,18 +193,6 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
     idContainer.setId(id);
     params.setId(idContainer);
     gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.GetByIdsResponse boxedResult = portType.getByIds(params);
-    return boxedResult.getClinicalResearchStaff();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.ClinicalResearchStaff[] search(gov.nih.nci.coppa.po.ClinicalResearchStaff clinicalResearchStaff) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequestClinicalResearchStaff clinicalResearchStaffContainer = new gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchRequestClinicalResearchStaff();
-    clinicalResearchStaffContainer.setClinicalResearchStaff(clinicalResearchStaff);
-    params.setClinicalResearchStaff(clinicalResearchStaffContainer);
-    gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getClinicalResearchStaff();
     }
   }

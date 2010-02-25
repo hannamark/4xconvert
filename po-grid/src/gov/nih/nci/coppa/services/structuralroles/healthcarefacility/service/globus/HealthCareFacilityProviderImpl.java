@@ -50,12 +50,6 @@ public class HealthCareFacilityProviderImpl{
     return boxedResult;
   }
 
-    public gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchResponse search(gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchRequest params) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.SearchResponse();
-    boxedResult.setHealthCareFacility(impl.search(params.getHealthCareFacility().getHealthCareFacility()));
-    return boxedResult;
-  }
-
     public gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateResponse update(gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateRequest params) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {
     gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateResponse boxedResult = new gov.nih.nci.coppa.services.structuralroles.healthcarefacility.stubs.UpdateResponse();
     impl.update(params.getHealthCareFacility().getHealthCareFacility());

@@ -33,7 +33,7 @@ import org.iso._21090.CD;
  */
 public class OrganizationalContactClient extends OrganizationalContactClientBase implements OrganizationalContactI {
 
-    private static ClientParameterHelper<OrganizationalContactClient> helper = 
+    private static ClientParameterHelper<OrganizationalContactClient> helper =
         new ClientParameterHelper<OrganizationalContactClient>(OrganizationalContactClient.class);
 
     /**
@@ -66,7 +66,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         System.out.println("Running the Grid Service Client");
         try{
 
-            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};          
+            String[] localArgs = new String[] {"-getId", "-playerId", "-playerId2"};
             helper.setLocalArgs(localArgs);
             helper.setupParams(args);
 
@@ -94,37 +94,34 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     }
 
     @GridTestMethod
-    private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
-        OrganizationalContact criteria = createCriteria();
-        OrganizationalContact[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
-    }
-
-    @GridTestMethod
-    private static void searchOrgContactsByTypeCode(OrganizationalContactClient client) throws RemoteException {
+    private static void queryOrgContactsByTypeCode(OrganizationalContactClient client) throws RemoteException {
         System.out.println("Querying for typeCode = Responsible Party");
+        LimitOffset limit = new LimitOffset();
+        limit.setLimit(1);
+        limit.setOffset(0);
+
         OrganizationalContact criteria = createTypeCodeCriteria("Responsible Party");
-        OrganizationalContact[] results = client.search(criteria);
+        OrganizationalContact[] results = client.query(criteria, limit);
         ClientUtils.handleSearchResults(results);
 
         System.out.println("Querying for typeCode = IRB");
         criteria = createTypeCodeCriteria("IRB");
-        results = client.search(criteria);
+        results = client.query(criteria, limit);
         ClientUtils.handleSearchResults(results);
 
         System.out.println("Querying for typeCode = Site");
         criteria = createTypeCodeCriteria("Site");
-        results = client.search(criteria);
+        results = client.query(criteria, limit);
         ClientUtils.handleSearchResults(results);
 
         System.out.println("Querying for status=Pending, typeCode = Site");
         criteria = createTypeCodeCriteria("pending", "Site");
-        results = client.search(criteria);
+        results = client.query(criteria, limit);
         ClientUtils.handleSearchResults(results);
 
         System.out.println("Querying for status=Pending, typeCode = IRB");
         criteria = createTypeCodeCriteria("pending", "IRB");
-        results = client.search(criteria);
+        results = client.query(criteria, limit);
         ClientUtils.handleSearchResults(results);
     }
 
@@ -138,7 +135,6 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         ClientUtils.handleSearchResults(results);
     }
 
-    @GridTestMethod
     private static OrganizationalContact createCriteria() {
         OrganizationalContact criteria = new OrganizationalContact();
         CD statusCode = new CD();
@@ -221,18 +217,6 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
     idContainer.setId(id);
     params.setId(idContainer);
     gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.GetByIdsResponse boxedResult = portType.getByIds(params);
-    return boxedResult.getOrganizationalContact();
-    }
-  }
-
-  public gov.nih.nci.coppa.po.OrganizationalContact[] search(gov.nih.nci.coppa.po.OrganizationalContact organizationalContact) throws RemoteException, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
-    synchronized(portTypeMutex){
-      configureStubSecurity((Stub)portType,"search");
-    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest params = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequest();
-    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequestOrganizationalContact organizationalContactContainer = new gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchRequestOrganizationalContact();
-    organizationalContactContainer.setOrganizationalContact(organizationalContact);
-    params.setOrganizationalContact(organizationalContactContainer);
-    gov.nih.nci.coppa.services.structuralroles.organizationalcontact.stubs.SearchResponse boxedResult = portType.search(params);
     return boxedResult.getOrganizationalContact();
     }
   }
