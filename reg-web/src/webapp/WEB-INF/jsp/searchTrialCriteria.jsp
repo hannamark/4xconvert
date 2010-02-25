@@ -188,7 +188,7 @@ function getMyPartialTrial() {
                 <s:a href="#" cssClass="btn" onclick="handleMyAction()"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>       
                 <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
                 <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                <s:a href="#" cssClass="btn" onclick="getMyPartialTrial()"><span class="btn_img"><span class="search">Search Partial Submission</span></span></s:a>
+                <s:a href="#" cssClass="btn" onclick="getMyPartialTrial()"><span class="btn_img"><span class="search">Search  Saved Drafts</span></span></s:a>
                 </li>                
                </ul>
             </del>
@@ -198,7 +198,7 @@ function getMyPartialTrial() {
             <br>
             Search All Trials: Search all trials I have submitted as well as those registered by others.
             <br>
-            Search Partial Submissions: Search my saved partial submissions.
+            Search Saved Drafts: Search my saved drafts.
         </p>
        </s:form>
      </div>

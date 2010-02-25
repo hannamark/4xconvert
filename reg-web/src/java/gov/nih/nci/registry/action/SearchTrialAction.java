@@ -195,7 +195,7 @@ public class SearchTrialAction extends ActionSupport {
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             ServletActionContext.getRequest().setAttribute(
-                    "failureMessage" , "Exception occured during trials search : " + e.getMessage());
+                    "failureMessage" , e.getMessage());
             return ERROR;
         }
     }

@@ -65,7 +65,7 @@ var winprint=window.open("","",sOption);
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>          
     <c:if test="${requestScope.protocolId != null && requestScope.partialSubmission != null && requestScope.partialSubmission == 'submit'}">
         <div class="confirm_msg">
-          <strong>The trial has been successfully submitted and assigned the Identifier ${requestScope.protocolId}</strong>
+          <strong>The trial draft has been successfully saved and assigned the Identifier ${requestScope.protocolId}</strong>
         </div>
      </c:if>
     <div id="contentprint">        

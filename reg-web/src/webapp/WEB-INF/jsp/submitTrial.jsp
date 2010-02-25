@@ -924,7 +924,7 @@ function toggledisplay2 (it) {
                 <ul class="btnrow">         
                         <li>
                         <li>            
-                            <s:a href="#" cssClass="btn" onclick="partialSave()"><span class="btn_img"><span class="save">Partial Save</span></span></s:a>
+                            <s:a href="#" cssClass="btn" onclick="partialSave()"><span class="btn_img"><span class="save">Save as Draft</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="reviewProtocol()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>  
                         </li>
