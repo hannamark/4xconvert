@@ -58,6 +58,13 @@ function getMyPartialTrial() {
         document.forms[0].action="searchTrialpartiallySubmittedView.action?studyProtocolId="+pId+"&usercreated="+user;
         document.forms[0].submit(); 
     }
+   function deletePartialProtocol(pId,user) {
+	   delete_box = confirm("Do you want to delete?");
+	   if (delete_box==true){       
+		    document.forms[0].action="submitTrialdeletePartialSubmission.action?studyProtocolId="+pId+"&usercreated="+user;
+		    document.forms[0].submit(); 
+	   }
+   }
 </SCRIPT>
 <body>
 <!-- main content begins-->
@@ -204,7 +211,6 @@ function getMyPartialTrial() {
      </div>
     	<div class="line"></div>
     	 <s:if test="records != null">						
-			<h2 id="search_results">Submitted Clinical Trials Search Results</h2>
 			   <c:set var="topic" scope="request" value="search_results"/>   
 				<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
 		 </s:if>

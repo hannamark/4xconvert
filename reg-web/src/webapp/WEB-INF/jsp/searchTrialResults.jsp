@@ -3,6 +3,7 @@
 <s:set name="records" value="records" scope="request"/>
 <c:choose>
 <c:when test="${requestScope.partialSubmission != null}">
+<h2 id="search_results">Saved Draft Search Results</h2>
 <display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results" 
             decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
               name="records" requestURI="searchTrialgetMyPartiallySavedTrial.action" export="false">   
@@ -18,13 +19,13 @@
         href="submitTrialcompletePartialSubmission.action" property="completePartialSubmission"
         paramId="studyProtocolId" paramProperty="studyProtocolId"
         sortable="true" headerClass="sortable"/> 
-    <display:column titleKey="search.trial.action" 
-        href="submitTrialdeletePartialSubmission.action" property="deletePartialSubmission"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"
-        sortable="true" headerClass="sortable"/>
+    <display:column titleKey="search.trial.action">
+        <a href="#" onclick="deletePartialProtocol('${row.studyProtocolId}','${row.userLastCreated}');">Delete</a> 
+    </display:column>
 </display:table>
 </c:when>
 <c:otherwise>
+<h2 id="search_results">Submitted Clinical Trials Search Results</h2>
 <display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results" 
             decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
               name="records" requestURI="searchTrialquery.action" export="false">	
