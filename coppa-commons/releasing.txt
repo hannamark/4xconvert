@@ -2,7 +2,7 @@ Steps to perform release:
 
 1.  Check out latest code that you want to release and make sure you have no local modifications.
 2.  Make sure Jira is in order with all issues in the release you want to tag marked resolved and all other issues moved out of the release.
-3.  verify that the app passes all tests by running:
+3.  verify that the app passes all tests by running (you may need to run site verify in a separate step):
 mvn clean install site verify
 4.  Verify that your ~/.m2 directory has a settings.xml file with the needed user name and password to deploy to the mvn repo.
 5.  run mvn release:prepare providing all information when asked.  You should usually be able to
