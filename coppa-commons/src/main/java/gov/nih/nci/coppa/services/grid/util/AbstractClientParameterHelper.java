@@ -144,7 +144,7 @@ public abstract class AbstractClientParameterHelper {
     private void namesToMethods(String[] methodNames) {
         for (String methodName : methodNames) {
             try {
-                Method method = getClientClass().getDeclaredMethod(methodName);
+                Method method = getClientClass().getDeclaredMethod(methodName, getClientClass());
                 runMethods.add(method);
             } catch (SecurityException e) {
                 throw new IllegalArgumentException("incorrect method name: " + methodName, e);
