@@ -10,6 +10,7 @@
 
     <path id="classpath">
         <fileset dir="${basedir}/../pa-ejb/target" includes="pa-ejb.jar"/>
+        <fileset dir="${basedir}/../commons/target" includes="pa-commons.jar"/>
         <fileset dir="${basedir}/lib"/>
         <fileset dir="${lib.dir}/pa-ejb/compile" includes="hibernate-annotations*.jar"/>
         <fileset dir="${lib.dir}/pa-ejb/compile" includes="persistence-api*.jar"/>
