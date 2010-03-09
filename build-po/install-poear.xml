@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+$Id: install.xml 4757 2008-05-15 20:43:31Z zengje $
+$HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
+-->
+<project name="po-ear-installer" default="upgrade" basedir="."
+  xmlns:ivy="antlib:org.apache.ivy.ant"
+  >
+  <description>
+    This build file is part of the COPPA-PO project. This is the po ear install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is called from the master install.xml. This script has two flows install and upgrade.
+    Install will do the following
+    * Install binaries
+    * Configure binaries
+    * Install application
+    * Configure application
+    * Re-create database
+    * Upgrade database
+    Upgrade will do the following
+    * Install application
+    * Configure application
+    * Upgrade database
+    The script includes target that may not be used by all projects, but are included in here becaue it is a template. This script has targets to deal with the following, you can delete targets you don't want to work with
+    Application servers (option for grid services also)
+    * JBoss
+    Databases
+    * PostgreSQL
+    This script requires java and ant to run. Every thing else it needs is included in the distribution.
+  </description>
+  <!-- *-ds.xml and WAR -->
+  <property name="po-ear.dir.dist" value="${basedir}/${po-ear.dist.relative.dir}" />
+  <property name="po-ear.ds.file" value="po-ds.xml" />
+  <property name="po-ear.app-sec-conf.file" value="ApplicationSecurityConfig.xml" />
+  <property name="po-ear.hibernate.file" value="hibernate.cfg.xml" />
+  <property name="po-ear.ear.file" value="po.ear" />
+
+  <target name="install:po-ear-jboss:clean" unless="exclude.jboss">
+    <sleep seconds="5" />
+    <property name="backup.count" value="5"/>
+
+    <if>
+      <not>
+        <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+      </not>
+      <then>
+        <!-- Jboss backup, do not compress until install is finished -->
+        <property name="backup.po-ear-jboss.base.dir" location="${application.base.path}/backup/po-ear"/>
+        <!-- So these directories won't be included in the backup, they are not needed to use jboss -->
+        <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
+        <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
+
+        <backup-dir
+          src.dir="${jboss.home}"
+          backup.base.dir="${backup.po-ear-jboss.base.dir}"
+          backup.count="${backup.count}"
+          />
+      </then>
+    </if>
+    <delete dir="${jboss.home}"/>
+  </target>
+
+  <!-- Targets begin -->
+  <target name="install:po-ear-jboss:init" depends="common:init:pre">
+	  <!-- determine if port configurations or port lists are being called -->
+	  <if>
+		  <isset property="jboss.ncicb-standard.port-config"/>
+		  <then>
+			  <!-- Read some port properties from standard bindings file -->
+			  <echo message="Using JBoss NCICB Standard port configurations"/>
+			  <if>
+				  <equals arg1="${jboss.major.version}" arg2="4"/>
+				  <then>
+					  <property name="jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
+					  <jboss-read-ports
+						  jboss.server.bindingfile.location="${jboss.server.binding.template.location}"
+						  />
+					  <jboss-bindings-validate
+						  jboss.server.bindingfile.location="${jboss.server.binding.template.location}"
+						  />
+				  </then>
+				  <elseif>
+					  <equals arg1="${jboss.major.version}" arg2="5"/>
+					  <then>
+						  <property name="po-ear-jboss.server.bindingfile.location" value="${jboss.home}/server/${jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"/>
+						  <property name="temp.bindings.file" value="${temp.dir}/unmodified-bindings-jboss-beans.xml"/>
+						  <copy tofile="${temp.bindings.file}" file="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/unmodified-bindings-jboss-beans.xml"/>
+						  <jboss51-bindings-nci
+							  jboss.server.bindingfile.location="${temp.bindings.file}"
+							  />
+						  <jboss51-read-ports-nci
+							  jboss.server.bindingfile.location="${temp.bindings.file}"
+							  />
+					  </then>
+				  </elseif>
+			  </if>
+			  <echo message="http -${jboss.server.port} "/>
+			  <echo message="http -${jboss.server.jndi.port} "/>
+			  <properties-exist
+				  properties.list="jboss.server.jndi.port,jboss.server.port,jboss.server.ports.name"
+				  />
+		  </then>
+		  <else>
+			  <!-- else ensure that all ports are set, since these will be removed from install-properties.template we will verify here.  They have to be removed so the validator works with or without the properties or we have to change the format of the file. -->
+			  <echo message="Using custom JBoss port configurations"/>
+			  <property name="jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
+			  <properties-exist
+				  properties.list="jboss.server.jndi.port,jboss.server.port,jboss.cobraorb.port,jboss.hajndi.port,jboss.hajrmi.port,jboss.jmx-rmi.port,jboss.messaging.port,jboss.pooledha.port,jboss.server.bind.port,jboss.server.rmi.port,jboss.service.rmiobject.port,jboss.snmp.port,jboss.snmp-trapd.port,jboss.web.service.port,jboss.unifiedinvoker.port,jboss.hajndi.auto.port,jboss.ssl.port,jboss.jms2.netty.port,jboss.jms2.netty-ssl.port,jboss.transaction.recovery.port,jboss.transaction.status.port,jboss.transaction.processid.port"
+				  />
+		  </else>
+	  </if>
+  </target>
+  <target name="common:po-ear-jboss:init" depends="common:init:pre" unless="exclude.jboss">
+	  <property name="po-ear-jboss.ssl.enable" value="false"/>
+	  <property name="po-ear-jboss.home" value="${application.base.path}/po-ear/${jboss.relative.path}"/>
+	  <jboss-version
+		  />
+	  <if>
+		  <equals arg1="${po-ear-jboss.http-connector.remove}" arg2="true"/>
+		  <then>
+			  <property name="po-ear-jboss.application.url" value="https://${jboss.server.hostname}:${jboss.grid.secure.port}/po-web"/>
+		  </then>
+		  <else>
+			  <property name="po-ear-jboss.application.url" value="http://${jboss.server.hostname}:${jboss.server.port}/po-web"/>
+		  </else>
+	  </if>
+	  <available file="${po-ear-jboss.home}/server/${po-ear-jboss.server.name}/conf/jboss-service.xml" property="po-ear-jboss.exists"/>
+	  <basename file="${po-ear-jboss.ssl.keystore.location}" property="po-ear-jboss.ssl.keystore.file"/>
+	  <dirname file="${po-ear-jboss.ssl.keystore.location}" property="po-ear-jboss.ssl.keystore.dir"/>
+	  <basename file="${po-ear-jboss.grid.secure.cert.location}" property="po-ear-jboss.grid.secure.cert.file"/>
+	  <dirname file="${po-ear-jboss.grid.secure.cert.location}" property="po-ear-jboss.grid.secure.dir"/>
+	  <basename file="${po-ear-jboss.grid.secure.key.location}" property="po-ear-jboss.grid.secure.key.file"/>
+	  <property name="po-ear-jboss.socket.ports" value="${jboss.server.port},${jboss.server.rmi.port},${jboss.server.jndi.port},${jboss.service.rmiobject.port},${jboss.jms.port},${jboss.web.service.port}"/>
+  </target>
+
+  <target name="install:po-ear-jboss:binaries" unless="exclude.po-ear">
+    <jboss-install-binaries
+      jboss.server.name="${jboss.server.name}"
+      application.base.path="${application.base.path}/poear"
+      jems.install.option="ejb3" 
+      jboss.home="${jboss.home}" 
+      />
+  </target>
+
+  <target name="install:po-ear-jboss:app" 
+            description="Deploy po-ear po-ear.ear, po-ear-api.war and common libraries" 
+            unless="exclude.po-ear">
+    <!-- added to ensure working.dirs are fresh for our install -->
+    <delete dir="${jboss.home}/server/${jboss.server.name}/tmp"/>
+    <delete dir="${jboss.home}/server/${jboss.server.name}/work"/>
+
+    <copy file="${po-ear.dir.dist}/${po-ear.ear.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+    <copy file="${bda-utils.dir}/clm-3.2.jar" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
+    <copy file="${database.driver.file}" todir="${jboss.home}/server/${jboss.server.name}/lib" overwrite="true" />
+
+    <!-- Replace this with file from ivy when project is ivy'fied -->
+  </target>
+
+  <target name="install:po-ear-jboss:app:configure" description="Configure po-ear application" unless="exclude.po-ear">
+    <!-- Not needed being done inside of ear
+    <copy file="${jboss-conf.dir.dest}/${po-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
+    -->
+  </target>
+
+  <target name="install:po-ear-jboss:configure" unless="exclude.po-ear">
+     
+        <!-- Use below if you are defining all the ports in your install.xml not the NCICB port configuraitons-->
+        <!-- configure the po-ear instance -->
+        <jboss-configure
+            />
+  </target>
+
+  <!-- Calls to bda macros for basic functionality -->
+  <target name="install:po-ear-jboss:stop" unless="exclude.po-ear">
+    <jboss-stop-jboss jboss.server.jndi.port="${jboss.server.jndi.port}" jboss.server.name="${jboss.server.name}"/>
+  </target>
+
+    <target name="install:po-ear-jboss:start" unless="exclude.po-ear">
+    <if>
+      <not>
+        <isset property="exclude.start.servers"/>
+      </not>
+      <then>
+	      <jboss-start-jboss
+		      jboss.server.name="${jboss.server.name}"
+		      />
+      </then>
+    </if>
+    </target>
+
+    <target name="install:po-ear-jboss:validation:pre-install" description="Runs pre-install validation checks bda-utils"
+	    depends="
+	    common:po-ear-jboss:init,common:init,
+	    install:common:validation:pre-install
+	    ">
+	    <validate-pre-install-jboss
+		    />
+    </target>
+    <target name="install:po-ear-jboss:validation:pre-install:ports" description="Checks to see if configured ports are listenting and fails buld, meant to be run after jboss:stop"
+	    depends="
+	    common:init,
+	    install:po-ear-jboss:stop
+	    ">
+	    <validate-pre-jboss-ports
+		    />
+    </target>
+    <target name="install:po-ear-jboss:validation:post-install" description="Run post-install checks from bda-utils"
+	    depends="
+	    common:po-ear-jboss:init,
+	    common:init,
+	    install:po-ear-jboss:start
+	    ">
+	    <if>
+		    <not>
+			    <isset property="exclude.start.servers"/>
+		    </not>
+		    <then>
+			    <validate-post-jboss
+				    jboss.application.url="${po-ear-jboss.application.url}"
+				    />
+		    </then>
+	    </if>
+    </target>
+
+  <!-- Wrapper target to deploy JBOSS container -->
+  <target name="install:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+	  depends="
+	  common:po-ear-jboss:init,
+	  common:init,
+	  install:po-ear-jboss:init,
+	  install:po-ear-jboss:validation:pre-install,
+	  install:common:validation:pre-install,
+	  install:po-ear-jboss:stop,
+	  install:po-ear-jboss:validation:pre-install:ports,
+	  install:po-ear-jboss:clean,
+	  install:po-ear-jboss:binaries,
+	  install:po-ear-jboss:configure,
+	  install:po-ear-jboss:re-configure,
+	  install:po-ear-jboss:app,
+	  install:po-ear-jboss:app:configure,
+	  install:po-ear-jboss:post,
+	  install:po-ear-jboss:start,
+	  install:po-ear-jboss:validation:post-install
+	  " >
+  </target>
+  <!-- Fixes hibernate dialect and other configurations in code generated at build time.  This is requred because the properties/options selected at build time can be different than those used at install time. -->
+  <target name="install:po-ear-jboss:re-configure" unless="exclude.po-ear">
+    <mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
+    <delete dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
+    <mkdir dir="${temp.dir}/${po-ear.dist.relative.dir}"/>
+    <unzip src="${po-ear.dir.dist}/${po-ear.ear.file}" dest="${temp.dir}/${po-ear.dist.relative.dir}"/>
+    <unzip src="${temp.dir}/${po-ear.dist.relative.dir}/po-web.war" dest="${temp.dir}/po-web"/>
+    <unzip src="${temp.dir}/${po-ear.dist.relative.dir}/${po-services.jar.name}" dest="${temp.dir}/po-services"/>
+
+    <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
+    <var name="file.list"
+      value="${po-ear.dist.relative.dir}/po-ds.xml,${po-ear.dist.relative.dir}/po-log4j.xml,${po-ear.dist.relative.dir}/META-INF/security-config.xml,po-web/WEB-INF/classes/jndi.properties,${po-ear.dist.relative.dir}/jboss-service.xml,po-services/ctep-services.properties"/>
+
+    <for list="${file.list}" param="file.relative.name">
+      <sequential>
+        <propertyregex property="file.name"
+          input="@{file.relative.name}"
+          regexp="^.*\/(.*)"
+          select="\1"
+          override="true"
+          />
+        <propertyregex property="relative.dir"
+          input="@{file.relative.name}"
+          regexp="^(.*)\/.*"
+          select="\1"
+          override="true"
+          />
+        <echo message="relative.dir=${relative.dir} file.name=${file.name}"/>
+        <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
+        <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
+          <filterset>
+            <filter token="database.server" value="${database.server}"/>
+            <filter token="database.port" value="${database.port}"/>
+            <filter token="database.name" value="${database.name}"/>
+            <filter token="database.user" value="${database.user}"/>
+            <filter token="database.password" value="${database.password}"/>
+            <filter token="database.driver" value="${database.driver}"/>
+            <filter token="database.xa.driver" value="${database.xa.driver}"/>
+            <filter token="app.log.level" value="${app.log.level}"/>
+            <filter token="app.log.level.default" value="${app.log.level.default}"/>
+            <filter token="app.log.smtp.host" value="${app.log.smtp.host}"/>
+            <filter token="app.log.smtp.from" value="${app.log.smtp.from}"/>
+            <filter token="app.log.smtp.to" value="${app.log.smtp.to}"/>
+            <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+            <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
+            <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress" value="${jboss.server.hostname}"/>
+            <filter token="ctep.url" value="${ctep.url}"/>
+            <filter token="ctep.username" value="${ctep.username}"/>
+            <filter token="ctep.password" value="${ctep.password}"/>
+            <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
+            <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
+            <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
+
+            <!-- PO-GRID: reuses the jboss.server.jndi.port -->
+            <filter token="pogrid.jndi.principal" value="${pogrid.jndi.principal}"/>
+            <filter token="pogrid.jndi.credentials" value="${pogrid.jndi.credentials}"/>
+            <filter token="pogrid.jndi.credentials.encrypted" value="${pogrid.jndi.credentials.encrypted}"/>
+          </filterset>
+        </copy>
+        <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
+      </sequential>
+    </for>
+
+    <move file="${po-ear.dir.dist}/${po-ear.ear.file}" tofile="${po-ear.dir.dist}/${po-ear.ear.file}.orig"/>
+
+    <war destfile="${temp.dir}/po-ear/po-web.war"
+      compress="false"  duplicate="preserve"
+      webxml="${temp.dir}/po-web/WEB-INF/web.xml">
+
+      <lib dir="${temp.dir}/po-web/WEB-INF/lib"/>
+      <classes dir="${temp.dir}/po-web/WEB-INF/classes"/>
+      <webinf dir="${temp.dir}/po-web/WEB-INF" excludes="web.xml"/>
+      <fileset dir="${temp.dir}/po-web"/>
+    </war>
+
+      <jar destfile="${temp.dir}/po-ear/${po-services.jar.name}"
+                  basedir="${temp.dir}/po-services" compress="false" />
+
+      <ear destfile="${po-ear.dir.dist}/${po-ear.ear.file}"
+      basedir="${temp.dir}/po-ear"
+      compress="false"
+      appxml="${temp.dir}/po-ear/META-INF/application.xml"
+      />
+
+  </target>
+
+
+  <target name="upgrade-dac:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+	  depends="
+	  upgrade:po-ear-jboss:init,
+	  common:po-ear-jboss:init,
+	  common:init,
+	  install:po-ear-jboss:init,
+	  install:po-ear-jboss:validation:pre-install,
+	  install:common:validation:pre-install,
+	  install:po-ear-jboss:stop,
+	  install:po-ear-jboss:validation:pre-install:ports,
+	  install:po-ear-jboss:clean,
+	  install:po-ear-jboss:binaries,
+	  install:po-ear-jboss:configure,
+	  install:po-ear-jboss:re-configure,
+	  install:po-ear-jboss:app,
+	  install:po-ear-jboss:app:configure,
+	  upgrade:po-ear-jboss:post,
+	  install:po-ear-jboss:post,
+	  install:po-ear-jboss:start,
+	  install:po-ear-jboss:validation:post-install
+	  " >
+  </target>
+  <target name="upgrade-cm:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+	  depends="
+	  upgrade:po-ear-jboss:init,
+	  common:po-ear-jboss:init,
+	  common:init,
+	  install:po-ear-jboss:init,
+	  install:po-ear-jboss:validation:pre-install,
+	  install:common:validation:pre-install,
+	  install:po-ear-jboss:stop,
+	  install:po-ear-jboss:validation:pre-install:ports,
+	  install:po-ear-jboss:configure,
+	  install:po-ear-jboss:re-configure,
+	  install:po-ear-jboss:app,
+	  install:po-ear-jboss:app:configure,
+	  upgrade:po-ear-jboss:post,
+	  install:po-ear-jboss:post,
+	  install:po-ear-jboss:start,
+	  install:po-ear-jboss:validation:post-install
+	  " >
+  </target>
+
+  <target name="upgrade-ncm:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+	  depends="
+	  upgrade:po-ear-jboss:init,
+	  common:po-ear-jboss:init,
+	  common:init,
+	  install:po-ear-jboss:init,
+	  install:po-ear-jboss:validation:pre-install,
+	  install:common:validation:pre-install,
+	  install:po-ear-jboss:stop,
+	  install:po-ear-jboss:validation:pre-install:ports,
+	  install:po-ear-jboss:re-configure,
+	  install:po-ear-jboss:app,
+	  install:po-ear-jboss:app:configure,
+	  upgrade:po-ear-jboss:post,
+	  install:po-ear-jboss:post,
+	  install:po-ear-jboss:start,
+	  install:po-ear-jboss:validation:post-install
+	  " >
+  </target>
+
+  <target name="install:po-ear-jboss:post" unless="exclude.jboss">
+    <if>
+      <not>
+        <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+      </not>
+      <then>
+        <property name="changelogFile" location="${install-logs.dir}/chagneLog-${install.time}.txt"/>
+        <property name="compare1.dir" location="${backup.po-ear-jboss.base.dir}/backup/${jboss.relative.path}"/>
+        <property name="compare2.dir" location="${jboss.home}"/>
+        <report-dir-diff
+          dir1="${compare1.dir}"
+          dir2="${compare2.dir}"
+          reportFile="${changelogFile}"
+          />
+        <!-- Copy app server logs -->
+        <mkdir dir="${jboss.home}/server/${jboss.server.name}/log"/>
+        <mkdir dir="${backup.po-ear-jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log"/>
+        <!-- so the logs wont be included in the zip -->
+        <move todir="${jboss.home}/server/${jboss.server.name}/log">
+          <fileset dir="${backup.po-ear-jboss.base.dir}/backup/${jboss.relative.path}/server/${jboss.server.name}/log">
+            <include name="*"/>
+          </fileset>
+        </move>
+
+        <!-- Compress backup and cleanup -->
+        <mkdir dir="${backup.po-ear-jboss.base.dir}/backup1"/>
+        <zip destfile="${backup.po-ear-jboss.base.dir}/backup1/${jboss.relative.path}.zip" basedir="${backup.po-ear-jboss.base.dir}/backup" />
+        <delete dir="${backup.po-ear-jboss.base.dir}/backup"/>
+      </then>
+    </if>
+  </target>
+
+  <target name="upgrade:po-ear-jboss:init"
+	  depends="
+	  upgrade:po-ear-jboss:init:prep,
+	  upgrade:po-ear-jboss:readers:bda,
+	  upgrade:po-ear-jboss:readers:custom
+	  ">
+	  <properties-print
+		  properties.list="${read.properties.list}"
+		  />
+	  <properties-exist
+		  properties.list="${read.properties.list}"
+		  />
+	  <properties-write
+		  properties.list="${read.properties.list}"
+		  />
+  </target>
+
+  <target name="upgrade:po-ear-jboss:init:prep" depends="upgrade:common:init:prep">
+	  <property name="jboss.home" value="${application.base.path}/po-ear/${jboss.relative.path}"/>
+	  <jboss-version
+		  />
+	  <if>
+		  <equals arg1="${jboss.ncicb-standard.port-config}" arg2="true"/>
+		  <then>
+			  <property name="jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
+		  </then>
+		  <else>
+			  <property name="jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
+		  </else>
+	  </if>
+
+	  <!-- Upgrades always use port configs
+	  <property name="jboss.ncicb-standard.port-config" value="true"/>
+	  -->
+	  <available file="${jboss.home}" property="jboss.exists"/>
+	  <property name="read.jboss.home" value="${jboss.home}"/>
+	  <echo message="jboss.exists - ${jboss.exists}"/>
+  </target>
+
+  <target name="upgrade:po-ear-jboss:readers:custom">
+	  <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
+  </target>
+
+  <target name="upgrade:po-ear-jboss:readers:bda" if="jboss.exists">
+  </target>
+
+  <target name="upgrade:po-ear-jboss:post">
+  </target>
+</project>
