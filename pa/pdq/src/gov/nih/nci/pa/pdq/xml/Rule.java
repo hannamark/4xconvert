@@ -126,13 +126,13 @@ public enum Rule {
     public static ArrayList<String> diseaseList;
     static {
         diseaseList = new ArrayList<String>();
-        diseaseList.add("Disease/diagnosis");
-        diseaseList.add("Cancer diagnosis");
+
         diseaseList.add("Cancer stage");
-        diseaseList.add("Cancer grade");
+        diseaseList.add("Disease/diagnosis");
         diseaseList.add("Genetic condition");
+        diseaseList.add("Neoplasm diagnosis");
         diseaseList.add("Secondary related condition");
-        diseaseList.add("Other health status");
+
     }
 
     /**

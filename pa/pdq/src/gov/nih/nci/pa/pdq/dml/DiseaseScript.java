@@ -187,7 +187,8 @@ public class DiseaseScript extends BaseScript {
                         + " VALUES (" + codeMap.get(dp.childCode) + "," + codeMap.get(dp.parentCode) + "," + fixString(dp.parentType) + ",'"
                         + ActiveInactiveCode.ACTIVE.getName() + "',now());");
             } else {
-                LOG.warn("Bad parent child relationship ignored.");
+                
+                LOG.warn("Bad parent child relationship ignored." + dp.childCode + " - " + dp.parentCode + " - " + dp.parentType);
             }
         }
     }
