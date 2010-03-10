@@ -166,7 +166,8 @@ public final class InterventionScript extends BaseScript {
         out.println("UPDATE intervention_alternate_name ia SET user_last_created=(SELECT user_last_created FROM intervention ii WHERE ii.identifier = ia.intervention_identifier);");
         out.println("UPDATE intervention_alternate_name SET date_last_created='" + PDQConstants.DATA_DUMP_DATE + "';");
         out.println("DELETE FROM intervention WHERE status_code = '" + ActiveInactivePendingCode.INACTIVE.getName()
-                + "' AND identifier NOT IN (SELECT intervention_identifier FROM planned_activity);");
+                + "' AND identifier NOT IN (SELECT intervention_identifier FROM planned_activity) "
+                + "  AND identifier NOT IN (SELECT intervention_identifier FROM performed_activity);");
         out.close();
     }
 

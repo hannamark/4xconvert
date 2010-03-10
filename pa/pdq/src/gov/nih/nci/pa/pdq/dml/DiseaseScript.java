@@ -200,7 +200,8 @@ public class DiseaseScript extends BaseScript {
         out.println("UPDATE disease_parent dp SET user_last_created = (SELECT user_last_created FROM disease dd WHERE dd.identifier = dp.disease_identifier);");
         out.println("UPDATE disease_parent SET date_last_created = '" + PDQConstants.DATA_DUMP_DATE + "';");
         out.println("DELETE FROM disease WHERE status_code = '" + ActiveInactivePendingCode.INACTIVE.getName()
-                + "' AND identifier NOT IN (SELECT disease_identifier FROM study_disease);");
+                + "' AND identifier NOT IN (SELECT disease_identifier FROM study_disease) "
+                + "  AND identifier NOT IN (SELECT disease_identifier FROM study_subject);");
         out.close();
     }
 }
