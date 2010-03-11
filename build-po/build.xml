@@ -132,6 +132,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <!-- Where to write files retrieved by get, into the distribution area.  The file names come from project.properties  -->
   <property name="jboss.dest.file" location="${download.dir}/${jboss.binaries.file}"/>
   <property name="jbosscp.dest.file" value="${download.dir}/${jbosscp.binaries.file}" />
+  <property name="cagrid-console.dest.file" value="${download.dir}/${cagrid-console.binaries.file}" />
 
   <!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
   <property name="install.target" value="install"/>
@@ -148,25 +149,25 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
   <!-- retrive ivy.jar.files then retrieve bda files and librarires -->
   <condition property="commonlibrary.dir" value="">
-	  <or>            
-		  <os family="unix" />
-		  <os family="mac" />     
-	  </or>           
+      <or>
+          <os family="unix" />
+          <os family="mac" />
+      </or>
   </condition>
 
   <condition property="commonlibrary.dir" value="c:/">
-	  <os family="windows" />
+      <os family="windows" />
   </condition>
 
   <condition property="local.cbiit-ivy-repo.dir" value="">
-	  <or>            
-		  <os family="unix" />
-		  <os family="mac" />     
-	  </or>           
+      <or>
+          <os family="unix" />
+          <os family="mac" />
+      </or>
   </condition>
 
   <condition property="local.cbiit-ivy-repo.dir" value="c:/">
-	  <os family="windows" />
+      <os family="windows" />
   </condition>
 
   <property name="bda-download.file" value="bda-ivy-build.xml"/>
@@ -224,12 +225,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
 
   <if>
-	  <not>
-		  <isset property="env.ANT_OPTS"/>
-	  </not>
-	  <then>
-		  <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator} set  ANT_OPTS=-Xms256m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=512m  # for windows."/>
-	  </then>
+      <not>
+          <isset property="env.ANT_OPTS"/>
+      </not>
+      <then>
+          <fail message="To build this project you need to specify a increased java memory settings.${line.separator}export ANT_OPTS='-Xms256m -Xmx1024m -XX\:PermSize\=128m -XX\:MaxPermSize\=512m' # for Linux or MAC${line.separator} set  ANT_OPTS=-Xms256m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=512m  # for windows."/>
+      </then>
   </if>
   <!-- Targets -->
   <target name="diagnostics" description="diagnostics">
@@ -368,7 +369,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <!-- Build po-grid sub-project produces project level artifact -->
   <target name="build:po-grid" depends="init" unless="exclude.po-grid">
     <fail unless="jboss.server.hostname"/>
-  
+
     <ant inheritAll="false" inheritRefs="false" antfile="${po-grid.build.file}"
             target="${po-grid.build.target}"
             dir="${po-grid.base.dir}" >
@@ -397,7 +398,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             dir="${po-grid-legacy.base.dir}" >
       <property name="project.name" value="${project.name}"/>
       <property name="jboss.dir" value="target"/>
-      <property name="jboss.serverinstance.name" value="${po-grid-legacy.jboss.server.name}"/>
+      <property name="jboss.serverinstance.name" value="${po-grid-legacy-jboss.server.name}"/>
       <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
       <property name="java.naming.provider.url.host" value="localhost"/>
       <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
@@ -407,36 +408,36 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </ant>
 
     <zip update="false" destfile="${po-grid-legacy.dist.dir}/${po-grid-legacy.artifact.file}">
-      <zipfileset dir="${po-grid-legacy.artifact.dir}/server/${po-grid-legacy.jboss.server.name}/deploy/${po-grid-legacy.dir.target}/" />
+      <zipfileset dir="${po-grid-legacy.artifact.dir}/server/${po-grid-legacy-jboss.server.name}/deploy/${po-grid-legacy.dir.target}/" />
     </zip>
     <delete dir="${po-grid-legacy.artifact.dir}/server" />
   </target>
 
   <macrodef name="maven">
-	  <attribute name="maven.profile.list" default="" />
-	  <attribute name="maven.goal.list" />
-	  <attribute name="maven.dir" />
-	  <attribute name="maven.home" default="${env.MAVEN_HOME}"/>
-	  <attribute name="resultproperty" default="maven.result" />
-	  <attribute name="maven.mem" default="-Xmx1024m"/>
-	  <element name="args" implicit="true" optional="true" />
-	  <sequential>
-		  <java classname="org.codehaus.classworlds.Launcher" fork="true"
-			  dir="@{maven.dir}" resultproperty="@{resultproperty}">
-			  <jvmarg value="-Xmx1024m"/>
-			  <classpath>
-				  <fileset dir="@{maven.home}/boot">
-					  <include name="*.jar" />
-				  </fileset>
-				  <fileset dir="@{maven.home}/lib">
-					  <include name="*.jar" />
-				  </fileset>
-			  </classpath>
-			  <sysproperty key="classworlds.conf" value="@{maven.home}/bin/m2.conf" />
-			  <sysproperty key="maven.home" value="@{maven.home}" />
-			  <arg line="--batch-mode @{maven.profile.list} @{maven.goal.list}" />
-		  </java>
-	  </sequential>
+      <attribute name="maven.profile.list" default="" />
+      <attribute name="maven.goal.list" />
+      <attribute name="maven.dir" />
+      <attribute name="maven.home" default="${env.M2_HOME}"/>
+      <attribute name="resultproperty" default="maven.result" />
+      <attribute name="maven.mem" default="-Xmx1024m"/>
+      <element name="args" implicit="true" optional="true" />
+      <sequential>
+          <java classname="org.codehaus.classworlds.Launcher" fork="true"
+              dir="@{maven.dir}" resultproperty="@{resultproperty}">
+              <jvmarg value="-Xmx1024m"/>
+              <classpath>
+                  <fileset dir="@{maven.home}/boot">
+                      <include name="*.jar" />
+                  </fileset>
+                  <fileset dir="@{maven.home}/lib">
+                      <include name="*.jar" />
+                  </fileset>
+              </classpath>
+              <sysproperty key="classworlds.conf" value="@{maven.home}/bin/m2.conf" />
+              <sysproperty key="maven.home" value="@{maven.home}" />
+              <arg line="--batch-mode @{maven.profile.list} @{maven.goal.list}" />
+          </java>
+      </sequential>
   </macrodef>
 
   <!-- Produces all distributions: installer, upgrader and source -->
@@ -469,74 +470,74 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     dist:tools:retrieve:sync-gts
     " />
     <target name="dist:tools:retrieve:jbosscp" unless="jbosscp.tools.exists" description="Downloads JBOSS Cumulative Patch from binary repository and verifies checksum">
-	    <echoproperties  prefix="jbosscp"> <propertyset negate="yes" > <propertyref regex="passw" /> </propertyset> </echoproperties>
-	    <if>
-		    <isset property="jbosscp.src.url"/>
-		    <then>
-			    <get src="${jbosscp.src.url}" dest="${jbosscp.dest.file}" />
-		    </then>
-		    <else>
-			    <echo message="jbosscp.src.url not set skipping download of jboss cumulative patch"/>
-		    </else>
-	    </if>
+        <echoproperties  prefix="jbosscp"> <propertyset negate="yes" > <propertyref regex="passw" /> </propertyset> </echoproperties>
+        <if>
+            <isset property="jbosscp.src.url"/>
+            <then>
+                <get src="${jbosscp.src.url}" dest="${jbosscp.dest.file}" />
+            </then>
+            <else>
+                <echo message="jbosscp.src.url not set skipping download of jboss cumulative patch"/>
+            </else>
+        </if>
     </target>
     <target name="dist:tools:retrieve:cagrid" unless="cagrid-libs.tools.exists" description="Downloads JBOSS from binary repository and verifies checksum">
     </target>
 
     <target name="dist:tools:retrieve:cagrid-console" description="Downloads JBOSS from binary repository and verifies checksum">
-	    <if>
-		    <not>
-			    <available file="${cagrid-console.dest.file}"/>
-		    </not>
-		    <then>
-			    <get src="${cagrid-console.src.url}" dest="${cagrid-console.dest.file}" />
-		    </then>
-	    </if>
-	    <property name="cagrid-console.dist.dir" location="${dist.exploded.dir}/${cagrid-console.dist.relative.dir}"/> 
-	    <unzip src="${cagrid-console.dest.file}" dest="${dist.exploded.dir}"/>
-	    <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true"
-		    match="override=.true."
-		    replace=""
-		    />
-	    <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true"
-		    match="id=.ivy.instance."
-		    replace=""
-		    />
+        <if>
+            <not>
+                <available file="${cagrid-console.dest.file}"/>
+            </not>
+            <then>
+                <get src="${cagrid-console.src.url}" dest="${cagrid-console.dest.file}" />
+            </then>
+        </if>
+        <property name="cagrid-console.dist.dir" location="${dist.exploded.dir}/${cagrid-console.dist.relative.dir}"/>
+        <unzip src="${cagrid-console.dest.file}" dest="${dist.exploded.dir}"/>
+        <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true"
+            match="override=.true."
+            replace=""
+            />
+        <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true"
+            match="id=.ivy.instance."
+            replace=""
+            />
     </target>
 
 
-	<!-- 
-	   See https://wiki.nci.nih.gov/display/BuildandDeploymentAutomation/How+to+configure+a+Secure+Grid+Listener for more details
-	-->
+    <!--
+       See https://wiki.nci.nih.gov/display/BuildandDeploymentAutomation/How+to+configure+a+Secure+Grid+Listener for more details
+    -->
     <target name="dist:tools:retrieve:sync-gts"  description="Downloads caGrid SyncGTS service file from binary repository and verifies checksum">
-	    <if>
-		    <not>
-			    <available file="${download.dir}/${sync-gts.binaries.file}"/>
-		    </not>
-		    <then>
-			    <get src="${sync-gts.src.url}" dest="${download.dir}/${sync-gts.binaries.file}" />
-		    </then>
-	    </if>
-	    <property name="sync-gts.dist.dir" location="${dist.exploded.dir}/${sync-gts.dist.relative.dir}"/>
-	    <unzip src="${download.dir}/${sync-gts.binaries.file}" dest="${sync-gts.dist.dir}"/>
-	    <property name="cagrid.target.co.dir" location="${target.dir}/cagrid-target"/>
-	    <mkdir dir="${cagrid.target.co.dir}"/>
-	    <if>
-		    <not>
-			    <available file="${cagrid-target.src.url}"/>
-		    </not>
-		    <then>
-			    <mkdir dir="${cagrid.target.co.dir}"/>
-			    <svn-co
-				    svn.checkout.url="${cagrid-target.src.url}"
-				    svn.checkout.dir="${cagrid.target.co.dir}"
-				    delete="false"
-				    />
-		    </then>
-	    </if>
-	    <copy todir="${sync-gts.dist.dir}/cagrid-target">
-		    <fileset dir="${cagrid.target.co.dir}"/>
-	    </copy>
+        <if>
+            <not>
+                <available file="${download.dir}/${sync-gts.binaries.file}"/>
+            </not>
+            <then>
+                <get src="${sync-gts.src.url}" dest="${download.dir}/${sync-gts.binaries.file}" />
+            </then>
+        </if>
+        <property name="sync-gts.dist.dir" location="${dist.exploded.dir}/${sync-gts.dist.relative.dir}"/>
+        <unzip src="${download.dir}/${sync-gts.binaries.file}" dest="${sync-gts.dist.dir}"/>
+        <property name="cagrid.target.co.dir" location="${target.dir}/cagrid-target"/>
+        <mkdir dir="${cagrid.target.co.dir}"/>
+        <if>
+            <not>
+                <available file="${cagrid-target.src.url}"/>
+            </not>
+            <then>
+                <mkdir dir="${cagrid.target.co.dir}"/>
+                <svn-co
+                    svn.checkout.url="${cagrid-target.src.url}"
+                    svn.checkout.dir="${cagrid.target.co.dir}"
+                    delete="false"
+                    />
+            </then>
+        </if>
+        <copy todir="${sync-gts.dist.dir}/cagrid-target">
+            <fileset dir="${cagrid.target.co.dir}"/>
+        </copy>
     </target>
 
 
@@ -588,11 +589,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </copy>
     <dist-prep />
     <copy todir="${dist.exploded.dir}">
-	    <fileset dir="${build.dir}">
-		    <include name="install-poear.xml"/>
-		    <include name="install-pogrid.xml"/>
-		    <include name="install-pogridlegacy.xml"/>
-	    </fileset>
+        <fileset dir="${build.dir}">
+            <include name="install-poear.xml"/>
+            <include name="install-pogrid.xml"/>
+            <include name="install-pogridlegacy.xml"/>
+        </fileset>
     </copy>
   </target>
 
@@ -632,11 +633,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
       default.target="upgrade"
       />
     <copy todir="${dist.exploded.dir}">
-	    <fileset dir="${build.dir}">
-		    <include name="install-poear.xml"/>
-		    <include name="install-pogrid.xml"/>
-		    <include name="install-pogridlegacy.xml"/>
-	    </fileset>
+        <fileset dir="${build.dir}">
+            <include name="install-poear.xml"/>
+            <include name="install-pogrid.xml"/>
+            <include name="install-pogridlegacy.xml"/>
+        </fileset>
     </copy>
   </target>
 
@@ -647,11 +648,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <delete file="${dist.dir}/${po-grid-legacy.upgrade.zip.file}"/>
     <!-- Set environment name to external -->
     <copy todir="${dist.exploded.dir}" overwrite="true">
-	    <fileset dir="${build.dir}">
-		    <include name="upgrade.properties" />
-	    </fileset>
+        <fileset dir="${build.dir}">
+            <include name="upgrade.properties" />
+        </fileset>
     </copy>
-    <delete file="${dist.exploded.dir}/install.properties"/> 
+    <delete file="${dist.exploded.dir}/install.properties"/>
     <replaceregexp file="${dist.exploded.dir}/upgrade.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
 
     <obfuscate-properties-file
@@ -909,7 +910,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     />
 
   <target name="test:selenium:run">
-  
+
     <osfamily property="os.family"/>
     <if>
       <equals arg1="${os.family}" arg2="unix"/>

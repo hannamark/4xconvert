@@ -8,7 +8,7 @@
                 <hbm2ddl.drop.table>@db.po.generate.drop@</hbm2ddl.drop.table>
                 <hbm2ddl.create.table>@db.po.generate.create@</hbm2ddl.create.table>
 
-                <!-- Maven uses these properties to maniuplate files, we are inserting tokens so that they can be de-tokenized by the install:jboss:po-ear:re-create target -->
+                <!-- Maven uses these properties to manipulate files, we are inserting tokens so that they can be de-tokenized by the install:jboss:po-ear:re-create target -->
                 <!-- po-ds.xml -->
                 <database.hostname>%%database.server%%</database.hostname>
                 <database.port>%%database.port%%</database.port>
@@ -52,7 +52,7 @@
                 <ctep.jms.subscription.name>%%ctep.jms.subscription.name%%</ctep.jms.subscription.name>
                 <ctep.jms.topic.connection.factory.name>%%ctep.jms.topic.connection.factory.name%%</ctep.jms.topic.connection.factory.name>
                 <ctep.jms.topic.name>%%ctep.jms.topic.name%%</ctep.jms.topic.name>
-                
+
                 <gridServicePrincipal>%%pogrid.jndi.principal%%</gridServicePrincipal>
                 <gridServiceCredential>%%pogrid.jndi.credentials.encrypted%%</gridServiceCredential>
             </properties>

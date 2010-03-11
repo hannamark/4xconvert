@@ -6,25 +6,25 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 <project name="po-grid-legacy-installer" default="upgrade" basedir="."
   xmlns:ivy="antlib:org.apache.ivy.ant"
   >
-	<description>
-	    This build file is part of the COPPA-PO project. This is the po grid legacy install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is called from the master install.xml. This script has two flows install and upgrade.
-	    Install will do the following
-	    * Install binaries
-	    * Configure binaries
-	    * Install application
-	    * Configure application
-	    * Re-create database
-	    * Upgrade database
-	    Upgrade will do the following
-	    * Install application
-	    * Configure application
-	    * Upgrade database
-	    The script includes target that may not be used by all projects, but are included in here becaue it is a template. This script has targets to deal with the following, you can delete targets you don't want to work with
-	    Application servers (option for grid services also)
-	    * JBoss
-	    Databases
-	    * PostgreSQL
-	    This script requires java and ant to run. Every thing else it needs is included in the distribution.
+    <description>
+        This build file is part of the COPPA-PO project. This is the po grid legacy install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is called from the master install.xml. This script has two flows install and upgrade.
+        Install will do the following
+        * Install binaries
+        * Configure binaries
+        * Install application
+        * Configure application
+        * Re-create database
+        * Upgrade database
+        Upgrade will do the following
+        * Install application
+        * Configure application
+        * Upgrade database
+        The script includes target that may not be used by all projects, but are included in here becaue it is a template. This script has targets to deal with the following, you can delete targets you don't want to work with
+        Application servers (option for grid services also)
+        * JBoss
+        Databases
+        * PostgreSQL
+        This script requires java and ant to run. Every thing else it needs is included in the distribution.
     </description>
 
     <property name="grid.resource.dir" value="${working.dir}/${grid.dist.relative.dir}" />
@@ -64,101 +64,102 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="install:po-grid-legacy-jboss:init" depends="common:init:pre">
-	  <!-- determine if port configurations or port lists are being called -->
-	  <if>
-		  <isset property="po-grid-legacy-jboss.ncicb-standard.port-config"/>
-		  <then>
-			  <!-- Read some port properties from standard bindings file -->
-			  <echo message="Using JBoss NCICB Standard port configurations"/>
-			  <if>
-				  <equals arg1="${jboss.major.version}" arg2="4"/>
-				  <then>
-					  <property name="po-grid-legacy-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
-					  <jboss-read-ports
-						  jboss.server.ports.name="${po-grid-legacy-jboss.server.ports.name}"
-					  	  jboss.server.bindingfile.location="${po-grid-legacy-jboss.server.binding.template.location}"
-					  	  jboss.server.jndi.port.property.name="po-grid-legacy-jboss.server.jndi.port"
-					  	  jboss.server.port.property.name="po-grid-legacy-jboss.server.port"
-					  	  jboss.ejbinvoker.port.property.name="po-grid-legacy-jboss.ejbinvoker.port"
-					  	  jboss.server.rmi.port.property.name="po-grid-legacy-jboss.server.rmi.port"
-					  	  jboss.web.service.port.property.name="po-grid-legacy-jboss.web.service.port"
-					  	  jboss.service.rmiobject.port.property.name="po-grid-legacy-jboss.service.rmiobject.port"
-					  	  jboss.server.bind.port.property.name="po-grid-legacy-jboss.server.bind.port"
-					  	  jboss.hajndi.port.property.name="po-grid-legacy-jboss.hajndi.port"
-					  	  jboss.hajrmi.port.property.name="po-grid-legacy-jboss.hajrmi.port"
-					  	  jboss.cobraorb.port.property.name="po-grid-legacy-jboss.cobraorb.port"
-					  	  jboss.jmx-rmi.port.property.name="po-grid-legacy-jboss.jmx-rmi.port"
-					  	  jboss.snmp-trapd.port.property.name="po-grid-legacy-jboss.snmp-trapd.port"
-					  	  jboss.snmp.port.property.name="po-grid-legacy-jboss.snmp.port"
-					  	  jboss.jms.port.property.name="po-grid-legacy-jboss.jms.port"
-					  	  jboss.remoting.port.property.name="po-grid-legacy-jboss.remoting.port"
-					  	  jboss.messaging.port.property.name="po-grid-legacy-jboss.messaging.port"
-						  />
-					  <jboss-bindings-validate
-						  jboss.server.ports.name="${po-grid-legacy-jboss.server.ports.name}"
-						  jboss.server.bindingfile.location="${po-grid-legacy-jboss.server.binding.template.location}"
-						  />
-				  </then>
-				  <elseif>
-					  <equals arg1="${jboss.major.version}" arg2="5"/>
-					  <then>
-						  <property name="po-grid-legacy-jboss.server.bindingfile.location" value="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"/>
-						  <property name="temp.bindings.file" value="${temp.dir}/unmodified-bindings-jboss-beans.xml"/>
-						  <copy tofile="${temp.bindings.file}" file="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/unmodified-bindings-jboss-beans.xml"/>
-						  <jboss51-bindings-nci
-							  jboss.server.bindingfile.location="${temp.bindings.file}"
-							  />
-						  <jboss51-read-ports-nci
-							  jboss.server.bindingfile.location="${temp.bindings.file}"
-							  />
-					  </then>
-				  </elseif>
-			  </if>
-			  <echo message="http -${po-grid-legacy-jboss.server.port} "/>
-			  <echo message="http -${po-grid-legacy-jboss.server.jndi.port} "/>
-			  <properties-exist
-				  properties.list="po-grid-legacy-jboss.server.jndi.port,po-grid-legacy-jboss.server.port,po-grid-legacy-jboss.server.ports.name"
-				  />
-		  </then>
-		  <else>
-			  <!-- else ensure that all ports are set, since these will be removed from install-properties.template we will verify here.  They have to be removed so the validator works with or without the properties or we have to change the format of the file. -->
-			  <echo message="Using custom JBoss port configurations"/>
-			  <property name="po-grid-legacy-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
-			  <properties-exist
-				  properties.list="po-grid-legacy-jboss.server.jndi.port,po-grid-legacy-jboss.server.port,po-grid-legacy-jboss.cobraorb.port,po-grid-legacy-jboss.hajndi.port,po-grid-legacy-jboss.hajrmi.port,po-grid-legacy-jboss.jmx-rmi.port,po-grid-legacy-jboss.messaging.port,po-grid-legacy-jboss.pooledha.port,po-grid-legacy-jboss.server.bind.port,po-grid-legacy-jboss.server.rmi.port,po-grid-legacy-jboss.service.rmiobject.port,po-grid-legacy-jboss.snmp.port,po-grid-legacy-jboss.snmp-trapd.port,po-grid-legacy-jboss.web.service.port,po-grid-legacy-jboss.unifiedinvoker.port,po-grid-legacy-jboss.hajndi.auto.port,po-grid-legacy-jboss.ssl.port,po-grid-legacy-jboss.jms2.netty.port,po-grid-legacy-jboss.jms2.netty-ssl.port,po-grid-legacy-jboss.transaction.recovery.port,po-grid-legacy-jboss.transaction.status.port,po-grid-legacy-jboss.transaction.processid.port"
-				  />
-		  </else>
-	  </if>
+      <!-- determine if port configurations or port lists are being called -->
+      <if>
+          <isset property="po-grid-legacy-jboss.ncicb-standard.port-config"/>
+          <then>
+              <!-- Read some port properties from standard bindings file -->
+              <echo message="Using JBoss NCICB Standard port configurations"/>
+              <if>
+                  <equals arg1="${jboss.major.version}" arg2="4"/>
+                  <then>
+                      <property name="po-grid-legacy-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
+                      <echo message="po-grid-legacy port name -${po-grid-legacy-jboss.server.ports.name}"/>
+                      <jboss-read-ports
+                          jboss.server.ports.name="${po-grid-legacy-jboss.server.ports.name}"
+                            jboss.server.bindingfile.location="${po-grid-legacy-jboss.server.binding.template.location}"
+                            jboss.server.jndi.port.property.name="po-grid-legacy-jboss.server.jndi.port"
+                            jboss.server.port.property.name="po-grid-legacy-jboss.server.port"
+                            jboss.ejbinvoker.port.property.name="po-grid-legacy-jboss.ejbinvoker.port"
+                            jboss.server.rmi.port.property.name="po-grid-legacy-jboss.server.rmi.port"
+                            jboss.web.service.port.property.name="po-grid-legacy-jboss.web.service.port"
+                            jboss.service.rmiobject.port.property.name="po-grid-legacy-jboss.service.rmiobject.port"
+                            jboss.server.bind.port.property.name="po-grid-legacy-jboss.server.bind.port"
+                            jboss.hajndi.port.property.name="po-grid-legacy-jboss.hajndi.port"
+                            jboss.hajrmi.port.property.name="po-grid-legacy-jboss.hajrmi.port"
+                            jboss.cobraorb.port.property.name="po-grid-legacy-jboss.cobraorb.port"
+                            jboss.jmx-rmi.port.property.name="po-grid-legacy-jboss.jmx-rmi.port"
+                            jboss.snmp-trapd.port.property.name="po-grid-legacy-jboss.snmp-trapd.port"
+                            jboss.snmp.port.property.name="po-grid-legacy-jboss.snmp.port"
+                            jboss.jms.port.property.name="po-grid-legacy-jboss.jms.port"
+                            jboss.remoting.port.property.name="po-grid-legacy-jboss.remoting.port"
+                            jboss.messaging.port.property.name="po-grid-legacy-jboss.messaging.port"
+                          />
+                      <jboss-bindings-validate
+                          jboss.server.ports.name="${po-grid-legacy-jboss.server.ports.name}"
+                          jboss.server.bindingfile.location="${po-grid-legacy-jboss.server.binding.template.location}"
+                          />
+                  </then>
+                  <elseif>
+                      <equals arg1="${jboss.major.version}" arg2="5"/>
+                      <then>
+                          <property name="po-grid-legacy-jboss.server.bindingfile.location" value="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"/>
+                          <property name="temp.bindings.file" value="${temp.dir}/unmodified-bindings-jboss-beans.xml"/>
+                          <copy tofile="${temp.bindings.file}" file="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/unmodified-bindings-jboss-beans.xml"/>
+                          <jboss51-bindings-nci
+                              jboss.server.bindingfile.location="${temp.bindings.file}"
+                              />
+                          <jboss51-read-ports-nci
+                              jboss.server.bindingfile.location="${temp.bindings.file}"
+                              />
+                      </then>
+                  </elseif>
+              </if>
+              <echo message="http -${po-grid-legacy-jboss.server.port} "/>
+              <echo message="http -${po-grid-legacy-jboss.server.jndi.port} "/>
+              <properties-exist
+                  properties.list="po-grid-legacy-jboss.server.jndi.port,po-grid-legacy-jboss.server.port,po-grid-legacy-jboss.server.ports.name"
+                  />
+          </then>
+          <else>
+              <!-- else ensure that all ports are set, since these will be removed from install-properties.template we will verify here.  They have to be removed so the validator works with or without the properties or we have to change the format of the file. -->
+              <echo message="Using custom JBoss port configurations"/>
+              <property name="po-grid-legacy-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
+              <properties-exist
+                  properties.list="po-grid-legacy-jboss.server.jndi.port,po-grid-legacy-jboss.server.port,po-grid-legacy-jboss.cobraorb.port,po-grid-legacy-jboss.hajndi.port,po-grid-legacy-jboss.hajrmi.port,po-grid-legacy-jboss.jmx-rmi.port,po-grid-legacy-jboss.messaging.port,po-grid-legacy-jboss.pooledha.port,po-grid-legacy-jboss.server.bind.port,po-grid-legacy-jboss.server.rmi.port,po-grid-legacy-jboss.service.rmiobject.port,po-grid-legacy-jboss.snmp.port,po-grid-legacy-jboss.snmp-trapd.port,po-grid-legacy-jboss.web.service.port,po-grid-legacy-jboss.unifiedinvoker.port,po-grid-legacy-jboss.hajndi.auto.port,po-grid-legacy-jboss.ssl.port,po-grid-legacy-jboss.jms2.netty.port,po-grid-legacy-jboss.jms2.netty-ssl.port,po-grid-legacy-jboss.transaction.recovery.port,po-grid-legacy-jboss.transaction.status.port,po-grid-legacy-jboss.transaction.processid.port"
+                  />
+          </else>
+      </if>
   </target>
   <target name="common:po-grid-legacy-jboss:init" depends="common:init:pre" unless="exclude.jboss">
-	  <property name="po-grid-legacy-jboss.ssl.enable" value="false"/>
-	  <property name="po-grid-legacy-jboss.home" value="${application.base.path}/${po-grid-legacy-jboss.relative.path}"/>
-	  <jboss-version
-		  />
-	  <if>
-		  <equals arg1="${po-grid-legacy-jboss.http-connector.remove}" arg2="true"/>
-		  <then>
-			  <property name="po-grid-legacy-jboss.application.url" value="https://${po-grid-legacy-jboss.server.hostname}:${po-grid-legacy-jboss.grid.secure.port}/wsrf/services/cagrid/CoreServices"/>
-		  </then>
-		  <else>
-			  <property name="po-grid-legacy-jboss.application.url" value="http://${po-grid-legacy-jboss.server.hostname}:${po-grid-legacy-jboss.server.port}/wsrf/services/cagrid/CoreServices"/>
-		  </else>
-	  </if>
-	  <available file="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/conf/jboss-service.xml" property="po-grid-legacy-jboss.exists"/>
-	  <basename file="${po-grid-legacy-jboss.ssl.keystore.location}" property="po-grid-legacy-jboss.ssl.keystore.file"/>
-	  <dirname file="${po-grid-legacy-jboss.ssl.keystore.location}" property="po-grid-legacy-jboss.ssl.keystore.dir"/>
-	  <basename file="${po-grid-legacy-jboss.grid.secure.cert.location}" property="po-grid-legacy-jboss.grid.secure.cert.file"/>
-	  <dirname file="${po-grid-legacy-jbospo-grid-legacy-jbosscert.location}" property="po-grid-legacy-jboss.grid.secure.dir"/>
-	  <basename file="${po-grid-legacy-jboss.grid.secure.key.location}" property="po-grid-legacy-jboss.grid.secure.key.file"/>
-	  <property name="po-grid-legacy-jboss.socket.ports" value="${po-grid-legacy-jboss.server.port},${po-grid-legacy-jboss.server.rmi.port},${po-grid-legacy-jboss.server.jndi.port},${po-grid-legacy-jboss.service.rmiobject.port},${po-grid-legacy-jboss.jms.port},${po-grid-legacy-jboss.web.service.port}"/>
+      <property name="po-grid-legacy-jboss.ssl.enable" value="false"/>
+      <property name="po-grid-legacy-jboss.home" value="${application.base.path}/${po-grid-legacy-jboss.relative.path}"/>
+      <jboss-version
+          />
+      <if>
+          <equals arg1="${po-grid-legacy-jboss.http-connector.remove}" arg2="true"/>
+          <then>
+              <property name="po-grid-legacy-jboss.application.url" value="https://${po-grid-legacy-jboss.server.hostname}:${po-grid-legacy-jboss.grid.secure.port}/wsrf/services/cagrid/CoreServices"/>
+          </then>
+          <else>
+              <property name="po-grid-legacy-jboss.application.url" value="http://${po-grid-legacy-jboss.server.hostname}:${po-grid-legacy-jboss.server.port}/wsrf/services/cagrid/CoreServices"/>
+          </else>
+      </if>
+      <available file="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/conf/jboss-service.xml" property="po-grid-legacy-jboss.exists"/>
+      <basename file="${po-grid-legacy-jboss.ssl.keystore.location}" property="po-grid-legacy-jboss.ssl.keystore.file"/>
+      <dirname file="${po-grid-legacy-jboss.ssl.keystore.location}" property="po-grid-legacy-jboss.ssl.keystore.dir"/>
+      <basename file="${po-grid-legacy-jboss.grid.secure.cert.location}" property="po-grid-legacy-jboss.grid.secure.cert.file"/>
+      <dirname file="${po-grid-legacy-jboss.grid.secure.cert.location}" property="po-grid-legacy-jboss.grid.secure.dir"/>
+      <basename file="${po-grid-legacy-jboss.grid.secure.key.location}" property="po-grid-legacy-jboss.grid.secure.key.file"/>
+      <property name="po-grid-legacy-jboss.socket.ports" value="${po-grid-legacy-jboss.server.port},${po-grid-legacy-jboss.server.rmi.port},${po-grid-legacy-jboss.server.jndi.port},${po-grid-legacy-jboss.service.rmiobject.port},${po-grid-legacy-jboss.jms.port},${po-grid-legacy-jboss.web.service.port}"/>
   </target>
 
   <target name="install:po-grid-legacy-jboss:binaries" unless="exclude.po-grid-legacy">
     <jboss-install-binaries
       application.base.path="${application.base.path}/pogridlegacy"
-      jems.install.option="default" 
-      jboss.home="${po-grid-legacy-jboss.home}" 
-      jboss.server.name="${po-grid-legacy-jboss.server.name}" 
+      jems.install.option="default"
+      jboss.home="${po-grid-legacy-jboss.home}"
+      jboss.server.name="${po-grid-legacy-jboss.server.name}"
             />
   </target>
 
@@ -176,85 +177,85 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
     <!-- Configures installed po-grid application -->
     <target name="install:po-grid-legacy-jboss:grid:configure" description="Configure po-grid-legacy service based on properties" unless="exclude.po-grid-legacy">
-	
-	<jboss-configure-grid
-		jboss.home="${po-grid-legacy-jboss.home}"
-		jboss.server.name="${po-grid-legacy-jboss.server.name}"
-		jboss.port.http="${po-grid-legacy-jboss.server.port}"
-		jboss.port.ssl="${po-grid-legacy-jboss.ssl.port}"
-		jboss.hostname="${po-grid-legacy-jboss.server.hostname}"
-		jboss.external.http.host="${po-grid-legacy-jboss.external.http.host}"
-		jboss.external.http.port="${po-grid-legacy-jboss.external.http.port}"
-		jboss.external.grid.secure.host="${po-grid-legacy-jboss.external.grid.secure.host}"
-		jboss.external.grid.secure.port="${po-grid-legacy-jboss.external.grid.secure.port}"
-		jboss.grid.secure.enable="${po-grid-legacy-jboss.grid.secure.enable}"
-		jboss.grid.secure.dir="${po-grid-legacy-jboss.grid.secure.dir}"
-		jboss.grid.secure.port="${po-grid-legacy-jboss.grid.secure.port}"
-		jboss.grid.secure.key.file="${po-grid-legacy-jboss.grid.secure.key.file}"
-		jboss.grid.secure.cert.file="${po-grid-legacy-jboss.grid.secure.cert.file}"
-		grid.application.name="${po-grid-legacy.introduce.skeleton.service.name}"
-		/>
+
+    <jboss-configure-grid
+        jboss.home="${po-grid-legacy-jboss.home}"
+        jboss.server.name="${po-grid-legacy-jboss.server.name}"
+        jboss.port.http="${po-grid-legacy-jboss.server.port}"
+        jboss.port.ssl="${po-grid-legacy-jboss.ssl.port}"
+        jboss.hostname="${po-grid-legacy-jboss.server.hostname}"
+        jboss.external.http.host="${po-grid-legacy-jboss.external.http.host}"
+        jboss.external.http.port="${po-grid-legacy-jboss.external.http.port}"
+        jboss.external.grid.secure.host="${po-grid-legacy-jboss.external.grid.secure.host}"
+        jboss.external.grid.secure.port="${po-grid-legacy-jboss.external.grid.secure.port}"
+        jboss.grid.secure.enable="${po-grid-legacy-jboss.grid.secure.enable}"
+        jboss.grid.secure.dir="${po-grid-legacy-jboss.grid.secure.dir}"
+        jboss.grid.secure.port="${po-grid-legacy-jboss.grid.secure.port}"
+        jboss.grid.secure.key.file="${po-grid-legacy-jboss.grid.secure.key.file}"
+        jboss.grid.secure.cert.file="${po-grid-legacy-jboss.grid.secure.cert.file}"
+        grid.application.name="${po-grid-legacy.introduce.skeleton.service.name}"
+        />
     </target>
 
   <target name="install:po-grid-legacy-jboss:configure" unless="exclude.po-grid-legacy">
         <!-- create a new template bindings file from template (using ports for po-grid -->
-	
-	  <jboss-configure
-		  jboss.home="${po-grid-legacy-jboss.home}"
-		  jboss.server.name="${po-grid-legacy-jboss.server.name}"
-		  jboss.server.ports.name="${po-grid-legacy-jboss.server.ports.name}"
-		  jboss.server.bindingfile.location="${po-grid-legacy-jboss.home}/bindings/bindings.xml"
-		  jboss.server.binding.template.location="${po-grid-legacy-jboss.server.binding.template.location}"
-		  jboss.server.jndi.port="${po-grid-legacy-jboss.server.jndi.port}"
-		  jboss.server.port="${po-grid-legacy-jboss.server.port}"
-		  jboss.cobraorb.port="${po-grid-legacy-jboss.cobraorb.port}"
-		  jboss.ejbinvoker.port="${po-grid-legacy-jboss.ejbinvoker.port}"
-		  jboss.hajndi.port="${po-grid-legacy-jboss.hajndi.port}"
-		  jboss.hajrmi.port="${po-grid-legacy-jboss.hajrmi.port}"
-		  jboss.jms.port="${po-grid-legacy-jboss.jms.port}"
-		  jboss.jmx-rmi.port="${po-grid-legacy-jboss.jmx-rmi.port}"
-		  jboss.messaging.port="${po-grid-legacy-jboss.messaging.port}"
-		  jboss.pooledha.port="${po-grid-legacy-jboss.pooledha.port}"
-		  jboss.remoting.port="${po-grid-legacy-jboss.remoting.port}"
-		  jboss.server.bind.port="${po-grid-legacy-jboss.server.bind.port}"
-		  jboss.server.rmi.port="${po-grid-legacy-jboss.server.rmi.port}"
-		  jboss.service.rmiobject.port="${po-grid-legacy-jboss.service.rmiobject.port}"
-		  jboss.snmp.port="${po-grid-legacy-jboss.snmp.port}"
-		  jboss.snmp-trapd.port="${po-grid-legacy-jboss.snmp-trapd.port}"
-		  jboss.web.service.port="${po-grid-legacy-jboss.web.service.port}"
-		  jboss.unifiedinvoker.port="${po-grid-legacy-jboss.unifiedinvoker.port}"
-		  jboss.hajndi.auto.port="${po-grid-legacy-jboss.hajndi.auto.port}"
-		  jboss.ssl.port="${po-grid-legacy-jboss.ssl.port}"
-		  jboss.jms2.netty.port="${po-grid-legacy-jboss.jms2.netty.port}"
-		  jboss.jms2.netty-ssl.port="${po-grid-legacy-jboss.jms2.netty-ssl.port}"
-		  jboss.transaction.recovery.port="${po-grid-legacy-jboss.transaction.recovery.port}"
-		  jboss.transaction.status.port="${po-grid-legacy-jboss.transaction.status.port}"
-		  jboss.transaction.processid.port="${po-grid-legacy-jboss.transaction.processid.port}"
-		  jboss.conf.dir="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/conf"
-		  jboss.server-xml.file="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
-		  jboss.ssl.enable="${po-grid-legacy-jboss.ssl.enable}"
-		  jboss.ssl.keystore.file="${po-grid-legacy-jboss.ssl.keystore.file}"
-		  jboss.ssl.keystore.dir="${po-grid-legacy-jboss.ssl.keystore.dir}"
-		  jboss.ssl.keystore.pass="${po-grid-legacy-jboss.ssl.keystore.pass}"
-		  jboss.ssl.keystore.alias="${po-grid-legacy-jboss.ssl.keystore.alias}"
-		  jboss.ssl.fullyqualified.hostname="${po-grid-legacy-jboss.ssl.fullyqualified.hostname}"
-		  jboss.external.ssl.host="${po-grid-legacy-jboss.external.ssl.host}"
-		  jboss.external.ssl.port="${po-grid-legacy-jboss.external.ssl.port}"
-		  jboss.external.http.host="${po-grid-legacy-jboss.external.http.host}"
-		  jboss.external.http.port="${po-grid-legacy-jboss.external.http.port}"
-		  jboss.external.grid.secure.host="${po-grid-legacy-jboss.external.grid.secure.host}"
-		  jboss.external.grid.secure.port="${po-grid-legacy-jboss.external.grid.secure.port}"
-		  jboss.server.hostname="${po-grid-legacy-jboss.server.hostname}"
-		  jboss.grid.configure="true"
-		  jboss.grid.secure.dir="${po-grid-legacy-jboss.grid.secure.dir}"
-		  jboss.grid.secure.enable="${po-grid-legacy-jboss.grid.secure.enable}"
-		  jboss.grid.secure.port="${po-grid-legacy-jboss.grid.secure.port}"
-		  jboss.grid.secure.key.file="${po-grid-legacy-jboss.grid.secure.key.file}" 
-		  jboss.grid.secure.cert.file="${po-grid-legacy-jboss.grid.secure.cert.file}" 
-		  jboss.java.opts="${po-grid-legacy-jboss.java.opts}"
-		  jboss.logs.dir="${po-grid-legacy-jboss.home}/server/${po-grid-jboss.server.name}/log"
-		  jboss.http-connector.remove="${po-grid-legacy-jboss.http-connector.remove}"
-		  />
+
+      <jboss-configure
+          jboss.home="${po-grid-legacy-jboss.home}"
+          jboss.server.name="${po-grid-legacy-jboss.server.name}"
+          jboss.server.ports.name="${po-grid-legacy-jboss.server.ports.name}"
+          jboss.server.bindingfile.location="${po-grid-legacy-jboss.home}/bindings/bindings.xml"
+          jboss.server.binding.template.location="${po-grid-legacy-jboss.server.binding.template.location}"
+          jboss.server.jndi.port="${po-grid-legacy-jboss.server.jndi.port}"
+          jboss.server.port="${po-grid-legacy-jboss.server.port}"
+          jboss.cobraorb.port="${po-grid-legacy-jboss.cobraorb.port}"
+          jboss.ejbinvoker.port="${po-grid-legacy-jboss.ejbinvoker.port}"
+          jboss.hajndi.port="${po-grid-legacy-jboss.hajndi.port}"
+          jboss.hajrmi.port="${po-grid-legacy-jboss.hajrmi.port}"
+          jboss.jms.port="${po-grid-legacy-jboss.jms.port}"
+          jboss.jmx-rmi.port="${po-grid-legacy-jboss.jmx-rmi.port}"
+          jboss.messaging.port="${po-grid-legacy-jboss.messaging.port}"
+          jboss.pooledha.port="${po-grid-legacy-jboss.pooledha.port}"
+          jboss.remoting.port="${po-grid-legacy-jboss.remoting.port}"
+          jboss.server.bind.port="${po-grid-legacy-jboss.server.bind.port}"
+          jboss.server.rmi.port="${po-grid-legacy-jboss.server.rmi.port}"
+          jboss.service.rmiobject.port="${po-grid-legacy-jboss.service.rmiobject.port}"
+          jboss.snmp.port="${po-grid-legacy-jboss.snmp.port}"
+          jboss.snmp-trapd.port="${po-grid-legacy-jboss.snmp-trapd.port}"
+          jboss.web.service.port="${po-grid-legacy-jboss.web.service.port}"
+          jboss.unifiedinvoker.port="${po-grid-legacy-jboss.unifiedinvoker.port}"
+          jboss.hajndi.auto.port="${po-grid-legacy-jboss.hajndi.auto.port}"
+          jboss.ssl.port="${po-grid-legacy-jboss.ssl.port}"
+          jboss.jms2.netty.port="${po-grid-legacy-jboss.jms2.netty.port}"
+          jboss.jms2.netty-ssl.port="${po-grid-legacy-jboss.jms2.netty-ssl.port}"
+          jboss.transaction.recovery.port="${po-grid-legacy-jboss.transaction.recovery.port}"
+          jboss.transaction.status.port="${po-grid-legacy-jboss.transaction.status.port}"
+          jboss.transaction.processid.port="${po-grid-legacy-jboss.transaction.processid.port}"
+          jboss.conf.dir="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/conf"
+          jboss.server-xml.file="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+          jboss.ssl.enable="${po-grid-legacy-jboss.ssl.enable}"
+          jboss.ssl.keystore.file="${po-grid-legacy-jboss.ssl.keystore.file}"
+          jboss.ssl.keystore.dir="${po-grid-legacy-jboss.ssl.keystore.dir}"
+          jboss.ssl.keystore.pass="${po-grid-legacy-jboss.ssl.keystore.pass}"
+          jboss.ssl.keystore.alias="${po-grid-legacy-jboss.ssl.keystore.alias}"
+          jboss.ssl.fullyqualified.hostname="${po-grid-legacy-jboss.ssl.fullyqualified.hostname}"
+          jboss.external.ssl.host="${po-grid-legacy-jboss.external.ssl.host}"
+          jboss.external.ssl.port="${po-grid-legacy-jboss.external.ssl.port}"
+          jboss.external.http.host="${po-grid-legacy-jboss.external.http.host}"
+          jboss.external.http.port="${po-grid-legacy-jboss.external.http.port}"
+          jboss.external.grid.secure.host="${po-grid-legacy-jboss.external.grid.secure.host}"
+          jboss.external.grid.secure.port="${po-grid-legacy-jboss.external.grid.secure.port}"
+          jboss.server.hostname="${po-grid-legacy-jboss.server.hostname}"
+          jboss.grid.configure="true"
+          jboss.grid.secure.dir="${po-grid-legacy-jboss.grid.secure.dir}"
+          jboss.grid.secure.enable="${po-grid-legacy-jboss.grid.secure.enable}"
+          jboss.grid.secure.port="${po-grid-legacy-jboss.grid.secure.port}"
+          jboss.grid.secure.key.file="${po-grid-legacy-jboss.grid.secure.key.file}"
+          jboss.grid.secure.cert.file="${po-grid-legacy-jboss.grid.secure.cert.file}"
+          jboss.java.opts="${po-grid-legacy-jboss.java.opts}"
+          jboss.logs.dir="${po-grid-legacy-jboss.home}/server/${po-grid-jboss.server.name}/log"
+          jboss.http-connector.remove="${po-grid-legacy-jboss.http-connector.remove}"
+          />
   </target>
 
   <!-- Calls to bda macros for basic functionality -->
@@ -268,78 +269,78 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <isset property="exclude.start.servers"/>
       </not>
       <then>
-	      <jboss-start-jboss
-		      jboss.home="${po-grid-legacy-jboss.home}"
-		      jboss.server.name="${po-grid-legacy-jboss.server.name}"
-		      />
+          <jboss-start-jboss
+              jboss.home="${po-grid-legacy-jboss.home}"
+              jboss.server.name="${po-grid-legacy-jboss.server.name}"
+              />
       </then>
     </if>
     </target>
 
     <target name="install:po-grid-legacy-jboss:validation:pre-install" description="Runs pre-install validation checks bda-utils"
-	    depends="
-	    common:po-grid-legacy-jboss:init,common:init,
-	    install:common:validation:pre-install
-	    ">
-	    <validate-pre-install-jboss
-		    jboss.ssl.enable="${po-grid-legacy-jboss.ssl.enable}"
-		    jboss.ssl.keystore.file="${po-grid-legacy-jboss.ssl.keystore.file}"
-		    jboss.ssl.keystore.dir="${po-grid-legacy-jboss.ssl.keystore.dir}"
-		    jboss.ssl.keystore.pass="${po-grid-legacy-jboss.ssl.keystore.pass}"
-		    jboss.ssl.keystore.alias="${po-grid-legacy-jboss.ssl.keystore.alias}"
-		    jboss.ssl.fullyqualified.hostname="${po-grid-legacy-jboss.ssl.fullyqualified.hostname}"
-		    />
+        depends="
+        common:po-grid-legacy-jboss:init,common:init,
+        install:common:validation:pre-install
+        ">
+        <validate-pre-install-jboss
+            jboss.ssl.enable="${po-grid-legacy-jboss.ssl.enable}"
+            jboss.ssl.keystore.file="${po-grid-legacy-jboss.ssl.keystore.file}"
+            jboss.ssl.keystore.dir="${po-grid-legacy-jboss.ssl.keystore.dir}"
+            jboss.ssl.keystore.pass="${po-grid-legacy-jboss.ssl.keystore.pass}"
+            jboss.ssl.keystore.alias="${po-grid-legacy-jboss.ssl.keystore.alias}"
+            jboss.ssl.fullyqualified.hostname="${po-grid-legacy-jboss.ssl.fullyqualified.hostname}"
+            />
     </target>
     <target name="install:po-grid-legacy-jboss:validation:pre-install:ports" description="Checks to see if configured ports are listenting and fails buld, meant to be run after jboss:stop"
-	    depends="
-	    common:init,
-	    install:po-grid-legacy-jboss:stop
-	    ">
-	    <validate-pre-jboss-ports
-		    jboss.socket.ports="${po-grid-legacy-jboss.socket.ports}" 
-		    hostname="${po-grid-legacy-jboss.server.hostname}"
-		    />
+        depends="
+        common:init,
+        install:po-grid-legacy-jboss:stop
+        ">
+        <validate-pre-jboss-ports
+            jboss.socket.ports="${po-grid-legacy-jboss.socket.ports}"
+            hostname="${po-grid-legacy-jboss.server.hostname}"
+            />
     </target>
     <target name="install:po-grid-legacy-jboss:validation:post-install" description="Run post-install checks from bda-utils"
-	    depends="
-	    common:po-grid-legacy-jboss:init,
-	    common:init,
-	    install:po-grid-legacy-jboss:start
-	    ">
-	    <if>
-		    <not>
-			    <isset property="exclude.start.servers"/>
-		    </not>
-		    <then>
-			    <validate-post-jboss
-				    jboss.socket.list="${po-grid-legacy-jboss.socket.list}" 
-				    jboss.home="${po-grid-legacy-jboss.home}" 
-				    jboss.hostname="${po-grid-legacy-jboss.server.hostname}" 
-				    jboss.application.url="${po-grid-legacy-jboss.application.url}" 
-				    />
-		    </then>
-	    </if>
+        depends="
+        common:po-grid-legacy-jboss:init,
+        common:init,
+        install:po-grid-legacy-jboss:start
+        ">
+        <if>
+            <not>
+                <isset property="exclude.start.servers"/>
+            </not>
+            <then>
+                <validate-post-jboss
+                    jboss.socket.list="${po-grid-legacy-jboss.socket.list}"
+                    jboss.home="${po-grid-legacy-jboss.home}"
+                    jboss.hostname="${po-grid-legacy-jboss.server.hostname}"
+                    jboss.application.url="${po-grid-legacy-jboss.application.url}"
+                    />
+            </then>
+        </if>
     </target>
 
   <target name="install:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
-	  depends="
-	  common:po-grid-legacy-jboss:init,
-	  common:init,
-	  install:po-grid-legacy-jboss:init,
-	  install:po-grid-legacy-jboss:validation:pre-install,
-	  install:common:validation:pre-install,
-	  install:po-grid-legacy-jboss:stop,
-	  install:po-grid-legacy-jboss:validation:pre-install:ports,
-	  install:po-grid-legacy-jboss:clean,
-	  install:po-grid-legacy-jboss:binaries,
-	  install:po-grid-legacy-jboss:configure,
-	  install:po-grid-legacy-jboss:re-configure,
-	  install:po-grid-legacy-jboss:grid,
-	  install:po-grid-legacy-jboss:grid:configure,
-	  install:po-grid-legacy-jboss:post,
-	  install:po-grid-legacy-jboss:start,
-	  install:po-grid-legacy-jboss:validation:post-install
-	  " >
+      depends="
+      common:po-grid-legacy-jboss:init,
+      common:init,
+      install:po-grid-legacy-jboss:init,
+      install:po-grid-legacy-jboss:validation:pre-install,
+      install:common:validation:pre-install,
+      install:po-grid-legacy-jboss:stop,
+      install:po-grid-legacy-jboss:validation:pre-install:ports,
+      install:po-grid-legacy-jboss:clean,
+      install:po-grid-legacy-jboss:binaries,
+      install:po-grid-legacy-jboss:configure,
+      install:po-grid-legacy-jboss:re-configure,
+      install:po-grid-legacy-jboss:grid,
+      install:po-grid-legacy-jboss:grid:configure,
+      install:po-grid-legacy-jboss:post,
+      install:po-grid-legacy-jboss:start,
+      install:po-grid-legacy-jboss:validation:post-install
+      " >
   </target>
 
   <target name="install:po-grid-legacy-jboss:re-configure" depends="install:po-ear-jboss:init" unless="exclude.po-grid-legacy">
@@ -385,66 +386,66 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="upgrade-dac:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
-	  depends="
-	  upgrade:po-grid-legacy-jboss:init,
-	  common:po-grid-legacy-jboss:init,
-	  common:init,
-	  install:po-grid-legacy-jboss:init,
-	  install:po-grid-legacy-jboss:validation:pre-install,
-	  install:common:validation:pre-install,
-	  install:po-grid-legacy-jboss:stop,
-	  install:po-grid-legacy-jboss:validation:pre-install:ports,
-	  install:po-grid-legacy-jboss:clean,
-	  install:po-grid-legacy-jboss:binaries,
-	  install:po-grid-legacy-jboss:configure,
-	  install:po-grid-legacy-jboss:re-configure,
-	  install:po-grid-legacy-jboss:grid,
-	  install:po-grid-legacy-jboss:grid:configure,
-	  upgrade:po-grid-legacy-jboss:post,
-	  install:po-grid-legacy-jboss:post,
-	  install:po-grid-legacy-jboss:start,
-	  install:po-grid-legacy-jboss:validation:post-install
-	  " >
+      depends="
+      upgrade:po-grid-legacy-jboss:init,
+      common:po-grid-legacy-jboss:init,
+      common:init,
+      install:po-grid-legacy-jboss:init,
+      install:po-grid-legacy-jboss:validation:pre-install,
+      install:common:validation:pre-install,
+      install:po-grid-legacy-jboss:stop,
+      install:po-grid-legacy-jboss:validation:pre-install:ports,
+      install:po-grid-legacy-jboss:clean,
+      install:po-grid-legacy-jboss:binaries,
+      install:po-grid-legacy-jboss:configure,
+      install:po-grid-legacy-jboss:re-configure,
+      install:po-grid-legacy-jboss:grid,
+      install:po-grid-legacy-jboss:grid:configure,
+      upgrade:po-grid-legacy-jboss:post,
+      install:po-grid-legacy-jboss:post,
+      install:po-grid-legacy-jboss:start,
+      install:po-grid-legacy-jboss:validation:post-install
+      " >
   </target>
   <target name="upgrade-cm:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
-	  depends="
-	  upgrade:po-grid-legacy-jboss:init,
-	  common:po-grid-legacy-jboss:init,
-	  common:init,
-	  install:po-grid-legacy-jboss:init,
-	  install:po-grid-legacy-jboss:validation:pre-install,
-	  install:common:validation:pre-install,
-	  install:po-grid-legacy-jboss:stop,
-	  install:po-grid-legacy-jboss:validation:pre-install:ports,
-	  install:po-grid-legacy-jboss:configure,
-	  install:po-grid-legacy-jboss:re-configure,
-	  install:po-grid-legacy-jboss:grid,
-	  install:po-grid-legacy-jboss:grid:configure,
-	  upgrade:po-grid-legacy-jboss:post,
-	  install:po-grid-legacy-jboss:post,
-	  install:po-grid-legacy-jboss:start,
-	  install:po-grid-legacy-jboss:validation:post-install
-	  " >
+      depends="
+      upgrade:po-grid-legacy-jboss:init,
+      common:po-grid-legacy-jboss:init,
+      common:init,
+      install:po-grid-legacy-jboss:init,
+      install:po-grid-legacy-jboss:validation:pre-install,
+      install:common:validation:pre-install,
+      install:po-grid-legacy-jboss:stop,
+      install:po-grid-legacy-jboss:validation:pre-install:ports,
+      install:po-grid-legacy-jboss:configure,
+      install:po-grid-legacy-jboss:re-configure,
+      install:po-grid-legacy-jboss:grid,
+      install:po-grid-legacy-jboss:grid:configure,
+      upgrade:po-grid-legacy-jboss:post,
+      install:po-grid-legacy-jboss:post,
+      install:po-grid-legacy-jboss:start,
+      install:po-grid-legacy-jboss:validation:post-install
+      " >
   </target>
 
   <target name="upgrade-ncm:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
-	  depends="
-	  upgrade:po-grid-legacy-jboss:init,
-	  common:po-grid-legacy-jboss:init,
-	  common:init,
-	  install:po-grid-legacy-jboss:init,
-	  install:po-grid-legacy-jboss:validation:pre-install,
-	  install:common:validation:pre-install,
-	  install:po-grid-legacy-jboss:stop,
-	  install:po-grid-legacy-jboss:validation:pre-install:ports,
-	  install:po-grid-legacy-jboss:re-configure,
-	  install:po-grid-legacy-jboss:grid,
-	  install:po-grid-legacy-jboss:grid:configure,
-	  upgrade:po-grid-legacy-jboss:post,
-	  install:po-grid-legacy-jboss:post,
-	  install:po-grid-legacy-jboss:start,
-	  install:po-grid-legacy-jboss:validation:post-install
-	  " >
+      depends="
+      upgrade:po-grid-legacy-jboss:init,
+      common:po-grid-legacy-jboss:init,
+      common:init,
+      install:po-grid-legacy-jboss:init,
+      install:po-grid-legacy-jboss:validation:pre-install,
+      install:common:validation:pre-install,
+      install:po-grid-legacy-jboss:stop,
+      install:po-grid-legacy-jboss:validation:pre-install:ports,
+      install:po-grid-legacy-jboss:re-configure,
+      install:po-grid-legacy-jboss:grid,
+      install:po-grid-legacy-jboss:grid:configure,
+      upgrade:po-grid-legacy-jboss:post,
+      install:po-grid-legacy-jboss:post,
+      install:po-grid-legacy-jboss:start,
+      install:po-grid-legacy-jboss:validation:post-install
+      " >
   </target>
 
   <target name="install:po-grid-legacy-jboss:post" unless="exclude.jboss">
@@ -480,86 +481,86 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="upgrade:po-grid-legacy-jboss:init"
-	  depends="
-	  upgrade:po-grid-legacy-jboss:init:prep,
-	  upgrade:po-grid-legacy-jboss:readers:bda,
-	  upgrade:po-grid-legacy-jboss:readers:custom
-	  ">
-	  <properties-print
-		  properties.list="${read.properties.list}"
-		  />
-	  <properties-exist
-		  properties.list="${read.properties.list}"
-		  />
-	  <properties-write
-		  properties.list="${read.properties.list}"
-		  />
+      depends="
+      upgrade:po-grid-legacy-jboss:init:prep,
+      upgrade:po-grid-legacy-jboss:readers:bda,
+      upgrade:po-grid-legacy-jboss:readers:custom
+      ">
+      <properties-print
+          properties.list="${read.properties.list}"
+          />
+      <properties-exist
+          properties.list="${read.properties.list}"
+          />
+      <properties-write
+          properties.list="${read.properties.list}"
+          />
   </target>
 
   <target name="upgrade:po-grid-legacy-jboss:init:prep" depends="upgrade:common:init:prep">
-	  <property name="po-grid-legacy-jboss.home" value="${application.base.path}/${po-grid-legacy-jboss.relative.path}"/>
-	  <jboss-version
-		  />
-	  <if>
-		  <equals arg1="${po-grid-legacy-jboss.ncicb-standard.port-config}" arg2="true"/>
-		  <then>
-			  <property name="po-grid-legacy-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
-		  </then>
-		  <else>
-			  <property name="po-grid-legacy-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
-		  </else>
-	  </if>
+      <property name="po-grid-legacy-jboss.home" value="${application.base.path}/${po-grid-legacy-jboss.relative.path}"/>
+      <jboss-version
+          />
+      <if>
+          <equals arg1="${po-grid-legacy-jboss.ncicb-standard.port-config}" arg2="true"/>
+          <then>
+              <property name="po-grid-legacy-jboss.server.binding.template.location" value="${basedir}/${jboss-bindings.file}"/>
+          </then>
+          <else>
+              <property name="po-grid-legacy-jboss.server.binding.template.location" value="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings.xml"/>
+          </else>
+      </if>
 
-	  <!-- Upgrades always use port configs
-	  <property name="po-grid-legacy-jboss.ncicb-standard.port-config" value="true"/>
-	  -->
-	  <available file="${po-grid-legacy-jboss.home}" property="po-grid-legacy-jboss.exists"/>
-	  <property name="read.po-grid-legacy-jboss.home" value="${po-grid-legacy-jboss.home}"/>
-	  <echo message="po-grid-legacy-jboss.exists - ${po-grid-legacy-jboss.exists}"/>
+      <!-- Upgrades always use port configs
+      <property name="po-grid-legacy-jboss.ncicb-standard.port-config" value="true"/>
+      -->
+      <available file="${po-grid-legacy-jboss.home}" property="po-grid-legacy-jboss.exists"/>
+      <property name="read.po-grid-legacy-jboss.home" value="${po-grid-legacy-jboss.home}"/>
+      <echo message="po-grid-legacy-jboss.exists - ${po-grid-legacy-jboss.exists}"/>
   </target>
 
   <target name="upgrade:po-grid-legacy-jboss:readers:custom">
-	  <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
+      <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
   </target>
 
   <target name="upgrade:po-grid-legacy-jboss:readers:bda" if="jboss.exists">
 
-	  <if>
-		  <equals arg1="${jboss.major.version}" arg2="4"/>
-		  <then>
-			  <jboss-read-bindings-file-location
-				  jboss.home="${read.po-grid-legacy-jboss.home}"
-				  jboss.server.name="${po-grid-legacy-jboss.server.name}"
-				  jboss.server.ports.name.property.name="po-grid-legacy-jboss-server.ports.name"
-				  jboss.bindings.file.location.property.name="po-grid-legacy-jboss.server.bindingfile.location"
-				  />
-			  <jboss-read-ports
-				  jboss.server.ports.name="${po-grid-legacy-jboss.server.ports.name}"
-				  jboss.server.bindingfile.location="${po-grid-legacy-jboss.server.bindingfile.location}"
-				  jboss.server.jndi.port.property.name="po-grid-legacy-jboss.server.jndi.port"
-				  jboss.server.port.property.name="po-grid-legacy-jboss.server.port"
-				  jboss.ejbinvoker.port.property.name="po-grid-legacy-jboss.ejbinvoker.port"
-				  jboss.server.rmi.port.property.name="po-grid-legacy-jboss.server.rmi.port"
-				  jboss.web.service.port.property.name="po-grid-legacy-jboss.web.service.port"
-				  jboss.service.rmiobject.port.property.name="po-grid-legacy-jboss.service.rmiobject.port"
-				  jboss.server.bind.port.property.name="po-grid-legacy-jboss.server.bind.port"
-				  jboss.hajndi.port.property.name="po-grid-legacy-jboss.hajndi.port"
-				  jboss.hajrmi.port.property.name="po-grid-legacy-jboss.hajrmi.port"
-				  jboss.pooledha.port.property.name="po-grid-legacy-jboss.pooledha.port"
-				  jboss.cobraorb.port.property.name="po-grid-legacy-jboss.cobraorb.port"
-				  jboss.jmx-rmi.port.property.name="po-grid-legacy-jboss.jmx-rmi.port"
-				  jboss.snmp-trapd.port.property.name="po-grid-legacy-jboss.snmp-trapd.port"
-				  jboss.snmp.port.property.name="po-grid-legacy-jboss.snmp.port"
-				  jboss.jms.port.property.name="po-grid-legacy-jboss.jms.port"
-				  jboss.remoting.port.property.name="po-grid-legacy-jboss.remoting.port"
-				  jboss.messaging.port.property.name="po-grid-legacy-jboss.messaging.port"
-				  />
-		  </then>
-	  </if>
-	 
+      <if>
+          <equals arg1="${jboss.major.version}" arg2="4"/>
+          <then>
+              <jboss-read-bindings-file-location
+                  jboss.home="${read.po-grid-legacy-jboss.home}"
+                  jboss.server.name="${po-grid-legacy-jboss.server.name}"
+                  jboss.server.ports.name.property.name="po-grid-legacy-jboss-server.ports.name"
+                  jboss.bindings.file.location.property.name="po-grid-legacy-jboss.server.bindingfile.location"
+                  />
+              <jboss-read-ports
+                  jboss.server.ports.name="${po-grid-legacy-jboss.server.ports.name}"
+                  jboss.server.bindingfile.location="${po-grid-legacy-jboss.server.bindingfile.location}"
+                  jboss.server.jndi.port.property.name="po-grid-legacy-jboss.server.jndi.port"
+                  jboss.server.port.property.name="po-grid-legacy-jboss.server.port"
+                  jboss.ejbinvoker.port.property.name="po-grid-legacy-jboss.ejbinvoker.port"
+                  jboss.server.rmi.port.property.name="po-grid-legacy-jboss.server.rmi.port"
+                  jboss.web.service.port.property.name="po-grid-legacy-jboss.web.service.port"
+                  jboss.service.rmiobject.port.property.name="po-grid-legacy-jboss.service.rmiobject.port"
+                  jboss.server.bind.port.property.name="po-grid-legacy-jboss.server.bind.port"
+                  jboss.hajndi.port.property.name="po-grid-legacy-jboss.hajndi.port"
+                  jboss.hajrmi.port.property.name="po-grid-legacy-jboss.hajrmi.port"
+                  jboss.pooledha.port.property.name="po-grid-legacy-jboss.pooledha.port"
+                  jboss.cobraorb.port.property.name="po-grid-legacy-jboss.cobraorb.port"
+                  jboss.jmx-rmi.port.property.name="po-grid-legacy-jboss.jmx-rmi.port"
+                  jboss.snmp-trapd.port.property.name="po-grid-legacy-jboss.snmp-trapd.port"
+                  jboss.snmp.port.property.name="po-grid-legacy-jboss.snmp.port"
+                  jboss.jms.port.property.name="po-grid-legacy-jboss.jms.port"
+                  jboss.remoting.port.property.name="po-grid-legacy-jboss.remoting.port"
+                  jboss.messaging.port.property.name="po-grid-legacy-jboss.messaging.port"
+                  />
+          </then>
+      </if>
+
   </target>
 
   <target name="upgrade:po-grid-legacy-jboss:post">
-	 
+
   </target>
 </project>
