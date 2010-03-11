@@ -191,13 +191,153 @@
             </extension>
         </extensions>
     </build>
+    
     <dependencies>
-         <dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>gov.nih.nci.iso21090</groupId>
             <artifactId>iso-datatypes-extensions</artifactId>
             <version>2.0</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>caGrid-core</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.cagrid.gaards.csm</groupId>
+            <artifactId>caGrid-csm-common</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.cagrid.gaards.csm</groupId>
+            <artifactId>caGrid-csm-stubs</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.cagrid.gaards.csm</groupId>
+            <artifactId>caGrid-csm-service</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.cagrid.gaards.csm</groupId>
+            <artifactId>caGrid-csm-client</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>globus</groupId>
+            <artifactId>wsrf_core_stubs</artifactId>
+            <version>4.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>globus</groupId>
+            <artifactId>wsrf_core</artifactId>
+            <version>4.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>caGrid-gridgrouper-common</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>caGrid-gridgrouper-stubs</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>caGrid-gridgrouper-client</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>gridgrouper</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>caGrid-ServiceSecurityProvider-common</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>caGrid-ServiceSecurityProvider-client</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.2-custom</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.addressing</groupId>
+            <artifactId>addressing</artifactId>
+            <version>1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>globus</groupId>
+            <artifactId>cog-jglobus</artifactId>
+            <version>4.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>cog-axis</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>caGrid-metadata-common</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.nih.nci.cagrid</groupId>
+            <artifactId>caGrid-metadata-security</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>wss4j</groupId>
+            <artifactId>wss4j</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+        
 
         <!-- Testing only jars -->
         <dependency>
@@ -212,12 +352,7 @@
             <version>4.0.3</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
-            <version>0.4</version>
-            <scope>test</scope>
-        </dependency>
+       
         <dependency>
             <groupId>gov.nih.nci.iso21090</groupId>
             <artifactId>iso-datatypes-extensions</artifactId>
@@ -287,6 +422,7 @@
                     <instrumentation>
                         <excludes>
                             <exclude>gov/nih/nci/coppa/common/*</exclude>
+                            <exclude>gov/nih/nci/coppa/web/CSMSyncListener.class</exclude>
                         </excludes>
                     </instrumentation>
                     <check>
