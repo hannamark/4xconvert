@@ -413,11 +413,32 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <delete dir="${po-grid-legacy.artifact.dir}/server" />
   </target>
 
+  <if>
+      <isset property="env.M2_HOME"/>
+      <then>
+          <property name="maven.home" value="${env.M2_HOME}"/>
+      </then>
+      <elseif>
+          <isset property="env.MAVEN_HOME"/>
+          <then>
+              <property name="maven.home" value="${env.MAVEN_HOME}"/>
+          </then>
+      </elseif>
+      <elseif>
+          <not>
+              <isset property="maven.home"/>
+          </not>
+          <then>
+              <fail message="To build this project you need to specify a M2_HOME or MAVEN_HOME environment variable or a maven.home build property pointing to your maven 2.0.x installation"/>
+          </then>
+      </elseif>
+  </if>
+
   <macrodef name="maven">
       <attribute name="maven.profile.list" default="" />
       <attribute name="maven.goal.list" />
       <attribute name="maven.dir" />
-      <attribute name="maven.home" default="${env.M2_HOME}"/>
+      <attribute name="maven.home" default="${maven.home}"/>
       <attribute name="resultproperty" default="maven.result" />
       <attribute name="maven.mem" default="-Xmx1024m"/>
       <element name="args" implicit="true" optional="true" />

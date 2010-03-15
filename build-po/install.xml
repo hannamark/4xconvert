@@ -69,7 +69,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <condition property="os.temp.dir" value="c:/temp">
     <os family="windows" />
   </condition>
-  <property name="project.name" value="po"/>
 
   <!-- Install Time properties -->
   <!-- Source and target directories -->
