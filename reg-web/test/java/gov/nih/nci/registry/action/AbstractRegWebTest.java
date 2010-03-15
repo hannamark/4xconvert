@@ -18,7 +18,6 @@ import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -34,7 +33,6 @@ import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -448,22 +446,5 @@ public abstract class AbstractRegWebTest {
        country.setNumeric("67");
        addUpdObject(country);
        HibernateUtil.getCurrentSession().clear();
-   }
-   
-   protected String getTomorrowDate() {
-    
-       // get a calendar instance, which defaults to "now"
-       Calendar calendar = Calendar.getInstance();
-       
-       // get a date to represent "today"
-       Date today = calendar.getTime();
-       System.out.println("today:    " + today);
-    
-       // add one day to the date/calendar
-       calendar.add(Calendar.DAY_OF_YEAR, 1);
-       
-       // now get "tomorrow"
-       Date tomorrow = calendar.getTime();
-       return PAUtil.normalizeDateString(tomorrow.toString());
    }
 }

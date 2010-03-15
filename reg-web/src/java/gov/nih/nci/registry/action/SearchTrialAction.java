@@ -84,15 +84,14 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -101,11 +100,13 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.dto.TempStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -570,15 +571,15 @@ public class SearchTrialAction extends ActionSupport {
      * @return st
      */
     public String getMyPartiallySavedTrial() {
-        StudyProtocolStage criteriaSpDTO = new StudyProtocolStage();
-        criteriaSpDTO.setUserLastCreated(ServletActionContext
-                .getRequest().getRemoteUser());
-        criteriaSpDTO.setOfficialTitle(criteria.getOfficialTitle());
-        criteriaSpDTO.setPhaseCode(PhaseCode.getByCode(criteria.getPhaseCode()));
-        criteriaSpDTO.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(criteria.getPrimaryPurposeCode()));
+        TempStudyProtocolDTO criteriaSpDTO = new TempStudyProtocolDTO();
+        criteriaSpDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext
+                .getRequest().getRemoteUser()));
+        criteriaSpDTO.setOfficialTitle(StConverter.convertToSt(criteria.getOfficialTitle()));
+        criteriaSpDTO.setPhaseCode(CdConverter.convertStringToCd(criteria.getPhaseCode()));
+        criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         try {
-            List<StudyProtocolStage> tempSpDTOs =  PaRegistry.getStudyProtocolStageService()
+            List<TempStudyProtocolDTO> tempSpDTOs =  PaRegistry.getTempStudyProtocolService()
                 .search(criteriaSpDTO, limit);
             records = convertToSpQueryDTO(tempSpDTOs);
         } catch (PAException e) {
@@ -624,39 +625,41 @@ public class SearchTrialAction extends ActionSupport {
         }
      return "partialView";   
     }
-    private List<StudyProtocolQueryDTO> convertToSpQueryDTO(List<StudyProtocolStage> tempSpDTOs) {
+    private List<StudyProtocolQueryDTO> convertToSpQueryDTO(List<TempStudyProtocolDTO> tempSpDTOs) {
         StudyProtocolQueryDTO spQueryDTO;
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         List<StudyProtocolQueryDTO> returnList = new ArrayList<StudyProtocolQueryDTO>();
-        for (StudyProtocolStage studyProtocolStage : tempSpDTOs) {
+        for (TempStudyProtocolDTO tempStudyProtocolDTO : tempSpDTOs) {
             spQueryDTO = new StudyProtocolQueryDTO();
-            spQueryDTO.setStudyProtocolId(studyProtocolStage.getId());
-            spQueryDTO.setOfficialTitle(studyProtocolStage.getOfficialTitle());
-            if (studyProtocolStage.getPhaseCode() != null) {
-                spQueryDTO.setPhaseCode(studyProtocolStage.getPhaseCode());
-            }
-            if (studyProtocolStage.getPrimaryPurposeCode() != null) {
-                spQueryDTO.setPrimaryPurpose(studyProtocolStage.getPrimaryPurposeCode().getCode());
-            }
-            spQueryDTO.setPrimaryPurposeOtherText(studyProtocolStage.getPrimaryPurposeOtherText());
-            spQueryDTO.setLocalStudyProtocolIdentifier(studyProtocolStage.getLocalProtocolIdentifier());
-            spQueryDTO.setLeadOrganizationId(Long.parseLong(studyProtocolStage.getLeadOrganizationIdentifier()));
-            if (PAUtil.isNotEmpty(studyProtocolStage.getLeadOrganizationIdentifier())) {
+            spQueryDTO.setStudyProtocolId(IiConverter.convertToLong(tempStudyProtocolDTO.getIdentifier()));
+            spQueryDTO.setOfficialTitle(StConverter.convertToString(tempStudyProtocolDTO.getOfficialTitle()));
+            spQueryDTO.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(
+                tempStudyProtocolDTO.getPhaseCode())));
+            spQueryDTO.setPrimaryPurpose(CdConverter.convertCdToString(
+                tempStudyProtocolDTO.getPrimaryPurposeCode()));
+            spQueryDTO.setPrimaryPurposeOtherText(StConverter.convertToString(
+                tempStudyProtocolDTO.getPrimaryPurposeOtherText()));
+            spQueryDTO.setLocalStudyProtocolIdentifier(StConverter.convertToString(
+                tempStudyProtocolDTO.getLocalProtocolIdentifier()));
+            
+            spQueryDTO.setLeadOrganizationId(IiConverter.convertToLong(
+                tempStudyProtocolDTO.getLeadOrganizationIdentifier()));
+            if (PAUtil.isIiNotNull(tempStudyProtocolDTO.getLeadOrganizationIdentifier())) {
                 OrganizationDTO orgDto = paServiceUtil.getPOOrganizationEntity(
-                        IiConverter.convertToPoOrganizationIi(studyProtocolStage.getLeadOrganizationIdentifier()));
+                        tempStudyProtocolDTO.getLeadOrganizationIdentifier());
                 spQueryDTO.setLeadOrganizationName(EnOnConverter.convertEnOnToString(
                         orgDto.getName()));
             }
-            
-            if (PAUtil.isNotEmpty(studyProtocolStage.getPiIdentifier())) {
-                spQueryDTO.setPiId(Long.parseLong(studyProtocolStage.getPiIdentifier()));
+            spQueryDTO.setPiId(IiConverter.convertToLong(tempStudyProtocolDTO.getPiIdentifier()));
+            if (PAUtil.isIiNotNull(tempStudyProtocolDTO.getPiIdentifier())) {
                 PersonDTO perDto = paServiceUtil.getPoPersonEntity(
-                        IiConverter.convertToPoPersonIi(studyProtocolStage.getPiIdentifier()));
+                        tempStudyProtocolDTO.getPiIdentifier());
                 spQueryDTO.setPiFullName(PAUtil.convertToPaPersonDTO(perDto).getFullName());
             }
-            spQueryDTO.setStudyStatusCode(studyProtocolStage.getTrialStatusCode());
-            spQueryDTO.setStudyStatusDate(studyProtocolStage.getTrialStatusDate());
-            spQueryDTO.setUserLastCreated(studyProtocolStage.getUserLastCreated());
+            spQueryDTO.setStudyStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(
+                tempStudyProtocolDTO.getTrialStatusCode())));
+            spQueryDTO.setStudyStatusDate(TsConverter.convertToTimestamp(tempStudyProtocolDTO.getTrialStatusDate()));
+            spQueryDTO.setUserLastCreated(StConverter.convertToString(tempStudyProtocolDTO.getUserLastCreated()));
             returnList.add(spQueryDTO);
         }
         return returnList;   

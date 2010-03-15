@@ -21,7 +21,7 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table (name = "TEMP_STUDY_FUNDING")
-public class StudyFundingStage extends AbstractEntity {
+public class TempStudyFunding extends AbstractEntity {
 
     /**
      * 
@@ -31,7 +31,7 @@ public class StudyFundingStage extends AbstractEntity {
     private String nihInstituteCode;
     private NciDivisionProgramCode nciDivisionProgramCode;
     private String serialNumber;
-    private StudyProtocolStage studyProtocolStage;
+    private TempStudyProtocol tempStudyProtocol;
     /**
      * @return the fundingMechanismCode
      */
@@ -87,10 +87,10 @@ public class StudyFundingStage extends AbstractEntity {
         this.serialNumber = serialNumber;
     }
     /**
-     * @param spStage the studyProtocolStage to set
+     * @param tempStudyProtocol the tempStudyProtocol to set
      */
-    public void setStudyProtocolStage(StudyProtocolStage spStage) {
-        this.studyProtocolStage = spStage;
+    public void setTempStudyProtocol(TempStudyProtocol tempStudyProtocol) {
+        this.tempStudyProtocol = tempStudyProtocol;
     }
     /**
      * @return the tempStudyProtocol
@@ -98,8 +98,8 @@ public class StudyFundingStage extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "TEMP_STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
-    public StudyProtocolStage getStudyProtocolStage() {
-        return studyProtocolStage;
+    public TempStudyProtocol getTempStudyProtocol() {
+        return tempStudyProtocol;
     }
     
 }

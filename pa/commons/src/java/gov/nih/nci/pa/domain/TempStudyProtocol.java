@@ -10,8 +10,6 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +17,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -28,9 +25,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@SuppressWarnings({ "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals",
+        "PMD.ExcessiveClassLength" })
 @Table(name = "TEMP_STUDY_PROTOCOL")        
-public class StudyProtocolStage extends AbstractEntity {
+public class TempStudyProtocol extends AbstractEntity {
     /**
      * 
      */
@@ -59,7 +57,7 @@ public class StudyProtocolStage extends AbstractEntity {
     
     private StudyStatusCode  trialStatusCode;
     private Timestamp trialStatusDate;
-    private String statusReason;
+    private String reason;
     private Timestamp startDate;
     private ActualAnticipatedTypeCode startDateTypeCode;
     private Timestamp primaryCompletionDate;
@@ -73,8 +71,7 @@ public class StudyProtocolStage extends AbstractEntity {
     private Boolean nciDesignatedCancerCenterIndicator;
     private String oversightAuthorityCountryId;
     private String oversightAuthorityOrgId;
-    private List<StudyFundingStage> studyFunding = new ArrayList<StudyFundingStage>();
-    private List<StudyIndIdeStage> studyIndIde = new ArrayList<StudyIndIdeStage>();
+
     /**
      * @return the localProtocolIdentifier
      */
@@ -370,14 +367,14 @@ public class StudyProtocolStage extends AbstractEntity {
      * @return the reason
      */
     @Column (name = "STATUS_REASON")
-    public String getStatusReason() {
-        return statusReason;
+    public String getReason() {
+        return reason;
     }
     /**
      * @param reason the reason to set
      */
-    public void setStatusReason(String reason) {
-        this.statusReason = reason;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
     /**
      * @return the startDate
@@ -511,7 +508,7 @@ public class StudyProtocolStage extends AbstractEntity {
      * @param nciDesignatedCancerCenterIndicator the nciDesignatedCancerCenterIndicator to set
      */
     public void setNciDesignatedCancerCenterIndicator(
-            Boolean nciDesignatedCancerCenterIndicator) {
+            boolean nciDesignatedCancerCenterIndicator) {
         this.nciDesignatedCancerCenterIndicator = nciDesignatedCancerCenterIndicator;
     }
     /**
@@ -541,30 +538,6 @@ public class StudyProtocolStage extends AbstractEntity {
     public String getOversightAuthorityOrgId() {
         return oversightAuthorityOrgId;
     }
-    /**
-     * @return the studyFunding
-     */
-    @OneToMany(mappedBy = "studyProtocolStage")
-    public List<StudyFundingStage> getStudyFunding() {
-        return studyFunding;
-    }
-    /**
-     * @param studyFunding the studyFunding to set
-     */
-    public void setStudyFunding(List<StudyFundingStage> studyFunding) {
-        this.studyFunding = studyFunding;
-    }
-    /**
-     * @return the studyIndIde
-     */
-    /*@OneToMany(mappedBy = "studyProtocolStage")
-    public List<StudyIndIdeStage> getStudyIndIde() {
-        return studyIndIde;
-    }
-    *//**
-     * @param studyIndIde the studyIndIde to set
-     *//*
-    public void setStudyIndIde(List<StudyIndIdeStage> studyIndIde) {
-        this.studyIndIde = studyIndIde;
-    }*/
+
+
 }

@@ -34,6 +34,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -47,7 +48,6 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
-import gov.nih.nci.pa.service.util.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -106,7 +106,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final RegulatoryInformationServiceRemote regulatoryInfoService = new MockRegulatoryInformationService();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatorAuthService = new MockStudyRegulatoryAuthorityService();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
-    private final StudyProtocolStageServiceLocal tempStudyProtocolService = new MockTempStudyProtocolService(); 
+    private final TempStudyProtocolServiceLocal tempStudyProtocolService = new MockTempStudyProtocolService(); 
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -390,7 +390,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
+    public TempStudyProtocolServiceLocal getTempStudyProtocolService() {
         return tempStudyProtocolService;
     }
     
