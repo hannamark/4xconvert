@@ -391,7 +391,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule18Fail() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setStatusDate("02/22/2010");
+        dto.setStatusDate("12/22/2010");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.statusDate"));
@@ -408,7 +408,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule19ActualFail() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setStartDate("02/22/2010");
+        dto.setStartDate("12/22/2010");
         dto.setStartDateType("Actual");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
@@ -418,7 +418,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule19AnticipatedFail(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setStartDate("02/22/2000");
+        dto.setStartDate("12/22/2000");
         dto.setStartDateType("Anticipated");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
@@ -428,7 +428,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule20ActualFail(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setCompletionDate("02/22/2010");
+        dto.setCompletionDate("12/22/2010");
         dto.setCompletionDateType("Actual");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
@@ -438,7 +438,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule20AnticipatedFail(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setCompletionDate("02/22/2000");
+        dto.setCompletionDate(getTomorrowDate());
         dto.setCompletionDateType("Anticipated");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());

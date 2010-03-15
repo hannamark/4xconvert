@@ -540,7 +540,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     public void testValidateTrialDatesRule18Fail(){
         trialAction = new AmendmentTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setStatusDate("02/22/2010");
+        dto.setStatusDate("12/22/2010");
         trialAction.setTrialDTO(dto);
         assertEquals("error", trialAction.review());
         assertTrue(trialAction.getFieldErrors().containsKey("trialDTO.statusDate"));
