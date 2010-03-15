@@ -26,21 +26,21 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table (name = "TEMP_STUDY_INDIDE")
-public class TempStudyIndIde extends AbstractEntity {
+public class StudyIndIdeStage extends AbstractEntity {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 4623392526279206778L;
+    private static final long serialVersionUID = -4623392526279206778L;
     private String indIdeNumber;
-    private IndldeTypeCode indldeTypeCode;
+    private IndldeTypeCode indIdeTypeCode;
     private GrantorCode grantorCode;
     private HolderTypeCode holderTypeCode;
     private Boolean expandedAccessIndicator;
     private ExpandedAccessStatusCode expandedAccessStatusCode;
     private NihInstituteCode nihInstHolderCode;
     private NciDivisionProgramCode nciDivPrgHolderCode;
-    private TempStudyProtocol tempStudyProtocol;
+    private StudyProtocolStage studyProtocolStage;
     /**
      * @return the indIdeNumber
      */
@@ -55,18 +55,18 @@ public class TempStudyIndIde extends AbstractEntity {
         this.indIdeNumber = indIdeNumber;
     }
     /**
-     * @return the indldeTypeCode
+     * @return the indIdeTypeCode
      */
     @Column (name = "INDIDE_TYPE_CODE")
     @Enumerated (EnumType.STRING)
     public IndldeTypeCode getIndldeTypeCode() {
-        return indldeTypeCode;
+        return indIdeTypeCode;
     }
     /**
-     * @param indldeTypeCode the indldeTypeCode to set
+     * @param indIdeTypeCode the indldeTypeCode to set
      */
-    public void setIndldeTypeCode(IndldeTypeCode indldeTypeCode) {
-        this.indldeTypeCode = indldeTypeCode;
+    public void setIndIdeTypeCode(IndldeTypeCode indIdeTypeCode) {
+        this.indIdeTypeCode = indIdeTypeCode;
     }
     /**
      * @return the grantorCode
@@ -157,14 +157,14 @@ public class TempStudyIndIde extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "TEMP_STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
-    public TempStudyProtocol getTempStudyProtocol() {
-        return tempStudyProtocol;
+    public StudyProtocolStage getStudyProtocolStage() {
+        return studyProtocolStage;
     }
     /**
-     * @param tempStudyProtocol the tempStudyProtocol to set
+     * @param studyProtocolStage the studyProtocolStage to set
      */
-    public void setTempStudyProtocol(TempStudyProtocol tempStudyProtocol) {
-        this.tempStudyProtocol = tempStudyProtocol;
+    public void setStudyProtocolStage(StudyProtocolStage studyProtocolStage) {
+        this.studyProtocolStage = studyProtocolStage;
     }
     
 }

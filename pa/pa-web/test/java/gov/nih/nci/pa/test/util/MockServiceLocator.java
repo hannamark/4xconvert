@@ -82,7 +82,6 @@ import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.DiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.DiseaseServiceLocal;
-import gov.nih.nci.pa.service.DocumentBeanLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
@@ -117,7 +116,6 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -132,6 +130,7 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceBean;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
+import gov.nih.nci.pa.service.util.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -550,7 +549,7 @@ public class MockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public TempStudyProtocolServiceLocal getTempStudyProtocolService() {
+    public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         // TODO Auto-generated method stub
         return null;
     }
