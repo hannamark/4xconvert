@@ -21,8 +21,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <property name="upgrade.properties.file" value="upgrade.properties"/>
   <echo message="Using properties file of ${properties.file}."/>
   <available file="${properties.file}" property="properties.file.exists" />
-  <fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail."/>
-
+  
   <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
   <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
   <property file="${properties.file}" />
@@ -791,13 +790,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
   <target name="remote:upgrade" depends="dist:upgrader,remote:upgrade:po-ear,remote:upgrade:po-grid,remote:upgrade:po-grid-legacy">
   </target>
+ 
+  <target name="deploy:remote:upgrade:ahp" depends="remote:upgrade:po-ear,remote:upgrade:po-grid,remote:upgrade:po-grid-legacy">
+  </target>
 
   <target name="remote:upgrade:po-ear">
     <!-- install po-ear only-->
+  	<override-properties-prep
+  	                        override.properties="${override.properties}"
+  	                        override.properties.string.property.name="override.properties.string"
+  	                        />
     <deploy-files
              dist.file="${po-ear.upgrade.zip.file}"
              />
-    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:po-ear-jboss upgrade:database" />
+    <remote-ssh remotesshcommand=". .bash_profile;cd ${ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} ${override.properties.string} -Dforce.reinstall=true upgrade-dac:po-ear-jboss upgrade:database" />
   </target>
 
   <target name="remote:upgrade:po-grid" unless="exclude.po-grid">
@@ -810,12 +816,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remote.directory.property.name="pogrid.ssh.dir.temp"
              dist.file="${po-grid.upgrade.zip.file}"
              />
+  	<override-properties-prep
+  	                            override.properties="${override.properties}"
+  	                            override.properties.string.property.name="override.properties.string"
+  	                            />
     <remote-ssh
            remoteSshUser="${pogrid.ssh.server.username}"
            remoteSshHost="${pogrid.ssh.server.hostname}"
             remoteSshPort="${pogrid.ssh.port}"
            remoteSshKeyfile="${pogrid.ssh.key.file}"
-           remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:po-grid-jboss" />
+           remotesshcommand=". .bash_profile;cd ${pogrid.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} ${override.properties.string} -Dforce.reinstall=true upgrade-dac:po-grid-jboss" />
   </target>
 
   <target name="remote:upgrade:po-grid-legacy" unless="exclude.po-grid-legacy">
@@ -828,12 +838,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remote.directory.property.name="pogrid-legacy.ssh.dir.temp"
              dist.file="${po-grid-legacy.upgrade.zip.file}"
              />
+  	<override-properties-prep
+  	                                override.properties="${override.properties}"
+  	                                override.properties.string.property.name="override.properties.string"
+  	                                />
     <remote-ssh
            remoteSshUser="${pogrid-legacy.ssh.server.username}"
            remoteSshHost="${pogrid-legacy.ssh.server.hostname}"
             remoteSshPort="${pogrid-legacy.ssh.port}"
            remoteSshKeyfile="${pogrid-legacy.ssh.key.file}"
-           remotesshcommand=". .bash_profile;cd ${pogrid-legacy.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true upgrade-dac:po-grid-legacy-jboss" />
+           remotesshcommand=". .bash_profile;cd ${pogrid-legacy.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} ${override.properties.string} -Dforce.reinstall=true upgrade-dac:po-grid-legacy-jboss" />
   </target>
 
   <target name="usage" description="Explains how to use this build script">
