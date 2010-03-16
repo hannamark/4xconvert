@@ -391,7 +391,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule18Fail() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setStatusDate("02/22/2010");
+        dto.setStatusDate(getTomorrowDate());
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.statusDate"));
@@ -408,7 +408,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule19ActualFail() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setStartDate("02/22/2010");
+        dto.setStartDate(getTomorrowDate());
         dto.setStartDateType("Actual");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
@@ -428,7 +428,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule20ActualFail(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setCompletionDate("02/22/2010");
+        dto.setCompletionDate(getTomorrowDate());
         dto.setCompletionDateType("Actual");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
