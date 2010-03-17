@@ -205,7 +205,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		jboss.grid.secure.cert.file="${po-grid-jboss.grid.secure.cert.file}"
 		grid.application.name="${po-grid.introduce.skeleton.service.name}"
 		/>
-
+        <copy file="${grid.dist.relative.dir}/log4j.xml" todir="${po-grid-jboss.home}/server/${po-grid-jboss.server.name}/conf" overwrite="true" />
     </target>
 
   <target name="install:po-grid-jboss:configure" unless="exclude.po-grid">
