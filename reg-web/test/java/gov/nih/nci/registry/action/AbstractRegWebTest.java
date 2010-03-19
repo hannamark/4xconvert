@@ -93,7 +93,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setAmendmentDate("01/20/2009");
         trialDTO.setLocalAmendmentNumber("localAmendmentNumber");
         trialDTO.setAssignedIdentifier("assignedIdentifier");
-        trialDTO.setLocalProtocolIdentifier("localProtocolIdentifier");
+        trialDTO.setLeadOrgTrialIdentifier("localProtocolIdentifier");
         trialDTO.setOfficialTitle("officialTitle");
         trialDTO.setPhaseCode("II");
         trialDTO.setPrimaryPurposeCode("TREATMENT");

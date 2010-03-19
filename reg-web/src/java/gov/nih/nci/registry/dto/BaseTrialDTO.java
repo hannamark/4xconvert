@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.registry.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.validator.NotEmpty;
@@ -30,12 +31,20 @@ public class BaseTrialDTO {
     private String trialType;
     private String identifier;
     private String submissionNumber;
-    
+    private String propritaryTrialIndicator;
+    private String studyProtocolId;
     private List<TrialFundingWebDTO> fundingDtos;
     private List<TrialDocumentWebDTO> docDtos;
     private List <TrialIndIdeDTO> indIdeDtos;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
-    
+    /**
+     * default Cons.
+     */
+    public BaseTrialDTO() {
+        fundingDtos = new ArrayList<TrialFundingWebDTO>();
+        docDtos = new ArrayList<TrialDocumentWebDTO>();
+        indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+    }
     /**
      * @return the assignedIdentifier
      */
@@ -271,5 +280,29 @@ public class BaseTrialDTO {
      */
     public void setIndIdeDtos(List<TrialIndIdeDTO> indIdeDtos) {
         this.indIdeDtos = indIdeDtos;
+    }
+    /**
+     * @param propritaryTrialIndicator the propritaryTrialIndicator to set
+     */
+    public void setPropritaryTrialIndicator(String propritaryTrialIndicator) {
+        this.propritaryTrialIndicator = propritaryTrialIndicator;
+    }
+    /**
+     * @return the propritaryTrialIndicator
+     */
+    public String getPropritaryTrialIndicator() {
+        return propritaryTrialIndicator;
+    }
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
+    }
+    /**
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
     }
 }

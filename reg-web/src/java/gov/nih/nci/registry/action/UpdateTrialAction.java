@@ -746,8 +746,8 @@ public class UpdateTrialAction extends ActionSupport implements ServletResponseA
           updateId = studyProtocolIi; 
           List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
           studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
-          studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
-          studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
+          //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
+          //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
           //call the service to invoke the update method
           PaRegistry.getTrialRegistrationService().
                         update(spDTO, sosDto, studyIdentifierDTOs, studyIndldeDTOList, studyResourcingDTOs, 

@@ -65,6 +65,14 @@ function getMyPartialTrial() {
 		    document.forms[0].submit(); 
 	   }
    }
+   function completeDraft(pId,trialCategory) {
+	   if (trialCategory != "" && trialCategory == "true" ){
+		    document.forms[0].action="submitProprietaryTrialcomplete.action?studyProtocolId="+pId;
+	   } else {
+		   document.forms[0].action="submitTrialcompletePartialSubmission.action?studyProtocolId="+pId;
+	   }
+	   document.forms[0].submit();
+   }
 </SCRIPT>
 <body>
 <!-- main content begins-->

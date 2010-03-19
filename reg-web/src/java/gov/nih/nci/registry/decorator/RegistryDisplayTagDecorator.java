@@ -304,4 +304,21 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         }
         return retComplete;
     }
+    /**
+     * 
+     * @return st
+     */
+    public String getTrialCategory() {
+        String trialCat = "";
+        String isProprietaryTrial = 
+            ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() != null 
+                   ? ((StudyProtocolQueryDTO) this.getCurrentRowObject()).getIsProprietaryTrial() : "";
+        if (PAUtil.isNotEmpty(isProprietaryTrial) 
+                && isProprietaryTrial.equalsIgnoreCase("true")) {
+            trialCat = "Proprietary Trial";
+        } else {
+            trialCat = "Non Proprietary Trial";
+        }
+        return trialCat;
+    }
 }

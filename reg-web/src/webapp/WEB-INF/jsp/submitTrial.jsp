@@ -538,7 +538,6 @@ function toggledisplay2 (it) {
           <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
          </td>
          </tr>
-          <tr>           
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
@@ -922,7 +921,6 @@ function toggledisplay2 (it) {
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">         
-                        <li>
                         <li>            
                             <s:a href="#" cssClass="btn" onclick="partialSave()"><span class="btn_img"><span class="save">Save as Draft</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="reviewProtocol()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>

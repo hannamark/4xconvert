@@ -90,11 +90,11 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.TempStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -167,6 +167,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         trialDTO = new TrialDTO();
         trialDTO.setResponsiblePartyType("pi");
         trialDTO.setTrialType("Interventional");
+        trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
         TrialValidator.removeSessionAttributes();
         trialUtil.populateRegulatoryList(trialDTO);
         
@@ -188,6 +189,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             }
             TrialUtil util = new TrialUtil();
             StudyProtocolDTO studyProtocolDTO = null;
+            trialDTO.setPropritaryTrialIndicator(CommonsConstant.YES);
             if (trialDTO.getTrialType().equals("Interventional")) {
                 studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
             } else {
@@ -200,12 +202,12 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
             OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
-            StudySiteDTO leadOrgSiteIdDTO = util.convertToStudySiteDTO(trialDTO);
+            StudySiteDTO leadOrgSiteIdDTO = util.convertToleadOrgSiteIdDTO(trialDTO);
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
-            studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
-            studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO , null));
+            //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
+            //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO , null));
             
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
@@ -241,7 +243,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
              ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
              ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
              if (PAUtil.isNotEmpty(trialDTO.getStudyProtocolId())) {
-                PaRegistry.getTempStudyProtocolService().delete(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+                PaRegistry.getStudyProtocolStageService().delete(IiConverter.convertToIi(
+                        trialDTO.getStudyProtocolId()));
              }
         } catch (Exception e) {
             TrialValidator.addSessionAttributes(trialDTO);
@@ -572,7 +575,8 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
                 return ERROR;
             }
             List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
-           trialDTO.setDocDtos(docDTOList);
+            trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
+            trialDTO.setDocDtos(docDTOList);
            //get the document and put in list
            //add the IndIde,FundingList
            List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
@@ -660,61 +664,15 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      */
     @SuppressWarnings("unchecked")
     public String partialSave() {
-        //lead org local id and lead org is mandatory
-        if (PAUtil.isEmpty(trialDTO.getLocalProtocolIdentifier())) {
-            addActionError("Lead Organization Trial Identifier is required.");
-            return ERROR;
-        }
-        if (PAUtil.isEmpty(trialDTO.getLeadOrganizationIdentifier())) {
-            addActionError("Lead Organization is required.");
-            return ERROR;
-        }
         try {
-            Ii tempStudyProtocolIi = null;
-            if (PAUtil.isNotEmpty(trialDTO.getStudyProtocolId())) {
-                TempStudyProtocolDTO dto = PaRegistry.getTempStudyProtocolService().updateTempStudyProtocol(
-                        trialUtil.convertToTempStudyProtocolDTO(trialDTO));
-                tempStudyProtocolIi =  dto.getIdentifier();
-            } else {
-                tempStudyProtocolIi = PaRegistry.getTempStudyProtocolService().createTempStudyProtocol(
-                        trialUtil.convertToTempStudyProtocolDTO(trialDTO));
-            }
-            List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
-                .getSession().getAttribute(Constants.GRANT_LIST);
-            if (PAUtil.isIiNotNull(tempStudyProtocolIi)) {
-                //first delete grants and recreate
-                PaRegistry.getTempStudyProtocolService().deleteGrantsForTempStudyProtocol(tempStudyProtocolIi);
-                if (PAUtil.isListNotEmpty(grantList)) {
-                    for (TrialFundingWebDTO fundingDto : grantList) {
-                        PaRegistry.getTempStudyProtocolService().createGrant(trialUtil.convertToTempStudyFunding(
-                                fundingDto, tempStudyProtocolIi));
-                    }
-                }
-                //inds
-                List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
-                    .getSession().getAttribute(Constants.INDIDE_LIST);
-                PaRegistry.getTempStudyProtocolService().deleteIndIdeForTempStudyProtocol(tempStudyProtocolIi);
-                if (PAUtil.isListNotEmpty(indList)) {
-                    for (TrialIndIdeDTO indDto : indList) {
-                        PaRegistry.getTempStudyProtocolService().createIndIde(trialUtil.convertToTempStudyIndIde(
-                                indDto, tempStudyProtocolIi));
-                    }
-                }
-                ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
-                ServletActionContext.getRequest().getSession().removeAttribute("grantList");
-                if (indList != null) {
-                    trialDTO.setIndIdeDtos(indList);
-                }
-                if (grantList != null) {
-                    trialDTO.setFundingDtos(grantList);
-                }
-            }
-            ServletActionContext.getRequest().setAttribute("protocolId", tempStudyProtocolIi.getExtension());
+            trialDTO = (TrialDTO) trialUtil.saveDraft(trialDTO);
+            ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
         } catch (PAException e) {
             LOG.error(e.getLocalizedMessage());
             addActionError(e.getMessage());
+            return ERROR;
         }
         return "review";
     }
@@ -731,7 +689,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
         }
         trialDTO = new TrialDTO();
         try {
-            trialDTO =  trialUtil.getTrialDTOForPartiallySumbissionById(pId);
+            trialDTO =  (TrialDTO) trialUtil.getTrialDTOForPartiallySumbissionById(pId);
             ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST,
                     trialDTO.getIndIdeDtos());
             ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
@@ -755,7 +713,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
             return ERROR;
         }
         try {
-            PaRegistry.getTempStudyProtocolService().delete(IiConverter.convertToIi(pId));
+            PaRegistry.getStudyProtocolStageService().delete(IiConverter.convertToIi(pId));
         } catch (PAException e) {
             addActionError(e.getMessage());
         }

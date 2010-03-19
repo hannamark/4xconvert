@@ -196,7 +196,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testCreateWithDupTrial(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setLocalProtocolIdentifier("DupTestinglocalStudyProtocolId");
+        dto.setLeadOrgTrialIdentifier("DupTestinglocalStudyProtocolId");
         HttpSession sess = new MockHttpSession();
         sess.setAttribute("trialDTO", dto);
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -209,7 +209,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setLeadOrganizationIdentifier("2");
-        dto.setLocalProtocolIdentifier("DupTestinglocalStudyProtocolId");
+        dto.setLeadOrgTrialIdentifier("DupTestinglocalStudyProtocolId");
         HttpSession sess = new MockHttpSession();
         sess.setAttribute("trialDTO", dto);
         MockHttpServletRequest request = new MockHttpServletRequest();

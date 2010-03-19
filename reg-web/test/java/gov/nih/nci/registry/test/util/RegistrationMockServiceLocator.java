@@ -26,6 +26,7 @@ import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
@@ -34,7 +35,6 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -68,12 +68,12 @@ import gov.nih.nci.registry.service.MockStudyContactService;
 import gov.nih.nci.registry.service.MockStudyIndldeService;
 import gov.nih.nci.registry.service.MockStudyOverallStatusService;
 import gov.nih.nci.registry.service.MockStudyProtocolService;
+import gov.nih.nci.registry.service.MockStudyProtocolStageService;
 import gov.nih.nci.registry.service.MockStudyRegulatoryAuthorityService;
 import gov.nih.nci.registry.service.MockStudyResourcingService;
 import gov.nih.nci.registry.service.MockStudySiteAccrualStatusService;
 import gov.nih.nci.registry.service.MockStudySiteContactService;
 import gov.nih.nci.registry.service.MockStudySiteService;
-import gov.nih.nci.registry.service.MockTempStudyProtocolService;
 import gov.nih.nci.registry.service.MockTrialRegistrationService;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
@@ -106,7 +106,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final RegulatoryInformationServiceRemote regulatoryInfoService = new MockRegulatoryInformationService();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatorAuthService = new MockStudyRegulatoryAuthorityService();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
-    private final TempStudyProtocolServiceLocal tempStudyProtocolService = new MockTempStudyProtocolService(); 
+    private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService(); 
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
@@ -390,8 +390,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public TempStudyProtocolServiceLocal getTempStudyProtocolService() {
-        return tempStudyProtocolService;
+    public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
+        return studyProtocolStageService;
     }
     
-    }
+}

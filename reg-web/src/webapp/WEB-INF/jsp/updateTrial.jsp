@@ -305,7 +305,7 @@ function toggledisplay2 (it) {
     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
     <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
     <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
-    <s:hidden name="trialDTO.localProtocolIdentifier" id="trialDTO.localProtocolIdentifier"/>
+    <s:hidden name="trialDTO.leadOrgTrialIdentifier" id="trialDTO.leadOrgTrialIdentifier"/>
     <s:hidden name="trialDTO.phaseOtherText" id="trialDTO.phaseOtherText" />
         <s:hidden name="page" />
         <s:hidden name="uuidhidden"/>  
@@ -335,23 +335,6 @@ function toggledisplay2 (it) {
                 </td>
                 <td>
                     <s:textfield name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>                
-          </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="submitTrial_CTEP_Identifier"> <fmt:message key="submit.trial.ctepIdentifier"/></label>
-                </td>
-                <td>
-                    <s:textfield name="trialDTO.ctepIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>                
-          </tr>
-          
-          <tr>
-                <td scope="row" class="label">
-                    <label for="submitTrial_DCP_Identifier"> <fmt:message key="submit.trial.dcpIdentifier"/></label>
-                </td>
-                <td>
-                    <s:textfield name="trialDTO.dcpIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                 </td>                
           </tr>
           <tr>

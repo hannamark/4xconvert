@@ -62,7 +62,7 @@ var winprint=window.open("","",sOption);
  
 <div class="box">
     <s:form > <s:actionerror/>
-    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>          
+    <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>     
     <c:if test="${requestScope.protocolId != null && requestScope.partialSubmission != null && requestScope.partialSubmission == 'submit'}">
         <div class="confirm_msg">
           <strong>The trial draft has been successfully saved and assigned the Identifier ${requestScope.protocolId}</strong>
@@ -102,7 +102,7 @@ var winprint=window.open("","",sOption);
                         </label>
                 </td>
                 <td class="value">
-                    <c:out value="${trialDTO.localProtocolIdentifier}"/> 
+                    <c:out value="${trialDTO.leadOrgTrialIdentifier}"/> 
                 </td>
           </tr>
           <c:if test="${trialDTO.nctIdentifier != null}">
@@ -117,7 +117,8 @@ var winprint=window.open("","",sOption);
                     </td>
               </tr>
           </c:if>
-          <c:if test="${trialDTO.ctepIdentifier != null}">
+          <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
+              <c:if test="${trialDTO.ctepIdentifier != null}">
               <tr>     
                     <td scope="row" class="label">
                         <label for="CTEP Identifier">
@@ -141,7 +142,7 @@ var winprint=window.open("","",sOption);
                     </td>
               </tr>
           </c:if>
-        <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
+          <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
           <tr>
             <th colspan="2"><fmt:message key="trial.amendDetails"/></th>
           </tr>
@@ -165,6 +166,7 @@ var winprint=window.open("","",sOption);
                     <c:out value="${trialDTO.amendmentDate}"/> 
                 </td>
           </tr>
+        </c:if>
         </c:if>
         <tr>
             <th colspan="2"><fmt:message key="view.trial.trialDetails"/></th>
@@ -233,8 +235,6 @@ var winprint=window.open("","",sOption);
                     </td>
               </tr>
           </c:if>
-
-         
           <tr>
             <td colspan="2" class="space">&nbsp;</td>
           </tr>           
@@ -250,8 +250,41 @@ var winprint=window.open("","",sOption);
              <td class="value">
                 <c:out value="${trialDTO.leadOrganizationName }"/>
              </td>
-       </tr> 
-       <tr>     
+       </tr>
+       <c:if test="${trialDTO.propritaryTrialIndicator == 'Yes'}">
+          <tr>     
+            <td scope="row" class="label">
+                <label for="Participating Organization Trial Identifier">
+                    <fmt:message key="submit.proprietary.trial.siteOrganization"/>                
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${trialDTO.siteOrganizationName}"/> 
+            </td>
+          </tr>
+          <tr>     
+            <td scope="row" class="label">
+                <label for="Local Trial Identifier">
+                    <fmt:message key="submit.proprietary.trial.siteidentifier"/>                
+                </label>
+            </td>
+            <td class="value">
+                <c:out value="${trialDTO.localSiteIdentifier}"/> 
+            </td>
+          </tr>
+          <tr>     
+            <td scope="row" class="label">
+                <label for="Principal Investigator">
+                <fmt:message key="view.trial.principalInvestigator"/>                
+                </label>
+              </td>
+             <td class="value">
+                <c:out value="${trialDTO.sitePiName}"/>
+                </td>
+       </tr>
+          </c:if> 
+          <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
+           <tr>     
             <td scope="row" class="label">
                 <label for="Principal Investigator">
                 <fmt:message key="view.trial.principalInvestigator"/>                
@@ -336,6 +369,7 @@ var winprint=window.open("","",sOption);
                 <td colspan="2" class="space">&nbsp;</td>
            </tr>
        </c:if>
+       </c:if>
        <c:if test="${fn:trim(trialDTO.summaryFourOrgName) != ''}">             
            <tr>
                 <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
@@ -361,6 +395,7 @@ var winprint=window.open("","",sOption);
                 </td>
            </tr> 
       </c:if>
+      <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
         <c:if test="${trialDTO.programCodeText != ''}">   
              <c:if test="${fn:trim(trialDTO.summaryFourOrgName) == ''}">             
                 <tr>
@@ -433,7 +468,74 @@ var winprint=window.open("","",sOption);
              <c:out value="${trialDTO.completionDate}"/> 
              <c:out value="${trialDTO.completionDateType}"/>
         </td>
+      </tr>
+      </c:if>
+      <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'Yes'}">
+          <c:if test="${fn:trim(trialDTO.siteProgramCodeText) != ''}">   
+             <c:if test="${fn:trim(trialDTO.summaryFourOrgName) == ''}">             
+                <tr>
+                    <th colspan="2"><fmt:message key="view.trial.Summary4Information"/></th>
+                </tr>
+            </c:if>
+           <tr>
+             <td scope="row" class="label"><label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label></td>
+             <td class="value">
+                <c:out value="${trialDTO.siteProgramCodeText}"/>
+               </td>
+            </tr>
+             <tr>
+              <td colspan="2" class="space">&nbsp;</td>
+            </tr>
+            </c:if>          
+      <tr>
+          <th colspan="2"><fmt:message key="view.trial.statusDates"/></th>
+      </tr>
+      <tr>     
+        <td scope="row" class="label">
+        <label for="Site Recruitment Status">
+            <fmt:message key="view.trial.siteRecruitmentStatus"/>                
+        </label>
+       </td>
+         <td class="value">
+            <c:out value="${trialDTO.siteStatusCode}"/>
+         </td>
       </tr> 
+      <tr>     
+        <td scope="row" class="label">
+          <label for="Site Recruitment Status Date">
+              <fmt:message key="view.trial.siteRecruitmentStatusDate"/>                
+          </label>
+         </td>
+         <td class="value">
+           <c:out value="${trialDTO.siteStatusDate}"/>
+           </td>
+      </tr>
+      <c:if test="${fn:trim(trialDTO.dateOpenedforAccrual) != ''}"> 
+      <tr>     
+          <td scope="row" class="label">
+              <label for="Trial Start Date">
+                  <fmt:message key="submit.proprietary.trial.dateOpenedforAccrual"/>                
+              </label>
+          </td>
+          <td class="value">
+               <c:out value="${trialDTO.dateOpenedforAccrual}"/>
+          </td>
+       </tr> 
+       </c:if>
+       <c:if test="${fn:trim(trialDTO.dateClosedforAccrual) != ''}">
+       <tr>     
+        <td scope="row" class="label">
+            <label for="Primary Completion Date">
+                <fmt:message key="submit.proprietary.trial.dateClosedforAccrual"/>                
+            </label>
+        </td>
+        <td class="value">
+             <c:out value="${trialDTO.dateClosedforAccrual}"/> 
+        </td>
+      </tr> 
+      </c:if>
+      
+      </c:if> 
      </table>
      <c:if test="${fn:length(trialDTO.indIdeDtos) > 0}">
         <div class="box">                                   
@@ -444,8 +546,9 @@ var winprint=window.open("","",sOption);
      <c:if test="${trialDTO.fundingDtos != null}">  
         <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
      </c:if>
-     <table class="form">
-     <tr>
+     <c:if test="${fn:trim(trialDTO.propritaryTrialIndicator) == 'No'}">
+        <table class="form">
+        <tr>
               <th colspan="2">Regulatory Information</th>
           </tr>
         <tr>
@@ -486,6 +589,7 @@ var winprint=window.open("","",sOption);
          <td class="value"><c:out value="${trialDTO.dataMonitoringCommitteeAppointedIndicator}" /></td>       
      </tr>
       </table>
+      </c:if>
         <c:if test="${fn:length(trialDTO.docDtos) >0}">          
             <div class="box">
                <display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
@@ -495,6 +599,7 @@ var winprint=window.open("","",sOption);
                 </display:table>
             </div>
         </c:if>
+        
         </div>
         <c:if test="${requestScope.partialSubmission == null}">
         <div class="actionsrow">

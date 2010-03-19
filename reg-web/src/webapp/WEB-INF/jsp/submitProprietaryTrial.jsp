@@ -174,6 +174,12 @@ function addIndIde(indIde,number,grantor,holdertype,programcode,expandedaccess,e
     resetValues();
 
 }
+function partialSave() {
+    var action = "submitProprietaryTrialpartialSave.action"; 
+    document.forms[0].action=action;
+    document.forms[0].submit();
+    showPopWin('${partialSave}', 600, 200, '', 'Saving Draft');
+}
 </SCRIPT>
 <script language="javascript">
 function toggledisplay (it, box) {
@@ -203,6 +209,7 @@ function toggledisplay2 (it) {
         <s:hidden name="trialDTO.sitePiIdentifier" id="trialDTO.sitePiIdentifier"/> 
         <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
         <s:hidden name="trialDTO.siteOrganizationIdentifier" id="trialDTO.siteOrganizationIdentifier"/>
+        <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
     
         <s:hidden name="page" />
         <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
@@ -526,7 +533,8 @@ function toggledisplay2 (it) {
             <del class="btnwrapper">
                 <ul class="btnrow">         
                         <li>
-                        <li>            
+                        <li>
+                            <s:a href="#" cssClass="btn" onclick="partialSave()"><span class="btn_img"><span class="save">Save as Draft</span></span></s:a>            
                             <s:a href="#" cssClass="btn" onclick="reviewProtocol()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>  
                         </li>

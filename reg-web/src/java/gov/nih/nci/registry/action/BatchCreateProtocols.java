@@ -536,7 +536,7 @@ public class BatchCreateProtocols {
         OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
         PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
         OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
-        StudySiteDTO leadOrgSiteIdDTO = util.convertToStudySiteDTO(trialDTO);
+        StudySiteDTO leadOrgSiteIdDTO = util.convertToleadOrgSiteIdDTO(trialDTO);
         StudyContactDTO studyContactDTO = null;
         StudySiteContactDTO studySiteContactDTO = null;
         OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
@@ -654,7 +654,7 @@ public class BatchCreateProtocols {
         TrialDTO  trialDTO = new TrialDTO();
         trialDTO.setCompletionDate(batchDTO.getPrimaryCompletionDate());
         trialDTO.setCompletionDateType(batchDTO.getPrimaryCompletionDateType());
-        trialDTO.setLocalProtocolIdentifier(batchDTO.getLocalProtocolIdentifier());
+        trialDTO.setLeadOrgTrialIdentifier(batchDTO.getLocalProtocolIdentifier());
         trialDTO.setNctIdentifier(batchDTO.getNctNumber());
         trialDTO.setOfficialTitle(batchDTO.getTitle());
         trialDTO.setPhaseCode(batchDTO.getPhase());

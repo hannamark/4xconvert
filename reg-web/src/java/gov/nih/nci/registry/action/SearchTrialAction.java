@@ -97,10 +97,11 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.dto.TempStudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -114,6 +115,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
@@ -571,7 +573,7 @@ public class SearchTrialAction extends ActionSupport {
      * @return st
      */
     public String getMyPartiallySavedTrial() {
-        TempStudyProtocolDTO criteriaSpDTO = new TempStudyProtocolDTO();
+        StudyProtocolStageDTO criteriaSpDTO = new StudyProtocolStageDTO();
         criteriaSpDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext
                 .getRequest().getRemoteUser()));
         criteriaSpDTO.setOfficialTitle(StConverter.convertToSt(criteria.getOfficialTitle()));
@@ -579,9 +581,9 @@ public class SearchTrialAction extends ActionSupport {
         criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
         try {
-            List<TempStudyProtocolDTO> tempSpDTOs =  PaRegistry.getTempStudyProtocolService()
+            List<StudyProtocolStageDTO> spStageDTOs =  PaRegistry.getStudyProtocolStageService()
                 .search(criteriaSpDTO, limit);
-            records = convertToSpQueryDTO(tempSpDTOs);
+            records = convertToSpQueryDTO(spStageDTOs);
         } catch (PAException e) {
             LOG.equals(e.getMessage());
             addActionError("Exception :" + e.getMessage());
@@ -601,23 +603,25 @@ public class SearchTrialAction extends ActionSupport {
             addActionError("study protocol id cannot null.");
             return ERROR;
         }
-        TrialDTO trialDTO = new TrialDTO();
+        BaseTrialDTO trialDTO = new BaseTrialDTO();
         try {
             trialDTO =  trialUtil.getTrialDTOForPartiallySumbissionById(pId);
-            if (PAUtil.isNotEmpty(trialDTO.getSelectedRegAuth())) {
-                String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
-                        trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
-                trialDTO.setTrialOversgtAuthOrgName(orgName);
+            if (trialDTO instanceof TrialDTO) {
+                if (PAUtil.isNotEmpty(((TrialDTO) trialDTO).getSelectedRegAuth())) {
+                    String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
+                            ((TrialDTO) trialDTO).getSelectedRegAuth()), "RegulatoryAuthority");
+                    ((TrialDTO) trialDTO).setTrialOversgtAuthOrgName(orgName);
+                }
+                if (PAUtil.isNotEmpty(((TrialDTO) trialDTO).getLst())) {
+                    String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+                            Long.valueOf(((TrialDTO) trialDTO).getLst()), "Country");
+                    ((TrialDTO) trialDTO).setTrialOversgtAuthCountryName(countryName);
+                }
             }
-            if (PAUtil.isNotEmpty(trialDTO.getLst())) {
-                String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-                        Long.valueOf(trialDTO.getLst()), "Country");
-                trialDTO.setTrialOversgtAuthCountryName(countryName);
-            }
-            
             ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
             ServletActionContext.getRequest().setAttribute("partialSubmission", "search");
             ServletActionContext.getRequest().setAttribute("protocolId", pId);
+            
         } catch (PAException e) {
             addActionError(e.getMessage());
         } catch (NullifiedRoleException e) {
@@ -625,41 +629,47 @@ public class SearchTrialAction extends ActionSupport {
         }
      return "partialView";   
     }
-    private List<StudyProtocolQueryDTO> convertToSpQueryDTO(List<TempStudyProtocolDTO> tempSpDTOs) {
+    private List<StudyProtocolQueryDTO> convertToSpQueryDTO(List<StudyProtocolStageDTO> spStageDTOs) {
         StudyProtocolQueryDTO spQueryDTO;
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         List<StudyProtocolQueryDTO> returnList = new ArrayList<StudyProtocolQueryDTO>();
-        for (TempStudyProtocolDTO tempStudyProtocolDTO : tempSpDTOs) {
+        for (StudyProtocolStageDTO studyProtocolStageDTO : spStageDTOs) {
             spQueryDTO = new StudyProtocolQueryDTO();
-            spQueryDTO.setStudyProtocolId(IiConverter.convertToLong(tempStudyProtocolDTO.getIdentifier()));
-            spQueryDTO.setOfficialTitle(StConverter.convertToString(tempStudyProtocolDTO.getOfficialTitle()));
+            spQueryDTO.setStudyProtocolId(IiConverter.convertToLong(studyProtocolStageDTO.getIdentifier()));
+            spQueryDTO.setOfficialTitle(StConverter.convertToString(studyProtocolStageDTO.getOfficialTitle()));
             spQueryDTO.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(
-                tempStudyProtocolDTO.getPhaseCode())));
+                studyProtocolStageDTO.getPhaseCode())));
             spQueryDTO.setPrimaryPurpose(CdConverter.convertCdToString(
-                tempStudyProtocolDTO.getPrimaryPurposeCode()));
+                studyProtocolStageDTO.getPrimaryPurposeCode()));
             spQueryDTO.setPrimaryPurposeOtherText(StConverter.convertToString(
-                tempStudyProtocolDTO.getPrimaryPurposeOtherText()));
+                studyProtocolStageDTO.getPrimaryPurposeOtherText()));
             spQueryDTO.setLocalStudyProtocolIdentifier(StConverter.convertToString(
-                tempStudyProtocolDTO.getLocalProtocolIdentifier()));
+                studyProtocolStageDTO.getLocalProtocolIdentifier()));
             
             spQueryDTO.setLeadOrganizationId(IiConverter.convertToLong(
-                tempStudyProtocolDTO.getLeadOrganizationIdentifier()));
-            if (PAUtil.isIiNotNull(tempStudyProtocolDTO.getLeadOrganizationIdentifier())) {
+                studyProtocolStageDTO.getLeadOrganizationIdentifier()));
+            if (PAUtil.isIiNotNull(studyProtocolStageDTO.getLeadOrganizationIdentifier())) {
                 OrganizationDTO orgDto = paServiceUtil.getPOOrganizationEntity(
-                        tempStudyProtocolDTO.getLeadOrganizationIdentifier());
+                        studyProtocolStageDTO.getLeadOrganizationIdentifier());
                 spQueryDTO.setLeadOrganizationName(EnOnConverter.convertEnOnToString(
                         orgDto.getName()));
             }
-            spQueryDTO.setPiId(IiConverter.convertToLong(tempStudyProtocolDTO.getPiIdentifier()));
-            if (PAUtil.isIiNotNull(tempStudyProtocolDTO.getPiIdentifier())) {
+            spQueryDTO.setPiId(IiConverter.convertToLong(studyProtocolStageDTO.getPiIdentifier()));
+            if (PAUtil.isIiNotNull(studyProtocolStageDTO.getPiIdentifier())) {
                 PersonDTO perDto = paServiceUtil.getPoPersonEntity(
-                        tempStudyProtocolDTO.getPiIdentifier());
+                        studyProtocolStageDTO.getPiIdentifier());
                 spQueryDTO.setPiFullName(PAUtil.convertToPaPersonDTO(perDto).getFullName());
             }
             spQueryDTO.setStudyStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(
-                tempStudyProtocolDTO.getTrialStatusCode())));
-            spQueryDTO.setStudyStatusDate(TsConverter.convertToTimestamp(tempStudyProtocolDTO.getTrialStatusDate()));
-            spQueryDTO.setUserLastCreated(StConverter.convertToString(tempStudyProtocolDTO.getUserLastCreated()));
+                studyProtocolStageDTO.getTrialStatusCode())));
+            spQueryDTO.setStudyStatusDate(TsConverter.convertToTimestamp(studyProtocolStageDTO.getTrialStatusDate()));
+            spQueryDTO.setUserLastCreated(StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
+            if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator()) 
+                    && BlConverter.covertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
+                spQueryDTO.setIsProprietaryTrial("true");
+            } else {
+                spQueryDTO.setIsProprietaryTrial("");
+            }
             returnList.add(spQueryDTO);
         }
         return returnList;   

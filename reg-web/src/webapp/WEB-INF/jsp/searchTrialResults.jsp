@@ -11,14 +11,12 @@
             <a href="#" onclick="viewPartialProtocol('${row.studyProtocolId}','${row.userLastCreated}');">${row.studyProtocolId}</a>
       </display:column>
     <display:column titleKey="search.trial.officialTitle" property="officialTitle" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
-    <display:column titleKey="search.trial.studyStatusCode" property="studyStatusCode.code"   sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.leadOrganizationName" property="leadOrganizationName"    sortable="true" headerClass="sortable" headerScope="col"/>
     <display:column titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier"    sortable="true" headerClass="sortable" headerScope="col"/>
-    <display:column titleKey="search.trial.piFullName" property="piFullName"    sortable="true" headerClass="sortable" headerScope="col"/>
-    <display:column titleKey="search.trial.action" 
-        href="submitTrialcompletePartialSubmission.action" property="completePartialSubmission"
-        paramId="studyProtocolId" paramProperty="studyProtocolId"
-        sortable="true" headerClass="sortable"/> 
+    <display:column titleKey="search.trial.trialCategory" property="trialCategory"    sortable="true" headerClass="sortable" headerScope="col"/>
+    <display:column titleKey="search.trial.action" >
+        <a href="#" onclick="completeDraft('${row.studyProtocolId}','${row.isProprietaryTrial}');">Complete</a>
+        </display:column>
     <display:column titleKey="search.trial.action">
         <a href="#" onclick="deletePartialProtocol('${row.studyProtocolId}','${row.userLastCreated}');">Delete</a> 
     </display:column>

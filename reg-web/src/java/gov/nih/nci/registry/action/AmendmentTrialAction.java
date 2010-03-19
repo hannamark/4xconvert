@@ -16,6 +16,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -136,7 +137,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
      * 
      * @return s
      */
-
+    @SuppressWarnings({"PMD.ExcessiveMethodLength" })
     public String review() {
         try {
             clearErrorsAndMessages();
@@ -155,6 +156,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
                 return ERROR;
             }
             List<TrialDocumentWebDTO> docDTOList = addDocDTOToList();
+            trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
            trialDTO.setDocDtos(docDTOList);
            //get the document and put in list add the IndIde,FundingList
            List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
@@ -252,7 +254,7 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
             OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
-            StudySiteDTO leadOrgSiteIdDTO = util.convertToStudySiteDTO(trialDTO);
+            StudySiteDTO leadOrgSiteIdDTO = util.convertToleadOrgSiteIdDTO(trialDTO);
 
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
@@ -278,8 +280,8 @@ public class AmendmentTrialAction extends ActionSupport implements ServletRespon
             
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
-            studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
-            studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, null));
+            //studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, null));
+            //studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, null));
             
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
             

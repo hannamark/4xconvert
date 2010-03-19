@@ -17,22 +17,10 @@ import org.hibernate.validator.NotEmpty;
  *
  */
 @SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyFields" })
-public class TrialDTO {
+public class TrialDTO extends BaseTrialDTO {
     private String accrualReportingMethodCode;
-    private String assignedIdentifier; // used to store nci-accession number
-    private String officialTitle;
-    private String phaseCode;
-    private String phaseOtherText;
-    private String primaryPurposeCode;
-    private String primaryPurposeOtherText;
-    private String localProtocolIdentifier;
-    private String leadOrganizationIdentifier;
-    private String leadOrganizationName;
     private String piIdentifier;
     private String piName;
-    private String summaryFourOrgIdentifier;
-    private String summaryFourOrgName;
-    private String summaryFourFundingCategoryCode;
     private String sponsorName;
     private String sponsorIdentifier;
     private String responsiblePartyType;
@@ -40,7 +28,7 @@ public class TrialDTO {
     private String responsiblePersonIdentifier;
     private String contactPhone;
     private String contactEmail;
-    private String nctIdentifier;
+    
     private String statusCode;
     private String statusDate;
     private String reason;
@@ -48,17 +36,10 @@ public class TrialDTO {
     private String completionDate;
     private String startDateType;
     private String completionDateType;
-    private String trialType;
     private String localAmendmentNumber;
     private String amendmentDate;
-    private String identifier;
     private String programCodeText;
     private String responsibleGenericContactName;
-    private String submissionNumber;
-      
-    private List<TrialFundingWebDTO> fundingDtos;
-    private List<TrialDocumentWebDTO> docDtos;
-    private List <TrialIndIdeDTO> indIdeDtos;
     
     //required for updating a trial
     private List<PaOrganizationDTO> collaborators;
@@ -71,7 +52,7 @@ public class TrialDTO {
     private List <TrialIndIdeDTO> indIdeAddDtos;
     private String lst = null;
     private String selectedRegAuth = null;
-    private String studyProtocolId;
+    
     
     private String fdaRegulatoryInformationIndicator;
     private String section801Indicator;
@@ -81,7 +62,7 @@ public class TrialDTO {
     private String dcpIdentifier;
     private String contactPhoneExtn;
     private String nciDesignedCancerCenter;
-    private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
+
     private String trialOversgtAuthCountryName;
     private String trialOversgtAuthOrgName;
     /**
@@ -89,10 +70,6 @@ public class TrialDTO {
      */
     public TrialDTO() {
         super();
-        fundingDtos = new ArrayList<TrialFundingWebDTO>();
-        docDtos = new ArrayList<TrialDocumentWebDTO>();
-        indIdeDtos = new ArrayList<TrialIndIdeDTO>();
-        
         collaborators = new ArrayList<PaOrganizationDTO>();
         participatingSites = new ArrayList<PaOrganizationDTO>();
         //regulatoryAuthority = new RegulatoryAuthorityWebDTO();
@@ -113,106 +90,7 @@ public class TrialDTO {
     public void setAccrualReportingMethodCode(String accrualReportingMethodCode) {
         this.accrualReportingMethodCode = accrualReportingMethodCode;
     }
-    /**
-     * @return the assignedIdentifier
-     */
-    public String getAssignedIdentifier() {
-        return assignedIdentifier;
-    }
-    /**
-     * @param assignedIdentifier the assignedIdentifier to set
-     */
-    public void setAssignedIdentifier(String assignedIdentifier) {
-        this.assignedIdentifier = assignedIdentifier;
-    }
-    /**
-     * @return the phaseCode
-     */
-    @NotEmpty(message = "error.submit.trialPhase")
-    public String getPhaseCode() {
-        return phaseCode;
-    }
-    /**
-     * @param phaseCode the phaseCode to set
-     */
-    public void setPhaseCode(String phaseCode) {
-        this.phaseCode = phaseCode;
-    }
-    /**
-     * @return the phaseOtherText
-     */
-    public String getPhaseOtherText() {
-        return phaseOtherText;
-    }
-    /**
-     * @param phaseOtherText the phaseOtherText to set
-     */
-    public void setPhaseOtherText(String phaseOtherText) {
-        this.phaseOtherText = phaseOtherText;
-    }
-    /**
-     * @return the primaryPurposeCode
-     */
-    @NotEmpty(message = "error.submit.trialPurpose")
-    public String getPrimaryPurposeCode() {
-        return primaryPurposeCode;
-    }
-    /**
-     * @param primaryPurposeCode the primaryPurposeCode to set
-     */
-    public void setPrimaryPurposeCode(String primaryPurposeCode) {
-        this.primaryPurposeCode = primaryPurposeCode;
-    }
-    /**
-     * @return the primaryPurposeOtherText
-     */
-    public String getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
-    }
-    /**
-     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
-     */
-    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
-    }
-    /**
-     * @return the localProtocolIdentifier
-     */
-    @NotEmpty(message = "error.submit.localProtocolIdentifier")
-    public String getLocalProtocolIdentifier() {
-        return localProtocolIdentifier;
-    }
-    /**
-     * @param localProtocolIdentifier the localProtocolIdentifier to set
-     */
-    public void setLocalProtocolIdentifier(String localProtocolIdentifier) {
-        this.localProtocolIdentifier = localProtocolIdentifier;
-    }
-    /**
-     * @return the leadOrganizationIdentifier
-     */
-    @NotEmpty (message = "error.submit.leadOrganization")
-    public String getLeadOrganizationIdentifier() {
-        return leadOrganizationIdentifier;
-    }
-    /**
-     * @param leadOrganizationIdentifier the leadOrganizationIdentifier to set
-     */
-    public void setLeadOrganizationIdentifier(String leadOrganizationIdentifier) {
-        this.leadOrganizationIdentifier = leadOrganizationIdentifier;
-    }
-    /**
-     * @return the leadOrganizationName
-     */
-    public String getLeadOrganizationName() {
-        return leadOrganizationName;
-    }
-    /**
-     * @param leadOrganizationName the leadOrganizationName to set
-     */
-    public void setLeadOrganizationName(String leadOrganizationName) {
-        this.leadOrganizationName = leadOrganizationName;
-    }
+
     /**
      * @return the piIdentifier
      */
@@ -237,43 +115,6 @@ public class TrialDTO {
      */
     public void setPiName(String piName) {
         this.piName = piName;
-    }
-    /**
-     * @return the summaryFourOrgIdentifier
-     */
-    public String getSummaryFourOrgIdentifier() {
-        return summaryFourOrgIdentifier;
-    }
-    /**
-     * @param summaryFourOrgIdentifier the summaryFourOrgIdentifier to set
-     */
-    public void setSummaryFourOrgIdentifier(String summaryFourOrgIdentifier) {
-        this.summaryFourOrgIdentifier = summaryFourOrgIdentifier;
-    }
-    /**
-     * @return the summaryFourOrgName
-     */
-    public String getSummaryFourOrgName() {
-        return summaryFourOrgName;
-    }
-    /**
-     * @param summaryFourOrgName the summaryFourOrgName to set
-     */
-    public void setSummaryFourOrgName(String summaryFourOrgName) {
-        this.summaryFourOrgName = summaryFourOrgName;
-    }
-    /**
-     * @return the summaryFourFundingCategoryCode
-     */
-    public String getSummaryFourFundingCategoryCode() {
-        return summaryFourFundingCategoryCode;
-    }
-    /**
-     * @param summaryFourFundingCategoryCode the summaryFourFundingCategoryCode to set
-     */
-    public void setSummaryFourFundingCategoryCode(
-            String summaryFourFundingCategoryCode) {
-        this.summaryFourFundingCategoryCode = summaryFourFundingCategoryCode;
     }
     /**
      * @return the sponsorName
@@ -367,18 +208,6 @@ public class TrialDTO {
         this.contactEmail = contactEmail;
     }
     /**
-     * @return the nctIdentifier
-     */
-    public String getNctIdentifier() {
-        return nctIdentifier;
-    }
-    /**
-     * @param nctIdentifier the nctIdentifier to set
-     */
-    public void setNctIdentifier(String nctIdentifier) {
-        this.nctIdentifier = nctIdentifier;
-    }
-    /**
      * @return the statusCode
      */
     @NotEmpty (message = "error.submit.statusCode")
@@ -415,20 +244,6 @@ public class TrialDTO {
      */
     public void setReason(String reason) {
         this.reason = reason;
-    }
-    /**
-     * @return the officialTitle
-     */
-    @NotEmpty (message = "error.submit.trialTitle")
-    @org.hibernate.validator.Length(message = "error.submit.trialTitleLength", max = TRIAL_TITLE_MAX_LENGTH)
-    public String getOfficialTitle() {
-        return officialTitle;
-    }
-    /**
-     * @param officialTitle the officialTitle to set
-     */
-    public void setOfficialTitle(String officialTitle) {
-        this.officialTitle = officialTitle;
     }
     /**
      * @return the startDate
@@ -483,19 +298,6 @@ public class TrialDTO {
         this.completionDateType = completionDateType;
     }
     /**
-     * @return the trialType
-     */
-    @NotEmpty (message = "error.submit.trialType")
-    public String getTrialType() {
-        return trialType;
-    }
-    /**
-     * @param trialType the trialType to set
-     */
-    public void setTrialType(String trialType) {
-        this.trialType = trialType;
-    }
-    /**
      * @return the localAmendmentNumber
      */
     public String getLocalAmendmentNumber() {
@@ -518,54 +320,6 @@ public class TrialDTO {
      */
     public void setAmendmentDate(String amendmentDate) {
         this.amendmentDate = amendmentDate;
-    }
-    /**
-     * @return the identifier
-     */
-    public String getIdentifier() {
-        return identifier;
-    }
-    /**
-     * @param identifier the identifier to set
-     */
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-    /**
-     * @return the fundingDtos
-     */
-    public List<TrialFundingWebDTO> getFundingDtos() {
-        return fundingDtos;
-    }
-    /**
-     * @param fundingDtos the fundingDtos to set
-     */
-    public void setFundingDtos(List<TrialFundingWebDTO> fundingDtos) {
-        this.fundingDtos = fundingDtos;
-    }
-    /**
-     * @return the docDtos
-     */
-    public List<TrialDocumentWebDTO> getDocDtos() {
-        return docDtos;
-    }
-    /**
-     * @param docDtos the docDtos to set
-     */
-    public void setDocDtos(List<TrialDocumentWebDTO> docDtos) {
-        this.docDtos = docDtos;
-    }
-    /**
-     * @return the indIdeDtos
-     */
-    public List<TrialIndIdeDTO> getIndIdeDtos() {
-        return indIdeDtos;
-    }
-    /**
-     * @param indIdeDtos the indIdeDtos to set
-     */
-    public void setIndIdeDtos(List<TrialIndIdeDTO> indIdeDtos) {
-        this.indIdeDtos = indIdeDtos;
     }
     /**
      * @return the programCodeText
@@ -677,18 +431,6 @@ public class TrialDTO {
         this.indIdeUpdateDtos = indIdeUpdateDtos;
     }
     /**
-     * @return the studyProtocolId
-     */
-    public String getStudyProtocolId() {
-        return studyProtocolId;
-    }
-    /**
-     * @param studyProtocolId the studyProtocolId to set
-     */
-    public void setStudyProtocolId(String studyProtocolId) {
-        this.studyProtocolId = studyProtocolId;
-    }
-    /**
      * @return the fundingAddDtos
      */
     public List<TrialFundingWebDTO> getFundingAddDtos() {
@@ -711,18 +453,6 @@ public class TrialDTO {
      */
     public void setIndIdeAddDtos(List<TrialIndIdeDTO> indIdeAddDtos) {
         this.indIdeAddDtos = indIdeAddDtos;
-    }
-    /**
-     * @return the submissionNumber
-     */
-    public String getSubmissionNumber() {
-        return submissionNumber;
-    }
-    /**
-     * @param submissionNumber the submissionNumber to set
-     */
-    public void setSubmissionNumber(String submissionNumber) {
-        this.submissionNumber = submissionNumber;
     }
     /**
      * @return the fdaRegulatoryInformationIndicator
