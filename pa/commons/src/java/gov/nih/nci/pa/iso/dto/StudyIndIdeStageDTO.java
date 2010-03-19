@@ -12,7 +12,7 @@ import gov.nih.nci.iso21090.St;
  * @author Vrushali
  *
  */
-public class TempStudyIndIdeDTO extends BaseDTO {
+public class StudyIndIdeStageDTO extends BaseDTO {
 
     /**
      * 
@@ -26,7 +26,7 @@ public class TempStudyIndIdeDTO extends BaseDTO {
     private Cd nciDivProgHolderCode;
     private St indldeNumber;
     private Cd indldeTypeCode;
-    private Ii tempStudyProtocolIi;
+    private Ii studyProtocolStageIi;
     /**
      * @return the expandedAccessStatusCode
      */
@@ -124,16 +124,16 @@ public class TempStudyIndIdeDTO extends BaseDTO {
         this.indldeTypeCode = indldeTypeCode;
     }
     /**
-     * @return the tempStudyProtocolIi
+     * @return the studyProtocolStageIi
      */
-    public Ii getTempStudyProtocolIi() {
-        return tempStudyProtocolIi;
+    public Ii getStudyProtocolStageIi() {
+        return studyProtocolStageIi;
     }
     /**
-     * @param tempStudyProtocolIi the tempStudyProtocolIi to set
+     * @param studyProtocolStageIi the studyProtocolStageIi to set
      */
-    public void setTempStudyProtocolIi(Ii tempStudyProtocolIi) {
-        this.tempStudyProtocolIi = tempStudyProtocolIi;
+    public void setStudyProtocolStageIi(Ii studyProtocolStageIi) {
+        this.studyProtocolStageIi = studyProtocolStageIi;
     }
     
 

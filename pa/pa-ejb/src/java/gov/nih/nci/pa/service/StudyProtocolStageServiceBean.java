@@ -17,7 +17,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
 @RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
-public class TempStudyProtocolServiceBean extends TempStudyProtocolBeanLocal 
-    implements TempStudyProtocolServiceRemote {
+public class StudyProtocolStageServiceBean extends StudyProtocolStageBeanLocal 
+    implements StudyProtocolStageServiceRemote {
 
 }

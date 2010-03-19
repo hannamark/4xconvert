@@ -6,6 +6,7 @@ package gov.nih.nci.pa.domain;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 
@@ -27,16 +28,14 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @SuppressWarnings({ "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals",
         "PMD.ExcessiveClassLength" })
-@Table(name = "TEMP_STUDY_PROTOCOL")        
-public class TempStudyProtocol extends AbstractEntity {
+@Table(name = "STUDY_PROTOCOL_STAGE")        
+public class StudyProtocolStage extends AbstractEntity {
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     private String localProtocolIdentifier;
     private String nctIdentifier;
-    private String ctepIdentifier;
-    private String dcpIdentifier;
     private String officialTitle;
     private PhaseCode phaseCode;
     private String phaseOtherText;
@@ -71,11 +70,24 @@ public class TempStudyProtocol extends AbstractEntity {
     private Boolean nciDesignatedCancerCenterIndicator;
     private String oversightAuthorityCountryId;
     private String oversightAuthorityOrgId;
-
+    private Boolean ctgovXmlRequiredIndicator;
+    private String submitterOrganizationIdentifier;
+    private String siteProtocolIdentifier;
+    private String sitePiIdentifier;
+    private Integer  siteTargetAccrual;
+    private String siteSummaryFourOrgIdentifier;
+    private SummaryFourFundingCategoryCode siteSummaryFourFundingTypeCode;
+    private String siteProgramCodeText;
+    private RecruitmentStatusCode siteRecruitmentStatus;
+    private Timestamp siteRecruitmentStatusDate;
+    private Timestamp opendedForAccrualDate;
+    private Timestamp closedForAccrualDate;
+    private Boolean piInitiatedIndicator;
+    private Boolean siteNciDesignatedCancerCenterIndicator;
     /**
      * @return the localProtocolIdentifier
      */
-    @Column(name = "LOCAL_PROTOCOL_INDENTIFIER")
+    @Column(name = "LEAD_PROTOCOL_INDENTIFIER")
     public String getLocalProtocolIdentifier() {
         return localProtocolIdentifier;
     }
@@ -97,32 +109,6 @@ public class TempStudyProtocol extends AbstractEntity {
      */
     public void setNctIdentifier(String nctIdentifier) {
         this.nctIdentifier = nctIdentifier;
-    }
-    /**
-     * @return the ctepIdentifier
-     */
-    @Column (name = "CTEP_IDENTIFIER")
-    public String getCtepIdentifier() {
-        return ctepIdentifier;
-    }
-    /**
-     * @param ctepIdentifier the ctepIdentifier to set
-     */
-    public void setCtepIdentifier(String ctepIdentifier) {
-        this.ctepIdentifier = ctepIdentifier;
-    }
-    /**
-     * @return the dcpIdentifier
-     */
-    @Column (name = "DCP_IDENTIFIER")
-    public String getDcpIdentifier() {
-        return dcpIdentifier;
-    }
-    /**
-     * @param dcpIdentifier the dcpIdentifier to set
-     */
-    public void setDcpIdentifier(String dcpIdentifier) {
-        this.dcpIdentifier = dcpIdentifier;
     }
     /**
      * @return the officialTitle
@@ -508,7 +494,7 @@ public class TempStudyProtocol extends AbstractEntity {
      * @param nciDesignatedCancerCenterIndicator the nciDesignatedCancerCenterIndicator to set
      */
     public void setNciDesignatedCancerCenterIndicator(
-            boolean nciDesignatedCancerCenterIndicator) {
+            Boolean nciDesignatedCancerCenterIndicator) {
         this.nciDesignatedCancerCenterIndicator = nciDesignatedCancerCenterIndicator;
     }
     /**
@@ -538,6 +524,192 @@ public class TempStudyProtocol extends AbstractEntity {
     public String getOversightAuthorityOrgId() {
         return oversightAuthorityOrgId;
     }
-
+    /**
+     * @return the ctgovXmlRequiredIndicator
+     */
+    @Column (name = "CTGOV_XML_REQUIRED_INDICATOR")
+    public Boolean getCtgovXmlRequiredIndicator() {
+        return ctgovXmlRequiredIndicator;
+    }
+    /**
+     * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
+     */
+    public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
+        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+    /**
+     * @return the submitterOrganizationIdentifier
+     */
+    @Column(name = "SUBMITTER_ORGANIZATION_IDENTIFIER")
+    public String getSubmitterOrganizationIdentifier() {
+        return submitterOrganizationIdentifier;
+    }
+    /**
+     * @param submitterOrganizationIdentifier the submitterOrganizationIdentifier to set
+     */
+    public void setSubmitterOrganizationIdentifier(
+            String submitterOrganizationIdentifier) {
+        this.submitterOrganizationIdentifier = submitterOrganizationIdentifier;
+    }
+    /**
+     * @return the siteProtocolIdentifier
+     */
+    @Column(name = "SITE_PROTOCOL_IDENTIFIER")
+    public String getSiteProtocolIdentifier() {
+        return siteProtocolIdentifier;
+    }
+    /**
+     * @param siteProtocolIdentifier the siteProtocolIdentifier to set
+     */
+    public void setSiteProtocolIdentifier(String siteProtocolIdentifier) {
+        this.siteProtocolIdentifier = siteProtocolIdentifier;
+    }
+    /**
+     * @return the sitePiIdentifier
+     */
+    @Column (name = "SITE_PRINCIPAL_INVESTOGATOR_IDENTIFIER")
+    public String getSitePiIdentifier() {
+        return sitePiIdentifier;
+    }
+    /**
+     * @param sitePiIdentifier the sitePiIdentifier to set
+     */
+    public void setSitePiIdentifier(String sitePiIdentifier) {
+        this.sitePiIdentifier = sitePiIdentifier;
+    }
+    /**
+     * @return the siteTargetAccrual
+     */
+    @Column (name = "SITE_TARGET_ACCRUAL")
+    public Integer getSiteTargetAccrual() {
+        return siteTargetAccrual;
+    }
+    /**
+     * @param siteTargetAccrual the siteTargetAccrual to set
+     */
+    public void setSiteTargetAccrual(Integer siteTargetAccrual) {
+        this.siteTargetAccrual = siteTargetAccrual;
+    }
+    /**
+     * @return the siteSummaryFourOrgIdentifier
+     */
+    @Column (name = "SITE_SUMMARY_FOUR_ORG_IDENTIFIER")
+    public String getSiteSummaryFourOrgIdentifier() {
+        return siteSummaryFourOrgIdentifier;
+    }
+    /**
+     * @param siteSummaryFourOrgIdentifier the siteSummaryFourOrgIdentifier to set
+     */
+    public void setSiteSummaryFourOrgIdentifier(String siteSummaryFourOrgIdentifier) {
+        this.siteSummaryFourOrgIdentifier = siteSummaryFourOrgIdentifier;
+    }
+    /**
+     * @return the siteSummaryFourFundingTypeCode
+     */
+    @Column (name = "SITE_SUMMARY_FOUR_FUNDING_TYPE_CODE")
+    @Enumerated(EnumType.STRING)
+    public SummaryFourFundingCategoryCode getSiteSummaryFourFundingTypeCode() {
+        return siteSummaryFourFundingTypeCode;
+    }
+    /**
+     * @param siteSummaryFourFundingTypeCode the siteSummaryFourFundingTypeCode to set
+     */
+    public void setSiteSummaryFourFundingTypeCode(
+            SummaryFourFundingCategoryCode siteSummaryFourFundingTypeCode) {
+        this.siteSummaryFourFundingTypeCode = siteSummaryFourFundingTypeCode;
+    }
+    /**
+     * @return the siteProgramCodeText
+     */
+    @Column (name = "SITE_PROGRAM_CODE_TEXT")
+    public String getSiteProgramCodeText() {
+        return siteProgramCodeText;
+    }
+    /**
+     * @param siteProgramCodeText the siteProgramCodeText to set
+     */
+    public void setSiteProgramCodeText(String siteProgramCodeText) {
+        this.siteProgramCodeText = siteProgramCodeText;
+    }
+    /**
+     * @return the siteRecruitmentStatus
+     */
+    @Column (name = "SITE_RECRUITMENT_STATUS")
+    @Enumerated(EnumType.STRING)
+    public RecruitmentStatusCode getSiteRecruitmentStatus() {
+        return siteRecruitmentStatus;
+    }
+    /**
+     * @param siteRecruitmentStatus the siteRecruitmentStatus to set
+     */
+    public void setSiteRecruitmentStatus(RecruitmentStatusCode siteRecruitmentStatus) {
+        this.siteRecruitmentStatus = siteRecruitmentStatus;
+    }
+    /**
+     * @return the siteRecruitmentStatusDate
+     */
+    @Column (name = "SITE_RECRUITMENT_STATUS_DATE")
+    public Timestamp getSiteRecruitmentStatusDate() {
+        return siteRecruitmentStatusDate;
+    }
+    /**
+     * @param siteRecruitmentStatusDate the siteRecruitmentStatusDate to set
+     */
+    public void setSiteRecruitmentStatusDate(Timestamp siteRecruitmentStatusDate) {
+        this.siteRecruitmentStatusDate = siteRecruitmentStatusDate;
+    }
+    /**
+     * @return the opendedForAccrualDate
+     */
+    @Column (name = "OPENDED_FOR_ACCRUAL_DATE")
+    public Timestamp getOpendedForAccrualDate() {
+        return opendedForAccrualDate;
+    }
+    /**
+     * @param opendedForAccrualDate the opendedForAccrualDate to set
+     */
+    public void setOpendedForAccrualDate(Timestamp opendedForAccrualDate) {
+        this.opendedForAccrualDate = opendedForAccrualDate;
+    }
+    /**
+     * @return the closedForAccrualDate
+     */
+    @Column (name = "CLOSED_FOR_ACCRUAL_DATE")
+    public Timestamp getClosedForAccrualDate() {
+        return closedForAccrualDate;
+    }
+    /**
+     * @param closedForAccrualDate the closedForAccrualDate to set
+     */
+    public void setClosedForAccrualDate(Timestamp closedForAccrualDate) {
+        this.closedForAccrualDate = closedForAccrualDate;
+    }
+    /**
+     * @return the piInitiatedIndicator
+     */
+    @Column (name = "PI_INITIATED_INDICATOR")
+    public Boolean getPiInitiatedIndicator() {
+        return piInitiatedIndicator;
+    }
+    /**
+     * @param piInitiatedIndicator the piInitiatedIndicator to set
+     */
+    public void setPiInitiatedIndicator(Boolean piInitiatedIndicator) {
+        this.piInitiatedIndicator = piInitiatedIndicator;
+    }
+    /**
+     * @return the siteNciDesignatedCancerCenterIndicator
+     */
+    @Column (name = "SITE_NCI_DESIGNATED_CANCER_CENTER_INDICATOR")
+    public Boolean getSiteNciDesignatedCancerCenterIndicator() {
+        return siteNciDesignatedCancerCenterIndicator;
+    }
+    /**
+     * @param siteNciDesignatedCancerCenterIndicator the siteNciDesignatedCancerCenterIndicator to set
+     */
+    public void setSiteNciDesignatedCancerCenterIndicator(
+            Boolean siteNciDesignatedCancerCenterIndicator) {
+        this.siteNciDesignatedCancerCenterIndicator = siteNciDesignatedCancerCenterIndicator;
+    }
 
 }

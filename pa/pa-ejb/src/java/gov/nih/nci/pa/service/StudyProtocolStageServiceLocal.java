@@ -8,6 +8,6 @@ import javax.ejb.Local;
  *
  */
 @Local
-public interface TempStudyProtocolServiceLocal extends TempStudyProtocolService {
+public interface StudyProtocolStageServiceLocal extends StudyProtocolStageService {
 
 }

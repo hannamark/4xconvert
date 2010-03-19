@@ -1282,6 +1282,9 @@ public class TrialRegistrationBeanLocal implements TrialRegistrationServiceLocal
         errorMsg.append("Error getting Responsible Party Contact from PO for id = " 
                 + responsiblePartyContactIi.getExtension() + ".  ");
     }
+    if (AMENDMENT.equalsIgnoreCase(operation) && PAUtil.isTsNull(studyProtocolDTO.getAmendmentDate())) {
+        errorMsg.append("Amendment Date is required.  ");
+    }
     if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);
     }

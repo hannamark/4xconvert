@@ -101,6 +101,7 @@ import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
@@ -109,7 +110,6 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.TempStudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -456,7 +456,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return service for partial save
      */
-    public TempStudyProtocolServiceLocal getTempStudyProtocolService() {
-        return (TempStudyProtocolServiceLocal) JNDIUtil.lookup("pa/TempStudyProtocolBeanLocal/local");
+    public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
+        return (StudyProtocolStageServiceLocal) JNDIUtil.lookup("pa/StudyProtocolStageBeanLocal/local");
     }
 }

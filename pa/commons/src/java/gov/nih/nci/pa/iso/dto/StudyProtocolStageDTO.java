@@ -6,6 +6,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 
@@ -13,13 +14,11 @@ import gov.nih.nci.iso21090.Ts;
  * @author Vrushali
  *
  */
-@SuppressWarnings({"PMD.TooManyFields" })
-public class TempStudyProtocolDTO extends BaseDTO {
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
+public class StudyProtocolStageDTO extends BaseDTO {
     private static final long serialVersionUID = 7235772554482606139L;
     private St localProtocolIdentifier;
     private St nctIdentifier;
-    private St ctepIdentifier;
-    private St dcpIdentifier;
     private St officialTitle;
     private Cd phaseCode;
     private St phaseOtherText;
@@ -60,6 +59,20 @@ public class TempStudyProtocolDTO extends BaseDTO {
     private Bl proprietaryTrialIndicator;
     private Ii oversightAuthorityCountryId;
     private Ii oversightAuthorityOrgId;
+    private Bl ctgovXmlRequiredIndicator;
+    private Ii submitterOrganizationIdentifier;
+    private Ii siteProtocolIdentifier;
+    private Ii sitePiIdentifier;
+    private Int siteTargetAccrual;
+    private Ii siteSummaryFourOrgIdentifier;
+    private Cd siteSummaryFourFundingTypeCode;
+    private St siteProgramCodeText;
+    private Cd siteRecruitmentStatus;
+    private Ts siteRecruitmentStatusDate;
+    private Ts opendedForAccrualDate;
+    private Ts closedForAccrualDate;
+    private Bl piInitiatedIndicator;
+    private Bl siteNciDesignatedCancerCenterIndicator;
     /**
      * @return the localProtocolIdentifier
      */
@@ -83,30 +96,6 @@ public class TempStudyProtocolDTO extends BaseDTO {
      */
     public void setNctIdentifier(St nctIdentifier) {
         this.nctIdentifier = nctIdentifier;
-    }
-    /**
-     * @return the ctepIdentifier
-     */
-    public St getCtepIdentifier() {
-        return ctepIdentifier;
-    }
-    /**
-     * @param ctepIdentifier the ctepIdentifier to set
-     */
-    public void setCtepIdentifier(St ctepIdentifier) {
-        this.ctepIdentifier = ctepIdentifier;
-    }
-    /**
-     * @return the dcpIdentifier
-     */
-    public St getDcpIdentifier() {
-        return dcpIdentifier;
-    }
-    /**
-     * @param dcpIdentifier the dcpIdentifier to set
-     */
-    public void setDcpIdentifier(St dcpIdentifier) {
-        this.dcpIdentifier = dcpIdentifier;
     }
     /**
      * @return the officialTitle
@@ -506,5 +495,174 @@ public class TempStudyProtocolDTO extends BaseDTO {
     public void setOversightAuthorityOrgId(Ii oversightAuthorityOrgId) {
         this.oversightAuthorityOrgId = oversightAuthorityOrgId;
     }
-    
+    /**
+     * @return the ctgovXmlRequiredIndicator
+     */
+    public Bl getCtgovXmlRequiredIndicator() {
+        return ctgovXmlRequiredIndicator;
+    }
+    /**
+     * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
+     */
+    public void setCtgovXmlRequiredIndicator(Bl ctgovXmlRequiredIndicator) {
+        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+    /**
+     * @return the submitterOrganizationIdentifier
+     */
+    public Ii getSubmitterOrganizationIdentifier() {
+        return submitterOrganizationIdentifier;
+    }
+    /**
+     * @param submitterOrganizationIdentifier the submitterOrganizationIdentifier to set
+     */
+    public void setSubmitterOrganizationIdentifier(
+            Ii submitterOrganizationIdentifier) {
+        this.submitterOrganizationIdentifier = submitterOrganizationIdentifier;
+    }
+    /**
+     * @return the siteProtocolIdentifier
+     */
+    public Ii getSiteProtocolIdentifier() {
+        return siteProtocolIdentifier;
+    }
+    /**
+     * @param siteProtocolIdentifier the siteProtocolIdentifier to set
+     */
+    public void setSiteProtocolIdentifier(Ii siteProtocolIdentifier) {
+        this.siteProtocolIdentifier = siteProtocolIdentifier;
+    }
+    /**
+     * @return the sitePiIdentifier
+     */
+    public Ii getSitePiIdentifier() {
+        return sitePiIdentifier;
+    }
+    /**
+     * @param sitePiIdentifier the sitePiIdentifier to set
+     */
+    public void setSitePiIdentifier(Ii sitePiIdentifier) {
+        this.sitePiIdentifier = sitePiIdentifier;
+    }
+    /**
+     * @return the siteTargetAccrual
+     */
+    public Int getSiteTargetAccrual() {
+        return siteTargetAccrual;
+    }
+    /**
+     * @param siteTargetAccrual the siteTargetAccrual to set
+     */
+    public void setSiteTargetAccrual(Int siteTargetAccrual) {
+        this.siteTargetAccrual = siteTargetAccrual;
+    }
+    /**
+     * @return the siteSummaryFourOrgIdentifier
+     */
+    public Ii getSiteSummaryFourOrgIdentifier() {
+        return siteSummaryFourOrgIdentifier;
+    }
+    /**
+     * @param siteSummaryFourOrgIdentifier the siteSummaryFourOrgIdentifier to set
+     */
+    public void setSiteSummaryFourOrgIdentifier(Ii siteSummaryFourOrgIdentifier) {
+        this.siteSummaryFourOrgIdentifier = siteSummaryFourOrgIdentifier;
+    }
+    /**
+     * @return the siteSummaryFourFundingTypeCode
+     */
+    public Cd getSiteSummaryFourFundingTypeCode() {
+        return siteSummaryFourFundingTypeCode;
+    }
+    /**
+     * @param siteSummaryFourFundingTypeCode the siteSummaryFourFundingTypeCode to set
+     */
+    public void setSiteSummaryFourFundingTypeCode(Cd siteSummaryFourFundingTypeCode) {
+        this.siteSummaryFourFundingTypeCode = siteSummaryFourFundingTypeCode;
+    }
+    /**
+     * @return the siteProgramCodeText
+     */
+    public St getSiteProgramCodeText() {
+        return siteProgramCodeText;
+    }
+    /**
+     * @param siteProgramCodeText the siteProgramCodeText to set
+     */
+    public void setSiteProgramCodeText(St siteProgramCodeText) {
+        this.siteProgramCodeText = siteProgramCodeText;
+    }
+    /**
+     * @return the siteRecruitmentStatus
+     */
+    public Cd getSiteRecruitmentStatus() {
+        return siteRecruitmentStatus;
+    }
+    /**
+     * @param siteRecruitmentStatus the siteRecruitmentStatus to set
+     */
+    public void setSiteRecruitmentStatus(Cd siteRecruitmentStatus) {
+        this.siteRecruitmentStatus = siteRecruitmentStatus;
+    }
+    /**
+     * @return the siteRecruitmentStatusDate
+     */
+    public Ts getSiteRecruitmentStatusDate() {
+        return siteRecruitmentStatusDate;
+    }
+    /**
+     * @param siteRecruitmentStatusDate the siteRecruitmentStatusDate to set
+     */
+    public void setSiteRecruitmentStatusDate(Ts siteRecruitmentStatusDate) {
+        this.siteRecruitmentStatusDate = siteRecruitmentStatusDate;
+    }
+    /**
+     * @return the opendedForAccrualDate
+     */
+    public Ts getOpendedForAccrualDate() {
+        return opendedForAccrualDate;
+    }
+    /**
+     * @param opendedForAccrualDate the opendedForAccrualDate to set
+     */
+    public void setOpendedForAccrualDate(Ts opendedForAccrualDate) {
+        this.opendedForAccrualDate = opendedForAccrualDate;
+    }
+    /**
+     * @return the closedForAccrualDate
+     */
+    public Ts getClosedForAccrualDate() {
+        return closedForAccrualDate;
+    }
+    /**
+     * @param closedForAccrualDate the closedForAccrualDate to set
+     */
+    public void setClosedForAccrualDate(Ts closedForAccrualDate) {
+        this.closedForAccrualDate = closedForAccrualDate;
+    }
+    /**
+     * @return the piInitiatedIndicator
+     */
+    public Bl getPiInitiatedIndicator() {
+        return piInitiatedIndicator;
+    }
+    /**
+     * @param piInitiatedIndicator the piInitiatedIndicator to set
+     */
+    public void setPiInitiatedIndicator(Bl piInitiatedIndicator) {
+        this.piInitiatedIndicator = piInitiatedIndicator;
+    }
+    /**
+     * @return the siteNciDesignatedCancerCenterIndicator
+     */
+    public Bl getSiteNciDesignatedCancerCenterIndicator() {
+        return siteNciDesignatedCancerCenterIndicator;
+    }
+    /**
+     * @param siteNciDesignatedCancerCenterIndicator the siteNciDesignatedCancerCenterIndicator to set
+     */
+    public void setSiteNciDesignatedCancerCenterIndicator(
+            Bl siteNciDesignatedCancerCenterIndicator) {
+        this.siteNciDesignatedCancerCenterIndicator = siteNciDesignatedCancerCenterIndicator;
+    }
 }

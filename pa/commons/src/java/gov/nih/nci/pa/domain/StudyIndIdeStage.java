@@ -25,8 +25,8 @@ import org.hibernate.validator.NotNull;
  *
  */
 @Entity
-@Table (name = "TEMP_STUDY_INDIDE")
-public class TempStudyIndIde extends AbstractEntity {
+@Table (name = "STUDY_INDIDE_STAGE")
+public class StudyIndIdeStage extends AbstractEntity {
 
     /**
      * 
@@ -40,7 +40,7 @@ public class TempStudyIndIde extends AbstractEntity {
     private ExpandedAccessStatusCode expandedAccessStatusCode;
     private NihInstituteCode nihInstHolderCode;
     private NciDivisionProgramCode nciDivPrgHolderCode;
-    private TempStudyProtocol tempStudyProtocol;
+    private StudyProtocolStage studyProtocolStage;
     /**
      * @return the indIdeNumber
      */
@@ -152,19 +152,20 @@ public class TempStudyIndIde extends AbstractEntity {
         this.nciDivPrgHolderCode = nciDivPrgHolderCode;
     }
     /**
-     * @return the tempStudyProtocolIdentifier
+     * @param studyProtocolStage the studyProtocolStage to set
      */
-    @ManyToOne
-    @JoinColumn(name = "TEMP_STUDY_PROTOCOL_IDENTIFIER", updatable = false)
-    @NotNull
-    public TempStudyProtocol getTempStudyProtocol() {
-        return tempStudyProtocol;
+    public void setStudyProtocolStage(StudyProtocolStage studyProtocolStage) {
+        this.studyProtocolStage = studyProtocolStage;
     }
     /**
-     * @param tempStudyProtocol the tempStudyProtocol to set
+     * @return the tempStudyProtocol
      */
-    public void setTempStudyProtocol(TempStudyProtocol tempStudyProtocol) {
-        this.tempStudyProtocol = tempStudyProtocol;
+    @ManyToOne
+    @JoinColumn(name = "STUDY_PROTOCOL_STAGE_IDENTIFIER", updatable = false)
+    @NotNull
+    public StudyProtocolStage getStudyProtocolStage() {
+        return studyProtocolStage;
     }
+  
     
 }

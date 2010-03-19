@@ -11,7 +11,7 @@ import gov.nih.nci.iso21090.St;
  * @author Vrushalli
  *
  */
-public class TempStudyFundingDTO extends BaseDTO {
+public class StudyFundingStageDTO extends BaseDTO {
     
     /**
      * 
@@ -21,7 +21,7 @@ public class TempStudyFundingDTO extends BaseDTO {
     private Cd nciDivisionProgramCode;
     private Cd nihInstitutionCode;
     private St serialNumber;
-    private Ii tempStudyProtocolIi;
+    private Ii studyProtocolStageIi;
     /**
      * @return the fundingMechanismCode
      */
@@ -73,14 +73,14 @@ public class TempStudyFundingDTO extends BaseDTO {
     /**
      * @return the tempStudyProtocolIi
      */
-    public Ii getTempStudyProtocolIi() {
-        return tempStudyProtocolIi;
+    public Ii getStudyProtocolStageIi() {
+        return studyProtocolStageIi;
     }
     /**
-     * @param tempStudyProtocolIi the tempStudyProtocolIi to set
+     * @param studyProtocolStageIi the studyProtocolStageIi to set
      */
-    public void setTempStudyProtocolIi(Ii tempStudyProtocolIi) {
-        this.tempStudyProtocolIi = tempStudyProtocolIi;
+    public void setStudyProtocolStageIi(Ii studyProtocolStageIi) {
+        this.studyProtocolStageIi = studyProtocolStageIi;
     }
 
 }
