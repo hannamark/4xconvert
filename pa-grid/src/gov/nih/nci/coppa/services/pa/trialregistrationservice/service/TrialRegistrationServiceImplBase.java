@@ -155,6 +155,16 @@ public abstract class TrialRegistrationServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.studysitecontactservice.service.globus.resource.StudySiteContactServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.pa.diseaseservice.service.globus.resource.DiseaseServiceResourceHome getDiseaseServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("diseaseServiceHome");
+		return (gov.nih.nci.coppa.services.pa.diseaseservice.service.globus.resource.DiseaseServiceResourceHome)resource;
+	}
+	
+	public gov.nih.nci.coppa.services.pa.interventionservice.service.globus.resource.InterventionServiceResourceHome getInterventionServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("interventionServiceHome");
+		return (gov.nih.nci.coppa.services.pa.interventionservice.service.globus.resource.InterventionServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

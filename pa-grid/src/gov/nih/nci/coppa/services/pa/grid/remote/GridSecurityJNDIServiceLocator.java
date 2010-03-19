@@ -87,8 +87,10 @@ import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.coppa.services.pa.service.PAServicesConfiguration;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
@@ -107,8 +109,10 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.BasePaService;
+import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyCurrentPaService;
@@ -191,6 +195,8 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             values.put(DocumentWorkflowStatusDTO.class, this.getClass().getMethod("getDocumentWorkflowStatusService"));
             values.put(DocumentDTO.class, this.getClass().getMethod("getDocumentService"));
             values.put(PlannedActivityDTO.class, this.getClass().getMethod("getPlannedActivityService"));
+            values.put(DiseaseDTO.class, this.getClass().getMethod("getDiseaseService"));
+            values.put(InterventionDTO.class, this.getClass().getMethod("getInterventionService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -447,4 +453,17 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
         return (TrialRegistrationServiceRemote) lookup("/pa/TrialRegistrationServiceBean/remote");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public DiseaseServiceRemote getDiseaseService() throws NamingException {
+        return (DiseaseServiceRemote) lookup("/pa/DiseaseServiceBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public InterventionServiceRemote getInterventionService() throws NamingException {
+        return (InterventionServiceRemote) lookup("/pa/InterventionServiceBean/remote");
+    }
 }

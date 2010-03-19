@@ -5,8 +5,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.ArmTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.DiseaseTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentWorkflowStatusTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.PlannedActivityTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.PlannedEligibilityCriterionTransformer;
@@ -16,18 +18,20 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyIndldeTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOnholdTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOutcomeMeasureTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyOverallStatusTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteContactTransformer;
-import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRecruitmentStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRegulatoryAuthorityTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyRelationshipTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyResourcingTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteContactTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.TransformerRegistry;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
+import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -37,14 +41,14 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
 import java.util.Map;
 
@@ -56,7 +60,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(20, tMap.size());
+        assertEquals(22, tMap.size());
         tMap.clear();
     }
 
@@ -123,6 +127,12 @@ public class TransformerRegistryTest {
         //#20
         trans = TransformerRegistry.INSTANCE.getTransformer(DocumentDTO.class);
         assertTrue(trans instanceof DocumentTransformer);
+        //#21
+        trans = TransformerRegistry.INSTANCE.getTransformer(DiseaseDTO.class);
+        assertTrue(trans instanceof DiseaseTransformer);
+        //#22
+        trans = TransformerRegistry.INSTANCE.getTransformer(InterventionDTO.class);
+        assertTrue(trans instanceof InterventionTransformer);
     }
 
     @Test (expected=RuntimeException.class)
@@ -134,6 +144,5 @@ public class TransformerRegistryTest {
     public void testGetTranspormerWithUnknown() {
         TransformerRegistry.INSTANCE.getTransformer(String.class);
     }
-
 
 }

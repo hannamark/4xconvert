@@ -143,7 +143,7 @@ public final class ArmTransformer extends AbstractTransformer<Arm, ArmDTO>
     /**
      * {@inheritDoc}
      */
-    public Arm[] createXmlArray(int arg0) throws DtoTransformException {
-        return new Arm[arg0];
+    public Arm[] createXmlArray(int size) throws DtoTransformException {
+        return new Arm[size];
     }
 }

@@ -29,7 +29,7 @@ import org.globus.gsi.GlobusCredential;
  */
 public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase implements StudyProtocolServiceI {
 
-    private static String protocolExtention = "27426";
+    private static String protocolExtention = "27459";
     public StudyProtocolServiceClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
@@ -58,7 +58,6 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
               StudyProtocolServiceClient client = new StudyProtocolServiceClient(args[1]);
 
               System.out.println("Getting study protocol");
-              System.out.println("Getting study protocol client = "+client);
               getStudyProtocol(client);
 
               System.out.println("Getting interventional study protocol");

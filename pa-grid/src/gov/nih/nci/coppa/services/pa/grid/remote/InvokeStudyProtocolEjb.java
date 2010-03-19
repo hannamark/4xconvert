@@ -97,7 +97,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     * 
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -108,7 +108,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     * 
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -119,7 +119,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     * 
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -135,6 +135,19 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     public void validate(StudyProtocolDTO studyProtocolDto) throws PAException {
         try {
             GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().validate(studyProtocolDto);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void changeOwnership(StudyProtocolDTO studyProtocolDto) throws PAException {
+        try {
+            GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().changeOwnership(studyProtocolDto);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

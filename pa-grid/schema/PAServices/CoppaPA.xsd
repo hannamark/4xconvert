@@ -34,6 +34,17 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="BaseWithStatusCodeType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="COPPA-PA:BaseType">
+                <xs:sequence>
+                    <xs:element name="statusCode" type="ISO:CD" />
+                    <xs:element name="statusDateRangeLow" type="ISO:TS" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="FunctionalRoleType" abstract="true">
         <xs:complexContent>
             <xs:extension base="COPPA-PA:StudyType">
@@ -159,6 +170,23 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="Disease">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PA:BaseWithStatusCodeType">
+                    <xs:sequence>
+                        <xs:element name="diseaseCode" type="ISO:ST" />
+                        <xs:element name="ntTermIdentifier" type="ISO:ST" />
+                        <xs:element name="preferredName" type="ISO:ST" />
+                        <xs:element name="menuDisplayName" type="ISO:ST" />
+                        <xs:element name="includeSynonym" type="ISO:ST" />
+                        <xs:element name="exactMatch" type="ISO:ST" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="Document">
         <xs:complexType>
             <xs:complexContent>
@@ -193,6 +221,25 @@
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="COPPA-PA:FunctionalRoleType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Intervention">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PA:BaseWithStatusCodeType">
+                    <xs:sequence>
+                        <xs:element name="typeCode" type="ISO:CD" />
+                        <xs:element name="name" type="ISO:ST" />
+                        <xs:element name="descriptionText" type="ISO:ST" />
+                        <xs:element name="pdqTermIdentifier" type="ISO:ST" />
+                        <xs:element name="ntTermIdentifier" type="ISO:ST" />
+                        <xs:element name="includeSynonym" type="ISO:ST" />
+                        <xs:element name="exactMatch" type="ISO:ST" />
+                        <xs:element name="ctGovTypeCode" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
