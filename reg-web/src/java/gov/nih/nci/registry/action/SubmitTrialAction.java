@@ -619,6 +619,7 @@ public class SubmitTrialAction extends ActionSupport implements ServletResponseA
      */
     public String cancel() {
         TrialValidator.removeSessionAttributes();
+        setTrialAction("");
         return "redirect_to_search";
     }
     /**
