@@ -82,16 +82,16 @@
  */
 package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLINTTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<StudyProtocolTransformer, StudyProtocol, StudyProtocolDTO> {

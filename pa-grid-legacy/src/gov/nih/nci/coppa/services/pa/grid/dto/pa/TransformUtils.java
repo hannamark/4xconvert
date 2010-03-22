@@ -82,80 +82,32 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure;
-import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
-import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.log4j.Logger;
+
+import gov.nih.nci.iso21090.extensions.Id;
+
 
 /**
- * Transforms StudyOutcomeMeasure instances.
+ * Utility class for converting old types to new types.
+ * @author aevansel
  */
-public final class StudyOutcomeMeasureTransformer
-    extends AbstractTransformer<StudyOutcomeMeasure, StudyOutcomeMeasureDTO>
-    implements Transformer<StudyOutcomeMeasure, StudyOutcomeMeasureDTO> {
-
+public class TransformUtils {
+    private static final Logger LOGGER = Logger.getLogger(TransformUtils.class);
+    
+    
     /**
-     * Public singleton.
+     * Converts the given 2.0 Id to the 1.2.6 version.
+     * @param id The id to convert
+     * @return The 1.2.6 version
      */
-    public static final StudyOutcomeMeasureTransformer INSTANCE = new StudyOutcomeMeasureTransformer();
-
-    private StudyOutcomeMeasureTransformer() { }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyOutcomeMeasureDTO toDto(StudyOutcomeMeasure input) throws DtoTransformException {
-        if (input == null) {
-            return null;
+    public static gov.nih.nci.coppa.services.pa.Id convertToOldId(Id id) {
+        gov.nih.nci.coppa.services.pa.Id oldId = new gov.nih.nci.coppa.services.pa.Id();
+        try {
+            BeanUtils.copyProperties(oldId, id);
+        } catch (Exception e) {
+            LOGGER.error("Error converting gov.nih.nci.iso21090.extensions.Id to gov.nih.nci.coppa.services.pa.Id");
         }
-
-        StudyOutcomeMeasureDTO result = new StudyOutcomeMeasureDTO();
-        //II
-        result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
-        result.setStudyProtocolIdentifier((IITransformer.INSTANCE.toDto(input.getStudyProtocolIdentifier())));
-
-        //BL
-        result.setPrimaryIndicator(BLTransformer.INSTANCE.toDto(input.getPrimaryIndicator()));
-        result.setSafetyIndicator(BLTransformer.INSTANCE.toDto(input.getSafetyIndicator()));
-
-        //ST
-        result.setTimeFrame(STTransformer.INSTANCE.toDto(input.getTimeFrame()));
-        result.setName(STTransformer.INSTANCE.toDto(input.getName()));
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyOutcomeMeasure toXml(StudyOutcomeMeasureDTO input) throws DtoTransformException {
-        if (input == null) {
-            return null;
-        }
-        StudyOutcomeMeasure result = new StudyOutcomeMeasure();
-        //II
-        result.setIdentifier(IITransformer.INSTANCE.toXml(input.getIdentifier()));
-        result.setStudyProtocolIdentifier((IITransformer.INSTANCE.toXml(input.getStudyProtocolIdentifier())));
-
-        //BL
-        result.setPrimaryIndicator(BLTransformer.INSTANCE.toXml(input.getPrimaryIndicator()));
-        result.setSafetyIndicator(BLTransformer.INSTANCE.toXml(input.getSafetyIndicator()));
-
-        //ST
-        result.setTimeFrame(STTransformer.INSTANCE.toXml(input.getTimeFrame()));
-        result.setName(STTransformer.INSTANCE.toXml(input.getName()));
-
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudyOutcomeMeasure[] createXmlArray(int arg0)
-            throws DtoTransformException {
-        return new StudyOutcomeMeasure[arg0];
-    }
+        return oldId;
+    }  
 }

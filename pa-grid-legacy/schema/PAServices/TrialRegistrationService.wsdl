@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns4="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns1="uri:iso.org:21090" xmlns:ns3="http://po.coppa.nci.nih.gov" xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" xmlns:ns29="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" xmlns:ns17="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" xmlns:ns21="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns15="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns34="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" xmlns:ns2="http://common.coppa.nci.nih.gov" xmlns:ns33="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" xmlns:ns0="http://pa.services.coppa.nci.nih.gov" xmlns:ns19="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" xmlns:ns18="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" xmlns:ns11="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns7="http://faults.common.coppa.nci.nih.gov" xmlns:ns22="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns13="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns32="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" xmlns:ns12="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns30="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" xmlns:ns27="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" xmlns:ns28="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" xmlns:ns26="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" xmlns:ns25="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" xmlns:ns24="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" xmlns:ns14="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns16="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" xmlns:ns6="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns31="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" xmlns:ns5="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="TrialRegistrationService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns4="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns1="uri:iso.org:21090" xmlns:ns0="http://po.coppa.nci.nih.gov" xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" xmlns:ns29="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" xmlns:ns17="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" xmlns:ns21="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns15="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns34="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" xmlns:ns3="http://common.coppa.nci.nih.gov" xmlns:ns33="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns19="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" xmlns:ns18="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" xmlns:ns11="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns7="http://faults.common.coppa.nci.nih.gov" xmlns:ns22="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns13="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns32="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" xmlns:ns12="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns30="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" xmlns:ns27="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" xmlns:ns28="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" xmlns:ns26="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" xmlns:ns25="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" xmlns:ns24="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" xmlns:ns14="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns16="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" xmlns:ns6="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns31="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" xmlns:ns5="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="TrialRegistrationService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -54,105 +54,105 @@
             <element name="studyProtocol">
               <complexType>
                 <sequence>
-                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyOverallStatus">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyOverallStatus" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyOverallStatus" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyIndlde">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyIndlde" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudyIndlde" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyResourcing">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="document">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Document" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:Document" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="leadOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="principalInvestigator">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Person" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Person" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="sponsorOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="leadOrganizationSiteIdentifier">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="nctIdentifierSiteIdentifier">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyContact" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyContact" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySiteContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySiteContact" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySiteContact" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="summaryForOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="summaryForStudyResourcing">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyResourcing" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="responsiblePartyContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -162,7 +162,7 @@
       <element name="CreateInterventionalStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+            <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -172,105 +172,105 @@
             <element name="studyProtocol">
               <complexType>
                 <sequence>
-                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyOverallStatus">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyOverallStatus" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyOverallStatus" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyIndlde">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyIndlde" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudyIndlde" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyResourcing">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="document">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Document" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:Document" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="leadOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="principalInvestigator">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Person" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Person" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="sponsorOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="leadOrganizationSiteIdentifier">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="nctIdentifierSiteIdentifier">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyContact" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyContact" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySiteContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySiteContact" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySiteContact" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="summaryForOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="summaryForStudyResourcing">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyResourcing" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="responsiblePartyContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -280,7 +280,7 @@
       <element name="AmendInterventionalStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+            <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -290,105 +290,105 @@
             <element name="studyProtocol">
               <complexType>
                 <sequence>
-                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyOverallStatus">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyOverallStatus" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyOverallStatus" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySite">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyIndlde">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyIndlde" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudyIndlde" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyResourcing">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="document">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Document" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:Document" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyContact" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyContact" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySiteContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySiteContact" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySiteContact" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="summaryForOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="summaryForStudyResourcing">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyResourcing" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="responsiblePartyContact">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studyRegulatoryAuthority">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="collaborators">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySiteAccrualStatuses">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySiteAccrualStatus" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudySiteAccrualStatus" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySites">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
@@ -406,77 +406,77 @@
             <element name="studyProtocol">
               <complexType>
                 <sequence>
-                  <element ref="ns0:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySiteOverallStatus">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySiteOverallStatus" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySiteOverallStatus" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="documents">
               <complexType>
                 <sequence>
-                  <element ref="ns0:Document" minOccurs="1" maxOccurs="unbounded" />
+                  <element ref="ns2:Document" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
             <element name="leadOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySiteInvestigator">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Person" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Person" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="leadOrganizationStudySite">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySiteOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="studySite">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="nctIdentifier">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="summaryForOrganization">
               <complexType>
                 <sequence>
-                  <element ref="ns3:Organization" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns0:Organization" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="summaryForStudyResourcing">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyResourcing" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -486,7 +486,7 @@
       <element name="CreateProprietaryInterventionalStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+            <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>

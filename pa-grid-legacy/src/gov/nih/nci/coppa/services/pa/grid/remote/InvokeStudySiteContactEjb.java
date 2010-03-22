@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;

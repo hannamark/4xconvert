@@ -1,9 +1,9 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -141,5 +141,13 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void changeOwnership(StudyProtocolDTO arg0) throws PAException {
+        // TODO Auto-generated method stub
+        return;
     }
 }
