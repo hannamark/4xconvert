@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -77,6 +78,9 @@ implements DiseaseServiceLocal , DiseaseServiceRemote {
 
     // step 3: query the result
     queryList = query.list();
+    if (queryList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+        throw new PAException("Too many diseases found.  Please narrow search.");
+    }
     ArrayList<DiseaseDTO> resultList = new ArrayList<DiseaseDTO>();
     for (Disease bo : queryList) {
         resultList.add(convertFromDomainToDto(bo));

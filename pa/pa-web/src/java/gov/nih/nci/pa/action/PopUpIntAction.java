@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -108,9 +109,6 @@ import com.opensymphony.xwork2.ActionSupport;
 public class PopUpIntAction extends ActionSupport {
     private static final long serialVersionUID = 9987838321L;
     private static final Logger LOG = Logger.getLogger(PopUpIntAction.class);
-
-    private static final int MAX_SEARCH_RESULT_SIZE = 500;
-
     private String searchName;
     private String includeSynonym;
     private String exactMatch;
@@ -135,12 +133,11 @@ public class PopUpIntAction extends ActionSupport {
         List<InterventionDTO> interList = null;
         try {
             interList = PaRegistry.getInterventionService().search(criteria);
+        } catch (PAException e) {
+            error(e.getMessage());
+            return;
         } catch (Exception e) {
             error("Exception thrown while getting intervention list using service.", e);
-            return;
-        }
-        if (interList.size() > MAX_SEARCH_RESULT_SIZE) {
-            error("Too many interventions found.  Please narrow search.");
             return;
         }
         for (InterventionDTO inter : interList) {

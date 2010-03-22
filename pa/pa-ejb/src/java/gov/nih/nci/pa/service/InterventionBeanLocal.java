@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -76,6 +77,9 @@ implements InterventionServiceLocal, InterventionServiceRemote {
 
     // step 3: query the result
     queryList = query.list();
+    if (queryList.size() > PAConstants.MAX_SEARCH_RESULTS) {
+        throw new PAException("Too many interventions found.  Please narrow search.");
+    }
     ArrayList<InterventionDTO> resultList = new ArrayList<InterventionDTO>();
     for (Intervention bo : queryList) {
         resultList.add(convertFromDomainToDto(bo));

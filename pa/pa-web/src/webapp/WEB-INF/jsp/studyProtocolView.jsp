@@ -62,7 +62,8 @@
                 </label>
             </td>
             <td class="value">
-             <s:textfield name="localTrialIdentifier" maxlength="30" cssStyle="width:190px"/> 
+             <s:textfield name="localTrialIdentifier" maxlength="30" cssStyle="width:190px"/>
+             <span class="formErrorMsg"> <s:fielderror><s:param>localTrialIdentifier</s:param></s:fielderror></span>  
             </td>
             </tr>  
             <tr>

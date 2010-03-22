@@ -84,6 +84,7 @@ import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -109,7 +110,6 @@ public class PopUpDisAction extends ActionSupport {
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpDisAction.class);
-    private static final int MAX_SEARCH_RESULT_SIZE = 500;
 
     private String searchName;
     private String includeSynonym;
@@ -138,12 +138,11 @@ public class PopUpDisAction extends ActionSupport {
         List<DiseaseDTO> diseaseList = null;
         try {
             diseaseList = PaRegistry.getDiseaseService().search(criteria);
+        } catch (PAException e) {
+            error(e.getMessage());
+            return;
         } catch (Exception e) {
             error("Exception while loading disease results.", e);
-            return;
-        }
-        if (diseaseList.size() > MAX_SEARCH_RESULT_SIZE) {
-            error("Too many diseases found.  Please narrow search.");
             return;
         }
         for (DiseaseDTO disease : diseaseList) {
