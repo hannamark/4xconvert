@@ -21,7 +21,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <property name="upgrade.properties.file" value="upgrade.properties"/>
   <echo message="Using properties file of ${properties.file}."/>
   <available file="${properties.file}" property="properties.file.exists" />
-  
+
   <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
   <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
   <property file="${properties.file}" />
@@ -618,7 +618,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   </target>
 
   <!-- Creates the installer distribution used by automated or manual remote installations -->
-  <target name="dist:installer" depends="dist:installer:prep">
+  <target name="dist:installer" depends="build:all, dist:installer:prep">
     <delete file="${dist.dir}/${po-ear.install.zip.file}"/>
     <delete file="${dist.dir}/${po-grid.install.zip.file}"/>
     <delete file="${dist.dir}/${po-grid-legacy.install.zip.file}"/>
@@ -662,7 +662,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   </target>
 
   <!-- Creates upgrader distribution -->
-  <target name="dist:upgrader" depends="dist:upgrader:prep">
+  <target name="dist:upgrader" depends="build:all, dist:upgrader:prep">
     <delete file="${dist.dir}/${po-ear.upgrade.zip.file}"/>
     <delete file="${dist.dir}/${po-grid.upgrade.zip.file}"/>
     <delete file="${dist.dir}/${po-grid-legacy.upgrade.zip.file}"/>
@@ -729,12 +729,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
   <!-- Install the application remotely. Depends on above targets to copy and extract distribution. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from sshexec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. Requires specifying -Dproperties.file=@file@ on the command line to point installer to correct enviornment to install into -->
   <target name="deploy:remote:install"
     depends="
-    build:all,
     dist:installer,
     remote:install
     ">
   </target>
 
+  <target name="deploy:remote:install:ahp"
+      depends="remote:install:po-ear, remote:install:po-grid, remote:install:po-grid-legacy">
+    </target>
 
   <target name="remote:install" depends="dist:installer,remote:install:po-ear, remote:install:po-grid, remote:install:po-grid-legacy"/>
   <target name="remote:install:po-ear">
@@ -790,16 +792,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
   <target name="remote:upgrade" depends="dist:upgrader,remote:upgrade:po-ear,remote:upgrade:po-grid,remote:upgrade:po-grid-legacy">
   </target>
- 
+
   <target name="deploy:remote:upgrade:ahp" depends="remote:upgrade:po-ear,remote:upgrade:po-grid,remote:upgrade:po-grid-legacy">
   </target>
 
   <target name="remote:upgrade:po-ear">
     <!-- install po-ear only-->
-  	<override-properties-prep
-  	                        override.properties="${override.properties}"
-  	                        override.properties.string.property.name="override.properties.string"
-  	                        />
+      <override-properties-prep
+                              override.properties="${override.properties}"
+                              override.properties.string.property.name="override.properties.string"
+                              />
     <deploy-files
              dist.file="${po-ear.upgrade.zip.file}"
              />
@@ -816,10 +818,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remote.directory.property.name="pogrid.ssh.dir.temp"
              dist.file="${po-grid.upgrade.zip.file}"
              />
-  	<override-properties-prep
-  	                            override.properties="${override.properties}"
-  	                            override.properties.string.property.name="override.properties.string"
-  	                            />
+      <override-properties-prep
+                                  override.properties="${override.properties}"
+                                  override.properties.string.property.name="override.properties.string"
+                                  />
     <remote-ssh
            remoteSshUser="${pogrid.ssh.server.username}"
            remoteSshHost="${pogrid.ssh.server.hostname}"
@@ -838,10 +840,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
              remote.directory.property.name="pogrid-legacy.ssh.dir.temp"
              dist.file="${po-grid-legacy.upgrade.zip.file}"
              />
-  	<override-properties-prep
-  	                                override.properties="${override.properties}"
-  	                                override.properties.string.property.name="override.properties.string"
-  	                                />
+      <override-properties-prep
+                                      override.properties="${override.properties}"
+                                      override.properties.string.property.name="override.properties.string"
+                                      />
     <remote-ssh
            remoteSshUser="${pogrid-legacy.ssh.server.username}"
            remoteSshHost="${pogrid-legacy.ssh.server.hostname}"
