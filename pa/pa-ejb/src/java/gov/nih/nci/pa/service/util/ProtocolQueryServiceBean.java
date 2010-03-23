@@ -548,7 +548,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + PhaseCode.getByCode(studyProtocolQueryCriteria.getPhaseCode()) + "'");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getNciIdentifier())) {
-                where.append(" and upper(sp.identifier)  like '%"
+                where.append(" and sp.identifier  like '%"
                         + studyProtocolQueryCriteria.getNciIdentifier()
                                 .toUpperCase().trim().replaceAll("'", "''")
                         + "%'");
@@ -558,12 +558,12 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                         + StudyStatusCode.getByCode(studyProtocolQueryCriteria
                                 .getStudyStatusCode()) + "'");
                 where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
-                        + "                where sos.studyProtocol = sos1.studyProtocol )"
+                        + "                where sp.id = sos1.studyProtocol )"
                         + " or sos.id is null ) ");
             } else {
                 // add the subquery to pick the latest record
                 where.append(" and ( sos.id in (select max(id) from StudyOverallStatus as sos1 "
-                                + "                where sos.studyProtocol = sos1.studyProtocol )"
+                                + "                where sp.id = sos1.studyProtocol )"
                                 + " or sos.id is null ) ");
             }
             if (PAUtil.isNotEmpty(studyProtocolQueryCriteria.getPrimaryPurposeCode())) {
@@ -575,7 +575,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                 where.append(" and dws.statusCode  = '" + DocumentWorkflowStatusCode.
                         getByCode(studyProtocolQueryCriteria.getDocumentWorkflowStatusCode()) + "'");
                 where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                        + "                where dws.studyProtocol = dws1.studyProtocol )"
+                        + "                where sp.id = dws1.studyProtocol )"
                         + " or dws.id is null ) ");
             } else {
                 // added for Registry Trial Search
@@ -587,7 +587,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             where.append(" and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
                             // add the subquery to pick the latest record
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                            + "                where dws.studyProtocol = dws1.studyProtocol )"
+                                            + "                where sp.id = dws1.studyProtocol )"
                                             + " or dws.id is null ) ");
                     } else if (!studyProtocolQueryCriteria.getMyTrialsOnly().booleanValue()) {
                             where.append(" and ((sp.userLastCreated = '").append(
@@ -595,7 +595,7 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                             where.append(" and dws.statusCode <> '" + DocumentWorkflowStatusCode.REJECTED + "'");
                             // add the subquery to pick the latest record
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                            + "                where dws.studyProtocol = dws1.studyProtocol )"
+                                            + "                where sp.id = dws1.studyProtocol )"
                                             + " or dws.id is null )) ");
                             where.append(" or (sp.userLastCreated <> '").append(
                                     studyProtocolQueryCriteria.getUserLastCreated() + "'");
@@ -604,13 +604,13 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                                     + "'" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED + "')");
                             // add the subquery to pick the latest record
                             where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                            + "                where dws.studyProtocol = dws1.studyProtocol )"
+                                            + "                where sp.id = dws1.studyProtocol )"
                                             + " or dws.id is null ))) ");
                     }
                 } else {
                     // add the subquery to pick the latest record
                     where.append(" and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                                    + "                where dws.studyProtocol = dws1.studyProtocol )"
+                                    + "                where sp.id = dws1.studyProtocol )"
                                     + " or dws.id is null ) ");
                 }
            }
@@ -636,23 +636,23 @@ public class ProtocolQueryServiceBean implements ProtocolQueryServiceLocal {
                where.append(" and sms.milestoneCode  = '" + MilestoneCode.
                        getByCode(studyProtocolQueryCriteria.getStudyMilestone()) + "'");
                where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
-                       + " where sms.studyProtocol = sms1.studyProtocol )"
+                       + " where sp.id = sms1.studyProtocol )"
                        + " or sms.id is null ) ");
            } else {
                // add the sub-query to pick the latest record
                where.append(" and ( sms.id in (select max(id) from StudyMilestone as sms1 "
-                               + " where sms.studyProtocol = sms1.studyProtocol )"
+                               + " where sp.id = sms1.studyProtocol )"
                                + " or sms.id is null ) ");
            }
            // sub-query for inbox processing to retrieve only the updated records for review
            if (studyProtocolQueryCriteria.getInBoxProcessing() != null
                    && studyProtocolQueryCriteria.getInBoxProcessing().booleanValue()) {
              where.append(" and sinbx.id in (select distinct id from StudyInbox as sinbx1 "
-                   + " where sinbx.studyProtocol = sinbx1.studyProtocol and"
+                   + " where sp.id = sinbx1.studyProtocol and"
                      + " sinbx1.closeDate is null)");
            } else {
                where.append(" and (sinbx.id in (select max(id) from StudyInbox as sinbx1 "
-                       + " where sinbx.studyProtocol = sinbx1.studyProtocol )"
+                       + " where sp.id = sinbx1.studyProtocol )"
                          + " or sinbx.id is null)");   
            }
            studyCheckoutWhereClause(where);
