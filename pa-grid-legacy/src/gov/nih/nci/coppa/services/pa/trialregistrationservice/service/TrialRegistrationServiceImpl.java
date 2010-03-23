@@ -84,8 +84,11 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
             
+            //TODO: Remove once studyRegAuth has been added to signature and PO-1593 has been addressed.
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
+            Ii regAuthId = new Ii();
+            regAuthId.setExtension("0");
             Ii ii = service.createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
@@ -121,7 +124,10 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
             
+            //TODO: Remove once studyRegAuth has been added to signature and PO-1593 has been addressed.
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
+            Ii regAuthId = new Ii();
+            regAuthId.setExtension("0");
             
             Ii ii = service.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                             documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
