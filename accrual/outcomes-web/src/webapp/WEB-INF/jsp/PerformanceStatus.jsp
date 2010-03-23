@@ -94,7 +94,7 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if><s:else><accrual:sucessMessage /></s:else>
 <s:form name="detailForm">
-<s:hidden name="performance.id" />
+<s:hidden name="performance.identifier" />
 <s:hidden name="performance.performanceStatus" />
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="perfStatus.label.system"/><span class="required">*</span></label></td>

@@ -83,8 +83,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.RadiationWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.enums.RadiationProcedureTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.math.BigDecimal;
@@ -110,6 +112,7 @@ public class RadiationActionTest extends AbstractAccrualActionTest {
         action.prepare();
         radiation  = new RadiationWebDto();
         setParticipantIi(PARTICIPANT1);
+        setTpIi(MockPerformedActivityBean.TPID);
         setCourseIi(MockPerformedActivityBean.COURSEID);
     }
 
@@ -119,13 +122,6 @@ public class RadiationActionTest extends AbstractAccrualActionTest {
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
     
-    @Test
-    public void executeExceptionTest() {
-        setParticipantIi(PARTICIPANT2);
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-    }
     @Override
     @Test
     public void createTest() {
@@ -157,14 +153,14 @@ public class RadiationActionTest extends AbstractAccrualActionTest {
     @Test
     public void addTest() throws Exception {
         radiation.setRadDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        radiation.setDoseFreq(CdConverter.convertStringToCd("BID"));
+        radiation.setDoseFreq(CdConverter.convertStringToCd("QIS"));
         Pq dose = new Pq();
         dose.setValue(new BigDecimal("2"));
-        dose.setUnit("Years");
+        dose.setUnit("Unit/g");
         radiation.setDose(dose);
         radiation.setDuration(dose);
         radiation.setTotalDose(dose);
-        radiation.setType(CdConverter.convertStringToCd("radiation"));
+        radiation.setType(CdConverter.convertToCd(RadiationProcedureTypeCode.EXTENSIVE_RADIATION));
         action.setRadiation(radiation);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
@@ -173,14 +169,15 @@ public class RadiationActionTest extends AbstractAccrualActionTest {
     @Test
     public void editTest() throws Exception {
        radiation.setRadDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-       radiation.setDoseFreq(CdConverter.convertStringToCd("BID"));
+       radiation.setDoseFreq(CdConverter.convertStringToCd("QIS"));
        Pq dose = new Pq();
        dose.setValue(new BigDecimal("2"));
-       dose.setUnit("Years");
+       dose.setUnit("Unit/g");
        radiation.setDose(dose);
        radiation.setDuration(dose);
        radiation.setTotalDose(dose);
-       radiation.setType(CdConverter.convertStringToCd("radiation"));
+       radiation.setType(CdConverter.convertToCd(RadiationProcedureTypeCode.EXTENSIVE_RADIATION));
+       radiation.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.RADIATIONID));
        action.setRadiation(radiation);
        action.setSelectedRowIdentifier(MockPerformedActivityBean.RADIATIONID);
        assertEquals(ActionSupport.SUCCESS, action.edit());

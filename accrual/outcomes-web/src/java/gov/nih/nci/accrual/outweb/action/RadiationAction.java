@@ -78,19 +78,17 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.outweb.dto.util.RadiationWebDto;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.outcomes.svc.dto.CycleSvcDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.RadiationSvcDto;
+import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -111,21 +109,27 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
      */
     @Override
     public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<RadiationWebDto>());
+        List<RadiationWebDto> radiationList = new ArrayList<RadiationWebDto>();
+        PatientSvcDto svcDto = getPatientSvcDto();
+        List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+        TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+        treatmentRegimen.setIdentifier(getTpIi());
+        List<CycleSvcDto> cycleList = new ArrayList<CycleSvcDto>();
+        CycleSvcDto cycle = new CycleSvcDto();
+        cycle.setIdentifier(getCourseIi());
+        cycle.setRadiations(new ArrayList<RadiationSvcDto>());
+        cycleList.add(cycle);
+        treatmentRegimen.setCycles(cycleList);
+        trList.add(treatmentRegimen);
+        svcDto.setTreatmentRegimens(trList);
         try {
-            List<PerformedRadiationAdministrationDto> paList = performedActivitySvc.
-            getPerformedRadiationAdministrationByStudySubject(getParticipantIi());
-            for (PerformedRadiationAdministrationDto pra : paList) {
-                if (!PAUtil.isCdNull(pra.getCategoryCode())
-                        && pra.getCategoryCode().getCode().equals(ActivityCategoryCode.RADIATION.getCode())) {
-                    List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            pra.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    if (!arList.isEmpty() && arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
-                            .equals(getCourseIi().getExtension())) {  
-                        getDisplayTagList().add(new RadiationWebDto(pra));
-                    }
-                }
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            List<RadiationSvcDto> radList = pSvcList.get(0).getTreatmentRegimens().get(0).getCycles()
+                                                            .get(0).getRadiations();
+            for (RadiationSvcDto dto : radList) {
+                radiationList.add(new RadiationWebDto(dto));
             }
+            setDisplayTagList(radiationList);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
         } 
@@ -136,30 +140,33 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
      */
     @Override
     public String add() {
-        RadiationWebDto.validate(radiation, this);
-        if (hasActionErrors() || hasFieldErrors()) {
+        try {
+            PatientSvcDto svcDto = getPatientSvcDto();
+            List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+            TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+            List<CycleSvcDto> cycles = new ArrayList<CycleSvcDto>();
+            CycleSvcDto cycle = new CycleSvcDto();
+            List<RadiationSvcDto> radiations = new ArrayList<RadiationSvcDto>();
+            RadiationSvcDto rad = radiation.getSvcDto();
+            rad.setAction(SvcConstants.CREATE);
+            radiations.add(rad);
+            cycle.setIdentifier(getCourseIi());
+            cycle.setRadiations(radiations);
+            cycles.add(cycle);
+            treatmentRegimen.setCycles(cycles);
+            trList.add(treatmentRegimen);
+            svcDto.setTreatmentRegimens(trList);
+            outcomesSvc.write(svcDto); 
+            return super.add();  
+        } catch (OutcomesFieldException e) {
+            addFieldError(RadiationWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
-        }
-        try {
-            PerformedRadiationAdministrationDto dto = radiation.getPerformedRadiationAdministrationDto();
-            dto = performedActivitySvc.createPerformedRadiationAdministration(dto);
-
-            ActivityRelationshipDto arDto = new ActivityRelationshipDto();
-            arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-            arDto.setSourcePerformedActivityIdentifier(getCourseIi());
-            arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
-            activityRelationshipSvc.create(arDto);
-            return super.add();  
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
-        } catch (DataFormatException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
+        } 
     }
     
     /**
@@ -171,7 +178,7 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
         try {
             loadDisplayList();
             for (RadiationWebDto rad : getDisplayTagList()) {
-                if (rad.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                if (rad.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
                     radiation = rad;
                 }
             }
@@ -191,23 +198,32 @@ public class RadiationAction extends AbstractListEditAccrualAction<RadiationWebD
      */
     @Override
     public String edit() throws RemoteException {
-        RadiationWebDto.validate(radiation, this);
-        if (hasActionErrors() || hasFieldErrors()) {
+        try {
+            PatientSvcDto svcDto = getPatientSvcDto();
+            List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+            TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+            List<CycleSvcDto> cycles = new ArrayList<CycleSvcDto>();
+            CycleSvcDto cycle = new CycleSvcDto();
+            List<RadiationSvcDto> radiations = new ArrayList<RadiationSvcDto>();
+            RadiationSvcDto rad = radiation.getSvcDto();
+            rad.setAction(SvcConstants.UPDATE);
+            radiations.add(rad);
+            cycle.setIdentifier(getCourseIi());
+            cycle.setRadiations(radiations);
+            cycles.add(cycle);
+            treatmentRegimen.setCycles(cycles);
+            trList.add(treatmentRegimen);
+            svcDto.setTreatmentRegimens(trList);
+            outcomesSvc.write(svcDto); 
+        } catch (OutcomesFieldException e) {
+            addFieldError(RadiationWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_UPDATE);
             return INPUT;
-        }
-        try {
-            PerformedRadiationAdministrationDto dto = radiation.getPerformedRadiationAdministrationDto();
-            dto = performedActivitySvc.updatePerformedRadiationAdministration(dto);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_UPDATE);
             return INPUT;
-        } catch (DataFormatException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_UPDATE);
-            return INPUT;
-        }
+        } 
         return super.edit();
     }
 

@@ -84,13 +84,14 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.StagingWebDto;
 import gov.nih.nci.accrual.outweb.enums.StagingMethods;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.StagingSystemCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.junit.Before;
+import org.junit.Test;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -108,7 +109,7 @@ public class StagingActionTest extends AbstractAccrualActionTest {
         staging = new StagingWebDto();
         setParticipantIi(PARTICIPANT1);
     }
-    
+
     @Override
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
@@ -122,14 +123,27 @@ public class StagingActionTest extends AbstractAccrualActionTest {
         staging.setTt(StConverter.convertToSt("T"));
         staging.setStage(StConverter.convertToSt("Stage"));
         staging.setSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
-        staging.setId(new Ii());
+        staging.setIdentifier(new Ii());
         action.setStaging(staging);
+        setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, action.save());
     }
-
+    @Test
+    public void addMoreThanOneTest() throws Exception {
+        staging.setMethod(CdConverter.convertToCd(StagingMethods.PATHOLOGICAL));
+        staging.setMm(StConverter.convertToSt("M"));
+        staging.setNn(StConverter.convertToSt("N"));
+        staging.setTt(StConverter.convertToSt("T"));
+        staging.setStage(StConverter.convertToSt("Stage"));
+        staging.setSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
+        staging.setIdentifier(new Ii());
+        action.setStaging(staging);
+        setParticipantIi(PARTICIPANT1);
+        assertEquals(ActionSupport.INPUT, action.save());
+    }
     @Override
-    public void editTest() throws Exception { 
-        staging.setId(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
+    public void editTest() throws Exception {
+        staging.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
         staging.setMethod(CdConverter.convertToCd(StagingMethods.PATHOLOGICAL));
         staging.setMm(StConverter.convertToSt("M"));
         staging.setNn(StConverter.convertToSt("N"));
@@ -137,7 +151,7 @@ public class StagingActionTest extends AbstractAccrualActionTest {
         staging.setStage(StConverter.convertToSt("Stage"));
         staging.setSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
         action.setStaging(staging);
-        assertEquals(ActionSupport.SUCCESS, action.save()); 
+        assertEquals(ActionSupport.SUCCESS, action.save());
         assertNotNull(action.getStaging());
     }
 }

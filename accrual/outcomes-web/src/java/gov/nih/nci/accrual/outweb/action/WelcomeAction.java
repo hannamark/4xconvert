@@ -76,9 +76,10 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.outcomes.svc.dto.AbstractUserDto;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.apache.struts2.ServletActionContext;
@@ -97,21 +98,21 @@ public class WelcomeAction extends AbstractAccrualAction {
     @Override
     public String execute() {
         if (ServletActionContext.getRequest().isUserInRole(AccrualConstants.ROLE_OUTCOMES)) {
-            String loginName = ServletActionContext.getRequest().getRemoteUser();
+            St stUserName = StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser());
             try {
-                UserDto user = userSvc.getUser(StConverter.convertToSt(loginName));
+                AbstractUserDto user = userSvc.getUser(stUserName);
                 if (user != null) {
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_ROLE, AccrualConstants.ROLE_OUTCOMES);
                     SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME,
-                        StConverter.convertToString(user.getLastName()) + ", " 
-                        + StConverter.convertToString(user.getFirstName()));            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, 
-                        UserAccountAction.getPhysician(user.getPoPersonIdentifier()));            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, 
-                        user.getPoOrganizationIdentifier());            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, 
-                        UserAccountAction.getTreatmentSite(user.getPoOrganizationIdentifier()));
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II, 
+                        StConverter.convertToString(user.getLastName()) + ", "
+                        + StConverter.convertToString(user.getFirstName()));
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME,
+                        UserAccountAction.getPhysician(user.getPhysicianIdentifier()));
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II,
+                        user.getTreatmentSiteIdentifier());
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME,
+                        UserAccountAction.getTreatmentSite(user.getTreatmentSiteIdentifier()));
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II,
                         searchTrialSvc.getOutcomesStudyProtocolIi());
                 }
             } catch (Exception e) {

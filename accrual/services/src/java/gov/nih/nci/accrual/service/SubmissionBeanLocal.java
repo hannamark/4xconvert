@@ -81,7 +81,7 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.SubmissionConverter;
 import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
@@ -104,7 +104,7 @@ import javax.interceptor.Interceptors;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SubmissionBeanLocal
         extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
-        implements SubmissionService {
+        implements SubmissionService, SubmissionServiceLocal {
 
     /**
      * {@inheritDoc}

@@ -79,11 +79,10 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
-import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractOffTreatmentDto;
+import gov.nih.nci.outcomes.svc.dto.OffTreatmentSvcDto;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 
 import java.io.Serializable;
@@ -98,80 +97,62 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-public class OffTreatmentWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod" })
+public class OffTreatmentWebDto extends AbstractOffTreatmentDto implements Serializable {
 
     private static final long serialVersionUID = -6399459516758031413L;
     
-    private Ii id;
-    private Ts lastTreatmentDate;
-    private Cd offTreatmentReason;
-
     /**
-     * Instantiates a new off treatment study web dto.
+     * Instantiates a new off treatment web dto.
      */
     public OffTreatmentWebDto() {
         // default constructor
+    }  
+    
+    /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("lastTreatmentDate".equals(result)) {
+            result = "lastTreatmentDate";
+        }
+        if ("offTreatmentReason".equals(result)) {
+            result = "offTreatmentReason";
+        }
+        return "offTreat." + result;
     }
     
     /**
-     * Validate.
+     * Instantiates a new off treatment web dto.
      * 
-     * @param dto the dto
-     * @param action the action
+     * @param svcDto the svc dto
      */
-    public static void validate(OffTreatmentWebDto dto, AbstractAccrualAction action) {  
-        if (dto.getLastTreatmentDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getLastTreatmentDate().getValue());
-            if (!validDate) {
-                action.addFieldError("offTreat.lastTreatmentDate", "Please Enter Current or Past Date.");
-            }
-        }
+    public OffTreatmentWebDto(OffTreatmentSvcDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setLastTreatmentDate(svcDto.getLastTreatmentDate());
+        setOffTreatmentReason(svcDto.getOffTreatmentReason());
     }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-
+    
     /**
      * @return the lastTreatmentDate
      */
+    @Override
     @FieldExpressionValidator(expression = "lastTreatmentDate.value != null",
             message = "Please provide a Last Treatment Date")
     public Ts getLastTreatmentDate() {
-        return lastTreatmentDate;
-    }
-
-    /**
-     * @param lastTreatmentDate the lastTreatmentDate to set
-     */
-    public void setLastTreatmentDate(Ts lastTreatmentDate) {
-        this.lastTreatmentDate = lastTreatmentDate;
+        return super.getLastTreatmentDate();
     }
 
     /**
      * @return the offTreatmentReason
      */
+    @Override
     @FieldExpressionValidator(expression = "offTreatmentReason.code != null && offTreatmentReason.code.length() > 0",
             message = "Please provide an Off Treatment Reason")
     public Cd getOffTreatmentReason() {
-        return offTreatmentReason;
-    }
-
-    /**
-     * @param offTreatmentReason the offTreatmentReason to set
-     */
-    public void setOffTreatmentReason(Cd offTreatmentReason) {
-        this.offTreatmentReason = offTreatmentReason;
+        return super.getOffTreatmentReason();
     }
     
     /**
@@ -179,5 +160,18 @@ public class OffTreatmentWebDto implements Serializable {
      */
     public List<OffTreatmentReasonCode> getOffTreatmentReasons() {
         return Arrays.asList(OffTreatmentReasonCode.values());
+    }
+    
+    /**
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
+     */
+    public OffTreatmentSvcDto getSvcDto() {
+        OffTreatmentSvcDto svcDto = new OffTreatmentSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setLastTreatmentDate(getLastTreatmentDate());
+        svcDto.setOffTreatmentReason(getOffTreatmentReason());
+        return svcDto;
     }
 }

@@ -79,11 +79,12 @@
 package gov.nih.nci.accrual.outweb.action;
 
 import gov.nih.nci.accrual.outweb.dto.util.DiseaseWebDTO;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -105,7 +106,6 @@ public class PopUpAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpAction.class);
-    private static final int MAX_SEARCH_RESULT_SIZE = 500;
 
     private String searchName;
     private String includeSynonym;
@@ -133,14 +133,14 @@ public class PopUpAction extends AbstractAccrualAction {
         List<DiseaseDTO> diseaseList = null;
         try {
             diseaseList = diseaseSvc.search(criteria);
+        } catch (PAException e) {
+            error(e.getMessage());
+            return;
         } catch (Exception e) {
             error("Exception while loading disease results.", e);
             return;
         }
-        if (diseaseList.size() > MAX_SEARCH_RESULT_SIZE) {
-            error("Too many diseases found.  Please narrow search.");
-            return;
-        }
+        
         for (DiseaseDTO disease : diseaseList) {
             DiseaseWebDTO newRec = new DiseaseWebDTO();
             newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));

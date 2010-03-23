@@ -80,10 +80,10 @@
 package gov.nih.nci.accrual.outweb.dto.util;
 
 import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.outcomes.svc.dto.AbstractTumorMarkerDto;
+import gov.nih.nci.outcomes.svc.dto.TumorMarkerSvcDto;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
@@ -96,23 +96,43 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author Lisa Kelley
  * @since 10/28/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
-public class TumorMarkerWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod", "PMD.CyclomaticComplexity" })
+public class TumorMarkerWebDto extends AbstractTumorMarkerDto implements Serializable {
 
     private static final long serialVersionUID = 1820061539697238678L;
 
-    private Ii id;   
-    private Cd tumorMarker;    
-    private St tumorMarkerValue;    
-    private Pq tmvUom;
-
     /**
-     * Instantiates a new tumor marker dto.
+     * Instantiates a new tumor marker web dto.
      */
     public TumorMarkerWebDto() {
         // default constructor
     }
     
+    /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("tumorMarker".equals(result)) {
+            result = "tumorMarker";
+        }
+        if ("tmvUom.unit".equals(result)) {
+            result = "tmvUom.unit";
+        }
+        return "tumorMarker." + result;
+    }
+    
+    /**
+     * Instantiates a new tumor marker web dto.
+     * 
+     * @param svcDto the svc dto
+     */
+    public TumorMarkerWebDto(AbstractTumorMarkerDto svcDto) {
+        setTumorMarker(svcDto.getTumorMarker());
+        setTumorMarkerValue(svcDto.getTumorMarkerValue());
+        setTmvUom(svcDto.getTmvUom());    
+    }
     /**
      * Validate.
      * 
@@ -135,60 +155,33 @@ public class TumorMarkerWebDto implements Serializable {
     /**
      * @return the tumorMarker
      */
+    @Override
     @FieldExpressionValidator(expression = "tumorMarker.code != null && tumorMarker.code.length() > 0", 
                               message = "Please select a Tumor Marker")
     public Cd getTumorMarker() {
-        return tumorMarker;
-    }
-
-    /**
-     * @param tumorMarker the tumorMarker to set
-     */
-    public void setTumorMarker(Cd tumorMarker) {
-        this.tumorMarker = tumorMarker;
+        return super.getTumorMarker();
     }
 
     /**
      * @return the tumorMarkerValue
      */
+    @Override
     @FieldExpressionValidator(expression = "tumorMarkerValue.value != null && tumorMarkerValue.value.length() > 0", 
                               message = "Please enter a Tumor Marker Value")
     public St getTumorMarkerValue() {
-        return tumorMarkerValue;
-    }
-
-    /**
-     * @param tumorMarkerValue the tumorMarkerValue to set
-     */
-    public void setTumorMarkerValue(St tumorMarkerValue) {
-        this.tumorMarkerValue = tumorMarkerValue;
-    }
-
-    /**
-     * @return the tmvUom
-     */
-    public Pq getTmvUom() {
-        return tmvUom;
-    }
-
-    /**
-     * @param tmvUom the tmvUom to set
-     */
-    public void setTmvUom(Pq tmvUom) {
-        this.tmvUom = tmvUom;
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
+        return super.getTumorMarkerValue();
     }
     
     /**
-     * @param id the id to set
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setId(Ii id) {
-        this.id = id;
+    public TumorMarkerSvcDto getSvcDto() {
+        TumorMarkerSvcDto svcDto = new TumorMarkerSvcDto();
+        svcDto.setTumorMarker(getTumorMarker());
+        svcDto.setTumorMarkerValue(getTumorMarkerValue());
+        svcDto.setTmvUom(getTmvUom());
+        return svcDto;
     }
 }

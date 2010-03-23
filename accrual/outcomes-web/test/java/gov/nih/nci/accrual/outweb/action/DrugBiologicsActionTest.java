@@ -84,13 +84,16 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.DrugBiologicsWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPaInterventionBean;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.enums.DoseModificationType;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -110,20 +113,13 @@ public class DrugBiologicsActionTest extends AbstractAccrualActionTest {
         action.prepare();
         drugBiologic  = new DrugBiologicsWebDto();
         setParticipantIi(PARTICIPANT1);
+        setTpIi(MockPerformedActivityBean.TPID);
         setCourseIi(MockPerformedActivityBean.COURSEID);
     }
 
     @Override
     @Test
     public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-    }
-    
-    @Test
-    public void executeExceptionTest() {
-        setParticipantIi(PARTICIPANT2);
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
@@ -158,11 +154,11 @@ public class DrugBiologicsActionTest extends AbstractAccrualActionTest {
     @Test
     public void addTest() throws Exception {
         drugBiologic.setInterventionId(MockPaInterventionBean.list.get(0).getIdentifier());
-        drugBiologic.setDoseFreq(CdConverter.convertStringToCd("BID"));
-        drugBiologic.setDoseRoute(CdConverter.convertStringToCd("ORAL"));
+        drugBiologic.setDoseFreq(CdConverter.convertStringToCd("QIS"));
+        drugBiologic.setDoseRoute(CdConverter.convertStringToCd("AURICULAR (OTIC)"));
         Pq dose = new Pq();
         dose.setValue(new BigDecimal("2"));
-        dose.setUnit("Years");
+        dose.setUnit("Unit/g");
         drugBiologic.setDose(dose);
         drugBiologic.setDoseDur(dose);
         drugBiologic.setDoseTotal(dose);
@@ -171,6 +167,7 @@ public class DrugBiologicsActionTest extends AbstractAccrualActionTest {
         drugBiologic.setHeight(dose);
         drugBiologic.setWeight(dose);
         drugBiologic.setDoseModType(CdConverter.convertToCd(DoseModificationType.DOSE_INCREASED));
+        drugBiologic.setStartDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         action.setDrugBiologic(drugBiologic);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
@@ -178,13 +175,13 @@ public class DrugBiologicsActionTest extends AbstractAccrualActionTest {
    @Override
     @Test
     public void editTest() throws Exception {
-        drugBiologic.setId(IiConverter.convertToIi(MockPerformedActivityBean.DRUGBIOLOGICID));
+        drugBiologic.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DRUGBIOLOGICID));
         drugBiologic.setInterventionId(MockPaInterventionBean.list.get(0).getIdentifier());
-        drugBiologic.setDoseFreq(CdConverter.convertStringToCd("BID"));
-        drugBiologic.setDoseRoute(CdConverter.convertStringToCd("ORAL"));
+        drugBiologic.setDoseFreq(CdConverter.convertStringToCd("QIS"));
+        drugBiologic.setDoseRoute(CdConverter.convertStringToCd("AURICULAR (OTIC)"));
         Pq dose = new Pq();
         dose.setValue(new BigDecimal("2"));
-        dose.setUnit("Years");
+        dose.setUnit("Unit/g");
         drugBiologic.setDose(dose);
         drugBiologic.setDoseDur(dose);
         drugBiologic.setDoseTotal(dose);
@@ -193,6 +190,7 @@ public class DrugBiologicsActionTest extends AbstractAccrualActionTest {
         drugBiologic.setHeight(dose);
         drugBiologic.setWeight(dose);
         drugBiologic.setDoseModType(CdConverter.convertToCd(DoseModificationType.DOSE_INCREASED));
+        drugBiologic.setStartDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         action.setDrugBiologic(drugBiologic);
         action.setSelectedRowIdentifier(MockPerformedActivityBean.DRUGBIOLOGICID);
         assertEquals(ActionSupport.SUCCESS, action.edit());

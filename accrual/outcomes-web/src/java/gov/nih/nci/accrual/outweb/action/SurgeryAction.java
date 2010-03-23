@@ -78,21 +78,21 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedProcedureDto;
+import gov.nih.nci.accrual.outweb.dto.util.CourseWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.SurgeryWebDto;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+import gov.nih.nci.outcomes.svc.dto.CycleSvcDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.SurgerySvcDto;
+import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -113,27 +113,36 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
      */
     @Override
     public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<SurgeryWebDto>());
+        List<SurgeryWebDto> surgeryList = new ArrayList<SurgeryWebDto>();
+        PatientSvcDto svcDto = getPatientSvcDto();
+        List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+        TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+        treatmentRegimen.setIdentifier(getTpIi());
+        List<CycleSvcDto> cycleList = new ArrayList<CycleSvcDto>();
+        CycleSvcDto cycle = new CycleSvcDto();
+        cycle.setIdentifier(getCourseIi());
+        cycle.setSurgeries(new ArrayList<SurgerySvcDto>());
+        cycleList.add(cycle);
+        treatmentRegimen.setCycles(cycleList);
+        trList.add(treatmentRegimen);
+        svcDto.setTreatmentRegimens(trList);
         try {
-            List<PerformedProcedureDto> paList = performedActivitySvc.getPerformedProcedureByStudySubject(
-                                                                            getParticipantIi());
-            for (PerformedProcedureDto pp : paList) {
-                if (!PAUtil.isCdNull(pp.getCategoryCode())
-                        && pp.getCategoryCode().getCode().equals(ActivityCategoryCode.SURGERY.getCode())) {
-                    List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            pp.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    if (!arList.isEmpty() && arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
-                            .equals(getCourseIi().getExtension())) {
-                        InterventionDTO dto = interventionSvc.get(pp.getInterventionIdentifier());
-                        getDisplayTagList().add(new SurgeryWebDto(pp, dto));
-                    }
-                }  
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            List<SurgerySvcDto> syList = pSvcList.get(0).getTreatmentRegimens().get(0).getCycles()
+                                                            .get(0).getSurgeries();
+            for (SurgerySvcDto dto : syList) {
+                InterventionDTO intervention = interventionSvc.get(dto.getInterventionId());
+                SurgeryWebDto webDto = new SurgeryWebDto(dto);
+                webDto.setName(intervention.getName());
+                webDto.setInterventionId(intervention.getIdentifier());
+                surgeryList.add(webDto);
             }
+            setDisplayTagList(surgeryList);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
-        }
+        }  
     }
 
     /**
@@ -141,30 +150,37 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
      */
     @Override
     public String add() {
-        SurgeryWebDto.validate(surgery, this);
-        if (hasActionErrors() || hasFieldErrors()) {
+        try {
+            PatientSvcDto svcDto = getPatientSvcDto();
+            List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+            TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+            List<CycleSvcDto> cycles = new ArrayList<CycleSvcDto>();
+            CycleSvcDto cycle = new CycleSvcDto();
+            List<SurgerySvcDto> surgeries = new ArrayList<SurgerySvcDto>();
+            SurgerySvcDto sur = surgery.getSvcDto();
+            sur.setAction(SvcConstants.CREATE);
+            surgeries.add(sur);
+            cycle.setIdentifier(getCourseIi());
+            cycle.setSurgeries(surgeries);
+            cycles.add(cycle);
+            treatmentRegimen.setCycles(cycles);
+            trList.add(treatmentRegimen);
+            svcDto.setTreatmentRegimens(trList);
+            outcomesSvc.write(svcDto); 
+            return super.add();  
+        } catch (OutcomesFieldException e) {
+            addFieldError(CourseWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
-        }
-        try {
-            PerformedProcedureDto dto = surgery.getPerformedProcedureDto();
-            dto = performedActivitySvc.createPerformedProcedure(dto);
-
-            ActivityRelationshipDto arDto = new ActivityRelationshipDto();
-            arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-            arDto.setSourcePerformedActivityIdentifier(getCourseIi());
-            arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
-            activityRelationshipSvc.create(arDto);
-            return super.add();  
+        } catch (OutcomesException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_CREATE);
+            return INPUT;
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
-        } catch (DataFormatException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
+        } 
     }
     
     /**
@@ -176,7 +192,7 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
         try {
             loadDisplayList();
             for (SurgeryWebDto sur : getDisplayTagList()) {
-                if (sur.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                if (sur.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
                     surgery = sur;
                 }
             }
@@ -196,24 +212,37 @@ public class SurgeryAction extends AbstractListEditAccrualAction<SurgeryWebDto> 
      */
     @Override
     public String edit() throws RemoteException {
-        SurgeryWebDto.validate(surgery, this);
-        if (hasActionErrors() || hasFieldErrors()) {
+        try {
+            PatientSvcDto svcDto = getPatientSvcDto();
+            List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+            TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+            List<CycleSvcDto> cycles = new ArrayList<CycleSvcDto>();
+            CycleSvcDto cycle = new CycleSvcDto();
+            List<SurgerySvcDto> surgeries = new ArrayList<SurgerySvcDto>();
+            SurgerySvcDto sur = surgery.getSvcDto();
+            sur.setAction(SvcConstants.UPDATE);
+            surgeries.add(sur);
+            cycle.setIdentifier(getCourseIi());
+            cycle.setSurgeries(surgeries);
+            cycles.add(cycle);
+            treatmentRegimen.setCycles(cycles);
+            trList.add(treatmentRegimen);
+            svcDto.setTreatmentRegimens(trList);
+            outcomesSvc.write(svcDto);
+            return super.edit(); 
+        } catch (OutcomesFieldException e) {
+            addFieldError(CourseWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_UPDATE);
             return INPUT;
-        }
-        PerformedProcedureDto dto = surgery.getPerformedProcedureDto();
-        try {
-            dto = performedActivitySvc.updatePerformedProcedure(dto);
+        } catch (OutcomesException e) {
+            addActionError(e.getLocalizedMessage());
+            setCurrentAction(CA_UPDATE);
+            return INPUT;
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_UPDATE);
             return INPUT;
-        } catch (DataFormatException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_UPDATE);
-            return INPUT;
         }
-        return super.edit();
     }
     
 

@@ -115,7 +115,6 @@ public class ParticipantOutcomesActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
         setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
@@ -135,7 +134,7 @@ public class ParticipantOutcomesActionTest extends AbstractAccrualActionTest {
         targetOutcome.setEvaluationDate(TsConverter.convertToTs(ts));
         targetOutcome.setDiseaseStatusDate(TsConverter.convertToTs(ts));
         action.setTargetOutcome(targetOutcome);
-        assertEquals(ActionSupport.SUCCESS, action.add());
+        action.add();
         assertNotNull(action.getTargetOutcome());
     }
     

@@ -78,19 +78,15 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.outweb.dto.util.TumorMarkerWebDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.TumorMarkerSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -130,43 +126,22 @@ public class TumorMarkerAction extends AbstractEditAccrualAction<TumorMarkerWebD
      if (hasActionErrors() || hasFieldErrors()) {
         return INPUT;
      }
-     try {      
-       PerformedObservationDto dto = new PerformedObservationDto();
-       dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.TUMOR_MARKER));
-       dto.setStudyProtocolIdentifier(getSpIi());
-       dto.setStudySubjectIdentifier(getParticipantIi());
-       dto.setName(StConverter.convertToSt(tumorMarker.getTumorMarker().getCode()));
-       dto = performedActivitySvc.createPerformedObservation(dto);
-       if (tumorMarker.getTmvUom() != null 
-           && tumorMarker.getTmvUom().getUnit() != null && !tumorMarker.getTmvUom().getUnit().equals("") 
-           && tumorMarker.getTumorMarkerValue() != null 
-           && tumorMarker.getTumorMarkerValue().getValue() != null 
-           && !tumorMarker.getTumorMarkerValue().getValue().equals("")) {
-        //UOM 
-        PerformedObservationResultDto pcrDto1 = new PerformedObservationResultDto();
-        pcrDto1.setPerformedObservationIdentifier(dto.getIdentifier());
-        pcrDto1.setStudyProtocolIdentifier(getSpIi());
-        Pq pq = new Pq();
-        pq.setUnit(tumorMarker.getTmvUom().getUnit());
-        pq.setValue(BigDecimal.valueOf(Long.parseLong(tumorMarker.getTumorMarkerValue().getValue())));
-        pcrDto1.setResultQuantity(pq);
-        performedObservationResultSvc.create(pcrDto1);
-       } else {
-           //UOM 
-           PerformedObservationResultDto pcrDto1 = new PerformedObservationResultDto();
-           pcrDto1.setPerformedObservationIdentifier(dto.getIdentifier());
-           pcrDto1.setStudyProtocolIdentifier(getSpIi());
-           pcrDto1.setResultText(tumorMarker.getTumorMarkerValue());
-           performedObservationResultSvc.create(pcrDto1);   
-       }
-       ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+     try {
+         PatientSvcDto svcDto = getPatientSvcDto();
+         List<TumorMarkerSvcDto> listOfSvcDto = new ArrayList<TumorMarkerSvcDto>();
+         TumorMarkerSvcDto tempTumarMarkar = tumorMarker.getSvcDto();
+         tempTumarMarkar.setAction(SvcConstants.CREATE);
+         listOfSvcDto.add(tempTumarMarkar);
+         svcDto.setTumorMarkers(listOfSvcDto);
+         outcomesSvc.write(svcDto);
+         ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
          "Successfully saved Tumor Marker information."); 
-     } catch (RemoteException re) {
+     } catch (OutcomesFieldException e) {
+         addFieldError(TumorMarkerWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+         return INPUT;
+     } catch (Exception re) {
             addActionError("Error saving the  TumorMarker." + re.getLocalizedMessage());
             return INPUT;
-          } catch (DataFormatException dfe) {
-          addActionError("Error saving the  TumorMarker." + dfe.getLocalizedMessage());
-          return INPUT;
        }
       return "main";
     }

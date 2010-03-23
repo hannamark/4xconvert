@@ -96,7 +96,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("accrual-outcomes")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+@RolesAllowed({"client" , "Abstractor" , "Submitter" , "Outcomes" })
 public class PerformedObservationResultBean
         extends  PerformedObservationResultBeanLocal implements PerformedObservationResultService {
     

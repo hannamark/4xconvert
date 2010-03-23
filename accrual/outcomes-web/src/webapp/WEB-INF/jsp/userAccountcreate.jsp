@@ -56,8 +56,8 @@
     
         <s:form name="myAccount" method="POST">
             <s:actionerror/>
-            <s:hidden name="userAccount.id" />
-            <s:if test="userAccount.id == null">
+            <s:hidden name="userAccount.identifier" />
+            <s:if test="userAccount.identifier == null">
                 <p>To activate your account for NCI Outcomes, please begin by creating your login information.<br>                   
                    Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
                    Passwords must have a minimum of 8 characters and contain at least one special character and one digit.<br>
@@ -76,8 +76,8 @@
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.email.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield name="userAccount.loginName" maxlength="100" size="35" readonly="true" cssStyle="width:200px"/>
-                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.loginName</s:param></s:fielderror>
+                        <s:textfield name="userAccount.identity" maxlength="100" size="35" readonly="true" cssStyle="width:200px"/>
+                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.identity</s:param></s:fielderror>
                     </td>                
                 </tr>
                 <tr>
@@ -136,51 +136,51 @@
                     <td scope="row" class="label"><label><fmt:message key="user.account.state.label"/><span class="required">*</span></label></td>
                     <td>
                         <s:select name="userAccount.state" headerKey="" headerValue="--Select--" 
-                                  list="userAccount.states" listKey="name" listValue="code" value="userAccount.state" cssStyle="width:206px"/>
+                                  list="userAccount.states" listKey="name" listValue="code" value="userAccount.state.value" cssStyle="width:206px"/>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.state</s:param></s:fielderror>
                     </td>                
                 </tr>
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.zipCode.label"/></label></td>
                     <td>
-                        <s:textfield name="userAccount.zipCode" maxlength="15" size="8" cssStyle="width:80px"/>
-                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.zipCode</s:param></s:fielderror>
+                        <s:textfield name="userAccount.postalCode" maxlength="15" size="8" cssStyle="width:80px"/>
+                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.postalCode</s:param></s:fielderror>
                     </td>               
                 </tr>                   
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.country.label"/><span class="required">*</span></label></td>
                     <td>
                         <s:select name="userAccount.country" headerKey="USA" headerValue="United States" 
-                                  list="userAccount.countries" listKey="alpha3" listValue="name" value="userAccount.country" cssStyle="width:206px"/>
+                                  list="userAccount.countries" listKey="alpha3" listValue="name" value="userAccount.country.value" cssStyle="width:206px"/>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.country</s:param></s:fielderror>
                     </td>               
                 </tr>
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.phone.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield name="userAccount.phoneNumber" maxlength="50" size="15" cssStyle="width:120px"/>
-                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.phoneNumber</s:param></s:fielderror>
+                        <s:textfield name="userAccount.phone" maxlength="50" size="15" cssStyle="width:120px"/>
+                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.phone</s:param></s:fielderror>
                     </td>                
                 </tr>
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.organization.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield name="userAccount.organization" maxlength="200" size="100" cssStyle="width:200px"/>
-                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.organization</s:param></s:fielderror>
+                        <s:textfield name="userAccount.affiliateOrg" maxlength="200" size="100" cssStyle="width:200px"/>
+                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.affiliateOrg</s:param></s:fielderror>
                     </td>               
                 </tr>
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.prsOrganization.label"/></label></td>
                     <td>
-                        <s:textfield name="userAccount.prsOrganization" maxlength="200" size="100" cssStyle="width:200px"/>
-                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.prsOrganization</s:param></s:fielderror>
+                        <s:textfield name="userAccount.prsOrg" maxlength="200" size="100" cssStyle="width:200px"/>
+                        <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.prsOrg</s:param></s:fielderror>
                     </td>               
                 </tr>                
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.treatmentSite.label"/><span class="required">*</span></label></td>
                     <td>
                         <s:textfield readonly="true" size="30" name="userAccount.treatmentSite" cssStyle="float:left; width:250px" cssClass="readonly"/>                       
-                        <s:hidden name="userAccount.treatmentSiteId"/>
+                        <s:hidden name="userAccount.treatmentSiteIdentifier"/>
                         <s:if test="!patients">
                         <a href="#" class="btn" onclick="lookupTreatmentSite('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         </s:if>
@@ -191,7 +191,7 @@
                     <td scope="row" class="label"><label><fmt:message key="user.account.physician.label"/><span class="required">*</span></label></td>
                     <td>
                         <s:textfield readonly="true" size="30" name="userAccount.physician" cssStyle="float:left; width:250px" cssClass="readonly"/>
-                        <s:hidden name="userAccount.physicianId"/>
+                        <s:hidden name="userAccount.physicianIdentifier"/>
                         <s:if test="!patients">
                         <a href="#" class="btn" onclick="lookupPhysician('<s:property value="userAction"/>');"/><span class="btn_img"><span class="search">Look Up</span></span></a>
                         </s:if>

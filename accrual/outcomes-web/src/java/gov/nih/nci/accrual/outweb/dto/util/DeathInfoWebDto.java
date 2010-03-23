@@ -79,16 +79,13 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.outweb.enums.AutopsyPerformed;
-import gov.nih.nci.accrual.outweb.enums.ResponseInds;
-import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractDeathInformationDto;
+import gov.nih.nci.outcomes.svc.dto.DeathInformationSvcDto;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -102,19 +99,11 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" })
-public class DeathInfoWebDto implements Serializable {
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.UselessOverridingMethod" })
+public class DeathInfoWebDto extends AbstractDeathInformationDto implements Serializable {
 
     private static final long serialVersionUID = 7839457372215390511L;
-    
-    private Ii id;
-    private Ii autopsyId;
-    private Cd cause;
-    private Ts eventDate;
-    private Cd autopsyInd;
-    private Cd causeByAutopsy;
-    private Cd autopsySite;
-
+   
     /**
      * Instantiates a new death info web dto.
      */
@@ -123,131 +112,72 @@ public class DeathInfoWebDto implements Serializable {
     }
     
     /**
-     * Validate.
+     * Instantiates a new death info web dto.
      * 
-     * @param dto the dto
-     * @param action the action
+     * @param svcDto the svc dto
      */
-    public static void validate(DeathInfoWebDto dto, AbstractAccrualAction action) {  
-        if (dto.getEventDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getEventDate().getValue());
-            if (!validDate) {
-                action.addFieldError("deathInfo.eventDate", "Please Enter Current or Past Date.");
-            }
+    public DeathInfoWebDto(AbstractDeathInformationDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setCause(svcDto.getCause());
+        setEventDate(svcDto.getEventDate());
+        setAutopsyId(svcDto.getAutopsyId());
+        setAutopsyInd(svcDto.getAutopsyInd());
+        setAutopsySite(svcDto.getAutopsySite());
+        setCauseByAutopsy(svcDto.getCauseByAutopsy());
+    }
+    
+    /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("cause".equals(result)) {
+            result = "cause";
         }
-        if (dto.getAutopsyInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-            if (PAUtil.isCdNull(dto.getAutopsySite())) {
-                action.addFieldError("deathInfo.autopsySite", "Please provide a Site of Disease Autopsy");
-            }
-            if (PAUtil.isCdNull(dto.getCauseByAutopsy())) {
-                action.addFieldError("deathInfo.causeByAutopsy", 
-                        "Please provide a Death Cause As Determined By Autopsy");
-            }
+        if ("eventDate".equals(result)) {
+            result = "eventDate";
         }
+        if ("autopsyInd".equals(result)) {
+            result = "autopsyInd";
+        }
+        if ("causeByAutopsy".equals(result)) {
+            result = "causeByAutopsy";
+        }
+        if ("autopsySite".equals(result)) {
+            result = "autopsySite";
+        }
+        return "deathInfo." + result;
     }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-
-    /**
-     * @return autopsyId
-     */
-    public Ii getAutopsyId() {
-        return autopsyId;
-    }
-
-    /**
-     * @param autopsyId autopsyId
-     */
-    public void setAutopsyId(Ii autopsyId) {
-        this.autopsyId = autopsyId;
-    }
-
+    
     /**
      * @return the cause
      */
+    @Override
     @FieldExpressionValidator(expression = "cause.code != null && cause.code.length() > 0",
             message = "Please provide a Death Cause")
     public Cd getCause() {
-        return cause;
-    }
-
-    /**
-     * @param cause the cause to set
-     */
-    public void setCause(Cd cause) {
-        this.cause = cause;
+        return super.getCause();
     }
 
     /**
      * @return the eventDate
      */
+    @Override
     @FieldExpressionValidator(expression = "eventDate.value != null",
             message = "Please provide a Death Date")
     public Ts getEventDate() {
-        return eventDate;
-    }
-
-    /**
-     * @param eventDate the eventDate to set
-     */
-    public void setEventDate(Ts eventDate) {
-        this.eventDate = eventDate;
+        return super.getEventDate();
     }
 
     /**
      * @return the autopsyInd
      */
+    @Override
     @FieldExpressionValidator(expression = "autopsyInd.code != null && autopsyInd.code.length() > 0",
             message = "Please provide an Autopsy Performed Indicator")
     public Cd getAutopsyInd() {
-        return autopsyInd;
-    }
-
-    /**
-     * @param autopsyInd the autopsyInd to set
-     */
-    public void setAutopsyInd(Cd autopsyInd) {
-        this.autopsyInd = autopsyInd;
-    }
-
-    /**
-     * @return the causeByAutopsy
-     */
-    public Cd getCauseByAutopsy() {
-        return causeByAutopsy;
-    }
-
-    /**
-     * @param causeByAutopsy the causeByAutopsy to set
-     */
-    public void setCauseByAutopsy(Cd causeByAutopsy) {
-        this.causeByAutopsy = causeByAutopsy;
-    }
-
-    /**
-     * @return the autopsySite
-     */
-    public Cd getAutopsySite() {
-        return autopsySite;
-    }
-
-    /**
-     * @param autopsySite the autopsySite to set
-     */
-    public void setAutopsySite(Cd autopsySite) {
-        this.autopsySite = autopsySite;
+        return super.getAutopsyInd();
     }
     
     /**
@@ -269,5 +199,23 @@ public class DeathInfoWebDto implements Serializable {
      */
     public List<AutopsyDeathCause> getCausesByAutopsy() {
         return Arrays.asList(AutopsyDeathCause.values());
+    }
+    
+    /**
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
+     */
+    public DeathInformationSvcDto getSvcDto() {
+        DeathInformationSvcDto svcDto = new DeathInformationSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setCause(getCause());
+        svcDto.setEventDate(getEventDate());
+        svcDto.setAutopsyId(getAutopsyId());
+        svcDto.setAutopsyInd(getAutopsyInd());
+        svcDto.setAutopsySite(getAutopsySite());
+        svcDto.setCauseByAutopsy(getCauseByAutopsy());
+        return svcDto;
+        
     }
 }

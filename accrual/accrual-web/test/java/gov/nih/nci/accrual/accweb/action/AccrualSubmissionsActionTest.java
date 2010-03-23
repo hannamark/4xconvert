@@ -159,7 +159,7 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
     public void addNewTest() throws Exception {
         submission.setCutOffDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
         action.setSubmission(submission);
-      assertEquals(ActionSupport.SUCCESS, action.addNew());
+      assertEquals("showNewSubmission", action.addNew());
     }
     
     @Test

@@ -79,30 +79,30 @@
 package gov.nih.nci.accrual.outweb.action;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.accrual.outweb.dto.util.PhysicianWebDTO;
 import gov.nih.nci.accrual.outweb.dto.util.TreatmentSiteWebDTO;
-import gov.nih.nci.accrual.outweb.dto.util.UserAccountWebDTO;
+import gov.nih.nci.accrual.outweb.dto.util.UserAccountWebDto;
 import gov.nih.nci.accrual.outweb.mail.MailManager;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.accrual.outweb.util.EncoderDecoder;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
 import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.EnPn;
+import gov.nih.nci.coppa.iso.EntityNamePartType;
+import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
+import gov.nih.nci.coppa.iso.TelUrl;
 import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.EnPn;
-import gov.nih.nci.iso21090.EntityNamePartType;
-import gov.nih.nci.iso21090.Enxp;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.iso21090.TelEmail;
-import gov.nih.nci.iso21090.TelUrl;
+import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -132,7 +132,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class UserAccountAction extends AbstractAccrualAction {
 
     private static final long serialVersionUID = 1L;
-    private UserAccountWebDTO userAccount = new UserAccountWebDTO();
+    private UserAccountWebDto userAccount = new UserAccountWebDto();
     private String userAction = "";
     private static final String CREATE = "create";
     private String lookupType;
@@ -157,15 +157,16 @@ public class UserAccountAction extends AbstractAccrualAction {
      * @return String
      */
     public String request() {
-        UserAccountWebDTO.validate(userAccount, this, false);
+        userAccount.validate(this);
         if (hasFieldErrors()) {
             return ActionSupport.INPUT;
         }
 
         try {
             final MailManager mailManager = new MailManager();
-            mailManager.sendConfirmationMail(userAccount.getLoginName(), userAccount.getPassword());
-            LOG.info(" sending email to " + userAccount.getLoginName());
+            mailManager.sendConfirmationMail(StConverter.convertToString(userAccount.getIdentity()),
+                    StConverter.convertToString(userAccount.getPassword()));
+            LOG.info(" sending email to " + StConverter.convertToString(userAccount.getIdentity()));
         } catch (Exception e) {
             LOG.error("error while sending e-mail");
             return ERROR;
@@ -190,39 +191,32 @@ public class UserAccountAction extends AbstractAccrualAction {
         if (encodedPassword != null) {
             password = EncoderDecoder.decodeString(encodedPassword);
         }
-        
+
         try {
-            UserDto user = userSvc.getUser(StConverter.convertToSt(loginName));
+            UserSvcDto userSvcDto =  userSvc.getUser(StConverter.convertToSt(loginName));
             
-            if (user == null) { // new user
-                userAccount.setLoginName(loginName);
-                userAccount.setPassword(password);
+            if (userSvcDto == null) { // new user
+                userAccount = new UserAccountWebDto();
+                userAccount.setIdentity(StConverter.convertToSt(loginName));
+                userAccount.setPassword(StConverter.convertToSt(password));
+                userAccount.setRetypePassword(StConverter.convertToSt(password));
             } else { // user already exists
-                String treatmentSite = getTreatmentSite(user.getPoOrganizationIdentifier());
-                if (treatmentSite == null || treatmentSite.equals(UNAVAIL_ORG_MSG)) {
-                    user.setPoOrganizationIdentifier(null);
-                }
-                String physician = getPhysician(user.getPoPersonIdentifier());
-                if (physician == null || physician.equals(UNAVAIL_PERSON_MSG)) {
-                    user.setPoPersonIdentifier(null);
-                }
-                userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
+                userAccount = convertToWebDto(userSvcDto);
                 checkPatients(loginName);
             }
         } catch (Exception e) {
             LOG.error("error while activating user :" + loginName, e);
             return ERROR;
         }
-        
+
         userAction = "activateAccount";
         return CREATE;
     }
-    
     /**
      * getTreatmentSite.
      * @param poOrganizationId the poOrganizationId
      * @return String
-     * @throws RemoteException exception 
+     * @throws RemoteException exception
      */
     public static String getTreatmentSite(Ii poOrganizationId) throws RemoteException {
         if (poOrganizationId == null) {
@@ -237,7 +231,7 @@ public class UserAccountAction extends AbstractAccrualAction {
         }
         return UNAVAIL_ORG_MSG;
     }
-    
+
     /**
      * getPhysician.
      * @param poPersonId the poPersonId
@@ -250,7 +244,7 @@ public class UserAccountAction extends AbstractAccrualAction {
         }
         PersonDTO person;
         String lastName = null;
-        String firstName = null;                
+        String firstName = null;
 
         try {
             person = PoRegistry.getPersonEntityService().getPerson(poPersonId);
@@ -270,8 +264,8 @@ public class UserAccountAction extends AbstractAccrualAction {
             LOG.equals("NullifiedEntityException" + e.getMessage());
             firstName = UNAVAIL_PERSON_MSG;
         }
-        String physician = (lastName == null) ? "" : lastName;
-        physician += (firstName == null) ? "" : ", " + firstName;
+        String physician = lastName == null ? "" : lastName;
+        physician += firstName == null ? "" : ", " + firstName;
         return physician;
     }
 
@@ -280,59 +274,46 @@ public class UserAccountAction extends AbstractAccrualAction {
      * @return String
      */
     public String create() {
-        UserAccountWebDTO.validate(userAccount, this, true);
-        if (hasFieldErrors()) {
-            return ActionSupport.INPUT;
-        }
-
         String actionResult =  null;
-        UserDto user = new UserDto();
-        if (PAUtil.isNotEmpty(userAccount.getId())) {
-            user.setIdentifier(IiConverter.convertToIi(userAccount.getId()));
-        }
-        user.setLoginName(StConverter.convertToSt(userAccount.getLoginName()));
-        user.setPassword(StConverter.convertToSt(userAccount.getPassword()));
-        user.setFirstName(StConverter.convertToSt(userAccount.getFirstName()));
-        user.setLastName(StConverter.convertToSt(userAccount.getLastName()));
-        user.setMiddleName(StConverter.convertToSt(userAccount.getMiddleName()));
-        user.setAddress(StConverter.convertToSt(userAccount.getAddress()));
-        user.setCity(StConverter.convertToSt(userAccount.getCity()));
-        user.setState(StConverter.convertToSt(userAccount.getState()));
-        user.setPostalCode(StConverter.convertToSt(userAccount.getZipCode()));
-        user.setCountry(StConverter.convertToSt(userAccount.getCountry()));
-        user.setPhone(StConverter.convertToSt(userAccount.getPhoneNumber()));
-        user.setAffiliateOrg(StConverter.convertToSt(userAccount.getOrganization()));
-        user.setPrsOrg(StConverter.convertToSt(userAccount.getPrsOrganization()));
-        user.setPoOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(userAccount.getTreatmentSiteId()));
-        user.setPoPersonIdentifier(IiConverter.convertToPoPersonIi(userAccount.getPhysicianId()));
-        
         try {
-            if (PAUtil.isEmpty(userAccount.getId())) {
+            if (PAUtil.isIiNull(userAccount.getIdentifier())) {
+                userAccount.setAction(SvcConstants.CREATE);
+            } else {
+                userAccount.setAction(SvcConstants.UPDATE);
+            }
+            userAccount.validate(this);
+            if (hasFieldErrors() || hasActionErrors()) {
+                checkPatients(StConverter.convertToString(userAccount.getIdentity()));
+                return ActionSupport.INPUT;
+            }
+            if (PAUtil.isIiNull(userAccount.getIdentifier())) {
                 // create the user
-                userSvc.createUser(user);
+                userSvc.createUser(userAccount.getSvcDto());
 
                 userAction = "createAccount";
                 actionResult = "redirectToLogin";
             } else {
                 // update the user
-                userSvc.updateUser(user);
-
+                UserSvcDto svcDto = userSvc.updateUser(userAccount.getSvcDto());
+                userAccount = convertToWebDto(svcDto);
                 if (ServletActionContext.getRequest().getRemoteUser() == null) {
                     userAction = "resetPassword";
                     actionResult = "redirectToLogin";
+                    ServletActionContext.getRequest().getSession().invalidate();
                 } else {
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME, 
-                        userAccount.getLastName() + ", " + userAccount.getFirstName());            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME, 
-                        getPhysician(user.getPoPersonIdentifier()));            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II, 
-                        user.getPoOrganizationIdentifier());            
-                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME, 
-                        getTreatmentSite(user.getPoOrganizationIdentifier()));
-                        
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTER_NAME,
+                        StConverter.convertToString(userAccount.getLastName()) + ", " 
+                        + StConverter.convertToString(userAccount.getFirstName()));
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PHYSICIAN_NAME,
+                        getPhysician(userAccount.getPhysicianIdentifier()));
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II,
+                            userAccount.getTreatmentSiteIdentifier());
+                    SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_NAME,
+                        getTreatmentSite(userAccount.getTreatmentSiteIdentifier()));
+
                     userAction = "updateAccount";
                     actionResult = CREATE;
-                    checkPatients(StConverter.convertToString(user.getLoginName()));
+                    checkPatients(StConverter.convertToString(userAccount.getIdentity()));
                 }
             }
         } catch (Exception e) {
@@ -350,19 +331,11 @@ public class UserAccountAction extends AbstractAccrualAction {
     public String updateAccount() {
         String loginName = ServletActionContext.getRequest().getRemoteUser();
         try {
-            UserDto user = userSvc.getUser(StConverter.convertToSt(loginName));
-            
-            if (user != null) {
-                String treatmentSite = getTreatmentSite(user.getPoOrganizationIdentifier());
-                if (treatmentSite == null || treatmentSite.equals(UNAVAIL_ORG_MSG)) {
-                    user.setPoOrganizationIdentifier(null);
-                }
-                String physician = getPhysician(user.getPoPersonIdentifier());
-                if (physician == null || physician.equals(UNAVAIL_PERSON_MSG)) {
-                    user.setPoPersonIdentifier(null);
-                }
+            UserSvcDto userSvcDto =  userSvc.getUser();
+
+            if (userSvcDto != null) {
+                userAccount = convertToWebDto(userSvcDto);
                 checkPatients(loginName);
-                userAccount = new UserAccountWebDTO(user, treatmentSite, physician);
             }
         } catch (Exception e) {
             LOG.error("error while displaying My Account page for user :" + loginName, e);
@@ -387,40 +360,40 @@ public class UserAccountAction extends AbstractAccrualAction {
             setPatients(true);
         }
     }
-    
+
     /**
      * Lookup data.
      * @return result for next action
      */
     public String initTreatmentSiteLookup() {
-        treatmentSites = null;        
+        treatmentSites = null;
         return "initTreatmentSiteLookup";
     }
-    
+
     /**
      * Lookup data.
      * @return result for next action
      */
     public String initPhysicianLookup() {
-        physicians = null;        
+        physicians = null;
         return "initPhysicianLookup";
     }
-    
+
     /**
      * Lookup data.
      * @return result for next action
      */
-    public String lookupTreatmentSite() {                
+    public String lookupTreatmentSite() {
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setName(EnOnConverter.convertToEnOn(treatmentSiteSearchCriteria.getName()));
-        criteria.setPostalAddress(AddressConverterUtil.create(null, 
-                                                              null, 
-                                                              treatmentSiteSearchCriteria.getCity(), 
-                                                              treatmentSiteSearchCriteria.getState(), 
-                                                              treatmentSiteSearchCriteria.getZipCode(), 
+        criteria.setPostalAddress(AddressConverterUtil.create(null,
+                                                              null,
+                                                              treatmentSiteSearchCriteria.getCity(),
+                                                              treatmentSiteSearchCriteria.getState(),
+                                                              treatmentSiteSearchCriteria.getZipCode(),
                                                               treatmentSiteSearchCriteria.getCountry()));
-            
-        try {    
+
+        try {
             List<OrganizationDTO> poOrgDtos = new ArrayList<OrganizationDTO>();
             if (criteria.getIdentifier() != null || criteria.getName() != null || criteria.getPostalAddress() != null) {
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
@@ -431,7 +404,7 @@ public class UserAccountAction extends AbstractAccrualAction {
                 TreatmentSiteWebDTO treatmentSite = new TreatmentSiteWebDTO();
                 treatmentSite.setId(poOrgDtos.get(i).getIdentifier().getExtension().toString());
                 treatmentSite.setName(poOrgDtos.get(i).getName().getPart().get(0).getValue());
-                
+
                 int partSize = poOrgDtos.get(i).getPostalAddress().getPart().size();
                 for (int j = 0; j < partSize; j++) {
                     String type = poOrgDtos.get(i).getPostalAddress().getPart().get(j).getType().name();
@@ -444,11 +417,11 @@ public class UserAccountAction extends AbstractAccrualAction {
                     } else if (type.equals("CNT")) {
                         treatmentSite.setCountry(
                             getCountryNameUsingCode(poOrgDtos.get(i).getPostalAddress().getPart().get(j).getCode()));
-                    }                                                            
+                    }
                 }
-                
+
                 treatmentSites.add(treatmentSite);
-            }                
+            }
         } catch (Exception e) {
             treatmentSites = null;
             LOG.error("Error occured while searching PO Organizations " + e.getMessage(), e);
@@ -456,46 +429,46 @@ public class UserAccountAction extends AbstractAccrualAction {
 
         return SUCCESS;
     }
-    
+
     private String getCountryNameUsingCode(String code) {
         List<Country> countries = treatmentSiteSearchCriteria.getCountries();
         for (int i = 0; i < countries.size(); i++) {
-            Country country = (Country) countries.get(i);
+            Country country = countries.get(i);
             if (country.getAlpha3().equals(code)) {
                 return country.getName();
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Lookup data.
      * @return result for next action
      */
-    public String lookupPhysician() {        
+    public String lookupPhysician() {
         PersonDTO criteria = new PersonDTO();
         criteria.setName(EnPnConverter.convertToEnPn(
             physicianSearchCriteria.getFirstName(), null, physicianSearchCriteria.getLastName(), null, null));
-        criteria.setPostalAddress(AddressConverterUtil.create(null, 
-                                                              null, 
-                                                              physicianSearchCriteria.getCity(), 
-                                                              physicianSearchCriteria.getState(), 
-                                                              physicianSearchCriteria.getZipCode(), 
+        criteria.setPostalAddress(AddressConverterUtil.create(null,
+                                                              null,
+                                                              physicianSearchCriteria.getCity(),
+                                                              physicianSearchCriteria.getState(),
+                                                              physicianSearchCriteria.getZipCode(),
                                                               physicianSearchCriteria.getCountry()));
-        
+
         try {
             List<PersonDTO> poPersonDtos = new ArrayList<PersonDTO>();
-            if (criteria.getIdentifier() != null || criteria.getName() != null) {                
+            if (criteria.getIdentifier() != null || criteria.getName() != null) {
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
                 poPersonDtos = PoRegistry.getPersonEntityService().search(criteria, limit);
             }
-            
+
             for (int i = 0; i < poPersonDtos.size(); i++) {
                 PersonDTO poPersonDto = poPersonDtos.get(i);
                 PhysicianWebDTO physician = new PhysicianWebDTO();
                 physician.setId(poPersonDto.getIdentifier().getExtension().toString());
-                
+
                 List<Enxp> nameList = poPersonDto.getName().getPart();
                 Iterator<Enxp> nameIterator = nameList.iterator();
                 while (nameIterator.hasNext()) {
@@ -510,7 +483,7 @@ public class UserAccountAction extends AbstractAccrualAction {
                         }
                     }
                 }
-                
+
                 int partSize = poPersonDto.getPostalAddress().getPart().size();
                 for (int j = 0; j < partSize; j++) {
                     String type = poPersonDto.getPostalAddress().getPart().get(j).getType().name();
@@ -523,9 +496,9 @@ public class UserAccountAction extends AbstractAccrualAction {
                     } else if (type.equals("CNT")) {
                         physician.setCountry(
                             getCountryNameUsingCode(poPersonDto.getPostalAddress().getPart().get(j).getCode()));
-                    }                                                            
+                    }
                 }
-                
+
                 physicians.add(physician);
             }
         } catch (Exception e) {
@@ -535,13 +508,13 @@ public class UserAccountAction extends AbstractAccrualAction {
 
         return SUCCESS;
     }
-    
+
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
     private static final String ORG_CREATE_RESPONSE = "create_org_response";
     private final int ausStateCodeLen = 3;
-    
+
     /**
-     * 
+     *
      * @return String result
      */
     public String lookupCreatePerson() {
@@ -580,13 +553,13 @@ public class UserAccountAction extends AbstractAccrualAction {
                             || country.equalsIgnoreCase("CAN"))) {
             if (PAUtil.isEmpty(state) || state.trim().length() > 2) {
                 addActionError("2-letter State/Province Code required for USA/Canada");
-            }            
-        }        
+            }
+        }
         if (country != null && country.equalsIgnoreCase("AUS")) {
             if (PAUtil.isEmpty(state) || state.trim().length() > ausStateCodeLen) {
                 addActionError("2/3-letter State/Province Code required for Australia");
-            }            
-        }        
+            }
+        }
 
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
@@ -597,9 +570,9 @@ public class UserAccountAction extends AbstractAccrualAction {
             ServletActionContext.getRequest().setAttribute("failureMessage", sb.toString());
             return PERS_CREATE_RESPONSE;
         }
-        
+
         String preFix = ServletActionContext.getRequest().getParameter("preFix");
-        String midName = ServletActionContext.getRequest().getParameter("midName");        
+        String midName = ServletActionContext.getRequest().getParameter("midName");
         String phone = ServletActionContext.getRequest().getParameter("phone");
         String tty = ServletActionContext.getRequest().getParameter("tty");
         String fax = ServletActionContext.getRequest().getParameter("fax");
@@ -660,15 +633,15 @@ public class UserAccountAction extends AbstractAccrualAction {
             dto.setTelecomAddress(list);
             //PO Service requires upper case state codes for US and Canada
             if (PAUtil.isNotEmpty(state)) {
-                state = state.trim().toUpperCase();            
+                state = state.trim().toUpperCase();
             }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
             PoRegistry.getPersonEntityService().createPerson(dto);
             physicianSearchCriteria.setFirstName(firstName);
-            physicianSearchCriteria.setLastName(lastName);            
-            physicianSearchCriteria.setCity(city); 
-            physicianSearchCriteria.setState(state); 
-            physicianSearchCriteria.setZipCode(zip); 
+            physicianSearchCriteria.setLastName(lastName);
+            physicianSearchCriteria.setCity(city);
+            physicianSearchCriteria.setState(state);
+            physicianSearchCriteria.setZipCode(zip);
             physicianSearchCriteria.setCountry(country);
             lookupPhysician();
             physicianSearchCriteria = new PhysicianWebDTO();
@@ -679,7 +652,7 @@ public class UserAccountAction extends AbstractAccrualAction {
         } catch (URISyntaxException e) {
             handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
         } catch (CurationException e) {
-            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);        
+            handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
         }
         return PERS_CREATE_RESPONSE;
     }
@@ -714,12 +687,12 @@ public class UserAccountAction extends AbstractAccrualAction {
                                 || countryName.equalsIgnoreCase("CAN"))) {
             if (PAUtil.isEmpty(stateName) || stateName.trim().length() > 2) {
                 addActionError("2-letter State/Province Code required for USA/Canada");
-            }           
+            }
         }
         if (countryName != null && countryName.equalsIgnoreCase("AUS")) {
             if (PAUtil.isEmpty(stateName) || stateName.trim().length() > ausStateCodeLen) {
                 addActionError("2/3-letter State/Province Code required for Australia");
-            }           
+            }
         }
 
         String email = ServletActionContext.getRequest().getParameter("email");
@@ -744,7 +717,7 @@ public class UserAccountAction extends AbstractAccrualAction {
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
         //PO Service requires upper case state codes for US and Canada
         if (PAUtil.isNotEmpty(stateName)) {
-            stateName = stateName.trim().toUpperCase();            
+            stateName = stateName.trim().toUpperCase();
         }
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, null, cityName, stateName, zipCode,
                 countryName));
@@ -780,7 +753,7 @@ public class UserAccountAction extends AbstractAccrualAction {
             treatmentSiteSearchCriteria.setCity(cityName);
             treatmentSiteSearchCriteria.setState(stateName);
             treatmentSiteSearchCriteria.setZipCode(zipCode);
-            treatmentSiteSearchCriteria.setCountry(countryName);            
+            treatmentSiteSearchCriteria.setCountry(countryName);
             lookupTreatmentSite();
             treatmentSiteSearchCriteria = new TreatmentSiteWebDTO();
         } catch (URISyntaxException e) {
@@ -794,7 +767,7 @@ public class UserAccountAction extends AbstractAccrualAction {
         }
         return ORG_CREATE_RESPONSE;
     }
-    
+
     private String handleExceptions(String message, String returnString) {
         addActionError(message);
         ServletActionContext.getRequest().setAttribute("failureMessage", message);
@@ -804,14 +777,14 @@ public class UserAccountAction extends AbstractAccrualAction {
     /**
      * @return the userAccount
      */
-    public UserAccountWebDTO getUserAccount() {
+    public UserAccountWebDto getUserAccount() {
         return userAccount;
     }
 
     /**
      * @param userAccount the userAccount to set
      */
-    public void setUserAccount(UserAccountWebDTO userAccount) {
+    public void setUserAccount(UserAccountWebDto userAccount) {
         this.userAccount = userAccount;
     }
 
@@ -828,7 +801,7 @@ public class UserAccountAction extends AbstractAccrualAction {
     public void setUserAction(String userAction) {
         this.userAction = userAction;
     }
-    
+
     /**
      * @param lookupType the lookupType to set
      */
@@ -842,7 +815,7 @@ public class UserAccountAction extends AbstractAccrualAction {
     public String getLookupType() {
         return lookupType;
     }
-    
+
     /**
      * @return the treatmentSiteSearchCriteria
      */
@@ -856,7 +829,7 @@ public class UserAccountAction extends AbstractAccrualAction {
     public void setTreatmentSiteSearchCriteria(TreatmentSiteWebDTO treatmentSiteSearchCriteria) {
         this.treatmentSiteSearchCriteria = treatmentSiteSearchCriteria;
     }
-    
+
     /**
      * @return the treatmentSites
      */
@@ -870,7 +843,7 @@ public class UserAccountAction extends AbstractAccrualAction {
     public void setTreatmentSites(List<TreatmentSiteWebDTO> treatmentSites) {
         this.treatmentSites = treatmentSites;
     }
-    
+
     /**
      * @return the physicianSearchCriteria
      */
@@ -884,7 +857,7 @@ public class UserAccountAction extends AbstractAccrualAction {
     public void setPhysicianSearchCriteria(PhysicianWebDTO physicianSearchCriteria) {
         this.physicianSearchCriteria = physicianSearchCriteria;
     }
-    
+
     /**
      * @return the physicians
      */
@@ -911,5 +884,45 @@ public class UserAccountAction extends AbstractAccrualAction {
      */
     public void setPatients(boolean patients) {
         this.patients = patients;
+    }
+    /**
+     * @param userSvcDto
+     * @param password
+     * @throws RemoteException
+     */
+    private UserAccountWebDto convertToWebDto(UserSvcDto userSvcDto)
+            throws RemoteException {
+        UserAccountWebDto usrAcct = new UserAccountWebDto();
+        usrAcct.setIdentifier(userSvcDto.getIdentifier());
+        usrAcct.setIdentity(userSvcDto.getIdentity());
+        usrAcct.setPassword(userSvcDto.getPassword());
+        usrAcct.setRetypePassword(userSvcDto.getPassword());
+        usrAcct.setFirstName(userSvcDto.getFirstName());
+        usrAcct.setMiddleName(userSvcDto.getMiddleName());
+        usrAcct.setLastName(userSvcDto.getLastName());
+        usrAcct.setAddress(userSvcDto.getAddress());
+        usrAcct.setCity(userSvcDto.getCity());
+        usrAcct.setState(userSvcDto.getState());
+        usrAcct.setCountry(userSvcDto.getCountry());
+        usrAcct.setPostalCode(userSvcDto.getPostalCode());
+        usrAcct.setPhone(userSvcDto.getPhone());
+        usrAcct.setAffiliateOrg(userSvcDto.getAffiliateOrg());
+        usrAcct.setPrsOrg(userSvcDto.getPrsOrg());
+        String treatmentSite = getTreatmentSite(userSvcDto.getTreatmentSiteIdentifier());
+        if (treatmentSite == null || treatmentSite.equals(UNAVAIL_ORG_MSG)) {
+            usrAcct.setTreatmentSiteIdentifier(null);
+        } else {
+            usrAcct.setTreatmentSiteIdentifier(userSvcDto.getTreatmentSiteIdentifier());
+            usrAcct.setTreatmentSite(StConverter.convertToSt(treatmentSite));
+        }
+        String physician = getPhysician(userSvcDto.getPhysicianIdentifier());
+        if (physician == null || physician.equals(UNAVAIL_PERSON_MSG)) {
+            usrAcct.setPhysician(null);
+        } else {
+            usrAcct.setPhysicianIdentifier(userSvcDto.getPhysicianIdentifier());
+            usrAcct.setPhysician(StConverter.convertToSt(physician));
+        }
+
+        return usrAcct;
     }
 }

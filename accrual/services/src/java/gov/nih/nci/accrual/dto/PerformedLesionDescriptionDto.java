@@ -156,9 +156,9 @@
 */
 package gov.nih.nci.accrual.dto;
 
-import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.Int;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Bl;
+import gov.nih.nci.coppa.iso.Int;
+import gov.nih.nci.coppa.iso.Pq;
 
 
 /**

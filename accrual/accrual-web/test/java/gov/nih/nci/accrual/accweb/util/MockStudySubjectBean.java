@@ -81,10 +81,10 @@ package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;

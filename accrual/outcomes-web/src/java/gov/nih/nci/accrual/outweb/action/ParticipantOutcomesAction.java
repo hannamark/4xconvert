@@ -79,27 +79,17 @@
 
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.outweb.dto.util.ParticipantOutcomesWebDto;
-import gov.nih.nci.accrual.outweb.enums.ResponseInds;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
-import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.outcomes.svc.dto.DiseaseEvaluationSvcDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -134,62 +124,28 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
      */
     @Override
     public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<ParticipantOutcomesWebDto>());
+        List<DiseaseEvaluationSvcDto> evaluationList = new ArrayList<DiseaseEvaluationSvcDto>();
+        List<ParticipantOutcomesWebDto> webDtoList = new ArrayList<ParticipantOutcomesWebDto>();
         try {
-            List<PerformedObservationDto> poList = performedActivitySvc.getPerformedObservationByStudySubject(
-                                                               getParticipantIi());
-            List<PerformedObservationResultDto> participantOutcomesList = null;
-            List<PerformedObservationResultDto> diseaseStatusList = null;
-            List<PerformedObservationResultDto> bestResponseList = null;
-            List<ActivityRelationshipDto> arList = null;
-            ParticipantOutcomesWebDto webdto = new ParticipantOutcomesWebDto();
-            for (PerformedObservationDto poBean : poList) {
-                if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
-                        && poBean.getNameCode().getCode().equals(ActivityNameCode.PARTICIPANT_OUTCOMES.getCode())) {
-                    arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
-                            .getTargetPerformedActivityIdentifier());
-                    webdto.setEvaluationDate(po.getActualDateRange().getLow());
-                    participantOutcomesList = performedObservationResultSvc.
-                                      getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
-                        && poBean.getNameCode().getCode().equals(ActivityNameCode.DISEASE_STATUS.getCode())) {
-                    arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
-                            .getTargetPerformedActivityIdentifier());
-                    webdto.setDiseaseStatusDate(po.getActualDateRange().getLow());
-                    List<Cd> cds = new ArrayList<Cd>();
-                    cds = DSetConverter.convertDsetToCdList(po.getMethodCode());
-                    webdto.setAssessmentType(cds.get(0));
-                    diseaseStatusList = performedObservationResultSvc.getPerformedObservationResultByPerformedActivity(
-                            po.getIdentifier());
-                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
-                        && poBean.getNameCode().getCode().equals(ActivityNameCode.BEST_RESPONSE.getCode())) {
-                    arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            poBean.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arList.get(0)
-                            .getTargetPerformedActivityIdentifier());
-                    webdto.setBestResponseDate(po.getActualDateRange().getLow());
-                    bestResponseList = performedObservationResultSvc.getPerformedObservationResultByPerformedActivity(
-                            po.getIdentifier());               
+            PatientSvcDto svcDto = getPatientSvcDto();
+            svcDto.setTreatmentRegimens(new ArrayList<TreatmentRegimenSvcDto>());
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            List<TreatmentRegimenSvcDto> trList = pSvcList.get(0).getTreatmentRegimens();
+            List<TreatmentRegimenSvcDto> newTRList = new ArrayList<TreatmentRegimenSvcDto>();
+            for (TreatmentRegimenSvcDto dto : trList) {
+                dto.setDiseaseEvaluations(new ArrayList<DiseaseEvaluationSvcDto>());
+                newTRList.add(dto);
+                svcDto.setTreatmentRegimens(newTRList);
+                pSvcList = outcomesSvc.get(svcDto);
+                evaluationList = pSvcList.get(0).getTreatmentRegimens().get(0).getDiseaseEvaluations();
+                if (!evaluationList.isEmpty()) {
+                    break;
                 }
-
-                if (participantOutcomesList != null && !participantOutcomesList.isEmpty() 
-                        && diseaseStatusList != null && !diseaseStatusList.isEmpty()
-                        && bestResponseList != null && !bestResponseList.isEmpty()) {
-                    getDisplayTagList().add(new ParticipantOutcomesWebDto(
-                            participantOutcomesList, diseaseStatusList, bestResponseList, webdto));
-                    
-                    participantOutcomesList = null;
-                    diseaseStatusList = null;
-                    bestResponseList = null;
-                }
-
             }
-
-
+            for (DiseaseEvaluationSvcDto dto : evaluationList) {
+                webDtoList.add(new ParticipantOutcomesWebDto(dto));
+            }
+            setDisplayTagList(webDtoList);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
         }
@@ -198,110 +154,30 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
     /**
      * {@inheritDoc}
      */
-    public String add() throws RemoteException {
-        ParticipantOutcomesWebDto.validate(targetOutcome, this);
-        if (hasActionErrors() || hasFieldErrors()) {
+    public String add() {
+        PatientSvcDto svcDto = getPatientSvcDto();
+        List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+        TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+        List<DiseaseEvaluationSvcDto> dEvaluations = new ArrayList<DiseaseEvaluationSvcDto>();
+        DiseaseEvaluationSvcDto diseaseEvaluation = targetOutcome.getSvcDto();
+        diseaseEvaluation.setAction(SvcConstants.CREATE);
+        dEvaluations.add(diseaseEvaluation);
+        treatmentRegimen.setIdentifier(IiConverter.convertToIi(targetOutcome.getTreatmentPlanId()));
+        treatmentRegimen.setDiseaseEvaluations(dEvaluations);
+        trList.add(treatmentRegimen);
+        svcDto.setTreatmentRegimens(trList);
+        try {
+            outcomesSvc.write(svcDto); 
+            return super.add();
+        } catch (OutcomesFieldException e) {
+            addFieldError(ParticipantOutcomesWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
-        }
-        PerformedObservationDto dto = new PerformedObservationDto();
-        Ivl<Ts> evalutionDate = new Ivl<Ts>();
-        evalutionDate.setLow(targetOutcome.getEvaluationDate());
-        dto.setActualDateRange(evalutionDate);
-        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.getByCode("Participant Outcomes")));
-        dto.setStudyProtocolIdentifier(getSpIi());
-        dto.setStudySubjectIdentifier(getParticipantIi());
-        try {
-            dto = performedActivitySvc.createPerformedObservation(dto);
-
-            createPerformedObservationResult(dto);
-            
-            createDiseaseStatus();
-            
-            PerformedObservationDto dto5 = new PerformedObservationDto();
-            Ivl<Ts> bestResponseDate = new Ivl<Ts>();
-            bestResponseDate.setLow(targetOutcome.getBestResponseDate());
-            dto5.setActualDateRange(bestResponseDate);
-            dto5.setNameCode(CdConverter.convertToCd(ActivityNameCode.getByCode("Best Response")));
-            dto5.setStudyProtocolIdentifier(getSpIi());
-            dto5.setStudySubjectIdentifier(getParticipantIi());
-
-            dto5 = performedActivitySvc.createPerformedObservation(dto5);
-
-            PerformedObservationResultDto porDto7 = new PerformedObservationResultDto();
-            porDto7.setPerformedObservationIdentifier(dto5.getIdentifier());
-            porDto7.setResultCode(targetOutcome.getBestResponse());
-            porDto7.setStudyProtocolIdentifier(getSpIi());
-            performedObservationResultSvc.create(porDto7);
-
-            ActivityRelationshipDto arDto5 = new ActivityRelationshipDto();
-            arDto5.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
-            arDto5.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(targetOutcome.getTreatmentPlanId()));
-            arDto5.setTargetPerformedActivityIdentifier(dto5.getIdentifier());
-            activityRelationshipSvc.create(arDto5);            
-           
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
-            return super.create();
-        } catch (DataFormatException e) {
-            addActionError(e.getLocalizedMessage());
-            return super.create();
-        }
-        return super.add();
-    }
-
-    private void createDiseaseStatus() throws RemoteException, DataFormatException {
-        PerformedObservationDto dto2 = new PerformedObservationDto();
-        Ivl<Ts> diseaseStatusDate = new Ivl<Ts>();
-        diseaseStatusDate.setLow(targetOutcome.getDiseaseStatusDate());
-        dto2.setActualDateRange(diseaseStatusDate);
-        dto2.setNameCode(CdConverter.convertToCd(ActivityNameCode.getByCode("Disease Status")));
-        List<Cd> cds = new ArrayList<Cd>();
-        cds.add(targetOutcome.getAssessmentType());
-        dto2.setMethodCode(DSetConverter.convertCdListToDSet(cds));
-        dto2.setStudyProtocolIdentifier(getSpIi());
-        dto2.setStudySubjectIdentifier(getParticipantIi());
-
-        dto2 = performedActivitySvc.createPerformedObservation(dto2);
-
-        PerformedObservationResultDto porDto4 = new PerformedObservationResultDto();
-        porDto4.setPerformedObservationIdentifier(dto2.getIdentifier());
-        porDto4.setResultCode(targetOutcome.getDiseaseStatus());
-        porDto4.setStudyProtocolIdentifier(getSpIi());
-        performedObservationResultSvc.create(porDto4);
-
-        ActivityRelationshipDto arDto2 = new ActivityRelationshipDto();
-        arDto2.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
-        arDto2.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(targetOutcome.getTreatmentPlanId()));
-        arDto2.setTargetPerformedActivityIdentifier(dto2.getIdentifier());
-        activityRelationshipSvc.create(arDto2);
-    }
-
-    private void createPerformedObservationResult(PerformedObservationDto dto) throws RemoteException {
-        PerformedObservationResultDto porDto1 = new PerformedObservationResultDto();
-        porDto1.setPerformedObservationIdentifier(dto.getIdentifier());
-        porDto1.setResultCode(targetOutcome.getVitalStatus());
-        porDto1.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.getByCode("Vital Status")));
-        porDto1.setStudyProtocolIdentifier(getSpIi());
-        performedObservationResultSvc.create(porDto1);
-
-        PerformedObservationResultDto porDto2 = new PerformedObservationResultDto();
-        porDto2.setPerformedObservationIdentifier(dto.getIdentifier());
-        if (targetOutcome.getResponseInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-            porDto2.setResultIndicator(BlConverter.convertToBl(true));
-        } else if (targetOutcome.getResponseInd().getCode().equalsIgnoreCase(ResponseInds.NO.getCode())) {
-            porDto2.setResultIndicator(BlConverter.convertToBl(false));
-        }
-        porDto2.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.
-                                        getByCode("Evaluable for Response")));
-        porDto2.setStudyProtocolIdentifier(getSpIi());
-        performedObservationResultSvc.create(porDto2);
-
-        ActivityRelationshipDto arDto1 = new ActivityRelationshipDto();
-        arDto1.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.getByCode(AccrualConstants.COMP)));
-        arDto1.setSourcePerformedActivityIdentifier(IiConverter.convertToIi(targetOutcome.getTreatmentPlanId()));
-        arDto1.setTargetPerformedActivityIdentifier(dto.getIdentifier());
-        activityRelationshipSvc.create(arDto1);
+            setCurrentAction(CA_CREATE);
+            return INPUT;
+        } 
     }
 
     /**

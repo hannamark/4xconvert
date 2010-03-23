@@ -1,17 +1,17 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.DSet;
+import gov.nih.nci.coppa.iso.Enxp;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.NullFlavor;
+import gov.nih.nci.coppa.iso.Tel;
+import gov.nih.nci.coppa.iso.TelEmail;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.Enxp;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.NullFlavor;
-import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.Map;
 
 public class MockPoPersonEntityService implements PersonEntityServiceRemote {
-    static List<PersonDTO> personList;
+    public static List<PersonDTO> personList;
     static {
         personList = new ArrayList<PersonDTO>();
         PersonDTO dto = new PersonDTO();
-        dto.setIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
+        dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setName(EnPnConverter.convertToEnPn("firstName", null, "lastName", null, null));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
                 "stateOrProvince", "postalCode", "USA"));
@@ -49,15 +49,31 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
         } catch (URISyntaxException e) {
         }
         personList.add(dto);
+
         dto = new PersonDTO();
-        dto.setIdentifier(IiConverter.convertToIi("PO PERSON ID 02"));
+        dto.setIdentifier(IiConverter.convertToIi("2"));
         dto.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
                 "stateOrProvince", "postalCode", "USA"));
-
         personList.add(dto);
+
         dto = new PersonDTO();
-        dto.setIdentifier(IiConverter.convertToIi("PO PERSON ID 03"));
+        dto.setIdentifier(IiConverter.convertToIi("3"));
+        dto.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
+        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
+                "stateOrProvince", "postalCode", "USA"));
+        dto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+        personList.add(dto);
+
+        dto = new PersonDTO();
+        dto.setIdentifier(IiConverter.convertToIi("4"));
+        dto.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
+        dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
+                "stateOrProvince", "postalCode", "USA"));
+        personList.add(dto);
+
+        dto = new PersonDTO();
+        dto.setIdentifier(IiConverter.convertToIi("5"));
         dto.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
         dto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
                 "stateOrProvince", "postalCode", "USA"));
@@ -139,8 +155,8 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
                 matchingDTO.add(dto);
             }
         }
-        
-        int fromIndex = (arg1.getOffset() < 0 ? 0 : arg1.getOffset());
+
+        int fromIndex = arg1.getOffset() < 0 ? 0 : arg1.getOffset();
         int toIndex = Math.min(fromIndex + arg1.getLimit(), matchingDTO.size());
 
         try {

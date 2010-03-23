@@ -79,11 +79,14 @@
 
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.pa.domain.AbstractLookUpEntity;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 
 import java.rmi.RemoteException;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,4 +158,30 @@ public class BaseLookUpBean implements BaseLookUpService {
         LOG.info("Leaving search");
         return bos;
     }
+
+    /**
+     * {@inheritDoc}
+     */    
+    public boolean validateLookUp(String value, String tableName, String column) throws RemoteException {
+        String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = '" + value + "'";
+        Session session = null;
+        boolean exists = true;
+        int count = 0;
+        try { 
+          session = HibernateUtil.getCurrentSession();
+          Statement st = session.connection().createStatement();
+          ResultSet rs = st.executeQuery(sql);
+           while (rs.next()) {
+             count++;
+           }
+           if (count == 0) {
+             exists = false;
+           }
+       
+        }  catch (Exception e) {
+            throw new OutcomesException(" Hibernate exception while checking for value " 
+                    + value + " from table " + tableName , e);
+        } 
+        return exists;
+      }
 }

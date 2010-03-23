@@ -1,11 +1,13 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 /**
  * @author Vrushali
@@ -29,14 +31,16 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceRemote 
             throw new PAException("test");
         }
         RegistryUser regUser = null;
-        if(loginName != null && loginName.equals("test@scenpro.com")){    
-            regUser = new RegistryUser();
-            regUser.setCity("city");
-            regUser.setCountry("USA");
-            regUser.setState("Texas");
-            regUser.setCsmUserId(1L);
-            regUser.setUserLastCreated("userLastCreated");
-            regUser.setUserLastUpdated("userLastUpdated");
+        for (User user : MockCsmUtil.users) {
+            if (loginName.equals(user.getLoginName())) {
+                regUser = new RegistryUser();
+                regUser.setCity("city");
+                regUser.setCountry("USA");
+                regUser.setState("Texas");
+                regUser.setCsmUserId(user.getUserId());
+                regUser.setUserLastCreated("userLastCreated");
+                regUser.setUserLastUpdated("userLastUpdated");
+            }
         }
         return regUser;
     }

@@ -52,5 +52,11 @@ P.fA("Adding Lesion Assessment Records","outcomes.6.6.html");
 P.fA("Updating Lesion Assessment Records","outcomes.6.7.html");
 P.fA("Deleting Lesion Assessment Records","outcomes.6.8.html");
 P.fA("Submitting Death Information","outcomes.6.9.html");
-P.fA("Application Support","appSupport.7.1.html");
+P.fA("Working With Treatment Site Records","searchOrgs.7.1.html");
+P.fA("Looking Up Treatment Sites","searchOrgs.7.2.html");
+P.fA("Adding Treatment Site Records","searchOrgs.7.3.html");
+P.fA("Working With Physician Records","searchPersons.8.1.html");
+P.fA("Looking Up Registered Physicians","searchPersons.8.2.html");
+P.fA("Adding Physician Records","searchPersons.8.3.html");
+P.fA("Application Support","appSupport.9.1.html");
 }

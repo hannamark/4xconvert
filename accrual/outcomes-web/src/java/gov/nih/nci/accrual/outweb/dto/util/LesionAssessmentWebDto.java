@@ -79,29 +79,15 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.accrual.dto.PerformedImageDto;
-import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.outweb.enums.ResponseInds;
-import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.MeasurableEvaluableDiseaseTypeCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractLesionAssessmentDto;
+import gov.nih.nci.outcomes.svc.dto.LesionAssessmentSvcDto;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
@@ -112,257 +98,125 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author Kalpana Guthikonda
  * @since 11/20/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class LesionAssessmentWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod", "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+public class LesionAssessmentWebDto extends AbstractLesionAssessmentDto implements Serializable {
 
     private static final long serialVersionUID = -3658357689383961868L;
-    private static final String NUMERICMESSAGE = "Please Enter Numeric Value";
-    
-    private Ii id;
-    private Ii lesionNum;
-    private Cd lesionSite;
-    private Cd measurableEvaluableDiseaseType;
-    private Cd lesionMeasurementMethod;
-    private Ii imageSeriesIdentifier;
-    private Ii imageIdentifier;
-    private Pq lesionLongestDiameter;
-    private Ts clinicalAssessmentDate;
     private String treatmentPlanId;
     private String oldTreatmentPlanId;
-
-   
+    
     /**
      * Instantiates a new lesion assessment web dto.
      */
     public LesionAssessmentWebDto() {
         // default constructor
-    }
+    }  
     
     /**
      * Instantiates a new lesion assessment web dto.
-     * @param po the po
-     * @param pldList the pld list
-     * @param imageList the image list
-     * @param sourceTreatmentPlanId thetreatment plan id
-     */
-    public LesionAssessmentWebDto(PerformedObservationDto po,
-            List<PerformedLesionDescriptionDto> pldList,
-            List<PerformedImageDto> imageList, Ii sourceTreatmentPlanId) {        
-        lesionSite = po.getTargetSiteCode();
-        List<Cd> cds = new ArrayList<Cd>();
-        cds = DSetConverter.convertDsetToCdList(po.getMethodCode());
-        lesionMeasurementMethod = cds.get(0);
-        lesionNum = IiConverter.convertToIi(IntConverter.convertToString(pldList.get(0).getLesionNumber()));
-        lesionLongestDiameter = pldList.get(0).getLongestDiameter();
-        if (pldList.get(0).getMeasurableIndicator().getValue().equals(true)
-                && pldList.get(0).getEvaluableIndicator().getValue().equals(false)) {
-            measurableEvaluableDiseaseType = CdConverter.convertStringToCd(
-                    MeasurableEvaluableDiseaseTypeCode.MEASURABLE.getCode());
-        } else if (pldList.get(0).getEvaluableIndicator().getValue().equals(true)
-                && pldList.get(0).getMeasurableIndicator().getValue().equals(false)) {
-            measurableEvaluableDiseaseType = CdConverter.convertStringToCd(
-                    MeasurableEvaluableDiseaseTypeCode.EVALUABLE.getCode());
-        } else if (pldList.get(0).getMeasurableIndicator().getValue().equals(true) 
-                && pldList.get(0).getEvaluableIndicator().getValue().equals(true)) {
-            measurableEvaluableDiseaseType = CdConverter.convertStringToCd(
-                    MeasurableEvaluableDiseaseTypeCode.BOTH.getCode());
-        }
-        imageIdentifier = imageList.get(0).getImageIdentifier();
-        imageSeriesIdentifier = imageList.get(0).getSeriesIdentifier();
-        clinicalAssessmentDate = imageList.get(0).getResultDateRange().getLow();
-        id = po.getIdentifier();
-        treatmentPlanId = sourceTreatmentPlanId.getExtension();
-        oldTreatmentPlanId = sourceTreatmentPlanId.getExtension();
-    }
-
-    /**
-     * Validate.
      * 
-     * @param dto the dto
-     * @param action the action
-     * @throws RemoteException remote exception
+     * @param svcDto the svc dto
      */
-    public static void validate(LesionAssessmentWebDto dto, AbstractAccrualAction action) throws RemoteException {
-        if (dto.getLesionLongestDiameter() != null && dto.getLesionLongestDiameter().getValue() != null 
-                && !PAUtil.isNumber(dto.getLesionLongestDiameter().getValue().toString())) {
-            action.addFieldError("lesionAssessment.lesionLongestDiameter.value", NUMERICMESSAGE);
-        }
-        if (dto.getLesionNum().getExtension() != null && !PAUtil.isNumber(dto.getLesionNum().getExtension())) {
-            action.addFieldError("lesionAssessment.lesionNum", NUMERICMESSAGE);
-        }
-        if (dto.getImageIdentifier().getExtension() != null 
-                && !PAUtil.isNumber(dto.getImageIdentifier().getExtension())) {
-            action.addFieldError("lesionAssessment.imageIdentifier", NUMERICMESSAGE);
-        }
-        if (dto.getImageSeriesIdentifier().getExtension() != null 
-                && !PAUtil.isNumber(dto.getImageSeriesIdentifier().getExtension())) {
-            action.addFieldError("lesionAssessment.imageSeriesIdentifier", NUMERICMESSAGE);
-        }
-        if (dto.getClinicalAssessmentDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getClinicalAssessmentDate().getValue());
-            if (!validDate) {
-                action.addFieldError("lesionAssessment.clinicalAssessmentDate", "Please Enter Current or Past Date.");
-            }
-        }
-        Date earliest = action.getEarliestDeathDate();
-        if (earliest != null && dto.getClinicalAssessmentDate().getValue().after(earliest)) {
-            action.addFieldError("lesionAssessment.clinicalAssessmentDate", "Date must be on or before " 
-                    + AccrualUtil.dateToMDY(earliest));
-        }
+    public LesionAssessmentWebDto(AbstractLesionAssessmentDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setClinicalAssessmentDate(svcDto.getClinicalAssessmentDate());
+        setLesionMeasurementMethod(svcDto.getLesionMeasurementMethod());
+        setLesionLongestDiameter(svcDto.getLesionLongestDiameter());
+        setLesionNum(svcDto.getLesionNum());
+        setImageIdentifier(svcDto.getImageIdentifier());
+        setImageSeriesIdentifier(svcDto.getImageSeriesIdentifier());
+        setLesionSite(svcDto.getLesionSite());
+        setMeasurableEvaluableDiseaseType(svcDto.getMeasurableEvaluableDiseaseType());        
     }
-
+    
     /**
-     * @return the id
+     * @param svcField service field
+     * @return field name in jsp
      */
-    public Ii getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("lesionNum".equals(result)) {
+            result = "lesionNum";
+        }
+        if ("lesionSite".equals(result)) {
+            result = "lesionSite";
+        }
+        if ("measurableEvaluableDiseaseType".equals(result)) {
+            result = "measurableEvaluableDiseaseType";
+        }
+        if ("lesionMeasurementMethod".equals(result)) {
+            result = "lesionMeasurementMethod";
+        }
+        if ("imageSeriesIdentifier".equals(result)) {
+            result = "imageSeriesIdentifier";
+        }
+        if ("imageIdentifier".equals(result)) {
+            result = "imageIdentifier";
+        }
+        if ("lesionLongestDiameter".equals(result)) {
+            result = "lesionLongestDiameter";
+        }
+        if ("clinicalAssessmentDate".equals(result)) {
+            result = "clinicalAssessmentDate";
+        }
+        return "lesionAssessment." + result;
     }
 
     /**
      * Gets the lesion num.
      * @return the lesion num
      */
+    @Override
     @FieldExpressionValidator(expression = "lesionNum.extension != null && lesionNum.extension.length() > 0", 
             message = "Please enter Lesion Number")
     public Ii getLesionNum() {
-        return lesionNum;
-    }
-
-    /**
-     * Sets the lesion num.
-     * @param lesionNum the new lesion num
-     */
-    public void setLesionNum(Ii lesionNum) {
-        this.lesionNum = lesionNum;
+        return super.getLesionNum();
     }
 
     /**
      * Gets the lesion site.
      * @return the lesion site
      */
+    @Override
     @FieldExpressionValidator(expression = "lesionSite.code != null && lesionSite.code.length() > 0", 
             message = "Please select a Lesion Site")
     public Cd getLesionSite() {
-        return lesionSite;
-    }
-
-    /**
-     * Sets the lesion site.
-     * @param lesionSite the new lesion site
-     */
-    public void setLesionSite(Cd lesionSite) {
-        this.lesionSite = lesionSite;
+        return super.getLesionSite();
     }
 
     /**
      * Gets the measurable evaluable disease type.
      * @return the measurable evaluable disease type
      */
+    @Override
     @FieldExpressionValidator(
       expression = "measurableEvaluableDiseaseType.code != null && measurableEvaluableDiseaseType.code.length() > 0", 
             message = "Please select a Measurable Evaluable Disease Type")
     public Cd getMeasurableEvaluableDiseaseType() {
-        return measurableEvaluableDiseaseType;
-    }
-
-    /**
-     * Sets the measurable evaluable disease type.
-     * @param measurableEvaluableDiseaseType the new measurable evaluable disease type
-     */
-    public void setMeasurableEvaluableDiseaseType(Cd measurableEvaluableDiseaseType) {
-        this.measurableEvaluableDiseaseType = measurableEvaluableDiseaseType;
+        return super.getMeasurableEvaluableDiseaseType();
     }
 
     /**
      * Gets the lesion measurement method.
      * @return the lesion measurement method
      */
+    @Override
     @FieldExpressionValidator(
             expression = "lesionMeasurementMethod.code != null && lesionMeasurementMethod.code.length() > 0", 
             message = "Please select a Lesion Measurement Method")
     public Cd getLesionMeasurementMethod() {
-        return lesionMeasurementMethod;
-    }
-
-    /**
-     * Sets the lesion measurement method.
-     * @param lesionMeasurementMethod the new lesion measurement method
-     */
-    public void setLesionMeasurementMethod(Cd lesionMeasurementMethod) {
-        this.lesionMeasurementMethod = lesionMeasurementMethod;
-    }
-
-    /**
-     * Gets the image series identifier.
-     * @return the image series identifier
-     */
-   public Ii getImageSeriesIdentifier() {
-        return imageSeriesIdentifier;
-    }
-
-    /**
-     * Sets the image series identifier.
-     * @param imageSeriesIdentifier the new image series identifier
-     */
-    public void setImageSeriesIdentifier(Ii imageSeriesIdentifier) {
-        this.imageSeriesIdentifier = imageSeriesIdentifier;
-    }
-
-    /**
-     * Gets the image identifier.
-     * @return the image identifier
-     */
-   public Ii getImageIdentifier() {
-        return imageIdentifier;
-    }
-
-    /**
-     * Sets the image identifier.
-     * @param imageIdentifier the new image identifier
-     */
-    public void setImageIdentifier(Ii imageIdentifier) {
-        this.imageIdentifier = imageIdentifier;
-    }
-
-    /**
-     * Gets the lesion longest diameter.
-     * @return the lesion longest diameter
-     */
-    public Pq getLesionLongestDiameter() {
-        return lesionLongestDiameter;
-    }
-
-    /**
-     * Sets the lesion longest diameter.
-     * @param lesionLongestDiameter the new lesion longest diameter
-     */
-    public void setLesionLongestDiameter(Pq lesionLongestDiameter) {
-        this.lesionLongestDiameter = lesionLongestDiameter;
+        return super.getLesionMeasurementMethod();
     }
 
     /**
      * Gets the clinical assessment date.
      * @return the clinical assessment date
      */
+    @Override
     @FieldExpressionValidator(expression = "clinicalAssessmentDate.value != null",
             message = "Please provide a Clinical Assessment Date")
     public Ts getClinicalAssessmentDate() {
-        return clinicalAssessmentDate;
-    }
-
-    /**
-     * Sets the clinical assessment date.
-     * @param clinicalAssessmentDate the new clinical assessment date
-     */
-    public void setClinicalAssessmentDate(Ts clinicalAssessmentDate) {
-        this.clinicalAssessmentDate = clinicalAssessmentDate;
+        return super.getClinicalAssessmentDate();
     }
     
     /**
@@ -371,25 +225,7 @@ public class LesionAssessmentWebDto implements Serializable {
     public List<ResponseInds> getContrastAgentInds() {
         return Arrays.asList(ResponseInds.values());
     }
-
-    /**
-     * Gets the treatment plan id.
-     * @return the treatment plan id
-     */
-    @FieldExpressionValidator(
-            expression = "treatmentPlanId != null && treatmentPlanId.length() > 0", 
-            message = "Please Select TreatmentPlan")
-    public String getTreatmentPlanId() {
-        return treatmentPlanId;
-    }
-
-    /**
-     * Sets the treatment plan id.
-     * @param treatmentPlanId the new treatment plan id
-     */
-    public void setTreatmentPlanId(String treatmentPlanId) {
-        this.treatmentPlanId = treatmentPlanId;
-    }
+    
     /**
      * Gets the old treatment plan id.
      * @return the old treatment plan id
@@ -404,5 +240,43 @@ public class LesionAssessmentWebDto implements Serializable {
      */
     public void setOldTreatmentPlanId(String oldTreatmentPlanId) {
         this.oldTreatmentPlanId = oldTreatmentPlanId;
+    }
+
+    /**
+     * Sets the treatment plan id.
+     * @param treatmentPlanId the new treatment plan id
+     */
+    public void setTreatmentPlanId(String treatmentPlanId) {
+        this.treatmentPlanId = treatmentPlanId;
+    }
+
+    /**
+     * Gets the treatment plan id.
+     * @return the treatment plan id
+     */
+    @FieldExpressionValidator(
+            expression = "treatmentPlanId != null && treatmentPlanId.length() > 0", 
+            message = "Please Select TreatmentPlan")
+    public String getTreatmentPlanId() {
+        return treatmentPlanId;
+    }
+    
+    /**
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
+     */
+    public LesionAssessmentSvcDto getSvcDto() {
+        LesionAssessmentSvcDto svcDto = new LesionAssessmentSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setClinicalAssessmentDate(getClinicalAssessmentDate());
+        svcDto.setLesionMeasurementMethod(getLesionMeasurementMethod());
+        svcDto.setLesionLongestDiameter(getLesionLongestDiameter());
+        svcDto.setLesionNum(getLesionNum());
+        svcDto.setImageIdentifier(getImageIdentifier());
+        svcDto.setImageSeriesIdentifier(getImageSeriesIdentifier());
+        svcDto.setLesionSite(getLesionSite());
+        svcDto.setMeasurableEvaluableDiseaseType(getMeasurableEvaluableDiseaseType());
+        return svcDto;
     }
 }

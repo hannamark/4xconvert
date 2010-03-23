@@ -50,7 +50,7 @@
 <s:form name="detailForm">
 	<s:hidden name = "currentAction"/>
 	<s:hidden name = "selectedRowIdentifier"/>
-	<s:hidden name = "treatment.id"/>
+	<s:hidden name = "treatment.identifier"/>
 	<fmt:message key="treatPlan.recordMsg"/>
 <table class="form">
 <tr>

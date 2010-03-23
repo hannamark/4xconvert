@@ -77,13 +77,13 @@
 package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
+import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
+import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 
@@ -99,7 +99,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final StudySubjectService studySubjectService = new MockStudySubjectBean();
     private final PatientService patientService = new MockPatientBean();
     private final PerformedActivityService psmService = new MockPerformedActivityBean();
-    private final PatientServiceRemote poPatientService = new MockPaPatientServiceBean();
+    private final POPatientService poPatientService = new MockPaPatientServiceBean();
     private final PerformedObservationResultService porService = new MockPerformedObservationResultBean();
     private final ActivityRelationshipService arService = new MockActivityRelationshipBean();
     /**
@@ -147,7 +147,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     /**
      * {@inheritDoc}
      */
-    public PatientServiceRemote getPOPatientService() {
+    public POPatientService getPOPatientService() {
         return poPatientService;
     }
     /**

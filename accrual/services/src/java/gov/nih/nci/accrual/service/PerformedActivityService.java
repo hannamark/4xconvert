@@ -85,7 +85,7 @@ import gov.nih.nci.accrual.dto.PerformedProcedureDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 
 import java.rmi.RemoteException;
 import java.util.List;

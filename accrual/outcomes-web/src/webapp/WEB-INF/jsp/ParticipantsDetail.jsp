@@ -57,11 +57,7 @@ function handleEditAction(){
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
     <s:hidden name = "currentAction"/>
-    <s:hidden name = "participant.patientId" />
-    <s:hidden name = "participant.studySubjectIi" />
-    <s:hidden name = "participant.statusCode" />
-    <s:hidden name = "participant.poIdentifier" />
-    <s:hidden name = "participant.studyProtocolIi" />
+    <s:hidden name = "participant.identifier" />
 <table class="form">
     <tr>
         <td class="label">
@@ -74,7 +70,7 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:textfield id ="identifier" name="participant.assignedIdentifier" maxlength="400" size="50" 
+            <s:textfield id ="assignedIdentifier" name="participant.assignedIdentifier" maxlength="400" size="50" 
                   cssStyle="width:98%;max-width:206px" />
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
@@ -94,13 +90,13 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:textfield id ="birthDate" name="participant.birthDate" maxlength="400" size="50"
+            <s:textfield id ="birth" name="participant.birth" maxlength="400" size="50"
                          cssStyle="width:98%;max-width:128px" />
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:label name="participant.birthDate" cssStyle="font-weight:normal"/>
+            <s:label name="participant.birth" cssStyle="font-weight:normal"/>
           </s:elseif>
-           <s:fielderror cssClass="formErrorMsg"><s:param>participant.birthDate</s:param></s:fielderror>
+           <s:fielderror cssClass="formErrorMsg"><s:param>participant.birth</s:param></s:fielderror>
         </td>
     </tr>
     <tr>
@@ -137,15 +133,15 @@ function handleEditAction(){
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
             <s:set name="raceCodeValues" value="@gov.nih.nci.pa.enums.PatientRaceCode@getDisplayMap()" />
-            <s:select id ="raceCode" name="participant.raceCode" value="%{participant.raceCode}" multiple="true" size="7" list="#raceCodeValues" />
+            <s:select id ="raceCode" name="participant.raceCodes" value="%{participant.raceCodes}" multiple="true" size="7" list="#raceCodeValues" />
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
-            <s:iterator id="races" value="participant.raceCode" status="stat" >
+            <s:iterator id="races" value="participant.raceCodes" status="stat" >
                 <s:set name="racerx" value="%{code}"/>
                 <s:label name="races" cssStyle="font-weight:normal"/><br>
             </s:iterator>
           </s:elseif>  
-           <s:fielderror cssClass="formErrorMsg"><s:param>participant.raceCode</s:param></s:fielderror>        
+           <s:fielderror cssClass="formErrorMsg"><s:param>participant.raceCodes</s:param></s:fielderror>        
         </td>
     </tr>
 
@@ -182,14 +178,14 @@ function handleEditAction(){
         </td>
         <td class="value" colspan="4">
           <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-            <s:select id ="countryIdentifier" name="participant.countryIdentifier" headerValue="-Select-" headerKey=""
-                     list="listOfCountries"  value="participant.countryIdentifier.extension"
-                     listKey="id" listValue="name"/>
+            <s:select id ="countryAlpha3" name="participant.countryAlpha3" headerValue="-Select-" headerKey=""
+                     list="listOfCountries"  value="participant.countryAlpha3.value"
+                     listKey="alpha3" listValue="name"/>
           </s:if>
           <s:elseif test="%{currentAction == 'retrieve'}">
             <s:label name="participant.countryName" cssStyle="font-weight:normal"/>
           </s:elseif>
-          <s:fielderror cssClass="formErrorMsg"><s:param>participant.countryIdentifier</s:param></s:fielderror>
+          <s:fielderror cssClass="formErrorMsg"><s:param>participant.countryAlpha3</s:param></s:fielderror>
         </td>
     </tr>
 
@@ -208,6 +204,7 @@ function handleEditAction(){
           <s:elseif test="%{currentAction == 'retrieve'}">
             <s:label name="participant.paymentMethodCode.code" cssStyle="font-weight:normal"/>
           </s:elseif>
+          <s:fielderror cssClass="formErrorMsg"><s:param>participant.paymentMethodCode</s:param></s:fielderror>
         </td>
     </tr>
 </table>

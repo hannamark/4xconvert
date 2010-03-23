@@ -80,8 +80,9 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PatientServiceLocal;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
@@ -101,7 +102,7 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since Sep 26, 2009
  */
-public class MockPatientBean implements PatientService {
+public class MockPatientBean implements PatientService, PatientServiceLocal {
     private static Long seq = 1L;
     private static List<PatientDto> pList;
     static {
@@ -112,7 +113,7 @@ public class MockPatientBean implements PatientService {
         p.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         p.setGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));
         p.setIdentifier(IiConverter.convertToIi(seq++));
-        p.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.WHITE.getName()));
+        p.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.WHITE.getCode()));
         p.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         p.setZip(StConverter.convertToSt("12345"));
         pList.add(p);

@@ -63,7 +63,7 @@
 <s:hidden name="targetOutcomeId"/>
 <table class="form">
 <tr>
-        <td scope="row" class="label"><label><fmt:message key="outcomes.summary.treatmentPlan"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="outcomes.summary.treatmentPlan"/><span class="required">*</span></label></td>
         <td class="value">
             <s:select  name="targetOutcome.treatmentPlanId" headerKey="" headerValue="--Select--" list="%{#session.treatmentPlans}"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>targetOutcome.treatmentPlanId</s:param></s:fielderror>

@@ -6,16 +6,12 @@
     </i>
   </g>
   <g t="B" o="002">
-    <i t="baseline data overview">
-      <j l="17#1096866" />
-    </i>
     <i t="Becoming a registered user">
       <j l="1" />
     </i>
     <i t="best response values">
       <j l="46#1097861" />
     </i>
-    <i t="biologics, see drug/biologics" />
   </g>
   <g t="C" o="002">
     <i t="causes of death">
@@ -51,11 +47,14 @@
     <i t="death, causes of">
       <j l="51#1100361" />
     </i>
+    <i t="demographic data descriptions">
+      <j l="14#1089831" />
+    </i>
     <i t="demographic details, viewing">
       <j l="12" />
     </i>
     <i t="diagnosis data, submitting">
-      <j l="18#1091526" />
+      <j l="18#1100946" />
     </i>
     <i t="diagnosis, searching for">
       <j l="18#1091538" />
@@ -80,12 +79,6 @@
     <i t="dose duration modification values">
       <j l="40#1103833" />
     </i>
-    <i t="drug/biologics data">
-      <i t="prerequisites for submitting">
-        <j l="33#1100897" />
-        <j l="34#1092002" />
-      </i>
-    </i>
     <i t="drug/biologics records">
       <i t="adding">
         <j l="34#1101096" />
@@ -93,11 +86,6 @@
       <i t="updating">
         <j l="35#1112326" />
       </i>
-    </i>
-  </g>
-  <g t="E" o="002">
-    <i t="evidence of disease values">
-      <j l="46#1097882" />
     </i>
   </g>
   <g t="G" o="002">
@@ -175,6 +163,16 @@
     <i t="Online help, using">
       <j l="1" />
     </i>
+    <i t="organizations">
+      <i t="adding">
+        <j l="54" />
+        <j l="54#1083137" />
+      </i>
+      <i t="looking up">
+        <j l="53" />
+        <j l="53#1083288" />
+      </i>
+    </i>
     <i t="outcome data, overview of">
       <j l="44#1101706" />
     </i>
@@ -195,9 +193,6 @@
       </i>
     </i>
     <i t="overview">
-      <i t="of baseline data">
-        <j l="17#1096866" />
-      </i>
       <i t="of cycle data">
         <j l="30#1100234" />
       </i>
@@ -226,7 +221,7 @@
       </i>
     </i>
     <i t="pathology data, submitting">
-      <j l="21#1091745" />
+      <j l="21#1103867" />
     </i>
     <i t="pathology grade values">
       <j l="21#1091757" />
@@ -263,7 +258,7 @@
       <j l="11#1081704" />
     </i>
     <i t="performance score values">
-      <j l="24#1095901" />
+      <j l="24#1100662" />
       <i t="ECOG">
         <j l="24#1095906" />
       </i>
@@ -274,12 +269,24 @@
         <j l="24#1095998" />
       </i>
     </i>
+    <i t="persons">
+      <i t="working with">
+        <j l="55" />
+      </i>
+    </i>
+    <i t="physicians">
+      <i t="adding">
+        <j l="57" />
+        <j l="57#1083388" />
+      </i>
+      <i t="looking up">
+        <j l="56" />
+        <j l="56#1083332" />
+      </i>
+    </i>
     <i t="prerequisites">
       <i t="for submitting cycle data">
         <j l="30#1099924" />
-      </i>
-      <i t="for submitting drug/biologics data">
-        <j l="34#1092002" />
       </i>
       <i t="for submitting off-treatment data">
         <j l="42#1106790" />
@@ -310,9 +317,6 @@
   <g t="R" o="002">
     <i t="radiation dose modification">
       <j l="40#1103833" />
-    </i>
-    <i t="radiation machine types">
-      <j l="40#1108547" />
     </i>
     <i t="radiation records">
       <i t="prerequisites for submitting">
@@ -345,28 +349,34 @@
   </g>
   <g t="S" o="002">
     <i t="search tips">
-      <j l="5#1081341" />
+      <j l="53#1082817" />
+      <j l="56#1083371" />
     </i>
     <i t="staging data, submitting">
       <j l="19#1091580" />
     </i>
     <i t="staging records, adding tumor markers to">
-      <j l="20#1091677" />
+      <j l="20#1101659" />
     </i>
     <i t="staging systems, supported">
       <j l="19#1091600" />
+    </i>
+    <i t="study subjects">
+      <i t="demographic data for">
+        <j l="14#1089831" />
+      </i>
     </i>
     <i t="surgery records">
       <i t="adding">
         <j l="37#1113055" />
       </i>
       <i t="prerequisites for submitting">
-        <j l="36#1108077" />
-        <j l="37#1113068" />
+        <j l="36#1117474" />
+        <j l="37#1117508" />
       </i>
       <i t="submitting">
-        <j l="36#1108077" />
-        <j l="37#1113068" />
+        <j l="36#1117474" />
+        <j l="37#1117508" />
       </i>
       <i t="updating">
         <j l="38#1103221" />
@@ -402,8 +412,18 @@
         <j l="29#1091941" />
       </i>
     </i>
+    <i t="treatment sites">
+      <i t="adding">
+        <j l="54" />
+        <j l="54#1083137" />
+      </i>
+      <i t="looking up">
+        <j l="53" />
+        <j l="53#1083288" />
+      </i>
+    </i>
     <i t="tumor markers, adding">
-      <j l="20#1091677" />
+      <j l="20#1101659" />
     </i>
   </g>
   <g t="U" o="002">

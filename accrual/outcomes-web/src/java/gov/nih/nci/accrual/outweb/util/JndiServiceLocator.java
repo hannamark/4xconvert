@@ -79,18 +79,19 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
+import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.accrual.service.util.BaseLookUpService;
 import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
+import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.JNDIUtil;
+import gov.nih.nci.outcomes.svc.OutcomesSvcLocal;
+import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
 
 /**
  * @author Hugh Reinhart
@@ -122,8 +123,8 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    public PatientServiceRemote getPOPatientService() {
-        return (PatientServiceRemote) JNDIUtil.lookup("accrual/PatientServiceBean/remote");
+    public POPatientService getPOPatientService() {
+        return (POPatientService) JNDIUtil.lookup("accrual/POPatientBean/remote");
     }
 
     /**
@@ -153,7 +154,7 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     public CountryService getCountryService() {
         return (CountryService) JNDIUtil.lookup("accrual/CountryBean/remote");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -161,7 +162,7 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
         return (PerformedObservationResultService) JNDIUtil.lookup(
                 "accrual/PerformedObservationResultBeanLocal/remote");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -169,18 +170,25 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
         return (ActivityRelationshipService) JNDIUtil.lookup(
                 "accrual/ActivityRelationshipBeanLocal/remote");
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public UserService getUserService() {
-        return (UserService) JNDIUtil.lookup("accrual/UserBeanLocal/remote");
+    public OutcomesUserSvcLocal getOutcomesUserSvc() {
+        return (OutcomesUserSvcLocal) JNDIUtil.lookup("accrual/OutcomesUserSvcBeanLocal/local");
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public BaseLookUpService getBaseLookupService() {
         return (BaseLookUpService) JNDIUtil.lookup("accrual/BaseLookUpBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OutcomesSvcLocal getOutcomesSvc() {
+        return (OutcomesSvcLocal) JNDIUtil.lookup("accrual/OutcomesSvcBeanLocal/local");
     }
 }

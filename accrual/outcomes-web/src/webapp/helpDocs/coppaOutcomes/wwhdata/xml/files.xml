@@ -90,18 +90,24 @@
     <Document title="Updating Lesion Assessment Records" href="outcomes.6.7.html" />
     <Document title="Deleting Lesion Assessment Records" href="outcomes.6.8.html" />
     <Document title="Submitting Death Information" href="outcomes.6.9.html" />
-    <Document title="Application Support" href="appSupport.7.1.html" />
+    <Document title="Working With Treatment Site Records" href="searchOrgs.7.1.html" />
+    <Document title="Looking Up Treatment Sites" href="searchOrgs.7.2.html" />
+    <Document title="Adding Treatment Site Records" href="searchOrgs.7.3.html" />
+    <Document title="Working With Physician Records" href="searchPersons.8.1.html" />
+    <Document title="Looking Up Registered Physicians" href="searchPersons.8.2.html" />
+    <Document title="Adding Physician Records" href="searchPersons.8.3.html" />
+    <Document title="Application Support" href="appSupport.9.1.html" />
   </DocumentInfo>
   <TopicMap>
     <Topic name="Welcome" href="welcome.1.1.html#1077975" />
     <Topic name="login" href="getStartedOutcomes.2.4.html#1077986" />
     <Topic name="search_patient" href="search.3.3.html#1079384" />
     <Topic name="view_patient" href="search.3.4.html#1081867" />
-    <Topic name="add_patient" href="search.3.6.html#1083507" />
-    <Topic name="diagnosis" href="baseline.4.3.html#1091523" />
+    <Topic name="add_patient" href="search.3.6.html#1089712" />
+    <Topic name="diagnosis" href="baseline.4.3.html#1100942" />
     <Topic name="staging" href="baseline.4.4.html#1091577" />
     <Topic name="add_tumor" href="baseline.4.5.html#1091675" />
-    <Topic name="pathology" href="baseline.4.6.html#1091742" />
+    <Topic name="pathology" href="baseline.4.6.html#1101184" />
     <Topic name="prior_therapies" href="baseline.4.7.html#1091867" />
     <Topic name="add_therapy" href="baseline.4.8.html#1091878" />
     <Topic name="performance" href="baseline.4.9.html#1091902" />

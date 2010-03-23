@@ -63,7 +63,7 @@
 <s:form name="detailForm">
 <s:hidden name = "currentAction"/>
 <s:hidden name = "selectedRowIdentifier"/>
-<s:hidden name = "surgery.id"/>
+<s:hidden name = "surgery.identifier"/>
 <s:hidden name="surgery.interventionId" />
 <table class="form">
 <tr>

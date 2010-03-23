@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.accrual.service.util.BaseLookUpService;
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.pa.domain.AbstractLookUpEntity;
 import gov.nih.nci.pa.domain.AnatomicSites;
 import gov.nih.nci.pa.domain.AssessmentType;
@@ -234,6 +235,10 @@ public class MockBaseLookUpBean implements BaseLookUpService {
             bos.add(bo);
         }
         return bos;
+    }
+    public boolean validateLookUp(String value, String tableName, String column)
+            throws OutcomesException {
+        return true;
     } 
  
 }

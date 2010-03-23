@@ -77,8 +77,10 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.outcomes.svc.dto.AbstractPerformanceStatusDto;
+import gov.nih.nci.outcomes.svc.dto.PerformanceStatusSvcDto;
 
 import java.io.Serializable;
 
@@ -88,59 +90,67 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  *
  */
-public class PerformanceStatusWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod" })
+public class PerformanceStatusWebDto extends AbstractPerformanceStatusDto implements Serializable {
 
     private static final long serialVersionUID = -5148496195378850252L;
-
-    private Ii id;
     private Cd ecogStatus;
     private Cd karnofskyStatus;
-    private Cd lanskyStatus;
-    private Cd performanceSystem;
-    private Cd performanceStatus;   
+    private Cd lanskyStatus; 
     
     /**
-     * @param id the id to set
+     * Instantiates a new performance status web dto.
      */
-    public void setId(Ii id) {
-        this.id = id;
+    public PerformanceStatusWebDto() {
+     // default constructor
     }
+    
     /**
-     * @return the id
+     * Instantiates a new performance status web dto.
+     * 
+     * @param svcDto the svc dto
      */
-    public Ii getId() {
-        return id;
+    public PerformanceStatusWebDto(AbstractPerformanceStatusDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setPerformanceSystem(svcDto.getPerformanceSystem());
+        setPerformanceStatus(svcDto.getPerformanceStatus());        
     }
+    
     /**
      * @param ecogStatus the ecogStatus to set
      */
     public void setEcogStatus(Cd ecogStatus) {
         this.ecogStatus = ecogStatus;
     }
+    
     /**
      * @return the ecogStatus
      */
     public Cd getEcogStatus() {
         return ecogStatus;
     }
+    
     /**
      * @param karnofskyStatus the karnofskyStatus to set
      */
     public void setKarnofskyStatus(Cd karnofskyStatus) {
         this.karnofskyStatus = karnofskyStatus;
     }
+    
     /**
      * @return the karnofskyStatus
      */
     public Cd getKarnofskyStatus() {
         return karnofskyStatus;
     }
+    
     /**
      * @param lanskyStatus the lanskyStatus to set
      */
     public void setLanskyStatus(Cd lanskyStatus) {
         this.lanskyStatus = lanskyStatus;
     }
+    
     /**
      * @return the lanskyStatus
      */
@@ -151,32 +161,44 @@ public class PerformanceStatusWebDto implements Serializable {
     /**
      * @return performanceSystem
      */
+    @Override
     @FieldExpressionValidator(expression = "performanceSystem.code != null && performanceSystem.code.length() > 0",
             message = "Please select a Performance System")
     public Cd getPerformanceSystem() {
-        return performanceSystem;
-    }
-
-    /**
-     * @param performanceSystem performanceSystem
-     */
-    public void setPerformanceSystem(Cd performanceSystem) {
-        this.performanceSystem = performanceSystem;
+        return super.getPerformanceSystem();
     }
 
     /**
      * @return performanceStatus
      */
+    @Override
     @FieldExpressionValidator(expression = "performanceStatus.code != null && performanceStatus.code.length() > 0",
             message = "Please select a Performance Status")
     public Cd getPerformanceStatus() {
-        return performanceStatus;
+        return super.getPerformanceStatus();
     }
-
+    
     /**
-     * @param performanceStatus performanceStatus
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setPerformanceStatus(Cd performanceStatus) {
-        this.performanceStatus = performanceStatus;
+    public PerformanceStatusSvcDto getSvcDto() {
+        PerformanceStatusSvcDto svcDto = new PerformanceStatusSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setPerformanceSystem(getPerformanceSystem());
+        svcDto.setPerformanceStatus(getPerformanceStatus());
+        return svcDto;
     }
+    /**
+     * Validate.
+     * 
+     * @param dto the dto
+     * @param action the action
+     */
+    public static void validate(PerformanceStatusWebDto dto, AbstractAccrualAction action) {  
+        if (dto == null) {
+            action.addActionError("some error");
+        }
+    }    
 }

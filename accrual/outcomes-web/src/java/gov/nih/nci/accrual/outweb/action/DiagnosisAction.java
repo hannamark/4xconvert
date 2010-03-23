@@ -79,21 +79,16 @@
 
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.outweb.dto.util.DiagnosisWebDto;
-import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.outcomes.svc.dto.DiagnosisSvcDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
-import java.util.Date;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -118,23 +113,13 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
     @SkipValidation
     @Override
     public String execute() {
-        List<PerformedObservationDto> dtoList;
+        diagnosis = new DiagnosisWebDto();
         try {
-            dtoList = performedActivitySvc.getPerformedObservationByStudySubject(getParticipantIi());
-            for (PerformedObservationDto dto : dtoList) {
-                if (ActivityNameCode.DIAGNOSIS.getCode().equals(CdConverter.convertCdToString(dto.getNameCode()))) {
-                    diagnosis.setIdentifier(dto.getIdentifier());
-                    List<PerformedDiagnosisDto> pdList =
-                        performedObservationResultSvc.getPerformedDiagnosisByPerformedActivity(dto.getIdentifier());
-                    if (!pdList.isEmpty()) {
-                        PerformedDiagnosisDto pd = pdList.get(0);
-                        diagnosis.setName(pd.getResultCodeModifiedText());
-                        diagnosis.setResultCode(pd.getResultCode());
-                        diagnosis.setCreateDate(dto.getActualDateRange().getLow());
-                    }
-                    break;
-                }
-            }
+            PatientSvcDto svcDto = getPatientSvcDto();
+            svcDto.setDiagnosis(new DiagnosisSvcDto());
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            DiagnosisSvcDto dSvcDto = pSvcList.get(0).getDiagnosis();
+            diagnosis = new DiagnosisWebDto(dSvcDto);            
         } catch (RemoteException e) {
             LOG.error("Error in DiagnosisAction.execute()", e);
             return ERROR;
@@ -150,64 +135,6 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
         return execute();
     }
 
-    /*
-     * Save the Performed Observation.
-     */
-    private PerformedObservationDto savePod() throws RemoteException, DataFormatException {
-        boolean podUpd;
-        PerformedObservationDto pod = null;
-        if (PAUtil.isIiNull(diagnosis.getIdentifier())) {
-            podUpd = false;
-            pod = new PerformedObservationDto();
-            pod.setStudyProtocolIdentifier(getSpIi());
-            pod.setStudySubjectIdentifier(getParticipantIi());
-            pod.setNameCode(CdConverter.convertToCd(ActivityNameCode.DIAGNOSIS));
-        } else {
-            podUpd = true;
-            pod = performedActivitySvc.getPerformedObservation(diagnosis.getIdentifier());
-        }
-
-        pod.setActualDateRange(new Ivl<Ts>());
-        pod.getActualDateRange().setLow(diagnosis.getCreateDate());
-
-        if (podUpd) {
-            performedActivitySvc.updatePerformedObservation(pod);
-        } else {
-            pod = performedActivitySvc.createPerformedObservation(pod);
-        }
-
-        return pod;
-    }
-
-    /*
-     * Save the Performed Diagnosis.
-     */
-    private PerformedDiagnosisDto savePdd(PerformedObservationDto pod) throws RemoteException, DataFormatException {
-        List<PerformedDiagnosisDto> pdList =
-            performedObservationResultSvc.getPerformedDiagnosisByPerformedActivity(pod.getIdentifier());
-        PerformedDiagnosisDto pdd;
-        boolean pddUpd;
-        if (pdList.isEmpty()) {
-            pddUpd = false;
-            pdd = new PerformedDiagnosisDto();
-            pdd.setPerformedObservationIdentifier(pod.getIdentifier());
-            pdd.setStudyProtocolIdentifier(getSpIi());
-        } else {
-            pddUpd = true;
-            pdd = pdList.get(0);
-        }
-
-        pdd.setResultCode(diagnosis.getResultCode());
-        pdd.setResultCodeModifiedText(diagnosis.getName());
-
-        if (pddUpd) {
-            performedObservationResultSvc.updatePerformedDiagnosis(pdd);
-        } else {
-            pdd = performedObservationResultSvc.createPerformedDiagnosis(pdd);
-        }
-        
-        return pdd;
-    }
 
     /**
      * Save user entries.
@@ -216,28 +143,30 @@ public class DiagnosisAction extends AbstractEditAccrualAction<DiagnosisWebDto> 
      */
     @Override
     public String save() {
-        try {
-            // Check all the other dates first.
-            Date earliest = getEarliestTreatmentsDate();
-            if (earliest != null) {
-                if (earliest.getTime() >= diagnosis.getCreateDate().getValue().getTime()) {
-
-                    // Date is good so save changes.
-                    savePdd(savePod());
-                } else {
-                    addFieldError("diagnosis.createDate",
-                            "The Diagnosis Date must be on or before " + AccrualUtil.dateToMDY(earliest));
-                }
-            } else if (!hasActionErrors()) {
-                // since we don't have any dates in database
-                savePdd(savePod());
-            }
-        } catch (Exception e) {
-            addActionError("Error in save().  " + e.getLocalizedMessage());
+        DiagnosisWebDto.validate(diagnosis, this);
+        if (hasActionErrors() || hasFieldErrors()) {
             return INPUT;
+        }
+        PatientSvcDto svcDto = getPatientSvcDto();
+        svcDto.setDiagnosis(diagnosis.getSvcDto());
+
+        if (PAUtil.isIiNull(diagnosis.getIdentifier())) {
+            svcDto.getDiagnosis().setAction(SvcConstants.CREATE);
+        } else {
+            svcDto.getDiagnosis().setAction(SvcConstants.UPDATE);
+        }
+        try {
+            outcomesSvc.write(svcDto);
+        } catch (OutcomesFieldException e) {
+            addFieldError(DiagnosisWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+            return INPUT;
+        } catch (Exception e) {
+            addActionError("Error in Diagnosis Action save().  " + e.getLocalizedMessage());
+            return SUCCESS;
         }
         return super.save();
     }
+    
 
     /**
      * @param diagnosis the diagnosis to set

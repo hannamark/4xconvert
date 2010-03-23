@@ -79,11 +79,12 @@
 package gov.nih.nci.accrual.outweb.action;
 
 import gov.nih.nci.accrual.outweb.dto.util.InterventionWebDto;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -105,8 +106,7 @@ public class PopUpInterventionAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpInterventionAction.class);
-    private static final int MAX_SEARCH_RESULT_SIZE = 500;
-
+    
     private String searchName;
     private String includeSynonym;
     private String exactMatch;
@@ -150,14 +150,14 @@ public class PopUpInterventionAction extends AbstractAccrualAction {
         List<InterventionDTO> interList = null;
         try {
             interList = interventionSvc.search(criteria);
+        } catch (PAException e) {
+            error(e.getMessage());
+            return;
         } catch (Exception e) {
             error("Exception thrown while getting intervention list using service.", e);
             return;
         }
-        if (interList.size() > MAX_SEARCH_RESULT_SIZE) {
-            error("Too many interventions found.  Please narrow search.");
-            return;
-        }
+        
         for (InterventionDTO inter : interList) {
             InterventionWebDto newRec = new InterventionWebDto();
             newRec.setTypeCode(inter.getTypeCode());

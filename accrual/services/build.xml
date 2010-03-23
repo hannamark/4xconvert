@@ -109,10 +109,19 @@
     	    <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnOnConverter.java"/>
     		<fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/iso/util/EnPnConverter.java"/>
     	</copy> -->
-    	<copy todir="${services.build.domainDir}/service/util">
-    		<fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/LookUpTableServiceRemote.java"/>
-    		<fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/RegistryUserServiceRemote.java"/>
-    	</copy>
+        <copy todir="${services.build.domainDir}/service/util">
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*Service.java"/>
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*ServiceRemote.java"/>
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*ServiceLocal.java"/>
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/PAPersonServiceBean.java"/>
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/PAHealthCareProviderRemote.java"/>
+        </copy>
+        <copy todir="${services.build.domainDir}/util">
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/PaEarPropertyReader.java"/>
+        </copy>
+        <copy todir="${services.build.domainDir}/service/correlation">
+            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/correlation/OrganizationCorrelationServiceRemote.java"/>
+        </copy>
     	<!-- <copy todir="${services.build.domainDir}/util">
     	    <fileset file="${software.dir}/pa/commons/src/java/gov/nih/nci/pa/util/PAAttributeMaxLen.java"/>
     	</copy> -->
@@ -207,6 +216,7 @@
                               toDir="${services.build.coberturaOutputDir}">
             <fileset dir="${services.build.outputDir}">
                 <include name="**/accrual/**/*.class"/>
+            	<include name="**/outcomes/**/*.class"/>
             </fileset>
         </cobertura-instrument>
 
@@ -352,6 +362,9 @@
 								    **/service/util/PatientBean.class
 								    **/service/util/PatientServiceBean.class
 								    **/service/util/PatientServiceRemote.class
+    		                        **/svc/*Bean.class
+    		                        **/svc/*Local.class
+    		                        **/svc/util/*.class
     		"/>
     </target>
     

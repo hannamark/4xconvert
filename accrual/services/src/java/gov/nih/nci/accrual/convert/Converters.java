@@ -110,7 +110,7 @@ public class Converters {
     private static PerformedRadiationAdministrationConverter pRadiationAdministrationConverter = new
     PerformedRadiationAdministrationConverter();
     private static ActivityRelationshipConverter activityRelationshipConverter = new ActivityRelationshipConverter();
-    private static UserConverter userConverter = new UserConverter();
+    //private static UserConverter userConverter = new UserConverter();
 
     /**
      * @param clazz class
@@ -155,8 +155,8 @@ public class Converters {
             return (CONV) pRadiationAdministrationConverter;
         } else if (clazz.equals(ActivityRelationshipConverter.class)) {
             return (CONV) activityRelationshipConverter;
-        } else if (clazz.equals(UserConverter.class)) {
-            return (CONV) userConverter;
+        /*} else if (clazz.equals(UserConverter.class)) {
+            return (CONV) userConverter;*/
         }
         return null;
     }

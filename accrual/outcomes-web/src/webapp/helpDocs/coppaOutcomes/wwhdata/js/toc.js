@@ -52,5 +52,11 @@ C=B.fN("Adding Lesion Assessment Records","48");
 C=B.fN("Updating Lesion Assessment Records","49");
 C=B.fN("Deleting Lesion Assessment Records","50");
 B=A.fN("Submitting Death Information","51");
-A=P.fN("Application Support","52");
+A=P.fN("Working With Treatment Site Records","52");
+B=A.fN("Looking Up Treatment Sites","53");
+B=A.fN("Adding Treatment Site Records","54");
+A=P.fN("Working With Physician Records","55");
+B=A.fN("Looking Up Registered Physicians","56");
+B=A.fN("Adding Physician Records","57");
+A=P.fN("Application Support","58");
 }

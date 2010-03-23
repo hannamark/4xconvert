@@ -85,7 +85,7 @@ import gov.nih.nci.accrual.outweb.dto.util.PathologyWebDto;
 import gov.nih.nci.accrual.outweb.enums.PathologyGradeSystems;
 import gov.nih.nci.accrual.outweb.enums.PathologyGrades;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -113,8 +113,6 @@ public class PathologyActionTest extends AbstractAccrualActionTest {
     @Override
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        assertEquals(ActionSupport.ERROR, action.execute());
     }
     
     @Test
@@ -127,17 +125,27 @@ public class PathologyActionTest extends AbstractAccrualActionTest {
         pathology.setGrade(CdConverter.convertToCd(PathologyGrades.G2));
         pathology.setDescription(StConverter.convertToSt("Pathology Description"));
         pathology.setGradeSystem(CdConverter.convertToCd(PathologyGradeSystems.GLEASON));
-        pathology.setId(new Ii());
+        pathology.setIdentifier(new Ii());
         action.setPathology(pathology);
+        setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, action.save());
     }
-
+    @Test
+    public void addMoreThanOneTest() throws Exception {
+        pathology.setGrade(CdConverter.convertToCd(PathologyGrades.G2));
+        pathology.setDescription(StConverter.convertToSt("Pathology Description"));
+        pathology.setGradeSystem(CdConverter.convertToCd(PathologyGradeSystems.GLEASON));
+        pathology.setIdentifier(new Ii());
+        action.setPathology(pathology);
+        setParticipantIi(PARTICIPANT1);
+        assertEquals(ActionSupport.INPUT, action.save());
+    }
     @Override
     public void editTest() throws Exception { 
         pathology.setGrade(CdConverter.convertToCd(PathologyGrades.FOUR));
         pathology.setDescription(StConverter.convertToSt("Pathology Description"));
         pathology.setGradeSystem(CdConverter.convertToCd(PathologyGradeSystems.BLOOM_RICHARDSON));
-        pathology.setId(IiConverter.convertToIi(MockPerformedActivityBean.PATHOLOGYID));
+        pathology.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PATHOLOGYID));
         action.setPathology(pathology);
         assertEquals(ActionSupport.SUCCESS, action.save()); 
         assertNotNull(action.getPathology());

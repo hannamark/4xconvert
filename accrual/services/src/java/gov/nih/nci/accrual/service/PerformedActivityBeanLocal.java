@@ -93,7 +93,7 @@ import gov.nih.nci.accrual.dto.PerformedProcedureDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedImaging;
 import gov.nih.nci.pa.domain.PerformedObservation;
@@ -130,8 +130,8 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({"unchecked", "PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PerformedActivityBeanLocal extends
-        AbstractBaseAccrualStudyBean<PerformedActivityDto, PerformedActivity, PerformedActivityConverter> implements
-        PerformedActivityService {
+            AbstractBaseAccrualStudyBean<PerformedActivityDto, PerformedActivity, PerformedActivityConverter>
+        implements PerformedActivityService, PerformedActivityServiceLocal {
 
     /**
      * {@inheritDoc}
@@ -166,7 +166,7 @@ public class PerformedActivityBeanLocal extends
         }
         ArrayList<PerformedActivityDto> resultList = new ArrayList<PerformedActivityDto>();
         for (PerformedActivity bo : queryList) {
-            resultList.add((new PerformedActivityConverter().convertFromDomainToDto(bo)));
+            resultList.add(new PerformedActivityConverter().convertFromDomainToDto(bo));
         }
         getLogger().info("Leaving getByStudySubject, returning " + resultList.size() + " object(s).  ");
         return resultList;
@@ -714,7 +714,7 @@ public class PerformedActivityBeanLocal extends
         ArrayList<PerformedObservationDto> resultList = new ArrayList<PerformedObservationDto>();
         for (PerformedObservation bo : queryList) {
             try {
-                resultList.add((Converters.get(PerformedObservationConverter.class).convertFromDomainToDto(bo)));
+                resultList.add(Converters.get(PerformedObservationConverter.class).convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
                 throw new RemoteException("Iso conversion exception in getPerformedObservationByStudySubject().", e);
             }
@@ -732,7 +732,7 @@ public class PerformedActivityBeanLocal extends
      */
     private void validateTumorBusinessRule(PerformedObservationDto dto) throws RemoteException {
       List<PerformedObservationDto> performedObservationList =
-           this.getPerformedObservationByStudySubject(dto.getStudySubjectIdentifier());
+           getPerformedObservationByStudySubject(dto.getStudySubjectIdentifier());
       for (PerformedObservationDto performedObservation : performedObservationList) {
        if (!PAUtil.isCdNull(performedObservation.getCategoryCode())
            && performedObservation.getCategoryCode().getCode().equals(ActivityCategoryCode.TUMOR_MARKER.getCode())

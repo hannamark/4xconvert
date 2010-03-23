@@ -80,9 +80,10 @@
 package gov.nih.nci.accrual.outweb.dto.util;
 
 import gov.nih.nci.accrual.outweb.enums.StagingMethods;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.outcomes.svc.dto.AbstractStagingDto;
+import gov.nih.nci.outcomes.svc.dto.StagingSvcDto;
 import gov.nih.nci.pa.enums.StagingSystemCode;
 
 import java.io.Serializable;
@@ -93,21 +94,14 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
 /**
  * The Class StagingWebDto.
- * 
+ *
  * @author Lisa Kelley
  * @since 10/28/2009
  */
-public class StagingWebDto implements Serializable {
+public class StagingWebDto extends AbstractStagingDto implements Serializable {
 
     private static final long serialVersionUID = 1820061539697238678L;
 
-    private Ii id;    
-    private Cd method;    
-    private St tt;    
-    private St nn;    
-    private St mm;   
-    private St stage;    
-    private Cd system;
 
     /**
      * Instantiates a new staging web dto.
@@ -115,122 +109,80 @@ public class StagingWebDto implements Serializable {
     public StagingWebDto() {
         // default constructor
     }
+    
+    /**
+     * Instantiates a new staging web dto.
+     * 
+     * @param svcDto the svc dto
+     */
+    public StagingWebDto(AbstractStagingDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setMethod(svcDto.getMethod());
+        setMm(svcDto.getMm());
+        setNn(svcDto.getNn());
+        setStage(svcDto.getStage());
+        setSystem(svcDto.getSystem());
+        setTt(svcDto.getTt());        
+    }
 
     /**
      * @return the method
      */
-    @FieldExpressionValidator(expression = "method.code != null && method.code.length() > 0", 
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Override
+    @FieldExpressionValidator(expression = "method.code != null && method.code.length() > 0",
                               message = "Please select a Staging Method")
     public Cd getMethod() {
-        return method;
+        return super.getMethod();
     }
-
-    /**
-     * @param method the method to set
-     */
-    public void setMethod(Cd method) {
-        this.method = method;
-    }
-
-    /**
-     * @return the tt
-     */
-    public St getTt() {
-        return tt;
-    }
-
-    /**
-     * @param tt the tt to set
-     */
-    public void setTt(St tt) {
-        this.tt = tt;
-    }
-
-    /**
-     * @return the nn
-     */
-    public St getNn() {
-        return nn;
-    }
-
-    /**
-     * @param nn the nn to set
-     */
-    public void setNn(St nn) {
-        this.nn = nn;
-    }
-
-    /**
-     * @return the mm
-     */
-    public St getMm() {
-        return mm;
-    }
-
-    /**
-     * @param mm the mm to set
-     */
-    public void setMm(St mm) {
-        this.mm = mm;
-    }
-
     /**
      * @return the stage
      */
-    @FieldExpressionValidator(expression = "stage.value != null && stage.value.length() > 0", 
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Override
+    @FieldExpressionValidator(expression = "stage.value != null && stage.value.length() > 0",
                               message = "Please enter a value for Stage")
     public St getStage() {
-        return stage;
+        return super.getStage();
     }
-
-    /**
-     * @param stage the stage to set
-     */
-    public void setStage(St stage) {
-        this.stage = stage;
-    }
-
     /**
      * @return the system
      */
-    @FieldExpressionValidator(expression = "system.code != null && system.code.length() > 0", 
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    @Override
+    @FieldExpressionValidator(expression = "system.code != null && system.code.length() > 0",
                               message = "Please select a Staging system")
     public Cd getSystem() {
-        return system;
+        return super.getSystem();
     }
-
-    /**
-     * @param system the system to set
-     */
-    public void setSystem(Cd system) {
-        this.system = system;
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
-    }
-    
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-    
     /**
      * @return the list of staging methods
      */
     public List<StagingMethods> getMethods() {
         return Arrays.asList(StagingMethods.values());
     }
-    
+
     /**
      * @return the list of staging systems
      */
     public List<StagingSystemCode> getSystems() {
         return Arrays.asList(StagingSystemCode.values());
+    }
+    
+    /**
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
+     */
+    public StagingSvcDto getSvcDto() {
+        StagingSvcDto svcDto = new StagingSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setMethod(getMethod());
+        svcDto.setMm(getMm());
+        svcDto.setNn(getNn());
+        svcDto.setStage(getStage());
+        svcDto.setSystem(getSystem());
+        svcDto.setTt(getTt());
+        return svcDto;
     }
 }

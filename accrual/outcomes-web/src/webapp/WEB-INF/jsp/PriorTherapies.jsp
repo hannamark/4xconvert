@@ -76,14 +76,8 @@
 <s:form name="detailForm">
 <s:hidden name="currentAction"/>
 <s:hidden name="delItem"/>
-<s:hidden name="priorTherapy.type"/>
-<s:hidden name="priorTherapy.id"/>
-<s:hidden name="newPrior.id"/>
-<s:hidden name="lookupItem"/>
-<s:hidden name="priors.id" id="priors.id"/>
-<s:hidden name="priors.idTotalRegimenNum" id="priors.idTotalRegimenNum"/>
-<s:hidden name="priors.idChemoRegimenNum" id="priors.idChemoRegimenNum"/>
-<s:hidden name="priors.idHasPrior" id="priors.idHasPrior"/>
+<s:hidden name="newPrior.identifier"/>
+<s:hidden name="priors.identifier" id="priors.identifier"/>
 <label><fmt:message key="priorTherapy.label.has"/></label> <s:checkbox name="priors.hasPrior" onclick="handleRefreshAction()"/>
 <table class="form">
 <tr><td scope="row" class="label"><label style="${roClass}"><fmt:message key="priorTherapy.label.total"/></label></td>
@@ -101,7 +95,7 @@
                     list="#priorTherapyTypeCodeValues"/>
                 </s:elseif>
              <s:else>
-			 <s:select id="type_%{#attr.row.id.extension}" name="type_%{#attr.row.id.extension}" headerKey="" headerValue="--Select--"
+			 <s:select id="type_%{#attr.row.identifier.extension}" name="type_%{#attr.row.identifier.extension}" headerKey="" headerValue="--Select--"
                     list="#priorTherapyTypeCodeValues" value="%{#attr.row.type.code}"/>
              </s:else>
         </display:column>
@@ -110,7 +104,7 @@
              </s:if>
              <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:textfield size="50" name="newPrior.description"/>
              </s:elseif>
-             <s:else><s:textfield size="50" name="desc_%{#attr.row.id.extension}" value="%{#attr.row.description}"/>
+             <s:else><s:textfield size="50" name="desc_%{#attr.row.identifier.extension}" value="%{#attr.row.description}"/>
              </s:else>
         </display:column>
        <display:column titleKey="priorTherapy.label.list.action"  
@@ -119,7 +113,7 @@
              </s:if>
              <s:elseif test="%{#attr.row_rowNum == priors.list.size()}"><s:a href="#" cssClass="btn" onclick="handleAddPriorAction()"><span class="btn_img"><span class="add">Add</span></span></s:a>
              </s:elseif>
-             <s:else><s:a href="#" cssClass="btn" onclick="handleDelPriorAction('%{#attr.row.id.extension}')"><span class="btn_img"><span class="delete">Delete</span></span></s:a></s:else>
+             <s:else><s:a href="#" cssClass="btn" onclick="handleDelPriorAction('%{#attr.row.identifier.extension}')"><span class="btn_img"><span class="delete">Delete</span></span></s:a></s:else>
         </display:column>
     </display:table>
 </td></tr>

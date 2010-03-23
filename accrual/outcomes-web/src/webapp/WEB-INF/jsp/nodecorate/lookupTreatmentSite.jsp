@@ -18,7 +18,7 @@
     }
     
     function populateTreatmentSiteField(id, name) {
-        window.top.document.getElementsByName("userAccount.treatmentSiteId")[0].value = id;
+        window.top.document.getElementsByName("userAccount.treatmentSiteIdentifier")[0].value = id;
         window.top.document.getElementsByName("userAccount.treatmentSite")[0].value = name.replace(/&apos;/g,"'");       
         window.top.hidePopWin(false); 
     }

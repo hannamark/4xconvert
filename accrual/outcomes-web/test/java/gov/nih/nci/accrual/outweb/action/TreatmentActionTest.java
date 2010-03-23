@@ -111,9 +111,6 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        action.execute();
-        assertNotNull(action.hasActionErrors());
     }
 
     @Override
@@ -158,9 +155,24 @@ public class TreatmentActionTest extends AbstractAccrualActionTest {
     public void editTest() throws Exception {
     	treatment.setName(StConverter.convertToSt("TP1 Edited"));
         treatment.setDescription(StConverter.convertToSt("TP1description"));
-        treatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
+        treatment.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
         action.setTreatment(treatment);
         assertEquals(ActionSupport.SUCCESS, action.edit());
         assertNotNull(action.getTreatment());
+    }
+    
+    @Test
+    public void addExceptionTest() throws Exception {
+        treatment.setDescription(StConverter.convertToSt("TP1description"));
+        action.setTreatment(treatment);
+        assertEquals(ActionSupport.INPUT, action.add());
+    }
+
+    @Test
+    public void editExceptionTest() throws Exception {
+        treatment.setDescription(StConverter.convertToSt("TP1description"));
+        treatment.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TPID));
+        action.setTreatment(treatment);
+        assertEquals(ActionSupport.INPUT, action.edit());
     }
 }

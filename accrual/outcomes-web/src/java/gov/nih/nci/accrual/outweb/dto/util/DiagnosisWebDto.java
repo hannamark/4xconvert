@@ -79,10 +79,13 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractDiagnosisDto;
+import gov.nih.nci.outcomes.svc.dto.DiagnosisSvcDto;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -95,60 +98,59 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-public class DiagnosisWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod" })
+public class DiagnosisWebDto extends AbstractDiagnosisDto implements Serializable {
 
     private static final long serialVersionUID = -2554496551018810110L;
-
-    private Ii identifier = new Ii();
-    private Cd resultCode = new Cd();
-    private St name = new St();
-    private Ts createDate = new Ts();
-
 
     /**
      * Instantiates a new diagnosis web dto.
      */
     public DiagnosisWebDto() {
-        // default constructor
+     // default constructor
     }
 
     /**
-     * @return the resultCode
+     * @param svcField service field
+     * @return field name in jsp
      */
-    public Cd getResultCode() {
-        return resultCode;
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("createDate".equals(result)) {
+            result = "createDate";
+        }
+        return "diagnosis." + result;
     }
 
     /**
-     * @param resultCode the resultCode to set
+     * Instantiates a new diagnosis web dto.
+     *
+     * @param svcDto the svc dto
      */
-    public void setResultCode(Cd resultCode) {
-        this.resultCode = resultCode;
+    public DiagnosisWebDto(DiagnosisSvcDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setName(svcDto.getName());
+        setCreateDate(svcDto.getCreateDate());
+        setResultCode(svcDto.getResultCode());
     }
 
     /**
      * @return the name
      */
+    @Override
     @FieldExpressionValidator(expression = "name.value != null && name.value.length() > 0",
             message = "Please provide a Diagnosis")
     public St getName() {
-        return name;
+        return super.getName();
     }
 
     /**
-     * @param name the name to set
-     */
-    public void setName(St name) {
-        this.name = name;
-    }
-    
-    /**
      * Validate the date is current or past.
-     * 
+     *
      * @return true when valid
      */
     public boolean validateDate() {
-        Date value = createDate.getValue(); 
+        Date value = getCreateDate().getValue();
         if (value != null && value.getTime() <= System.currentTimeMillis()) {
             return true;
         }
@@ -158,30 +160,37 @@ public class DiagnosisWebDto implements Serializable {
     /**
      * @return the createDate
      */
+    @Override
     @FieldExpressionValidator(expression = "validateDate()",
             message = "Please provide a valid Diagnosis Date. Post-dates are not permitted.")
     public Ts getCreateDate() {
-        return createDate;
+        return super.getCreateDate();
     }
 
     /**
-     * @param createDate the createDate to set
+     * Gets the svc dto.
+     *
+     * @return the svc dto
      */
-    public void setCreateDate(Ts createDate) {
-        this.createDate = createDate;
+    public DiagnosisSvcDto getSvcDto() {
+        DiagnosisSvcDto svcDto = new DiagnosisSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setName(getName());
+        svcDto.setCreateDate(getCreateDate());
+        svcDto.setResultCode(CdConverter.convertStringToCd(StConverter.convertToString(getName())));
+        return svcDto;
     }
 
     /**
-     * @param id the id to set
+     * Validate.
+     *
+     * @param dto the dto
+     * @param action the action
      */
-    public void setIdentifier(Ii id) {
-        identifier = id;
+    public static void validate(DiagnosisWebDto dto, AbstractAccrualAction action) {
+        if (dto == null) {
+            action.addActionError("some error");
+        }
     }
 
-    /**
-     * @return the id
-     */
-    public Ii getIdentifier() {
-        return identifier;
-    }
 }

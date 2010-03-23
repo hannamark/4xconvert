@@ -79,18 +79,10 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.accrual.dto.PerformedProcedureDto;
-import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
-import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.iso.dto.InterventionDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractSurgeryDto;
+import gov.nih.nci.outcomes.svc.dto.SurgerySvcDto;
 
 import java.io.Serializable;
 
@@ -102,88 +94,53 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-public class SurgeryWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod" })
+public class SurgeryWebDto extends AbstractSurgeryDto implements Serializable {
 
     private static final long serialVersionUID = -1169014776715899917L;
-    
-    private Ii id;
     private St name;
-    private Ts createDate;
-    private St info;
-    private Ii interventionId;
-
+    
     /**
      * Instantiates a new surgery web dto.
      */
     public SurgeryWebDto() {
         // default constructor
-    }
+    } 
     
-    /**
-     * Validate.
-     * 
-     * @param dto the dto
-     * @param action the action
-     */
-    public static void validate(SurgeryWebDto dto, AbstractAccrualAction action) {  
-        if (dto.getCreateDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getCreateDate().getValue());
-            if (!validDate) {
-                action.addFieldError("surgery.createDate", "Please Enter Current or Past Date.");
-            }
-        }
-    }
-    
-   
     /**
      * Instantiates a new surgery web dto.
      * 
-     * @param pp the pp
-     * @param dto the dto
+     * @param svcDto the svc dto
      */
-    public SurgeryWebDto(PerformedProcedureDto pp, InterventionDTO dto) {
-        id = pp.getIdentifier();
-        name = dto.getName();
-        interventionId = dto.getIdentifier();
-        createDate = pp.getActualDateRange().getLow();
-        info = pp.getTextDescription();
-    }
-
+    public SurgeryWebDto(SurgerySvcDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setCreateDate(svcDto.getCreateDate());
+        setInfo(svcDto.getInfo());
+        setInterventionId(svcDto.getInterventionId());
+    }  
+    
     /**
-     * Gets the performed activity dto.
-     * @return the performed activity dto
+     * @param svcField service field
+     * @return field name in jsp
      */
-    public PerformedProcedureDto getPerformedProcedureDto() {
-        PerformedProcedureDto ppDto = new PerformedProcedureDto();
-        ppDto.setIdentifier(getId());        
-        if (ppDto.getActualDateRange() == null) {
-            ppDto.setActualDateRange(new Ivl<Ts>());
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("name".equals(result)) {
+            result = "name";
         }
-        ppDto.getActualDateRange().setLow(getCreateDate());
-        ppDto.setInterventionIdentifier(getInterventionId());
-        ppDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.SURGERY));
-        ppDto.setTextDescription(getInfo());
-        ppDto.setStudyProtocolIdentifier(
-                (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
-        ppDto.setStudySubjectIdentifier(
-                (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
-        return ppDto;
+        if ("createDate".equals(result)) {
+            result = "createDate";
+        }
+        return "surgery." + result;
     }
     
     /**
-     * @return the id
+     * @param name the name to set
      */
-    public Ii getId() {
-        return id;
+    public void setName(St name) {
+        this.name = name;
     }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-
+    
     /**
      * @return the name
      */
@@ -194,55 +151,26 @@ public class SurgeryWebDto implements Serializable {
     }
 
     /**
-     * @param name the name to set
-     */
-    public void setName(St name) {
-        this.name = name;
-    }
-
-    /**
      * @return the createDate
      */
+    @Override
     @FieldExpressionValidator(expression = "createDate.value != null",
             message = "Please provide a Surgery Date")
     public Ts getCreateDate() {
-        return createDate;
+        return super.getCreateDate();
     }
-
+    
     /**
-     * @param createDate the createDate to set
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setCreateDate(Ts createDate) {
-        this.createDate = createDate;
-    }
-
-    /**
-     * @return the info
-     */
-    public St getInfo() {
-        return info;
-    }
-
-    /**
-     * @param info the info to set
-     */
-    public void setInfo(St info) {
-        this.info = info;
-    }
-
-    /**
-     * Gets the intervention id.
-     * @return the intervention id
-     */
-    public Ii getInterventionId() {
-        return interventionId;
-    }
-
-    /**
-     * Sets the intervention id.
-     * @param interventionId the new intervention id
-     */
-    public void setInterventionId(Ii interventionId) {
-        this.interventionId = interventionId;
+    public SurgerySvcDto getSvcDto() {
+        SurgerySvcDto svcDto = new SurgerySvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setCreateDate(getCreateDate());
+        svcDto.setInfo(getInfo());
+        svcDto.setInterventionId(getInterventionId());
+        return svcDto;
     }
 }

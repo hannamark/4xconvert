@@ -91,11 +91,12 @@ import gov.nih.nci.accrual.outweb.enums.PathologyGradeSystems;
 import gov.nih.nci.accrual.outweb.enums.PathologyGrades;
 import gov.nih.nci.accrual.outweb.enums.ResponseInds;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.accrual.service.PerformedObservationResultServiceLocal;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
 import gov.nih.nci.pa.enums.DiseaseStatusCode;
@@ -110,6 +111,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -124,7 +126,7 @@ import java.util.zip.DataFormatException;
  * @author Kalpana Guthikonda
  * @since Nov 11, 2009
  */
-public class MockPerformedObservationResultBean implements PerformedObservationResultService {
+public class MockPerformedObservationResultBean implements PerformedObservationResultService, PerformedObservationResultServiceLocal {
 
     private static HashMap<String, PerformedDiagnosisDto> hmPd = new HashMap<String, PerformedDiagnosisDto>();
     private static List<PdPa> listPa = new ArrayList<PdPa>();
@@ -142,7 +144,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setResultCode(CdConverter.convertToCd(DeathCause.NEW_PRIMARY));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DEATH_INFORMATIONID));
@@ -153,7 +155,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.getResultDateRange().setLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
@@ -161,47 +163,47 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setResultCode(CdConverter.convertToCd(AutopsyPerformed.YES));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.AUTOPSY_INFORMATIONID));
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY));
         dto.setResultCode(CdConverter.convertToCd(AutopsyDeathCause.INFECTION));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        porList.add(dto);     
-        
+        porList.add(dto);
+
         Pq pq = new Pq();
         pq.setValue(new BigDecimal("2"));
-        pq.setUnit("Years");     
-        
+        pq.setUnit("Years");
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.HEIGHTID));
         dto.setResultQuantity(pq);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.WEIGHTID));
         dto.setResultQuantity(pq);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.BSAID));
         dto.setResultQuantity(pq);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.TUMORMARKERID));
         dto.setResultQuantity(pq);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESID));
@@ -209,7 +211,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.VITAL_STATUS));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESID));
@@ -217,7 +219,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.EVALUABLE_FOR_RESPONSE));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESID));
@@ -228,28 +230,28 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.DISEASE_RECURRENCE_INDICATOR));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASESTATUSID));
         dto.setResultCode(CdConverter.convertToCd(DiseaseStatusCode.DISEASE_PROGRESSION));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASEPROGRESSIONID));
         dto.setResultCode(CdConverter.convertToCd(AutopsyPerformed.UNKNOWN));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESBESTRESPONSEID));
         dto.setResultCode(CdConverter.convertToCd(ResponseInds.YES));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
-        
+
         dto = new PerformedObservationResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PARTICIPANTOUTCOMESDISEASEEVIDENCEID));
@@ -257,7 +259,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         porList.add(dto);
     }
-    
+
     private List<PerformedLesionDescriptionDto> pldList;
     {
         pldList = new ArrayList<PerformedLesionDescriptionDto>();
@@ -277,7 +279,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         pldList.add(dto);
     }
-    
+
     private List<PerformedHistopathologyDto> phpList;
     {
         phpList = new ArrayList<PerformedHistopathologyDto>();
@@ -291,7 +293,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         phpList.add(dto);
     }
-    
+
     private List<PerformedImageDto> piList;
     {
         piList = new ArrayList<PerformedImageDto>();
@@ -317,7 +319,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
         pcrList.add(dto);
-        
+
         dto = new PerformedClinicalResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
@@ -326,7 +328,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
         pcrList.add(dto);
-        
+
         dto = new PerformedClinicalResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
@@ -335,7 +337,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
         pcrList.add(dto);
-        
+
         dto = new PerformedClinicalResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.STAGINGID));
@@ -343,9 +345,9 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setResultText(StConverter.convertToSt("STAGE"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStageCodingSystem(CdConverter.convertToCd(StagingSystemCode.AJCC));
-        pcrList.add(dto);        
+        pcrList.add(dto);
     }
-    
+
     private List<PerformedMedicalHistoryResultDto> pmhr;
     {
         pmhr = new ArrayList<PerformedMedicalHistoryResultDto>();
@@ -355,8 +357,8 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.HAD_PRIOR_THERAPIES));
         dto.setResultIndicator(BlConverter.convertToBl(true));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        pmhr.add(dto); 
-        
+        pmhr.add(dto);
+
         dto = new PerformedMedicalHistoryResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PRIORTHERAPIESID));
@@ -364,8 +366,8 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setResultCode(CdConverter.convertToCd(PriorTherapyTypeCode.CHEMOTHERAPY_MULTIPLE_AGENTS_SYSTEMIC));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         pmhr.add(dto);
-        
-        dto = new PerformedMedicalHistoryResultDto();        
+
+        dto = new PerformedMedicalHistoryResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PRIORTHERAPIESID));
         dto.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.NUMBER_OF_PRIOR_THERAPIES));
@@ -374,8 +376,8 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         resultQuantity.setValue(new BigDecimal("1"));
         dto.setResultQuantity(resultQuantity);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
-        pmhr.add(dto); 
-        
+        pmhr.add(dto);
+
         dto = new PerformedMedicalHistoryResultDto();
         dto.setIdentifier(IiConverter.convertToIi(getKey()));
         dto.setPerformedObservationIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.PRIORTHERAPIESID));
@@ -383,9 +385,9 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         dto.setResultQuantity(resultQuantity);
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         pmhr.add(dto);
-        
+
     }
-    
+
     private class PdPa {
         public String pa;
         public PerformedDiagnosisDto dto;
@@ -403,7 +405,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
             this.dto = dto;
         }
     }
-    
+
     {
         if (hmPd.size() > 0) {
             hmPd = new HashMap<String, PerformedDiagnosisDto>();
@@ -423,7 +425,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         pd.setIdentifier(IiConverter.convertToIi(id));
         hmPd.put(id, pd);
         listPa.add(new PdPa(paId.getExtension(), pd));
-        
+
         PerformedClinicalResultDto cr = new PerformedClinicalResultDto();
         cr.setResultCode(CdConverter.convertStringToCd("50"));
         paId = MockPerformedActivityBean.getPerformanceStatusPo().getIdentifier();
@@ -433,15 +435,15 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         hmCr.put(id, cr);
         listCr.add(new CrPa(paId.getExtension(), cr));
     }
-    
+
     private synchronized String getKey() {
         return String.valueOf(++key);
     }
-    
+
     public PerformedClinicalResultDto createPerformedClinicalResult(
             PerformedClinicalResultDto dto) throws RemoteException,
             DataFormatException {
-        PerformedClinicalResultDto cr = (dto == null) ? new PerformedClinicalResultDto() : dto;
+        PerformedClinicalResultDto cr = dto == null ? new PerformedClinicalResultDto() : dto;
         String id = getKey();
         cr.setIdentifier(IiConverter.convertToIi(id));
         hmCr.put(id, cr);
@@ -452,7 +454,7 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
     public PerformedDiagnosisDto createPerformedDiagnosis(
             PerformedDiagnosisDto dto) throws RemoteException,
             DataFormatException {
-        PerformedDiagnosisDto pdd = (dto == null) ? new PerformedDiagnosisDto() : dto;
+        PerformedDiagnosisDto pdd = dto == null ? new PerformedDiagnosisDto() : dto;
         String id = getKey();
         pdd.setIdentifier(IiConverter.convertToIi(id));
         hmPd.put(id, pdd);
@@ -485,18 +487,18 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public PerformedClinicalResultDto getPerformedClinicalResult(Ii ii)
             throws RemoteException {
-        if (ii == null) {
-            throw new RemoteException("NULL argument getPerformedClinicalResult");
+        if (PAUtil.isIiNull(ii)) {
+            return null;
         }
         PerformedClinicalResultDto dto = hmCr.get(ii.getExtension());
-        return (dto == null) ? new PerformedClinicalResultDto() : dto;
+        return dto == null ? new PerformedClinicalResultDto() : dto;
     }
 
     public List<PerformedClinicalResultDto> getPerformedClinicalResultByPerformedActivity(
             Ii ii) throws RemoteException {
         ArrayList<PerformedClinicalResultDto> list = new ArrayList<PerformedClinicalResultDto>();
-        if (ii == null) {
-            throw new RemoteException("NULL argument getPerformedClinicalResultByPerformedActivity");
+        if (PAUtil.isIiNull(ii)) {
+            return null;
         }
         for (CrPa item : listCr) {
             if (item.pa.equals(ii.getExtension())) {
@@ -513,18 +515,18 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public PerformedDiagnosisDto getPerformedDiagnosis(Ii ii)
             throws RemoteException {
-        if (ii == null) {
-            throw new RemoteException("NULL argument getPerformedDiagnosis");
+        if (PAUtil.isIiNull(ii)) {
+            return null;
         }
         PerformedDiagnosisDto dto = hmPd.get(ii.getExtension());
-        return (dto == null) ? new PerformedDiagnosisDto() : dto;
+        return dto == null ? new PerformedDiagnosisDto() : dto;
     }
 
     public List<PerformedDiagnosisDto> getPerformedDiagnosisByPerformedActivity(
             Ii ii) throws RemoteException {
         ArrayList<PerformedDiagnosisDto> list = new ArrayList<PerformedDiagnosisDto>();
-        if (ii == null) {
-            throw new RemoteException("NULL argument getPerformedDiagnosisByPerformedActivity");
+        if (PAUtil.isIiNull(ii)) {
+            return null;
         }
         for (PdPa item : listPa) {
             if (item.pa.equals(ii.getExtension())) {
@@ -536,6 +538,9 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public PerformedHistopathologyDto getPerformedHistopathology(Ii ii)
             throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            return null;
+        }
         PerformedHistopathologyDto result = null;
         for (PerformedHistopathologyDto dto : phpList) {
             if (ii.getExtension().equals(dto.getIdentifier().getExtension())) {
@@ -547,25 +552,40 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public List<PerformedHistopathologyDto> getPerformedHistopathologyByPerformedActivity(
             Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            return null;
+        }
         return phpList;
     }
 
     public PerformedImageDto getPerformedImage(Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            return null;
+        }
         return new PerformedImageDto();
     }
 
     public List<PerformedImageDto> getPerformedImageByPerformedActivity(Ii ii)
             throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            return null;
+        }
         return piList;
     }
 
     public PerformedLesionDescriptionDto getPerformedLesionDescription(Ii ii)
             throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            return null;
+        }
         return new PerformedLesionDescriptionDto();
     }
 
     public List<PerformedLesionDescriptionDto> getPerformedLesionDescriptionByPerformedActivity(
             Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            return null;
+        }
         return pldList;
     }
 
@@ -576,6 +596,9 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
 
     public List<PerformedMedicalHistoryResultDto> getPerformedMedicalHistoryResultByPerformedActivity(
             Ii ii) throws RemoteException {
+        if (PAUtil.isIiNull(ii)) {
+            return null;
+        }
         return pmhr;
     }
 
@@ -641,5 +664,5 @@ public class MockPerformedObservationResultBean implements PerformedObservationR
         }
         return result;
     }
-    
+
 }

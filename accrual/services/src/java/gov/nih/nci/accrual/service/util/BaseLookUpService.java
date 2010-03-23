@@ -126,4 +126,17 @@ public interface BaseLookUpService {
       * @throws RemoteException the remote exception
       */
      <BO extends AbstractLookUpEntity>List<BO> search(BO bo) throws RemoteException;
+     
+     /**
+      * Validate look up.
+      * 
+      * @param value the value
+      * @param tableName the table name
+      * @param column the column
+      * 
+      * @return true, if successful
+      * 
+      * @throws RemoteException the remote exception
+      */
+     boolean validateLookUp(String value, String tableName, String column) throws RemoteException;
 }

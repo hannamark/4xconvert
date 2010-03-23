@@ -78,7 +78,7 @@
 <s:form name="detailForm">
 <s:hidden name = "currentAction"/>
 <s:hidden name = "selectedRowIdentifier"/>
-<s:hidden name = "radiation.id"/>
+<s:hidden name = "radiation.identifier"/>
 <table class="form"> 
  	<tr>
         <td scope="row" class="label"><label><fmt:message key="radiation.name"/>:<span class="required">*</span></label></td>

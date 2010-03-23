@@ -78,11 +78,12 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.outweb.dto.util.TreatmentWebDto;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -106,21 +107,21 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
      */
     @Override
     public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<TreatmentWebDto>());
+        List<TreatmentWebDto> treatmentList = new ArrayList<TreatmentWebDto>();
         try {
-            List<PerformedActivityDto> paList = performedActivitySvc.getByStudySubject(
-                                                          getParticipantIi());
-            for (PerformedActivityDto pa : paList) {
-                if (!PAUtil.isCdNull(pa.getCategoryCode())
-                        && pa.getCategoryCode().getCode().equals(ActivityCategoryCode.TREATMENT_PLAN.getCode())) {
-                    getDisplayTagList().add(new TreatmentWebDto(pa));
-                }
+            PatientSvcDto svcDto = getPatientSvcDto();
+            svcDto.setTreatmentRegimens(new ArrayList<TreatmentRegimenSvcDto>());
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            List<TreatmentRegimenSvcDto> trList = pSvcList.get(0).getTreatmentRegimens();
+            for (TreatmentRegimenSvcDto dto : trList) {
+                treatmentList.add(new TreatmentWebDto(dto));
             }
+            setDisplayTagList(treatmentList);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -135,22 +136,30 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
      */
     @Override
     public String add() {
-        if (hasActionErrors() || hasFieldErrors()) {
+        PatientSvcDto result;
+        PatientSvcDto svcDto = getPatientSvcDto();
+        List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+        TreatmentRegimenSvcDto dto = treatment.getSvcDto();
+        dto.setAction(SvcConstants.CREATE);
+        trList.add(dto);
+        svcDto.setTreatmentRegimens(trList);
+        try {
+            result = outcomesSvc.write(svcDto);
+            SessionEnvManager.putTreatmentPlanInSession(result.getTreatmentRegimens().get(0).getIdentifier()
+                    , result.getTreatmentRegimens().get(0).getName());
+
+            return super.add();
+        } catch (OutcomesFieldException e) {
+            addFieldError(TreatmentWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
-        }
-        PerformedActivityDto dto = treatment.getPerformedActivityDto(); 
-        try {
-            dto = performedActivitySvc.create(dto);
-            SessionEnvManager.putTreatmentPlanInSession(dto.getIdentifier(), dto.getName());
-            return super.add();
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -160,7 +169,7 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
         try {
             loadDisplayList();
             for (TreatmentWebDto tm : getDisplayTagList()) {
-                if (tm.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                if (tm.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
                     treatment = tm;
                 }
             }
@@ -172,10 +181,10 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
             addActionError("Error retrieving treatment info for update.");
             return execute();
         }
-        SessionEnvManager.putTreatmentPlanInSession(treatment.getId(), treatment.getName());
+        SessionEnvManager.putTreatmentPlanInSession(treatment.getIdentifier(), treatment.getName());
         return super.update();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -185,7 +194,7 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
         try {
             loadDisplayList();
             for (TreatmentWebDto tm : getDisplayTagList()) {
-                if (tm.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                if (tm.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
                     treatment = tm;
                 }
             }
@@ -197,7 +206,7 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
             addActionError("Error retrieving treatment info for retrieve.");
             return execute();
         }
-        SessionEnvManager.putTreatmentPlanInSession(treatment.getId(), treatment.getName());
+        SessionEnvManager.putTreatmentPlanInSession(treatment.getIdentifier(), treatment.getName());
         SessionEnvManager.clearCourse();
         return execute();
     }
@@ -207,19 +216,26 @@ public class TreatmentAction extends AbstractListEditAccrualAction<TreatmentWebD
      */
     @Override
     public String edit() throws RemoteException {
-        if (hasActionErrors() || hasFieldErrors()) {
+        PatientSvcDto result;
+        PatientSvcDto svcDto = getPatientSvcDto();
+        List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+        TreatmentRegimenSvcDto dto = treatment.getSvcDto();
+        dto.setAction(SvcConstants.UPDATE);
+        trList.add(dto);
+        svcDto.setTreatmentRegimens(trList);
+        try {
+            result = outcomesSvc.write(svcDto);
+            SessionEnvManager.putTreatmentPlanInSession(result.getTreatmentRegimens().get(0).getIdentifier()
+                    , result.getTreatmentRegimens().get(0).getName());
+        } catch (OutcomesFieldException e) {
+            addFieldError(TreatmentWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_UPDATE);
             return INPUT;
-        }
-        PerformedActivityDto dto = treatment.getPerformedActivityDto(); 
-        try {
-            dto = performedActivitySvc.update(dto);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_UPDATE);
             return INPUT;
         }
-        SessionEnvManager.putTreatmentPlanInSession(dto.getIdentifier(), dto.getName());
         return super.edit();
     }
 

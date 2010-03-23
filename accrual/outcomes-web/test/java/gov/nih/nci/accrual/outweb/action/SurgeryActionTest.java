@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.outweb.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.SurgeryWebDto;
+import gov.nih.nci.accrual.outweb.util.MockPaInterventionBean;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -109,20 +110,13 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
         action.prepare();
         surgery = new SurgeryWebDto();
         setParticipantIi(PARTICIPANT1);
+        setTpIi(MockPerformedActivityBean.TPID);
         setCourseIi(MockPerformedActivityBean.COURSEID);
     }
 
     @Override
     @Test
     public void executeTest() {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-    }
-    
-    @Test
-    public void executeExceptionTest() {
-        setParticipantIi(PARTICIPANT2);
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
@@ -156,6 +150,7 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
     @Test
     public void addTest() throws Exception {
         surgery.setName(StConverter.convertToSt("Surgery1"));
+        surgery.setInterventionId(MockPaInterventionBean.list.get(0).getIdentifier());
         surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         action.setSurgery(surgery);
         assertEquals(ActionSupport.SUCCESS, action.add());
@@ -175,8 +170,9 @@ public class SurgeryActionTest extends AbstractAccrualActionTest {
     @Test
     public void editTest() throws Exception {        
         surgery.setName(StConverter.convertToSt("Surgery1 Edited"));
+        surgery.setInterventionId(MockPaInterventionBean.list.get(0).getIdentifier());
         surgery.setCreateDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        surgery.setId(IiConverter.convertToIi(MockPerformedActivityBean.SURGERYID));
+        surgery.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.SURGERYID));
         action.setSurgery(surgery);
         assertEquals(ActionSupport.SUCCESS, action.edit());
         assertNotNull(action.getSurgery());

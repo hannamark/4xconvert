@@ -79,11 +79,13 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
+import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.outweb.enums.PathologyGradeSystems;
 import gov.nih.nci.accrual.outweb.enums.PathologyGrades;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.outcomes.svc.dto.AbstractPathologyDto;
+import gov.nih.nci.outcomes.svc.dto.PathologySvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -97,14 +99,10 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-public class PathologyWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod" })
+public class PathologyWebDto extends AbstractPathologyDto implements Serializable {
     
     private static final long serialVersionUID = -2586539583138557774L;
-
-    private Ii id = new Ii();
-    private Cd grade = new Cd();
-    private Cd gradeSystem = new Cd();
-    private St description = new St();
 
     /**
      * Instantiates a new pathology web dto.
@@ -112,51 +110,37 @@ public class PathologyWebDto implements Serializable {
     public PathologyWebDto() {
         // default constructor
     }
+    
+    /**
+     * Instantiates a new pathology web dto.
+     * 
+     * @param svcDto the svc dto
+     */
+    public PathologyWebDto(AbstractPathologyDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setGrade(svcDto.getGrade());
+        setGradeSystem(svcDto.getGradeSystem());
+        setDescription(svcDto.getDescription());        
+    }
 
     /**
      * @return the grade
      */
+    @Override
     @FieldExpressionValidator(expression = "grade.code != null && grade.code.length() > 0",
             message = "Please select a Pathology Grade")
     public Cd getGrade() {
-        return grade;
-    }
-
-    /**
-     * @param grade the grade to set
-     */
-    public void setGrade(Cd grade) {
-        this.grade = grade;
+        return super.getGrade();
     }
 
     /**
      * @return the gradeSystem
      */
+    @Override
     @FieldExpressionValidator(expression = "gradeSystem.code != null && gradeSystem.code.length() > 0",
             message = "Please select a Pathology Grade System")
     public Cd getGradeSystem() {
-        return gradeSystem;
-    }
-
-    /**
-     * @param gradeSystem the gradeSystem to set
-     */
-    public void setGradeSystem(Cd gradeSystem) {
-        this.gradeSystem = gradeSystem;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
+        return super.getGradeSystem();
     }
 
     /**
@@ -174,18 +158,29 @@ public class PathologyWebDto implements Serializable {
     public List<PathologyGradeSystems> getGradeSystems() {
         return Arrays.asList(PathologyGradeSystems.values());
     }
-
+    
     /**
-     * @param description the description to set
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setDescription(St description) {
-        this.description = description;
+    public PathologySvcDto getSvcDto() {
+        PathologySvcDto svcDto = new PathologySvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setGrade(getGrade());
+        svcDto.setGradeSystem(getGradeSystem());
+        svcDto.setDescription(getDescription());
+        return svcDto;
     }
-
     /**
-     * @return the description
+     * 
+     * @param action action
      */
-    public St getDescription() {
-        return description;
+    public void validate(AbstractAccrualAction action) {
+        try {
+            super.validate();
+        } catch (OutcomesException e) {
+            action.addActionError(e.getLocalizedMessage());
+        }
     }
 }

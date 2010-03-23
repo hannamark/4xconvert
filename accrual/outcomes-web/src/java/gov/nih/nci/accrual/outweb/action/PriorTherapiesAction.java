@@ -79,26 +79,24 @@
 
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.outweb.dto.util.PriorTherapiesItemWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.PriorTherapiesWebDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
-import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.outcomes.svc.dto.AbstractPriorTherapiesItemDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.PriorTherapySvcDto;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.PqConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -149,16 +147,13 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
         }
         newPrior = new PriorTherapiesItemWebDto();
         temp.add(newPrior);
-        if (db.getIdHasPrior() != null && db.getIdHasPrior().getExtension() != null) {
-            priors.setHasPrior(db.getHasPrior());
-        } 
-        priors.setId(db.getId());
-        priors.setIdTotalRegimenNum(db.getIdTotalRegimenNum());
-        priors.setIdHasPrior(db.getIdHasPrior());
-        priors.setIdChemoRegimenNum(db.getIdChemoRegimenNum());
-        priors.setList(temp);
+        if (!priors.getHasPrior()) {
+                priors.setHasPrior(db.getHasPrior());
+        }
+        priors.setIdentifier(db.getIdentifier());
         priors.setChemoRegimenNum(db.getChemoRegimenNum());
         priors.setTotalRegimenNum(db.getTotalRegimenNum());
+        priors.setList(temp);
         delItem = null;
         
     }
@@ -170,9 +165,12 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
      */
     private void resetData() {
       if ("reset".equals(getCurrentAction())) {
-            if (priors.getId() != null && priors.getId().getExtension() != null) {
+            if (priors.getIdentifier() != null && priors.getIdentifier().getExtension() != null) {
                 try {
-                    performedActivitySvc.delete(priors.getId());
+                    PatientSvcDto svcDto = getPatientSvcDto();
+                    svcDto.setPriorTherapy(new PriorTherapySvcDto());
+                    svcDto.getPriorTherapy().setAction(SvcConstants.DELETE);
+                    outcomesSvc.write(svcDto);
                 } catch (Exception e) {
                     addActionError(e.getMessage());
                 }
@@ -208,51 +206,19 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
             priors.setList(tempList);
             return SUCCESS;
         }
+        priors.setList(sessionListOfPriorTherapies);
+        calcTotals();
+        PatientSvcDto svcDto = getPatientSvcDto();
+        svcDto.setPriorTherapy(priors.getSvcDto());
+        if (PAUtil.isIiNotNull(priors.getIdentifier())) {
+            svcDto.getPriorTherapy().setAction(SvcConstants.UPDATE);
+        } else {
+            svcDto.getPriorTherapy().setAction(SvcConstants.CREATE); 
+        }
         try {
-            PerformedObservationDto dto = new PerformedObservationDto();
-            dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PRIOR_THERAPIES));
-            dto.setStudyProtocolIdentifier(getSpIi());
-            dto.setStudySubjectIdentifier(getParticipantIi());
-            PerformedObservationDto dbPerformedObservationDTO;
-            if (priors.getId() != null && priors.getId().getExtension() != null) {
-                dto.setIdentifier(priors.getId());
-                dbPerformedObservationDTO = performedActivitySvc.updatePerformedObservation(dto);
-            } else {
-                dbPerformedObservationDTO = performedActivitySvc.createPerformedObservation(dto);
-            }
-            createOrUpdateHasPrior(priors, dbPerformedObservationDTO.getIdentifier());
-            //this is update/create or delete for List
-            deletesPriorTherapyType();
-            createOrUpdatePriorTherapyType(sessionListOfPriorTherapies, dbPerformedObservationDTO.getIdentifier());
-            calcTotals(getData());
-            PerformedMedicalHistoryResultDto perMedicalHistoryDTO = new PerformedMedicalHistoryResultDto();
-            perMedicalHistoryDTO.setPerformedObservationIdentifier(dbPerformedObservationDTO.getIdentifier());
-            perMedicalHistoryDTO.setStudyProtocolIdentifier(getSpIi());
-            perMedicalHistoryDTO.setTypeCode(CdConverter.convertToCd(
-                    PerformedObservationResultTypeCode.NUMBER_OF_PRIOR_THERAPIES));
-            perMedicalHistoryDTO.setResultQuantity(priors.getTotalRegimenNum());
-            if (priors.getIdTotalRegimenNum() != null &&  priors.getIdTotalRegimenNum().getExtension() != null) {
-                perMedicalHistoryDTO.setIdentifier(priors.getIdTotalRegimenNum());
-                performedObservationResultSvc.updatePerformedMedicalHistoryResult(perMedicalHistoryDTO);
-            } else {
-                performedObservationResultSvc.createPerformedMedicalHistoryResult(perMedicalHistoryDTO);
-            }
-            perMedicalHistoryDTO = new PerformedMedicalHistoryResultDto();
-            perMedicalHistoryDTO.setPerformedObservationIdentifier(dbPerformedObservationDTO.getIdentifier());
-            perMedicalHistoryDTO.setStudyProtocolIdentifier(getSpIi());
-            perMedicalHistoryDTO.setTypeCode(CdConverter.convertToCd(
-                    PerformedObservationResultTypeCode.NUMBER_OF_PRIOR_CHEMOTHERAPY_REGIMENS));
-            perMedicalHistoryDTO.setResultQuantity(priors.getChemoRegimenNum());
-            if (priors.getIdChemoRegimenNum() != null &&  priors.getIdChemoRegimenNum().getExtension() != null) {
-                perMedicalHistoryDTO.setIdentifier(priors.getIdChemoRegimenNum());
-                performedObservationResultSvc.updatePerformedMedicalHistoryResult(perMedicalHistoryDTO);
-            } else {
-                performedObservationResultSvc.createPerformedMedicalHistoryResult(perMedicalHistoryDTO);
-            }
-        } catch (RemoteException e) {
-            addActionError(e.getMessage());
-        } catch (DataFormatException e) {
-            addActionError(e.getMessage());
+            outcomesSvc.write(svcDto);
+        } catch (Exception re) {
+            addActionError("Error saving the Prior Therapies." + re.getLocalizedMessage());
         }
         ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                 AccrualConstants.SAVE_MESSAGE);
@@ -271,8 +237,21 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
                 sessionListOfPriorTherapies = new ArrayList<PriorTherapiesItemWebDto>();
             } 
             PriorTherapiesItemWebDto webDto;
+            if (!sessionListOfPriorTherapies.isEmpty()) {
+                for (Iterator<PriorTherapiesItemWebDto> iter = sessionListOfPriorTherapies.iterator(); 
+                            iter.hasNext();) {
+                    PriorTherapiesItemWebDto tempDto = iter.next();
+                    if (tempDto.getType() == null || tempDto.getType().getCode() == null 
+                            || tempDto.getDescription() == null 
+                            || tempDto.getDescription().getValue() == null
+                            || "".equals(tempDto.getType().getCode()) 
+                            || "".equals(tempDto.getDescription().getValue())) {
+                        iter.remove();
+                    }    
+                }
+            }
             List<PriorTherapiesItemWebDto>  tempList = new ArrayList<PriorTherapiesItemWebDto>();
-            tempList.addAll(sessionListOfPriorTherapies);
+            tempList.addAll(sessionListOfPriorTherapies); 
             if (!hasErrors() && newPrior.getType() != null && newPrior.getType().getCode() != null 
                     && !"".equals(newPrior.getType().getCode()) && newPrior.getDescription() != null 
                     && newPrior.getDescription().getValue() != null 
@@ -291,98 +270,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
         }
         return SUCCESS;       
     }
-    /**
-     * @param newPriorsRec insertDto
-     * @param performedObservId ii
-     * @return dto
-     * @throws RemoteException
-     * @throws DataFormatException
-     */
-    private PerformedMedicalHistoryResultDto createOrUpdateHasPrior(
-            PriorTherapiesWebDto newPriorsRec , Ii performedObservId) throws RemoteException,
-            DataFormatException {
-        PerformedMedicalHistoryResultDto perMedicalHistoryDTO = new PerformedMedicalHistoryResultDto();
-        perMedicalHistoryDTO.setPerformedObservationIdentifier(performedObservId);
-        perMedicalHistoryDTO.setStudyProtocolIdentifier(getSpIi());
-        perMedicalHistoryDTO.setTypeCode(CdConverter.convertToCd(
-                PerformedObservationResultTypeCode.HAD_PRIOR_THERAPIES));
-        perMedicalHistoryDTO.setResultIndicator(BlConverter.convertToBl(newPriorsRec.getHasPrior()));
-        if (newPriorsRec.getIdHasPrior() != null && newPriorsRec.getIdHasPrior().getExtension() != null) {
-            perMedicalHistoryDTO.setIdentifier(newPriorsRec.getIdHasPrior());
-            performedObservationResultSvc.updatePerformedMedicalHistoryResult(perMedicalHistoryDTO);
-        } else {
-            performedObservationResultSvc.createPerformedMedicalHistoryResult(perMedicalHistoryDTO);
-        }
-        return perMedicalHistoryDTO;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void createOrUpdatePriorTherapyType(List<PriorTherapiesItemWebDto> therapiesDto ,
-            Ii performedObserId) throws RemoteException, DataFormatException {
-        getUpdatedDesc(therapiesDto);
-        PerformedMedicalHistoryResultDto perMedicalHistoryDTO; 
-        if (therapiesDto != null && !therapiesDto.isEmpty()) {
-                for (PriorTherapiesItemWebDto exitingPriorWebDto : therapiesDto) {
-                    perMedicalHistoryDTO = new PerformedMedicalHistoryResultDto();
-                    perMedicalHistoryDTO.setPerformedObservationIdentifier(performedObserId);
-                    perMedicalHistoryDTO.setStudyProtocolIdentifier(getSpIi());
-                    perMedicalHistoryDTO.setTypeCode(CdConverter.convertToCd(
-                            PerformedObservationResultTypeCode.PRIOR_THERAPY));
-                    perMedicalHistoryDTO.setResultCode(exitingPriorWebDto.getType());
-                    perMedicalHistoryDTO.setDescription(exitingPriorWebDto.getDescription());
-                    if (exitingPriorWebDto.getId() != null && exitingPriorWebDto.getId().getExtension() != null 
-                          && exitingPriorWebDto.getId().getIdentifierName() == null) {
-                        performedObservationResultSvc.createPerformedMedicalHistoryResult(perMedicalHistoryDTO);  
-                    } else {
-                         perMedicalHistoryDTO.setIdentifier(exitingPriorWebDto.getId());
-                         performedObservationResultSvc.updatePerformedMedicalHistoryResult(perMedicalHistoryDTO);
-                    } 
-                    
-                }
-        }
-    }
-
-    /**
-     * Calculate the numeric totals.
-     *
-     * @param db the memory buffer containing the persisted data
-     */
-    private void calcTotals(PriorTherapiesWebDto db) {
-        priors.setTotalRegimenNum(PqConverter.convertToPq(BigDecimal.valueOf(db.getList().size()), "Unitary"));
-
-        int chemoCnt = 0;
-        for (PriorTherapiesItemWebDto item : db.getList()) {
-            if (item.getType().getCode().startsWith("Chemo")) {
-                ++chemoCnt;
-            }
-        }
-        priors.setChemoRegimenNum(PqConverter.convertToPq(BigDecimal.valueOf(chemoCnt), "Unitary"));
-
-        db.setHasPrior(priors.getHasPrior());
-        db.setTotalRegimenNum(priors.getTotalRegimenNum());
-        db.setChemoRegimenNum(priors.getChemoRegimenNum());
-    }
-
-    /**
-     * Process delete actions.
-     *
-     * @param db the memory buffer containing the persisted data
-     * @throws RemoteException e 
-     */
-    private void deletesPriorTherapyType() throws RemoteException {
-        List<PriorTherapiesItemWebDto> deleteSsessionListOfPriorTherapies = (List<PriorTherapiesItemWebDto>)
-            ServletActionContext.getRequest().getSession().getAttribute(DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST);
-            if (deleteSsessionListOfPriorTherapies != null) {
-                for (PriorTherapiesItemWebDto item : deleteSsessionListOfPriorTherapies) {
-                    if (item.getId() != null && item.getId().getExtension() != null 
-                            && item.getId().getIdentifierName() != null) {
-                        performedObservationResultSvc.delete(item.getId());
-                    }
-                }
-            }
-    }
-
-    /**
+  /**
      * Save changes for all the descriptions.
      *
      * @param db the memory buffer containing the persisted data
@@ -390,8 +278,10 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     private void getUpdatedDesc(List<PriorTherapiesItemWebDto> toUpdateList) {
         if (toUpdateList != null && !toUpdateList.isEmpty()) {
             for (PriorTherapiesItemWebDto item : toUpdateList) {
-                String desc = ServletActionContext.getRequest().getParameter("desc_" + item.getId().getExtension());
-                String type = ServletActionContext.getRequest().getParameter("type_" + item.getId().getExtension());
+                String desc = ServletActionContext.getRequest().getParameter("desc_" 
+                        + item.getIdentifier().getExtension());
+                String type = ServletActionContext.getRequest().getParameter("type_" 
+                        + item.getIdentifier().getExtension());
                 St descrip = StConverter.convertToSt(desc);
                 Cd typeCd =  CdConverter.convertStringToCd(type);
                 item.setDescription(descrip);
@@ -445,56 +335,38 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     
     @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     private PriorTherapiesWebDto getData() {
-        PriorTherapiesWebDto dbPriors = new PriorTherapiesWebDto();      
-        dbPriors.setId(null);
-        dbPriors.setList(new ArrayList<PriorTherapiesItemWebDto>());
+        PriorTherapiesWebDto dbPriors = new PriorTherapiesWebDto();
         try {
-            List<PerformedObservationDto> paList = performedActivitySvc.getPerformedObservationByStudySubject(
-                    getParticipantIi());
-            List<PriorTherapiesItemWebDto> priorTherapiesItemWebList 
-                    = new ArrayList<PriorTherapiesItemWebDto>();
-            PriorTherapiesItemWebDto priorTherapiesItemWebDto;
-            for (PerformedObservationDto pp : paList) {
-                if (pp.getNameCode() != null && pp.getNameCode().getCode() != null
-                        && pp.getNameCode().getCode().equals(ActivityNameCode.PRIOR_THERAPIES.getCode())) {
-                    List<PerformedMedicalHistoryResultDto> medicalHisDTOS = performedObservationResultSvc
-                            .getPerformedMedicalHistoryResultByPerformedActivity(pp.getIdentifier());
-                    dbPriors.setId(pp.getIdentifier());
-                    for (PerformedMedicalHistoryResultDto medicalHisDto : medicalHisDTOS) {
-                        if (medicalHisDto.getResultIndicator() != null 
-                                && medicalHisDto.getResultIndicator().getValue() != null) {
-                            dbPriors.setHasPrior(BlConverter.covertToBoolean(medicalHisDto.getResultIndicator()));
-                            dbPriors.setIdHasPrior(medicalHisDto.getIdentifier());
-                        }
-                        if (medicalHisDto.getResultQuantity() != null 
-                                && medicalHisDto.getResultQuantity().getValue() != null) {
-                            if (PerformedObservationResultTypeCode.NUMBER_OF_PRIOR_THERAPIES.getCode()
-                                    .equalsIgnoreCase(medicalHisDto.getTypeCode().getCode())) {
-                                dbPriors.setTotalRegimenNum(medicalHisDto.getResultQuantity());
-                                dbPriors.setIdTotalRegimenNum(medicalHisDto.getIdentifier());
-                            } 
-                            if (PerformedObservationResultTypeCode.NUMBER_OF_PRIOR_CHEMOTHERAPY_REGIMENS.getCode()
-                                    .equalsIgnoreCase(medicalHisDto.getTypeCode().getCode())) {
-                                dbPriors.setChemoRegimenNum(medicalHisDto.getResultQuantity());
-                                dbPriors.setIdChemoRegimenNum(medicalHisDto.getIdentifier());
-                            }
-                        }
-                        if (medicalHisDto.getResultCode() != null && medicalHisDto.getResultCode().getCode() != null) {
-                            priorTherapiesItemWebDto = new PriorTherapiesItemWebDto();
-                            priorTherapiesItemWebDto.setId(medicalHisDto.getIdentifier());
-                            priorTherapiesItemWebDto.setType(medicalHisDto.getResultCode());
-                            priorTherapiesItemWebDto.setDescription(medicalHisDto.getDescription());
-                            priorTherapiesItemWebList.add(priorTherapiesItemWebDto);   
-                        }
+            PatientSvcDto svcDto = getPatientSvcDto();
+            svcDto.setPriorTherapy(new PriorTherapySvcDto());
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            PriorTherapySvcDto priorTherapySvcDto = pSvcList.get(0).getPriorTherapy();
+            if (priorTherapySvcDto != null) {
+                dbPriors.setIdentifier(priorTherapySvcDto.getIdentifier());
+                dbPriors.setHasPrior(priorTherapySvcDto.getHasPrior());
+                dbPriors.setTotalRegimenNum(priorTherapySvcDto.getTotalRegimenNum());
+                dbPriors.setChemoRegimenNum(priorTherapySvcDto.getChemoRegimenNum());
+                List<PriorTherapiesItemWebDto> list = new ArrayList<PriorTherapiesItemWebDto>();
+                PriorTherapiesItemWebDto  itemWebDto = null;
+                if (priorTherapySvcDto.getItemList() == null) {
+                    dbPriors.setList(new ArrayList<PriorTherapiesItemWebDto>());
+                } else {
+                    for (AbstractPriorTherapiesItemDto itemDto : priorTherapySvcDto.getItemList()) {
+                        itemWebDto = new PriorTherapiesItemWebDto();
+                        itemWebDto.setDescription(itemDto.getDescription());
+                        itemWebDto.setType(itemDto.getType());
+                        itemWebDto.setIdentifier(itemDto.getIdentifier());
+                        list.add(itemWebDto);
                     }
-                    dbPriors.setList(priorTherapiesItemWebList);
-                    ServletActionContext.getRequest().getSession().setAttribute(
-                                SESSION_PRIOR_THERAPIES_ITEM_LIST, priorTherapiesItemWebList);
-                    ServletActionContext.getRequest().getSession().setAttribute(
-                            DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST, new ArrayList<PriorTherapiesItemWebDto>());
+                
+                    dbPriors.setList(list);
                 }
             }
-        } catch (RemoteException e) {
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    SESSION_PRIOR_THERAPIES_ITEM_LIST, dbPriors.getList());
+            ServletActionContext.getRequest().getSession().setAttribute(
+                    DELETE_SESSION_PRIOR_THERAPIES_ITEM_LIST, new ArrayList<PriorTherapiesItemWebDto>());
+        } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }
         return dbPriors;
@@ -505,7 +377,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
     @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<PriorTherapiesWebDto>());
-        getDisplayTagList().add(getData());
+        //getDisplayTagList().add(getData());
     }
     /**
      * remove values from sessionList.
@@ -525,7 +397,7 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
             List<PriorTherapiesItemWebDto>  tempList = new ArrayList<PriorTherapiesItemWebDto>();
             for (int i = 0; i < sessionList.size(); i++) {
                 PriorTherapiesItemWebDto item = sessionList.get(i);
-                if (delItem.equals(item.getId().getExtension())) {
+                if (delItem.equals(item.getIdentifier().getExtension())) {
                     sessionList.remove(i);
                     deleteSessionList.add(item);
                     break;
@@ -565,21 +437,46 @@ public class PriorTherapiesAction extends AbstractListEditAccrualAction<PriorThe
                 || toValidateDto.getDescription() == null || toValidateDto.getDescription().getValue() == null 
                 || toValidateDto.getDescription().getValue().equals("")
                 || toValidateDto.getType().getCode().equals("")) {
-            addActionError("Prior Therapy Type and Description is required.\n");
+            addActionError("Both: Prior Therapy Type and Prior Therapy Description values"
+                    + " must be assigned for saving record.\n");
         }
-        if ((toValidateDto.getType() == null || toValidateDto.getType().getCode() == null 
+/*        if ((toValidateDto.getType() == null || toValidateDto.getType().getCode() == null 
                 || toValidateDto.getType().getCode().equals(""))
                 && toValidateDto.getDescription() != null && toValidateDto.getDescription().getValue() != null 
                 && !toValidateDto.getDescription().getValue().equals("")) {
-            addActionError("Prior Therapy Type is required.Modify: Both: Prior Therapy Type"
+            addActionError("Prior Therapy Type is required.\nModify: Both: Prior Therapy Type"
                     + " and Prior Therapy Description values must be assigned for saving record.\n");
         }
         if (toValidateDto.getType() != null && toValidateDto.getType().getCode() != null
                 && !toValidateDto.getType().getCode().equals("") && (toValidateDto.getDescription() == null 
                 || toValidateDto.getDescription().getValue() == null 
                 || toValidateDto.getDescription().getValue().equals(""))) {
-            addActionError("Prior Therapy Description is required. Modify: Both: Prior Therapy Type"
+            addActionError("Prior Therapy Description is required.\n Modify: Both: Prior Therapy Type"
                     + " and Prior Therapy Description values must be assigned for saving record.\n");
+        }*/
+    }
+    /**
+     * Calculate the numeric totals.
+     *
+     * @param db the memory buffer containing the persisted data
+     */
+    private void calcTotals() {
+        String strUnitary = "Unitary";
+        if (priors.getList() != null) {
+            priors.setTotalRegimenNum(PqConverter.convertToPq(BigDecimal.valueOf(priors.getList().size()), strUnitary));
+            int chemoCnt = 0;
+            for (PriorTherapiesItemWebDto item : priors.getList()) {
+                if (item.getType().getCode().startsWith("Chemo")) {
+                    ++chemoCnt;
+                }
+            }
+            priors.setChemoRegimenNum(PqConverter.convertToPq(BigDecimal.valueOf(chemoCnt), strUnitary));
+        } else {
+            priors.setTotalRegimenNum(PqConverter.convertToPq(BigDecimal.valueOf(0), strUnitary));
+            priors.setChemoRegimenNum(PqConverter.convertToPq(BigDecimal.valueOf(0), strUnitary));
         }
+
+        
+
     }
 }

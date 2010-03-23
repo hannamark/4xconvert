@@ -85,24 +85,26 @@ import gov.nih.nci.accrual.outweb.dto.util.SearchParticipantCriteriaWebDto;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
 import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -114,12 +116,12 @@ import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 public class ParticipantsAction extends AbstractListEditAccrualAction<ParticipantWebDto> {
 
     private static final long serialVersionUID = -6820189447703204634L;
-    private static String deletedStatusCode = FunctionalRoleStatusCode.TERMINATED.getCode();
+    private static final Logger LOG = Logger.getLogger(ParticipantsAction.class);
     private static List<Country> listOfCountries = null;
-    static Long unitedStatesId = null;
 
     private SearchParticipantCriteriaWebDto criteria;
     private ParticipantWebDto participant;
+    private boolean poAccessed = false;
 
     /**
      * {@inheritDoc}
@@ -139,7 +141,7 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String create() {
-        participant = new ParticipantWebDto(getSpIi(), unitedStatesId);
+        participant = new ParticipantWebDto();
         SessionEnvManager.putParticipantInSession(null, null);
         return super.create();
     }
@@ -149,28 +151,16 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String retrieve() {
-        try {
-            participant = null;
-            loadDisplayList();
-            for (ParticipantWebDto pat : getDisplayTagList()) {
-                if (pat.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
-                    participant = pat;
-                    Set<String> raceCodes = removeUnderTabs(participant.getRaceCode());
-                    participant.setRaceCode(raceCodes);
-                    Cd ethniccd = removeUnderTabs(participant.getEthnicCode());
-                    participant.setEthnicCode(ethniccd);
-                    break;
-                }
-            }
-            if (participant == null) {
-                addActionError("Error retrieving study subject info.");
-                return execute();
-            }
-       } catch (Exception e) {
-           participant = null;
-           LOG.error("Error in ParticipantAction.retrieve().", e);
+       loadParticipant(getSelectedRowIdentifier());
+       if (hasErrors()) {
+           return execute();
        }
-       SessionEnvManager.putParticipantInSession(participant.getStudySubjectIi(), participant.getAssignedIdentifier());
+       Set<String> raceCodes = removeUnderTabs(participant.getRaceCodes());
+       participant.setRaceCodes(raceCodes);
+       Cd ethniccd = removeUnderTabs(participant.getEthnicCode());
+       participant.setEthnicCode(ethniccd);
+
+       SessionEnvManager.putParticipantInSession(participant.getIdentifier(), participant.getAssignedIdentifier());
        return super.retrieve();
     }
 
@@ -179,23 +169,11 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String update() {
-        participant = null;
-        try {
-            loadDisplayList();
-            for (ParticipantWebDto pat : getDisplayTagList()) {
-                if (pat.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
-                    participant = pat;
-                }
-            }
-        } catch (Exception e) {
-            participant = null;
-            LOG.error("Error in ParticipantAction.update().", e);
+        loadParticipant(getSelectedRowIdentifier());
+        if (hasErrors()) {
+            return execute();
         }
-        if (participant == null) {
-            addActionError("Error retrieving study subject info for update.");
-            return super.update();
-        }
-        SessionEnvManager.putParticipantInSession(participant.getStudySubjectIi(), participant.getAssignedIdentifier());
+        SessionEnvManager.putParticipantInSession(participant.getIdentifier(), participant.getAssignedIdentifier());
         return super.update();
     }
 
@@ -205,21 +183,16 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
     @Override
     public String delete() throws RemoteException {
      try {
-       List<StudySubjectDto> subList = studySubjectSvc.getOutcomes(getAuthorizedUser());
-       for (StudySubjectDto dto : subList) {
-        if (dto.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
-           dto.setStatusCode(CdConverter.convertStringToCd(deletedStatusCode));
-           dto.getStatusDateRange().setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-           studySubjectSvc.update(dto);
-           SessionEnvManager.putParticipantInSession(null, null);  
-           break;
-        }
-       }
-     } catch (RemoteException e) {
-        addActionError("Not authorized to delete the Patient");
-        return super.execute(); 
+         PatientSvcDto dto = new PatientSvcDto();
+         dto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
+         dto.setAction(SvcConstants.DELETE);
+         outcomesSvc.write(dto);
+         SessionEnvManager.putParticipantInSession(null, null);
+     } catch (OutcomesException e) {
+        addActionError(e.getLocalizedMessage());
+        return super.execute();
      }
-     return super.delete(); 
+     return super.delete();
     }
 
     /**
@@ -227,23 +200,26 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String add() throws RemoteException {
-        ParticipantWebDto.validate(participant, this);
-        businessRules();
-        if (hasActionErrors() || hasFieldErrors()) {
-            return INPUT;
-         }
-        PatientDto pat = participant.getPatientDto();
-        pat.setOrganizationIdentifier((Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II));
-        StudySubjectDto ssub = participant.getStudySubjectDto(getAuthorizedUser());
+        PatientSvcDto result;
+        PatientSvcDto svcDto = participant.getSvcDto();
+        svcDto.setAction(SvcConstants.CREATE);
         try {
-            pat = patientSvc.create(pat);
-        } catch (RemoteException e) {
+            getAuthorizedUser();  // to store before PO service call
+            poAccessed = true;
+            result = outcomesSvc.write(svcDto);
+        } catch (OutcomesFieldException e) {
+            addFieldError(ParticipantWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+            return INPUT;
+        } catch (OutcomesException e) {
+            LOG.error("Outcomes exception calling outcomesSvc.put()", e);
             addActionError(e.getLocalizedMessage());
-            return super.create();
+            return INPUT;
+        } catch (Exception e) {
+            LOG.error("Unexpected exception calling outcomesSvc.put()", e);
+            addActionError(e.getLocalizedMessage());
+            return INPUT;
         }
-        ssub.setPatientIdentifier(pat.getIdentifier());
-        ssub = studySubjectSvc.createOutcomes(ssub);
-        SessionEnvManager.putParticipantInSession(ssub.getIdentifier(), ssub.getAssignedIdentifier());
+        SessionEnvManager.putParticipantInSession(result.getIdentifier(), result.getAssignedIdentifier());
         return super.add();
     }
 
@@ -252,22 +228,26 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public String edit() throws RemoteException {
-        ParticipantWebDto.validate(participant, this);
-        businessRules();
-        if (hasActionErrors() || hasFieldErrors()) {
+        PatientSvcDto result;
+        PatientSvcDto svcDto = participant.getSvcDto();
+        svcDto.setAction(SvcConstants.UPDATE);
+        try {
+            getAuthorizedUser();  // to store before PO service call
+            poAccessed = true;
+            result = outcomesSvc.write(svcDto);
+        } catch (OutcomesFieldException e) {
+            addFieldError(ParticipantWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+            return INPUT;
+        } catch (OutcomesException e) {
+            LOG.error("Outcomes exception calling outcomesSvc.put()", e);
+            addActionError(e.getLocalizedMessage());
+            return INPUT;
+        } catch (Exception e) {
+            LOG.error("Unexpected exception calling outcomesSvc.put()", e);
+            addActionError(e.getLocalizedMessage());
             return INPUT;
         }
-        PatientDto pat = participant.getPatientDto();
-        pat.setOrganizationIdentifier((Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_SUBMITTING_ORG_II));
-        StudySubjectDto ssub = participant.getStudySubjectDto(getAuthorizedUser());
-        try {
-            pat = patientSvc.update(pat);
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
-            return super.edit();
-        }
-        ssub = studySubjectSvc.update(ssub);
-        SessionEnvManager.putParticipantInSession(ssub.getIdentifier(), ssub.getAssignedIdentifier());
+        SessionEnvManager.putParticipantInSession(result.getIdentifier(), result.getAssignedIdentifier());
         return super.edit();
     }
 
@@ -276,6 +256,29 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
      */
     @Override
     public void loadDisplayList() {
+        if (poAccessed) {
+            loadDisplayListLowLevel();
+            return;
+        }
+        setDisplayTagList(new ArrayList<ParticipantWebDto>());
+        try {
+            List<PatientSvcDto> pList = outcomesSvc.get(new PatientSvcDto());
+            for (PatientSvcDto p : pList) {
+                ParticipantWebDto wp = new ParticipantWebDto(p);
+                getDisplayTagList().add(wp);
+            }
+        } catch (OutcomesException e) {
+            addActionError(e.getLocalizedMessage());
+        }
+        sortListOfParticipants();
+    }
+
+
+    /**
+     * This method is required to load the list after calls to PO have changed security
+     * context.  getAuthorizedUser() must be called prior to PO call.
+     */
+    private void loadDisplayListLowLevel() {
         setDisplayTagList(new ArrayList<ParticipantWebDto>());
         try {
             List<StudySubjectDto> subList = studySubjectSvc.getOutcomes(getAuthorizedUser());
@@ -331,61 +334,41 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
     private void loadListOfCountries() throws RemoteException {
         if (listOfCountries == null) {
             listOfCountries = countrySvc.getCountries();
-            for (Country c : listOfCountries) {
-                if ("United States".equals(c.getName())) {
-                    unitedStatesId = c.getId();
+        }
+    }
+
+    private void loadParticipant(String id) {
+        participant = null;
+        if (!PAUtil.isEmpty(id)) {
+            PatientSvcDto pat = new PatientSvcDto();
+            pat.setIdentifier(IiConverter.convertToIi(id));
+            List<PatientSvcDto> patList;
+            try {
+                patList = outcomesSvc.get(pat);
+                if (!patList.isEmpty()) {
+                    participant = new ParticipantWebDto(patList.get(0));
+                    loadCountryName();
                 }
+            } catch (OutcomesException e) {
+                addActionError(e.getLocalizedMessage());
             }
         }
-    }
-
-    private void businessRules() {
-        if (!hasActionErrors()) {
-            validateUnitedStatesRules();
-            validateNoPatientDuplicates();
+        if (participant == null) {
+            addActionError("Error retrieving patient information.");
         }
     }
 
-    private void validateUnitedStatesRules() {
-        if (!unitedStatesId.equals(Long.parseLong(participant.getCountryIdentifier().getExtension()))
-                && !PAUtil.isEmpty(participant.getPaymentMethodCode().getCode())) {
-            addActionError("Method of payment should only be entered if country is United States.");
-        }
-    }
-
-    @SuppressWarnings("PMD.CyclomaticComplexity")
-    private void validateNoPatientDuplicates() {
-        List<StudySubjectDto> allSss = null;
-        StudySubjectDto ssub = participant.getStudySubjectDto(getAuthorizedUser());
-        try {
-            allSss = studySubjectSvc.getOutcomes(getAuthorizedUser());
-        } catch (RemoteException e) {
-            LOG.error("Error in PatientAction.validateNoPatientDuplicates().", e);
-            addActionError(e.getLocalizedMessage());
-        }
-        
-        for (StudySubjectDto ss : allSss) {
-            if (ss.getAssignedIdentifier().getValue().equals(ssub.getAssignedIdentifier().getValue())
-                    && (PAUtil.isIiNull(ssub.getIdentifier())
-                        || !(ssub.getIdentifier().getExtension().equals(ss.getIdentifier().getExtension())))
-                    && !deletedStatusCode.equals(CdConverter.convertCdToString(ss.getStatusCode()))) {
-                addActionError("This Patient Id (" + ssub.getAssignedIdentifier().getValue()
-                        + ") has already been added to this study.");
-                break;
-            }
-        }
-    }
     private void sortListOfParticipants() {
         TreeMap<String, Ii> ids = new TreeMap<String, Ii>();
         for (ParticipantWebDto pat : getDisplayTagList()) {
-           String sortString = StConverter.convertToString(pat.getAssignedIdentifier()) 
-             + IiConverter.convertToString(pat.getStudySubjectIi());
-            ids.put(sortString, pat.getStudySubjectIi());
+           String sortString = StConverter.convertToString(pat.getAssignedIdentifier())
+             + IiConverter.convertToString(pat.getIdentifier());
+            ids.put(sortString, pat.getIdentifier());
         }
         List<ParticipantWebDto> result = new ArrayList<ParticipantWebDto>();
         for (Ii ssId : ids.values()) {
             for (ParticipantWebDto pat : getDisplayTagList()) {
-                if (ssId.equals(pat.getStudySubjectIi()) && includeParticipant(pat)) {
+                if (ssId.equals(pat.getIdentifier()) && includeParticipant(pat)) {
                     result.add(pat);
                 }
             }
@@ -399,24 +382,35 @@ public class ParticipantsAction extends AbstractListEditAccrualAction<Participan
                 getCriteria().getAssignedIdentifier())) {
             result = false;
         }
-        if (!WebUtil.stringEquals(pat.getBirthDate(), getCriteria().getBirthDate())) {
+        if (!WebUtil.stringEquals(pat.getBirth(), getCriteria().getBirthDate())) {
             result = false;
         }
         return result;
     }
+
     private Set<String> removeUnderTabs(Set<String> codes) {
         Set<String> newCodes = new HashSet<String>();
         for (String rc : codes) {
-          newCodes.add(rc.replace('_', ' '));
+            newCodes.add(rc.replace('_', ' '));
         }
         return newCodes;
-       }
-       
-       private Cd removeUnderTabs(Cd code) {
-         Cd newCode = new Cd();
-          newCode.setCode(code.getCode().replace('_', ' '));
-          newCode.setDisplayName(code.getDisplayName());
-         return newCode;
-       }
-    
+    }
+
+    private Cd removeUnderTabs(Cd code) {
+        Cd newCode = new Cd();
+        newCode.setCode(code.getCode().replace('_', ' '));
+        newCode.setDisplayName(code.getDisplayName());
+        return newCode;
+    }
+
+    private void loadCountryName() {
+        if (participant != null && !PAUtil.isStNull(participant.getCountryAlpha3())) {
+            String alpha3 = StConverter.convertToString(participant.getCountryAlpha3());
+            for (Country country : getListOfCountries()) {
+                if (alpha3.equals(country.getAlpha3())) {
+                    participant.setCountryName(StConverter.convertToSt(country.getName()));
+                }
+            }
+        }
+    }
 }

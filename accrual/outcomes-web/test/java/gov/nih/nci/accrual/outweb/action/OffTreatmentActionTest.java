@@ -83,7 +83,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.OffTreatmentWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -110,11 +110,11 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
         action = new OffTreatmentAction();
         action.prepare();
         offTreatment = new OffTreatmentWebDto();
+        setTpIi(MockPerformedActivityBean.TPID);
     }
 
     @Override
     public void executeTest() {
-        assertEquals(ActionSupport.ERROR, action.execute());
         setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, action.execute());
         assertNotNull(action.getOffTreat().getOffTreatmentReasons());
@@ -131,7 +131,7 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
         setParticipantIi(PARTICIPANT1);
         offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.LOST_TO_FOLLOWUP));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        offTreatment.setId(new Ii());
+        offTreatment.setIdentifier(new Ii());
         action.setOffTreat(offTreatment);
         assertEquals(ActionSupport.SUCCESS, action.save());
     }
@@ -141,7 +141,7 @@ public class OffTreatmentActionTest extends AbstractAccrualActionTest {
         setParticipantIi(PARTICIPANT1);
         offTreatment.setOffTreatmentReason(CdConverter.convertToCd(OffTreatmentReasonCode.ADVERSEEVENT_SIDEEFFECTS_COMPLICATIONS));
         offTreatment.setLastTreatmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        offTreatment.setId(IiConverter.convertToIi(MockPerformedActivityBean.OFFTREATMENTID));
+        offTreatment.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.OFFTREATMENTID));
         action.setOffTreat(offTreatment);
         assertEquals(ActionSupport.SUCCESS, action.save()); 
         assertNotNull(action.getOffTreat());

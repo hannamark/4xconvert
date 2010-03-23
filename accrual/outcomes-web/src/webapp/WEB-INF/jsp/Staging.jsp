@@ -32,7 +32,7 @@
     <accrual:sucessMessage />
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<s:hidden name="staging.id"/>
+<s:hidden name="staging.identifier"/>
 <label><fmt:message key="staging.saveMsg"/></label>
 <table class="form">
 

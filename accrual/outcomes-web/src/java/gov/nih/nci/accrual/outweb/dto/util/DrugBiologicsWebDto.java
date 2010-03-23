@@ -79,15 +79,11 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
-import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractDrugBiologicDto;
+import gov.nih.nci.outcomes.svc.dto.DrugBiologicSvcDto;
 
 import java.io.Serializable;
 
@@ -99,27 +95,13 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity" , "PMD.TooManyFields", 
+@SuppressWarnings({"PMD.UselessOverridingMethod", "PMD.CyclomaticComplexity" , "PMD.TooManyFields", 
     "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
-public class DrugBiologicsWebDto implements Serializable {
+public class DrugBiologicsWebDto extends AbstractDrugBiologicDto implements Serializable {
 
     private static final long serialVersionUID = -1395879742701837870L;
-    private static final String NUMERICMESSAGE = "Please Enter Numeric Value";
-
-    private Ii id; 
     private St drugName;
-    private Pq dose; 
-    private Cd doseRoute;  
-    private Cd doseFreq;    
-    private Pq doseDur;  
-    private Pq height; 
-    private Pq weight;   
-    private Pq bsa;    
-    private Pq doseTotal;    
-    private Cd doseModType;
-    private Ii interventionId;
-    private Ts startDate;
-
+        
     /**
      * Instantiates a new drug biologics web dto.
      */
@@ -128,107 +110,88 @@ public class DrugBiologicsWebDto implements Serializable {
     }
     
     /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("dose.value".equals(result)) {
+            result = "dose.value";
+        }
+        if ("dose.unit".equals(result)) {
+            result = "dose.unit";
+        }
+        if ("doseDur.value".equals(result)) {
+            result = "doseDur.value";
+        }
+        if ("doseDur.unit".equals(result)) {
+            result = "doseDur.unit";
+        }
+        if ("height.value".equals(result)) {
+            result = "height.value";
+        }
+        if ("height.unit".equals(result)) {
+            result = "height.unit";
+        }
+        if ("weight.value".equals(result)) {
+            result = "weight.value";
+        }
+        if ("weight.unit".equals(result)) {
+            result = "weight.unit";
+        }
+        if ("bsa.value".equals(result)) {
+            result = "bsa.value";
+        }
+        if ("doseTotal.value".equals(result)) {
+            result = "doseTotal.value";
+        }
+        if ("doseTotal.unit".equals(result)) {
+            result = "doseTotal.unit";
+        }
+        if ("startDate".equals(result)) {
+            result = "startDate";
+        }
+        if ("drugName".equals(result)) {
+            result = "drugName";
+        }
+        if ("doseRoute".equals(result)) {
+            result = "doseRoute";
+        }
+        if ("doseFreq".equals(result)) {
+            result = "doseFreq";
+        }
+        if ("doseModType".equals(result)) {
+            result = "doseModType";
+        }
+        return "drugBiologic." + result;
+    }
+    
+    /**
      * Instantiates a new drug biologics web dto.
      * 
-     * @param psaDto the psa dto
-     * @param webDto the web dto
+     * @param svcDto the svc dto
      */
-    public DrugBiologicsWebDto(PerformedSubstanceAdministrationDto psaDto,
-            DrugBiologicsWebDto webDto) {
-        id = psaDto.getIdentifier();
-        drugName = webDto.getDrugName();
-        dose = psaDto.getDose();
-        doseRoute = psaDto.getRouteOfAdministrationCode();
-        doseFreq = psaDto.getDoseFrequencyCode();  
-        doseDur = psaDto.getDoseDuration();
-        height = webDto.getHeight();
-        weight = webDto.getWeight();
-        bsa = webDto.getBsa();
-        doseTotal = psaDto.getDoseTotal();
-        doseModType = psaDto.getDoseModificationType();
-        interventionId = webDto.getInterventionId();   
-        startDate = psaDto.getActualDateRange().getLow();
+    public DrugBiologicsWebDto(DrugBiologicSvcDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setBsa(svcDto.getBsa());
+        setDose(svcDto.getDose());
+        setDoseDur(svcDto.getDoseDur());
+        setDoseFreq(svcDto.getDoseFreq());
+        setDoseModType(svcDto.getDoseModType());
+        setDoseRoute(svcDto.getDoseRoute());
+        setDoseTotal(svcDto.getDoseTotal());
+        setHeight(svcDto.getHeight());
+        setInterventionId(svcDto.getInterventionId());
+        setStartDate(svcDto.getStartDate());
+        setWeight(svcDto.getWeight());    
     }
-
+    
     /**
-     * Validate.
-     * 
-     * @param dto the dto
-     * @param action the action
+     * Sets the drug name.
+     * @param drugName the new drug name
      */
-    public static void validate(DrugBiologicsWebDto dto, AbstractAccrualAction action) {
-        if (dto.getDose() == null || dto.getDose().getValue() == null) {
-            action.addFieldError("drugBiologic.dose.value", "Please enter Dose Value.");
-        }
-        if (dto.getDose().getValue() != null && !PAUtil.isNumber(dto.getDose().getValue().toString())) {
-            action.addFieldError("drugBiologic.dose.value", NUMERICMESSAGE);
-        }
-        if (dto.getDose() == null || dto.getDose().getUnit().equals("")) {
-            action.addFieldError("drugBiologic.dose.unit", "Please select Dose UOM.");
-        }
-        if (dto.getDoseDur().getValue() == null &&  !(dto.getDoseDur().getUnit().equals(""))) {
-            action.addFieldError("drugBiologic.doseDur.value", "Please enter Duration Value.");
-        }
-        if (dto.getDoseDur() != null && dto.getDoseDur().getValue() != null 
-                && !PAUtil.isNumber(dto.getDoseDur().getValue().toString())) {
-            action.addFieldError("drugBiologic.doseDur.value", NUMERICMESSAGE);
-        }
-        if (dto.getDoseDur().getUnit().equals("") && dto.getDoseDur().getValue() != null) {
-            action.addFieldError("drugBiologic.doseDur.unit", "Please select Duration UOM.");
-        }
-        if (dto.getHeight() == null || dto.getHeight().getValue() == null) {
-            action.addFieldError("drugBiologic.height.value", "Please enter Height Value.");
-        }
-        if (dto.getHeight().getValue() != null && !PAUtil.isNumber(dto.getHeight().getValue().toString())) {
-            action.addFieldError("drugBiologic.height.value", NUMERICMESSAGE);
-        }
-        if (dto.getHeight() == null || dto.getHeight().getUnit().equals("")) {
-            action.addFieldError("drugBiologic.height.unit", "Please select Height UOM.");
-        }
-        if (dto.getWeight() == null || dto.getWeight().getValue() == null) {
-            action.addFieldError("drugBiologic.weight.value", "Please enter Weight Value.");
-        }
-        if (dto.getWeight().getValue() != null && !PAUtil.isNumber(dto.getWeight().getValue().toString())) {
-            action.addFieldError("drugBiologic.weight.value", NUMERICMESSAGE);
-        }
-        if (dto.getWeight() == null || dto.getWeight().getUnit().equals("")) {
-            action.addFieldError("drugBiologic.weight.unit", "Please select Weight UOM.");  
-        }
-        if (dto.getBsa() != null && dto.getBsa().getValue() != null 
-                && !PAUtil.isNumber(dto.getBsa().getValue().toString())) {
-            action.addFieldError("drugBiologic.bsa.value", NUMERICMESSAGE);  
-        }
-        if (dto.getDoseTotal() == null || dto.getDoseTotal().getValue() == null) { 
-            action.addFieldError("drugBiologic.doseTotal.value", "Please enter Dose Total Value.");
-        }
-        if (dto.getDoseTotal().getValue() != null && !PAUtil.isNumber(dto.getDoseTotal().getValue().toString())) {
-            action.addFieldError("drugBiologic.doseTotal.value", NUMERICMESSAGE);
-        }
-        if (dto.getDoseTotal() == null || dto.getDoseTotal().getUnit().equals("")) {
-            action.addFieldError("drugBiologic.doseTotal.unit", "Please select Dose Total UOM.");
-        }
-        if (dto.getStartDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getStartDate().getValue());
-            if (!validDate) {
-                action.addFieldError("drugBiologic.startDate", "Please Enter Current or Past Date.");
-            }
-        }
-    }
-
-    /**
-     * Gets the id.
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
-    }
-
-    /**
-     * Sets the id.
-     * @param id the new id
-     */
-    public void setId(Ii id) {
-        this.id = id;
+    public void setDrugName(St drugName) {
+        this.drugName = drugName;
     }
 
     /**
@@ -242,189 +205,55 @@ public class DrugBiologicsWebDto implements Serializable {
     }
 
     /**
-     * Sets the drug name.
-     * @param drugName the new drug name
-     */
-    public void setDrugName(St drugName) {
-        this.drugName = drugName;
-    }
-
-    /**
-     * Gets the dose.
-     * @return the dose
-     */
-    public Pq getDose() {
-        return dose;
-    }
-
-    /**
-     * Sets the dose.
-     * @param dose the new dose
-     */
-    public void setDose(Pq dose) {
-        this.dose = dose;
-    }
-
-    /**
      * Gets the dose route.
      * @return the dose route
      */
+    @Override
     @FieldExpressionValidator(expression = "doseRoute.code != null && doseRoute.code.length() > 0", 
             message = "Please select a Route of Administration")
     public Cd getDoseRoute() {
-        return doseRoute;
-    }
-
-    /**
-     * Sets the dose route.
-     * @param doseRoute the new dose route
-     */
-    public void setDoseRoute(Cd doseRoute) {
-        this.doseRoute = doseRoute;
+        return super.getDoseRoute();
     }
 
     /**
      * Gets the dose freq.
      * @return the dose freq
      */
+    @Override
     @FieldExpressionValidator(expression = "doseFreq.code != null && doseFreq.code.length() > 0", 
             message = "Please select a Frequency")
     public Cd getDoseFreq() {
-        return doseFreq;
-    }
-
-    /**
-     * Sets the dose freq.
-     * @param doseFreq the new dose freq
-     */
-    public void setDoseFreq(Cd doseFreq) {
-        this.doseFreq = doseFreq;
-    }
-
-    /**
-     * Gets the dose dur.
-     * @return the dose dur
-     */
-    public Pq getDoseDur() {
-        return doseDur;
-    }
-
-    /**
-     * Sets the dose dur.
-     * @param doseDur the new dose dur
-     */
-    public void setDoseDur(Pq doseDur) {
-        this.doseDur = doseDur;
-    }
-
-    /**
-     * Gets the height.
-     * @return the height
-     */
-    public Pq getHeight() {
-        return height;
-    }
-
-    /**
-     * Sets the height.
-     * @param height the new height
-     */
-    public void setHeight(Pq height) {
-        this.height = height;
-    }
-
-    /**
-     * Gets the weight.
-     * @return the weight
-     */
-    public Pq getWeight() {
-        return weight;
-    }
-
-    /**
-     * Sets the weight.
-     * @param weight the new weight
-     */
-    public void setWeight(Pq weight) {
-        this.weight = weight;
-    }
-
-    /**
-     * Gets the bsa.
-     * @return the bsa
-     */
-    public Pq getBsa() {
-        return bsa;
-    }
-
-    /**
-     * Sets the bsa.
-     * @param bsa the new bsa
-     */
-    public void setBsa(Pq bsa) {
-        this.bsa = bsa;
-    }
-
-    /**
-     * Gets the dose total.
-     * @return the dose total
-     */
-    public Pq getDoseTotal() {
-        return doseTotal;
-    }
-
-    /**
-     * Sets the dose total.
-     * @param doseTotal the new dose total
-     */
-    public void setDoseTotal(Pq doseTotal) {
-        this.doseTotal = doseTotal;
-    }
-
-    /**
-     * Gets the dose mod type.
-     * @return the dose mod type
-     */
-    public Cd getDoseModType() {
-        return doseModType;
-    }
-
-    /**
-     * Sets the dose mod type.
-     * @param doseModType the new dose mod type
-     */
-    public void setDoseModType(Cd doseModType) {
-        this.doseModType = doseModType;
-    }
-
-    /**
-     * Gets the intervention id.
-     * @return the intervention id
-     */
-    public Ii getInterventionId() {
-        return interventionId;
-    }
-
-    /**
-     * Sets the intervention id.
-     * @param interventionId the new intervention id
-     */
-    public void setInterventionId(Ii interventionId) {
-        this.interventionId = interventionId;
+        return super.getDoseFreq();
     }
 
     /**
      * @return startDate
      */
+    @Override
     @FieldExpressionValidator(expression = "startDate.value != null", message = "Please provide a Start Date.")     
     public Ts getStartDate() {
-        return startDate;
+        return super.getStartDate();
     }
-
+    
     /**
-     * @param startDate startDate
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setStartDate(Ts startDate) {
-        this.startDate = startDate;
+    public DrugBiologicSvcDto getSvcDto() {
+        DrugBiologicSvcDto svcDto = new DrugBiologicSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setBsa(getBsa());
+        svcDto.setDose(getDose());
+        svcDto.setDoseDur(getDoseDur());
+        svcDto.setDoseFreq(getDoseFreq());
+        svcDto.setDoseModType(getDoseModType());
+        svcDto.setDoseRoute(getDoseRoute());
+        svcDto.setDoseTotal(getDoseTotal());
+        svcDto.setHeight(getHeight());
+        svcDto.setInterventionId(getInterventionId());
+        svcDto.setStartDate(getStartDate());
+        svcDto.setWeight(getWeight());
+        return svcDto;
     }
 }

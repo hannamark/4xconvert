@@ -79,23 +79,20 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.outcomes.svc.dto.AbstractPriorTherapiesItemDto;
+import gov.nih.nci.outcomes.svc.dto.PriorTherapiesItemSvcDto;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 
 /**
  * @author lhebel
  */
-public class PriorTherapiesItemWebDto implements Serializable {
+public class PriorTherapiesItemWebDto extends AbstractPriorTherapiesItemDto implements Serializable {
 
     private static final long serialVersionUID = 1800901171926087044L;
     private static int key = 0;
-
-    private Ii id = new Ii();
-    private Cd type = new Cd();
-    private St description = new St();
 
     private synchronized int getKey() {
         return ++key;
@@ -105,45 +102,35 @@ public class PriorTherapiesItemWebDto implements Serializable {
      * Default constructor.
      */
     public PriorTherapiesItemWebDto() {
-        id.setExtension(String.valueOf(getKey()));
-        type.setCode("");
-        description.setValue("");
+        if (PAUtil.isIiNull(getIdentifier())) {
+            setIdentifier(new Ii());
+        }
+        getIdentifier().setExtension(String.valueOf(getKey()));
+        getType().setCode("");
+        getDescription().setValue("");
     }
     
     /**
-     * @param type the type to set
+     * Instantiates a new prior therapies item web dto.
+     * 
+     * @param svcDto the svc dto
      */
-    public void setType(Cd type) {
-        this.type = type;
+    public PriorTherapiesItemWebDto(AbstractPriorTherapiesItemDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setType(svcDto.getType());
+        setDescription(svcDto.getDescription());        
     }
+    
     /**
-     * @return the type
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public Cd getType() {
-        return type;
-    }
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(St description) {
-        this.description = description;
-    }
-    /**
-     * @return the description
-     */
-    public St getDescription() {
-        return description;
-    }
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
+    public PriorTherapiesItemSvcDto getSvcDto() {
+        PriorTherapiesItemSvcDto svcDto = new PriorTherapiesItemSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setType(getType());
+        svcDto.setDescription(getDescription());
+        return svcDto;
     }
 }

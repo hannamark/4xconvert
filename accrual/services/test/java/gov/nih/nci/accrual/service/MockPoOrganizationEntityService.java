@@ -1,12 +1,12 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class MockPoOrganizationEntityService implements
         OrganizationEntityServiceRemote {
-    static List<OrganizationDTO> orgDtoList;
+    public static List<OrganizationDTO> orgDtoList;
     static {
         orgDtoList = new ArrayList<OrganizationDTO>();
         OrganizationDTO dto = new OrganizationDTO();
@@ -34,7 +34,7 @@ public class MockPoOrganizationEntityService implements
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
         dto.setStatusCode(CdConverter.convertStringToCd("code"));
         dto.setPostalAddress(AddressConverterUtil.
-                create("streetAddressLine", "deliveryAddressLine", 
+                create("streetAddressLine", "deliveryAddressLine",
                         "cityOrMunicipality", "stateOrProvince",
                         "postalCode", "USA"));
         orgDtoList.add(dto);

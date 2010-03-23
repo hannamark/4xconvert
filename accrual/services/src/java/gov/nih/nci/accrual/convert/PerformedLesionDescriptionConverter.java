@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PerformedLesionDescription;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;

@@ -79,17 +79,18 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
+import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.accrual.service.util.BaseLookUpService;
 import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
+import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.outcomes.svc.OutcomesSvcLocal;
+import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
 
 /**
  * @author Hugh Reinhart
@@ -112,7 +113,7 @@ public interface ServiceLocatorAccInterface {
     /**
      * @return Patient correlation service
      */
-    PatientServiceRemote getPOPatientService();
+    POPatientService getPOPatientService();
     /**
      * @return Submission domain service
      */
@@ -140,10 +141,13 @@ public interface ServiceLocatorAccInterface {
     /**
      * @return User domain service
      */
-    UserService getUserService();
-    
+    OutcomesUserSvcLocal getOutcomesUserSvc();
     /**
      * @return the base lookup service
      */
     BaseLookUpService getBaseLookupService();
+    /**
+     * @return the outcomes business service
+     */
+    OutcomesSvcLocal getOutcomesSvc();
 }

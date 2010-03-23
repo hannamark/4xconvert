@@ -83,8 +83,8 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 

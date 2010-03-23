@@ -82,8 +82,8 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -115,7 +115,7 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
-        implements StudySubjectService {
+        implements StudySubjectService, StudySubjectServiceLocal {
 
     @EJB
     SearchTrialService searchTrialSvc;

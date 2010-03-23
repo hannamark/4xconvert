@@ -41,7 +41,7 @@
             <display:column titleKey="drugBiologic.frequency" property="doseFreq.code" sortable="true" headerClass="sortable"/>
             <display:column titleKey="drugBiologic.doseMT" property="doseModType.code" sortable="true" headerClass="sortable"/>
             <display:column title="Edit" headerClass="centered" class="action">
-    		<s:url id="url" action="updateDrugBiologics"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
+    		<s:url id="url" action="updateDrugBiologics"><s:param name="selectedRowIdentifier" value="%{#attr.row.identifier.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>   
     </display:table>

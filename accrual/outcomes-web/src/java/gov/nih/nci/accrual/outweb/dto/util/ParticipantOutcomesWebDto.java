@@ -79,23 +79,17 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.outweb.enums.AutopsyPerformed;
 import gov.nih.nci.accrual.outweb.enums.ResponseInds;
-import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractDiseaseEvaluationDto;
+import gov.nih.nci.outcomes.svc.dto.DiseaseEvaluationSvcDto;
 import gov.nih.nci.pa.enums.DiseaseStatusCode;
 import gov.nih.nci.pa.enums.PatientVitalStatus;
-import gov.nih.nci.pa.iso.util.CdConverter;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
@@ -104,242 +98,127 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", "PMD.TooManyFields",
-    "PMD.NPathComplexity", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength" })
-public class ParticipantOutcomesWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod", "PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList", 
+    "PMD.TooManyFields", "PMD.NPathComplexity", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveMethodLength" })
+public class ParticipantOutcomesWebDto extends AbstractDiseaseEvaluationDto implements Serializable {
 
     private static final long serialVersionUID = 1839478941711659167L;
-    
-    /** The Constant validDateMessage. */
-    private static final String VALIDDATEMESSAGE = "Please Enter Current or Past Date";
-    
-    private Ii id;
-    private Cd vitalStatus;
-    private Cd responseInd;
-    private Cd diseaseStatus;
-    private Cd assessmentType;
-    private Ts diseaseStatusDate;
-    private Ts evaluationDate;
-    private Cd bestResponse;
-    private Ts bestResponseDate;
     private String treatmentPlanId;
-
-
+    
     /**
-     * Instantiates a new patient outcomes web dto.
+     * Instantiates a new participant outcomes web dto.
      */
     public ParticipantOutcomesWebDto() {
         // default constructor
-    }
-    
-    /**
-     * Validate.
-     * 
-     * @param dto the dto
-     * @param action the action
-     * @throws RemoteException remote exception
-     */
-    public static void validate(ParticipantOutcomesWebDto dto, AbstractAccrualAction action) throws RemoteException {  
-        if (dto.getBestResponseDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getBestResponseDate().getValue());
-            if (!validDate) {
-                action.addFieldError("targetOutcome.bestResponseDate", VALIDDATEMESSAGE);
-            }
-        }
-        if (dto.getEvaluationDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getEvaluationDate().getValue());
-            if (!validDate) {
-                action.addFieldError("targetOutcome.evaluationDate", VALIDDATEMESSAGE);
-            }
-        }
-        if (dto.getDiseaseStatusDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getDiseaseStatusDate().getValue());
-            if (!validDate) {
-                action.addFieldError("targetOutcome.diseaseStatusDate", VALIDDATEMESSAGE);
-            }
-        }
-        Date courseDate = action.getEarliestCourseDate();
-        Date diagnosisDate = action.getDiagnosisDate();
-        Date deathDate = action.getEarliestDeathDate();
-        if (diagnosisDate != null && dto.getBestResponseDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be less than Diagnosis Date " 
-                    + AccrualUtil.dateToMDY(diagnosisDate));
-        } 
-        if (deathDate != null && dto.getBestResponseDate().getValue().after(deathDate)) {
-            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be greater than Death Date " 
-                    + AccrualUtil.dateToMDY(deathDate));
-        } 
-        if (courseDate != null && dto.getBestResponseDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.bestResponseDate", "Date can't be less than Cycle Date " 
-                    + AccrualUtil.dateToMDY(courseDate));
-        }
-        
-        if (diagnosisDate != null && dto.getEvaluationDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Diagnosis Date " 
-                    + AccrualUtil.dateToMDY(diagnosisDate));
-        } 
-        if (deathDate != null && dto.getEvaluationDate().getValue().after(deathDate)) {
-            action.addFieldError("targetOutcome.evaluationDate", "Date can't be greater than Death Date " 
-                    + AccrualUtil.dateToMDY(deathDate));
-        } 
-        if (courseDate != null && dto.getEvaluationDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.evaluationDate", "Date can't be less than Cycle Date " 
-                    + AccrualUtil.dateToMDY(courseDate));
-        }
-        if (diagnosisDate != null && dto.getDiseaseStatusDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Diagnosis Date " 
-                    + AccrualUtil.dateToMDY(diagnosisDate));
-        } 
-        if (deathDate != null && dto.getDiseaseStatusDate().getValue().after(deathDate)) {
-            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be greater than Death Date " 
-                    + AccrualUtil.dateToMDY(deathDate));
-        } 
-        if (courseDate != null && dto.getDiseaseStatusDate().getValue().before(courseDate)) {
-            action.addFieldError("targetOutcome.diseaseStatusDate", "Date can't be less than Cycle Date " 
-                    + AccrualUtil.dateToMDY(courseDate));
-        }
     } 
-
+    
     /**
      * Instantiates a new participant outcomes web dto.
      * 
-     * @param participantOutcomesList the participant outcomes list
-     * @param diseaseStatusList the disease status list
-     * @param bestResponseList the best response list
-     * @param webdto the webdto
+     * @param svcDto the svc dto
      */
-    public ParticipantOutcomesWebDto(
-            List<PerformedObservationResultDto> participantOutcomesList,
-            List<PerformedObservationResultDto> diseaseStatusList,
-            List<PerformedObservationResultDto> bestResponseList,
-            ParticipantOutcomesWebDto webdto) {
-        for (PerformedObservationResultDto por : participantOutcomesList) {
-            if (por.getTypeCode().getCode().equalsIgnoreCase("Vital Status")) {
-                vitalStatus = por.getResultCode();
-            } else  if (por.getTypeCode().getCode().equalsIgnoreCase("Evaluable for Response")) {
-                if (por.getResultIndicator().getValue().equals(true)) {
-                    responseInd = CdConverter.convertStringToCd(ResponseInds.YES.getCode());
-                } else if (por.getResultIndicator().getValue().equals(false)) {
-                    responseInd = CdConverter.convertStringToCd(ResponseInds.NO.getCode());
-                }
-            }
+    public ParticipantOutcomesWebDto(AbstractDiseaseEvaluationDto svcDto) {
+        setAssessmentType(svcDto.getAssessmentType());
+        setBestResponse(svcDto.getBestResponse());
+        setBestResponseDate(svcDto.getBestResponseDate());
+        setDiseaseStatus(svcDto.getDiseaseStatus());
+        setDiseaseStatusDate(svcDto.getDiseaseStatusDate());
+        setEvaluationDate(svcDto.getEvaluationDate());
+        setResponseInd(svcDto.getResponseInd());
+        setVitalStatus(svcDto.getVitalStatus());        
+    }
+    
+    /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("vitalStatus".equals(result)) {
+            result = "vitalStatus";
         }
-        diseaseStatus = diseaseStatusList.get(0).getResultCode();
-        bestResponse = bestResponseList.get(0).getResultCode();
-        evaluationDate = webdto.getEvaluationDate();
-        diseaseStatusDate = webdto.getDiseaseStatusDate();
-        assessmentType = webdto.getAssessmentType();
-        bestResponseDate = webdto.getBestResponseDate();
-        
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
+        if ("responseInd".equals(result)) {
+            result = "responseInd";
+        }
+        if ("diseaseStatus".equals(result)) {
+            result = "diseaseStatus";
+        }
+        if ("assessmentType".equals(result)) {
+            result = "assessmentType";
+        }
+        if ("diseaseStatusDate".equals(result)) {
+            result = "diseaseStatusDate";
+        }
+        if ("evaluationDate".equals(result)) {
+            result = "evaluationDate";
+        }
+        if ("bestResponse".equals(result)) {
+            result = "bestResponse";
+        }
+        if ("bestResponseDate".equals(result)) {
+            result = "bestResponseDate";
+        }
+        return "targetOutcome." + result;
+    } 
 
     /**
      * @return the vitalStatus
      */
+    @Override
     @FieldExpressionValidator(expression = "vitalStatus.code != null && vitalStatus.code.length() > 0",
             message = "Please provide a Vital Status")
     public Cd getVitalStatus() {
-        return vitalStatus;
-    }
-
-    /**
-     * @param vitalStatus the vitalStatus to set
-     */
-    public void setVitalStatus(Cd vitalStatus) {
-        this.vitalStatus = vitalStatus;
+        return super.getVitalStatus();
     }
 
     /**
      * @return the responseInd
      */
+    @Override
     @FieldExpressionValidator(expression = "responseInd.code != null && responseInd.code.length() > 0",
             message = "Please provide an Evaluable for Response")
     public Cd getResponseInd() {
-        return responseInd;
-    }
-
-    /**
-     * @param responseInd the responseInd to set
-     */
-    public void setResponseInd(Cd responseInd) {
-        this.responseInd = responseInd;
+        return super.getResponseInd();
     }
 
     /**
      * @return the diseaseStatus
      */
+    @Override
     @FieldExpressionValidator(expression = "diseaseStatus.code != null && diseaseStatus.code.length() > 0",
             message = "Please provide a Disease Status")
     public Cd getDiseaseStatus() {
-        return diseaseStatus;
-    }
-
-    /**
-     * @param diseaseStatus the diseaseStatus to set
-     */
-    public void setDiseaseStatus(Cd diseaseStatus) {
-        this.diseaseStatus = diseaseStatus;
+        return super.getDiseaseStatus();
     }
 
     /**
      * @return the diseaseStatusDate
      */
+    @Override
     @FieldExpressionValidator(expression = "diseaseStatusDate.value != null",
             message = "Please provide a Disease Status Date")
     public Ts getDiseaseStatusDate() {
-        return diseaseStatusDate;
-    }
-
-    /**
-     * @param diseaseStatusDate the diseaseStatusDate to set
-     */
-    public void setDiseaseStatusDate(Ts diseaseStatusDate) {
-        this.diseaseStatusDate = diseaseStatusDate;
+        return super.getDiseaseStatusDate();
     }
 
     /**
      * @return the assessmentType
      */
+    @Override
     @FieldExpressionValidator(expression = "assessmentType.code != null && assessmentType.code.length() > 0",
             message = "Please provide a Method of Disease Status Evaluation")
     public Cd getAssessmentType() {
-        return assessmentType;
-    }
-
-    /**
-     * @param assessmentType the assessmentType to set
-     */
-    public void setAssessmentType(Cd assessmentType) {
-        this.assessmentType = assessmentType;
-    }
-    /**
-     * @param evaluationDate the evaluationDate to set
-     */
-    public void setEvaluationDate(Ts evaluationDate) {
-        this.evaluationDate = evaluationDate;
+        return super.getAssessmentType();
     }
 
     /**
      * @return the evaluationDate
      */
+    @Override
     @FieldExpressionValidator(expression = "evaluationDate.value != null",
             message = "Please provide an Outcomes Evaluation Date")
     public Ts getEvaluationDate() {
-        return evaluationDate;
+        return super.getEvaluationDate();
     }
 
     /**
@@ -380,33 +259,29 @@ public class ParticipantOutcomesWebDto implements Serializable {
     /**
      * @return bestResponse
      */
+    @Override
     @FieldExpressionValidator(expression = "bestResponse.code != null && bestResponse.code.length() > 0",
             message = "Please select Best Response")
     public Cd getBestResponse() {
-        return bestResponse;
-    }
-
-    /**
-     * @param bestResponse bestResponse
-     */
-    public void setBestResponse(Cd bestResponse) {
-        this.bestResponse = bestResponse;
+        return super.getBestResponse();
     }
 
     /**
      * @return bestResponseDate
      */
+    @Override
     @FieldExpressionValidator(expression = "bestResponseDate.value != null",
             message = "Please provide an Best Response Date")
     public Ts getBestResponseDate() {
-        return bestResponseDate;
+        return super.getBestResponseDate();
     }
 
     /**
-     * @param bestResponseDate bestResponseDate
+     * Sets the treatment plan id.
+     * @param treatmentPlanId the new treatment plan id
      */
-    public void setBestResponseDate(Ts bestResponseDate) {
-        this.bestResponseDate = bestResponseDate;
+    public void setTreatmentPlanId(String treatmentPlanId) {
+        this.treatmentPlanId = treatmentPlanId;
     }
 
     /**
@@ -419,12 +294,22 @@ public class ParticipantOutcomesWebDto implements Serializable {
     public String getTreatmentPlanId() {
         return treatmentPlanId;
     }
-
+    
     /**
-     * Sets the treatment plan id.
-     * @param treatmentPlanId the new treatment plan id
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setTreatmentPlanId(String treatmentPlanId) {
-        this.treatmentPlanId = treatmentPlanId;
+    public DiseaseEvaluationSvcDto getSvcDto() {
+        DiseaseEvaluationSvcDto svcDto = new DiseaseEvaluationSvcDto();
+        svcDto.setAssessmentType(getAssessmentType());
+        svcDto.setBestResponse(getBestResponse());
+        svcDto.setBestResponseDate(getBestResponseDate());
+        svcDto.setDiseaseStatus(getDiseaseStatus());
+        svcDto.setDiseaseStatusDate(getDiseaseStatusDate());
+        svcDto.setEvaluationDate(getEvaluationDate());
+        svcDto.setResponseInd(getResponseInd());
+        svcDto.setVitalStatus(getVitalStatus());
+        return svcDto;
     }
 }

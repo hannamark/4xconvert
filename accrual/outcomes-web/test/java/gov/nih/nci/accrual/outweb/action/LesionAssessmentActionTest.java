@@ -83,8 +83,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.LesionAssessmentWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.pa.enums.LesionMeasurementMethodCode;
 import gov.nih.nci.pa.enums.MeasurableEvaluableDiseaseTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -120,8 +121,6 @@ public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
     @Test
     public void executeTest() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
-        setParticipantIi(null);
-        assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
     @Override
@@ -154,17 +153,18 @@ public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void addTest() throws Exception {
-        lesionAssessment.setLesionSite(CdConverter.convertStringToCd("LesionSite")); 
+        lesionAssessment.setLesionSite(CdConverter.convertStringToCd("Mammary Gland")); 
         Pq lesionLongestDiameter = new Pq();
         lesionLongestDiameter.setValue(new BigDecimal("2"));
         lesionLongestDiameter.setUnit("Years");
-        lesionAssessment.setId(new Ii());
+        lesionAssessment.setIdentifier(new Ii());
         lesionAssessment.setClinicalAssessmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         lesionAssessment.setImageIdentifier(IiConverter.convertToIi(1L));
         lesionAssessment.setImageSeriesIdentifier(IiConverter.convertToIi(1L));
         lesionAssessment.setLesionLongestDiameter(lesionLongestDiameter);
         lesionAssessment.setLesionNum(IiConverter.convertToIi(1L));
         lesionAssessment.setMeasurableEvaluableDiseaseType(CdConverter.convertToCd(MeasurableEvaluableDiseaseTypeCode.EVALUABLE));
+        lesionAssessment.setLesionMeasurementMethod(CdConverter.convertToCd(LesionMeasurementMethodCode.BONE_SCAN));
         action.setLesionAssessment(lesionAssessment);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
@@ -186,16 +186,17 @@ public class LesionAssessmentActionTest extends AbstractAccrualActionTest {
         Pq lesionLongestDiameter = new Pq();
         lesionLongestDiameter.setValue(new BigDecimal("4"));
         lesionLongestDiameter.setUnit("Months");
-        lesionAssessment.setLesionSite(CdConverter.convertStringToCd("LesionSite edited")); 
+        lesionAssessment.setLesionSite(CdConverter.convertStringToCd("Mammary Gland")); 
         lesionAssessment.setImageSeriesIdentifier(IiConverter.convertToIi(3L));
         lesionAssessment.setMeasurableEvaluableDiseaseType(CdConverter.convertToCd(MeasurableEvaluableDiseaseTypeCode.BOTH));
-        lesionAssessment.setId(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID));
+        lesionAssessment.setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.LESION_ASSESSMENTID));
         lesionAssessment.setOldTreatmentPlanId(MockPerformedActivityBean.TPID);
         lesionAssessment.setTreatmentPlanId("TestTP2");
         lesionAssessment.setLesionNum(IiConverter.convertToIi(2L));
         lesionAssessment.setImageIdentifier(IiConverter.convertToIi(2L));
         lesionAssessment.setLesionLongestDiameter(lesionLongestDiameter);
         lesionAssessment.setClinicalAssessmentDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - MILLIS_IN_DAY)));
+        lesionAssessment.setLesionMeasurementMethod(CdConverter.convertToCd(LesionMeasurementMethodCode.BONE_SCAN));
         action.setLesionAssessment(lesionAssessment);
         action.setSelectedRowIdentifier(MockPerformedActivityBean.LESION_ASSESSMENTID);
         assertEquals(ActionSupport.SUCCESS, action.edit());

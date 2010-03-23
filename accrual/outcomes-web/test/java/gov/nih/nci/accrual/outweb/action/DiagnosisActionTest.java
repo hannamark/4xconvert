@@ -80,7 +80,7 @@ package gov.nih.nci.accrual.outweb.action;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.accrual.outweb.dto.util.DiagnosisWebDto;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -124,8 +124,8 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
      * {@inheritDoc}
      */
     @Override
+    @Test
     public void executeTest() {
-        assertEquals(ActionSupport.ERROR, dAction.execute());
         setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
     }
@@ -168,14 +168,5 @@ public class DiagnosisActionTest extends AbstractAccrualActionTest {
         setParticipantIi(PARTICIPANT1);
         dAction.getDiagnosis().setIdentifier(IiConverter.convertToIi(MockPerformedActivityBean.DIAGNOSISID));
         assertEquals(ActionSupport.SUCCESS, dAction.save());
-    }
-
-    /**
-     * Test save.
-     */
-    @Test
-    public void nullSaveTest() {
-        setParticipantIi(null);
-        assertEquals(ActionSupport.INPUT, dAction.save());
     }
 }

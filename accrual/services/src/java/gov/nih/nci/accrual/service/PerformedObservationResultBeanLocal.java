@@ -93,7 +93,7 @@ import gov.nih.nci.accrual.dto.PerformedImageDto;
 import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.PerformedClinicalResult;
 import gov.nih.nci.pa.domain.PerformedDiagnosis;
 import gov.nih.nci.pa.domain.PerformedHistopathology;
@@ -126,10 +126,11 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
- @SuppressWarnings({"unchecked", "PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"unchecked", "PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PerformedObservationResultBeanLocal
         extends AbstractBaseAccrualBean<PerformedObservationResultDto, PerformedObservationResult,
-        PerformedObservationResultConverter> implements PerformedObservationResultService {
+            PerformedObservationResultConverter>
+        implements PerformedObservationResultService, PerformedObservationResultServiceLocal {
 
     /**
      * {@inheritDoc}

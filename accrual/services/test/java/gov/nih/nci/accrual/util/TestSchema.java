@@ -76,13 +76,18 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.accrual.service.MockPoOrganizationEntityService;
+import gov.nih.nci.accrual.service.MockPoPersonEntityService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.pa.domain.ActivityRelationship;
+import gov.nih.nci.pa.domain.AnatomicSites;
+import gov.nih.nci.pa.domain.AssessmentType;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.DoseFrequency;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Intervention;
+import gov.nih.nci.pa.domain.LesionLocationAnatomicSite;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedActivity;
@@ -99,7 +104,9 @@ import gov.nih.nci.pa.domain.PerformedRadiationAdministration;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
 import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.domain.RouteOfAdministration;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -107,12 +114,15 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.domain.Submission;
+import gov.nih.nci.pa.domain.TumorMarker;
+import gov.nih.nci.pa.domain.UnitOfMeasurement;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -125,6 +135,7 @@ import gov.nih.nci.pa.enums.RadiationMachineTypeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.CtrpHibernateHelper;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -174,6 +185,7 @@ public class TestSchema {
     public static List<PerformedActivity> performedActivities;
     public static List<ActivityRelationship> activityRelationships;
     public static ArrayList<Long> interventionIds;
+    public static ArrayList<RegistryUser> registryUsers;
 
     public static int outcomesSpId = 0;
     public static int outcomesSsId = 0;
@@ -263,6 +275,14 @@ public class TestSchema {
         performedActivities = new ArrayList<PerformedActivity>();
         activityRelationships = new ArrayList<ActivityRelationship>();
         interventionIds = new ArrayList<Long>();
+
+
+        Country c =  new Country();
+        c.setName("United States");
+        c.setAlpha2("US");
+        c.setAlpha3("USA");
+        addUpdObject(c);
+        countries.add(c);
 
         // Organization
         Organization org = new Organization();
@@ -493,10 +513,10 @@ public class TestSchema {
         // Patient
         Patient p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("7/11/1963"));
-        p.setCountryIdentifier(100L);
+        p.setCountryIdentifier(countries.get(0).getId());
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
         p.setIdentifier("PO PATIENT ID 01");
-        p.setPersonIdentifier("PO PERSON ID 01");
+        p.setPersonIdentifier("1");
         p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -507,9 +527,9 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("5/10/1963"));
-        p.setCountryIdentifier(100L);
+        p.setCountryIdentifier(countries.get(0).getId());
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
-        p.setIdentifier("PO PATIENT ID 02");
+        p.setIdentifier("2");
         p.setPersonIdentifier("PO PERSON ID 02");
         p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.MALE);
@@ -521,9 +541,9 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("8/11/1963"));
-        p.setCountryIdentifier(100L);
+        p.setCountryIdentifier(countries.get(0).getId());
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
-        p.setIdentifier("PO PATIENT ID 03");
+        p.setIdentifier("3");
         p.setPersonIdentifier("PO PERSON ID 03");
         p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
@@ -535,9 +555,9 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("1/3/1960"));
-        p.setCountryIdentifier(100L);
+        p.setCountryIdentifier(countries.get(0).getId());
         p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
-        p.setIdentifier("PO PATIENT ID 04");
+        p.setIdentifier("4");
         p.setPersonIdentifier("PO PERSON ID 04");
         p.setRaceCode(PatientRaceCode.NOT_REPORTED.getName());
         p.setSexCode(PatientGenderCode.MALE);
@@ -549,9 +569,9 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("9/7/1968"));
-        p.setCountryIdentifier(100L);
+        p.setCountryIdentifier(countries.get(0).getId());
         p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
-        p.setIdentifier("PO PATIENT ID 05");
+        p.setIdentifier("5");
         p.setPersonIdentifier("PO PERSON ID 05");
         p.setRaceCode(PatientRaceCode.UNKNOWN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
@@ -573,6 +593,17 @@ public class TestSchema {
         addUpdObject(subj);
         studySubjects.add(subj);
 
+        subj = new StudySubject();
+        subj.setPatient(patients.get(0));
+        subj.setAssignedIdentifier("001");
+        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
+        subj.setStudyProtocol(studyProtocols.get(0));
+        subj.setStudySite(studySites.get(0));
+        subj.setOutcomesLoginName("user1@mail.nih.gov");
+        addUpdObject(subj);
+        studySubjects.add(subj);
+
         // PerformedSubjectMilestone
         PerformedSubjectMilestone m = new PerformedSubjectMilestone();
         m.setCategoryCode(ActivityCategoryCode.OTHER);
@@ -582,18 +613,19 @@ public class TestSchema {
         addUpdObject(m);
         performedSubjectMilestones.add(m);
 
-        Country c =  new Country();
-        c.setAlpha2("US");
-        c.setAlpha3("USA");
-        addUpdObject(c);
-        countries.add(c);
-
         // PerformedObservation
         PerformedObservation performedObservation = new PerformedObservation();
         performedObservation.setMethodCode("methodCode");
         performedObservation.setTargetSiteCode("targetSiteCode");
         performedObservation.setStudyProtocol(studyProtocols.get(0));
         performedObservation.setStudySubject(studySubjects.get(0));
+        addUpdObject(performedObservation);
+        performedObservations.add(performedObservation);
+        performedObservation = new PerformedObservation();
+        performedObservation.setNameCode(ActivityNameCode.DIAGNOSIS);
+        performedObservation.setStudyProtocol(studyProtocols.get(0));
+        performedObservation.setStudySubject(studySubjects.get(0));
+        performedObservation.setActualDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         addUpdObject(performedObservation);
         performedObservations.add(performedObservation);
 
@@ -659,9 +691,10 @@ public class TestSchema {
         // PerformedDiagnosis
         PerformedDiagnosis pd = new PerformedDiagnosis();
         pd.setResultCode("PerformedDiagnosis");
+        pd.setResultCodeModifiedText("PerformedDiagnosis");
         pd.setResultDateRangeLow(PAUtil.dateStringToTimestamp("11/06/2009"));
         pd.setStudyProtocol(studyProtocols.get(0));
-        pd.setPerformedObservation(performedObservation);
+        pd.setPerformedObservation(performedObservations.get(1));
         addUpdObject(pd);
         performedDiagnosis.add(pd);
 
@@ -723,12 +756,22 @@ public class TestSchema {
         plannedActivities.add(pa);
 
         PerformedActivity pera = new PerformedActivity();
-        pera.setCategoryCode(ActivityCategoryCode.OTHER);
+        pera.setCategoryCode(ActivityCategoryCode.TREATMENT_PLAN);
+        pera.setName("Treatement Name");
         pera.setTextDescription("PerformedActivity");
         pera.setStudyProtocol(studyProtocols.get(0));
+        pera.setStudySubject(studySubjects.get(1));
         addUpdObject(pera);
         performedActivities.add(pera);
-        
+        pera = new PerformedActivity();
+        pera.setCategoryCode(ActivityCategoryCode.COURSE);
+        pera.setName("Cycle Name");
+        pera.setTextDescription("PerformedActivity");
+        pera.setStudyProtocol(studyProtocols.get(0));
+        pera.setStudySubject(studySubjects.get(1));
+        addUpdObject(pera);
+        performedActivities.add(pera);
+
         Intervention inv = new Intervention();
         inv.setName("Chocolate Bar");
         inv.setDescriptionText("Oral intervention to improve morale");
@@ -752,11 +795,67 @@ public class TestSchema {
         df.setDisplayName("Four Times Weekly");
         df.setDescription("Four Times Weekly");
         addUpdObject(df);
-        
+
         RegulatoryAuthority ra = new RegulatoryAuthority();
         ra.setAuthorityName("authorityName");
         ra.setCountry(countries.get(0));
         addUpdObject(ra);
+
+        RegistryUser ru = new RegistryUser();
+        ru.setAddressLine("address");
+        ru.setAffiliateOrg("affiliateOrg");
+        ru.setCity("city");
+        ru.setCountry(countries.get(0).getAlpha3());
+        ru.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
+        ru.setFirstName("fname");
+        ru.setLastName("lname");
+        ru.setPhone("1234567890");
+        ru.setPoOrganizationId(IiConverter.convertToLong(MockPoOrganizationEntityService.orgDtoList.get(0).getIdentifier()));
+        ru.setPoPersonId(IiConverter.convertToLong(MockPoPersonEntityService.personList.get(0).getIdentifier()));
+        ru.setState("MD");
+        addUpdObject(ru);
+
+        UnitOfMeasurement uom = new UnitOfMeasurement();
+        uom.setCode("Unit/g");
+        uom.setDisplayName("Unit per gram");
+        uom.setDescription("Unit per gram");
+        addUpdObject(uom);
+
+        RouteOfAdministration roa = new RouteOfAdministration();
+        roa.setCode("AURICULAR (OTIC)");
+        roa.setDisplayName("Auricular Route of Administration");
+        roa.setDescription("Administration to or by way of the ear.");
+        addUpdObject(roa);
+
+        TumorMarker tm = new TumorMarker();
+        tm.setCode("Phospho-HER-2/neu");
+        tm.setDisplayName("Phospho-HER-2/neu");
+        tm.setDescription("Phospho-HER-2/neu");
+        addUpdObject(tm);
+        
+        tm = new TumorMarker();
+        tm.setCode("HER-2/neu");
+        tm.setDisplayName("HER-2/neu");
+        tm.setDescription("HER-2/neu");
+        addUpdObject(tm);
+
+        LesionLocationAnatomicSite llas = new LesionLocationAnatomicSite();
+        llas.setCode("Mammary Gland");
+        llas.setDisplayName("Mammary Gland");
+        llas.setDescription("Mammary Gland");
+        addUpdObject(llas);
+
+        AnatomicSites as = new AnatomicSites();
+        as.setCode("Abdomen");
+        as.setDisplayName("Abdomen");
+        as.setDescription("Abdomen");
+        addUpdObject(as);
+
+        AssessmentType at = new AssessmentType();
+        at.setCode("2-D Echocardiogram");
+        at.setDisplayName("2-D Echocardiogram");
+        at.setDescription("2-D Echocardiogram");
+        addUpdObject(at);
     }
 
 }

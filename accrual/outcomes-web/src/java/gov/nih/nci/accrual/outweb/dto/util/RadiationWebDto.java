@@ -80,22 +80,13 @@
 package gov.nih.nci.accrual.outweb.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractRadiationDto;
+import gov.nih.nci.outcomes.svc.dto.RadiationSvcDto;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
-
-import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -105,213 +96,128 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-public class RadiationWebDto implements Serializable {
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.UselessOverridingMethod" })
+public class RadiationWebDto extends AbstractRadiationDto implements Serializable {
 
     private static final long serialVersionUID = -3658357689383961868L;
-    private static final String NUMERICMESSAGE = "Please Enter Numeric Value";
     
-    private Ii id;
-    private Cd type;
-    private Ts radDate;
-    private Pq totalDose;
-    private Pq duration;
-    private Pq dose; 
-    private Cd doseFreq;  
-
     /**
      * Instantiates a new radiation web dto.
      */
     public RadiationWebDto() {
         // default constructor
+    }
+    
+    /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("dose.value".equals(result)) {
+            result = "dose.value";
+        }
+        if ("dose.unit".equals(result)) {
+            result = "dose.unit";
+        }
+        if ("duration.value".equals(result)) {
+            result = "duration.value";
+        }
+        if ("duration.unit".equals(result)) {
+            result = "duration.unit";
+        }
+        if ("totalDose.value".equals(result)) {
+            result = "totalDose.value";
+        }
+        if ("totalDose.unit".equals(result)) {
+            result = "totalDose.unit";
+        }
+        if ("radDate".equals(result)) {
+            result = "radDate";
+        }
+        if ("doseFreq".equals(result)) {
+            result = "doseFreq";
+        }
+        if ("type".equals(result)) {
+            result = "type";
+        }
+        return "radiation." + result;
     } 
+    
+    /**
+     * Instantiates a new radiation web dto.
+     * 
+     * @param svcDto the svc dto
+     */
+    public RadiationWebDto(RadiationSvcDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setDose(svcDto.getDose());
+        setDoseFreq(svcDto.getDoseFreq());
+        setDuration(svcDto.getDuration());
+        setRadDate(svcDto.getRadDate());
+        setTotalDose(svcDto.getTotalDose());
+        setType(svcDto.getType());        
+    }
     
     /**
      * Instantiates a new radiation web dto.
      * @param pra the pra
      */
     public RadiationWebDto(PerformedRadiationAdministrationDto pra) {
-        id = pra.getIdentifier();
-        type = CdConverter.convertStringToCd(pra.getName().getValue());
-        radDate = pra.getActualDateRange().getLow();
-        totalDose = pra.getDoseTotal();
-        duration = pra.getDoseDuration();
-        dose = pra.getDose();
-        doseFreq = pra.getDoseFrequencyCode();
-    }
-    
-    /**
-     * Gets the performed radiation administration dto.
-     * @return the performed radiation administration dto
-     */
-    public PerformedRadiationAdministrationDto getPerformedRadiationAdministrationDto() {
-        PerformedRadiationAdministrationDto praDto = new PerformedRadiationAdministrationDto();
-        praDto.setIdentifier(getId());        
-        if (praDto.getActualDateRange() == null) {
-            praDto.setActualDateRange(new Ivl<Ts>());
-        }
-        praDto.getActualDateRange().setLow(getRadDate());
-        praDto.setName(StConverter.convertToSt(getType().getCode()));
-        praDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.RADIATION));
-        praDto.setDoseDuration(getDuration());
-        praDto.setDoseTotal(getTotalDose());
-        praDto.setDose(getDose());
-        praDto.setDoseFrequencyCode(getDoseFreq());
-        praDto.setStudyProtocolIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
-        praDto.setStudySubjectIdentifier((Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
-        return praDto;
-    }
-    
-    /**
-     * Validate.
-     * 
-     * @param dto the dto
-     * @param action the action
-     */
-    public static void validate(RadiationWebDto dto, AbstractAccrualAction action) {       
-        if (dto.getTotalDose() == null || dto.getTotalDose().getValue() == null) {
-            action.addFieldError("radiation.totalDose.value", "Please enter Total Dose Value.");
-        }
-        if (dto.getTotalDose().getValue() != null && !PAUtil.isNumber(dto.getTotalDose().getValue().toString())) {
-            action.addFieldError("radiation.totalDose.value", NUMERICMESSAGE);
-        }
-        if (dto.getTotalDose() == null || dto.getTotalDose().getUnit().equals("")) {
-            action.addFieldError("radiation.totalDose.unit", "Please select Total Dose UOM.");
-        }
-        if (dto.getDuration().getValue() == null &&  !(dto.getDuration().getUnit().equals(""))) {
-            action.addFieldError("radiation.duration.value", "Please enter Duration Value.");
-        }
-        if (dto.getDuration() != null && dto.getDuration().getValue() != null 
-                && !PAUtil.isNumber(dto.getDuration().getValue().toString())) {
-            action.addFieldError("radiation.duration.value", NUMERICMESSAGE);
-        }
-        if (dto.getDuration().getUnit().equals("") && dto.getDuration().getValue() != null) {
-            action.addFieldError("radiation.duration.unit", "Please select Duration UOM.");
-        }
-        if (dto.getDose() == null || dto.getDose().getValue() == null) {
-            action.addFieldError("radiation.dose.value", "Please enter Dose Value.");
-        }
-        if (dto.getDose().getValue() != null && !PAUtil.isNumber(dto.getDose().getValue().toString())) {
-            action.addFieldError("radiation.dose.value", NUMERICMESSAGE);
-        }
-        if (dto.getDose() == null || dto.getDose().getUnit().equals("")) {
-            action.addFieldError("radiation.dose.unit", "Please select Dose UOM.");
-        }
-        if (dto.getRadDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getRadDate().getValue());
-            if (!validDate) {
-                action.addFieldError("radiation.radDate", "Please Enter Current or Past Date.");
-            }
-        }
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
+        setIdentifier(pra.getIdentifier());
+        setType(CdConverter.convertStringToCd(pra.getName().getValue()));
+        setRadDate(pra.getActualDateRange().getLow());
+        setTotalDose(pra.getDoseTotal());
+        setDuration(pra.getDoseDuration());
+        setDose(pra.getDose());
+        setDoseFreq(pra.getDoseFrequencyCode());
     }
 
     /**
      * @return the type
      */
+    @Override
     @FieldExpressionValidator(expression = "type.code != null && type.code.length() > 0", 
             message = "Please select a Radiation Type")
     public Cd getType() {
-        return type;
+        return super.getType();
     }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(Cd type) {
-        this.type = type;
-    }
-
+    
     /**
      * @return radDate
      */
+    @Override
     @FieldExpressionValidator(expression = "radDate.value != null",
             message = "Please provide a Radiation Date.")           
     public Ts getRadDate() {
-        return radDate;
-    }
-
-    /**
-     * @param radDate the radDate to set
-     */
-    public void setRadDate(Ts radDate) {
-        this.radDate = radDate;
-    }
-
-    /**
-     * @return totalDose
-     */
-    public Pq getTotalDose() {
-        return totalDose;
-    }
-
-    /**
-     * @param totalDose the totalDose to set
-     */
-    public void setTotalDose(Pq totalDose) {
-        this.totalDose = totalDose;
-    }
-
-    /**
-     * @return duration
-     */
-    public Pq getDuration() {
-        return duration;
-    }
-
-    /**
-     * @param duration the duration to set
-     */
-    public void setDuration(Pq duration) {
-        this.duration = duration;
-    }
-
-    /**
-     * Gets the dose.
-     * @return the dose
-     */
-    public Pq getDose() {
-        return dose;
-    }
-
-    /**
-     * Sets the dose.
-     * @param dose the new dose
-     */
-    public void setDose(Pq dose) {
-        this.dose = dose;
+        return super.getRadDate();
     }
 
     /**
      * Gets the dose freq.
      * @return the dose freq
      */
+    @Override
     @FieldExpressionValidator(expression = "doseFreq.code != null && doseFreq.code.length() > 0", 
             message = "Please select a Frequency")
     public Cd getDoseFreq() {
-        return doseFreq;
+        return super.getDoseFreq();
     }
-
+    
     /**
-     * Sets the dose freq.
-     * @param doseFreq the new dose freq
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setDoseFreq(Cd doseFreq) {
-        this.doseFreq = doseFreq;
+    public RadiationSvcDto getSvcDto() {
+        RadiationSvcDto svcDto = new RadiationSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setDose(getDose());
+        svcDto.setDoseFreq(getDoseFreq());
+        svcDto.setDuration(getDuration());
+        svcDto.setRadDate(getRadDate());
+        svcDto.setTotalDose(getTotalDose());
+        svcDto.setType(getType());
+        return svcDto;
     }
 }

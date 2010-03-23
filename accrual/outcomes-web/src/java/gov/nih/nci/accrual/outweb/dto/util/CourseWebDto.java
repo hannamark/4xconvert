@@ -79,22 +79,12 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
-import gov.nih.nci.accrual.outweb.util.WebUtil;
-import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.outcomes.svc.dto.AbstractCycleDto;
+import gov.nih.nci.outcomes.svc.dto.CycleSvcDto;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.Date;
 
 import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
 
@@ -104,125 +94,74 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author Kalpana Guthikonda
  * @since 11/17/2009
  */
-@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.CyclomaticComplexity" })
-public class CourseWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod", "PMD.AvoidDuplicateLiterals", "PMD.CyclomaticComplexity" })
+public class CourseWebDto extends AbstractCycleDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Ii identifier;
-    private St name;    
-    private Ts createDate;
-    
+
     /**
      * Instantiates a new Course web dto.
      */
     public CourseWebDto() {
         // default constructor
+    }
+    
+    /**
+     * Instantiates a new course web dto.
+     * 
+     * @param svcDto the AbstractCycleDto
+     */
+    public CourseWebDto(CycleSvcDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setName(svcDto.getName());
+        setCreateDate(svcDto.getCreateDate());
     }  
     
     /**
-     * Validate.
-     * 
-     * @param dto the dto
-     * @param action the action
-     * @throws RemoteException remote exception
+     * @param svcField service field
+     * @return field name in jsp
      */
-    public static void validate(CourseWebDto dto, AbstractAccrualAction action) throws RemoteException {  
-        if (dto.getCreateDate() != null) {
-            boolean validDate = WebUtil.checkValidDate(dto.getCreateDate().getValue());
-            if (!validDate) {
-                action.addFieldError("course.createDate", "Please Enter Current or Past Date.");
-            }
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("name".equals(result)) {
+            result = "name";
         }
-        Date offTreatDate = action.getEarliestOffTreatmentDate();
-        Date diagnosisDate = action.getDiagnosisDate();
-        Date deathDate = action.getEarliestDeathDate();
-        if (diagnosisDate != null && dto.getCreateDate().getValue().before(diagnosisDate)) {
-            action.addFieldError("course.createDate", "Date can't be less than Diagnosis Date " 
-                    + AccrualUtil.dateToMDY(diagnosisDate));
-        } 
-        if (deathDate != null && dto.getCreateDate().getValue().after(deathDate)) {
-            action.addFieldError("course.createDate", "Date can't be greater than Death Date " 
-                    + AccrualUtil.dateToMDY(deathDate));
-        } 
-        if (offTreatDate != null && dto.getCreateDate().getValue().after(offTreatDate)) {
-            action.addFieldError("course.createDate", "Date can't be greater than Offtreatment Date " 
-                    + AccrualUtil.dateToMDY(offTreatDate));
+        if ("createDate".equals(result)) {
+            result = "createDate";
         }
-    }
-    
-    /**
-     * Instantiates a new treatment web dto.
-     * @param pa the pa
-     */
-    public CourseWebDto(PerformedActivityDto pa) {
-        identifier = pa.getIdentifier();
-        name = pa.getName();
-        createDate = pa.getActualDateRange().getLow();
-    }
-
-
-    /**
-     * Gets the performed activity dto.
-     * @return the performed activity dto
-     */
-    public PerformedActivityDto getPerformedActivityDto() {
-        PerformedActivityDto paDto = new PerformedActivityDto();
-        paDto.setIdentifier(getIdentifier());
-        Ivl<Ts> courseDate = new Ivl<Ts>();
-        courseDate.setLow(getCreateDate());
-        paDto.setActualDateRange(courseDate);
-        paDto.setName(getName());
-        paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.getByCode("Course"))); 
-        paDto.setStudyProtocolIdentifier(
-                (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
-        paDto.setStudySubjectIdentifier(
-                (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
-        return paDto;
+        return "course." + result;
     }
 
     /**
      * @return the name
      */
+    @Override
     @FieldExpressionValidator(expression = "name.value != null && name.value.length() > 0",
             message = "Please provide a Course")
     public St getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(St name) {
-        this.name = name;
+        return super.getName();
     }
 
     /**
      * @return the createDate
      */
+    @Override
     @FieldExpressionValidator(expression = "createDate.value != null",
             message = "Please provide a Cycle Date")          
     public Ts getCreateDate() {
-        return createDate;
+        return super.getCreateDate();
     }
-
+    
     /**
-     * @param createDate the createDate to set
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setCreateDate(Ts createDate) {
-        this.createDate = createDate;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setIdentifier(Ii id) {
-        this.identifier = id;
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getIdentifier() {
-        return identifier;
+    public CycleSvcDto getSvcDto() {
+        CycleSvcDto svcDto = new CycleSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setCreateDate(getCreateDate());
+        svcDto.setName(getName());
+        return svcDto;
     }
 }

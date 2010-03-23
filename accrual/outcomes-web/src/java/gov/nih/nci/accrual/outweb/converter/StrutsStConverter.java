@@ -79,7 +79,7 @@
 
 package gov.nih.nci.accrual.outweb.converter;
 
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAUtil;
 

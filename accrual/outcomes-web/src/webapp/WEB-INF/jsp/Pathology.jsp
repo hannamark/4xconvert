@@ -32,7 +32,7 @@
     <accrual:sucessMessage />
     <s:if test="hasActionErrors() && !hasFieldErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 <s:form name="detailForm">
-<s:hidden name="pathology.id"/>
+<s:hidden name="pathology.identifier"/>
 <table class="form"> 
     <tr><td scope="row" class="label"><label><fmt:message key="pathology.label.grades"/><span class="required">*</span></label></td>
     <td class="value"><s:select required="true" id ="pathologyGrades" name="pathology.grade"

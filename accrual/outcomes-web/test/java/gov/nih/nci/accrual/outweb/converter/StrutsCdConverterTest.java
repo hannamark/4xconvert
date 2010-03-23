@@ -80,7 +80,7 @@
 package gov.nih.nci.accrual.outweb.converter;
 
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.coppa.iso.Cd;
 
 /**
  * Converter test.

@@ -115,6 +115,7 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void executeTest() {
+        setParticipantIi(PARTICIPANT1);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }
 
@@ -127,7 +128,6 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void retrieveTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
         setParticipantIi(PARTICIPANT1);
         action.setSelectedRowIdentifier(MockPerformedActivityBean.COURSEID);
         assertEquals(AbstractListEditAccrualAction.SUCCESS, action.retrieve());
@@ -136,7 +136,6 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
      public void updateTest() {
-        assertEquals(AbstractListEditAccrualAction.SUCCESS, action.update());
         setParticipantIi(PARTICIPANT1);
         action.setSelectedRowIdentifier(MockPerformedActivityBean.COURSEID);
         assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
@@ -145,6 +144,7 @@ public class CourseActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void deleteTest() throws Exception {
+        setParticipantIi(PARTICIPANT1);
         action.delete();
     }
 
@@ -186,7 +186,6 @@ public class CourseActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void editExceptionTest() throws Exception {
-        course.setName(StConverter.convertToSt("Course1 Edited"));
         Date test = new Date();
         course.setCreateDate(TsConverter.convertToTs(new Timestamp(test.getTime() + MILLIS_IN_DAY)));
         action.setCourse(course);

@@ -51,7 +51,7 @@
                 <tr>
                     <td scope="row" class="label"><label><fmt:message key="user.account.email.label"/><span class="required">*</span></label></td>
                     <td>
-                        <s:textfield name="userAccount.loginName" maxlength="200" size="100" cssStyle="width:200px"/>
+                        <s:textfield name="userAccount.identity" maxlength="200" size="100" cssStyle="width:200px"/>
                         <s:fielderror cssClass="formErrorMsg"><s:param>userAccount.loginName</s:param></s:fielderror>
                     </td>                
                 </tr>

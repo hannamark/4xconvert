@@ -79,15 +79,11 @@
 
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.outweb.dto.util.DeathInfoWebDto;
-import gov.nih.nci.accrual.outweb.enums.ResponseInds;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.outcomes.svc.dto.DeathInformationSvcDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -116,52 +112,10 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
     @Override
     public String execute() {
         try {
-            loadTreatmentPlans();
-            List<PerformedObservationResultDto> deathCauseList = null;
-            List<PerformedObservationResultDto> autopsyList = null;
-
-            List<PerformedObservationDto> poList = performedActivitySvc.getPerformedObservationByStudySubject(
-                    getParticipantIi());
-            for (PerformedObservationDto poBean : poList) {
-                if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
-                        && poBean.getNameCode().getCode().equals(ActivityNameCode.DEATH_INFORMATION.getCode())) {
-                    deathCauseList = performedObservationResultSvc.
-                                      getPerformedObservationResultByPerformedActivity(poBean.getIdentifier());
-                    deathInfo.setId(poBean.getIdentifier());
-                } else if (poBean.getNameCode() != null && poBean.getNameCode().getCode() != null
-                        && poBean.getNameCode().getCode().equals(ActivityNameCode.AUTOPSY_INFORMATION.getCode())) {
-                    deathInfo.setAutopsyId(poBean.getIdentifier());
-                    deathInfo.setAutopsySite(poBean.getTargetSiteCode());
-                    autopsyList = performedObservationResultSvc.getPerformedObservationResultByPerformedActivity(
-                            poBean.getIdentifier());
-
-                }
-                if (deathCauseList != null && !deathCauseList.isEmpty()
-                        && autopsyList != null && !autopsyList.isEmpty()) {
-                    for (PerformedObservationResultDto dto : deathCauseList) {
-                        if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
-                                                      DEATH_CAUSE.getCode())) {
-                            deathInfo.setCause(dto.getResultCode());
-                        } else if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
-                                                    DEATH_DATE.getCode())) {
-                            deathInfo.setEventDate(dto.getResultDateRange().getLow());
-                        }
-                    }
-                    for (PerformedObservationResultDto dto : autopsyList) {
-                        if (!PAUtil.isCdNull(dto.getTypeCode()) && dto.getTypeCode().getCode().equals(
-                                PerformedObservationResultTypeCode.AUTOPSY_PERFORMED_INDICATOR.getCode())) {
-                            deathInfo.setAutopsyInd(dto.getResultCode());
-                        } else if (!PAUtil.isCdNull(dto.getTypeCode()) && dto.getTypeCode().getCode().equals(
-                                PerformedObservationResultTypeCode.CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY.getCode())) {
-                            deathInfo.setCauseByAutopsy(dto.getResultCode());
-                        }
-                    }
-
-                    deathCauseList = null;
-                    autopsyList = null;
-                }
-
-            }
+            PatientSvcDto svcDto = getPatientSvcDto();
+            svcDto.setDeathInformation(new DeathInformationSvcDto());
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            deathInfo = new DeathInfoWebDto(pSvcList.get(0).getDeathInformation());
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             return super.execute();
@@ -175,106 +129,19 @@ public class DeathInformationAction extends AbstractEditAccrualAction<DeathInfoW
      */
     @Override
     public String save() {
-        DeathInfoWebDto.validate(deathInfo, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            return INPUT;
+        PatientSvcDto svcDto = getPatientSvcDto();
+        svcDto.setDeathInformation(deathInfo.getSvcDto());
+
+        if (PAUtil.isIiNull(deathInfo.getIdentifier())) {
+            svcDto.getDeathInformation().setAction(SvcConstants.CREATE);
+        } else {
+            svcDto.getDeathInformation().setAction(SvcConstants.UPDATE);
         }
         try {
-            if (deathInfo.getId() != null && deathInfo.getId().getExtension() == null) {
-                PerformedObservationDto dto = new PerformedObservationDto();
-                dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.DEATH_INFORMATION));
-                dto.setStudyProtocolIdentifier(getSpIi());
-                dto.setStudySubjectIdentifier(getParticipantIi());
-                dto = performedActivitySvc.createPerformedObservation(dto);
-
-                PerformedObservationResultDto porDto1 = new PerformedObservationResultDto();
-                porDto1.setPerformedObservationIdentifier(dto.getIdentifier());
-                porDto1.setResultCode(deathInfo.getCause());
-                porDto1.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.DEATH_CAUSE));
-                porDto1.setStudyProtocolIdentifier(getSpIi());
-                performedObservationResultSvc.create(porDto1);
-
-                PerformedObservationResultDto porDto2 = new PerformedObservationResultDto();
-                porDto2.setPerformedObservationIdentifier(dto.getIdentifier());
-                if (porDto2.getResultDateRange() == null) {
-                    porDto2.setResultDateRange(new Ivl<Ts>());
-                }
-                porDto2.getResultDateRange().setLow(deathInfo.getEventDate());
-                porDto2.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.DEATH_DATE));
-                porDto2.setStudyProtocolIdentifier(getSpIi());
-                performedObservationResultSvc.create(porDto2);
-
-                PerformedObservationDto dto2 = new PerformedObservationDto();
-                dto2.setNameCode(CdConverter.convertToCd(ActivityNameCode.AUTOPSY_INFORMATION));
-                if (deathInfo.getAutopsyInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-                    dto2.setTargetSiteCode(deathInfo.getAutopsySite());                    
-                }
-                dto2.setStudyProtocolIdentifier(getSpIi());
-                dto2.setStudySubjectIdentifier(getParticipantIi());
-                dto2 = performedActivitySvc.createPerformedObservation(dto2);
-
-                PerformedObservationResultDto porDto3 = new PerformedObservationResultDto();
-                porDto3.setPerformedObservationIdentifier(dto2.getIdentifier());
-                porDto3.setResultCode(deathInfo.getAutopsyInd());
-                porDto3.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.
-                        AUTOPSY_PERFORMED_INDICATOR));
-                porDto3.setStudyProtocolIdentifier(getSpIi());
-                performedObservationResultSvc.create(porDto3);
-
-                if (deathInfo.getAutopsyInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-                    PerformedObservationResultDto porDto4 = new PerformedObservationResultDto();
-                    porDto4.setPerformedObservationIdentifier(dto2.getIdentifier());
-                    porDto4.setResultCode(deathInfo.getCauseByAutopsy());
-                    porDto4.setTypeCode(CdConverter.convertToCd(PerformedObservationResultTypeCode.
-                            CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY));
-                    porDto4.setStudyProtocolIdentifier(getSpIi());
-                    performedObservationResultSvc.create(porDto4);
-                }
-
-            } else {
-                        PerformedObservationDto deathDto = performedActivitySvc.getPerformedObservation(
-                                deathInfo.getId());
-                        PerformedObservationDto autopsyDto = performedActivitySvc.getPerformedObservation(
-                                deathInfo.getAutopsyId());
-
-                        List<PerformedObservationResultDto> deathCauseList = performedObservationResultSvc.
-                        getPerformedObservationResultByPerformedActivity(deathDto.getIdentifier());
-
-                        List<PerformedObservationResultDto> autopsyList = performedObservationResultSvc.
-                        getPerformedObservationResultByPerformedActivity(autopsyDto.getIdentifier());
-
-                        for (PerformedObservationResultDto dto : deathCauseList) {
-                            if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
-                                                          DEATH_CAUSE.getCode())) {
-                                dto.setResultCode(deathInfo.getCause());
-                            } else if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
-                                                        DEATH_DATE.getCode())) {
-                                dto.getResultDateRange().setLow(deathInfo.getEventDate());
-                            }
-                            performedObservationResultSvc.update(dto);
-                        }
-                        for (PerformedObservationResultDto dto : autopsyList) {
-                            if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
-                                    AUTOPSY_PERFORMED_INDICATOR.getCode())) {
-                                dto.setResultCode(deathInfo.getAutopsyInd());
-                            } else if (dto.getTypeCode().getCode().equals(PerformedObservationResultTypeCode.
-                                    CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY.getCode())) {
-                                if (deathInfo.getAutopsyInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-                                    dto.setResultCode(deathInfo.getCauseByAutopsy());
-                                } else {
-                                    dto.setResultCode(CdConverter.convertStringToCd("")); 
-                                }
-                            }
-                            performedObservationResultSvc.update(dto);
-                        }
-                        if (deathInfo.getAutopsyInd().getCode().equalsIgnoreCase(ResponseInds.YES.getCode())) {
-                            autopsyDto.setTargetSiteCode(deathInfo.getAutopsySite());
-                        } else {
-                            autopsyDto.setTargetSiteCode(CdConverter.convertStringToCd("")); 
-                        }
-                        performedActivitySvc.updatePerformedObservation(autopsyDto);                      
-
-            }
+            outcomesSvc.write(svcDto);
+        } catch (OutcomesFieldException e) {
+            addFieldError(DeathInfoWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+            return INPUT;
         } catch (Exception e) {
             addActionError("Error in DeathInformationAction save().  " + e.getLocalizedMessage());
             return INPUT;

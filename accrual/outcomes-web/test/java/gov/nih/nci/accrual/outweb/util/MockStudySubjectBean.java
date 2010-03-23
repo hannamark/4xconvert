@@ -80,11 +80,13 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.outweb.action.AbstractAccrualActionTest;
 import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -99,7 +101,7 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since Sep 26, 2009
  */
-public class MockStudySubjectBean implements StudySubjectService {
+public class MockStudySubjectBean implements StudySubjectService, StudySubjectServiceLocal {
 
     Long seq = 1L;
     List<StudySubjectDto> ssList;
@@ -114,6 +116,31 @@ public class MockStudySubjectBean implements StudySubjectService {
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(1L));
+        dto.setOutcomesLoginName(MockOutcomesUserSvcBean.userList.get(0).getIdentity());
+        dto.setStatusDateRange(new Ivl<Ts>());
+        ssList.add(dto);
+        
+        dto = new StudySubjectDto();
+        dto.setAssignedIdentifier(StConverter.convertToSt("SUBJ 002"));
+        dto.setDiseaseIdentifier(null);
+        dto.setIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT1));
+        dto.setPatientIdentifier(IiConverter.convertToIi(1L));
+        dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(1L));
+        dto.setOutcomesLoginName(MockOutcomesUserSvcBean.userList.get(0).getIdentity());
+        dto.setStatusDateRange(new Ivl<Ts>());
+        ssList.add(dto);
+        
+        dto = new StudySubjectDto();
+        dto.setAssignedIdentifier(StConverter.convertToSt("SUBJ 003"));
+        dto.setDiseaseIdentifier(null);
+        dto.setIdentifier(IiConverter.convertToIi(AbstractAccrualActionTest.PARTICIPANT2));
+        dto.setPatientIdentifier(IiConverter.convertToIi(1L));
+        dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(1L));
+        dto.setOutcomesLoginName(MockOutcomesUserSvcBean.userList.get(0).getIdentity());
         dto.setStatusDateRange(new Ivl<Ts>());
         ssList.add(dto);
     }
@@ -145,10 +172,10 @@ public class MockStudySubjectBean implements StudySubjectService {
      * {@inheritDoc}
      */
     public StudySubjectDto get(Ii ii) throws RemoteException {
-        Long id = IiConverter.convertToLong(ii);
+        //Long id = IiConverter.convertToLong(ii);
         StudySubjectDto result = null;
         for (StudySubjectDto dto : ssList) {
-            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
+            if (ii.getExtension().equals(dto.getIdentifier().getExtension())) {
                 result = dto;
             }
         }
@@ -159,9 +186,9 @@ public class MockStudySubjectBean implements StudySubjectService {
      * {@inheritDoc}
      */
     public StudySubjectDto update(StudySubjectDto dto) throws RemoteException {
-        Long id = IiConverter.convertToLong(dto.getIdentifier());
+        //Long id = IiConverter.convertToLong(dto.getIdentifier());
         for (StudySubjectDto ss : ssList) {
-            if (id.equals(IiConverter.convertToLong(ss.getIdentifier()))) {
+            if (dto.getIdentifier().getExtension().equals(ss.getIdentifier().getExtension())) {
                 ss = dto;
             }
         }

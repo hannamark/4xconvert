@@ -39,11 +39,11 @@
             	<s:property value="%{#attr.row.clinicalAssessmentDate}"/>
             </display:column>
             <display:column title="Edit" headerClass="centered" class="action">
-    		<s:url id="url" action="updateLesionAssessment"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
+    		<s:url id="url" action="updateLesionAssessment"><s:param name="selectedRowIdentifier" value="%{#attr.row.identifier.extension}" /></s:url>
     		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
     	</display:column>
 		<display:column title="Delete"	headerClass="centered" class="action">
-				<s:url id="url" action="deleteLesionAssessment"><s:param name="selectedRowIdentifier" value="%{#attr.row.id.extension}" /></s:url>
+				<s:url id="url" action="deleteLesionAssessment"><s:param name="selectedRowIdentifier" value="%{#attr.row.identifier.extension}" /></s:url>
     			<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif"	alt="Delete" width="16" height="16" /></s:a>
 				</display:column>  
     </display:table>

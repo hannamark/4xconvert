@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.outweb.dto.util.TumorMarkerWebDto;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -48,7 +48,7 @@ public class TumorMarkerActionTest extends AbstractAccrualActionTest{
             tumor.setUnit("Years");
             tumorMarker.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker"));
             tumorMarker.setTmvUom(tumor);
-            tumorMarker.setId(new Ii());
+            tumorMarker.setIdentifier(new Ii());
             action.setTumorMarker(tumorMarker);
             assertEquals(ActionSupport.INPUT, action.save());
         }
@@ -56,11 +56,11 @@ public class TumorMarkerActionTest extends AbstractAccrualActionTest{
         @Test
         public void addTestException2() throws Exception {
             Pq tumor = new Pq();
-            tumor.setUnit("Years");
+            tumor.setUnit("Unit/g");
             tumorMarker.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker"));
             tumorMarker.setTmvUom(tumor);
             tumorMarker.setTumorMarkerValue(StConverter.convertToSt("ab"));
-            tumorMarker.setId(new Ii());
+            tumorMarker.setIdentifier(new Ii());
             action.setTumorMarker(tumorMarker);
             assertEquals(ActionSupport.INPUT, action.save());
         }
@@ -69,19 +69,19 @@ public class TumorMarkerActionTest extends AbstractAccrualActionTest{
         @Test
         public void addTest() throws Exception {
             Pq tumor = new Pq();
-            tumor.setUnit("Years");
-            tumorMarker.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker"));
+            tumor.setUnit("Unit/g");
+            tumorMarker.setTumorMarker(CdConverter.convertStringToCd("Phospho-HER-2/neu"));
             tumorMarker.setTmvUom(tumor);
             tumorMarker.setTumorMarkerValue(StConverter.convertToSt("2"));
-            tumorMarker.setId(new Ii());
+            tumorMarker.setIdentifier(new Ii());
             action.setTumorMarker(tumorMarker);
             assertEquals("main", action.save());
         }
         @Test
         public void addTest2() throws Exception {
-            tumorMarker.setTumorMarker(CdConverter.convertStringToCd("Tumor Marker"));
+            tumorMarker.setTumorMarker(CdConverter.convertStringToCd("Phospho-HER-2/neu"));
             tumorMarker.setTumorMarkerValue(StConverter.convertToSt("2"));
-            tumorMarker.setId(new Ii());
+            tumorMarker.setIdentifier(new Ii());
             action.setTumorMarker(tumorMarker);
             assertEquals("main", action.save());
         }

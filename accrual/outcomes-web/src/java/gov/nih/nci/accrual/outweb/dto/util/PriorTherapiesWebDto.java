@@ -79,8 +79,12 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.outcomes.svc.dto.AbstractPriorTherapiesItemDto;
+import gov.nih.nci.outcomes.svc.dto.AbstractPriorTherapyDto;
+import gov.nih.nci.outcomes.svc.dto.PriorTherapySvcDto;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -89,92 +93,65 @@ import java.util.List;
 
 /**
  * The Class PriorTherapiesWebDto.
- * 
+ *
  * @author lhebel
  * @since 10/28/2009
  */
-public class PriorTherapiesWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod" })
+public class PriorTherapiesWebDto extends AbstractPriorTherapyDto implements Serializable {
 
     private static final long serialVersionUID = -2181055279094490613L;
-
-    private Ii id = new Ii();
-    private Pq totalRegimenNum = new Pq();
-    private Pq chemoRegimenNum = new Pq();
-    private Ii idTotalRegimenNum = new Ii();
-    private Ii idChemoRegimenNum = new Ii();
     private List<PriorTherapiesItemWebDto> list = new ArrayList<PriorTherapiesItemWebDto>();
-    private boolean hasPrior = false;
-    private Ii idHasPrior = new Ii();
+
     /**
      * Instantiates a new prior therapies web dto.
      */
     @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public PriorTherapiesWebDto() {
-        id.setExtension(id.toString());
+        if (PAUtil.isIiNull(getIdentifier())) {
+            setIdentifier(new Ii());
+        }
+        getIdentifier().setExtension(getIdentifier().toString());
+        setHasPrior(Boolean.TRUE);
+        setTotalRegimenNum(new Pq());
+        setChemoRegimenNum(new Pq());
+        setHasPrior(Boolean.FALSE);
         clear();
     }
-    
+
+    /**
+     * Instantiates a new prior therapies web dto.
+     *
+     * @param svcDto the svc dto
+     */
+    public PriorTherapiesWebDto(AbstractPriorTherapyDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setHasPrior(svcDto.getHasPrior());
+        setChemoRegimenNum(svcDto.getChemoRegimenNum());
+        setTotalRegimenNum(svcDto.getTotalRegimenNum());
+        List<PriorTherapiesItemWebDto> ptItemList = new ArrayList<PriorTherapiesItemWebDto>();
+        if (!getList().isEmpty()) {
+            for (AbstractPriorTherapiesItemDto pti : svcDto.getItemList()) {
+                ptItemList.add(new PriorTherapiesItemWebDto(pti));
+            }
+        }
+        list = ptItemList;
+    }
+
     /**
      * Clear the values.
      */
     public void clear() {
-        totalRegimenNum.setValue(BigDecimal.valueOf(0));
-        chemoRegimenNum.setValue(BigDecimal.valueOf(0));
+        getTotalRegimenNum().setValue(BigDecimal.valueOf(0));
+        getChemoRegimenNum().setValue(BigDecimal.valueOf(0));
         list = new ArrayList<PriorTherapiesItemWebDto>();
         list.add(new PriorTherapiesItemWebDto());
     }
-
-    /**
-     * @return the totalRegimenNum
-     */
-    public Pq getTotalRegimenNum() {
-        return totalRegimenNum;
-    }
-
-    /**
-     * @param totalRegimenNum the totalRegimenNum to set
-     */
-    public void setTotalRegimenNum(Pq totalRegimenNum) {
-        if (hasPrior) {
-            this.totalRegimenNum = totalRegimenNum;
-        }
-    }    
-
-    /**
-     * @return the chemoRegimenNum
-     */
-    public Pq getChemoRegimenNum() {
-        return chemoRegimenNum;
-    }
-
-    /**
-     * @param chemoRegimenNum the chemoRegimenNum to set
-     */
-    public void setChemoRegimenNum(Pq chemoRegimenNum) {
-        if (hasPrior) {
-            this.chemoRegimenNum = chemoRegimenNum;
-        }
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
-    }
-
     /**
      * @param list the list to set
      */
     public void setList(List<PriorTherapiesItemWebDto> list) {
-        if (hasPrior) {
+        if (super.getHasPrior()) {
             this.list = list;
         }
     }
@@ -187,60 +164,23 @@ public class PriorTherapiesWebDto implements Serializable {
     }
 
     /**
-     * @param hasPrior the updateFlag to set
+     * Gets the svc dto.
+     *
+     * @return the svc dto
      */
-    public void setHasPrior(boolean hasPrior) {
-        this.hasPrior = hasPrior;
+    public PriorTherapySvcDto getSvcDto() {
+        PriorTherapySvcDto svcDto = new PriorTherapySvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setHasPrior(getHasPrior());
+        svcDto.setChemoRegimenNum(getChemoRegimenNum());
+        svcDto.setTotalRegimenNum(getTotalRegimenNum());
+        List<AbstractPriorTherapiesItemDto> itemList = new ArrayList<AbstractPriorTherapiesItemDto>();
+        if (getList() != null && !getList().isEmpty()) {
+            for (PriorTherapiesItemWebDto pti : list) {
+                itemList.add(pti.getSvcDto());
+            }
+        }
+        svcDto.setItemList(itemList);
+        return svcDto;
     }
-
-    /**
-     * @return the updateFlag
-     */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getHasPrior() {
-        return hasPrior;
-    }
-
-    /**
-     * @return the idTotalRegimenNum
-     */
-    public Ii getIdTotalRegimenNum() {
-        return idTotalRegimenNum;
-    }
-
-    /**
-     * @param idTotalRegimenNum the idTotalRegimenNum to set
-     */
-    public void setIdTotalRegimenNum(Ii idTotalRegimenNum) {
-        this.idTotalRegimenNum = idTotalRegimenNum;
-    }
-
-    /**
-     * @return the idChemoRegimenNum
-     */
-    public Ii getIdChemoRegimenNum() {
-        return idChemoRegimenNum;
-    }
-
-    /**
-     * @param idChemoRegimenNum the idChemoRegimenNum to set
-     */
-    public void setIdChemoRegimenNum(Ii idChemoRegimenNum) {
-        this.idChemoRegimenNum = idChemoRegimenNum;
-    }
-
-    /**
-     * @return the idHasPrior
-     */
-    public Ii getIdHasPrior() {
-        return idHasPrior;
-    }
-
-    /**
-     * @param idHasPrior the idHasPrior to set
-     */
-    public void setIdHasPrior(Ii idHasPrior) {
-        this.idHasPrior = idHasPrior;
-    }
-    
 }

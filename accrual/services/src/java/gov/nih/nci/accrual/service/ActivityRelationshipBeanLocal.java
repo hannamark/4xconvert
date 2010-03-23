@@ -81,8 +81,8 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.ActivityRelationshipConverter;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.ActivityRelationship;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
@@ -113,7 +113,7 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
        <ActivityRelationshipDto, ActivityRelationship, ActivityRelationshipConverter>
-        implements ActivityRelationshipService {
+        implements ActivityRelationshipService, ActivityRelationshipServiceLocal {
 
     /**
      * {@inheritDoc}
@@ -133,7 +133,7 @@ public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
             getLogger().info("query ActivityRelationship = " + hql + ".");
             query = session.createQuery(hql);
             query.setParameter("typeCode", ActivityRelationshipTypeCode.getByCode(typeCode.getCode()));
-            
+
             PerformedActivity pa = new PerformedActivity();
             pa.setId(IiConverter.convertToLong(ii));
             query.setParameter("targetPerformedActivityIi", pa);
@@ -152,7 +152,7 @@ public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
         getLogger().info("Leaving getByTargetPerformedActivity(), returning " + resultList.size() + " object(s).");
         return resultList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -171,7 +171,7 @@ public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
             getLogger().info("query ActivityRelationship = " + hql + ".");
             query = session.createQuery(hql);
             query.setParameter("typeCode", ActivityRelationshipTypeCode.getByCode(typeCode.getCode()));
-            
+
             PerformedActivity pa = new PerformedActivity();
             pa.setId(IiConverter.convertToLong(ii));
             query.setParameter("sourcePerformedActivityIi", pa);
@@ -190,5 +190,5 @@ public class ActivityRelationshipBeanLocal extends AbstractBaseAccrualStudyBean
         getLogger().info("Leaving getBySourcePerformedActivity(), returning " + resultList.size() + " object(s).");
         return resultList;
     }
-    
+
 }

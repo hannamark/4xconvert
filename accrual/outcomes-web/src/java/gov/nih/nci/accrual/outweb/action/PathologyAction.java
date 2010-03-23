@@ -79,19 +79,14 @@
 
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
 import gov.nih.nci.accrual.outweb.dto.util.PathologyWebDto;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.outcomes.svc.dto.PathologySvcDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
+import gov.nih.nci.pa.util.PAUtil;
 
-import java.rmi.RemoteException;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
@@ -116,27 +111,22 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
     @SkipValidation
     @Override
     public String execute() {
-     try {
-       List<PerformedObservationDto> psmList = performedActivitySvc.getPerformedObservationByStudySubject(
-                                                    getParticipantIi());
-        for (PerformedObservationDto psm : psmList) {
-         if (psm.getNameCode() != null && psm.getNameCode().getCode() != null
-                    && psm.getNameCode().getCode().equals(ActivityNameCode.PATHOLOGY_GRADE.getCode())) {
-          List<PerformedHistopathologyDto> phpList = 
-           performedObservationResultSvc.getPerformedHistopathologyByPerformedActivity(psm.getIdentifier());
-           if (!phpList.isEmpty()) {
-              pathology.setId(psm.getIdentifier());
-              pathology.setGrade(CdConverter.convertStringToCd(phpList.get(0).getGradeCode().getCode()));
-              pathology.setDescription(phpList.get(0).getDescription());
-              pathology.setGradeSystem(CdConverter.convertStringToCd(phpList.get(0).getGradeCode().getCodeSystem()));
-         } 
-        }  
-       }        
-    } catch (RemoteException e) {
-      LOG.error("Error in PathologyAction.execute() " + e.getLocalizedMessage());
-      return ERROR;
-    }
-    return super.execute();
+        try {
+            PatientSvcDto svcDto = getPatientSvcDto();
+            svcDto.setPathology(new PathologySvcDto());
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            PathologySvcDto pSvcDto = pSvcList.get(0).getPathology();
+            if (pSvcDto != null) {
+                pathology.setIdentifier(pSvcDto.getIdentifier());
+                pathology.setDescription(pSvcDto.getDescription());
+                pathology.setGrade(pSvcDto.getGrade());
+                pathology.setGradeSystem(pSvcDto.getGradeSystem());
+            }
+        } catch (Exception e) {
+            LOG.error("Error in PathologyAction.execute() " + e.getLocalizedMessage());
+            return ERROR;
+        }
+        return super.execute();
     }
 
     /**
@@ -153,55 +143,23 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
      */
     @Override
     public String save() {
-   
-    try {  
-       if (pathology.getId() != null 
-           && pathology.getId().getExtension() != null 
-           && !pathology.getId().getExtension().equals("")) {
-            //for update
-            PerformedObservationDto dto = performedActivitySvc.getPerformedObservation(pathology.getId());
-            List<PerformedHistopathologyDto> porDtoList = 
-               performedObservationResultSvc.getPerformedHistopathologyByPerformedActivity(dto.getIdentifier());
-            if (!porDtoList.isEmpty()) {
-              porDtoList.get(0).setDescription(pathology.getDescription());
-              Cd newValue = new Cd();
-              newValue.setCode(pathology.getGrade().getCode());
-              if (pathology.getGradeSystem() != null && pathology.getGradeSystem().getCode() != null) {
-               newValue.setCodeSystem(pathology.getGradeSystem().getCode());
-              } 
-              porDtoList.get(0).setGradeCode(newValue); 
-              performedObservationResultSvc.updatePerformedHistopathology(porDtoList.get(0));
-            }
-            
-       } else {
-        //for new insert   
-        PerformedObservationDto dto = new PerformedObservationDto();
-        dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.PATHOLOGY_GRADE));
-        dto.setStudyProtocolIdentifier(getSpIi());
-        dto.setStudySubjectIdentifier(getParticipantIi());
-        dto = performedActivitySvc.createPerformedObservation(dto);
-
-        PerformedHistopathologyDto porDto1 = new PerformedHistopathologyDto();
-        porDto1.setPerformedObservationIdentifier(dto.getIdentifier());
-        Cd newValue = new Cd();
-        newValue.setCode(pathology.getGrade().getCode());
-        if (pathology.getGradeSystem() != null && pathology.getGradeSystem().getCode() != null) {
-         newValue.setCodeSystem(pathology.getGradeSystem().getCode());
-        } 
-        porDto1.setGradeCode(newValue);
-        porDto1.setDescription(pathology.getDescription());
-        porDto1.setStudyProtocolIdentifier(getSpIi());
-        performedObservationResultSvc.createPerformedHistopathology(porDto1);
-      } 
-       ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
-            "Successfully saved Pathology information.");
-    } catch (RemoteException re) {
-       addActionError("Error saving the pathology." + re.getLocalizedMessage());
-        return super.save();
-    } catch (DataFormatException dfe) {
-       addActionError("Error saving the pathology." + dfe.getLocalizedMessage());
-       return super.save();
-    }
+        pathology.validate(this);
+        if (hasActionErrors() || hasFieldErrors()) {
+            return INPUT;
+        }
+        PatientSvcDto svcDto = getPatientSvcDto();
+        svcDto.setPathology(pathology.getSvcDto());
+        if (PAUtil.isIiNotNull(pathology.getIdentifier())) {
+            svcDto.getPathology().setAction(SvcConstants.UPDATE);
+        } else {
+            svcDto.getPathology().setAction(SvcConstants.CREATE); 
+        }
+        try {
+            outcomesSvc.write(svcDto);
+        } catch (Exception re) {
+            addActionError("Error saving the pathology." + re.getLocalizedMessage());
+            return INPUT;
+        }
         return super.save();
     }
 

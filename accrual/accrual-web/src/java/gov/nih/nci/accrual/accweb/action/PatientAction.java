@@ -86,7 +86,7 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -103,7 +103,9 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.struts2.ServletActionContext;
@@ -166,6 +168,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 if (pat.getIdentifier().equals(getSelectedRowIdentifier())) {
                     patient = pat;
                 }
+            }
+            if (patient != null) {
+                Set<String> raceCodes = removeUnderTabs(patient.getRaceCode());
+                patient.setRaceCode(raceCodes);
+                String ethniccd = removeUnderTabs(patient.getEthnicCode());
+                patient.setEthnicCode(ethniccd);
             }
             if (patient == null) {
                 addActionError("Error retrieving study subject info.");
@@ -568,5 +576,17 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             result = false;
         }
         return result;
+    }
+
+    private Set<String> removeUnderTabs(Set<String> codes) {
+        Set<String> newCodes = new HashSet<String>();
+        for (String rc : codes) {
+            newCodes.add(rc.replace('_', ' '));
+        }
+        return newCodes;
+    }
+
+    private String removeUnderTabs(String code) {
+        return code.replace('_', ' ');
     }
 }

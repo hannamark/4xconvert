@@ -122,8 +122,6 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
     public void execute2ndTest() {
         setParticipantIi(PARTICIPANT2);
         assertEquals(ActionSupport.SUCCESS, dAction.execute());
-        setParticipantIi(null);
-        assertEquals(ActionSupport.INPUT, dAction.execute());
     }
 
     /**
@@ -158,7 +156,7 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
     @Test
     public void nullIiSaveTest() {
         setParticipantIi(null);
-        assertEquals(ActionSupport.INPUT, dAction.save());
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
     }
 
     /**
@@ -167,7 +165,7 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
     @Test
     public void emptyPerformanceSaveTest() {
         dAction.setPerformance(new PerformanceStatusWebDto());
-        assertEquals(ActionSupport.INPUT, dAction.save());
+        assertEquals(ActionSupport.SUCCESS, dAction.save());
     }
     
     @Test

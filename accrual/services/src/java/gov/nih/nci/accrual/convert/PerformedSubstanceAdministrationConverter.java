@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.domain.PerformedSubstanceAdministration;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;

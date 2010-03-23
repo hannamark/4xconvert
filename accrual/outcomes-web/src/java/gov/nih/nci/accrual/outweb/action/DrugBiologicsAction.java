@@ -78,27 +78,19 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
 import gov.nih.nci.accrual.outweb.dto.util.DrugBiologicsWebDto;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
+import gov.nih.nci.outcomes.svc.dto.CycleSvcDto;
+import gov.nih.nci.outcomes.svc.dto.DrugBiologicSvcDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import com.opensymphony.xwork2.validator.annotations.VisitorFieldValidator;
 
@@ -119,48 +111,31 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
      */
     @Override
     public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<DrugBiologicsWebDto>());
+        List<DrugBiologicsWebDto> drugBiologicList = new ArrayList<DrugBiologicsWebDto>();
+        PatientSvcDto svcDto = getPatientSvcDto();
+        List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+        TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+        treatmentRegimen.setIdentifier(getTpIi());
+        List<CycleSvcDto> cycleList = new ArrayList<CycleSvcDto>();
+        CycleSvcDto cycle = new CycleSvcDto();
+        cycle.setIdentifier(getCourseIi());
+        cycle.setDrugBiologics(new ArrayList<DrugBiologicSvcDto>());
+        cycleList.add(cycle);
+        treatmentRegimen.setCycles(cycleList);
+        trList.add(treatmentRegimen);
+        svcDto.setTreatmentRegimens(trList);
         try {
-            List<PerformedSubstanceAdministrationDto> psaList = performedActivitySvc.
-            getPerformedSubstanceAdministrationByStudySubject(getParticipantIi());
-            
-            List<PerformedObservationResultDto>porList = null;
-            DrugBiologicsWebDto webDto = new DrugBiologicsWebDto();
-            
-            for (PerformedSubstanceAdministrationDto psaDto : psaList) {
-                if (!PAUtil.isCdNull(psaDto.getCategoryCode())
-                        && psaDto.getCategoryCode().getCode().equals(ActivityCategoryCode.DRUG_BIOLOGIC.getCode())) {
-                    List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
-                            psaDto.getIdentifier(), CdConverter.convertStringToCd(AccrualConstants.COMP));
-                    if (!arList.isEmpty() && arList.get(0).getSourcePerformedActivityIdentifier().getExtension()
-                            .equals(getCourseIi().getExtension())) {
-                        arList = activityRelationshipSvc.getBySourcePerformedActivity(
-                                arList.get(0).getTargetPerformedActivityIdentifier(), 
-                                CdConverter.convertStringToCd(AccrualConstants.COMP));
-                        for (ActivityRelationshipDto arDto : arList) {
-                            PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arDto
-                                    .getTargetPerformedActivityIdentifier());
-                            if (po.getNameCode().getCode().equals(ActivityNameCode.HEIGHT.getCode())) {
-                                porList = performedObservationResultSvc.
-                                getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                                webDto.setHeight(porList.get(0).getResultQuantity());
-                            } else if (po.getNameCode().getCode().equals(ActivityNameCode.WEIGHT.getCode())) {
-                                porList = performedObservationResultSvc.
-                                getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                                webDto.setWeight(porList.get(0).getResultQuantity());
-                            } else if (po.getNameCode().getCode().equals(ActivityNameCode.BSA.getCode())) {
-                                porList = performedObservationResultSvc.
-                                getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                                webDto.setBsa(porList.get(0).getResultQuantity());
-                            }
-                        }
-                        InterventionDTO dto = interventionSvc.get(psaDto.getInterventionIdentifier());
-                        webDto.setDrugName(dto.getName());
-                        webDto.setInterventionId(dto.getIdentifier());
-                        getDisplayTagList().add(new DrugBiologicsWebDto(psaDto, webDto));
-                    }
-                }
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            List<DrugBiologicSvcDto> drugList = pSvcList.get(0).getTreatmentRegimens().get(0).getCycles()
+                                                            .get(0).getDrugBiologics();
+            for (DrugBiologicSvcDto dto : drugList) {
+                InterventionDTO intervention = interventionSvc.get(dto.getInterventionId());
+                DrugBiologicsWebDto webDto = new DrugBiologicsWebDto(dto);
+                webDto.setDrugName(intervention.getName());
+                webDto.setInterventionId(intervention.getIdentifier());
+                drugBiologicList.add(webDto);
             }
+            setDisplayTagList(drugBiologicList);
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
         } catch (PAException e) {
@@ -173,98 +148,29 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
      */
     @Override
     public String add() {
-        DrugBiologicsWebDto.validate(drugBiologic, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            setCurrentAction(CA_CREATE);
-            return INPUT;
-        }
         try {
-            PerformedSubstanceAdministrationDto psaDto = new PerformedSubstanceAdministrationDto();         
-            psaDto.setInterventionIdentifier(drugBiologic.getInterventionId());
-            psaDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.DRUG_BIOLOGIC));
-            psaDto.setDose(drugBiologic.getDose());
-            psaDto.setRouteOfAdministrationCode(drugBiologic.getDoseRoute());
-            psaDto.setDoseFrequencyCode(drugBiologic.getDoseFreq());
-            
-            psaDto.setDoseDuration(drugBiologic.getDoseDur());
-            psaDto.setDoseTotal(drugBiologic.getDoseTotal());
-            psaDto.setDoseModificationType(drugBiologic.getDoseModType());
-            psaDto.setStudyProtocolIdentifier(getSpIi());
-            psaDto.setStudySubjectIdentifier(getParticipantIi());
-            if (psaDto.getActualDateRange() == null) {
-                psaDto.setActualDateRange(new Ivl<Ts>());
-            }
-            psaDto.getActualDateRange().setLow(drugBiologic.getStartDate());
-            
-            psaDto = performedActivitySvc.createPerformedSubstanceAdministration(psaDto);
-            
-            ActivityRelationshipDto arDto = new ActivityRelationshipDto();
-            arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-            arDto.setSourcePerformedActivityIdentifier(getCourseIi());
-            arDto.setTargetPerformedActivityIdentifier(psaDto.getIdentifier());
-            activityRelationshipSvc.create(arDto);
-            
-            PerformedObservationDto poDto1 = new PerformedObservationDto();
-            poDto1.setNameCode(CdConverter.convertToCd(ActivityNameCode.HEIGHT));
-            poDto1.setStudyProtocolIdentifier(getSpIi());
-            poDto1.setStudySubjectIdentifier(getParticipantIi());
-            poDto1 = performedActivitySvc.createPerformedObservation(poDto1);
-            
-            PerformedObservationResultDto porDto1 = new PerformedObservationResultDto();
-            porDto1.setPerformedObservationIdentifier(poDto1.getIdentifier());
-            porDto1.setResultQuantity(drugBiologic.getHeight());
-            porDto1.setStudyProtocolIdentifier(getSpIi());
-            performedObservationResultSvc.create(porDto1);
-            
-            ActivityRelationshipDto arDto2 = new ActivityRelationshipDto();
-            arDto2.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-            arDto2.setSourcePerformedActivityIdentifier(psaDto.getIdentifier());
-            arDto2.setTargetPerformedActivityIdentifier(poDto1.getIdentifier());
-            activityRelationshipSvc.create(arDto2);
-            
-            PerformedObservationDto poDto2 = new PerformedObservationDto();
-            poDto2.setNameCode(CdConverter.convertToCd(ActivityNameCode.WEIGHT));
-            poDto2.setStudyProtocolIdentifier(getSpIi());
-            poDto2.setStudySubjectIdentifier(getParticipantIi());
-            poDto2 = performedActivitySvc.createPerformedObservation(poDto2);
-            
-            PerformedObservationResultDto porDto2 = new PerformedObservationResultDto();
-            porDto2.setPerformedObservationIdentifier(poDto2.getIdentifier());
-            porDto2.setResultQuantity(drugBiologic.getWeight());
-            porDto2.setStudyProtocolIdentifier(getSpIi());
-            performedObservationResultSvc.create(porDto2);
-            
-            ActivityRelationshipDto arDto3 = new ActivityRelationshipDto();
-            arDto3.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-            arDto3.setSourcePerformedActivityIdentifier(psaDto.getIdentifier());
-            arDto3.setTargetPerformedActivityIdentifier(poDto2.getIdentifier());
-            activityRelationshipSvc.create(arDto3);
-            
-            PerformedObservationDto poDto3 = new PerformedObservationDto();
-            poDto3.setNameCode(CdConverter.convertToCd(ActivityNameCode.BSA));
-            poDto3.setStudyProtocolIdentifier(getSpIi());
-            poDto3.setStudySubjectIdentifier(getParticipantIi());
-            poDto3 = performedActivitySvc.createPerformedObservation(poDto3);
-            
-            PerformedObservationResultDto porDto3 = new PerformedObservationResultDto();
-            porDto3.setPerformedObservationIdentifier(poDto3.getIdentifier());
-            drugBiologic.getBsa().setUnit("m2");
-            porDto3.setResultQuantity(drugBiologic.getBsa());
-            porDto3.setStudyProtocolIdentifier(getSpIi());
-            performedObservationResultSvc.create(porDto3);
-            
-            ActivityRelationshipDto arDto4 = new ActivityRelationshipDto();
-            arDto4.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-            arDto4.setSourcePerformedActivityIdentifier(psaDto.getIdentifier());
-            arDto4.setTargetPerformedActivityIdentifier(poDto3.getIdentifier());
-            activityRelationshipSvc.create(arDto4);            
-            
+            PatientSvcDto svcDto = getPatientSvcDto();
+            List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+            TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+            List<CycleSvcDto> cycles = new ArrayList<CycleSvcDto>();
+            CycleSvcDto cycle = new CycleSvcDto();
+            List<DrugBiologicSvcDto> drugBiologics = new ArrayList<DrugBiologicSvcDto>();
+            DrugBiologicSvcDto dBiologic = drugBiologic.getSvcDto();
+            dBiologic.setAction(SvcConstants.CREATE);
+            drugBiologics.add(dBiologic);
+            cycle.setDrugBiologics(drugBiologics);
+            cycle.setIdentifier(getCourseIi());
+            cycles.add(cycle);
+            treatmentRegimen.setCycles(cycles);
+            trList.add(treatmentRegimen);
+            svcDto.setTreatmentRegimens(trList);
+            outcomesSvc.write(svcDto); 
             return super.add();
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
+        } catch (OutcomesFieldException e) {
+            addFieldError(DrugBiologicsWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
-        } catch (DataFormatException e) {
+        }  catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_CREATE);
             return INPUT;
@@ -280,7 +186,7 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
         try {
             loadDisplayList();
             for (DrugBiologicsWebDto drug : getDisplayTagList()) {
-                if (drug.getId().getExtension().equals(getSelectedRowIdentifier())) {
+                if (drug.getIdentifier().getExtension().equals(getSelectedRowIdentifier())) {
                     drugBiologic = drug;
                 }
             }
@@ -300,68 +206,32 @@ public class DrugBiologicsAction extends AbstractListEditAccrualAction<DrugBiolo
      */
     @Override
     public String edit() throws RemoteException {
-        DrugBiologicsWebDto.validate(drugBiologic, this);
-        if (hasActionErrors() || hasFieldErrors()) {
+        try {
+            PatientSvcDto svcDto = getPatientSvcDto();
+            List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+            TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+            List<CycleSvcDto> cycles = new ArrayList<CycleSvcDto>();
+            CycleSvcDto cycle = new CycleSvcDto();
+            List<DrugBiologicSvcDto> drugBiologics = new ArrayList<DrugBiologicSvcDto>();
+            DrugBiologicSvcDto dBiologic = drugBiologic.getSvcDto();
+            dBiologic.setAction(SvcConstants.UPDATE);
+            drugBiologics.add(dBiologic);
+            cycle.setIdentifier(getCourseIi());
+            cycle.setDrugBiologics(drugBiologics);
+            cycles.add(cycle);
+            treatmentRegimen.setCycles(cycles);
+            trList.add(treatmentRegimen);
+            svcDto.setTreatmentRegimens(trList);
+            outcomesSvc.write(svcDto);             
+        } catch (OutcomesFieldException e) {
+            addFieldError(DrugBiologicsWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
             setCurrentAction(CA_UPDATE);
             return INPUT;
-        }
-        try {
-            List<PerformedObservationResultDto>porList = null;
-            
-            List<ActivityRelationshipDto> arList = activityRelationshipSvc.getByTargetPerformedActivity(
-            IiConverter.convertToIi(getSelectedRowIdentifier()), CdConverter.convertStringToCd(AccrualConstants.COMP));
-            
-            arList = activityRelationshipSvc.getBySourcePerformedActivity(
-                    arList.get(0).getTargetPerformedActivityIdentifier(), 
-                    CdConverter.convertStringToCd(AccrualConstants.COMP));
-            for (ActivityRelationshipDto arDto : arList) {
-                PerformedObservationDto po = performedActivitySvc.getPerformedObservation(arDto
-                        .getTargetPerformedActivityIdentifier());
-                if (po.getNameCode().getCode().equals(ActivityNameCode.HEIGHT.getCode())) {
-                    porList = performedObservationResultSvc.
-                    getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                    porList.get(0).setResultQuantity(drugBiologic.getHeight());
-                    performedObservationResultSvc.update(porList.get(0));
-                } else if (po.getNameCode().getCode().equals(ActivityNameCode.WEIGHT.getCode())) {
-                    porList = performedObservationResultSvc.
-                    getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                    porList.get(0).setResultQuantity(drugBiologic.getWeight());
-                    performedObservationResultSvc.update(porList.get(0));
-                } else if (po.getNameCode().getCode().equals(ActivityNameCode.BSA.getCode())) {
-                    porList = performedObservationResultSvc.
-                    getPerformedObservationResultByPerformedActivity(po.getIdentifier());
-                    porList.get(0).setResultQuantity(drugBiologic.getBsa());
-                    performedObservationResultSvc.update(porList.get(0));
-                }
-            }
-            PerformedSubstanceAdministrationDto psa = performedActivitySvc.
-            getPerformedSubstanceAdministration(arList.get(0).getSourcePerformedActivityIdentifier());
-            
-            if (psa.getCategoryCode().getCode().equals(ActivityCategoryCode.DRUG_BIOLOGIC.getCode())) {
-            psa.setInterventionIdentifier(drugBiologic.getInterventionId());            
-            psa.setDose(drugBiologic.getDose());
-            psa.setRouteOfAdministrationCode(drugBiologic.getDoseRoute());
-            psa.setDoseFrequencyCode(drugBiologic.getDoseFreq());
-            
-            psa.setDoseDuration(drugBiologic.getDoseDur());
-            psa.setDoseTotal(drugBiologic.getDoseTotal());
-            psa.setDoseModificationType(drugBiologic.getDoseModType());
-            if (psa.getActualDateRange() == null) {
-                psa.setActualDateRange(new Ivl<Ts>());
-            }
-            psa.getActualDateRange().setLow(drugBiologic.getStartDate());
-            performedActivitySvc.updatePerformedSubstanceAdministration(psa);
-            }
-            
         } catch (RemoteException e) {
             addActionError(e.getLocalizedMessage());
             setCurrentAction(CA_UPDATE);
             return INPUT;
-        } catch (DataFormatException e) {
-            addActionError(e.getLocalizedMessage());
-            setCurrentAction(CA_UPDATE);
-            return INPUT;
-        }
+        } 
         return super.edit();
     }
 

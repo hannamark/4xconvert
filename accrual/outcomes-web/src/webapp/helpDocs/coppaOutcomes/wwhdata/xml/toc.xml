@@ -69,5 +69,13 @@
     </i>
     <i t="Submitting Death Information" l="51" />
   </i>
-  <i t="Application Support" l="52" />
+  <i t="Working With Treatment Site Records" l="52">
+    <i t="Looking Up Treatment Sites" l="53" />
+    <i t="Adding Treatment Site Records" l="54" />
+  </i>
+  <i t="Working With Physician Records" l="55">
+    <i t="Looking Up Registered Physicians" l="56" />
+    <i t="Adding Physician Records" l="57" />
+  </i>
+  <i t="Application Support" l="58" />
 </WebWorksHelpTOC>

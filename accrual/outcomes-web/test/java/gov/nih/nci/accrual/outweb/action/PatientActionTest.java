@@ -85,7 +85,6 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.outweb.dto.util.ParticipantWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.SearchParticipantCriteriaWebDto;
 import gov.nih.nci.accrual.outweb.dto.util.SearchStudySiteResultWebDto;
-import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
@@ -142,7 +141,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     public void retrieveTest() {
         action.execute();
         action.retrieve();
-        assertTrue(action.hasActionErrors());
+        assertTrue(action.hasErrors());
+        action.clearErrors();
         action.setSelectedRowIdentifier("1");
         assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.retrieve());
     }
@@ -151,7 +151,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Test
      public void updateTest() {
         action.update();
-        assertTrue(action.hasActionErrors());
+        assertTrue(action.hasErrors());
+        action.clearErrors();
         action.setSelectedRowIdentifier("1");
         assertEquals(AbstractListEditAccrualAction.AR_DETAIL, action.update());
     }
@@ -166,27 +167,24 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void addTest() throws Exception {
-        patient.setBirthDate("7/16/2009");
-        patient.setCountryIdentifier(IiConverter.convertToCountryIi(1L));
+        patient.setBirth("7/16/2009");
+        patient.setCountryAlpha3(StConverter.convertToSt("USA"));
         patient.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         patient.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
         Set<String> raceCode = new HashSet<String>();
-        raceCode.add(PatientRaceCode.WHITE.getName());
-        patient.setRaceCode(raceCode);
-        patient.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+        raceCode.add(PatientRaceCode.WHITE.getCode());
+        patient.setRaceCodes(raceCode);
         patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
-        ParticipantsAction.unitedStatesId = 1L;
         action.setParticipant(patient);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
-    
+
     @Test
     public void addExceptionTest() throws Exception {
-        ParticipantsAction.unitedStatesId = 1L;
-        patient.setCountryIdentifier(IiConverter.convertToCountryIi(3L));
+        patient.setCountryAlpha3(StConverter.convertToSt("USA"));
         patient.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MEDICAID_AND_MEDICARE));
         patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
-        patient.setPatientId(IiConverter.convertToIi(1L));
         action.setParticipant(patient);
         assertEquals(ActionSupport.INPUT, action.add());
     }
@@ -194,34 +192,30 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void editTest() throws Exception {
-        patient.setBirthDate("7/16/2009");
-        patient.setCountryIdentifier(IiConverter.convertToCountryIi(1L));
+        patient.setBirth("7/16/2009");
+        patient.setCountryAlpha3(StConverter.convertToSt("USA"));
         patient.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         patient.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
         Set<String> raceCode = new HashSet<String>();
-        raceCode.add(PatientRaceCode.WHITE.getName());
-        patient.setRaceCode(raceCode);
-        patient.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+        raceCode.add(PatientRaceCode.WHITE.getCode());
+        patient.setRaceCodes(raceCode);
         patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
-        patient.setDiseaseIdentifier(IiConverter.convertToIi(1L));
-        patient.setStudySubjectIi(IiConverter.convertToIi(1L));
-        patient.setPatientId(IiConverter.convertToIi(1L));
-        ParticipantsAction.unitedStatesId = 1L;
+        patient.setIdentifier(IiConverter.convertToIi(1L));
         action.setParticipant(patient);
         assertEquals(ActionSupport.SUCCESS, action.edit());
         assertNotNull(action.getParticipant());
     }
-    
+
     @Test
     public void editExceptionTest() throws Exception {
-        ParticipantsAction.unitedStatesId = 1L;
-        patient.setCountryIdentifier(IiConverter.convertToCountryIi(3L));
+        patient.setCountryAlpha3(StConverter.convertToSt("FRA"));
         patient.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MEDICAID_AND_MEDICARE));
         patient.setAssignedIdentifier(StConverter.convertToSt("PO PATIENT ID 01"));
-        patient.setPatientId(IiConverter.convertToIi(1L));
+        patient.setIdentifier(IiConverter.convertToIi(1L));
         action.setParticipant(patient);
         assertEquals(ActionSupport.INPUT, action.edit());
     }
+
     @Test
     public void criteriaTest() throws Exception {
         criteria.setAssignedIdentifier("PO PATIENT ID 01");

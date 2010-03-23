@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.coppa.iso.Cd;
 import gov.nih.nci.pa.domain.PerformedImaging;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;

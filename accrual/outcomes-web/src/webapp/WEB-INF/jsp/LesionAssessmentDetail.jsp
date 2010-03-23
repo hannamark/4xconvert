@@ -61,10 +61,11 @@
 <s:form name="detailForm">
 	<s:hidden name = "currentAction"/>
 	<s:hidden name = "selectedRowIdentifier"/>
+	<s:hidden name = "lesionAssessment.identifier"/>
      <s:hidden name = "lesionAssessment.oldTreatmentPlanId" />
 <table class="form">
 	<tr>
-        <td scope="row" class="label"><label><fmt:message key="outcomes.summary.treatmentPlan"/>:<span class="required">*</span></label></td>
+        <td scope="row" class="label"><label><fmt:message key="outcomes.summary.treatmentPlan"/><span class="required">*</span></label></td>
         <td class="value">
             <s:select  name="lesionAssessment.treatmentPlanId" headerKey="" headerValue="--Select--" list="%{#session.treatmentPlans}"/>
             <s:fielderror cssClass="formErrorMsg"><s:param>lesionAssessment.treatmentPlanId</s:param></s:fielderror>

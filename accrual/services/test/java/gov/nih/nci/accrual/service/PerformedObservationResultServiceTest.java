@@ -91,7 +91,7 @@ import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
 import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
 import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.coppa.iso.Pq;
 import gov.nih.nci.pa.enums.PerformedObservationResultTypeCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -445,25 +445,25 @@ public class PerformedObservationResultServiceTest
     }
     @Test
     public void getByPerformedActivity() throws Exception {
-        List<PerformedDiagnosisDto> rList1 = bean.getPerformedDiagnosisByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
+        List<PerformedDiagnosisDto> rList1 = bean.getPerformedDiagnosisByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(1).getId()));
         assertTrue(0 < rList1.size());
         assertNull(bean.getPerformedDiagnosisByPerformedActivity(null));
-        List<PerformedImageDto> rList2 = bean.getPerformedImageByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
+        List<PerformedImageDto> rList2 = bean.getPerformedImageByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(1).getId()));
         assertTrue(0 < rList2.size());
         assertNull(bean.getPerformedImageByPerformedActivity(null));
-        List<PerformedHistopathologyDto> rList3 = bean.getPerformedHistopathologyByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
+        List<PerformedHistopathologyDto> rList3 = bean.getPerformedHistopathologyByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(1).getId()));
         assertTrue(0 < rList3.size());
         assertNull(bean.getPerformedHistopathologyByPerformedActivity(null));
-        List<PerformedClinicalResultDto> rList4 = bean.getPerformedClinicalResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
+        List<PerformedClinicalResultDto> rList4 = bean.getPerformedClinicalResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(1).getId()));
         assertTrue(0 < rList4.size());
         assertNull(bean.getPerformedClinicalResultByPerformedActivity(null));
-        List<PerformedMedicalHistoryResultDto> rList5 = bean.getPerformedMedicalHistoryResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
+        List<PerformedMedicalHistoryResultDto> rList5 = bean.getPerformedMedicalHistoryResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(1).getId()));
         assertTrue(0 < rList5.size());
         assertNull(bean.getPerformedMedicalHistoryResultByPerformedActivity(null));
-        List<PerformedLesionDescriptionDto> rList6 = bean.getPerformedLesionDescriptionByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
+        List<PerformedLesionDescriptionDto> rList6 = bean.getPerformedLesionDescriptionByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(1).getId()));
         assertTrue(0 < rList6.size());
         assertNull(bean.getPerformedLesionDescriptionByPerformedActivity(null));
-        List<PerformedObservationResultDto> rList7 = bean.getPerformedObservationResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(0).getId()));
+        List<PerformedObservationResultDto> rList7 = bean.getPerformedObservationResultByPerformedActivity(IiConverter.convertToIi(TestSchema.performedObservations.get(1).getId()));
         assertTrue(0 < rList7.size());
         assertNull(bean.getPerformedObservationResultByPerformedActivity(null));
     }  

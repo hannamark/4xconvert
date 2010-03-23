@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.accrual.convert;
 
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.Disease;
 import gov.nih.nci.pa.domain.Patient;

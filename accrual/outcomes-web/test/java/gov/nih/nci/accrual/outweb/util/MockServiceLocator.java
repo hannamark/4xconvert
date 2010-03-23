@@ -77,17 +77,24 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
+import gov.nih.nci.accrual.service.ActivityRelationshipServiceLocal;
+import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
+import gov.nih.nci.accrual.service.PerformedActivityServiceLocal;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
+import gov.nih.nci.accrual.service.PerformedObservationResultServiceLocal;
 import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.accrual.service.util.BaseLookUpService;
 import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
+import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.outcomes.svc.OutcomesSvc;
+import gov.nih.nci.outcomes.svc.OutcomesUserSvc;
+import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
 
 /**
  * @author Hugh Reinhart
@@ -101,12 +108,14 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     private final StudySubjectService studySubjectService = new MockStudySubjectBean();
     private final PatientService patientService = new MockPatientBean();
     private final PerformedActivityService psmService = new MockPerformedActivityBean();
-    private final PatientServiceRemote poPatientService = new MockPaPatientServiceBean();
+    private final POPatientService poPatientService = new MockPaPatientServiceBean();
     private final PerformedObservationResultService porService = new MockPerformedObservationResultBean();
     private final ActivityRelationshipService arService = new MockActivityRelationshipBean();
-    private final UserService userService = new MockUserBean();
+    private final OutcomesUserSvcLocal userSvc = new MockOutcomesUserSvcBean();
     private final BaseLookUpService baseLooupSvc = new MockBaseLookUpBean();
-    
+    private final OutcomesSvc outcomesSvc = new MockOutcomesSvcBean();
+
+
     /**
      * {@inheritDoc}
      */
@@ -152,7 +161,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     /**
      * {@inheritDoc}
      */
-    public PatientServiceRemote getPOPatientService() {
+    public POPatientService getPOPatientService() {
         return poPatientService;
     }
     /**
@@ -167,10 +176,25 @@ public class MockServiceLocator implements ServiceLocatorAccInterface{
     /**
      * {@inheritDoc}
      */
-    public UserService getUserService() {
-        return userService;
+    public OutcomesUserSvcLocal getOutcomesUserSvc() {
+        return userSvc;
     }
     public BaseLookUpService getBaseLookupService() {
         return baseLooupSvc;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public OutcomesSvc getOutcomesSvc() {
+        ((MockOutcomesSvcBean) outcomesSvc).setActivityRelationshipService((ActivityRelationshipServiceLocal) getActivityRelationshipService());
+        ((MockOutcomesSvcBean) outcomesSvc).setPerformedActivityService((PerformedActivityServiceLocal) getPerformedActivityService());
+        ((MockOutcomesSvcBean) outcomesSvc).setPerformedObservationResultService((PerformedObservationResultServiceLocal) getPerformedObservationResultService());
+        ((MockOutcomesSvcBean) outcomesSvc).setStudySubjectService((StudySubjectServiceLocal) getStudySubjectService());
+        ((MockOutcomesSvcBean) outcomesSvc).setPatientService((PatientServiceLocal) getPatientService());
+        ((MockOutcomesSvcBean) outcomesSvc).setSearchTrialService(getSearchTrialService());
+        ((MockOutcomesSvcBean) outcomesSvc).setOutcomesUserService((OutcomesUserSvcLocal) getOutcomesUserSvc());
+        ((MockOutcomesSvcBean) outcomesSvc).setCountryService(getCountryService());
+        ((MockOutcomesSvcBean) outcomesSvc).setLookUpService(getBaseLookupService());
+        return outcomesSvc;
     }
 }

@@ -47,7 +47,7 @@
 <div class="box">
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if><accrual:sucessMessage />
 <s:form name="detailForm">
-	<s:hidden name="deathInfo.id"/>
+	<s:hidden name="deathInfo.identifier"/>
     <s:hidden name = "deathInfo.autopsyId" />
 <table class="form">
 <tr><td scope="row" class="label"><label><fmt:message key="deathInfo.label.cause"/><span class="required">*</span></label></td>

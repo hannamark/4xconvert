@@ -78,14 +78,12 @@
 */
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -103,19 +101,12 @@ public class PatientWebDtoTest {
     public void initDto() {
       patientWebDto = new ParticipantWebDto();
       patientWebDto.setAssignedIdentifier(StConverter.convertToSt("assignedIdentifier"));
-      patientWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1977/01"));
-      patientWebDto.setCountryIdentifier(IiConverter.convertToCountryIi(1L));
-      patientWebDto.setDiseaseIdentifier(IiConverter.convertToIi(1L));
+      patientWebDto.setBirth(AccrualUtil.normalizeYearMonthString("1977/01"));
+      patientWebDto.setCountryAlpha3(StConverter.convertToSt("USA"));
       patientWebDto.setEthnicCode(CdConverter.convertStringToCd("ethnicCode"));
       patientWebDto.setGenderCode(CdConverter.convertStringToCd("genderCode"));
       patientWebDto.setIdentifier(IiConverter.convertToIi("identifier"));
-      patientWebDto.setPatientId(IiConverter.convertToIi(1L));
       patientWebDto.setPaymentMethodCode(CdConverter.convertStringToCd("paymentMethodCode"));
-      patientWebDto.setPoIdentifier(IiConverter.convertToIi(1L));
-      //patientWebDto.setRaceCode("");
-      patientWebDto.setStatusCode(CdConverter.convertStringToCd("statusCode"));
-      patientWebDto.setStudyProtocolIi(IiConverter.convertToIi(1L));
-      patientWebDto.setStudySubjectIi(IiConverter.convertToIi(1L));
 
 
     }
@@ -132,12 +123,7 @@ public class PatientWebDtoTest {
 
     @Test
     public void countryIdentifierPropertyTest() {
-       assertNotNull(patientWebDto.getCountryIdentifier());
-    }
-
-    @Test
-    public void diseaseIdentifierPropertyTest() {
-       assertNotNull(patientWebDto.getDiseaseIdentifier());
+       assertNotNull(patientWebDto.getCountryAlpha3());
     }
 
     @Test
@@ -156,33 +142,8 @@ public class PatientWebDtoTest {
     }
 
     @Test
-    public void patientIdPropertyTest() {
-      assertNotNull(patientWebDto.getPatientId());
-    }
-
-    @Test
     public void paymentMethodCodePropertyTest() {
       assertNotNull(patientWebDto.getPaymentMethodCode());
-    }
-
-    @Test
-    public void poIdentifierPropertyTest() {
-      assertNotNull(patientWebDto.getPoIdentifier());
-    }
-
-    @Test
-    public void statusCodePropertyTest() {
-      assertNotNull(patientWebDto.getStatusCode());
-    }
-
-    @Test
-    public void studyProtocolIiPropertyTest() {
-        assertFalse(PAUtil.isIiNull(patientWebDto.getStudyProtocolIi()));
-    }
-
-    @Test
-    public void studySubjectIdPropertyTest() {
-        assertFalse(PAUtil.isIiNull(patientWebDto.getStudySubjectIi()));
     }
 
     @Test

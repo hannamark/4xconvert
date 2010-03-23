@@ -80,11 +80,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.accrual.outweb.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.outweb.util.MockOutcomesUserSvcBean;
 import gov.nih.nci.accrual.outweb.util.MockPaServiceLocator;
+import gov.nih.nci.accrual.outweb.util.MockPoServiceLocator;
 import gov.nih.nci.accrual.outweb.util.MockServiceLocator;
 import gov.nih.nci.accrual.outweb.util.PaServiceLocator;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
+import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
@@ -109,8 +113,8 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
 public class AbstractAccrualActionTest {
     public static final String PARTICIPANT1 = "John";
     public static final String PARTICIPANT2 = "Mary";
-    
-    protected static final String TEST_USER = "joe@barngrill.com";
+
+    protected static final String TEST_USER = StConverter.convertToString(MockOutcomesUserSvcBean.userList.get(0).getIdentity());
 
     private class TestAction extends AbstractListEditAccrualAction<Object>{
         private static final long serialVersionUID = 8637312133341800224L;
@@ -128,6 +132,7 @@ public class AbstractAccrualActionTest {
     public void initMockServiceLocator() {
         AccrualServiceLocator.getInstance().setServiceLocator(new MockServiceLocator());
         PaServiceLocator.getInstance().setServiceLocator(new MockPaServiceLocator());
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
 
     /**
@@ -231,7 +236,7 @@ public class AbstractAccrualActionTest {
             ServletActionContext.getRequest().getSession().removeAttribute(AccrualConstants.SESSION_ATTR_ROLE);
         }
     }
-    
+
     public void setParticipantIi(String participant) {
         if (participant == null) {
             SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II, null);
@@ -239,7 +244,7 @@ public class AbstractAccrualActionTest {
             SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II, IiConverter.convertToIi(participant));
         }
     }
-    
+
     public void setCourseIi(String cycle) {
         if (cycle == null) {
             SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_COURSE_II, null);
@@ -247,7 +252,7 @@ public class AbstractAccrualActionTest {
             SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_COURSE_II, IiConverter.convertToIi(cycle));
         }
     }
-    
+
     public void setTpIi(String treatment) {
         if (treatment == null) {
             SessionEnvManager.setAttr(AccrualConstants.SESSION_ATTR_TREATMENT_PLAN_II, null);

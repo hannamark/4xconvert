@@ -78,16 +78,16 @@
 */
 package gov.nih.nci.accrual.outweb.action;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.outweb.dto.util.OffTreatmentWebDto;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.ActivityNameCode;
-import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.outcomes.svc.dto.OffTreatmentSvcDto;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.SvcConstants;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -112,17 +112,17 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
     @SkipValidation
     @Override
     public String execute() {
+        PatientSvcDto svcDto = getPatientSvcDto();
+        List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+        TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto(); 
+        treatmentRegimen.setIdentifier(getTpIi());
+        treatmentRegimen.setOffTreatment(new OffTreatmentSvcDto());
+        trList.add(treatmentRegimen);
+        svcDto.setTreatmentRegimens(trList);
         try {
-        List<PerformedSubjectMilestoneDto> psmList = performedActivitySvc.getPerformedSubjectMilestoneByStudySubject(
-                                                                   getParticipantIi());
-        for (PerformedSubjectMilestoneDto psm : psmList) {
-            if (psm.getNameCode() != null && psm.getNameCode().getCode() != null
-                    && psm.getNameCode().getCode().equals(ActivityNameCode.OFF_TREATMENT.getCode())) {
-                offTreat.setId(psm.getIdentifier());
-                offTreat.setLastTreatmentDate(psm.getActualDateRange().getLow());
-                offTreat.setOffTreatmentReason(psm.getReasonCode());
-            }
-        }        
+            List<PatientSvcDto> pSvcList = outcomesSvc.get(svcDto);
+            OffTreatmentSvcDto offTreatment = pSvcList.get(0).getTreatmentRegimens().get(0).getOffTreatment();
+            offTreat = new OffTreatmentWebDto(offTreatment);
         } catch (RemoteException e) {
             LOG.error("Error in OffTreatmentAction.execute() " + e.getLocalizedMessage());
             return ERROR;
@@ -136,35 +136,23 @@ public class OffTreatmentAction extends AbstractEditAccrualAction<OffTreatmentWe
      */
     @Override
     public String save() {
-        OffTreatmentWebDto.validate(offTreat, this);
-        if (hasActionErrors() || hasFieldErrors()) {
-            return INPUT;
+        PatientSvcDto svcDto = getPatientSvcDto();
+        List<TreatmentRegimenSvcDto> trList = new ArrayList<TreatmentRegimenSvcDto>();
+        TreatmentRegimenSvcDto treatmentRegimen = new TreatmentRegimenSvcDto();
+        treatmentRegimen.setOffTreatment(offTreat.getSvcDto());
+        treatmentRegimen.setIdentifier(getTpIi());
+        if (PAUtil.isIiNull(offTreat.getIdentifier())) {
+            treatmentRegimen.getOffTreatment().setAction(SvcConstants.CREATE);
+        } else {
+            treatmentRegimen.getOffTreatment().setAction(SvcConstants.UPDATE);
         }
+        trList.add(treatmentRegimen);
+        svcDto.setTreatmentRegimens(trList);
         try {
-            PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
-            if (offTreat.getId() != null && offTreat.getId().getExtension() != null) {
-                dto = performedActivitySvc.getPerformedSubjectMilestone(offTreat.getId());
-            }
-            if (dto.getActualDateRange() == null) {
-                dto.setActualDateRange(new Ivl<Ts>());
-            }
-            dto.getActualDateRange().setLow(offTreat.getLastTreatmentDate());
-            dto.setReasonCode(offTreat.getOffTreatmentReason());
-
-            if (offTreat.getId() != null && offTreat.getId().getExtension() == null) {
-                dto.setStudyProtocolIdentifier(getSpIi());
-                dto.setStudySubjectIdentifier(getParticipantIi());
-                dto.setNameCode(CdConverter.convertToCd(ActivityNameCode.OFF_TREATMENT));
-                dto = performedActivitySvc.createPerformedSubjectMilestone(dto);
-
-                ActivityRelationshipDto arDto = new ActivityRelationshipDto();
-                arDto.setTypeCode(CdConverter.convertToCd(ActivityRelationshipTypeCode.COMP));
-                arDto.setSourcePerformedActivityIdentifier(getTpIi());
-                arDto.setTargetPerformedActivityIdentifier(dto.getIdentifier());
-                activityRelationshipSvc.create(arDto);
-            } else {
-                dto = performedActivitySvc.updatePerformedSubjectMilestone(dto);
-            }
+            outcomesSvc.write(svcDto); 
+        } catch (OutcomesFieldException e) {
+            addFieldError(OffTreatmentWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+            return INPUT;
         } catch (Exception e) {
             addActionError("Error in OffTreatmentAction save().  " + e.getLocalizedMessage());
             return INPUT;

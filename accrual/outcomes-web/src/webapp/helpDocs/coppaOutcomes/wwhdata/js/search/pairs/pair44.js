@@ -3,13 +3,14 @@ function FileData_Pairs(x)
 x.t("example","clinicians");
 x.t("measure","tumor");
 x.t("treatment","course");
-x.t("treatment","during");
 x.t("treatment","order");
 x.t("course","treatment");
+x.t("course","during");
 x.t("working","outcome");
-x.t("obtained","end");
+x.t("obtained","during");
 x.t("times","throughout");
 x.t("response","measurement");
+x.t("during","end");
 x.t("during","post-treatment");
 x.t("clinicians","may");
 x.t("tumor","times");

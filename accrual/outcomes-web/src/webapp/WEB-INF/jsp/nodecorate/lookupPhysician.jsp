@@ -19,7 +19,7 @@
     }
     
     function populatePhysicianField(id, name) {
-        window.top.document.getElementsByName("userAccount.physicianId")[0].value = id;
+        window.top.document.getElementsByName("userAccount.physicianIdentifier")[0].value = id;
         window.top.document.getElementsByName("userAccount.physician")[0].value = name.replace(/&apos;/g,"'");       
         window.top.hidePopWin(false); 
     }

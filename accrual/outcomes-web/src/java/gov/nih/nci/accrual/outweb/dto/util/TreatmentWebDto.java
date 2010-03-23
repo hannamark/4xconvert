@@ -79,13 +79,9 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.outweb.util.AccrualConstants;
-import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.outcomes.svc.dto.AbstractTreatmentRegimenDto;
+import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
 
 import java.io.Serializable;
 
@@ -97,92 +93,74 @@ import com.opensymphony.xwork2.validator.annotations.FieldExpressionValidator;
  * @author lhebel
  * @since 10/28/2009
  */
-public class TreatmentWebDto implements Serializable {
+@SuppressWarnings({"PMD.UselessOverridingMethod" })
+public class TreatmentWebDto extends AbstractTreatmentRegimenDto implements Serializable {
 
     private static final long serialVersionUID = -2839999612985254553L;
-
-    private Ii id;  
-    private St name;
-    private St description;
-
+    
     /**
      * Instantiates a new treatment web dto.
      */
     public TreatmentWebDto() {
         // default constructor
-    }    
+    }
+    
+    /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("name".equals(result)) {
+            result = "name";
+        }
+        if ("description".equals(result)) {
+            result = "description";
+        }
+        return "treatment." + result;
+    }
     
     /**
      * Instantiates a new treatment web dto.
-     * @param pa the pa
+     * 
+     * @param svcDto the svc dto
      */
-    public TreatmentWebDto(PerformedActivityDto pa) {
-        id = pa.getIdentifier();
-        name = pa.getName();
-        description = pa.getTextDescription();
+    public TreatmentWebDto(TreatmentRegimenSvcDto svcDto) {
+        setIdentifier(svcDto.getIdentifier());
+        setName(svcDto.getName());
+        setDescription(svcDto.getDescription());        
     }
-
-
-    /**
-     * Gets the performed activity dto.
-     * @return the performed activity dto
-     */
-    public PerformedActivityDto getPerformedActivityDto() {
-        PerformedActivityDto paDto = new PerformedActivityDto();
-        paDto.setIdentifier(getId());
-        paDto.setTextDescription(getDescription());
-        paDto.setName(getName());
-        paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.getByCode("Treatment Plan"))); 
-        paDto.setStudyProtocolIdentifier(
-                (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_STUDYPROTOCOL_II));
-        paDto.setStudySubjectIdentifier(
-                (Ii) SessionEnvManager.getAttr(AccrualConstants.SESSION_ATTR_PARTICIPANT_II));
-        return paDto;
-    }
-
+    
     /**
      * @return name
      */
+    @Override
     @FieldExpressionValidator(expression = "name.value != null && name.value.length() > 0", 
             message = "Please enter a Treatment Plan Name")
     public St getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(St name) {
-        this.name = name;
+        return super.getName();
     }
 
     /**
      * @return description
      */
+    @Override
     @FieldExpressionValidator(expression = "description.value != null && description.value.length() > 0", 
             message = "Please enter a Treatment Plan Description")
     public St getDescription() {
-        return description;
+        return super.getDescription();
     }
-
+    
     /**
-     * @param description the description to set
+     * Gets the svc dto.
+     * 
+     * @return the svc dto
      */
-    public void setDescription(St description) {
-        this.description = description;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Ii id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the id
-     */
-    public Ii getId() {
-        return id;
+    public TreatmentRegimenSvcDto getSvcDto() {
+        TreatmentRegimenSvcDto svcDto = new TreatmentRegimenSvcDto();
+        svcDto.setIdentifier(getIdentifier());
+        svcDto.setName(getName());
+        svcDto.setDescription(getDescription());
+        return svcDto;
     }
 }

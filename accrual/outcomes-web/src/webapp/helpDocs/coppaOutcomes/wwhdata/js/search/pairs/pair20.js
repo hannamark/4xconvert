@@ -2,6 +2,8 @@ function FileData_Pairs(x)
 {
 x.t("measure","(uom)");
 x.t("measure","click");
+x.t("table","bottom");
+x.t("markers","table");
 x.t("markers","require");
 x.t("markers","staging");
 x.t("markers","along");
@@ -79,7 +81,7 @@ x.t("marker","click");
 x.t("marker","value");
 x.t("marker","page");
 x.t("(uom)","next");
-x.t("displayed","staging");
+x.t("displayed","tumor");
 x.t("include","tumor");
 x.t("value","field");
 x.t("value","selected");
@@ -100,6 +102,7 @@ x.t("save","tumor");
 x.t("nci","outcomes");
 x.t("(number)","search");
 x.t("note","markers");
+x.t("bottom","staging");
 x.t("adding","tumor");
 x.t("outcomes","portal");
 }

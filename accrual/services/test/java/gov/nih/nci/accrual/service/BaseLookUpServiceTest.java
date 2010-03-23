@@ -30,4 +30,15 @@ public class BaseLookUpServiceTest extends AbstractServiceTest<BaseLookUpService
             assertNotNull(bean.getByCode(df));
         }
     }
+    
+    @Test
+    public void testValidateLookUp() throws Exception {
+        bean.validateLookUp("Abdomen", "ANATOMIC_SITES", "CODE");
+        bean.validateLookUp("Unit/g", "UNIT_OF_MEASUREMENT", "CODE");
+        bean.validateLookUp("AURICULAR (OTIC)", "ROUTE_OF_ADMINISTRATION", "CODE");
+        bean.validateLookUp("Mammary Gland", "LESION_LOCATION_ANATOMIC_SITE", "CODE");
+        bean.validateLookUp("Phospho-HER-2/neu", "TUMOR_MARKER", "CODE");
+        bean.validateLookUp("QIS", "DOSE_FREQUENCY", "CODE");
+        bean.validateLookUp("2-D Echocardiogram", "ASSESSMENT_TYPE", "CODE");
+    }
 }

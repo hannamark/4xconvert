@@ -79,17 +79,18 @@
 package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
+import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.PerformedObservationResultService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.UserService;
 import gov.nih.nci.accrual.service.util.BaseLookUpService;
 import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.PatientService;
-import gov.nih.nci.accrual.service.util.PatientServiceRemote;
+import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.outcomes.svc.OutcomesSvcLocal;
+import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
 
 
 /**
@@ -152,7 +153,7 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    public PatientServiceRemote getPOPatientService() {
+    public POPatientService getPOPatientService() {
         return serviceLocator.getPOPatientService();
     }
 
@@ -183,26 +184,26 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
     public CountryService getCountryService() {
         return serviceLocator.getCountryService();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public PerformedObservationResultService getPerformedObservationResultService() {
         return serviceLocator.getPerformedObservationResultService();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public ActivityRelationshipService getActivityRelationshipService() {
         return serviceLocator.getActivityRelationshipService();
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public UserService getUserService() {
-        return serviceLocator.getUserService();
+    public OutcomesUserSvcLocal getOutcomesUserSvc() {
+        return serviceLocator.getOutcomesUserSvc();
     }
 
     /**
@@ -210,5 +211,12 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
      */
     public BaseLookUpService getBaseLookupService() {
         return serviceLocator.getBaseLookupService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OutcomesSvcLocal getOutcomesSvc() {
+        return serviceLocator.getOutcomesSvc();
     }
 }

@@ -87,7 +87,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.util.SearchTrialBean;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;

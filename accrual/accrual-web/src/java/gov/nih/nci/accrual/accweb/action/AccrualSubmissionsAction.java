@@ -84,8 +84,8 @@ import gov.nih.nci.accrual.accweb.util.WebUtil;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.coppa.iso.Ivl;
+import gov.nih.nci.coppa.iso.Ts;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -217,6 +218,11 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
                     new Timestamp(new Date().getTime()), null));
             submission.setCreateUser(StConverter.convertToSt((String) ServletActionContext.getRequest().getSession().
                     getAttribute(AccrualConstants.SESSION_ATTR_AUTHORIZED_USER)));
+
+            if (PAUtil.isTsNull(submission.getCutOffDate())) {
+                addActionError("Please Enter Submission Cut off Date.");
+                return AR_NEW_SUBMISSION;
+            }
             
             List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(getSpIi());
             if (!listOfSubmissions.isEmpty()) {
@@ -231,10 +237,11 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
                         cutOffDate = sDto.getCutOffDate();
                     }
                 }
-                if (submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
+                if (!PAUtil.isTsNull(submission.getCutOffDate())
+                        && submission.getCutOffDate().getValue().before(cutOffDate.getValue())) {
                     addActionError("New Cut-off Date must be same or bigger than"
                             + " the Cut-off-Date of the previous submission");
-                    return super.execute();
+                    return AR_NEW_SUBMISSION;
                 }
             }
             submissionSvc.create(submission);
