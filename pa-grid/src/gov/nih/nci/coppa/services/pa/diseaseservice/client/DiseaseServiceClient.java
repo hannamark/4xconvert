@@ -2,9 +2,9 @@ package gov.nih.nci.coppa.services.pa.diseaseservice.client;
 
 import gov.nih.nci.coppa.services.pa.BaseType;
 import gov.nih.nci.coppa.services.pa.Disease;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.diseaseservice.common.DiseaseServiceI;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -107,7 +107,7 @@ public class DiseaseServiceClient extends DiseaseServiceClientBase implements Di
         }
     }
 
-    public gov.nih.nci.coppa.services.pa.Disease get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Disease get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.diseaseservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.diseaseservice.stubs.GetRequest();
@@ -143,7 +143,7 @@ public class DiseaseServiceClient extends DiseaseServiceClientBase implements Di
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.diseaseservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.diseaseservice.stubs.DeleteRequest();

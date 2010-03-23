@@ -1,10 +1,10 @@
 package gov.nih.nci.coppa.services.pa.interventionservice.client;
 
 import gov.nih.nci.coppa.services.pa.BaseType;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.Intervention;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.interventionservice.common.InterventionServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -98,9 +98,7 @@ public class InterventionServiceClient extends InterventionServiceClientBase imp
         }
     }
 
-
-
-  public gov.nih.nci.coppa.services.pa.Intervention get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Intervention get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.interventionservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.interventionservice.stubs.GetRequest();
@@ -136,7 +134,7 @@ public class InterventionServiceClient extends InterventionServiceClientBase imp
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.interventionservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.interventionservice.stubs.DeleteRequest();

@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
-import gov.nih.nci.coppa.iso.Bl;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -119,17 +119,18 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            StudySiteDTO nctIdentifierSiteIdentifierDTO, StudyContactDTO studyContactDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi, Bl isBatch) throws PAException {
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi, 
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
 
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService().amend(studyProtocolDTO,
                     overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
                     principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                    nctIdentifierSiteIdentifierDTO, studyContactDTO, studySiteContactDTO, summary4organizationDTO,
-                    summary4studyResourcingDTO, responsiblePartyContactIi, isBatch);
+                    studyIdentifierDTOs, studyContactDTO, studySiteContactDTO, summary4organizationDTO,
+                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, isBatch);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
@@ -171,18 +172,19 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            StudySiteDTO nctIdentifierSiteIdentifierDTO, StudyContactDTO studyContactDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi, Bl isBatch) throws PAException {
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi, 
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
         
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
                     .createInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
-                            sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, nctIdentifierSiteIdentifierDTO,
+                            sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
                             studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                            responsiblePartyContactIi, isBatch);
+                            responsiblePartyContactIi, studyRegAuthDTO, isBatch);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
@@ -202,7 +204,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      */
     // CHECKSTYLE:OFF
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            StudySiteDTO studySiteDto, List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudySiteDTO> studyIdentifierDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             StudyContactDTO studyContactDTO, StudySiteContactDTO studyParticipationContactDTO,
             OrganizationDTO summary4organizationDTO, StudyResourcingDTO summary4studyResourcingDTO,
@@ -212,7 +214,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         // CHECKSTYLE:ON
         try {
             GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService().update(studyProtocolDTO,
-                    overallStatusDTO, studySiteDto, studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                    overallStatusDTO, studyIdentifierDTOs, studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
                     studyContactDTO, studyParticipationContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                     responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, studySiteAccrualStatusDTOs,
                     studySiteDTOs, isBatch);

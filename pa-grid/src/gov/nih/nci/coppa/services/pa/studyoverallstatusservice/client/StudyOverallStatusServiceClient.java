@@ -82,9 +82,9 @@
  */
 package gov.nih.nci.coppa.services.pa.studyoverallstatusservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyOverallStatus;
 import gov.nih.nci.coppa.services.pa.studyoverallstatusservice.common.StudyOverallStatusServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -195,7 +195,7 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.GetByStudyProtocolRequest();
@@ -207,7 +207,7 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.CopyRequest();
@@ -221,7 +221,7 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOverallStatus getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus getCurrentByStudyProtocol(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.GetCurrentByStudyProtocolRequest();
@@ -233,7 +233,7 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOverallStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOverallStatus get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.GetRequest();
@@ -269,7 +269,7 @@ public class StudyOverallStatusServiceClient extends StudyOverallStatusServiceCl
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.DeleteRequest();

@@ -1,7 +1,8 @@
 package gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.client;
+
 import gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.common.DocumentWorkflowStatusServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -91,7 +92,7 @@ public class DocumentWorkflowStatusServiceClient extends DocumentWorkflowStatusS
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
-  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus getCurrentByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetCurrentByStudyProtocolRequest();
@@ -103,7 +104,7 @@ public class DocumentWorkflowStatusServiceClient extends DocumentWorkflowStatusS
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetByStudyProtocolRequest();
@@ -115,7 +116,7 @@ public class DocumentWorkflowStatusServiceClient extends DocumentWorkflowStatusS
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.CopyRequest();
@@ -129,7 +130,7 @@ public class DocumentWorkflowStatusServiceClient extends DocumentWorkflowStatusS
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.DocumentWorkflowStatus get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.GetRequest();
@@ -165,7 +166,7 @@ public class DocumentWorkflowStatusServiceClient extends DocumentWorkflowStatusS
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.DeleteRequest();

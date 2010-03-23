@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure;
 import gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.common.StudyOutcomeMeasureServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
@@ -93,7 +93,7 @@ public class StudyOutcomeMeasureServiceClient extends StudyOutcomeMeasureService
         System.out.println("get by study protocol brought back set sized " + out.length);
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.GetByStudyProtocolRequest();
@@ -105,7 +105,7 @@ public class StudyOutcomeMeasureServiceClient extends StudyOutcomeMeasureService
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.CopyRequest();
@@ -119,7 +119,7 @@ public class StudyOutcomeMeasureServiceClient extends StudyOutcomeMeasureService
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOutcomeMeasure get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.GetRequest();
@@ -155,7 +155,7 @@ public class StudyOutcomeMeasureServiceClient extends StudyOutcomeMeasureService
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.DeleteRequest();

@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  */
 public interface StudyRelationshipServiceI {
 
-  public gov.nih.nci.coppa.services.pa.StudyRelationship get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.StudyRelationship get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.StudyRelationship[] search(gov.nih.nci.coppa.services.pa.StudyRelationship studyRelationship,gov.nih.nci.coppa.common.LimitOffset limitOffset) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
@@ -20,7 +20,7 @@ public interface StudyRelationshipServiceI {
 
   public gov.nih.nci.coppa.services.pa.StudyRelationship update(gov.nih.nci.coppa.services.pa.StudyRelationship studyRelationship) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
 }
 

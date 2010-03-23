@@ -1,10 +1,10 @@
 package gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudySiteAccrualStatusEjb;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 
 import java.rmi.RemoteException;
@@ -28,7 +28,7 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
     /**
      * {@inheritDoc}
      */
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getStudySiteAccrualStatus(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getStudySiteAccrualStatus(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
             Ii iiDto = IITransformer.INSTANCE.toDto(id);
             StudySiteAccrualStatusDTO dto = ejb.getStudySiteAccrualStatus(iiDto);
@@ -56,7 +56,7 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
   /**
    * {@inheritDoc}
    */
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudySite(gov.nih.nci.iso21090.extensions.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studySiteId);
           List<StudySiteAccrualStatusDTO> dtoList = ejb.getStudySiteAccrualStatusByStudySite(iiDto);
@@ -70,7 +70,7 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
   /**
    * {@inheritDoc}
    */
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.iso21090.extensions.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studySiteId);
           StudySiteAccrualStatusDTO dto = ejb.getCurrentStudySiteAccrualStatusByStudySite(iiDto);

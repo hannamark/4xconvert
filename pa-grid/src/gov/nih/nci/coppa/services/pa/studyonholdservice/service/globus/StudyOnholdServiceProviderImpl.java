@@ -64,7 +64,7 @@ public class StudyOnholdServiceProviderImpl{
 
     public gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.IsOnholdResponse isOnhold(gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.IsOnholdRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.IsOnholdResponse boxedResult = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.IsOnholdResponse();
-    boxedResult.setBL(impl.isOnhold(params.getStudyProtocolId().getId()));
+    boxedResult.setBl(impl.isOnhold(params.getStudyProtocolId().getId()));
     return boxedResult;
   }
 

@@ -31,7 +31,7 @@ public class DiseaseServiceImpl extends DiseaseServiceImplBase {
         super();
     }
 
-  public gov.nih.nci.coppa.services.pa.Disease get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Disease get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       return impl.get(id);
   }
 
@@ -55,7 +55,7 @@ public class DiseaseServiceImpl extends DiseaseServiceImplBase {
     throw new RemoteException("Not yet implemented");
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     throw new RemoteException("Not yet implemented");
   }
 

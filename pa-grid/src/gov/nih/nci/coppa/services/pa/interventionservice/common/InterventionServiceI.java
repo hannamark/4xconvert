@@ -12,13 +12,13 @@ import java.rmi.RemoteException;
  */
 public interface InterventionServiceI {
 
-  public gov.nih.nci.coppa.services.pa.Intervention get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.Intervention get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.Intervention create(gov.nih.nci.coppa.services.pa.Intervention intervention) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.Intervention update(gov.nih.nci.coppa.services.pa.Intervention intervention) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.Intervention[] search(gov.nih.nci.coppa.services.pa.Intervention searchCriteria) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 

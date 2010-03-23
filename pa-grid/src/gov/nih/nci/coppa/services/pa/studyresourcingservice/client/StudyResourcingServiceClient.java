@@ -1,9 +1,9 @@
 package gov.nih.nci.coppa.services.pa.studyresourcingservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyResourcing;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.studyresourcingservice.common.StudyResourcingServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
@@ -113,7 +113,7 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
 
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyResourcing getSummaryForReportedResource(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing getSummaryForReportedResource(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getSummaryForReportedResource");
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummaryForReportedResourceRequest params = new gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummaryForReportedResourceRequest();
@@ -149,7 +149,7 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyResourcing[] getStudyResourceByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing[] getStudyResourceByStudyProtocol(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getStudyResourceByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetStudyResourceByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetStudyResourceByStudyProtocolRequest();
@@ -161,7 +161,7 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyResourcing getStudyResourceByID(gov.nih.nci.coppa.services.pa.Id studyResourceId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing getStudyResourceByID(gov.nih.nci.iso21090.extensions.Id studyResourceId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getStudyResourceByID");
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetStudyResourceByIDRequest params = new gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetStudyResourceByIDRequest();

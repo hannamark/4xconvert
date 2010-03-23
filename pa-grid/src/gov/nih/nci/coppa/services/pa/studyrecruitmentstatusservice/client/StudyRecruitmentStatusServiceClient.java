@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus;
 import gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.common.StudyRecruitmentStatusServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -100,7 +100,7 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.GetByStudyProtocolRequest();
@@ -112,7 +112,7 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.CopyRequest();
@@ -126,7 +126,7 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus getCurrentByStudyProtocol(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.GetCurrentByStudyProtocolRequest();
@@ -138,7 +138,7 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.GetRequest();
@@ -174,7 +174,7 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.DeleteRequest();

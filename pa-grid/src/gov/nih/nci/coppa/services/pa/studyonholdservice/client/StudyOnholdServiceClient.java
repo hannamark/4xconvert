@@ -1,9 +1,9 @@
 package gov.nih.nci.coppa.services.pa.studyonholdservice.client;
 
-import gov.nih.nci.coppa.services.pa.BL;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyOnhold;
 import gov.nih.nci.coppa.services.pa.studyonholdservice.common.StudyOnholdServiceI;
+import gov.nih.nci.iso21090.extensions.Bl;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -102,7 +102,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
       id.setExtension("1");
 
       System.out.println("Testing StudyOnhold.isOnhold()...");
-      BL result = client.isOnhold(id);
+      Bl result = client.isOnhold(id);
       if (result == null) {
           System.out.println("Could not find StudyOnhold records for StudyProtocol = 1.");
       } else {
@@ -110,7 +110,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
       }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOnhold[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOnhold[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetByStudyProtocolRequest();
@@ -122,7 +122,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.CopyRequest();
@@ -136,7 +136,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyOnhold get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyOnhold get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.GetRequest();
@@ -172,7 +172,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.DeleteRequest();
@@ -183,7 +183,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.BL isOnhold(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.iso21090.extensions.Bl isOnhold(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"isOnhold");
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.IsOnholdRequest params = new gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.IsOnholdRequest();
@@ -191,7 +191,7 @@ public class StudyOnholdServiceClient extends StudyOnholdServiceClientBase imple
     studyProtocolIdContainer.setId(studyProtocolId);
     params.setStudyProtocolId(studyProtocolIdContainer);
     gov.nih.nci.coppa.services.pa.studyonholdservice.stubs.IsOnholdResponse boxedResult = portType.isOnhold(params);
-    return boxedResult.getBL();
+    return boxedResult.getBl();
     }
   }
 

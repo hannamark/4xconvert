@@ -82,12 +82,12 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.DSETCDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformer;
 import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETCDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformer;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 
 /**

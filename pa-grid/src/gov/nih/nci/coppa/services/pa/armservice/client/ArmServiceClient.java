@@ -2,9 +2,9 @@ package gov.nih.nci.coppa.services.pa.armservice.client;
 
 import gov.nih.nci.coppa.services.pa.Arm;
 import gov.nih.nci.coppa.services.pa.BaseType;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.armservice.common.ArmServiceI;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -108,7 +108,7 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
 
     }
 
-  public gov.nih.nci.coppa.services.pa.Arm get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetRequest();
@@ -120,7 +120,7 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.Arm[] getByPlannedActivity(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm[] getByPlannedActivity(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByPlannedActivity");
     gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByPlannedActivityRequest();
@@ -132,7 +132,7 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.Arm[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Arm[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.GetByStudyProtocolRequest();
@@ -144,7 +144,7 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.CopyRequest();
@@ -182,7 +182,7 @@ public class ArmServiceClient extends ArmServiceClientBase implements ArmService
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.armservice.stubs.DeleteRequest();

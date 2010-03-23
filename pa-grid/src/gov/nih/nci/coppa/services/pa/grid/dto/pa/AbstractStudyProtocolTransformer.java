@@ -82,17 +82,17 @@
  */
 package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.BLTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.INTTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IVLINTTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.coppa.services.pa.StudyProtocolType;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 /**

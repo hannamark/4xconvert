@@ -1,10 +1,10 @@
 package gov.nih.nci.coppa.services.pa.studyprotocolservice.client;
 
 import gov.nih.nci.coppa.common.LimitOffset;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.studyprotocolservice.common.StudyProtocolServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
@@ -111,7 +111,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyProtocol getStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyProtocol getStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetStudyProtocolRequest();
@@ -135,7 +135,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol getInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol getInterventionalStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getInterventionalStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetInterventionalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.GetInterventionalStudyProtocolRequest();
@@ -159,7 +159,7 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.Id createInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol interventionalStudyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.iso21090.extensions.Id createInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol interventionalStudyProtocol) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"createInterventionalStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateInterventionalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.CreateInterventionalStudyProtocolRequest();

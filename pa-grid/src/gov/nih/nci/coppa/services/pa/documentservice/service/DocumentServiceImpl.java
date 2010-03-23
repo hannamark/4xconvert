@@ -1,10 +1,10 @@
 package gov.nih.nci.coppa.services.pa.documentservice.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeDocumentEjb;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 
 import java.rmi.RemoteException;
@@ -27,7 +27,7 @@ public class DocumentServiceImpl extends DocumentServiceImplBase {
     super();
   }
 
-  public gov.nih.nci.coppa.services.pa.Document[] getDocumentsByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Document[] getDocumentsByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(id);
           List<DocumentDTO> results = documentService.getDocumentsByStudyProtocol(iiDto);
@@ -41,7 +41,7 @@ public class DocumentServiceImpl extends DocumentServiceImplBase {
       }
   }
 
-  public gov.nih.nci.coppa.services.pa.Document get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Document get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(id);
           DocumentDTO result = documentService.get(iiDto);

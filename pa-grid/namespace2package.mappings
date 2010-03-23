@@ -118,6 +118,7 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types=
 http\://enterpriseservices.nci.nih.gov/PAServices/ArmService/types=gov.nih.nci.coppa.services.pa.armservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types=gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.stubs.types
 http\://pa.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.pa
+http\://iso21090.nci.nih.gov=gov.nih.nci.iso21090.extensions
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types=gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.types
 http\://www.w3.org/XML/1998/namespace=namespace
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types=gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.types

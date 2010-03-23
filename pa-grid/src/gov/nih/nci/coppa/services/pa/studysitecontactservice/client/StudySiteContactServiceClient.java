@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.studysitecontactservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudySiteContact;
 import gov.nih.nci.coppa.services.pa.studysitecontactservice.common.StudySiteContactServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
@@ -100,7 +100,7 @@ public class StudySiteContactServiceClient extends StudySiteContactServiceClient
         }
     }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.CopyRequest();
@@ -126,7 +126,7 @@ public class StudySiteContactServiceClient extends StudySiteContactServiceClient
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.DeleteRequest();
@@ -137,7 +137,7 @@ public class StudySiteContactServiceClient extends StudySiteContactServiceClient
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteContact get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteContact get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetRequest();
@@ -149,7 +149,7 @@ public class StudySiteContactServiceClient extends StudySiteContactServiceClient
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteContact[] getByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteContact[] getByStudySite(gov.nih.nci.iso21090.extensions.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudySite");
     gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetByStudySiteRequest params = new gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetByStudySiteRequest();
@@ -161,7 +161,7 @@ public class StudySiteContactServiceClient extends StudySiteContactServiceClient
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteContact[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteContact[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetByStudyProtocolRequest();
@@ -173,7 +173,7 @@ public class StudySiteContactServiceClient extends StudySiteContactServiceClient
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteContact[] getByStudyProtocolAndRole(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteContact[] getByStudyProtocolAndRole(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocolAndRole");
     gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetByStudyProtocolAndRoleRequest params = new gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetByStudyProtocolAndRoleRequest();
@@ -188,7 +188,7 @@ public class StudySiteContactServiceClient extends StudySiteContactServiceClient
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteContact[] getByStudyProtocolAndRoles(gov.nih.nci.coppa.services.pa.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudySiteContact[] studySiteContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteContact[] getByStudyProtocolAndRoles(gov.nih.nci.iso21090.extensions.Id studyProtocolId,gov.nih.nci.coppa.services.pa.StudySiteContact[] studySiteContact) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocolAndRoles");
     gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetByStudyProtocolAndRolesRequest params = new gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.GetByStudyProtocolAndRolesRequest();

@@ -1,9 +1,9 @@
 package gov.nih.nci.coppa.services.pa.studyrelationshipservice.client;
 
 import gov.nih.nci.coppa.common.LimitOffset;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyRelationship;
 import gov.nih.nci.coppa.services.pa.studyrelationshipservice.common.StudyRelationshipServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -87,7 +87,7 @@ public class StudyRelationshipServiceClient extends StudyRelationshipServiceClie
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyRelationship get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRelationship get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.GetRequest();
@@ -138,7 +138,7 @@ public class StudyRelationshipServiceClient extends StudyRelationshipServiceClie
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studyrelationshipservice.stubs.DeleteRequest();

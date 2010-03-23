@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus;
 import gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.common.StudySiteAccrualStatusServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -101,7 +101,7 @@ public class StudySiteAccrualStatusServiceClient extends StudySiteAccrualStatusS
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getStudySiteAccrualStatus(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getStudySiteAccrualStatus(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getStudySiteAccrualStatus");
     gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusRequest params = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusRequest();
@@ -137,7 +137,7 @@ public class StudySiteAccrualStatusServiceClient extends StudySiteAccrualStatusS
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] getStudySiteAccrualStatusByStudySite(gov.nih.nci.iso21090.extensions.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getStudySiteAccrualStatusByStudySite");
     gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteRequest params = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetStudySiteAccrualStatusByStudySiteRequest();
@@ -149,7 +149,7 @@ public class StudySiteAccrualStatusServiceClient extends StudySiteAccrualStatusS
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.coppa.services.pa.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.iso21090.extensions.Id studySiteId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentStudySiteAccrualStatusByStudySite");
     gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteRequest params = new gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.stubs.GetCurrentStudySiteAccrualStatusByStudySiteRequest();

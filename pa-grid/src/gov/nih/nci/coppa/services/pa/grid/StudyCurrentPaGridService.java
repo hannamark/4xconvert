@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.coppa.services.pa.grid;
 
-import gov.nih.nci.coppa.services.pa.Id;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 import java.rmi.RemoteException;

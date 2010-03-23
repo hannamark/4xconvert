@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.documentservice.client;
 
 import gov.nih.nci.coppa.services.pa.Document;
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.documentservice.common.DocumentServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -84,7 +84,7 @@ public class DocumentServiceClient extends DocumentServiceClientBase implements 
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
-  public gov.nih.nci.coppa.services.pa.Document[] getDocumentsByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Document[] getDocumentsByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getDocumentsByStudyProtocol");
     gov.nih.nci.coppa.services.pa.documentservice.stubs.GetDocumentsByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.documentservice.stubs.GetDocumentsByStudyProtocolRequest();
@@ -96,7 +96,7 @@ public class DocumentServiceClient extends DocumentServiceClientBase implements 
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.Document get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.Document get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.documentservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.documentservice.stubs.GetRequest();

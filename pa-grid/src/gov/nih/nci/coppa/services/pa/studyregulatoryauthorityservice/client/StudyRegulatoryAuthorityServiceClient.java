@@ -1,9 +1,9 @@
 package gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.common.StudyRegulatoryAuthorityServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
@@ -111,7 +111,7 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetByStudyProtocolRequest();
@@ -147,7 +147,7 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.CopyRequest();
@@ -161,7 +161,7 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority getCurrentByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority getCurrentByStudyProtocol(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getCurrentByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetCurrentByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetCurrentByStudyProtocolRequest();
@@ -173,7 +173,7 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.GetRequest();
@@ -185,7 +185,7 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.stubs.DeleteRequest();

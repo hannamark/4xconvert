@@ -84,10 +84,10 @@ package gov.nih.nci.coppa.pa.grid.dto.transform.pa.faults;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.PAFaultTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.pa.service.PAException;
 
 import org.junit.Test;

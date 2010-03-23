@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.studydiseaseservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.StudyDisease;
 import gov.nih.nci.coppa.services.pa.studydiseaseservice.common.StudyDiseaseServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.rmi.RemoteException;
@@ -95,7 +95,7 @@ public class StudyDiseaseServiceClient extends StudyDiseaseServiceClientBase imp
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyDisease[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyDisease[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetByStudyProtocolRequest();
@@ -107,7 +107,7 @@ public class StudyDiseaseServiceClient extends StudyDiseaseServiceClientBase imp
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.CopyRequest();
@@ -121,7 +121,7 @@ public class StudyDiseaseServiceClient extends StudyDiseaseServiceClientBase imp
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.StudyDisease get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyDisease get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.GetRequest();
@@ -157,7 +157,7 @@ public class StudyDiseaseServiceClient extends StudyDiseaseServiceClientBase imp
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.DeleteRequest();

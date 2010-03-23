@@ -1,8 +1,8 @@
 package gov.nih.nci.coppa.services.pa.plannedactivityservice.client;
 
-import gov.nih.nci.coppa.services.pa.Id;
 import gov.nih.nci.coppa.services.pa.PlannedActivityType;
 import gov.nih.nci.coppa.services.pa.plannedactivityservice.common.PlannedActivityServiceI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -120,7 +120,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByArm(gov.nih.nci.coppa.services.pa.Id armId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByArm(gov.nih.nci.iso21090.extensions.Id armId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByArm");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByArmRequest();
@@ -132,7 +132,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion[] getPlannedEligibilityCriterionByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion[] getPlannedEligibilityCriterionByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getPlannedEligibilityCriterionByStudyProtocol");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionByStudyProtocolRequest();
@@ -144,7 +144,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion getPlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.PlannedEligibilityCriterion getPlannedEligibilityCriterion(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getPlannedEligibilityCriterion");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetPlannedEligibilityCriterionRequest();
@@ -180,7 +180,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     }
   }
 
-  public void deletePlannedEligibilityCriterion(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void deletePlannedEligibilityCriterion(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"deletePlannedEligibilityCriterion");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeletePlannedEligibilityCriterionRequest();
@@ -191,7 +191,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     }
   }
 
-  public void copyPlannedEligibilityStudyCriterions(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copyPlannedEligibilityStudyCriterions(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copyPlannedEligibilityStudyCriterions");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyPlannedEligibilityStudyCriterionsRequest();
@@ -205,7 +205,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.PlannedActivity[] getByStudyProtocol(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetByStudyProtocolRequest();
@@ -217,7 +217,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     }
   }
 
-  public void copy(gov.nih.nci.coppa.services.pa.Id fromStudyProtocolId,gov.nih.nci.coppa.services.pa.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void copy(gov.nih.nci.iso21090.extensions.Id fromStudyProtocolId,gov.nih.nci.iso21090.extensions.Id toStudyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"copy");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.CopyRequest();
@@ -231,7 +231,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     }
   }
 
-  public gov.nih.nci.coppa.services.pa.PlannedActivity get(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.PlannedActivity get(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.GetRequest();
@@ -267,7 +267,7 @@ public class PlannedActivityServiceClient extends PlannedActivityServiceClientBa
     }
   }
 
-  public void delete(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public void delete(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"delete");
     gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequest params = new gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.DeleteRequest();
