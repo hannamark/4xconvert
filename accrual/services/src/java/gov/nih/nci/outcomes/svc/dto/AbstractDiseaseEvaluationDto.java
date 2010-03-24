@@ -92,6 +92,7 @@ import gov.nih.nci.pa.enums.PatientVitalStatus;
  * @author Kalpana Guthikonda
  * @since 02/16/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public abstract class AbstractDiseaseEvaluationDto extends AbstractBaseOutSvcDto {
 
     private static final long serialVersionUID = -723717136423473609L;

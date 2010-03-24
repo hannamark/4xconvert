@@ -290,6 +290,7 @@
             <formatter type="xml"  toFile="${services.report.dir}/pmd.xml"/>
             <fileset dir="src">
                 <include name="**/accrual/**/*.java"/>
+            	<include name="**/outcomes/**/*.java"/>
             </fileset>
          </pmd>
     </target>
@@ -303,7 +304,10 @@
        <taskdef resource="simiantask.properties" 
              classpath="${test-simian.jar.dir}/simian-2.2.24.jar"/>
        <simian>
-            <fileset dir="src" includes="**/accrual/**/*.java"/>
+       		<fileset dir="src">
+       	          <include name="**/accrual/**/*.java"/>
+       	          <include name="**/outcomes/**/*.java"/>
+       	    </fileset>
             <formatter type="plain" toFile="${services.report.dir}/simian.txt"/>
             <formatter type="xml" toFile="${services.report.dir}/simian.xml"/>
             <formatter type="plain"/>

@@ -113,6 +113,8 @@ import java.util.zip.DataFormatException;
  * @since Feb 22, 2010
  *
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
+    "PMD.AvoidDuplicateLiterals" })
 public class LesionAssessmentSvcBean extends
         AbstractOutcomesBusSvcBean<LesionAssessmentSvcDto> {
 

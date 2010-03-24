@@ -126,7 +126,7 @@ import javax.interceptor.Interceptors;
 
 /**
  * <pre>
- * To summarize, the &quot;get&quot; options are:
+ * To summarize, the &quot;get&quot; options are.
  * Get one full patient record, with all associated child objects (getById)
  * Get one patient record with your choice of child objects (get with a specified ID)
  * Get all patient records for a user with no child objects (get without an ID)

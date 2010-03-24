@@ -91,6 +91,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @author Kalpana Guthikonda
  * @since 02/16/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public abstract class AbstractRadiationDto extends AbstractBaseOutSvcDto {
 
     private static final long serialVersionUID = 2300189222768338424L;

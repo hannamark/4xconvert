@@ -94,6 +94,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @author Kalpana Guthikonda
  * @since 02/16/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public abstract class AbstractDeathInformationDto extends AbstractBaseOutSvcDto {
 
     private static final long serialVersionUID = -1753075681406399565L;

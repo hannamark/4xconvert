@@ -91,6 +91,7 @@ import java.util.List;
  * @author Kalpana Guthikonda
  * @since 02/16/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public abstract class AbstractPriorTherapyDto extends AbstractBaseOutSvcDto {
 
     private Pq totalRegimenNum;

@@ -105,6 +105,8 @@ import java.util.zip.DataFormatException;
  * @since Feb 24, 2010
  *
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
+    "PMD.AvoidDuplicateLiterals" })
 public class DrugBiologicSvcBean extends AbstractOutcomesBusSvcBean<DrugBiologicSvcDto> {
 
     private static DrugBiologicSvcBean instance = new DrugBiologicSvcBean();

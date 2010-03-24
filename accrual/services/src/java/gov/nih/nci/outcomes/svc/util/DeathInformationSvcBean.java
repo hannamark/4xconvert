@@ -100,6 +100,7 @@ import java.util.zip.DataFormatException;
  * @author Hugh Reinhart
  * @since Feb 22, 2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class DeathInformationSvcBean extends AbstractOutcomesBusSvcBean<DeathInformationSvcDto> {
 
     private static DeathInformationSvcBean instance = new DeathInformationSvcBean();

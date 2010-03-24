@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  * @author Vrushali
  *
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyFields", "PMD.AvoidDuplicateLiterals" })
 public abstract class AbstractUserDto extends AbstractBaseOutSvcDto {
 
     /**

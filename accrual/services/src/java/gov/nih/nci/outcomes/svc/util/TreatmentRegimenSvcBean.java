@@ -97,6 +97,7 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since Feb 22, 2010
   */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class TreatmentRegimenSvcBean extends AbstractOutcomesBusSvcBean<TreatmentRegimenSvcDto> {
 
     private static TreatmentRegimenSvcBean instance = new TreatmentRegimenSvcBean();

@@ -99,6 +99,7 @@ import java.util.zip.DataFormatException;
  * @since Feb 22, 2010
  *
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class PerformanceStatusSvcBean extends
         AbstractOutcomesBusSvcBean<PerformanceStatusSvcDto> {
 
@@ -126,7 +127,8 @@ public class PerformanceStatusSvcBean extends
         try {
             dtoList = cctx.getPerformedActivityService().getPerformedObservationByStudySubject(parentIi);
             for (PerformedObservationDto dto : dtoList) {
-                if (ActivityNameCode.PERFORMANCE_STATUS.getCode().equals(CdConverter.convertCdToString(dto.getNameCode()))) {
+                if (ActivityNameCode.PERFORMANCE_STATUS.getCode().equals(
+                        CdConverter.convertCdToString(dto.getNameCode()))) {
                     performance.setIdentifier(dto.getIdentifier());
                     List<Cd> cds =  DSetConverter.convertDsetToCdList(dto.getMethodCode());
                     if (cds != null && !cds.isEmpty()) {
@@ -199,7 +201,7 @@ public class PerformanceStatusSvcBean extends
             List<PerformedClinicalResultDto> pcDtoList = null;
             PerformedObservationDto dto =
                 OutcomesUtil.getPerformedObservationByNameCode(ActivityNameCode.PERFORMANCE_STATUS, cctx, parentIi,
-                    true, true , true , svcDto.getIdentifier() ).get(0);
+                    true, true , true , svcDto.getIdentifier()).get(0);
             List<Cd> cds = new ArrayList<Cd>();
             cds.add(svcDto.getPerformanceSystem());
             dto.setMethodCode(DSetConverter.convertCdListToDSet(cds));
@@ -208,7 +210,7 @@ public class PerformanceStatusSvcBean extends
                     getPerformedClinicalResultByPerformedActivity(dto.getIdentifier());
             if (PAUtil.isListEmpty(pcDtoList)) {
                 throw new OutcomesException("Performed Clinical Result is not found for identifier = "
-                        +dto.getIdentifier().getExtension()  );
+                        + dto.getIdentifier().getExtension());
             }
             PerformedClinicalResultDto pcDto = pcDtoList.get(0);
             pcDto.setResultCode(svcDto.getPerformanceStatus());

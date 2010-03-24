@@ -85,8 +85,9 @@ import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 /**
  * @author Hugh Reinhart
  * @since Feb 19, 2010
- *
+ * @param <DTO> svcDto
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public abstract class AbstractOutcomesBusSvcBean<DTO extends AbstractBaseOutSvcDto> {
 
 
@@ -106,6 +107,7 @@ public abstract class AbstractOutcomesBusSvcBean<DTO extends AbstractBaseOutSvcD
      * @return array of iso dto's
      * @throws OutcomesException exception
      */
+    @SuppressWarnings("PMD")
      public DTO put(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException {
         DTO result = null;
         if (dto != null) {

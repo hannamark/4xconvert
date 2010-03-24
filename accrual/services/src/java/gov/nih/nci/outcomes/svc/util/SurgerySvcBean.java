@@ -101,6 +101,7 @@ import java.util.zip.DataFormatException;
  * @since Feb 24, 2010
  *
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class SurgerySvcBean extends AbstractOutcomesBusSvcBean<SurgerySvcDto> {
 
     private static SurgerySvcBean instance = new SurgerySvcBean();

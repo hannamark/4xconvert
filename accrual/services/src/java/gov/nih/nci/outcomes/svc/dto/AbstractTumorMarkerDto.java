@@ -88,6 +88,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @author Kalpana Guthikonda
  * @since 02/16/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public abstract class AbstractTumorMarkerDto extends AbstractBaseOutSvcDto {
 
     private static final long serialVersionUID = -6748537330185864921L;

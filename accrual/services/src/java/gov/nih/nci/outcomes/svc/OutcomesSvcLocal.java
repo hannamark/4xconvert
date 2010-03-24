@@ -96,6 +96,7 @@ public interface OutcomesSvcLocal {
     /**
      * @param dto master dto for the PODS service
      * @return result array
+     * @throws OutcomesException exception
      */
     public List<PatientSvcDto> get(PatientSvcDto dto) throws OutcomesException;
 

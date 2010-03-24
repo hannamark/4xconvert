@@ -101,6 +101,7 @@ import java.util.zip.DataFormatException;
  * @since Feb 22, 2010
  *
  */
+@SuppressWarnings({"PMD" })
 public class TumorMarkerSvcBean extends AbstractOutcomesBusSvcBean<TumorMarkerSvcDto> {
 
     private static TumorMarkerSvcBean instance = new TumorMarkerSvcBean();

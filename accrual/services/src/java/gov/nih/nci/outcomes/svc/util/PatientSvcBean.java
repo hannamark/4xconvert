@@ -107,6 +107,7 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since Feb 19, 2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class PatientSvcBean extends AbstractOutcomesBusSvcBean<PatientSvcDto> {
 
     private static List<Country> listOfCountries = null;

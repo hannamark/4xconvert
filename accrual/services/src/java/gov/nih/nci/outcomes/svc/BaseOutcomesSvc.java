@@ -90,11 +90,12 @@ import org.apache.commons.lang.StringUtils;
  * @author smatyas
  *
  */
+@SuppressWarnings("PMD.AbstractNaming")
 public abstract class BaseOutcomesSvc {
 
     
     /**
-     * Remove encoded grid security information and returns the actual principal
+     * Remove encoded grid security information and returns the actual principal.
      * @param ejbContext the EJBContext
      * @return the caller principal value
      */

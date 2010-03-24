@@ -105,6 +105,7 @@ import java.util.List;
  * @since Feb 24, 2010
  *
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
 public class CycleSvcBean extends AbstractOutcomesBusSvcBean<CycleSvcDto> {
 
     private static CycleSvcBean instance = new CycleSvcBean();

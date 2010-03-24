@@ -107,6 +107,7 @@ import java.util.List;
  * @author Naveen Amiruddin
  * @since Mar 2, 2010
  */
+@SuppressWarnings({"PMD" })
 public class OutcomesUtil {
 
 

@@ -102,6 +102,7 @@ import java.util.zip.DataFormatException;
  * @since Feb 24, 2010
  *
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
 public class RadiationSvcBean extends AbstractOutcomesBusSvcBean<RadiationSvcDto> {
 
     private static RadiationSvcBean instance = new RadiationSvcBean();

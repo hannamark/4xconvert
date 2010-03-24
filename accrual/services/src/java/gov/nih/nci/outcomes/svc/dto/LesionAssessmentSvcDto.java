@@ -88,6 +88,7 @@ import java.io.Serializable;
  * @author Hugh Reinhart
  * @since Feb 18, 2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public class LesionAssessmentSvcDto extends AbstractLesionAssessmentDto implements Serializable {
     private static final long serialVersionUID = 1L;
     

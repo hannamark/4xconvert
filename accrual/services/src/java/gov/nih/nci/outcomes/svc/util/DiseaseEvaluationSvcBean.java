@@ -108,6 +108,7 @@ import java.util.zip.DataFormatException;
  * @since Feb 22, 2010
  *
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class DiseaseEvaluationSvcBean extends
         AbstractOutcomesBusSvcBean<DiseaseEvaluationSvcDto> {
 

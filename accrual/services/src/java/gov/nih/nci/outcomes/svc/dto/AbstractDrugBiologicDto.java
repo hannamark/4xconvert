@@ -92,6 +92,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @author Kalpana Guthikonda
  * @since 02/16/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public abstract class AbstractDrugBiologicDto extends AbstractBaseOutSvcDto {
 
     private static final long serialVersionUID = -2097649710120994685L;

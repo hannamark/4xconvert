@@ -85,6 +85,7 @@ import gov.nih.nci.iso21090.St;
  * @author Kalpana Guthikonda
  * @since 02/19/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public abstract class AbstractPriorTherapiesItemDto extends AbstractBaseOutSvcDto {
 
     private Cd type = new Cd();

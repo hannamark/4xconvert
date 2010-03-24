@@ -102,6 +102,7 @@ import java.util.List;
  * @author Kalpana Guthikonda
  * @since 02/16/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public abstract class AbstractPatientDto extends AbstractBaseOutSvcDto implements Serializable {
 
     private static final long serialVersionUID = -8955860125402107636L;
@@ -161,6 +162,7 @@ public abstract class AbstractPatientDto extends AbstractBaseOutSvcDto implement
         super.validate();
     }
 
+    @SuppressWarnings({"PMD" })
     private boolean validateCountryCodeIsUsa() throws OutcomesFieldException {
         String alpha3 = StConverter.convertToString(getCountryAlpha3());
         if (PAUtil.isEmpty(alpha3)) {

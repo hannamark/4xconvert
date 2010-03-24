@@ -90,6 +90,7 @@ import gov.nih.nci.pa.util.PAUtil;
  * @author Kalpana Guthikonda
  * @since 02/16/2010
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity" })
 public abstract class AbstractPerformanceStatusDto extends AbstractBaseOutSvcDto {
 
     private static final long serialVersionUID = -625755377453701409L;
