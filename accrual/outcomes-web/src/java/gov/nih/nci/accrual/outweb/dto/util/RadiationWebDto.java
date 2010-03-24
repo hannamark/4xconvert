@@ -80,8 +80,8 @@
 package gov.nih.nci.accrual.outweb.dto.util;
 
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.outcomes.svc.dto.AbstractRadiationDto;
 import gov.nih.nci.outcomes.svc.dto.RadiationSvcDto;
 import gov.nih.nci.pa.iso.util.CdConverter;

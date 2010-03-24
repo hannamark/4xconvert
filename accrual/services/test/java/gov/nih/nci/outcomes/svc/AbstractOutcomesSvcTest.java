@@ -82,7 +82,7 @@ import gov.nih.nci.accrual.service.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.util.MockPoServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;

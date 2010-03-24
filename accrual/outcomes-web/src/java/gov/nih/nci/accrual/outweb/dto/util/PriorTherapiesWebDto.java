@@ -79,8 +79,8 @@
 
 package gov.nih.nci.accrual.outweb.dto.util;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.outcomes.svc.dto.AbstractPriorTherapiesItemDto;
 import gov.nih.nci.outcomes.svc.dto.AbstractPriorTherapyDto;
 import gov.nih.nci.outcomes.svc.dto.PriorTherapySvcDto;

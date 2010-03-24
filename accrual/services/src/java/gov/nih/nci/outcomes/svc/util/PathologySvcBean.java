@@ -80,8 +80,8 @@ package gov.nih.nci.outcomes.svc.util;
 
 import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
 import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.outcomes.svc.dto.PathologySvcDto;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.pa.enums.ActivityNameCode;

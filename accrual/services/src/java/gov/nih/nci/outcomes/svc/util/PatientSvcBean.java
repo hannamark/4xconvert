@@ -80,8 +80,8 @@ package gov.nih.nci.outcomes.svc.util;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
 import gov.nih.nci.outcomes.svc.dto.TumorMarkerSvcDto;

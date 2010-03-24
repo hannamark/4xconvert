@@ -5,7 +5,7 @@ package gov.nih.nci.accrual.outweb.dto.util;
 
 import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.outweb.util.PaServiceLocator;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.dto.AbstractUserDto;
 import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;

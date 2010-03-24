@@ -80,8 +80,8 @@
 package gov.nih.nci.accrual.outweb.dto.util;
 
 import gov.nih.nci.accrual.outweb.action.AbstractAccrualAction;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.dto.AbstractTumorMarkerDto;
 import gov.nih.nci.outcomes.svc.dto.TumorMarkerSvcDto;
 import gov.nih.nci.pa.util.PAUtil;

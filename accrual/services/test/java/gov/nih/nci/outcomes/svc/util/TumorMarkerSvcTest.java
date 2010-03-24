@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.outcomes.svc.AbstractOutcomesSvcTest;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 import gov.nih.nci.outcomes.svc.dto.TumorMarkerSvcDto;

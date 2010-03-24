@@ -85,7 +85,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;

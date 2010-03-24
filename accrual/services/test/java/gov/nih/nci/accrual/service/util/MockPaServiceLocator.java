@@ -103,6 +103,7 @@ import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyRelationshipServiceLocal;
@@ -497,6 +498,11 @@ public class MockPaServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public PAHealthCareProviderRemote getPAHealthCareProviderService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         // TODO Auto-generated method stub
         return null;
     }

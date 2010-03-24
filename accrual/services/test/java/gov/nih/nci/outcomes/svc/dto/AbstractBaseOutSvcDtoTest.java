@@ -81,7 +81,7 @@ package gov.nih.nci.outcomes.svc.dto;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.outweb.enums.StagingMethods;
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
 import gov.nih.nci.pa.iso.util.CdConverter;
 

@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.outcomes.svc.util;
 
-import gov.nih.nci.coppa.iso.Cd;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
 /**

@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.outcomes.svc.dto;
 
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.pa.enums.PriorTherapyTypeCode;
 import gov.nih.nci.pa.util.PAUtil;

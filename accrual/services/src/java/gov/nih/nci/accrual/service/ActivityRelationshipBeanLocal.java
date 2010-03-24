@@ -81,8 +81,8 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.ActivityRelationshipConverter;
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ActivityRelationship;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.enums.ActivityRelationshipTypeCode;

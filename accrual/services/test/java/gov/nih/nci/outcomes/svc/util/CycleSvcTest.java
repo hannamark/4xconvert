@@ -3,7 +3,7 @@ package gov.nih.nci.outcomes.svc.util;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.outcomes.svc.AbstractOutcomesSvcTest;
 import gov.nih.nci.outcomes.svc.dto.CycleSvcDto;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;

@@ -79,7 +79,7 @@
 package gov.nih.nci.outcomes.svc;
 
 
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 

@@ -80,9 +80,9 @@ package gov.nih.nci.outcomes.svc.util;
 
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Ivl;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.outcomes.svc.dto.RadiationSvcDto;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;

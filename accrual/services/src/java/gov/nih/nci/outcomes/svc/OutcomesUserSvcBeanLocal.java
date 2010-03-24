@@ -81,8 +81,8 @@ package gov.nih.nci.outcomes.svc;
 
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.PoRegistry;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 import gov.nih.nci.pa.domain.Country;

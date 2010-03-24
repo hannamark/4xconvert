@@ -2,8 +2,8 @@ package gov.nih.nci.accrual.outweb.util;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -45,7 +45,7 @@ public class MockPoOrganizationEntityService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#getOrganization(gov.nih.nci.coppa.iso.Ii)
+     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#getOrganization(gov.nih.nci.iso21090.Ii)
      */
     public OrganizationDTO getOrganization(Ii ii)
             throws NullifiedEntityException {
@@ -85,7 +85,7 @@ public class MockPoOrganizationEntityService implements
     }
 
     /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganizationStatus(gov.nih.nci.coppa.iso.Ii, gov.nih.nci.coppa.iso.Cd)
+     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganizationStatus(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Cd)
      */
     public void updateOrganizationStatus(Ii arg0, Cd arg1)
             throws EntityValidationException {

@@ -80,8 +80,8 @@ package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
 import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 
 import java.rmi.RemoteException;
 import java.util.List;

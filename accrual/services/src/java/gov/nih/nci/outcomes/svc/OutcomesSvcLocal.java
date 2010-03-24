@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.outcomes.svc;
 
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 

@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.outweb.converter;
 
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.iso.Pq;
+import gov.nih.nci.iso21090.Pq;
 
 /**
  * @author Hugh Reinhart

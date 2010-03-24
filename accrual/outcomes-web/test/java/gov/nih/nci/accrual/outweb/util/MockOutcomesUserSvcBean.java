@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.accrual.outweb.util;
 
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.OutcomesUserSvc;
 import gov.nih.nci.outcomes.svc.OutcomesUserSvcLocal;
 import gov.nih.nci.outcomes.svc.dto.UserSvcDto;

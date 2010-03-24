@@ -78,7 +78,7 @@ package gov.nih.nci.accrual.outweb.action;
 
 import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.accrual.outweb.util.SessionEnvManager;
-import gov.nih.nci.coppa.iso.St;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.dto.AbstractUserDto;
 import gov.nih.nci.pa.iso.util.StConverter;
 

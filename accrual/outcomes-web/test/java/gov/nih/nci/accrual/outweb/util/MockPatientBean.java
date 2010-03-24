@@ -82,7 +82,7 @@ package gov.nih.nci.accrual.outweb.util;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PatientServiceLocal;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;

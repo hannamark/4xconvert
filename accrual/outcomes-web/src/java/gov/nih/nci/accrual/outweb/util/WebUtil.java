@@ -78,9 +78,9 @@
 */
 package gov.nih.nci.accrual.outweb.util;
 
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.iso.Ts;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;

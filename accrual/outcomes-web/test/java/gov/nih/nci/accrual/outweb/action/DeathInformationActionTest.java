@@ -85,7 +85,7 @@ import gov.nih.nci.accrual.outweb.dto.util.DeathInfoWebDto;
 import gov.nih.nci.accrual.outweb.enums.AutopsyPerformed;
 import gov.nih.nci.accrual.outweb.enums.ResponseInds;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AutopsyDeathCause;
 import gov.nih.nci.pa.enums.DeathCause;
 import gov.nih.nci.pa.iso.util.CdConverter;

@@ -84,7 +84,7 @@ import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.StagingWebDto;
 import gov.nih.nci.accrual.outweb.enums.StagingMethods;
 import gov.nih.nci.accrual.outweb.util.MockPerformedActivityBean;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.StagingSystemCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;

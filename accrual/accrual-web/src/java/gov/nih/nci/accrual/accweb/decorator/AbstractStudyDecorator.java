@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.accweb.decorator;
 
 import gov.nih.nci.accrual.dto.AbstractStudyDto;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import org.displaytag.decorator.TableDecorator;

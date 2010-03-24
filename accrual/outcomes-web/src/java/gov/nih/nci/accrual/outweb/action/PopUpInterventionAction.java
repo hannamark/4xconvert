@@ -79,7 +79,7 @@
 package gov.nih.nci.accrual.outweb.action;
 
 import gov.nih.nci.accrual.outweb.dto.util.InterventionWebDto;
-import gov.nih.nci.coppa.iso.Ii;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;

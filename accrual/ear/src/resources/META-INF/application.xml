@@ -23,10 +23,10 @@
         <java>jboss-service.xml</java>
     </module>
     <module>
-        <java>pa-ejb-client-3.2.0-alpha5.jar</java>
+        <java>pa-ejb-client-3.2.0-alpha6.jar</java>
     </module>
     <module>
-        <java>pa-commons-3.2.0-alpha5.jar</java>
+        <java>pa-commons-3.2.0-alpha6.jar</java>
     </module>
 	<module>
 		<java>commons-collections-3.2.1.jar</java>
