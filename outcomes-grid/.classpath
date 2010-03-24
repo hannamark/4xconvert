@@ -63,7 +63,6 @@
 	<classpathentry kind="var" path="OUTCOMES_GLOBUS/lib/xercesImpl.jar"/>
 	<classpathentry kind="var" path="OUTCOMES_GLOBUS/lib/xml-apis.jar"/>
 	<classpathentry kind="var" path="OUTCOMES_GLOBUS/lib/xmlsec.jar"/>
-	<classpathentry kind="lib" path="build/lib/accrual-services-client-3.1.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="build/lib/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="build/lib/commons-lang-2.4.jar"/>
@@ -112,5 +111,6 @@
 	<classpathentry kind="lib" path="lib/jbossall-client-4.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/xsom14.jar"/>
+	<classpathentry kind="lib" path="build/lib/accrual-services-client-3.1.2-alpha7.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

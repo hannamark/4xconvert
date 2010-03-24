@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  */
 public interface UserI {
 
-  public gov.nih.nci.coppa.services.outcomes.User getUser(gov.nih.nci.coppa.services.outcomes.ST loginName) throws RemoteException ;
+  public gov.nih.nci.coppa.services.outcomes.User getUser() throws RemoteException ;
 
   public gov.nih.nci.coppa.services.outcomes.User createUser(gov.nih.nci.coppa.services.outcomes.User user) throws RemoteException ;
 

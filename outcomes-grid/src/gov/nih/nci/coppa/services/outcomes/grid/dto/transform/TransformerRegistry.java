@@ -82,25 +82,8 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
-import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
-import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
-import gov.nih.nci.accrual.dto.PerformedImageDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
-import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.dto.UserDto;
-import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -117,24 +100,7 @@ public final class TransformerRegistry {
     private static Map<Class<?>, Transformer<?, ?>> values = new HashMap<Class<?>, Transformer<?, ?>>();
 
     static {
-        values.put(StudySubjectDto.class, StudySubjectTransformer.INSTANCE);
-        values.put(ActivityRelationshipDto.class, ActivityRelationshipTransformer.INSTANCE);
-        values.put(PerformedActivityDto.class, PerformedActivityTransformer.INSTANCE);
-        values.put(PerformedObservationDto.class, PerformedObservationTransformer.INSTANCE);
-        values.put(PerformedImagingDto.class, PerformedImagingTransformer.INSTANCE);
-        values.put(PerformedSubjectMilestoneDto.class, PerformedSubjectMilestoneTransformer.INSTANCE);
-        values.put(PerformedSubstanceAdministrationDto.class, PerformedSubstanceAdministrationTransformer.INSTANCE);
-        values.put(PerformedRadiationAdministrationDto.class, PerformedRadiationAdministrationTransformer.INSTANCE);
-        values.put(SubmissionDto.class, SubmissionTransformer.INSTANCE);
-        values.put(PatientDto.class, PatientTransformer.INSTANCE);
-        values.put(PerformedObservationResultDto.class, PerformedObservationResultTransformer.INSTANCE);
-        values.put(PerformedLesionDescriptionDto.class, PerformedLesionDescriptionTransformer.INSTANCE);
-        values.put(PerformedClinicalResultDto.class, PerformedClinicalResultTransformer.INSTANCE);
-        values.put(PerformedMedicalHistoryResultDto.class, PerformedMedicalHistoryResultTransformer.INSTANCE);
-        values.put(PerformedImageDto.class, PerformedImageTransformer.INSTANCE);
-        values.put(PerformedDiagnosisDto.class, PerformedDiagnosisTransformer.INSTANCE);
-        values.put(PerformedHistopathologyDto.class, PerformedHistopathologyTransformer.INSTANCE);
-        values.put(UserDto.class, UserTransformer.INSTANCE);
+        values.put(UserSvcDto.class, UserTransformer.INSTANCE);
     }
 
     /**

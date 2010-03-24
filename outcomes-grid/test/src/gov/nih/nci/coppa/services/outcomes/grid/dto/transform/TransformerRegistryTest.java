@@ -85,25 +85,8 @@ package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedClinicalResultDto;
-import gov.nih.nci.accrual.dto.PerformedDiagnosisDto;
-import gov.nih.nci.accrual.dto.PerformedHistopathologyDto;
-import gov.nih.nci.accrual.dto.PerformedImageDto;
-import gov.nih.nci.accrual.dto.PerformedImagingDto;
-import gov.nih.nci.accrual.dto.PerformedLesionDescriptionDto;
-import gov.nih.nci.accrual.dto.PerformedMedicalHistoryResultDto;
-import gov.nih.nci.accrual.dto.PerformedObservationDto;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.accrual.dto.PerformedRadiationAdministrationDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.PerformedSubstanceAdministrationDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.dto.UserDto;
-import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 
 import java.util.Map;
 
@@ -115,7 +98,7 @@ public class TransformerRegistryTest {
     public void testGetRegistry() {
         Map<Class<?>, Transformer<?,?>> tMap = TransformerRegistry.getRegistry();
         assertNotNull(tMap);
-        assertEquals(18, tMap.size());
+        assertEquals(1, tMap.size());
         tMap.clear();
     }
 
@@ -123,58 +106,7 @@ public class TransformerRegistryTest {
     @SuppressWarnings("unchecked")
     public void testGetTransformer() {
         //#1
-        Transformer trans = TransformerRegistry.INSTANCE.getTransformer(StudySubjectDto.class);
-        assertTrue(trans instanceof StudySubjectTransformer);
-        //#2
-        trans = TransformerRegistry.INSTANCE.getTransformer(ActivityRelationshipDto.class);
-        assertTrue(trans instanceof ActivityRelationshipTransformer);
-        //#3
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedActivityDto.class);
-        assertTrue(trans instanceof PerformedActivityTransformer);
-        //#4
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedObservationDto.class);
-        assertTrue(trans instanceof PerformedObservationTransformer);
-        //#5
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedImagingDto.class);
-        assertTrue(trans instanceof PerformedImagingTransformer);
-        //#6
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedSubjectMilestoneDto.class);
-        assertTrue(trans instanceof PerformedSubjectMilestoneTransformer);
-        //#7
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedSubstanceAdministrationDto.class);
-        assertTrue(trans instanceof PerformedSubstanceAdministrationTransformer);
-        //#8
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedRadiationAdministrationDto.class);
-        assertTrue(trans instanceof PerformedRadiationAdministrationTransformer);
-        //#9
-        trans = TransformerRegistry.INSTANCE.getTransformer(SubmissionDto.class);
-        assertTrue(trans instanceof SubmissionTransformer);
-        //#10
-        trans = TransformerRegistry.INSTANCE.getTransformer(PatientDto.class);
-        assertTrue(trans instanceof PatientTransformer);
-        //#11
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedObservationResultDto.class);
-        assertTrue(trans instanceof PerformedObservationResultTransformer);
-        //#12
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedLesionDescriptionDto.class);
-        assertTrue(trans instanceof PerformedLesionDescriptionTransformer);
-        //#13
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedClinicalResultDto.class);
-        assertTrue(trans instanceof PerformedClinicalResultTransformer);
-        //#14
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedMedicalHistoryResultDto.class);
-        assertTrue(trans instanceof PerformedMedicalHistoryResultTransformer);
-        //#15
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedImageDto.class);
-        assertTrue(trans instanceof PerformedImageTransformer);
-        //#16
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedDiagnosisDto.class);
-        assertTrue(trans instanceof PerformedDiagnosisTransformer);
-        //#17
-        trans = TransformerRegistry.INSTANCE.getTransformer(PerformedHistopathologyDto.class);
-        assertTrue(trans instanceof PerformedHistopathologyTransformer);
-        //#18
-        trans = TransformerRegistry.INSTANCE.getTransformer(UserDto.class);
+        Transformer trans = TransformerRegistry.INSTANCE.getTransformer(UserSvcDto.class);
         assertTrue(trans instanceof UserTransformer);
     }
 

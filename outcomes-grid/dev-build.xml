@@ -29,6 +29,8 @@
     <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces" />
     <property name="java.naming.security.principal" value="Gr1DU5er" />
     <property name="java.naming.security.credentials" value="Pa44Wurd" />
+    <property name="java.naming.security.principal.non-grid-identity" value="ejbclient" />
+    <property name="java.naming.security.credentials.non-grid-identity" value="pass" />
     <property name="cobertura.dir" value="tools/cobertura" />
 
     <path id="cobertura.classpath">
@@ -159,6 +161,7 @@
             <arg value="-xmlschema" />
             <arg file="${basedir}/schema/OutcomesServices/Outcomes.xsd" />
             <arg file="${basedir}/schema/OutcomesServices/ISO_datatypes_Narrative.xsd" />
+            <arg file="${basedir}/schema/OutcomesServices/Outcomes-Business.xsd" />
             <arg value="-d" />
             <arg file="${stubs.src}" />
             <arg value="-b" />
@@ -240,6 +243,8 @@
                 <filter token="java.naming.factory.url.pkgs" value="${java.naming.factory.url.pkgs}" />
                 <filter token="java.naming.security.principal" value="${java.naming.security.principal}" />
                 <filter token="java.naming.security.credentials" value="${java.naming.security.credentials}" />
+                <filter token="java.naming.security.principal.non-grid-identity" value="${java.naming.security.principal.non-grid-identity}" />
+                <filter token="java.naming.security.credentials.non-grid-identity" value="${java.naming.security.credentials.non-grid-identity}" />
             </filterset>
             <fileset dir="${src.dir}">
                 <include name="**/*" />
@@ -349,7 +354,9 @@
             <classpath refid="cobertura.classpath" />
             <formatter type="xml" />
             <formatter type="plain" />
-            <batchtest fork="yes" todir="${junit.results.dir}">
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false">
+            </test>
+            <batchtest fork="yes" todir="${junit.results.dir}" unless="test">
                 <fileset dir="${test.src.dir}">
                     <include name="**/Test*.java" />
                     <include name="**/*Test.java" />
@@ -371,7 +378,7 @@
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="html" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <cobertura-report datafile="${basedir}/build/cobertura.ser" format="xml" destdir="${build.dir}/cobertura" srcdir="${src.dir}" />
         <!-- Increase these as unit tests are written -->
-        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="95" totallinerate="95" />
+        <cobertura-check datafile="${basedir}/build/cobertura.ser" totalbranchrate="89" totallinerate="89" />
     </target>
 
     <!--
@@ -419,7 +426,7 @@
     <!-- Create a JAR file with the test implementation classes -->
     <target name="jarTests-quick" depends="jar-quick,compileTests-quick">
         <runtarget target="preJarTests" />
-        <jar jarfile="${build.lib.dir}/${test.jar.name}" basedir="${test.build.dest}" />
+        <jar jarfile="${build.lib.dir}/${test.jar.name}" basedir="${test.build.dest}" update="false"/>
         <runtarget target="postJarTests" />
     </target>
 
@@ -460,32 +467,13 @@
         </sequential>
     </macrodef>
 
-    <target name="runActivityRelationshipClient" depends="checkGlobus, defineClasspaths" description="Run the sample ActivityRelationshipService Client">
-        <run-client serviceendpointname="ActivityRelationship" class="gov.nih.nci.coppa.services.outcomes.activityrelationship.client.ActivityRelationshipClient" debug-suspend="n" />
-    </target>
 
-    <target name="runPerformedActivityClient" depends="checkGlobus, defineClasspaths" description="Run the sample PerformedActivityService Client">
-        <run-client serviceendpointname="PerformedActivity" class="gov.nih.nci.coppa.services.outcomes.performedactivity.client.PerformedActivityClient" debug-suspend="n" />
-    </target>
-
-    <target name="runSubmissionClient" depends="checkGlobus, defineClasspaths" description="Run the sample Submission Client">
-        <run-client serviceEndpointName="Submission" class="gov.nih.nci.coppa.services.outcomes.submission.client.SubmissionClient" debug-suspend="n" />
-    </target>
-
-    <target name="runPatientClient" depends="checkGlobus, defineClasspaths" description="Run the sample Patient Client">
-        <run-client serviceEndpointName="Patient" class="gov.nih.nci.coppa.services.outcomes.patient.client.PatientClient" debug-suspend="n" />
-    </target>
-
-    <target name="runStudySubjectClient" depends="checkGlobus, defineClasspaths" description="Run the sample Study Subject Client">
-        <run-client serviceEndpointName="StudySubject" class="gov.nih.nci.coppa.services.outcomes.studysubject.client.StudySubjectClient" debug-suspend="n" />
-    </target>
-
-    <target name="runUserClient" depends="checkGlobus, defineClasspaths" description="Run the sample User Client">
+    <target name="runOutcomesUserSvcClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample OutcomesSvc User Client">
         <run-client serviceEndpointName="User" class="gov.nih.nci.coppa.services.outcomes.user.client.UserClient" debug-suspend="n" />
     </target>
 
-    <target name="runPerformedObservationResultClient" depends="checkGlobus, defineClasspaths" description="Run the sample PerformedObservationResult Client">
-        <run-client serviceEndpointName="PerformedObservationResult" class="gov.nih.nci.coppa.services.outcomes.performedobservationresult.client.PerformedObservationResultClient" debug-suspend="n" />
+    <target name="runOutcomesSvcClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample OutcomesSvc Business Client">
+        <run-client serviceEndpointName="Business" class="gov.nih.nci.coppa.services.outcomes.business.client.BusinessClient" debug-suspend="n" />
     </target>
 
 </project>

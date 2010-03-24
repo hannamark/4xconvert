@@ -5,49 +5,25 @@ http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
 http\://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl=org.oasis.wsrf.properties
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship=gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/bindings=gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.bindings
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/service=gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.service
-http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity=gov.nih.nci.coppa.services.outcomes.performedactivity.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/bindings=gov.nih.nci.coppa.services.outcomes.performedactivity.stubs.bindings
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/service=gov.nih.nci.coppa.services.outcomes.performedactivity.stubs.service
-http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult=gov.nih.nci.coppa.services.outcomes.performedobservationresult.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/bindings=gov.nih.nci.coppa.services.outcomes.performedobservationresult.stubs.bindings
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/service=gov.nih.nci.coppa.services.outcomes.performedobservationresult.stubs.service
-http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject=gov.nih.nci.coppa.services.outcomes.studysubject.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/bindings=gov.nih.nci.coppa.services.outcomes.studysubject.stubs.bindings
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/service=gov.nih.nci.coppa.services.outcomes.studysubject.stubs.service
-http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/Submission=gov.nih.nci.coppa.services.outcomes.submission.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/bindings=gov.nih.nci.coppa.services.outcomes.submission.stubs.bindings
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/service=gov.nih.nci.coppa.services.outcomes.submission.stubs.service
-http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/Patient=gov.nih.nci.coppa.services.outcomes.patient.stubs
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/bindings=gov.nih.nci.coppa.services.outcomes.patient.stubs.bindings
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/service=gov.nih.nci.coppa.services.outcomes.patient.stubs.service
-http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/User=gov.nih.nci.coppa.services.outcomes.user.stubs
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/User/bindings=gov.nih.nci.coppa.services.outcomes.user.stubs.bindings
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/User/service=gov.nih.nci.coppa.services.outcomes.user.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/Business=gov.nih.nci.coppa.services.outcomes.business.stubs
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/Business/bindings=gov.nih.nci.coppa.services.outcomes.business.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/Business/service=gov.nih.nci.coppa.services.outcomes.business.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types=gov.nih.nci.coppa.services.outcomes.patient.stubs.types
+gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
 http\://outcomes.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.outcomes
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
+http\://business.outcomes.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.outcomes.business
 uri\:iso.org\:21090=org.iso._21090
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/User/types=gov.nih.nci.coppa.services.outcomes.user.stubs.types
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/types=gov.nih.nci.coppa.services.outcomes.stubs.types
+http\://enterpriseservices.nci.nih.gov/OutcomesServices/Business/types=gov.nih.nci.coppa.services.outcomes.business.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
-gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service=gov.nih.nci.cagrid.metadata.service
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/types=gov.nih.nci.coppa.services.outcomes.stubs.types
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/types=gov.nih.nci.coppa.services.outcomes.studysubject.stubs.types
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types=gov.nih.nci.coppa.services.outcomes.performedactivity.stubs.types
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types=gov.nih.nci.coppa.services.outcomes.activityrelationship.stubs.types
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types=gov.nih.nci.coppa.services.outcomes.performedobservationresult.stubs.types
-http\://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types=gov.nih.nci.coppa.services.outcomes.submission.stubs.types
 
 
 

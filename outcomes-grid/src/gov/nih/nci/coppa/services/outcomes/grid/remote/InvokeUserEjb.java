@@ -82,34 +82,24 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
-import gov.nih.nci.accrual.dto.UserDto;
-import gov.nih.nci.accrual.service.UserService;
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
-
-import java.rmi.RemoteException;
+import gov.nih.nci.outcomes.svc.OutcomesUserSvc;
+import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
 
 /**
  * @author Max Shestopalov
  */
-public class InvokeUserEjb extends InvokeAccrualServiceEjb<UserDto> implements
-        UserService {
-    
-    /**
-     * Const.
-     */
-    public InvokeUserEjb() {
-        super(UserDto.class);
-    }
+public class InvokeUserEjb implements OutcomesUserSvc {
 
     /**
      * {@inheritDoc}
      */
-    public UserDto createUser(UserDto input) throws RemoteException {
-        // purposely using unsecure service.
+    public UserSvcDto createUser(UserSvcDto input) throws OutcomesException {
         try {
+            /* purposely using unsecure service. */
             return JNDIServiceLocator.getInstance().getUserService().createUser(input);
-        } catch (RemoteException e) {
+        } catch (OutcomesException e) {
             throw e;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -119,10 +109,10 @@ public class InvokeUserEjb extends InvokeAccrualServiceEjb<UserDto> implements
     /**
      * {@inheritDoc}
      */
-    public UserDto getUser(St input) throws RemoteException {
+    public UserSvcDto getUser() throws OutcomesException {
         try {
-            return getLocator().getUserService().getUser(input);
-        } catch (RemoteException e) {
+            return GridSecurityJNDIServiceLocator.newInstance().getUserService().getUser();
+        } catch (OutcomesException e) {
             throw e;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -132,13 +122,14 @@ public class InvokeUserEjb extends InvokeAccrualServiceEjb<UserDto> implements
     /**
      * {@inheritDoc}
      */
-    public UserDto updateUser(UserDto input) throws RemoteException {
+    public UserSvcDto updateUser(UserSvcDto input) throws OutcomesException {
         try {
-            return getLocator().getUserService().updateUser(input);
-        } catch (RemoteException e) {
+            return GridSecurityJNDIServiceLocator.newInstance().getUserService().updateUser(input);
+        } catch (OutcomesException e) {
             throw e;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
-    }   
+    }
+
 }

@@ -82,21 +82,21 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
-import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.AbstractTransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.coppa.services.outcomes.User;
+import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 
 /**
  * @author mshestopalov
  *
  */
 public final class UserTransformer 
-    extends AbstractTransformer<User, UserDto>
-    implements Transformer<User, UserDto> {
+    extends AbstractTransformer<User, UserSvcDto>
+    implements Transformer<User, UserSvcDto> {
 
     /**
      * Public singleton.
@@ -113,11 +113,11 @@ public final class UserTransformer
     /**
      * {@inheritDoc}
      */
-    public UserDto toDto(User arg0) throws DtoTransformException {
+    public UserSvcDto toDto(User arg0) throws DtoTransformException {
         if (arg0 == null) {
             return null;
         }
-        UserDto returnVal = new UserDto();
+        UserSvcDto returnVal = new UserSvcDto();
         returnVal.setIdentifier(IITransformer.INSTANCE.toDto(arg0.getIdentifier()));
         returnVal.setAddress(STTransformer.INSTANCE.toDto(arg0.getAddress()));
         returnVal.setAffiliateOrg(STTransformer.INSTANCE.toDto(arg0.getAffiliateOrg()));
@@ -125,22 +125,22 @@ public final class UserTransformer
         returnVal.setCountry(STTransformer.INSTANCE.toDto(arg0.getCountry()));
         returnVal.setFirstName(STTransformer.INSTANCE.toDto(arg0.getFirstName()));
         returnVal.setLastName(STTransformer.INSTANCE.toDto(arg0.getLastName()));
-        returnVal.setLoginName(STTransformer.INSTANCE.toDto(arg0.getLoginName()));
         returnVal.setMiddleName(STTransformer.INSTANCE.toDto(arg0.getMiddleName()));
         returnVal.setPassword(STTransformer.INSTANCE.toDto(arg0.getPassword()));
         returnVal.setPhone(STTransformer.INSTANCE.toDto(arg0.getPhone()));
-        returnVal.setPoOrganizationIdentifier(IITransformer.INSTANCE.toDto(arg0.getPoOrganizationIdentifier()));
-        returnVal.setPoPersonIdentifier(IITransformer.INSTANCE.toDto(arg0.getPoPersonIdentifier()));
         returnVal.setPostalCode(STTransformer.INSTANCE.toDto(arg0.getPostalCode()));
         returnVal.setPrsOrg(STTransformer.INSTANCE.toDto(arg0.getPrsOrg()));
         returnVal.setState(STTransformer.INSTANCE.toDto(arg0.getState()));
+        returnVal.setIdentity(STTransformer.INSTANCE.toDto(arg0.getIdentity()));
+        returnVal.setTreatmentSiteIdentifier(IITransformer.INSTANCE.toDto(arg0.getTreatmentSiteIdentifier()));
+        returnVal.setPhysicianIdentifier(IITransformer.INSTANCE.toDto(arg0.getPhysicianIdentifier()));
         return returnVal;
     }
 
     /**
      * {@inheritDoc}
      */
-    public User toXml(UserDto arg0) throws DtoTransformException {
+    public User toXml(UserSvcDto arg0) throws DtoTransformException {
         if (arg0 == null) {
             return null;
         }
@@ -152,15 +152,15 @@ public final class UserTransformer
         returnVal.setCountry(STTransformer.INSTANCE.toXml(arg0.getCountry()));
         returnVal.setFirstName(STTransformer.INSTANCE.toXml(arg0.getFirstName()));
         returnVal.setLastName(STTransformer.INSTANCE.toXml(arg0.getLastName()));
-        returnVal.setLoginName(STTransformer.INSTANCE.toXml(arg0.getLoginName()));
         returnVal.setMiddleName(STTransformer.INSTANCE.toXml(arg0.getMiddleName()));
         returnVal.setPassword(STTransformer.INSTANCE.toXml(arg0.getPassword()));
         returnVal.setPhone(STTransformer.INSTANCE.toXml(arg0.getPhone()));
-        returnVal.setPoOrganizationIdentifier(IITransformer.INSTANCE.toXml(arg0.getPoOrganizationIdentifier()));
-        returnVal.setPoPersonIdentifier(IITransformer.INSTANCE.toXml(arg0.getPoPersonIdentifier()));
         returnVal.setPostalCode(STTransformer.INSTANCE.toXml(arg0.getPostalCode()));
         returnVal.setPrsOrg(STTransformer.INSTANCE.toXml(arg0.getPrsOrg()));
         returnVal.setState(STTransformer.INSTANCE.toXml(arg0.getState()));
+        returnVal.setIdentity(STTransformer.INSTANCE.toXml(arg0.getIdentity()));
+        returnVal.setTreatmentSiteIdentifier(IITransformer.INSTANCE.toXml(arg0.getTreatmentSiteIdentifier()));
+        returnVal.setPhysicianIdentifier(IITransformer.INSTANCE.toXml(arg0.getPhysicianIdentifier()));
         return returnVal;
     }
 

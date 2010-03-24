@@ -82,26 +82,12 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
-import gov.nih.nci.accrual.dto.ActivityRelationshipDto;
-import gov.nih.nci.accrual.dto.PerformedActivityDto;
-import gov.nih.nci.accrual.dto.PerformedObservationResultDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.dto.SubmissionDto;
-import gov.nih.nci.accrual.dto.UserDto;
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.service.ActivityRelationshipService;
-import gov.nih.nci.accrual.service.BaseAccrualService;
-import gov.nih.nci.accrual.service.BaseAccrualStudyService;
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.PerformedObservationResultService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
-import gov.nih.nci.accrual.service.UserService;
-import gov.nih.nci.accrual.service.util.PatientService;
 import gov.nih.nci.cagrid.introduce.servicetools.security.SecurityUtils;
-import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.coppa.services.outcomes.service.OutcomesServicesConfiguration;
-import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.outcomes.svc.OutcomesSvc;
+import gov.nih.nci.outcomes.svc.OutcomesUserSvc;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -124,7 +110,6 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
     private InitialContext context;
     private static Map<Class<?>, Method> values = new HashMap<Class<?>, Method>();
     private static final String JNDI_PRINCIPAL = "java.naming.security.principal";
-    private static final String JNDI_CREDENTIALS = "java.naming.security.credentials";
 
     /**
      * @return a ServiceLocator with the caller's identity
@@ -146,14 +131,8 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
              * Cache the Method instead of the actual Remote instance as it would be very difficult to handle
              * NamingException, etc..
              */
-            values.put(ActivityRelationshipDto.class, this.getClass().getMethod("getActivityRelationshipService"));
-            values.put(PerformedActivityDto.class, this.getClass().getMethod("getPerformedActivityService"));
-            values.put(PerformedObservationResultDto.class,
-                    this.getClass().getMethod("getPerformedObservationResultService"));
-            values.put(StudySubjectDto.class, this.getClass().getMethod("getStudySubjectService"));
-            values.put(SubmissionDto.class, this.getClass().getMethod("getSubmissionService"));
-            values.put(PatientDto.class, this.getClass().getMethod("getPatientService"));
-            values.put(UserDto.class, this.getClass().getMethod("getUserService"));
+            values.put(UserSvcDto.class, this.getClass().getMethod("getUserService"));
+            values.put(PatientSvcDto.class, this.getClass().getMethod("getOutcomesService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -187,7 +166,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
                 LOG.debug("Performing JNDI Lookup of : " + name);
                 object = context.lookup(name);
             } catch (CommunicationException com) {
-                LOG.warn("Unable to lookup: " + name);
+                LOG.warn("Unable to lookup: " + name, com);
             }
             i++;
         }
@@ -198,86 +177,15 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public ActivityRelationshipService getActivityRelationshipService() throws NamingException {
-        return (ActivityRelationshipService) lookup("accrual/ActivityRelationshipBean/remote");
+    public OutcomesUserSvc getUserService() throws NamingException {
+        return (OutcomesUserSvc) lookup("accrual/OutcomesUserSvcBean/remote");
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    public PerformedActivityService getPerformedActivityService() throws NamingException {
-        return (PerformedActivityService) lookup("accrual/PerformedActivityBean/remote");
+    public OutcomesSvc getOutcomesService() throws NamingException {
+        return (OutcomesSvc) lookup("accrual/OutcomesSvcBean/remote");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedObservationResultService getPerformedObservationResultService() throws NamingException {
-        return (PerformedObservationResultService) lookup("accrual/PerformedObservationResultBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectService getStudySubjectService() throws NamingException {
-        return (StudySubjectService) lookup("accrual/StudySubjectBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() throws NamingException {
-        return (SubmissionService) lookup("accrual/SubmissionBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PatientService getPatientService() throws NamingException {
-        return (PatientService) lookup("accrual/PatientBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public UserService getUserService() throws NamingException {
-        return (UserService) lookup("accrual/UserBean/remote");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public <B extends BaseDTO> BaseAccrualService<B> getBaseAccrualService(Class<B> type) throws NamingException {
-        Method serviceMethod = values.get(type);
-        BaseAccrualService<B> service = null;
-        try {
-            service = (BaseAccrualService<B>) serviceMethod.invoke(this);
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
-        }
-        if (service == null) {
-            throw new IllegalArgumentException("Unable to locate service for type, " + type);
-        }
-        return service;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public <B extends BaseDTO> BaseAccrualStudyService getBaseAccrualStudyService(Class<B> type)
-            throws NamingException {
-        Method serviceMethod = values.get(type);
-        BaseAccrualStudyService<B> service = null;
-        try {
-            service = (BaseAccrualStudyService<B>) serviceMethod.invoke(this);
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
-        }
-        if (service == null) {
-            throw new IllegalArgumentException("Unable to locate service for type, " + type);
-        }
-        return service;
-    }
 }

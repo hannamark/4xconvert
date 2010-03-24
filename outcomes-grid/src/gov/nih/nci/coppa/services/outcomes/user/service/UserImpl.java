@@ -1,12 +1,11 @@
 package gov.nih.nci.coppa.services.outcomes.user.service;
 
-import gov.nih.nci.accrual.dto.UserDto;
 import gov.nih.nci.coppa.iso.St;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.UserTransformer;
 import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.faults.FaultUtil;
 import gov.nih.nci.coppa.services.outcomes.grid.remote.InvokeUserEjb;
 import gov.nih.nci.coppa.services.outcomes.user.service.globus.UserAuthorization;
+import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 
 import java.rmi.RemoteException;
 
@@ -29,10 +28,9 @@ public class UserImpl extends UserImplBase {
 		super();
 	}
 	
-  public gov.nih.nci.coppa.services.outcomes.User getUser(gov.nih.nci.coppa.services.outcomes.ST loginName) throws RemoteException {
+  public gov.nih.nci.coppa.services.outcomes.User getUser() throws RemoteException {
       try {
-          St stDto = STTransformer.INSTANCE.toDto(loginName);
-          UserDto userDto = userService.getUser(stDto);
+          UserSvcDto userDto = userService.getUser();
           return UserTransformer.INSTANCE.toXml(userDto);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
@@ -42,10 +40,10 @@ public class UserImpl extends UserImplBase {
 
   public gov.nih.nci.coppa.services.outcomes.User createUser(gov.nih.nci.coppa.services.outcomes.User user) throws RemoteException {
       try {
-          UserDto userDto = UserTransformer.INSTANCE.toDto(user);
+          UserSvcDto userDto = UserTransformer.INSTANCE.toDto(user);
           St loginName = new St();
           loginName.setValue(UserAuthorization.getCallerIdentity());
-          userDto.setLoginName(loginName);
+          userDto.setIdentity(loginName);
           return UserTransformer.INSTANCE.toXml(userService.createUser(userDto));
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
@@ -55,7 +53,7 @@ public class UserImpl extends UserImplBase {
 
   public gov.nih.nci.coppa.services.outcomes.User updateUser(gov.nih.nci.coppa.services.outcomes.User user) throws RemoteException {
       try {
-          UserDto userDto = UserTransformer.INSTANCE.toDto(user);
+          UserSvcDto userDto = UserTransformer.INSTANCE.toDto(user);
           return UserTransformer.INSTANCE.toXml(userService.updateUser(userDto));
       } catch (Exception e) {
           logger.error(e.getMessage(), e);

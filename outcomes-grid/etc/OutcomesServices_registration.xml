@@ -13,26 +13,22 @@
   <Content xsi:type="agg:AggregatorContent" xmlns:agg="http://mds.globus.org/aggregator/types">
     <agg:AggregatorConfig xsi:type="agg:AggregatorConfig">
       <agg:GetMultipleResourcePropertiesPollType
-			xmlns:ns12="http://enterpriseservices.nci.nih.gov/OutcomesServices/Patient/types"
+			xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service"
 			xmlns:ns0="http://outcomes.services.coppa.nci.nih.gov"
-			xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"
+			xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"
+			xmlns:ns2="http://business.outcomes.services.coppa.nci.nih.gov"
 			xmlns:ns1="uri:iso.org:21090"
-			xmlns:ns13="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/types"
+			xmlns:ns8="http://enterpriseservices.nci.nih.gov/OutcomesServices/User/types"
+			xmlns:ns3="http://enterpriseservices.nci.nih.gov/OutcomesServices/types"
+			xmlns:ns9="http://enterpriseservices.nci.nih.gov/OutcomesServices/Business/types"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
-			xmlns:ns3="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
-			xmlns:ns6="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"
-			xmlns:ns5="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service"
-			xmlns:ns2="http://enterpriseservices.nci.nih.gov/OutcomesServices/types"
-			xmlns:ns10="http://enterpriseservices.nci.nih.gov/OutcomesServices/StudySubject/types"
-			xmlns:ns8="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedActivity/types"
-			xmlns:ns7="http://enterpriseservices.nci.nih.gov/OutcomesServices/ActivityRelationship/types"
-			xmlns:ns9="http://enterpriseservices.nci.nih.gov/OutcomesServices/PerformedObservationResult/types"
-			xmlns:ns11="http://enterpriseservices.nci.nih.gov/OutcomesServices/Submission/types">
+			xmlns:ns4="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"
+			xmlns:ns7="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common">
         <!-- Specifies that the index should refresh information
             every 300000 milliseconds (once every 5 minutes) -->
         <agg:PollIntervalMillis>INDEX_REFRESH</agg:PollIntervalMillis>
         <!-- specifies all Resource Properties that should be retrieved from the service -->
-		<agg:ResourcePropertyNames>ns4:ServiceMetadata</agg:ResourcePropertyNames>
+		<agg:ResourcePropertyNames>ns5:ServiceMetadata</agg:ResourcePropertyNames>
 	
       </agg:GetMultipleResourcePropertiesPollType>
     </agg:AggregatorConfig>

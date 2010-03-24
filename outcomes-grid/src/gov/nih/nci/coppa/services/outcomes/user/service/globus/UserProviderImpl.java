@@ -28,7 +28,7 @@ public class UserProviderImpl{
 
     public gov.nih.nci.coppa.services.outcomes.user.stubs.GetUserResponse getUser(gov.nih.nci.coppa.services.outcomes.user.stubs.GetUserRequest params) throws RemoteException {
     gov.nih.nci.coppa.services.outcomes.user.stubs.GetUserResponse boxedResult = new gov.nih.nci.coppa.services.outcomes.user.stubs.GetUserResponse();
-    boxedResult.setUser(impl.getUser(params.getLoginName().getST()));
+    boxedResult.setUser(impl.getUser());
     return boxedResult;
   }
 
