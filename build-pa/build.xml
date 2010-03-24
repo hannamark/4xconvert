@@ -710,6 +710,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
         <property name="java.naming.security.principal" value="%%outcomes-grid.jndi.principal%%"/>
         <property name="java.naming.security.credentials" value="%%outcomes-grid.jndi.credentials%%"/>
+        <property name="java.naming.security.principal.non-grid-identity" value="%%outcomes-grid.jndi.principal.non-grid-identity%%"/>
+        <property name="java.naming.security.credentials.non-grid-identity" value="%%outcomes-grid.jndi.credentials.non-grid-identity%%"/>
         <property name="no.deployment.validation" value="true"/>
       </ant>
 

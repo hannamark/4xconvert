@@ -572,7 +572,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <unzip src="${temp.dir}/${outcomes-grid.dist.relative.dir}/WEB-INF/lib/${outcomes-grid.introduce.skeleton.service.name}-common.jar" dest="${temp.dir}/${outcomes-grid.introduce.skeleton.service.name}-common"/>
         <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
         <var name="file.list"
-            value="${outcomes-grid.introduce.skeleton.service.name}-common/jndi.properties"/>
+            value="${outcomes-grid.introduce.skeleton.service.name}-common/jndi.properties,${outcomes-grid.introduce.skeleton.service.name}-common/jndi.non-grid-identity.properties"/>
 
         <for list="${file.list}" param="file.relative.name">
             <sequential>
@@ -595,6 +595,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                         <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
                         <filter token="outcomes-grid.jndi.principal" value="${outcomes-grid.jndi.principal}"/>
                         <filter token="outcomes-grid.jndi.credentials" value="${outcomes-grid.jndi.credentials}"/>
+                        <filter token="outcomes-grid.jndi.principal.non-grid-identity" value="${outcomes-grid.jndi.principal.non-grid-identity}"/>
+                        <filter token="outcomes-grid.jndi.credentials.non-grid-identity" value="${outcomes-grid.jndi.credentials.non-grid-identity}"/>
                     </filterset>
                 </copy>
                 <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
