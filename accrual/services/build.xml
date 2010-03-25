@@ -366,8 +366,7 @@
 								    **/service/util/PatientBean.class
 								    **/service/util/PatientServiceBean.class
 								    **/service/util/PatientServiceRemote.class
-    		                        **/svc/*Bean.class
-    		                        **/svc/*Local.class
+    		                        **/svc/*Bean*.class
     		                        **/svc/util/*.class
     		"/>
     </target>

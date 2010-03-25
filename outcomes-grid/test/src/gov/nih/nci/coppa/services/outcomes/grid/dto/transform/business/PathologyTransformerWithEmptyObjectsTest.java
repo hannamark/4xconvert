@@ -83,9 +83,9 @@
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform.business;
 
 import static org.junit.Assert.assertNull;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.coppa.services.outcomes.business.Pathology;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.outcomes.svc.dto.PathologySvcDto;
 
 /**

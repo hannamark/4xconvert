@@ -85,7 +85,7 @@ package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.services.grid.dto.transform.Transformer;
+import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 
 import java.util.Map;

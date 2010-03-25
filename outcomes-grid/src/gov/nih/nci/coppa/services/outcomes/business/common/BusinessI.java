@@ -14,7 +14,7 @@ public interface BusinessI {
 
   public gov.nih.nci.coppa.services.outcomes.business.Patient[] get(gov.nih.nci.coppa.services.outcomes.business.Patient patient) throws RemoteException ;
 
-  public gov.nih.nci.coppa.services.outcomes.business.Patient getById(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException ;
+  public gov.nih.nci.coppa.services.outcomes.business.Patient getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException ;
 
   public gov.nih.nci.coppa.services.outcomes.business.Patient write(gov.nih.nci.coppa.services.outcomes.business.Patient patient) throws RemoteException ;
 

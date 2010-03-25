@@ -1,21 +1,20 @@
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform.business;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.services.outcomes.business.LesionAssessment;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.PQTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
+import gov.nih.nci.outcomes.svc.dto.LesionAssessmentSvcDto;
 
 import java.util.Date;
-
-import gov.nih.nci.coppa.iso.Cd;
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.iso.Pq;
-import gov.nih.nci.coppa.iso.Ts;
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.PQTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
-import gov.nih.nci.coppa.services.outcomes.business.LesionAssessment;
-import gov.nih.nci.outcomes.svc.dto.LesionAssessmentSvcDto;
 
 public class LesionAssessmentTransformerTest extends 
     AbstractTransformerTestBase<LesionAssessmentTransformer, LesionAssessment, LesionAssessmentSvcDto> {

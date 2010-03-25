@@ -86,13 +86,12 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.services.outcomes.business.Patient;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 
 import org.iso._21090.NullFlavor;
-
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.outcomes.business.Patient;
-import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 /**
  * @author smatyas
  *

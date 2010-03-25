@@ -1,10 +1,10 @@
 package gov.nih.nci.coppa.services.outcomes.user.service;
 
-import gov.nih.nci.coppa.iso.St;
 import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.UserTransformer;
 import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.faults.FaultUtil;
 import gov.nih.nci.coppa.services.outcomes.grid.remote.InvokeUserEjb;
 import gov.nih.nci.coppa.services.outcomes.user.service.globus.UserAuthorization;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 
 import java.rmi.RemoteException;

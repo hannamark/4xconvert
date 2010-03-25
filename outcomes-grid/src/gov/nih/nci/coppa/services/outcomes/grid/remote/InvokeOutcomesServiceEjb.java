@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.remote;
 
-import gov.nih.nci.coppa.iso.Ii;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.outcomes.svc.OutcomesSvc;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 import gov.nih.nci.outcomes.svc.exception.OutcomesException;

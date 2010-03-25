@@ -1,10 +1,10 @@
 package gov.nih.nci.coppa.services.outcomes.business.service;
 
-import gov.nih.nci.coppa.iso.Ii;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.business.PatientTransformer;
 import gov.nih.nci.coppa.services.outcomes.grid.dto.transform.faults.FaultUtil;
 import gov.nih.nci.coppa.services.outcomes.grid.remote.GridSecurityJNDIServiceLocator;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 
 import java.rmi.RemoteException;
@@ -37,7 +37,7 @@ public class BusinessImpl extends BusinessImplBase {
       }
   }
 
-  public gov.nih.nci.coppa.services.outcomes.business.Patient getById(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.services.outcomes.business.Patient getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException {
       try {
           Ii dto = IITransformer.INSTANCE.toDto(id);
           PatientSvcDto result = GridSecurityJNDIServiceLocator.newInstance().getOutcomesService().getById(dto);

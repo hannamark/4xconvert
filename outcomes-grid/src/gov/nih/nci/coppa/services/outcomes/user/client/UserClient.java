@@ -93,9 +93,9 @@ public class UserClient extends UserClientBase implements UserI {
         ST orgAffl = new ST();
         orgAffl.setValue("3262");
         II poOrgId = new II();
-        poOrgId.setExtension("3262");
+        poOrgId.setExtension("501");
         II poPersonId = new II();
-        poPersonId.setExtension("1031");
+        poPersonId.setExtension("518");
 
         user.setCountry(country);
         user.setState(state);

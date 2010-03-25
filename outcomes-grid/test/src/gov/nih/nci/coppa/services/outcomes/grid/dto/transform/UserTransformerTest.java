@@ -1,9 +1,9 @@
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.AbstractTransformerTestBase;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformerTest;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.coppa.services.outcomes.User;
+import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.outcomes.svc.dto.UserSvcDto;
 
 public class UserTransformerTest extends

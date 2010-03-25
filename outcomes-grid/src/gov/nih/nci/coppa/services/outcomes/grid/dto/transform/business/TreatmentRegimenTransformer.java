@@ -82,12 +82,12 @@
  */
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform.business;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.coppa.services.outcomes.business.Cycle;
 import gov.nih.nci.coppa.services.outcomes.business.DiseaseEvaluation;
 import gov.nih.nci.coppa.services.outcomes.business.LesionAssessment;
 import gov.nih.nci.coppa.services.outcomes.business.TreatmentRegimen;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.outcomes.svc.dto.TreatmentRegimenSvcDto;
 
 import java.util.Collections;

@@ -1,8 +1,5 @@
 package gov.nih.nci.coppa.services.outcomes.business.client;
 
-import gov.nih.nci.coppa.services.outcomes.CD;
-import gov.nih.nci.coppa.services.outcomes.Id;
-import gov.nih.nci.coppa.services.outcomes.ST;
 import gov.nih.nci.coppa.services.outcomes.business.Cycle;
 import gov.nih.nci.coppa.services.outcomes.business.DeathInformation;
 import gov.nih.nci.coppa.services.outcomes.business.LesionAssessment;
@@ -13,6 +10,7 @@ import gov.nih.nci.coppa.services.outcomes.business.PriorTherapiesItem;
 import gov.nih.nci.coppa.services.outcomes.business.PriorTherapy;
 import gov.nih.nci.coppa.services.outcomes.business.TreatmentRegimen;
 import gov.nih.nci.coppa.services.outcomes.business.common.BusinessI;
+import gov.nih.nci.iso21090.extensions.Id;
 
 import java.rmi.RemoteException;
 
@@ -22,9 +20,11 @@ import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
+import org.iso._21090.CD;
 import org.iso._21090.DSETCD;
 import org.iso._21090.II;
 import org.iso._21090.PQ;
+import org.iso._21090.ST;
 import org.iso._21090.TS;
 
 /**
@@ -174,7 +174,6 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
     
 	private static void testDeleteDeathInfo(BusinessClient client) throws RemoteException {
 	    System.out.println("testDeleteDeathInfo");
-
 
         Patient patient = getCreatedPatient(client);
         DeathInformation deathInfo = patient.getDeathInformation();
@@ -443,7 +442,6 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
 	    return cd;
 	}
 
-
   public gov.nih.nci.coppa.services.outcomes.business.Patient[] get(gov.nih.nci.coppa.services.outcomes.business.Patient patient) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"get");
@@ -456,7 +454,7 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
     }
   }
 
-  public gov.nih.nci.coppa.services.outcomes.business.Patient getById(gov.nih.nci.coppa.services.outcomes.Id id) throws RemoteException {
+  public gov.nih.nci.coppa.services.outcomes.business.Patient getById(gov.nih.nci.iso21090.extensions.Id id) throws RemoteException {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getById");
     gov.nih.nci.coppa.services.outcomes.business.stubs.GetByIdRequest params = new gov.nih.nci.coppa.services.outcomes.business.stubs.GetByIdRequest();

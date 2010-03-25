@@ -1,6 +1,5 @@
 package gov.nih.nci.coppa.services.outcomes.common;
 
-import javax.xml.namespace.QName;
 
 
 /**

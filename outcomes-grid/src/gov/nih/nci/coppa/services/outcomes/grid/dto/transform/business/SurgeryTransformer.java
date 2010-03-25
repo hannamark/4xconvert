@@ -83,11 +83,11 @@
 
 package gov.nih.nci.coppa.services.outcomes.grid.dto.transform.business;
 
-import gov.nih.nci.coppa.services.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.IITransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.STTransformer;
-import gov.nih.nci.coppa.services.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.coppa.services.outcomes.business.Surgery;
+import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.outcomes.svc.dto.SurgerySvcDto;
 
 /**

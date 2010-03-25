@@ -23,6 +23,7 @@ http\://enterpriseservices.nci.nih.gov/OutcomesServices/User/types=gov.nih.nci.c
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/types=gov.nih.nci.coppa.services.outcomes.stubs.types
 http\://enterpriseservices.nci.nih.gov/OutcomesServices/Business/types=gov.nih.nci.coppa.services.outcomes.business.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.metadata.security
+http\://iso21090.nci.nih.gov=gov.nih.nci.iso21090.extensions
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
 
 
