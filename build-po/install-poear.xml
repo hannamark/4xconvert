@@ -33,7 +33,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <property name="po-ear.hibernate.file" value="hibernate.cfg.xml" />
   <property name="po-ear.ear.file" value="po.ear" />
 
-  <target name="install:po-ear-jboss:clean" unless="exclude.jboss">
+  <target name="install:po-ear-jboss:clean" unless="exclude.po-ear">
     <sleep seconds="5" />
     <property name="backup.count" value="5"/>
 
@@ -109,7 +109,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           </else>
       </if>
   </target>
-  <target name="common:po-ear-jboss:init" depends="common:init:pre" unless="exclude.jboss">
+  <target name="common:po-ear-jboss:init" depends="common:init:pre" unless="exclude.po-ear">
       <property name="po-ear-jboss.ssl.enable" value="false"/>
       <property name="po-ear-jboss.home" value="${application.base.path}/po-ear/${jboss.relative.path}"/>
       <jboss-version
@@ -222,7 +222,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     </target>
 
   <!-- Wrapper target to deploy JBOSS container -->
-  <target name="install:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+  <target name="install:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-ear"
       depends="
       common:po-ear-jboss:init,
       common:init,
@@ -329,7 +329,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
 
-  <target name="upgrade-dac:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+  <target name="upgrade-dac:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-ear"
       depends="
       upgrade:po-ear-jboss:init,
       common:po-ear-jboss:init,
@@ -351,7 +351,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       install:po-ear-jboss:validation:post-install
       " >
   </target>
-  <target name="upgrade-cm:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+  <target name="upgrade-cm:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-ear"
       depends="
       upgrade:po-ear-jboss:init,
       common:po-ear-jboss:init,
@@ -372,7 +372,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       " >
   </target>
 
-  <target name="upgrade-ncm:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+  <target name="upgrade-ncm:po-ear-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-ear"
       depends="
       upgrade:po-ear-jboss:init,
       common:po-ear-jboss:init,
@@ -392,15 +392,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       " >
   </target>
 
-  <target name="install:po-ear-jboss:post" unless="exclude.jboss">
+  <target name="install:po-ear-jboss:post" unless="exclude.po-ear">
     <if>
       <not>
         <equals arg1="${exclude.jboss.backup}" arg2="true"/>
       </not>
       <then>
-        <property name="changelogFile" location="${install-logs.dir}/chagneLog-${install.time}.txt"/>
-        <property name="compare1.dir" location="${backup.po-ear-jboss.base.dir}/backup/${jboss.relative.path}"/>
-        <property name="compare2.dir" location="${jboss.home}"/>
+        <var name="changelogFile" value="${log.dir}/changeLog-${install.time}.txt"/>
+        <var name="compare1.dir" value="${backup.po-ear-jboss.base.dir}/backup/${jboss.binaries.relative.dir}"/>
+        <var name="compare2.dir" value="${jboss.home}"/>
         <report-dir-diff
           dir1="${compare1.dir}"
           dir2="${compare2.dir}"
@@ -418,7 +418,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
         <!-- Compress backup and cleanup -->
         <mkdir dir="${backup.po-ear-jboss.base.dir}/backup1"/>
-        <zip destfile="${backup.po-ear-jboss.base.dir}/backup1/${jboss.relative.path}.zip" basedir="${backup.po-ear-jboss.base.dir}/backup" />
+        <zip destfile="${backup.po-ear-jboss.base.dir}/backup1/${jboss.binaries.relative.dir}.zip" basedir="${backup.po-ear-jboss.base.dir}/backup" />
         <delete dir="${backup.po-ear-jboss.base.dir}/backup"/>
       </then>
     </if>

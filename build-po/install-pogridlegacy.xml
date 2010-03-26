@@ -38,7 +38,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <property name="po-grid-legacy.dir.target" value="wsrf.war" />
     <property name="po-grid-legacy.introduce.skeleton.service.name" value="CoreServices"/>
 
-  <target name="install:po-grid-legacy-jboss:clean" unless="exclude.jboss">
+  <target name="install:po-grid-legacy-jboss:clean" unless="exclude.po-grid-legacy">
     <sleep seconds="5" />
     <property name="backup.count" value="5"/>
 
@@ -131,7 +131,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           </else>
       </if>
   </target>
-  <target name="common:po-grid-legacy-jboss:init" depends="common:init:pre" unless="exclude.jboss">
+  <target name="common:po-grid-legacy-jboss:init" depends="common:init:pre" unless="exclude.po-grid-legacy">
       <property name="po-grid-legacy-jboss.ssl.enable" value="false"/>
       <property name="po-grid-legacy-jboss.home" value="${application.base.path}/${po-grid-legacy-jboss.relative.path}"/>
       <jboss-version
@@ -322,7 +322,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         </if>
     </target>
 
-  <target name="install:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+  <target name="install:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-grid-legacy"
       depends="
       common:po-grid-legacy-jboss:init,
       common:init,
@@ -385,7 +385,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       <zip basedir="${temp.dir}/${po-grid-legacy.dist.relative.dir}" compress="true" file="${po-grid-legacy.dir.dist}/${po-grid-legacy.artifact.file}" update="false"/>
   </target>
 
-  <target name="upgrade-dac:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+  <target name="upgrade-dac:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-grid-legacy"
       depends="
       upgrade:po-grid-legacy-jboss:init,
       common:po-grid-legacy-jboss:init,
@@ -407,7 +407,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       install:po-grid-legacy-jboss:validation:post-install
       " >
   </target>
-  <target name="upgrade-cm:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+  <target name="upgrade-cm:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-grid-legacy"
       depends="
       upgrade:po-grid-legacy-jboss:init,
       common:po-grid-legacy-jboss:init,
@@ -428,7 +428,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       " >
   </target>
 
-  <target name="upgrade-ncm:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.jboss"
+  <target name="upgrade-ncm:po-grid-legacy-jboss" description="Wrapper scripts that calls all required targets to install the jboss container" unless="exclude.po-grid-legacy"
       depends="
       upgrade:po-grid-legacy-jboss:init,
       common:po-grid-legacy-jboss:init,
@@ -448,15 +448,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       " >
   </target>
 
-  <target name="install:po-grid-legacy-jboss:post" unless="exclude.jboss">
+  <target name="install:po-grid-legacy-jboss:post" unless="exclude.po-grid-legacy">
     <if>
       <not>
-        <equals arg1="${exclude.jboss.backup}" arg2="true"/>
+        <equals arg1="${exclude.po-grid-legacy-jboss.backup}" arg2="true"/>
       </not>
       <then>
-        <property name="changelogFile" location="${install-logs.dir}/chagneLog-${install.time}.txt"/>
-        <property name="compare1.dir" location="${backup.po-grid-legacy-jboss.base.dir}/backup/${jboss.relative.path}"/>
-        <property name="compare2.dir" location="${jboss.home}"/>
+        <var name="changelogFile" value="${log.dir}/changeLog-${install.time}.txt"/>
+        <var name="compare1.dir" value="${backup.po-grid-legacy-jboss.base.dir}/backup/${jboss.binaries.relative.dir}"/>
+        <var name="compare2.dir" value="${jboss.home}"/>
         <report-dir-diff
           dir1="${compare1.dir}"
           dir2="${compare2.dir}"
@@ -474,7 +474,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
         <!-- Compress backup and cleanup -->
         <mkdir dir="${backup.po-grid-legacy-jboss.base.dir}/backup1"/>
-        <zip destfile="${backup.po-grid-legacy-jboss.base.dir}/backup1/${jboss.relative.path}.zip" basedir="${backup.po-grid-legacy-jboss.base.dir}/backup" />
+        <zip destfile="${backup.po-grid-legacy-jboss.base.dir}/backup1/${jboss.binaries.relative.dir}.zip" basedir="${backup.po-grid-legacy-jboss.base.dir}/backup" />
         <delete dir="${backup.po-grid-legacy-jboss.base.dir}/backup"/>
       </then>
     </if>
