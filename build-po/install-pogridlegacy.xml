@@ -175,7 +175,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <unzip dest="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/deploy/${po-grid-legacy.dir.target}" src="${po-grid-legacy.dir.src}/${po-grid-legacy.artifact.file}" />
     </target>
 
-    <!-- Configures installed po-grid application -->
+    <!-- Configures installed po-grid-legacy application -->
     <target name="install:po-grid-legacy-jboss:grid:configure" description="Configure po-grid-legacy service based on properties" unless="exclude.po-grid-legacy">
 
     <jboss-configure-grid
@@ -198,7 +198,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     </target>
 
   <target name="install:po-grid-legacy-jboss:configure" unless="exclude.po-grid-legacy">
-        <!-- create a new template bindings file from template (using ports for po-grid -->
+        <!-- create a new template bindings file from template (using ports for po-grid-legacy) -->
 
       <jboss-configure
           jboss.home="${po-grid-legacy-jboss.home}"
@@ -253,7 +253,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           jboss.grid.secure.key.file="${po-grid-legacy-jboss.grid.secure.key.file}"
           jboss.grid.secure.cert.file="${po-grid-legacy-jboss.grid.secure.cert.file}"
           jboss.java.opts="${po-grid-legacy-jboss.java.opts}"
-          jboss.logs.dir="${po-grid-legacy-jboss.home}/server/${po-grid-jboss.server.name}/log"
+          jboss.logs.dir="${po-grid-legacy-jboss.home}/server/${po-grid-legacy-jboss.server.name}/log"
           jboss.http-connector.remove="${po-grid-legacy-jboss.http-connector.remove}"
           />
   </target>
