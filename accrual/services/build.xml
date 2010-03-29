@@ -266,7 +266,11 @@
              classpath="${test-checkstyle.jar.dir}/checkstyle-all-4.4.jar"/>
              
         <checkstyle config="${checkstyleFile}" failOnViolation="true">
-            <fileset dir="src" includes="**/accrual/**/*.java"/>
+        	<fileset dir="src">
+        	        <include name="**/accrual/**/*.java"/>
+        	        <include name="**/outcomes/**/*.java"/>
+        	</fileset>
+        	<classpath location="${services.build.dir}/classes"/> 
             <formatter type="plain"/>
             <formatter type="plain" toFile="${services.report.dir}/checkstyle.txt"/>
             <formatter type="xml" toFile="${services.report.dir}/checkstyle.xml"/>

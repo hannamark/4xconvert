@@ -211,7 +211,7 @@ public class PriorTherapySvcBean extends
                     PerformedObservationResultTypeCode.NUMBER_OF_PRIOR_CHEMOTHERAPY_REGIMENS));
             perMedicalHistoryDTO.setResultQuantity(svcDto.getChemoRegimenNum());
             cctx.getPerFormedObservationResultService().createPerformedMedicalHistoryResult(perMedicalHistoryDTO);
-            svcDto.setIdentifier(dto.getIdentifier());
+            svcDto.setIdentifier(dbPerformedObservationDTO.getIdentifier());
         } catch (RemoteException e) {
             throw new OutcomesException("Error in PriorTherapySvcBean.create()" + e.getMessage());
         } catch (DataFormatException e) {

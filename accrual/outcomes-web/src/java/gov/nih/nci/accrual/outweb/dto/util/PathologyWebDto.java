@@ -112,6 +112,21 @@ public class PathologyWebDto extends AbstractPathologyDto implements Serializabl
     }
     
     /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("grade".equals(result)) {
+            result = "grade";
+        }
+        if ("gradeSystem".equals(result)) {
+            result = "gradeSystem";
+        }
+        return "pathology." + result;
+    }
+    
+    /**
      * Instantiates a new pathology web dto.
      * 
      * @param svcDto the svc dto

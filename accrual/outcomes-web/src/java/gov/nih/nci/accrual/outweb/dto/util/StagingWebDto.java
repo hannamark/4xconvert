@@ -109,6 +109,24 @@ public class StagingWebDto extends AbstractStagingDto implements Serializable {
     public StagingWebDto() {
         // default constructor
     }
+
+    /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("method".equals(result)) {
+            result = "method";
+        }
+        if ("stage".equals(result)) {
+            result = "stage";
+        }
+        if ("system".equals(result)) {
+            result = "system";
+        }
+        return "staging." + result;
+    }
     
     /**
      * Instantiates a new staging web dto.

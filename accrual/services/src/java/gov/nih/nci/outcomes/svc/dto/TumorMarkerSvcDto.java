@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.outcomes.svc.dto;
 
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.pa.util.PAUtil;
+
 import java.io.Serializable;
 
 /**
@@ -86,5 +90,19 @@ import java.io.Serializable;
  */
 public class TumorMarkerSvcDto extends AbstractTumorMarkerDto implements Serializable {
     private static final long serialVersionUID = 1L;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate() throws OutcomesException {
+        if (PAUtil.isCdNull(getTumorMarker())) {
+            throw new OutcomesFieldException(getClass(), "tumorMarker", "Please select a Tumor Marker.");
+        }
+        if (PAUtil.isStNull(getTumorMarkerValue())) {
+            throw new OutcomesFieldException(getClass(), "tumorMarkerValue", "Please enter a Tumor Marker Value.");
+        }
+        super.validate();
+    }
 
 }

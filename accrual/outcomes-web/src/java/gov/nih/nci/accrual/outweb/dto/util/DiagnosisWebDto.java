@@ -116,6 +116,9 @@ public class DiagnosisWebDto extends AbstractDiagnosisDto implements Serializabl
      */
     public static String svcFieldToWebField(String svcField) {
         String result = svcField;
+        if ("name".equals(result)) {
+            result = "name";
+        }
         if ("createDate".equals(result)) {
             result = "createDate";
         }

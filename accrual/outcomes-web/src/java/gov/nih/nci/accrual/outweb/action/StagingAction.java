@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.outweb.util.AccrualConstants;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 import gov.nih.nci.outcomes.svc.dto.StagingSvcDto;
 import gov.nih.nci.outcomes.svc.dto.TumorMarkerSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
 import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -152,6 +153,9 @@ public class StagingAction extends AbstractListEditAccrualAction<TumorMarkerWebD
             outcomesSvc.write(svcDto);
             ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                 "Successfully saved Staging information.");
+        } catch (OutcomesFieldException e) {
+            addFieldError(StagingWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+            return INPUT;
         } catch (Exception re) {
             addActionError("Error saving the  Staging." + re.getLocalizedMessage());
             return INPUT;

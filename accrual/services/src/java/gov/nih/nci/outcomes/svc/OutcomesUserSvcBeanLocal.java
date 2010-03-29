@@ -174,7 +174,7 @@ public class OutcomesUserSvcBeanLocal extends BaseOutcomesSvc implements Outcome
     }
 
     /**
-     * @param dto
+     * @param dto the dto
      * @return the created user object
      * @throws OutcomesException if any error occurs or validation fails
      */

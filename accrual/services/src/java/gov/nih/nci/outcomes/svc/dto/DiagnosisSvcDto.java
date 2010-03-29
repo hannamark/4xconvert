@@ -78,6 +78,11 @@
 */
 package gov.nih.nci.outcomes.svc.dto;
 
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.outcomes.svc.util.OutcomesUtil;
+import gov.nih.nci.pa.util.PAUtil;
+
 import java.io.Serializable;
 
 /**
@@ -86,5 +91,25 @@ import java.io.Serializable;
  */
 public class DiagnosisSvcDto extends AbstractDiagnosisDto implements Serializable {
     private static final long serialVersionUID = 1L;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate() throws OutcomesException {
+        if (PAUtil.isStNull(getName())) {
+            throw new OutcomesFieldException(getClass(), "name", "Please provide a Diagnosis.");
+        }
+        if (PAUtil.isTsNull(getCreateDate())) {
+            throw new OutcomesFieldException(getClass(), "createDate", "Please enter Diagnosis Date.");
+        }
+        if (getCreateDate() != null) {
+            boolean validDate = OutcomesUtil.checkValidDate(getCreateDate().getValue());
+            if (!validDate) {
+                throw new OutcomesFieldException(getClass(), "createDate", "Please Enter Current or Past Date.");
+            }
+        }
+        super.validate();
+    }
 
 }

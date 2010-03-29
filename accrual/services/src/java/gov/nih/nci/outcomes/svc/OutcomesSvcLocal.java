@@ -98,18 +98,19 @@ public interface OutcomesSvcLocal {
      * @return result array
      * @throws OutcomesException exception
      */
-    public List<PatientSvcDto> get(PatientSvcDto dto) throws OutcomesException;
+    List<PatientSvcDto> get(PatientSvcDto dto) throws OutcomesException;
 
     /**
      * @param patientIdentifier the Ii of the patient
      * @return the entire tree for given patient
      * @throws OutcomesException exception
      */
-    public PatientSvcDto getById(Ii patientIdentifier) throws OutcomesException;
+    PatientSvcDto getById(Ii patientIdentifier) throws OutcomesException;
 
     /**
      * @param dto master dto for the PODS service
      * @return result array
+     * @throws OutcomesException exception
      */
-    public PatientSvcDto write(PatientSvcDto dto) throws OutcomesException;
+    PatientSvcDto write(PatientSvcDto dto) throws OutcomesException;
 }

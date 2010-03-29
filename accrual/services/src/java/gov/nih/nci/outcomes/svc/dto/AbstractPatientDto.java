@@ -168,7 +168,7 @@ public abstract class AbstractPatientDto extends AbstractBaseOutSvcDto implement
         if (PAUtil.isEmpty(alpha3)) {
             throw new OutcomesFieldException(getClass(), "countryAlpha3", "Country should not be null.");
         }
-        if (alpha3.length() != 3) {
+        if (alpha3.length() != "USA".length()) {
             throw new OutcomesFieldException(getClass(), "countryAlpha3",
                     "Use ISO Alpha 3 code for country (e.g. use 'USA' for United States).");
         }

@@ -106,6 +106,21 @@ public class PerformanceStatusWebDto extends AbstractPerformanceStatusDto implem
     }
     
     /**
+     * @param svcField service field
+     * @return field name in jsp
+     */
+    public static String svcFieldToWebField(String svcField) {
+        String result = svcField;
+        if ("performanceSystem".equals(result)) {
+            result = "performanceSystem";
+        }
+        if ("performanceStatus".equals(result)) {
+            result = "performanceStatus";
+        }
+        return "performance." + result;
+    }
+    
+    /**
      * Instantiates a new performance status web dto.
      * 
      * @param svcDto the svc dto

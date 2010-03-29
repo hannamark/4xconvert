@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.outcomes.svc.dto;
 
+import gov.nih.nci.outcomes.svc.exception.OutcomesException;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
+import gov.nih.nci.pa.util.PAUtil;
+
 import java.io.Serializable;
 
 /**
@@ -86,5 +90,22 @@ import java.io.Serializable;
  */
 public class StagingSvcDto extends AbstractStagingDto implements Serializable {
     private static final long serialVersionUID = 1L;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate() throws OutcomesException {
+        if (PAUtil.isCdNull(getMethod())) {
+            throw new OutcomesFieldException(getClass(), "method", "Please select a Staging Method.");
+        }
+        if (PAUtil.isStNull(getStage())) {
+            throw new OutcomesFieldException(getClass(), "stage", "Please enter a value for Stage.");
+        }
+        if (PAUtil.isCdNull(getSystem())) {
+            throw new OutcomesFieldException(getClass(), "system", "Please select a Staging system.");
+        }
+        super.validate();
+    }
 
 }

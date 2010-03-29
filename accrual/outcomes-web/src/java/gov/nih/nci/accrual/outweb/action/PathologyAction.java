@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.outweb.action;
 import gov.nih.nci.accrual.outweb.dto.util.PathologyWebDto;
 import gov.nih.nci.outcomes.svc.dto.PathologySvcDto;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
 import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -156,6 +157,9 @@ public class PathologyAction extends AbstractEditAccrualAction<PathologyWebDto> 
         }
         try {
             outcomesSvc.write(svcDto);
+        } catch (OutcomesFieldException e) {
+            addFieldError(PathologyWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+            return INPUT;
         } catch (Exception re) {
             addActionError("Error saving the pathology." + re.getLocalizedMessage());
             return INPUT;

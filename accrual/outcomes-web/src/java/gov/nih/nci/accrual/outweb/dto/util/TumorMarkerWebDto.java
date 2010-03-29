@@ -117,6 +117,9 @@ public class TumorMarkerWebDto extends AbstractTumorMarkerDto implements Seriali
         if ("tumorMarker".equals(result)) {
             result = "tumorMarker";
         }
+        if ("tumorMarkerValue".equals(result)) {
+            result = "tumorMarkerValue";
+        }
         if ("tmvUom.unit".equals(result)) {
             result = "tmvUom.unit";
         }

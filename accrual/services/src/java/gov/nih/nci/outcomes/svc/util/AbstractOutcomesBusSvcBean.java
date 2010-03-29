@@ -98,7 +98,7 @@ public abstract class AbstractOutcomesBusSvcBean<DTO extends AbstractBaseOutSvcD
      * @return array of iso dto's
      * @throws OutcomesException exception
      */
-    abstract public DTO get(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException;
+    public abstract DTO get(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException;
 
     /**
      * @param dto iso dto
@@ -130,19 +130,27 @@ public abstract class AbstractOutcomesBusSvcBean<DTO extends AbstractBaseOutSvcD
     /**
      * @param dto dto
      * @param parentIi studySubjectId
+     * @param cctx the cctx
      * @return dto
+     * @throws OutcomesException exception
      */
-    abstract protected DTO create(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException;
+    protected abstract DTO create(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException;
     /**
      * @param dto dto
+     * @param cctx the cctx
+     * @param parentIi the parentIi
      * @return dto
+     * @throws OutcomesException exception
      */
-    abstract protected DTO update(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException;
+    protected abstract DTO update(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException;
     /**
      * @param dto dto
+     * @param cctx the cctx
+     * @param parentIi the parentIi
      * @return dto
+     * @throws OutcomesException exception
      */
-    abstract protected DTO delete(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException;
+    protected abstract DTO delete(DTO dto, SvcContext cctx, Ii parentIi) throws OutcomesException;
 
 
 }

@@ -178,7 +178,7 @@ public class DiagnosisSvcBean extends AbstractOutcomesBusSvcBean<DiagnosisSvcDto
              pdDto.setResultCode(svcDto.getResultCode());
              pdDto.setResultCodeModifiedText(svcDto.getName());
              cctx.getPerFormedObservationResultService().createPerformedDiagnosis(pdDto);
-
+             svcDto.setIdentifier(dto.getIdentifier());
          } catch (RemoteException e) {
              throw new OutcomesException("Error in DiagnosisSvcBean.create().", e);
          } catch (DataFormatException e) {

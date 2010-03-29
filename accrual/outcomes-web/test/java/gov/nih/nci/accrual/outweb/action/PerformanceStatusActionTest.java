@@ -80,6 +80,8 @@ package gov.nih.nci.accrual.outweb.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.accrual.outweb.dto.util.PerformanceStatusWebDto;
+import gov.nih.nci.pa.enums.KarnoskyPerformanceStatusCode;
+import gov.nih.nci.pa.enums.PerformanceSystemCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 
 import org.junit.Before;
@@ -105,8 +107,8 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
         dAction.prepare();
         dAction.setPerformance(new PerformanceStatusWebDto());
         PerformanceStatusWebDto temp = dAction.getPerformance();
-        temp.setPerformanceSystem(CdConverter.convertStringToCd("Karnofsky"));
-        temp.setPerformanceStatus(CdConverter.convertStringToCd("100"));
+        temp.setPerformanceSystem(CdConverter.convertToCd(PerformanceSystemCode.Karnofsky));
+        temp.setPerformanceStatus(CdConverter.convertToCd(KarnoskyPerformanceStatusCode.HUNDRED));
     }
 
     /**
@@ -165,7 +167,7 @@ public class PerformanceStatusActionTest extends AbstractAccrualActionTest {
     @Test
     public void emptyPerformanceSaveTest() {
         dAction.setPerformance(new PerformanceStatusWebDto());
-        assertEquals(ActionSupport.SUCCESS, dAction.save());
+        assertEquals(ActionSupport.INPUT, dAction.save());
     }
     
     @Test

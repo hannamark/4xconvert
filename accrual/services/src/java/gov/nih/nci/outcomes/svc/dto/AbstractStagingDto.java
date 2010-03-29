@@ -103,8 +103,8 @@ public abstract class AbstractStagingDto extends AbstractBaseOutSvcDto {
      */
     @Override
     public void validate() throws OutcomesException {
-        validateEnumerator(getMethod(), StagingMethods.values(), "Staging Method", false);
-        validateEnumerator(getSystem(), StagingSystemCode.values(), "Staging System", false);
+        validateEnumerator(getMethod(), StagingMethods.values(), "method", false);
+        validateEnumerator(getSystem(), StagingSystemCode.values(), "system", false);
         super.validate();
     }
     /**

@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.outweb.action;
 import gov.nih.nci.accrual.outweb.dto.util.PerformanceStatusWebDto;
 import gov.nih.nci.outcomes.svc.dto.PatientSvcDto;
 import gov.nih.nci.outcomes.svc.dto.PerformanceStatusSvcDto;
+import gov.nih.nci.outcomes.svc.exception.OutcomesFieldException;
 import gov.nih.nci.outcomes.svc.util.SvcConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -144,6 +145,9 @@ public class PerformanceStatusAction extends AbstractEditAccrualAction<Performan
         }   
         try {
             outcomesSvc.write(svcDto);
+        } catch (OutcomesFieldException e) {
+            addFieldError(PerformanceStatusWebDto.svcFieldToWebField(e.getField()), e.getLocalizedMessage());
+            return INPUT;
         } catch (Exception e) {
             addActionError("Error in PerformanceStatus Action save().  " + e.getLocalizedMessage());
             return SUCCESS;
