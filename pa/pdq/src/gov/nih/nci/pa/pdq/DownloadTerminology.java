@@ -14,22 +14,22 @@ import org.apache.log4j.Logger;
 
 public class DownloadTerminology {
     private static final Logger LOG = Logger.getLogger(DownloadTerminology.class);
-    
+
     private static String filename = "Terminology.tar.gz";
-    
+
     public static void process() throws IOException {
-        
+
         preCheck();
-        LOG.info("Compled Pre Check ...........");
+        LOG.info("Completed Pre Check ...........");
         cleanUp();
-        LOG.info("Compled Clean up ...........");
+        LOG.info("Completed Clean up ...........");
         download();
-        LOG.info("Compled Download ...........");
+        LOG.info("Completed Download ...........");
         extract();
-        LOG.info("Compled Extraction ...........");
+        LOG.info("Completed Extraction ...........");
     }
-    
-    
+
+
     private static void download() throws IOException {
       FTPClient client = new FTPClient();
       try {
@@ -46,7 +46,7 @@ public class DownloadTerminology {
       } catch (IOException e) {
           e.printStackTrace();
       }
-        
+
     }
     private static void extract() throws IOException {
         InputStream is = getInputStream(filename);
@@ -56,18 +56,18 @@ public class DownloadTerminology {
         while ((tea = tais.getNextTarEntry()) != null) {
             if (tea.getName().endsWith(".xml")) {
                 i++;
-                int b = tais.available(); 
+                int b = tais.available();
                 byte[] data = new byte[b];
                 tais.read(data);
                 FileOutputStream fos = new FileOutputStream(tea.getName());
                 fos.write(data);
                 fos.close();
             }
-                
-            
+
+
         }
-        
-     
+
+
     }
 
     private static void preCheck() {
@@ -81,7 +81,7 @@ public class DownloadTerminology {
             System.out.println(" file exist, move intervention.sql to scripts before continuing");
             System.exit(0);
         }
-        
+
     }
     private static void cleanUp() {
         File ter = new File(filename);
@@ -94,13 +94,13 @@ public class DownloadTerminology {
             if (file.getName().endsWith(".xml")) {
                 file.delete();
             }
-            
+
         }
-        
+
     }
     private static InputStream getInputStream(String tarFileName) throws IOException{
-        
+
            return new GZIPInputStream(new FileInputStream(new File(tarFileName)));
     }
-    
+
 }
