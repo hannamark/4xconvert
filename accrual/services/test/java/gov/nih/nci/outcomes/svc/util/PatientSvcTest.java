@@ -81,6 +81,7 @@ package gov.nih.nci.outcomes.svc.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.outweb.enums.PathologyGradeSystems;
@@ -240,6 +241,13 @@ public class PatientSvcTest extends AbstractOutcomesSvcTest {
         assertNotNull(p.getTreatmentRegimens().get(0).getOffTreatment().getIdentifier());
         assertNotNull(p.getTreatmentRegimens().get(0).getCycles().get(0).getIdentifier());
         assertNotNull(p.getTreatmentRegimens().get(0).getCycles().get(0).getRadiations().get(0).getIdentifier());
+        
+        Ii patientIi =  p.getIdentifier();
+        p = new PatientSvcDto();
+        p.setIdentifier(patientIi);
+        p.setAction(SvcConstants.DELETE);
+        p = osb.write(p);
+        assertNull(p);
     }
 
     @Test
