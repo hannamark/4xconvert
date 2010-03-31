@@ -102,7 +102,7 @@ import java.util.zip.DataFormatException;
  * @since Feb 24, 2010
  *
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals", "PMD.NPathComplexity" })
 public class RadiationSvcBean extends AbstractOutcomesBusSvcBean<RadiationSvcDto> {
 
     private static RadiationSvcBean instance = new RadiationSvcBean();
@@ -281,7 +281,8 @@ public class RadiationSvcBean extends AbstractOutcomesBusSvcBean<RadiationSvcDto
                     "UNIT_OF_MEASUREMENT", "CODE");
             doseFrequencyExists = cctx.getLookUpService().validateLookUp(dto.getDoseFreq().getCode(),
                     "DOSE_FREQUENCY", "CODE");
-            if (dto.getDuration() != null && !dto.getDuration().getUnit().equals("")) {
+            if (dto.getDuration() != null && dto.getDuration().getUnit() != null 
+                    && !dto.getDuration().getUnit().equals("")) {
                 doseDurationUomExists = cctx.getLookUpService().validateLookUp(dto.getDuration().getUnit(),
                         "UNIT_OF_MEASUREMENT", "CODE");
             }
@@ -298,7 +299,8 @@ public class RadiationSvcBean extends AbstractOutcomesBusSvcBean<RadiationSvcDto
             throw new OutcomesFieldException(getClass(), "doseFreq", dto.getDoseFreq().getCode()
                     + " Dose Frequency is not a valid value");
         }
-        if (dto.getDuration() != null && !dto.getDuration().getUnit().equals("") && !doseDurationUomExists) {
+        if (dto.getDuration() != null && dto.getDuration().getUnit() != null 
+                && !dto.getDuration().getUnit().equals("") && !doseDurationUomExists) {
             throw new OutcomesFieldException(getClass(), "duration.unit", dto.getDuration().getUnit()
                     + " Dose Duration UOM is not a valid value");
         }

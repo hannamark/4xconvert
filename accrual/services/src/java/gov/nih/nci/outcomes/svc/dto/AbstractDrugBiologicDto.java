@@ -123,14 +123,16 @@ public abstract class AbstractDrugBiologicDto extends AbstractBaseOutSvcDto {
         if (getDose() == null || getDose().getUnit().equals("")) {
             throw new OutcomesFieldException(getClass(), "dose.unit", "Please select Dose UOM.");
         }
-        if (getDoseDur().getValue() == null &&  !getDoseDur().getUnit().equals("")) {
+        if (getDoseDur() != null && getDoseDur().getValue() == null 
+                && getDoseDur().getUnit() != null &&  !getDoseDur().getUnit().equals("")) {
             throw new OutcomesFieldException(getClass(), "doseDur.value", "Please enter Duration Value.");
         }
         if (getDoseDur() != null && getDoseDur().getValue() != null
                 && !PAUtil.isNumber(getDoseDur().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "doseDur.value", NUMERICMESSAGE);
         }
-        if (getDoseDur().getUnit().equals("") && getDoseDur().getValue() != null) {
+        if (getDoseDur() != null && getDoseDur().getUnit() != null 
+                && getDoseDur().getUnit().equals("") && getDoseDur().getValue() != null) {
             throw new OutcomesFieldException(getClass(), "doseDur.unit", "Please select Duration UOM.");
         }
         if (getHeight() == null || getHeight().getValue() == null) {

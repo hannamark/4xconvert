@@ -412,7 +412,8 @@ public class DrugBiologicSvcBean extends AbstractOutcomesBusSvcBean<DrugBiologic
                     "DOSE_FREQUENCY", "CODE");
             routeOfAdministrationExists = cctx.getLookUpService().validateLookUp(dto.getDoseRoute().getCode(),
                     "ROUTE_OF_ADMINISTRATION", "CODE");
-            if (dto.getDoseDur() != null && !dto.getDoseDur().getUnit().equals("")) {
+            if (dto.getDoseDur() != null && dto.getDoseDur().getUnit() != null 
+                    && !dto.getDoseDur().getUnit().equals("")) {
                 doseDurationUomExists = cctx.getLookUpService().validateLookUp(dto.getDoseDur().getUnit(),
                         "UNIT_OF_MEASUREMENT", "CODE");
             }
@@ -433,8 +434,8 @@ public class DrugBiologicSvcBean extends AbstractOutcomesBusSvcBean<DrugBiologic
             throw new OutcomesFieldException(getClass(), "doseRoute", dto.getDoseRoute().getCode()
                     + " RouteOfAdministration is not a valid value");
         }
-        if (dto.getDoseDur() != null && !dto.getDoseDur().getUnit().equals("")
-                && !doseDurationUomExists) {
+        if (dto.getDoseDur() != null && dto.getDoseDur().getUnit() != null
+                && !dto.getDoseDur().getUnit().equals("") && !doseDurationUomExists) {
             throw new OutcomesFieldException(getClass(), "doseDur.unit", dto.getDoseDur().getUnit()
                     + " Dose Duration UOM is not a valid value");
         }

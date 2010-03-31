@@ -123,11 +123,11 @@ public abstract class AbstractLesionAssessmentDto extends AbstractBaseOutSvcDto 
         if (getLesionNum().getExtension() != null && !PAUtil.isNumber(getLesionNum().getExtension())) {
             throw new OutcomesFieldException(getClass(), "lesionNum", NUMERICMESSAGE);
         }
-        if (getImageIdentifier().getExtension() != null 
+        if (getImageIdentifier() != null && getImageIdentifier().getExtension() != null 
                 && !PAUtil.isNumber(getImageIdentifier().getExtension())) {
             throw new OutcomesFieldException(getClass(), "imageIdentifier", NUMERICMESSAGE);
         }
-        if (getImageSeriesIdentifier().getExtension() != null 
+        if (getImageSeriesIdentifier() != null && getImageSeriesIdentifier().getExtension() != null 
                 && !PAUtil.isNumber(getImageSeriesIdentifier().getExtension())) {
             throw new OutcomesFieldException(getClass(), "imageSeriesIdentifier", NUMERICMESSAGE);
         }

@@ -118,14 +118,16 @@ public abstract class AbstractRadiationDto extends AbstractBaseOutSvcDto {
         if (getTotalDose() == null || getTotalDose().getUnit().equals("")) {
             throw new OutcomesFieldException(getClass(), "totalDose.unit", "Please select Total Dose UOM.");
         }
-        if (getDuration().getValue() == null &&  !getDuration().getUnit().equals("")) {
+        if (getDuration() != null && getDuration().getValue() == null 
+                && getDuration().getUnit() != null && !getDuration().getUnit().equals("")) {
             throw new OutcomesFieldException(getClass(), "duration.value", "Please enter Duration Value.");
         }
         if (getDuration() != null && getDuration().getValue() != null
                 && !PAUtil.isNumber(getDuration().getValue().toString())) {
             throw new OutcomesFieldException(getClass(), "duration.value", NUMERICMESSAGE);
         }
-        if (getDuration().getUnit().equals("") && getDuration().getValue() != null) {
+        if (getDuration() != null && getDuration().getUnit() != null
+                && getDuration().getUnit().equals("") && getDuration().getValue() != null) {
             throw new OutcomesFieldException(getClass(), "duration.unit", "Please select Duration UOM.");
         }
         if (getDose() == null || getDose().getValue() == null) {
