@@ -175,7 +175,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
         <unzip dest="${po-grid-jboss.home}/server/${po-grid-jboss.server.name}/deploy/${po-grid.dir.target}" src="${po-grid.dir.src}/${po-grid.artifact.file}" />
     </target>
-
+    
 
     <!-- Configures installed po-grid application -->
     <target name="install:po-grid-jboss:grid:configure" description="Configure po-grid service based on properties" unless="exclude.po-grid">
