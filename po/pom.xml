@@ -65,10 +65,10 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/po</connection>
-        <developerConnection>scm:svn:http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/po</developerConnection>
+        <connection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/po</connection>
+        <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/po</developerConnection>
         <tag>HEAD</tag>
-        <url>http://gforge.nci.nih.gov/svnroot/coppa/trunk/code/po</url>
+        <url>https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/po</url>
     </scm>
 
     <issueManagement>
@@ -120,6 +120,11 @@
             <id>lpower</id>
             <name>Leslie Power</name>
         </developer>
+        <developer>
+            <email>slustbader@5amsolutions.com</email>
+            <id>slustbader</id>
+            <name>Steve Lustbader</name>
+        </developer>
     </developers>
 
     <modules>
@@ -146,7 +151,7 @@
     <build>
         <plugins>
             <plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
@@ -155,7 +160,7 @@
                 </configuration>
             </plugin>
             <plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
                 <executions>
@@ -175,7 +180,7 @@
                 </dependencies>
             </plugin>
             <plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <excludeRoots>
@@ -330,7 +335,7 @@
     <reporting>
         <plugins>
             <plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
                 <configuration>
@@ -338,12 +343,12 @@
                </configuration>
             </plugin>
             <plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven-javadoc-plugin.version}</version>
             </plugin>
             <plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>${maven-pmd-plugin.version}</version>
                 <configuration>
@@ -377,7 +382,7 @@
                 </configuration>
             </plugin>
             <plugin>
-            	<groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>${maven-surefire-report-plugin.version}</version>
             </plugin>
