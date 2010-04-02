@@ -117,10 +117,10 @@
                 </sequence>
               </complexType>
             </element>
-            <element name="nctIdentifierSiteIdentifier">
+            <element name="nctIdentifierSiteIdentifiers">
               <complexType>
                 <sequence>
-                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
@@ -156,6 +156,13 @@
               <complexType>
                 <sequence>
                   <element ref="ns3:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="studyRegulatoryAuthority">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -235,10 +242,10 @@
                 </sequence>
               </complexType>
             </element>
-            <element name="nctIdentifierSiteIdentifier">
+            <element name="nctIdentifierSiteIdentifiers">
               <complexType>
                 <sequence>
-                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
@@ -277,6 +284,13 @@
                 </sequence>
               </complexType>
             </element>
+            <element name="studyRegulatoryAuthority">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
           </sequence>
         </complexType>
       </element>
@@ -304,10 +318,10 @@
                 </sequence>
               </complexType>
             </element>
-            <element name="studySite">
+            <element name="studyIdentifiers">
               <complexType>
                 <sequence>
-                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudySite" minOccurs="1" maxOccurs="unbounded" />
                 </sequence>
               </complexType>
             </element>
