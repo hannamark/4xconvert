@@ -154,7 +154,8 @@
         <fail unless="accrual.jnp.url" message="Property accrual.jnp.url not set.  Check build.properties file."/>
         <fail unless="pa.jnp.url" message="Property pa.jnp.url not set.  Check build.properties file."/>
         <fail unless="po.jnp.url" message="Property po.jnp.url not set.  Check build.properties file."/>
-    	<fail unless="po.username" message="Property po.username not set.  Check build.properties file."/>
+        <fail unless="po.server.name" message="Property po.server.name not set.  Check build.properties file."/>
+        <fail unless="po.username" message="Property po.username not set.  Check build.properties file."/>
         <fail unless="po.pass" message="Property po.pass not set.  Check build.properties file."/>
         <copy todir="${services.build.outputDir}">
             <filterset>
@@ -167,6 +168,7 @@
             	<filter token="outcomes.url" value="${outcomes.url}"/>
             	<filter token="po.username" value="${po.username}"/>
             	<filter token="po.pass" value="${po.pass}"/>
+                <filter token="po.server.name" value="${po.server.name}"/>
             </filterset>
             <fileset dir="${services.build.resourceDir}"/>
         </copy>

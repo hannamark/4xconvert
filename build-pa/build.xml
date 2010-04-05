@@ -111,7 +111,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="viewer-web.build.target" value="war-notest"/>
     <property name="accrual-ear.build.target" value="build-notest"/>
     <property name="accrual-ear.deploy.target" value="deploy-ear"/>
-    <property name="accrual.po.jnp.url" value="jnp://${jboss.server.hostname}:${po.port.number}" />
+    <property name="accrual.po.jnp.url" value="jnp://${po.server.name}:${po.port.number}" />
     <property name="accrual.pa.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
     <property name="accrual.jnp.url" value="jnp://${jboss.server.hostname}:${jboss.server.jndi.port}" />
 
@@ -493,6 +493,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
             <property name="po.username" value="${po.username}"/>
             <property name="po.pass" value="${po.pass}"/>
+            <property name="po.server.name" value="${po.server.name}"/>
             <target name="${accrual-clean.build.target}"/>
 	        <target name="${pa-ivy-clean.build.target}"/>
             <target name="${accrual-ear.build.target}"/>
