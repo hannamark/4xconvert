@@ -1270,6 +1270,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 		<property name="gridServiceCredential" value="${outcomes-grid.jndi.credentials.encrypted}"/>
 		<property name="po.username" value="${po.username}"/>
 		<property name="po.pass" value="${po.pass}"/>
+        <property name="po.server.name" value="${po.server.name}"/>
         </ant>
     </target>
 
