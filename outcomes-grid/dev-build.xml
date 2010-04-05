@@ -475,5 +475,31 @@
     <target name="runOutcomesSvcClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample OutcomesSvc Business Client">
         <run-client serviceEndpointName="Business" class="gov.nih.nci.coppa.services.outcomes.business.client.BusinessClient" debug-suspend="n" />
     </target>
+    
+    <target name="zip-clients" depends="jars,javadoc" description="Creates zip file with needed classes to run clients">
+        <zip destfile="Outcomes-clients.zip" duplicate="preserve">
+            <zipfileset dir="${lib.dir}" includes="*.jar" prefix="lib">
+                <exclude name="caGrid-Introduce-serviceTools-*.jar"/>
+                <exclude name="caGrid-ServiceSecurityProvider-service-*.jar"/>
+                <exclude name="caGrid-advertisement-*.jar"/>
+                <exclude name="jboss*.jar"/>
+                <exclude name="caGrid-metadata-validator*.jar"/>
+                <exclude name="castor-*.jar"/>
+                <exclude name="globus_wsrf_*.jar"/>
+            </zipfileset>
+            <zipfileset dir="${build.lib.dir}" includes="*.jar" prefix="lib">
+                <exclude name="OutcomesServices-tests.jar"/>
+                <exclude name="OutcomesServices-service.jar"/>
+                <exclude name="caGrid-csm-*"/>
+                <exclude name="caGrid-gridgrouper-*.jar"/>
+                <exclude name="gridgrouper-*.jar"/>
+            </zipfileset>
+            <zipfileset dir="${tools.lib.dir}" includes="ant-contrib-1.0b3.jar" prefix="tools/lib"/>
+            <zipfileset dir="${build.dest}" includes="**/*.class" prefix="classes"/>
+            <zipfileset dir="${build.dest}" includes="**/BusinessClient.java,**/UserClient.java" prefix="src"/>
+            <zipfileset dir="${javadoc.dir}" includes="**/*" prefix="docs"/>
+            <zipfileset dir="." includes="client.xml" fullpath="build.xml"/>
+        </zip>
+    </target>
 
 </project>

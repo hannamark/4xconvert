@@ -1,0 +1,71 @@
+<!-- Build File for running clients. This is renamed to build.xml when it is packaged with the clients. -->
+<project name="PODS Client build files" basedir=".">
+    <property environment="env" />
+    <property name="service.protocol" value="https" />
+    <property name="service.hostname" value="localhost" />
+    <property name="service.port" value="19643" />
+    <property name="ext.globus.dir" value="${env.GLOBUS_LOCATION}" />
+    <property name="src.dir" value="${basedir}/src" />
+    <property name="lib.dir" value="${basedir}/lib" />
+    <property name="classes.dir" value="${basedir}/classes" />
+    
+    <property name="ant.contrib.location" value="tools/lib/ant-contrib-1.0b3.jar"/>
+    
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${ant.contrib.location}" />
+        </classpath>
+    </taskdef>
+
+    <target name="defineClasspaths">
+        <path id="run.classpath">
+            <pathelement location="${classes.dir}" />
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar" />
+            </fileset> 
+            <fileset dir="${ext.globus.dir}/lib">
+                <include name="**/*.jar" />
+            </fileset>
+        </path>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${classes.dir}" />
+    </target>
+
+    <target name="build" depends="defineClasspaths">
+        <mkdir dir="${classes.dir}" />
+        <javac classpathref="run.classpath" srcdir="${src.dir}" destdir="${classes.dir}" debug="true" />
+    </target>
+    
+    <macrodef name="run-client">
+        <attribute name="class" default="gov.nih.nci.coppa.services.outcomes.client.OutcomesServicesClient" />
+        <attribute name="serviceendpointname" default="OutcomesServices" />
+        <attribute name="protocol" default="${service.protocol}" />
+        <attribute name="hostname" default="${service.hostname}" />
+        <attribute name="port" default="${service.port}" />
+        <attribute name="debug-suspend" default="n" />
+        <sequential>
+            <var name="run-client.service.url" unset="true" />
+            <var name="run-client.service.url" value="@{protocol}://@{hostname}:@{port}/wsrf/services/cagrid/@{serviceEndpointName}" />
+            <property name="runclasspath" refid="run.classpath" />
+            <echo message="Connecting to service: ${run-client.service.url}" />
+            <java failonerror="true" classname="@{class}" classpathref="run.classpath" fork="yes">
+                <jvmarg value="-Xdebug" />
+                <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8989,server=y,suspend=@{debug-suspend}" />
+                <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
+                <arg value="-url" />
+                <arg value="${run-client.service.url}" />
+            </java>
+        </sequential>
+    </macrodef>
+   
+    <target name="runOutcomesUserSvcClient" depends="build" description="Run the sample OutcomesSvc User Client">
+        <run-client serviceEndpointName="User" class="gov.nih.nci.coppa.services.outcomes.user.client.UserClient" debug-suspend="n" />
+    </target>
+
+    <target name="runOutcomesSvcClient" depends="build" description="Run the sample OutcomesSvc Business Client">
+        <run-client serviceEndpointName="Business" class="gov.nih.nci.coppa.services.outcomes.business.client.BusinessClient" debug-suspend="n" />
+    </target>
+    
+</project>
