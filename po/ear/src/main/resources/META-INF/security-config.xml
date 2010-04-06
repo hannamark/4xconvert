@@ -6,7 +6,12 @@
 <policy>
     <application-policy name="po">
         <authentication>
-	        <login-module code="com.fiveamsolutions.nci.commons.authentication.SessionFixationProtectionLoginModule" flag="required"/>
+            <login-module code="com.fiveamsolutions.nci.commons.authentication.SessionFixationProtectionLoginModule"
+               flag="required" />
+            <login-module code="gov.nih.nci.security.cgmm.loginmodules.NullPasswordStackingLoginModule"
+                flag="optional">
+                <module-option name="password-stacking">useFirstPass</module-option>
+            </login-module>             
             <!--
                 Notes on the policy here:
                 - Designed to work in both dev and production, which is why the first two are optional.

@@ -279,6 +279,9 @@
         <action name="login/login">
             <result>/WEB-INF/jsp/login/login.jsp</result>
         </action>
+        <action name="login/loginFailed">
+            <result>/WEB-INF/jsp/login/loginFailed.jsp</result>
+        </action>
 
         <action name="login/logout" class="com.fiveamsolutions.nci.commons.web.struts2.action.LogoutAction" method="logout">
             <result name="success" type="redirectAction">

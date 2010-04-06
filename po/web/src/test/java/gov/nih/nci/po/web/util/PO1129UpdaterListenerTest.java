@@ -6,6 +6,7 @@ import org.junit.Test;
 
 public class PO1129UpdaterListenerTest extends AbstractPoTest {
 
+    @Test
     public void testContextInitialized() {
         new PO1129UpdaterListener().contextInitialized(null);
     }

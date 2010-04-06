@@ -17,11 +17,11 @@ import org.apache.log4j.Logger;
  *
  */
 public class PO1129UpdaterListener implements ServletContextListener {
-    
+
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = Logger.getLogger(PO1129UpdaterListener.class);
-    
+
     /**
      * Move all IDs from deprecated column to new column.
      * {@inheritDoc}

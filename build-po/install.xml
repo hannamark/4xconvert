@@ -6,7 +6,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 <project name="po-installer" default="upgrade" basedir="."
   xmlns:ivy="antlib:org.apache.ivy.ant"
   >
-  <description>
+    <description>
     This build file is part of the COPPA-PO project. This is the master install file for the COPPA-PO project. This script is copied into the distribution and executed from the extracted distribution.  It is run by typing "ant" from the master project build.xml or from command line. This script has two flows install and upgrade.
     Install will do the following
     * Install binaries
@@ -27,238 +27,244 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     This script requires java and ant to run. Every thing else it needs is included in the distribution.
   </description>
 
-  <!-- Properties file related properties and tasks -->
-  <property environment="env" />
-  <property file="local.properties" />
-  <property file="project.properties"/>
-  <property name="properties.file" value="${basedir}/install.properties"/>
-  <echo message="Using properties file of ${properties.file}."/>
-  <available file="${properties.file}" property="properties.file.exists" />
-  <fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail."/>
-  <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
-  <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
-  <property file="${properties.file}" />
+    <!-- Properties file related properties and tasks -->
+    <property environment="env" />
+    <property file="local.properties" />
+    <property file="project.properties"/>
+    <property name="properties.file" value="${basedir}/install.properties"/>
+    <echo message="Using properties file of ${properties.file}."/>
+    <available file="${properties.file}" property="properties.file.exists" />
+    <fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail."/>
+    <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2"/>
+    <replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=[ \t]+(.*[\w\d\/\{\}\\]+)\r*$" replace="\1=\2"/>
+    <property file="${properties.file}" />
 
-  <!-- Set application.base.path based on platform -->
-  <condition property="application.base.path" value="${application.base.path.linux}">
-    <or>
-      <os family="unix" />
-      <os family="mac" />
-    </or>
-  </condition>
+    <!-- Set application.base.path based on platform -->
+    <condition property="application.base.path" value="${application.base.path.linux}">
+        <or>
+            <os family="unix" />
+            <os family="mac" />
+        </or>
+    </condition>
 
-  <condition property="application.base.path" value="${application.base.path.windows}">
-    <os family="windows" />
-  </condition>
-  <echo message="application.base.path=${application.base.path}"/>
-  <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
+    <condition property="application.base.path" value="${application.base.path.windows}">
+        <os family="windows" />
+    </condition>
+    <echo message="application.base.path=${application.base.path}"/>
+    <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
 
-  <!-- Generic properties -->
-  <property name="log.dir" value="${basedir}/logs" />
-  <property name="working.dir" value="${basedir}/working" />
-  <property name="temp.dir" value="${working.dir}/temp" />
+    <!-- Generic properties -->
+    <property name="log.dir" value="${basedir}/logs" />
+    <property name="working.dir" value="${basedir}/working" />
+    <property name="temp.dir" value="${working.dir}/temp" />
 
-  <!--OS Temp dir -->
-  <condition property="os.temp.dir" value="/tmp">
-    <or>
-      <os family="unix" />
-      <os family="mac" />
-    </or>
-  </condition>
+    <!--OS Temp dir -->
+    <condition property="os.temp.dir" value="/tmp">
+        <or>
+            <os family="unix" />
+            <os family="mac" />
+        </or>
+    </condition>
 
-  <condition property="os.temp.dir" value="c:/temp">
-    <os family="windows" />
-  </condition>
+    <condition property="os.temp.dir" value="c:/temp">
+        <os family="windows" />
+    </condition>
 
-  <!-- Install Time properties -->
-  <!-- Source and target directories -->
-  <property name="bda-utils.dir" value="bda-utils" />
-  <property name="tools.dir" value="${basedir}/${tools.dist.relative.dir}" />
-  <property name="common.dir.src" value="${basedir}/${common.dist.relative.dir}" />
-  <property name="common.dir.dest" value="${working.dir}/${common.dist.relative.dir}" />
-  <property name="jboss-conf.dir.dest" value="${working.dir}/${jboss-conf.dist.relative.dir}" />
-  <property name="db.dir.src" value="${basedir}/${db.dist.relative.dir}" />
-  <property name="db.dir.dest" value="${working.dir}/${db.dist.relative.dir}" />
-  <property name="db-install.dir.dest" value="${working.dir}/${db-install.dist.relative.dir}" />
-  <property name="db-upgrade.dir.dest" value="${working.dir}/${db-upgrade.dist.relative.dir}" />
+    <!-- Install Time properties -->
+    <!-- Source and target directories -->
+    <property name="bda-utils.dir" value="bda-utils" />
+    <property name="tools.dir" value="${basedir}/${tools.dist.relative.dir}" />
+    <property name="common.dir.src" value="${basedir}/${common.dist.relative.dir}" />
+    <property name="common.dir.dest" value="${working.dir}/${common.dist.relative.dir}" />
+    <property name="jboss-conf.dir.dest" value="${working.dir}/${jboss-conf.dist.relative.dir}" />
+    <property name="db.dir.src" value="${basedir}/${db.dist.relative.dir}" />
+    <property name="db.dir.dest" value="${working.dir}/${db.dist.relative.dir}" />
+    <property name="db-install.dir.dest" value="${working.dir}/${db-install.dist.relative.dir}" />
+    <property name="db-upgrade.dir.dest" value="${working.dir}/${db-upgrade.dist.relative.dir}" />
 
-  <!-- Jboss configurtion related properties -->
-  <property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
-  <property name="jboss.service.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/jboss-service.xml"/>
-  <!-- added for updated secure grid ssaksa 090826 -->
-   <property name="sync-gts.dir" location="${basedir}/${sync-gts.dist.relative.dir}"/>
-   <property name="sync-gts.build.dir" location="${sync-gts.dir}/syncgts"/>
-   <property name="cagrid-target.dir" location="${sync-gts.dir}/cagrid-target"/>
-   <property name="grid.dir.dest.jboss" value="wsrf.war" />
-   <property name="grid.dir.dest" value="wsrf.war" />
+    <!-- Jboss configurtion related properties -->
+    <property name="jboss.binding.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/bindings.xml"/>
+    <property name="jboss.service.template.location" value="${bda-utils.dir}/resource/${jboss.template.relative.dir}/jboss-service.xml"/>
+    <!-- added for updated secure grid ssaksa 090826 -->
+    <property name="sync-gts.dir" location="${basedir}/${sync-gts.dist.relative.dir}"/>
+    <property name="sync-gts.build.dir" location="${sync-gts.dir}/syncgts"/>
+    <property name="cagrid-target.dir" location="${basedir}/cagrid-target"/>
+    <property name="grid.dir.dest.jboss" value="wsrf.war" />
+    <property name="grid.dir.dest" value="wsrf.war" />
 
-  <!-- Default to false, properties can override -->
-  <property name="grid.secure.enable" value="false"/>
-  <property name="jboss.ssl.enable" value="false"/>
-  <property name="tomcat.ssl.enable" value="false"/>
+    <!-- Default to false, properties can override -->
+    <property name="grid.secure.enable" value="false"/>
+    <property name="jboss.ssl.enable" value="false"/>
+    <property name="tomcat.ssl.enable" value="false"/>
 
-  <!-- Paths -->
-  <path id="bda-utils.classpath">
-    <fileset dir="${bda-utils.dir}">
-      <include name="**/*.jar" />
-    </fileset>
-  </path>
-  <!-- Task definitions -->
-  <taskdef uri="antlib:org.apache.ant.antunit" resource="org/apache/ant/antunit/antlib.xml" classpathref="bda-utils.classpath"/>
-  <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="bda-utils.classpath"/>
-  <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="bda-utils.classpath"/>
-  <taskdef resource="liquibasetasks.properties" classpathref="bda-utils.classpath"/>
-  <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath"/>
+    <!-- Paths -->
+    <path id="bda-utils.classpath">
+        <fileset dir="${bda-utils.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+    <!-- Task definitions -->
+    <taskdef uri="antlib:org.apache.ant.antunit" resource="org/apache/ant/antunit/antlib.xml" classpathref="bda-utils.classpath"/>
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="bda-utils.classpath"/>
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="bda-utils.classpath"/>
+    <taskdef resource="liquibasetasks.properties" classpathref="bda-utils.classpath"/>
+    <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath"/>
 
-  <!-- Includes-->
-  <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
-  <import file="install-poear.xml"/>
-  <import file="install-pogrid.xml"/>
-  <import file="install-pogridlegacy.xml"/>
+    <!-- Includes-->
+    <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
+    <import file="install-poear.xml"/>
+    <import file="install-pogrid.xml"/>
+    <import file="install-pogridlegacy.xml"/>
 
-  <!-- Start logging -->
-  <mkdir dir="${log.dir}" />
-  <tstamp>
-    <format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
-  </tstamp>
-  <record name="${log.dir}/install-${install.time}.log" action="start"/>
-
-
-  <!-- Installer section -->
-  <target name="diag">
-    <echoproperties/>
-  </target>
-
-  <!-- Clean up destination directory -->
-  <target name="install:common:clean" description="Removes all files from the local filesystem" depends="install:po-ear-jboss:clean, install:po-grid-jboss:clean,install:po-grid-legacy-jboss:clean"/>
-
-  <target name="common:init:pre">
-      <!-- Set application.base.path based on platform -->
-      <condition property="application.base.path" value="${application.base.path.linux}">
-          <or>
-              <os family="unix" />
-              <os family="mac" />
-          </or>
-      </condition>
-
-      <condition property="application.base.path" value="${application.base.path.windows}">
-          <os family="windows" />
-      </condition>
-      <echo message="application.base.path=${application.base.path}"/>
-      <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
-      <jboss-version
-          />
-      <property name="tomcat.home" value="${application.base.path}/${tomcat.relative.path}"/>
-      <tomcat-version
-          />
-  </target>
-
-  <target name="common:init" depends="common:init:pre">
-      <!-- bda-blueprints-webapp can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
-      <echoproperties  prefix="database"> <propertyset negate="yes" > <propertyref regex="passw" /> </propertyset> </echoproperties>
-      <switch value="${database.type}">
-          <case value="postgresql">
-              <property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-              <property name="database.driver.file" value="${bda-utils.dir}/postgresql-8.3-603.jdbc3.jar"/>
-              <property name="database.driver" value="org.postgresql.Driver"/>
-              <property name="database.schema" value="public"/>
-              <property name="database.xa.driver" value="org.postgresql.xa.PGXADataSource"/>
-          </case>
-          <default>
-              <fail message="Invalid database type ${database.type}"/>
-          </default>
-      </switch>
-
-      <path id="jdbc.driver.classpath">
-          <pathelement location="${database.driver.file}"/>
-      </path>
-
-      <property name="properties.template.file" value="${basedir}/properties.template" />
-      <filterset id="embedded.filterset">
-          <filter token="application.base.path" value="${application.base.path}"/>
-          <filter token="application.url" value="${application.url}"/>
-          <filter token="database.url" value="${database.url}"/>
-          <filter token="database.user" value="${database.user}"/>
-          <filter token="database.password" value="${database.password}"/>
-          <filter token="database.system.url" value="${database.system.url}"/>
-          <!-- added internal properties that may be used in a filtered copy -->
-          <filter token="database.driver" value="${database.driver}"/>
-          <!-- added for liquibase -->
-          <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}/${database.type}"/>
-          <filter token="jboss.home" value="${jboss.home}"/>
-          <filter token="tomcat.home" value="${tomcat.home}"/>
-          <filter token="database.dialect" value="${database.dialect}"/>
-          <filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
-          <filter token="env.LOGNAME" value="${env.LOGNAME}"/>
-          <filter token="env.JAVA_HOME" value="${env.JAVA_HOME}"/>
-          <filter token="project.name" value="project.name"/>
-          <filter token="" value=""/>
-        <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
-        <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
-        <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress" value="${jboss.server.hostname}"/>
-        <filter token="ctep.url" value="${ctep.url}"/>
-        <filter token="ctep.username" value="${ctep.username}"/>
-        <filter token="ctep.password" value="${ctep.password}"/>
-        <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
-        <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
-        <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
-      </filterset>
-
-      <!--OS Temp dir -->
-      <condition property="os.temp.dir" value="/tmp/${project.name}">
-          <or>
-              <os family="unix" />
-              <os family="mac" />
-          </or>
-      </condition>
-
-      <condition property="os.temp.dir" value="c:/temp/${project.name}">
-          <os family="windows" />
-      </condition>
-      <echo message="os.temp.dir - ${os.temp.dir}"/>
-      <!-- Copy files to ensure values containing variables are expanded, such properties are stored in embedded.filterset and then copy with filter files -->
-      <copy todir="${common.dir.dest}" filtering="true">
-          <fileset dir="${common.dir.src}">
-              <include name="**/*"/>
-          </fileset>
-          <filterset refid="embedded.filterset"/>
-          <filterset>
-              <filtersfile file="${properties.file}"/>
-              <filtersfile file="project.properties"/>
-          </filterset>
-      </copy>
-  </target>
+    <!-- Start logging -->
+    <mkdir dir="${log.dir}" />
+    <tstamp>
+        <format property="install.time" pattern="yyyy-MM-dd-HH-mm" />
+    </tstamp>
+    <record name="${log.dir}/install-${install.time}.log" action="start"/>
 
 
-  <target name="install:database:prep" description="Copies db files with filtering" unless="exclude.database" depends="common:init">
-    <echoproperties prefix="database"/>
-    <property name="db.dir.temp" value="${working.dir}/tmp"/>
-    <mkdir dir="${db.dir.temp}"/>
-    <copy todir="${db.dir.dest}" filtering="true">
-      <fileset dir="${db.dir.src}">
-        <include name="**/*"/>
-      </fileset>
-      <filterset refid="embedded.filterset"/>
-      <filterset>
-        <filtersfile file="${properties.file}"/>
-        <filtersfile file="project.properties"/>
-      </filterset>
-    </copy>
-    <mkdir dir="${os.temp.dir}/${project.name}"/>
-    <copy todir="${os.temp.dir}/${project.name}" filtering="true" flatten="true" overwrite="true">
-      <fileset dir="${db.dir.dest}">
-        <include name="**/db-upgrade.xml"/>
-      </fileset>
-        <filterset begintoken="$${" endtoken="}">
+    <!-- Installer section -->
+    <target name="diag">
+        <echoproperties/>
+    </target>
+
+    <!-- Clean up destination directory -->
+    <target name="install:common:clean" description="Removes all files from the local filesystem" depends="install:po-ear-jboss:clean, install:po-grid-jboss:clean,install:po-grid-legacy-jboss:clean"/>
+
+    <target name="common:init:pre">
+        <!-- Set application.base.path based on platform -->
+        <condition property="application.base.path" value="${application.base.path.linux}">
+            <or>
+                <os family="unix" />
+                <os family="mac" />
+            </or>
+        </condition>
+
+        <condition property="application.base.path" value="${application.base.path.windows}">
+            <os family="windows" />
+        </condition>
+        <echo message="application.base.path=${application.base.path}"/>
+        <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}" />
+        <jboss-version />
+        <property name="tomcat.home" value="${application.base.path}/${tomcat.relative.path}" />
+        <tomcat-version />
+    </target>
+
+    <target name="common:init" depends="common:init:pre">
+        <!-- bda-blueprints-webapp can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
+        <echoproperties  prefix="database">
+            <propertyset negate="yes" >
+                <propertyref regex="passw" />
+            </propertyset>
+        </echoproperties>
+        <switch value="${database.type}">
+            <case value="postgresql">
+                <property name="database.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+                <property name="database.driver.file" value="${bda-utils.dir}/postgresql-8.3-603.jdbc3.jar"/>
+                <property name="database.driver" value="org.postgresql.Driver"/>
+                <property name="database.schema" value="public"/>
+                <property name="database.xa.driver" value="org.postgresql.xa.PGXADataSource"/>
+            </case>
+            <default>
+                <fail message="Invalid database type ${database.type}"/>
+            </default>
+        </switch>
+
+        <path id="jdbc.driver.classpath">
+            <pathelement location="${database.driver.file}"/>
+        </path>
+
+        <property name="properties.template.file" value="${basedir}/properties.template" />
+        <property file="${basedir}/cagrid-target/${grid.target}/service_urls.properties"/>
+        <property name="grid.index.url" value="${cagrid.master.index.service.url}"/>
+        <filterset id="embedded.filterset">
+            <filter token="application.base.path" value="${application.base.path}"/>
+            <filter token="application.url" value="${application.url}"/>
+            <filter token="database.url" value="${database.url}"/>
+            <filter token="database.user" value="${database.user}"/>
+            <filter token="database.password" value="${database.password}"/>
+            <filter token="database.system.url" value="${database.system.url}"/>
+            <!-- added internal properties that may be used in a filtered copy -->
+            <filter token="database.driver" value="${database.driver}"/>
+            <!-- added for liquibase -->
+            <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}/${database.type}"/>
+            <filter token="jboss.home" value="${jboss.home}"/>
+            <filter token="tomcat.home" value="${tomcat.home}"/>
+            <filter token="database.dialect" value="${database.dialect}"/>
+            <filter token="hibernate.cfg.file.path" value="${hibernate.cfg.file.path}"/>
+            <filter token="env.LOGNAME" value="${env.LOGNAME}"/>
+            <filter token="env.JAVA_HOME" value="${env.JAVA_HOME}"/>
+            <filter token="" value=""/>
+            <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
+            <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort" value="${jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort}"/>
+            <filter token="jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress" value="${jboss.server.hostname}"/>
+            <filter token="ctep.url" value="${ctep.url}"/>
+            <filter token="ctep.username" value="${ctep.username}"/>
+            <filter token="ctep.password" value="${ctep.password}"/>
+            <filter token="ctep.jms.subscription.name" value="${ctep.jms.subscription.name}"/>
+            <filter token="ctep.jms.topic.connection.factory.name" value="${ctep.jms.topic.connection.factory.name}"/>
+            <filter token="ctep.jms.topic.name" value="${ctep.jms.topic.name}"/>
+            <filter token="project.name" value="${project.name}"/>
+            <filter token="grid.dorian.name" value="${grid.target}-Dorian"/>
+            <filter token="grid.dorian.url" value="${cagrid.master.dorian.service.url}"/>
+        </filterset>
+
+        <!--OS Temp dir -->
+        <condition property="os.temp.dir" value="/tmp/${project.name}">
+            <or>
+                <os family="unix" />
+                <os family="mac" />
+            </or>
+        </condition>
+
+        <condition property="os.temp.dir" value="c:/temp/${project.name}">
+            <os family="windows" />
+        </condition>
+        <echo message="os.temp.dir - ${os.temp.dir}"/>
+        <!-- Copy files to ensure values containing variables are expanded, such properties are stored in embedded.filterset and then copy with filter files -->
+        <copy todir="${common.dir.dest}" filtering="true">
+            <fileset dir="${common.dir.src}">
+                <include name="**/*"/>
+            </fileset>
+            <filterset refid="embedded.filterset"/>
+            <filterset>
+                <filtersfile file="${properties.file}"/>
+                <filtersfile file="project.properties"/>
+            </filterset>
+        </copy>
+    </target>
+
+
+    <target name="install:database:prep" description="Copies db files with filtering" unless="exclude.database" depends="common:init">
+        <echoproperties prefix="database"/>
+        <property name="db.dir.temp" value="${working.dir}/tmp"/>
+        <mkdir dir="${db.dir.temp}"/>
+        <copy todir="${db.dir.dest}" filtering="true">
+            <fileset dir="${db.dir.src}">
+                <include name="**/*"/>
+            </fileset>
+            <filterset refid="embedded.filterset"/>
+            <filterset>
+                <filtersfile file="${properties.file}"/>
+                <filtersfile file="project.properties"/>
+            </filterset>
+        </copy>
+        <mkdir dir="${os.temp.dir}/${project.name}"/>
+        <copy todir="${os.temp.dir}/${project.name}" filtering="true" flatten="true" overwrite="true">
+            <fileset dir="${db.dir.dest}">
+                <include name="**/db-upgrade.xml"/>
+            </fileset>
+            <filterset begintoken="$${" endtoken="}">
                 <filtersfile file="${properties.file}"/>
                 <filtersfile file="project.properties"/>
                 <filter token="db-upgrade.run.dir" value="${db-upgrade.dir.dest}"/>
             </filterset>
-    </copy>
-  </target>
+        </copy>
+    </target>
 
 
-  <target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
+    <target name="install:database" description="Re-creates database and users from baseline and applys incremental database changes." unless="exclude.database"
     depends="
     common:init,
     install:database:prep,
@@ -274,31 +280,31 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
                     sql.delimiter="/"
                     sql.delimitertype="row"
                     />
-      <if>
-      <isset property="database.csm.sample"/>
-      <then>
-        <echo message="Found database.csm.sample=${database.csm.sample}."/>
+                <if>
+                    <isset property="database.csm.sample"/>
+                    <then>
+                        <echo message="Found database.csm.sample=${database.csm.sample}."/>
                         <echo message="Looking for: ${db-install.dir.dest}/${database.type}/${database.csm.sample}"/>
-          <run-sql-script database.url="${database.url}"
+                        <run-sql-script database.url="${database.url}"
             database.user="${database.user}"
             database.password="${database.password}"
             sql.delimiter="/"
             sql.delimitertype="row"
             sql.file="${db-install.dir.dest}/${database.type}/${database.csm.sample}"
             onerror="continue"/>
-      </then>
-      <else>
-        <echo message="No database.csm.sample property set."/>
-      </else>
-      </if>
+                    </then>
+                    <else>
+                        <echo message="No database.csm.sample property set."/>
+                    </else>
+                </if>
             </case>
         </switch>
-  <database-upgrade
+        <database-upgrade
     database.changelog.file="${os.temp.dir}/${project.name}/db-upgrade.xml"
     />
-  <database-tag/>
+        <database-tag/>
 
-  </target>
+    </target>
 
     <target name="install:common:validation:pre-install" description="Runs pre-install validation checks bda-utils" depends="common:init">
         <validate-pre-install-common
@@ -323,9 +329,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         <validate-post-common />
     </target>
 
-  <!-- Wrapper target to deploy JBOSS container -->
+    <!-- Wrapper target to deploy JBOSS container -->
 
-  <target name="install" description="Installs and configures JBOSS, creates database, and deploys application"
+    <target name="install" description="Installs and configures JBOSS, creates database, and deploys application"
       depends="
       install:po-ear-jboss:init,
       install:po-grid-jboss:init,
@@ -356,12 +362,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       install:po-grid-legacy-jboss:start,
       install:common:validation:post-install
       ">
-  </target>
+    </target>
 
-  <target name="upgrade" description="Upgrades JBoss and Database" depends="upgrade-dac">
-  </target>
+    <target name="upgrade" description="Upgrades JBoss and Database" depends="upgrade-dac">
+    </target>
 
-  <target name="upgrade-dac" description="Installs and configures JBOSS, creates database, and deploys application"
+    <target name="upgrade-dac" description="Installs and configures JBOSS, creates database, and deploys application"
       depends="
       upgrade:common:init,
       common:po-ear-jboss:init,
@@ -394,9 +400,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       install:po-grid-legacy-jboss:start,
       install:common:validation:post-install
       ">
-  </target>
+    </target>
 
-  <target name="upgrade-cm" description="Installs and configures JBOSS, creates database, and deploys application"
+    <target name="upgrade-cm" description="Installs and configures JBOSS, creates database, and deploys application"
       depends="
       upgrade:common:init,
       common:po-ear-jboss:init,
@@ -428,9 +434,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       install:po-grid-legacy-jboss:start,
       install:common:validation:post-install
       ">
-  </target>
+    </target>
 
-  <target name="upgrade-ncm" description="Installs and configures JBOSS, creates database, and deploys application"
+    <target name="upgrade-ncm" description="Installs and configures JBOSS, creates database, and deploys application"
       depends="
       upgrade:common:init,
       common:po-ear-jboss:init,
@@ -462,95 +468,95 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       install:po-grid-legacy-jboss:start,
       install:common:validation:post-install
       ">
-  </target>
+    </target>
 
-  <target name="upgrade:database" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
+    <target name="upgrade:database" description="Upgrades database using BDA Datbase Upgrade process." unless="exclude.database"
     depends="
     upgrade:database:init,
     common:init,
     install:database:prep,
     install:database:validation:pre-install
     ">
-    <database-upgrade
+        <database-upgrade
       database.changelog.file="${os.temp.dir}/${project.name}/db-upgrade.xml"
       />
-    <database-tag/>
-  </target>
+        <database-tag/>
+    </target>
 
 
-  <target name="upgrade:database:tag" description="Tags current state of database with a tag to allow for rollback of database to previous versions." unless="exclude.database"
+    <target name="upgrade:database:tag" description="Tags current state of database with a tag to allow for rollback of database to previous versions." unless="exclude.database"
     depends="
     upgrade:database:init,
     common:init,
     install:database:prep
     ">
-    <database-tag/>
-  </target>
+        <database-tag/>
+    </target>
 
-  <target name="upgrade:database:rollback" description="Rolls back database to previous tagged version using rollback scripts." unless="exclude.database"
+    <target name="upgrade:database:rollback" description="Rolls back database to previous tagged version using rollback scripts." unless="exclude.database"
     depends="
     upgrade:database:init,
     common:init,
     install:database:prep
     ">
-    <database-rollback/>
-  </target>
+        <database-rollback/>
+    </target>
 
-  <target name="install:common:post" depends="install:po-ear-jboss:post,install:po-grid-jboss:post,install:po-grid-legacy-jboss:post"/>
+    <target name="install:common:post" depends="install:po-ear-jboss:post,install:po-grid-jboss:post,install:po-grid-legacy-jboss:post"/>
 
-  <target name="upgrade:common:init" depends="upgrade:po-ear-jboss:init, upgrade:po-grid-jboss:init,upgrade:po-grid-legacy-jboss:init" >
-  </target>
+    <target name="upgrade:common:init" depends="upgrade:po-ear-jboss:init, upgrade:po-grid-jboss:init,upgrade:po-grid-legacy-jboss:init" >
+    </target>
 
-  <target name="upgrade:database:init"
+    <target name="upgrade:database:init"
       depends="
       upgrade:po-ear-jboss:init:prep,
       upgrade:database:readers:bda,
       upgrade:database:readers:custom
       ">
-      <!-- You need to either depend on jboss or tomcat so that you can read the db properties from it's configs.  BDA only has macros to read database properties from jboss. -->
-  </target>
-  <target name="upgrade:common:init:prep">
-      <if>
-          <not>
-              <isset property="application.base.path"/>
-          </not>
-          <then>
-              <!-- Set application.base.path based on platform -->
-              <condition property="application.base.path" value="${application.base.path.linux}">
-                  <or>
-                      <os family="unix" />
-                      <os family="mac" />
-                  </or>
-              </condition>
+        <!-- You need to either depend on jboss or tomcat so that you can read the db properties from it's configs.  BDA only has macros to read database properties from jboss. -->
+    </target>
+    <target name="upgrade:common:init:prep">
+        <if>
+            <not>
+                <isset property="application.base.path"/>
+            </not>
+            <then>
+                <!-- Set application.base.path based on platform -->
+                <condition property="application.base.path" value="${application.base.path.linux}">
+                    <or>
+                        <os family="unix" />
+                        <os family="mac" />
+                    </or>
+                </condition>
 
-              <condition property="application.base.path" value="${application.base.path.windows}">
-                  <os family="windows" />
-              </condition>
-              <echo message="application.base.path=${application.base.path}"/>
-          </then>
-      </if>
-      <properties-print
+                <condition property="application.base.path" value="${application.base.path.windows}">
+                    <os family="windows" />
+                </condition>
+                <echo message="application.base.path=${application.base.path}"/>
+            </then>
+        </if>
+        <properties-print
           properties.list="application.base.path,jboss.home,tomcat.home,jboss.server.name"
           />
-      <var name="read.properties.list" value=""/>
-  </target>
+        <var name="read.properties.list" value=""/>
+    </target>
 
-  <target name="upgrade:database:readers:custom">
-      <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
-  </target>
+    <target name="upgrade:database:readers:custom">
+        <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
+    </target>
 
-  <target name="upgrade:database:readers:bda" depends="upgrade:po-ear-jboss:init:prep" if="jboss.exists">
+    <target name="upgrade:database:readers:bda" depends="upgrade:po-ear-jboss:init:prep" if="jboss.exists">
 
-      <!-- Make sure the ${properties.file} has at least the following props -->
-      <properties-exist
+        <!-- Make sure the ${properties.file} has at least the following props -->
+        <properties-exist
           properties.list="application.base.path,jboss.home,jboss.server.name"
           />
-      <jboss-read-dbconfig
+        <jboss-read-dbconfig
           jboss.home="${read.jboss.home}"
           jboss.ds-xml.file="bda-blueprints-ds.xml"
           />
-  </target>
+    </target>
 
-  <target name="upgrade:common:post" depends="upgrade:po-ear-jboss:post,upgrade:po-grid-jboss:post,upgrade:po-grid-legacy-jboss:post">
-  </target>
+    <target name="upgrade:common:post" depends="upgrade:po-ear-jboss:post,upgrade:po-grid-jboss:post,upgrade:po-grid-legacy-jboss:post">
+    </target>
 </project>

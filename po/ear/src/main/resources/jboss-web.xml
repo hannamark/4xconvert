@@ -10,5 +10,6 @@
             <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
         </loader-repository>
     </class-loading>
+    <security-domain>java:/jaas/po</security-domain>
 </jboss-web>
 

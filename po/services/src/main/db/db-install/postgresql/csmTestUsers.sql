@@ -32,3 +32,7 @@ INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID) VALUES ((select protecti
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'firebird-nci'), (select group_id from csm_group where group_name = 'client'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'firebird-nci'), (select group_id from csm_group where group_name = 'Subscriber'));
+
+-- create a grid user for web authentication against grid. 
+INSERT INTO CSM_USER (LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ('/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=curator','PO','Curator','');
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = '/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=curator'), (select group_id from csm_group where group_name = 'Curator'));

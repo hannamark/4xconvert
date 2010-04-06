@@ -210,7 +210,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <target name="install:po-grid-jboss:configure" unless="exclude.po-grid">
         <!-- create a new template bindings file from template (using ports for po-grid -->
-	
+   	<if>
+
+    			<equals arg1="${jboss.major.version}" arg2="4"/>
+
+    			<then>
 	  <jboss-configure
 		  jboss.home="${po-grid-jboss.home}"
 		  jboss.server.name="${po-grid-jboss.server.name}"
@@ -267,6 +271,98 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 		  jboss.logs.dir="${po-grid-jboss.home}/server/${po-grid-jboss.server.name}/log"
 		  jboss.http-connector.remove="${po-grid-jboss.http-connector.remove}"
 		  />
+
+
+      		
+      				
+
+      			</then>
+
+      		</if>
+
+      		<if>
+
+      			<equals arg1="${jboss.major.version}" arg2="5"/>
+
+      			<then>
+
+      			    <!--       					jboss.grid.configure="true"
+
+      					jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"
+
+      					jboss.server.binding.template.location="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings-jboss-beans.xml"
+
+      					jboss.server-xml.file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb.sar/server.xml"
+
+      					jboss.server.ports.name="PortsDefaultBindings"
+      			    	proxy.update.connector.port.ssl="${jboss.ssl.port}"
+      				-->
+      				<jboss-configure
+
+
+      						  jboss.home="${po-grid-jboss.home}"
+      						  jboss.server.name="${po-grid-jboss.server.name}"
+      						  jboss.server.ports.name="${po-grid-jboss.server.ports.name}"
+      						  jboss.server.bindingfile.location="${po-grid-jboss.home}/bindings/bindings.xml"
+      						  jboss.server.binding.template.location="${po-grid-jboss.server.binding.template.location}"
+      						  jboss.server.jndi.port="${po-grid-jboss.server.jndi.port}"
+      						  jboss.server.port="${po-grid-jboss.server.port}"
+      						  jboss.cobraorb.port="${po-grid-jboss.cobraorb.port}"
+      						  jboss.ejbinvoker.port="${po-grid-jboss.ejbinvoker.port}"
+      						  jboss.hajndi.port="${po-grid-jboss.hajndi.port}"
+      						  jboss.hajrmi.port="${po-grid-jboss.hajrmi.port}"
+      						  jboss.jms.port="${po-grid-jboss.jms.port}"
+      						  jboss.jmx-rmi.port="${po-grid-jboss.jmx-rmi.port}"
+      						  jboss.messaging.port="${po-grid-jboss.messaging.port}"
+      						  jboss.pooledha.port="${po-grid-jboss.pooledha.port}"
+      						  jboss.remoting.port="${po-grid-jboss.remoting.port}"
+      						  jboss.server.bind.port="${po-grid-jboss.server.bind.port}"
+      						  jboss.server.rmi.port="${po-grid-jboss.server.rmi.port}"
+      						  jboss.service.rmiobject.port="${po-grid-jboss.service.rmiobject.port}"
+      						  jboss.snmp.port="${po-grid-jboss.snmp.port}"
+      						  jboss.snmp-trapd.port="${po-grid-jboss.snmp-trapd.port}"
+      						  jboss.web.service.port="${po-grid-jboss.web.service.port}"
+      						  jboss.unifiedinvoker.port="${po-grid-jboss.unifiedinvoker.port}"
+      						  jboss.hajndi.auto.port="${po-grid-jboss.hajndi.auto.port}"
+      						  jboss.ssl.port="${po-grid-jboss.ssl.port}"
+      						  jboss.jms2.netty.port="${po-grid-jboss.jms2.netty.port}"
+      						  jboss.jms2.netty-ssl.port="${po-grid-jboss.jms2.netty-ssl.port}"
+      						  jboss.transaction.recovery.port="${po-grid-jboss.transaction.recovery.port}"
+      						  jboss.transaction.status.port="${po-grid-jboss.transaction.status.port}"
+      						  jboss.transaction.processid.port="${po-grid-jboss.transaction.processid.port}"
+      						  jboss.conf.dir="${po-grid-jboss.home}/server/${po-grid-jboss.server.name}/conf"
+      						  jboss.server-xml.file="${po-grid-jboss.home}/server/${po-grid-jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+      						  jboss.ssl.enable="${po-grid-jboss.ssl.enable}"
+      						  jboss.ssl.keystore.file="${po-grid-jboss.ssl.keystore.file}"
+      						  jboss.ssl.keystore.dir="${po-grid-jboss.ssl.keystore.dir}"
+      						  jboss.ssl.keystore.pass="${po-grid-jboss.ssl.keystore.pass}"
+      						  jboss.ssl.keystore.alias="${po-grid-jboss.ssl.keystore.alias}"
+      						  jboss.ssl.fullyqualified.hostname="${po-grid-jboss.ssl.fullyqualified.hostname}"
+      						  jboss.external.ssl.host="${po-grid-jboss.external.ssl.host}"
+      						  jboss.external.ssl.port="${po-grid-jboss.external.ssl.port}"
+      						  jboss.external.http.host="${po-grid-jboss.external.http.host}"
+      						  jboss.external.http.port="${po-grid-jboss.external.http.port}"
+      						  jboss.external.grid.secure.host="${po-grid-jboss.external.grid.secure.host}"
+      						  jboss.external.grid.secure.port="${po-grid-jboss.external.grid.secure.port}"
+      						  jboss.server.hostname="${po-grid-jboss.server.hostname}"
+      						  jboss.grid.configure="true"
+      						  jboss.grid.secure.dir="${po-grid-jboss.grid.secure.dir}"
+      						  jboss.grid.secure.enable="${po-grid-jboss.grid.secure.enable}"
+      						  jboss.grid.secure.port="${po-grid-jboss.grid.secure.port}"
+      						  jboss.grid.secure.key.file="${po-grid-jboss.grid.secure.key.file}" 
+      						  jboss.grid.secure.cert.file="${po-grid-jboss.grid.secure.cert.file}" 
+      						  jboss.java.opts="${po-grid-jboss.java.opts}"
+      						  jboss.logs.dir="${po-grid-jboss.home}/server/${po-grid-jboss.server.name}/log"
+      						  jboss.http-connector.remove="${po-grid-jboss.http-connector.remove}"
+      						  
+
+      					/>
+      				<jboss51-encrypt-messaging-passwd
+      				/>
+      			</then>
+      		</if>
+
+
   </target>
 
   <target name="install:po-grid-jboss:stop" unless="exclude.po-grid">

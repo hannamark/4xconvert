@@ -119,4 +119,9 @@
        <comment>Add function for filling in unknown person emails.</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1492.sql"/>
     </changeSet>
+    <changeSet id="PO-1501" author="ludetc">
+       <comment>Upgrade to CSM 4.2.</comment>       
+       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1501.MigrationScript4.1.sql"/>
+       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1501.MigrationScript4.2.sql"/>
+    </changeSet>
 </databaseChangeLog>

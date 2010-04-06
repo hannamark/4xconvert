@@ -165,8 +165,65 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
         <!-- Use below if you are defining all the ports in your install.xml not the NCICB port configuraitons-->
         <!-- configure the po-ear instance -->
-        <jboss-configure
-            />
+      
+        	<if>
+
+        			<equals arg1="${jboss.major.version}" arg2="4"/>
+
+        			<then>
+
+        				<jboss-configure
+
+        					
+
+        					/>
+
+        				<if>
+
+        					<equals arg1="${jboss.cgmm.enable}" arg2="true"/>
+
+        					<then>
+
+        						<jboss-configure-cgmm
+
+        							/>
+
+        					</then>
+
+        				</if>
+
+        			</then>
+
+        		</if>
+
+        		<if>
+
+        			<equals arg1="${jboss.major.version}" arg2="5"/>
+
+        			<then>
+
+        				<jboss-configure
+
+        					jboss.grid.configure="true"
+
+        					jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"
+
+        					jboss.server.binding.template.location="${bda-utils.dir}/resource/${jboss.binaries.relative.dir}/bindings-jboss-beans.xml"
+
+        					jboss.server-xml.file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb.sar/server.xml"
+
+        					jboss.server.ports.name="PortsDefaultBindings"
+
+        					proxy.update.connector.port.ssl="${jboss.ssl.port}"
+        					/>
+        				<jboss51-encrypt-messaging-passwd
+        				/>
+        			</then>
+        		</if>
+
+      <!-- this one needs to be removed but CSM team wants to keep in their dependency tree -->
+      <delete file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/xmlsec-1.2.1.jar"/>
+      
   </target>
 
   <!-- Calls to bda macros for basic functionality -->

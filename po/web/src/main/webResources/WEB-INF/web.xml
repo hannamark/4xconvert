@@ -62,7 +62,11 @@
         <filter-name>sessionFixation</filter-name>
         <filter-class>com.fiveamsolutions.nci.commons.web.filter.SessionFixationProtectionFilter</filter-class>
     </filter>
-
+    <filter>
+        <filter-name>csmUserFilter</filter-name>
+        <filter-class>gov.nih.nci.po.web.filter.CsmUserFilter</filter-class>
+    </filter>
+    
      <filter-mapping>
         <filter-name>sessionFixation</filter-name>
         <url-pattern>*.action</url-pattern>
@@ -101,9 +105,13 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>csmUserFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
     
-
-
     <!-- Welcome file lists -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
@@ -133,10 +141,10 @@
     </security-constraint>
 
     <login-config>
-        <auth-method>FORM</auth-method>
+        <auth-method>${web.auth.method}</auth-method>
         <form-login-config>
             <form-login-page>/login.jsp</form-login-page>
-            <form-error-page>/login/login.action?failedLogin=true</form-error-page>
+            <form-error-page>/login/loginFailed.action</form-error-page>
         </form-login-config>
     </login-config>
 
