@@ -161,6 +161,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       jboss.home="${po-grid-legacy-jboss.home}"
       jboss.server.name="${po-grid-legacy-jboss.server.name}"
             />
+    <jboss-nci-customizations
+        application.base.path="${application.base.path}/pogridlegacy"
+        jboss.home="${po-grid-legacy-jboss.home}"
+        jboss.server.name="${po-grid-legacy-jboss.server.name}"
+        jboss.server.jndi.port="${po-grid-legacy-jboss.server.jndi.port}"
+        jboss.java.opts="${po-grid-legacy-jboss.java.opts}"
+        />
   </target>
 
     <!-- Installs the po-grid-legacy application to JBOSS -->

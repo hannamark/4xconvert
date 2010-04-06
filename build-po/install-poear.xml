@@ -139,6 +139,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       jems.install.option="ejb3"
       jboss.home="${jboss.home}"
       />
+      <jboss-nci-customizations
+          application.base.path="${application.base.path}/poear"
+          jboss.home="${jboss.home}"
+          jboss.server.name="${jboss.server.name}"
+          jboss.server.jndi.port="${jboss.server.jndi.port}"
+          jboss.java.opts="${jboss.java.opts}"
+      />
   </target>
 
   <target name="install:po-ear-jboss:app"
