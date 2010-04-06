@@ -494,6 +494,7 @@
                 <exclude name="caGrid-gridgrouper-*.jar"/>
                 <exclude name="gridgrouper-*.jar"/>
             </zipfileset>
+            <zipfileset dir="${build.lib.dir}" includes="OutcomesServices-client.jar" fullpath="OutcomesServices-client.jar"/>
             <zipfileset dir="${tools.lib.dir}" includes="ant-contrib-1.0b3.jar" prefix="tools/lib"/>
             <zipfileset dir="${build.dest}" includes="**/*.class" prefix="classes"/>
             <zipfileset dir="${build.dest}" includes="**/BusinessClient.java,**/UserClient.java" prefix="src"/>
