@@ -63,7 +63,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <delete dir="${po-grid-legacy-jboss.home}"/>
   </target>
 
-  <target name="install:po-grid-legacy-jboss:init" depends="common:init:pre">
+  <target name="install:po-grid-legacy-jboss:init" depends="common:init:pre" unless="exclude.po-grid-legacy">
       <!-- determine if port configurations or port lists are being called -->
       <if>
           <isset property="po-grid-legacy-jboss.ncicb-standard.port-config"/>
@@ -288,7 +288,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         depends="
         common:po-grid-legacy-jboss:init,common:init,
         install:common:validation:pre-install
-        ">
+        " unless="exclude.po-grid-legacy">
         <validate-pre-install-jboss
             jboss.ssl.enable="${po-grid-legacy-jboss.ssl.enable}"
             jboss.ssl.keystore.file="${po-grid-legacy-jboss.ssl.keystore.file}"
@@ -302,7 +302,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         depends="
         common:init,
         install:po-grid-legacy-jboss:stop
-        ">
+        " unless="exclude.po-grid-legacy">
         <validate-pre-jboss-ports
             jboss.socket.ports="${po-grid-legacy-jboss.socket.ports}"
             hostname="${po-grid-legacy-jboss.server.hostname}"
@@ -313,7 +313,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         common:po-grid-legacy-jboss:init,
         common:init,
         install:po-grid-legacy-jboss:start
-        ">
+        " unless="exclude.po-grid-legacy">
         <if>
             <not>
                 <isset property="exclude.start.servers"/>
@@ -492,7 +492,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       upgrade:po-grid-legacy-jboss:init:prep,
       upgrade:po-grid-legacy-jboss:readers:bda,
       upgrade:po-grid-legacy-jboss:readers:custom
-      ">
+      " unless="exclude.po-grid-legacy">
       <properties-print
           properties.list="${read.properties.list}"
           />
@@ -504,7 +504,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
           />
   </target>
 
-  <target name="upgrade:po-grid-legacy-jboss:init:prep" depends="upgrade:common:init:prep">
+  <target name="upgrade:po-grid-legacy-jboss:init:prep" depends="upgrade:common:init:prep" unless="exclude.po-grid-legacy">
       <property name="po-grid-legacy-jboss.home" value="${application.base.path}/${po-grid-legacy-jboss.relative.path}"/>
       <jboss-version
           />
@@ -526,7 +526,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       <echo message="po-grid-legacy-jboss.exists - ${po-grid-legacy-jboss.exists}"/>
   </target>
 
-  <target name="upgrade:po-grid-legacy-jboss:readers:custom">
+  <target name="upgrade:po-grid-legacy-jboss:readers:custom" unless="exclude.po-grid-legacy">
       <!-- call your custom readers here, two properties included in these scripts that don't have readers are "fs-data.base.dir, mail.smtp.server" -->
   </target>
 
@@ -567,7 +567,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   </target>
 
-  <target name="upgrade:po-grid-legacy-jboss:post">
+  <target name="upgrade:po-grid-legacy-jboss:post" unless="exclude.po-grid-legacy">
 
   </target>
 </project>
