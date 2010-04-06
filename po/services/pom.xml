@@ -94,7 +94,7 @@
         <!-- Jars required -->
         <dependency>
             <groupId>gov.nih.nci</groupId>
-            <artifactId>csm</artifactId>
+            <artifactId>security</artifactId>
             <version>4.2</version>
             <scope>compile</scope>
         </dependency>
