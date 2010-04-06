@@ -10,8 +10,9 @@ Contents
 
    1. Introduction
    2. Distribution Contents
-   3. Example Code
-   4. NCICB Web Pages
+   3. Runtime Options
+   4. Example Code
+   5. NCICB Web Pages
 
 Introduction
 ---------------------------
@@ -22,18 +23,26 @@ caGrid Service API of an existing PODS 2.0 server.
 Distribution Contents
 ------------------------
 
-The caArray client distribution includes the following contents:
+The PODS client distribution includes the following contents:
 
 / <root directory>
- caarray-client-external-v1_0.jar	  Required for both the Java and grid APIs
- build.xml            Runs the provided example clients of the Java and grid
-                      APIs via ant (required). Can also rebuild modified clients. 
-
+ OutcomesServices-client.jar Jar containing client examples.
+ build.xml            Runs the provided example clients via ant (required). This can also be used rebuild modified 
+                      clients.
 /docs                 Contains the Javadoc for all the PODS client related classes
 
 /lib                  Contains all JARs required at runtime for any PODS grid
                       service clients written in Java. 
-/src 	              Contains source of the example clients.
+/src 	              Contains source of the example clients. Changes to them will be reflected when the client is
+                      run from the command line.
+
+
+Runtime Options
+-----------------
+The following options can be modified at via the ant command line. I.E ant -D<variable>=<value>
+
+service.hostname
+service.port
 
 Example Code
 ------------------------
