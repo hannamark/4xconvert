@@ -109,7 +109,7 @@
         <dependency>
             <groupId>gov.nih.nci</groupId>
             <artifactId>cgmm</artifactId>
-            <version>0.6</version>
+            <version>0.7</version>
             <scope>provided</scope>
         </dependency>
 
