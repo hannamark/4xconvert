@@ -500,6 +500,7 @@
             <zipfileset dir="${build.dest}" includes="**/BusinessClient.java,**/UserClient.java" prefix="src"/>
             <zipfileset dir="${javadoc.dir}" includes="**/*" prefix="docs"/>
             <zipfileset dir="." includes="client.xml" fullpath="build.xml"/>
+            <zipfileset dir="." includes="README-external.txt" fullpath="README.txt"/>
         </zip>
     </target>
 
