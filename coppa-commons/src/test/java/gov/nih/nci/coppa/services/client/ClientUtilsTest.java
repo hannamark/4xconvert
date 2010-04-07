@@ -109,7 +109,7 @@ public class ClientUtilsTest {
 
     @Test
     public void printMany() {
-        ClientUtils.print(new II(), new II());
+        ClientUtils.print(new II[] {new II(), new II()});
     }
 
     @Test

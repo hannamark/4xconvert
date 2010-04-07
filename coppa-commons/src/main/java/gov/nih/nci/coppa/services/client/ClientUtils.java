@@ -132,11 +132,12 @@ public final class ClientUtils {
             }
         }
     }
+
     /**
      * Displays a retrieved result.
      * @param result to inspect and display
      */
-    public static void print(Object... result) {
+    public static void print(Object[] result) {
         if (result == null) {
             altPrint(result);
         } else {
