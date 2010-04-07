@@ -95,7 +95,7 @@ public class ClientUtilsTest {
 
     @Test
     public void printNull() {
-        ClientUtils.print((II) null);
+        ClientUtils.print((Object[]) null);
     }
 
     @Test
@@ -109,11 +109,12 @@ public class ClientUtilsTest {
 
     @Test
     public void printMany() {
-        ClientUtils.print(new II[] {new II(), new II()});
+        ClientUtils.print(new II(), new II());
+        ClientUtils.print(new LimitOffset(), new LimitOffset());
     }
 
     @Test
     public void printManyThatIsNull() {
-        ClientUtils.print((II[]) null);
+        ClientUtils.print(null, null, new LimitOffset());
     }
 }

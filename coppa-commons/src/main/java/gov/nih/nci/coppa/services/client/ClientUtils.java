@@ -107,9 +107,9 @@ public final class ClientUtils {
         //no-op
     }
 
-    private static void toXml(Object obj) throws JAXBException {
+    private static void printXml(Object obj) throws JAXBException {
         JAXBContext jaxbContext = MAP.get(obj.getClass().getPackage().getName());
-        if (jaxbContext == null) {           
+        if (jaxbContext == null) {
             jaxbContext = JAXBContext.newInstance(obj.getClass().getPackage().getName());
             MAP.put(obj.getClass().getPackage().getName(), jaxbContext);
         }
@@ -121,14 +121,14 @@ public final class ClientUtils {
      * Displays a retrieved result.
      * @param result to inspect and display
      */
-    public static void print(Object result) {
+    private static <E> void printSingle(E result) {
         if (result == null) {
-            altPrint(result);
+            printString(result);
         } else {
             try {
-                toXml(result);
+                printXml(result);
             } catch (JAXBException e) {
-                altPrint(result);
+                printString(result);
             }
         }
     }
@@ -136,18 +136,19 @@ public final class ClientUtils {
     /**
      * Displays a retrieved result.
      * @param result to inspect and display
+     * @param <E> the object to print
      */
-    public static void print(Object[] result) {
+    public static <E> void print(E... result) {
         if (result == null) {
-            altPrint(result);
+            printString(result);
         } else {
             for (Object object : result) {
-                print(object);
+                printSingle(object);
             }
         }
     }
 
-    private static void altPrint(Object... result) {
+    private static <E> void printString(E result) {
         System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
 
