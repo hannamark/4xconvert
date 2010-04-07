@@ -3,7 +3,7 @@ package gov.nih.nci.coppa.services.structuralroles.identifiedorganization.client
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.IdentifiedOrganization;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -109,7 +109,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
         id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
         id.setExtension(helper.getArgument("-getId", "1"));
         IdentifiedOrganization result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     @GridTestMethod
@@ -126,7 +126,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 
         try {
             IdentifiedOrganization[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -141,7 +141,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
         limitOffset.setOffset(0);
         IdentifiedOrganization criteria = createCriteria();
         IdentifiedOrganization[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     /**

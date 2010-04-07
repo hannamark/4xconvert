@@ -3,7 +3,7 @@ package gov.nih.nci.coppa.services.structuralroles.organizationalcontact.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -90,7 +90,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
         id.setExtension(helper.getArgument("-getId", "1"));
         OrganizationalContact result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     @GridTestMethod
@@ -102,27 +102,27 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 
         OrganizationalContact criteria = createTypeCodeCriteria("Responsible Party");
         OrganizationalContact[] results = client.query(criteria, limit);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for typeCode = IRB");
         criteria = createTypeCodeCriteria("IRB");
         results = client.query(criteria, limit);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for typeCode = Site");
         criteria = createTypeCodeCriteria("Site");
         results = client.query(criteria, limit);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for status=Pending, typeCode = Site");
         criteria = createTypeCodeCriteria("pending", "Site");
         results = client.query(criteria, limit);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for status=Pending, typeCode = IRB");
         criteria = createTypeCodeCriteria("pending", "IRB");
         results = client.query(criteria, limit);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     @GridTestMethod
@@ -132,7 +132,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         limitOffset.setOffset(0);
         OrganizationalContact criteria = createCriteria();
         OrganizationalContact[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     private static OrganizationalContact createCriteria() {
@@ -177,7 +177,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 
         try {
             OrganizationalContact[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {

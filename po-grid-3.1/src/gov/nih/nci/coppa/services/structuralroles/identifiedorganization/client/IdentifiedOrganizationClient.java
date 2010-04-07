@@ -91,7 +91,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
 	id.setIdentifierName(IDENTIFIED_ORG_IDENTIFIER_NAME);
 	id.setExtension("597");
 	IdentifiedOrganization result = client.getById(id);
-	ClientUtils.handleResult(result);
+	ClientUtils.print(result);
   }
   
   private static void getIdentifiedOrgsByPlayerIds(IdentifiedOrganizationClient client) {
@@ -107,7 +107,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
       
       try {
           IdentifiedOrganization[] results = client.getByPlayerIds(new Id[] {id1, id2});
-          ClientUtils.handleSearchResults(results);
+          ClientUtils.print(results);
       } catch (NullifiedRoleFault e) {
           e.printStackTrace();
       } catch (RemoteException e) {
@@ -118,7 +118,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
   private static void searchIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
 	    IdentifiedOrganization criteria = createCriteria();
         IdentifiedOrganization[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 	  }
   
   private static void queryIdentifiedOrg(IdentifiedOrganizationClient client) throws RemoteException {
@@ -127,7 +127,7 @@ public class IdentifiedOrganizationClient extends IdentifiedOrganizationClientBa
       limitOffset.setOffset(0);
       IdentifiedOrganization criteria = createCriteria();
       IdentifiedOrganization[] results = client.query(criteria, limitOffset);
-      ClientUtils.handleSearchResults(results);
+      ClientUtils.print(results);
   }
 
 /**

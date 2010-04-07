@@ -4,7 +4,7 @@ import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -13,11 +13,8 @@ import gov.nih.nci.iso21090.Constants;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.Arrays;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
@@ -96,14 +93,14 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
         id.setExtension(helper.getArgument("-getId", "1"));
         OrganizationalContact result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     @GridTestMethod
     private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
         OrganizationalContact criteria = createCriteria();
         OrganizationalContact[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     @GridTestMethod
@@ -113,7 +110,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         limitOffset.setOffset(0);
         OrganizationalContact criteria = createCriteria();
         OrganizationalContact[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     @GridTestMethod
@@ -121,81 +118,81 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         System.out.println("Querying for typeCode = Responsible Party");
         OrganizationalContact criteria = createTypeCodeCriteria("Responsible Party");
         OrganizationalContact[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for typeCode = IRB");
         criteria = createTypeCodeCriteria("IRB");
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for typeCode = Site");
         criteria = createTypeCodeCriteria("Site");
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for status=Pending, typeCode = Site");
         criteria = createTypeCodeCriteria("pending", "Site");
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for status=Pending, typeCode = IRB");
         criteria = createTypeCodeCriteria("pending", "IRB");
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         List<String> typeCodeList = Arrays.asList("IRB", "Site", "Responsible Party");
         System.out.println("Querying for multiple typecodes. typeCode = IRB, Site, Responsible Party");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         typeCodeList = Arrays.asList("Site", "IRB", "Responsible Party");
         System.out.println("Querying for multiple typecodes. typeCode = Site, IRB, Responsible Party");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         typeCodeList = Arrays.asList("Responsible Party", "IRB", "Site");
         System.out.println("Querying for multiple typecodes. typeCode = Responsible Party, IRB, Site");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         typeCodeList = Arrays.asList("Responsible Party", "IRB");
         System.out.println("Querying for multiple typecodes. typeCode = Responsible Party, IRB");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         typeCodeList = Arrays.asList("IRB", "Responsible Party");
         System.out.println("Querying for multiple typecodes. typeCode = IRB, Responsible Party");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         typeCodeList = Arrays.asList("IRB", "Site");
         System.out.println("Querying for multiple typecodes. typeCode = IRB, Site");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         typeCodeList = Arrays.asList("Site", "IRB");
         System.out.println("Querying for multiple typecodes. typeCode = Site, IRB");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         typeCodeList = Arrays.asList("Site", "Responsible Party");
         System.out.println("Querying for multiple typecodes. typeCode = Site, Responsible Party");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         typeCodeList = Arrays.asList("Responsible Party", "Site");
         System.out.println("Querying for multiple typecodes. typeCode = Responsible Party, Site");
         criteria = createTypeCodeCriteria(typeCodeList);
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
     }
 
@@ -260,7 +257,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 
         try {
             OrganizationalContact[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {

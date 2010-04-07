@@ -4,7 +4,7 @@ import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -90,14 +90,14 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         id.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         id.setExtension(helper.getArgument("-getId", "1"));
         HealthCareProvider result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     @GridTestMethod
     private static void searchHealthCareProvider(HealthCareProviderClient client) throws RemoteException {
         HealthCareProvider criteria = createCriteria();
         HealthCareProvider[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     @GridTestMethod
@@ -107,7 +107,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         limitOffset.setOffset(0);
         HealthCareProvider criteria = createCriteria();
         HealthCareProvider[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     @GridTestMethod
@@ -124,7 +124,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
 
         try {
             HealthCareProvider[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {

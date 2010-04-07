@@ -4,7 +4,7 @@ import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -90,14 +90,14 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         id.setIdentifierName(IDENTIFIED_PERSON_IDENTIFIER_NAME);
         id.setExtension(helper.getArgument("-getId", "1"));
         IdentifiedPerson result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     @GridTestMethod
     private static void searchIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
         IdentifiedPerson criteria = createCriteria();
         IdentifiedPerson[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     @GridTestMethod
@@ -107,7 +107,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         limitOffset.setOffset(0);
         IdentifiedPerson criteria = createCriteria();
         IdentifiedPerson[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     private static IdentifiedPerson createCriteria() {
@@ -132,7 +132,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
 
         try {
             IdentifiedPerson[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {

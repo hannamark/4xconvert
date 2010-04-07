@@ -3,7 +3,7 @@ package gov.nih.nci.coppa.services.structuralroles.clinicalresearchstaff.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.ClinicalResearchStaff;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -88,7 +88,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         ClinicalResearchStaff result;
         try {
             result = client.getById(id);
-            ClientUtils.handleResult(result);
+            ClientUtils.print(result);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -114,7 +114,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
 
         try {
             ClinicalResearchStaff[] results = client.getByIds(new Id[] {id, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -136,7 +136,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
 
         try {
             ClinicalResearchStaff[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -155,7 +155,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
             limitOffset.setLimit(1);
             limitOffset.setOffset(0);
             ClinicalResearchStaff[] results = client.query(criteria, limitOffset);
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

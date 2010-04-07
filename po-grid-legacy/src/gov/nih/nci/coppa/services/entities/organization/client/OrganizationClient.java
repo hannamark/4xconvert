@@ -4,7 +4,7 @@ package gov.nih.nci.coppa.services.entities.organization.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Organization;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -88,7 +88,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         id.setIdentifierName(ORG_IDENTIFIER_NAME);
         id.setExtension(helper.getArgument("-getId", "1"));
         Organization result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     private static Organization createCriteria() {
@@ -103,7 +103,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
     private static void searchOrganizations(OrganizationClient client) throws RemoteException {
         Organization criteria = createCriteria();
         Organization[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     @GridTestMethod
@@ -114,7 +114,7 @@ public class OrganizationClient extends OrganizationClientBase implements Organi
         limitOffset.setLimit(2);
         limitOffset.setOffset(0);
         Organization[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
   public void updateStatus(gov.nih.nci.coppa.po.Id targetId,gov.nih.nci.coppa.po.Cd statusCode) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {

@@ -91,13 +91,13 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         id.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         id.setExtension("571");
         HealthCareProvider result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     private static void searchHealthCareProvider(HealthCareProviderClient client) throws RemoteException {
       HealthCareProvider criteria = createCriteria();
         HealthCareProvider[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
     
     private static void queryHealthCareProvider(HealthCareProviderClient client) throws RemoteException {
@@ -106,7 +106,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         limitOffset.setOffset(0);
         HealthCareProvider criteria = createCriteria();
         HealthCareProvider[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
     
     private static void getHealthCareProvidersByPlayerIds(HealthCareProviderClient client) {
@@ -122,7 +122,7 @@ public class HealthCareProviderClient extends HealthCareProviderClientBase imple
         
         try {
             HealthCareProvider[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {

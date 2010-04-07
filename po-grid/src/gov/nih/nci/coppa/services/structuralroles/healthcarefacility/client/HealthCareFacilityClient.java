@@ -3,7 +3,7 @@ package gov.nih.nci.coppa.services.structuralroles.healthcarefacility.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.HealthCareFacility;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.organization.client.OrganizationClient;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -96,7 +96,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
 
         try {
             HealthCareFacility[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -112,7 +112,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         id.setExtension(helper.getArgument("-getId", "1"));
 
         HealthCareFacility result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     @GridTestMethod
@@ -122,7 +122,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         limitOffset.setOffset(0);
         HealthCareFacility criteria = createCriteria();
         HealthCareFacility[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     /**

@@ -91,13 +91,13 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         id.setIdentifierName(IDENTIFIED_PERSON_IDENTIFIER_NAME);
         id.setExtension("622");
         IdentifiedPerson result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     private static void searchIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
         IdentifiedPerson criteria = createCriteria();
         IdentifiedPerson[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
     
     private static void queryIdentifiedPerson(IdentifiedPersonClient client) throws RemoteException {
@@ -106,7 +106,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         limitOffset.setOffset(0);        
         IdentifiedPerson criteria = createCriteria();
         IdentifiedPerson[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     /**
@@ -133,7 +133,7 @@ public class IdentifiedPersonClient extends IdentifiedPersonClientBase implement
         
         try {
             IdentifiedPerson[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {

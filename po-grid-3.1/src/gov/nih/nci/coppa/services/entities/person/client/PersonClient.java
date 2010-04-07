@@ -94,7 +94,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
     private static void searchPersons(PersonClient client) throws RemoteException {
         Person criteria = createCriteria();
         gov.nih.nci.coppa.po.Person[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
     private static void queryPersons(PersonClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
@@ -102,7 +102,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
         limitOffset.setOffset(0);
         Person criteria = createCriteria();
         gov.nih.nci.coppa.po.Person[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     private static Person createCriteria() {
@@ -122,14 +122,14 @@ public class PersonClient extends PersonClientBase implements PersonI {
     private static void getPerson(PersonClient client) throws RemoteException {
         Id id = createII();
         Person result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     private static void getNullifiedPerson(PersonClient client) throws RemoteException {
         try {
             Id id = createII();
             Person result = client.getById(id);
-            ClientUtils.handleResult(result);
+            ClientUtils.print(result);
         } catch (NullifiedEntityFault e) {
             System.out.println("NullifiedEntityFault");
             e.printStackTrace(System.out);

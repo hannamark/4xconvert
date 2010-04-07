@@ -98,7 +98,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         
         try {
             HealthCareFacility[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -112,13 +112,13 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         id.setIdentifierName(HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         id.setExtension("592");
         HealthCareFacility result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     private static void searchHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
         HealthCareFacility criteria = createCriteria();
         HealthCareFacility[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
     private static void queryHealthCareFacility(HealthCareFacilityClient client) throws RemoteException {
         LimitOffset limitOffset = new LimitOffset();
@@ -126,7 +126,7 @@ public class HealthCareFacilityClient extends HealthCareFacilityClientBase imple
         limitOffset.setOffset(0);
         HealthCareFacility criteria = createCriteria();
         HealthCareFacility[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     /**

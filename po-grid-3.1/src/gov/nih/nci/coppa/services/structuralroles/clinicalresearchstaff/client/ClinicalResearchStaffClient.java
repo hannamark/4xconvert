@@ -90,7 +90,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         ClinicalResearchStaff result;
         try {
             result = client.getById(id);
-            ClientUtils.handleResult(result);
+            ClientUtils.print(result);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -119,7 +119,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         
         try {
             ClinicalResearchStaff[] results = client.getByIds(new Id[] {id, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -140,7 +140,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         
         try {
             ClinicalResearchStaff[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
@@ -155,7 +155,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
         criteria.setStatus(statusCode);
         try {
             ClinicalResearchStaff[] results = client.search(criteria);
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -170,7 +170,7 @@ public class ClinicalResearchStaffClient extends ClinicalResearchStaffClientBase
             limitOffset.setLimit(1);
             limitOffset.setOffset(0);
             ClinicalResearchStaff[] results = client.query(criteria, limitOffset);
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

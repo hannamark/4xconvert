@@ -3,7 +3,7 @@ package gov.nih.nci.coppa.services.structuralroles.patient.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Patient;
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.structuralroles.patient.common.PatientI;
@@ -121,7 +121,7 @@ public class PatientClient extends PatientClientBase implements PatientI {
         limitOffset.setOffset(0);
         Patient criteria = createCriteria();
         Patient[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
   public gov.nih.nci.iso21090.extensions.Id create(gov.nih.nci.coppa.po.Patient patient) throws RemoteException, gov.nih.nci.coppa.po.faults.EntityValidationFault {

@@ -7,8 +7,8 @@ import gov.nih.nci.coppa.po.EntityNode;
 import gov.nih.nci.coppa.po.EntityType;
 import gov.nih.nci.coppa.po.HealthCareProvider;
 import gov.nih.nci.coppa.po.Person;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
 import gov.nih.nci.coppa.services.business.business.common.BusinessI;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.entities.person.client.PersonClient;
 import gov.nih.nci.coppa.services.structuralroles.healthcareprovider.client.HealthCareProviderClient;
 import gov.nih.nci.iso21090.extensions.Bl;
@@ -95,11 +95,7 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
 	    players[0].setCode(RoleList.HEALTH_CARE_PROVIDER.toString());
 	    EntityNode result = client.getEntityByIdWithCorrelations(id, players, null);
 	    System.out.println("---- getPersonEntityNode top level----");
-	    ClientUtils.handleResult(result);
-	    System.out.println("----entity level----");
-	    ClientUtils.handleResult(result.getEntity().getContent().get(0));
-	    System.out.println("---- player correlations level----");
-	    ClientUtils.handleResult(result.getPlayers().getContent().get(0));
+	    ClientUtils.print(result);
 	}
 	
 	private static void getCorrelationEntityNode(BusinessClient client) throws RemoteException {
@@ -112,11 +108,7 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
         
         CorrelationNode result = client.getCorrelationByIdWithEntities(id, myTrue, myFalse);
         System.out.println("----getCorrelationEntityNode top level----");
-        ClientUtils.handleResult(result);
-        System.out.println("----correlation level----");
-        ClientUtils.handleResult(result.getCorrelation().getContent().get(0));
-        System.out.println("---- player entity level----");
-        ClientUtils.handleResult(result.getPlayer().getContent().get(0));
+        ClientUtils.print(result);
     }
 	
 	private static void getCorrelationsByPlayerIdsEntityNode(BusinessClient client) throws RemoteException {
@@ -132,11 +124,7 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
         
         CorrelationNode[] result = client.getCorrelationsByPlayerIdsWithEntities(cd, players, myTrue, myFalse);
         System.out.println("----getCorrelationsByPlayerIdsEntityNode top level----");
-        ClientUtils.handleResult(result[0]);
-        System.out.println("----correlation level----");
-        ClientUtils.handleResult(result[0].getCorrelation().getContent().get(0));
-        System.out.println("---- player entity level----");
-        ClientUtils.handleResult(result[0].getPlayer().getContent().get(0));
+        ClientUtils.print(result);
     }
 	
 	private static void getCorrelationsByIdsEntityNode(BusinessClient client) throws RemoteException {
@@ -149,13 +137,7 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
         
         CorrelationNode[] result = client.getCorrelationsByIdsWithEntities(ids, myTrue, myTrue);
         System.out.println("----getCorrelationsByIdsEntityNode top level----");
-        ClientUtils.handleResult(result[0]);
-        System.out.println("----correlation level----");
-        ClientUtils.handleResult(result[0].getCorrelation().getContent().get(0));
-        System.out.println("---- player entity level----");
-        ClientUtils.handleResult(result[0].getPlayer().getContent().get(0));
-        System.out.println("---- scoper entity level----");
-        ClientUtils.handleResult(result[0].getScoper().getContent().get(0));
+        ClientUtils.print(result);
     }
 	
 	private static void searchCorrelationsWithEntities(BusinessClient client) throws RemoteException {
@@ -179,13 +161,7 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
         
         CorrelationNode[] result = client.searchCorrelationsWithEntities(correlationNode, myTrue, myTrue, limitOffset);
         System.out.println("---- searchCorrelationsWithEntities top level----");
-        ClientUtils.handleResult(result[0]);
-        System.out.println("----correlation level----");
-        ClientUtils.handleResult(result[0].getCorrelation().getContent().get(0));
-        System.out.println("---- player entity level----");
-        ClientUtils.handleResult(result[0].getPlayer().getContent().get(0));
-        System.out.println("---- scoper entity level----");
-        ClientUtils.handleResult(result[0].getScoper().getContent().get(0));
+        ClientUtils.print(result);
     }
 	
 	private static void searchEntitiesWithCorrelations(BusinessClient client) throws RemoteException {
@@ -211,13 +187,7 @@ public class BusinessClient extends BusinessClientBase implements BusinessI {
         
         EntityNode[] result = client.searchEntitiesWithCorrelations(entityNode, roleTypes, null, limitOffset);
         System.out.println("---- searchCorrelationsWithEntities top level----");
-        ClientUtils.handleResult(result[0]);
-        System.out.println("----entity level----");
-        ClientUtils.handleResult(result[0].getEntity().getContent().get(0));
-        System.out.println("---- player correlation level----");
-        ClientUtils.handleResult(result[0].getPlayers().getContent().get(0));
-        System.out.println("---- scoper correlation level----");
-        ClientUtils.handleResult(result[0].getScopers().getContent().get(0));
+        ClientUtils.print(result);
     }
     
     private static Id createPersonII() {

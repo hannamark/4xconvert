@@ -3,7 +3,7 @@ package gov.nih.nci.coppa.services.entities.person.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.faults.NullifiedEntityFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.entities.person.common.PersonI;
 import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
@@ -96,7 +96,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
         limitOffset.setOffset(0);
         Person criteria = createCriteria();
         gov.nih.nci.coppa.po.Person[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     private static Person createCriteria() {
@@ -117,7 +117,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
     private static void getPerson(PersonClient client) throws RemoteException {
         Id id = createII();
         Person result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     @GridTestMethod
@@ -125,7 +125,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
         try {
             Id id = createII();
             Person result = client.getById(id);
-            ClientUtils.handleResult(result);
+            ClientUtils.print(result);
         } catch (NullifiedEntityFault e) {
             System.out.println("NullifiedEntityFault");
             e.printStackTrace(System.out);
@@ -177,7 +177,7 @@ public class PersonClient extends PersonClientBase implements PersonI {
         ad.getPart().add(adxp);
         person.setPostalAddress(ad);
 
-        ClientUtils.handleResult(client.create(person));
+        ClientUtils.print(client.create(person));
     }
 
     private static Id createII() {

@@ -92,40 +92,40 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         id.setIdentifierName(ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
         id.setExtension("631");
         OrganizationalContact result = client.getById(id);
-        ClientUtils.handleResult(result);
+        ClientUtils.print(result);
     }
 
     private static void searchOrgContact(OrganizationalContactClient client) throws RemoteException {
         OrganizationalContact criteria = createCriteria();
         OrganizationalContact[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     private static void searchOrgContactsByTypeCode(OrganizationalContactClient client) throws RemoteException {
         System.out.println("Querying for typeCode = Responsible Party");
         OrganizationalContact criteria = createTypeCodeCriteria("Responsible Party");
         OrganizationalContact[] results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for typeCode = IRB");
         criteria = createTypeCodeCriteria("IRB");
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for typeCode = Site");
         criteria = createTypeCodeCriteria("Site");
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for status=Pending, typeCode = Site");
         criteria = createTypeCodeCriteria("pending", "Site");
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
 
         System.out.println("Querying for status=Pending, typeCode = IRB");
         criteria = createTypeCodeCriteria("pending", "IRB");
         results = client.search(criteria);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     private static void queryOrgContact(OrganizationalContactClient client) throws RemoteException {
@@ -134,7 +134,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
         limitOffset.setOffset(0);
         OrganizationalContact criteria = createCriteria();
         OrganizationalContact[] results = client.query(criteria, limitOffset);
-        ClientUtils.handleSearchResults(results);
+        ClientUtils.print(results);
     }
 
     private static OrganizationalContact createCriteria() {
@@ -178,7 +178,7 @@ public class OrganizationalContactClient extends OrganizationalContactClientBase
 
         try {
             OrganizationalContact[] results = client.getByPlayerIds(new Id[] {id1, id2});
-            ClientUtils.handleSearchResults(results);
+            ClientUtils.print(results);
         } catch (NullifiedRoleFault e) {
             e.printStackTrace();
         } catch (RemoteException e) {
