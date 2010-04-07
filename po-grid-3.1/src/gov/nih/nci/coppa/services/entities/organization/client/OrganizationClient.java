@@ -3,7 +3,7 @@ package gov.nih.nci.coppa.services.entities.organization.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Organization;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.entities.organization.common.OrganizationI;
 
 import java.rmi.RemoteException;

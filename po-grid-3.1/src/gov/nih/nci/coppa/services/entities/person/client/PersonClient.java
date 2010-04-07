@@ -4,7 +4,7 @@ import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.faults.NullifiedEntityFault;
-import gov.nih.nci.coppa.po.grid.client.ClientUtils;
+import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.entities.person.common.PersonI;
 
 import java.rmi.RemoteException;

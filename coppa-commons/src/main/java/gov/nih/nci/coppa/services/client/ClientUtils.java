@@ -80,7 +80,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.coppa.po.grid.client;
+package gov.nih.nci.coppa.services.client;
 
 import java.util.HashMap;
 import java.util.Map;
