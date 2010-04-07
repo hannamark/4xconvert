@@ -91,27 +91,20 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.iso._21090.II;
 
 /**
- * Utility class for service *Client.java classes.
+ * Utility class for service *Client.java classes. 
+ * 
+ * NOTE: Ignoring PMD violations as to NOT require Log4J on clients
  * @author smatyas
  *
  */
+@SuppressWarnings({ "PMD.SystemPrintln", "PMD.AvoidPrintStackTrace" })
 public final class ClientUtils {
 
     private static final Map<String, JAXBContext> MAP = new HashMap<String, JAXBContext>();
     private ClientUtils() {
         //no-op
-    }
-
-    /**
-     * @param identifier the ISO II information
-     */
-    public static void print(II... identifier) {
-        for (II ii : identifier) {
-            handleResult(ii);
-        }
     }
 
     private static void toXml(Object obj) throws JAXBException {
@@ -128,31 +121,34 @@ public final class ClientUtils {
      * Displays a retrieved result.
      * @param result to inspect and display
      */
-    public static void handleResult(Object result) {
+    public static void print(Object result) {
         if (result == null) {
-            System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+            altPrint(result);
         } else {
             try {
                 toXml(result);
             } catch (JAXBException e) {
-                e.printStackTrace();
+                altPrint(result);
+            }
+        }
+    }
+    /**
+     * Displays a retrieved result.
+     * @param result to inspect and display
+     */
+    public static void print(Object... result) {
+        if (result == null) {
+            altPrint(result);
+        } else {
+            for (Object object : result) {
+                print(object);
             }
         }
     }
 
-    /**
-     * Displays search result messages.
-     * @param results the values to inspect and display
-     */
-    public static void handleSearchResults(Object... results) {
-        if (results == null) {
-            System.out.println("Search Results were null!");
-        } else {
-            System.out.println("Search Results Found: " + results.length);
-            for (Object entity : results) {
-                handleResult(entity);
-            }
-        }
+    private static void altPrint(Object... result) {
+        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
     }
+
 
 }
