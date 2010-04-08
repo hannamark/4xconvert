@@ -127,6 +127,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 
@@ -658,8 +659,7 @@ public class StudyProtocolBeanLocal implements StudyProtocolServiceLocal {
             exampleDO.setStatusCode(ActStatusCode.INACTIVE);
         }
         Example example = Example.create(exampleDO);
-        example.enableLike();
-        
+        example.enableLike(MatchMode.ANYWHERE).ignoreCase();
         DetachedCriteria protocolId = DetachedCriteria.forClass(DocumentWorkflowStatus.class, "dws")
             .setProjection(Projections.distinct(Property.forName("dws.studyProtocol")))
             .add(Expression.eq("dws.statusCode", DocumentWorkflowStatusCode.REJECTED));

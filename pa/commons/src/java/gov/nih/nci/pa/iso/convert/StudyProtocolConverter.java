@@ -143,7 +143,8 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
-        studyProtocolDTO.setAssignedIdentifier(IiConverter.convertToIi(studyProtocol.getIdentifier()));
+        studyProtocolDTO.setAssignedIdentifier(IiConverter.convertToAssignedIdentifierIi(
+                studyProtocol.getIdentifier()));
         studyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(
                 BlConverter.convertToBl(studyProtocol.getDataMonitoringCommitteeAppointedIndicator()));
         studyProtocolDTO.setDelayedpostingIndicator(

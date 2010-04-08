@@ -875,4 +875,16 @@ public class IiConverter {
 
     }
 
+    /**
+     * 
+     * @param identifier id
+     * @return ii
+     */
+    public static Ii convertToAssignedIdentifierIi(String identifier) {
+        Ii ii = convertToIi(identifier);
+        ii.setIdentifierName(STUDY_PROTOCOL_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_PROTOCOL_ROOT);
+        return ii;
+    }
+
 }
