@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns4="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns1="uri:iso.org:21090" xmlns:ns3="http://po.coppa.nci.nih.gov" xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" xmlns:ns29="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" xmlns:ns17="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" xmlns:ns21="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" xmlns:ns9="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns15="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns34="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" xmlns:ns2="http://common.coppa.nci.nih.gov" xmlns:ns33="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" xmlns:ns8="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" xmlns:ns0="http://pa.services.coppa.nci.nih.gov" xmlns:ns19="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" xmlns:ns18="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" xmlns:ns11="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns7="http://faults.common.coppa.nci.nih.gov" xmlns:ns22="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" xmlns:ns10="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns13="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns32="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" xmlns:ns12="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns30="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" xmlns:ns27="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" xmlns:ns28="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" xmlns:ns26="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" xmlns:ns25="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" xmlns:ns24="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" xmlns:ns14="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns16="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" xmlns:ns6="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns31="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" xmlns:ns5="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" name="StudyResourcingService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService">
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
+  <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://faults.pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPAFaults.xsd" />
+      <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+      <import namespace="http://po.coppa.nci.nih.gov" schemaLocation="./CoppaPO.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" schemaLocation="./StudyOnholdServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" schemaLocation="./DocumentServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" schemaLocation="./StudyRegulatoryAuthorityServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" schemaLocation="./StudyOverallStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/types" schemaLocation="./PAServicesTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" schemaLocation="./StudySiteAccrualStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" schemaLocation="./TrialRegistrationServiceTypes.xsd" />
+      <import namespace="http://common.coppa.nci.nih.gov" schemaLocation="./CoppaCommons.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" schemaLocation="./StudySiteContactServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" schemaLocation="./ArmServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" schemaLocation="./StudyParticipationContactServiceTypes.xsd" />
+      <import namespace="http://pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPA.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" schemaLocation="./StudyParticipationServiceTypes.xsd" />
+      <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="./../ws/xml.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" schemaLocation="./StudyRecruitmentStatusServiceTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
+      <import namespace="http://faults.common.coppa.nci.nih.gov" schemaLocation="./CoppaCommonsFaults.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" schemaLocation="./StudyOutcomeMeasureServiceTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" schemaLocation="./StudySiteParticipationServiceTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" schemaLocation="./xsd/cagrid/types/service/servicemodel.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" schemaLocation="./StudyRelationshipServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" schemaLocation="./PlannedActivityServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" schemaLocation="./DocumentWorkflowStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" schemaLocation="./StudyContactServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" schemaLocation="./StudyDiseaseServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" schemaLocation="./StudyIndIdeServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" schemaLocation="./StudyProtocolServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" schemaLocation="./StudyResourcingServiceTypes.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" schemaLocation="./StudySiteServiceTypes.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <element name="GetSummaryForReportedResourceRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetSummaryForReportedResourceResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStudyResourcingRequest">
+        <complexType>
+          <sequence>
+            <element name="studyResourcing">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStudyResourcingResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateStudyResourcingRequest">
+        <complexType>
+          <sequence>
+            <element name="studyResourcing">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateStudyResourcingResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetStudyResourceByStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetStudyResourceByStudyProtocolResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetStudyResourceByIDRequest">
+        <complexType>
+          <sequence>
+            <element name="studyResourceId">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetStudyResourceByIDResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteStudyResourceByIDRequest">
+        <complexType>
+          <sequence>
+            <element name="studyResourcing">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteStudyResourceByIDResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="StudyResourcingServiceResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="GetSummaryForReportedResourceRequest">
+    <part name="parameters" element="tns:GetSummaryForReportedResourceRequest" />
+  </message>
+  <message name="GetSummaryForReportedResourceResponse">
+    <part name="parameters" element="tns:GetSummaryForReportedResourceResponse" />
+  </message>
+  <message name="UpdateStudyResourcingRequest">
+    <part name="parameters" element="tns:UpdateStudyResourcingRequest" />
+  </message>
+  <message name="UpdateStudyResourcingResponse">
+    <part name="parameters" element="tns:UpdateStudyResourcingResponse" />
+  </message>
+  <message name="CreateStudyResourcingRequest">
+    <part name="parameters" element="tns:CreateStudyResourcingRequest" />
+  </message>
+  <message name="CreateStudyResourcingResponse">
+    <part name="parameters" element="tns:CreateStudyResourcingResponse" />
+  </message>
+  <message name="GetStudyResourceByStudyProtocolRequest">
+    <part name="parameters" element="tns:GetStudyResourceByStudyProtocolRequest" />
+  </message>
+  <message name="GetStudyResourceByStudyProtocolResponse">
+    <part name="parameters" element="tns:GetStudyResourceByStudyProtocolResponse" />
+  </message>
+  <message name="GetStudyResourceByIDRequest">
+    <part name="parameters" element="tns:GetStudyResourceByIDRequest" />
+  </message>
+  <message name="GetStudyResourceByIDResponse">
+    <part name="parameters" element="tns:GetStudyResourceByIDResponse" />
+  </message>
+  <message name="DeleteStudyResourceByIDRequest">
+    <part name="parameters" element="tns:DeleteStudyResourceByIDRequest" />
+  </message>
+  <message name="DeleteStudyResourceByIDResponse">
+    <part name="parameters" element="tns:DeleteStudyResourceByIDResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns4:PAFault" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="StudyResourcingServicePortType" wsrp:ResourceProperties="tns:StudyResourcingServiceResourceProperties">
+    <operation name="getSummaryForReportedResource">
+      <input message="tns:GetSummaryForReportedResourceRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/GetSummaryForReportedResourceRequest" />
+      <output message="tns:GetSummaryForReportedResourceResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/GetSummaryForReportedResourceResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="updateStudyResourcing">
+      <input message="tns:UpdateStudyResourcingRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/UpdateStudyResourcingRequest" />
+      <output message="tns:UpdateStudyResourcingResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/UpdateStudyResourcingResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="createStudyResourcing">
+      <input message="tns:CreateStudyResourcingRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/CreateStudyResourcingRequest" />
+      <output message="tns:CreateStudyResourcingResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/CreateStudyResourcingResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getStudyResourceByStudyProtocol">
+      <input message="tns:GetStudyResourceByStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/GetStudyResourceByStudyProtocolRequest" />
+      <output message="tns:GetStudyResourceByStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/GetStudyResourceByStudyProtocolResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getStudyResourceByID">
+      <input message="tns:GetStudyResourceByIDRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/GetStudyResourceByIDRequest" />
+      <output message="tns:GetStudyResourceByIDResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/GetStudyResourceByIDResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="deleteStudyResourceByID">
+      <input message="tns:DeleteStudyResourceByIDRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/DeleteStudyResourceByIDRequest" />
+      <output message="tns:DeleteStudyResourceByIDResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/DeleteStudyResourceByIDResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getServiceSecurityMetadata">
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+    </operation>
+  </portType>
+</definitions>
+
