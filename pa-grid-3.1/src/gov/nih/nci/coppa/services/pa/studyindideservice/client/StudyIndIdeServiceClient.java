@@ -86,7 +86,6 @@ public class StudyIndIdeServiceClient extends StudyIndIdeServiceClientBase imple
         ClientUtils.print(result);
     }
 
-
   public gov.nih.nci.coppa.services.pa.StudyIndlde[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");

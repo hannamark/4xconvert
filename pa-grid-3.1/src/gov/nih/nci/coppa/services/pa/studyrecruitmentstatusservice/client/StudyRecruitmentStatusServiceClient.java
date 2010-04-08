@@ -87,7 +87,6 @@ public class StudyRecruitmentStatusServiceClient extends StudyRecruitmentStatusS
         ClientUtils.print(result);
     }
 
-
   public gov.nih.nci.coppa.services.pa.StudyRecruitmentStatus[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id id) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");

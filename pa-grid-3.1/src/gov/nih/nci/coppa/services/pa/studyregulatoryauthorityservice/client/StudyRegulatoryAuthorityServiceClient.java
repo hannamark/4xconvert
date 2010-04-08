@@ -99,7 +99,6 @@ public class StudyRegulatoryAuthorityServiceClient extends StudyRegulatoryAuthor
         ClientUtils.print(results);
     }
 
-
   public gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority[] getByStudyProtocol(gov.nih.nci.coppa.services.pa.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getByStudyProtocol");
