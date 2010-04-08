@@ -113,9 +113,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <!-- Includes-->
   <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
   <import file="install-poear.xml"/>
-  <import file="install-pogrid.xml"/>
+  <import file="install-pogrid-3.2.xml"/>
   <import file="install-pogrid-3.1.xml"/>
-  <import file="install-pogridlegacy.xml"/>
+  <import file="install-pogrid-3.0.xml"/>
 
     <!-- Start logging -->
     <mkdir dir="${log.dir}" />
@@ -131,7 +131,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     </target>
 
     <!-- Clean up destination directory -->
-    <target name="install:common:clean" description="Removes all files from the local filesystem" depends="install:po-ear-jboss:clean, install:po-grid-jboss:clean,install:po-grid-legacy-jboss:clean"/>
+    <target name="install:common:clean" description="Removes all files from the local filesystem" depends="install:po-ear-jboss:clean, install:po-grid-3.2-jboss:clean,install:po-grid-3.0-jboss:clean"/>
 
     <target name="common:init:pre">
         <!-- Set application.base.path based on platform -->
@@ -335,39 +335,39 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
     <target name="install" description="Installs and configures JBOSS, creates database, and deploys application"
       depends="
       install:po-ear-jboss:init,
-      install:po-grid-jboss:init,
+      install:po-grid-3.2-jboss:init,
       install:po-grid-3.1-jboss:init,
-      install:po-grid-legacy-jboss:init,
+      install:po-grid-3.0-jboss:init,
       common:po-ear-jboss:init,
-      common:po-grid-jboss:init,
+      common:po-grid-3.2-jboss:init,
       common:po-grid-3.1-jboss:init,
-      common:po-grid-legacy-jboss:init,
+      common:po-grid-3.0-jboss:init,
       common:init,
       install:common:validation:pre-install,
       install:po-ear-jboss:validation:pre-install,
-      install:po-grid-jboss:validation:pre-install,
+      install:po-grid-3.2-jboss:validation:pre-install,
       install:po-grid-3.1-jboss:validation:pre-install,
-      install:po-grid-legacy-jboss:validation:pre-install,
+      install:po-grid-3.0-jboss:validation:pre-install,
       install:database:validation:pre-install,
       install:po-ear-jboss:stop,
-      install:po-grid-jboss:stop,
+      install:po-grid-3.2-jboss:stop,
       install:po-grid-3.1-jboss:stop,
-      install:po-grid-legacy-jboss:stop,
+      install:po-grid-3.0-jboss:stop,
       install:po-ear-jboss:validation:pre-install:ports,
-      install:po-grid-jboss:validation:pre-install:ports,
+      install:po-grid-3.2-jboss:validation:pre-install:ports,
       install:po-grid-3.1-jboss:validation:pre-install:ports,
-      install:po-grid-legacy-jboss:validation:pre-install:ports,
+      install:po-grid-3.0-jboss:validation:pre-install:ports,
       install:common:clean,
       install:database,
       install:po-ear-jboss,
-      install:po-grid-jboss,
+      install:po-grid-3.2-jboss,
       install:po-grid-3.1-jboss,
-      install:po-grid-legacy-jboss,
+      install:po-grid-3.0-jboss,
       install:common:post,
       install:po-ear-jboss:start,
-      install:po-grid-jboss:start,
+      install:po-grid-3.2-jboss:start,
       install:po-grid-3.1-jboss:start,
-      install:po-grid-legacy-jboss:start,
+      install:po-grid-3.0-jboss:start,
       install:common:validation:post-install
       ">
     </target>
@@ -379,40 +379,40 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       depends="
       upgrade:common:init,
       common:po-ear-jboss:init,
-      common:po-grid-jboss:init,
+      common:po-grid-3.2-jboss:init,
       common:po-grid-3.1-jboss:init,
-      common:po-grid-legacy-jboss:init,
+      common:po-grid-3.0-jboss:init,
       common:init,
       install:po-ear-jboss:init,
-      install:po-grid-jboss:init,
+      install:po-grid-3.2-jboss:init,
       install:po-grid-3.1-jboss:init,
-      install:po-grid-legacy-jboss:init,
+      install:po-grid-3.0-jboss:init,
       install:common:validation:pre-install,
       install:po-ear-jboss:validation:pre-install,
-      install:po-grid-jboss:validation:pre-install,
+      install:po-grid-3.2-jboss:validation:pre-install,
       install:po-grid-3.1-jboss:validation:pre-install,
-      install:po-grid-legacy-jboss:validation:pre-install,
+      install:po-grid-3.0-jboss:validation:pre-install,
       install:database:validation:pre-install,
       install:po-ear-jboss:stop,
-      install:po-grid-jboss:stop,
+      install:po-grid-3.2-jboss:stop,
       install:po-grid-3.1-jboss:stop,
-      install:po-grid-legacy-jboss:stop,
+      install:po-grid-3.0-jboss:stop,
       install:po-ear-jboss:validation:pre-install:ports,
-      install:po-grid-jboss:validation:pre-install:ports,
+      install:po-grid-3.2-jboss:validation:pre-install:ports,
       install:po-grid-3.1-jboss:validation:pre-install:ports,
-      install:po-grid-legacy-jboss:validation:pre-install:ports,
+      install:po-grid-3.0-jboss:validation:pre-install:ports,
       install:common:clean,
       upgrade:database,
       upgrade-dac:po-ear-jboss,
-      upgrade-dac:po-grid-jboss,
+      upgrade-dac:po-grid-3.2-jboss,
       upgrade-dac:po-grid-3.1-jboss,
-      upgrade-dac:po-grid-legacy-jboss,
+      upgrade-dac:po-grid-3.0-jboss,
       upgrade:common:post,
       install:common:post,
       install:po-ear-jboss:start,
-      install:po-grid-jboss:start,
+      install:po-grid-3.2-jboss:start,
       install:po-grid-3.1-jboss:start,
-      install:po-grid-legacy-jboss:start,
+      install:po-grid-3.0-jboss:start,
       install:common:validation:post-install
       ">
     </target>
@@ -421,39 +421,39 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       depends="
       upgrade:common:init,
       common:po-ear-jboss:init,
-      common:po-grid-jboss:init,
+      common:po-grid-3.2-jboss:init,
       common:po-grid-3.1-jboss:init,
-      common:po-grid-legacy-jboss:init,
+      common:po-grid-3.0-jboss:init,
       common:init,
       install:po-ear-jboss:init,
-      install:po-grid-jboss:init,
+      install:po-grid-3.2-jboss:init,
       install:po-grid-3.1-jboss:init,
-      install:po-grid-legacy-jboss:init,
+      install:po-grid-3.0-jboss:init,
       install:common:validation:pre-install,
       install:po-ear-jboss:validation:pre-install,
-      install:po-grid-jboss:validation:pre-install,
+      install:po-grid-3.2-jboss:validation:pre-install,
       install:po-grid-3.1-jboss:validation:pre-install,
-      install:po-grid-legacy-jboss:validation:pre-install,
+      install:po-grid-3.0-jboss:validation:pre-install,
       install:database:validation:pre-install,
       install:po-ear-jboss:stop,
-      install:po-grid-jboss:stop,
+      install:po-grid-3.2-jboss:stop,
       install:po-grid-3.1-jboss:stop,
-      install:po-grid-legacy-jboss:stop,
+      install:po-grid-3.0-jboss:stop,
       install:po-ear-jboss:validation:pre-install:ports,
-      install:po-grid-jboss:validation:pre-install:ports,
+      install:po-grid-3.2-jboss:validation:pre-install:ports,
       install:po-grid-3.1-jboss:validation:pre-install:ports,
-      install:po-grid-legacy-jboss:validation:pre-install:ports,
+      install:po-grid-3.0-jboss:validation:pre-install:ports,
       upgrade:database,
       upgrade-cm:po-ear-jboss,
-      upgrade-cm:po-grid-jboss,
+      upgrade-cm:po-grid-3.2-jboss,
       upgrade-cm:po-grid-3.1-jboss,
-      upgrade-cm:po-grid-legacy-jboss,
+      upgrade-cm:po-grid-3.0-jboss,
       upgrade:common:post,
       install:common:post,
       install:po-ear-jboss:start,
-      install:po-grid-jboss:start,
+      install:po-grid-3.2-jboss:start,
       install:po-grid-3.1-jboss:start,
-      install:po-grid-legacy-jboss:start,
+      install:po-grid-3.0-jboss:start,
       install:common:validation:post-install
       ">
     </target>
@@ -462,39 +462,39 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
       depends="
       upgrade:common:init,
       common:po-ear-jboss:init,
-      common:po-grid-jboss:init,
+      common:po-grid-3.2-jboss:init,
       common:po-grid-3.1-jboss:init,
-      common:po-grid-legacy-jboss:init,
+      common:po-grid-3.0-jboss:init,
       common:init,
       install:po-ear-jboss:init,
-      install:po-grid-jboss:init,
+      install:po-grid-3.2-jboss:init,
       install:po-grid-3.1-jboss:init,
-      install:po-grid-legacy-jboss:init,
+      install:po-grid-3.0-jboss:init,
       install:common:validation:pre-install,
       install:po-ear-jboss:validation:pre-install,
-      install:po-grid-jboss:validation:pre-install,
+      install:po-grid-3.2-jboss:validation:pre-install,
       install:po-grid-3.1-jboss:validation:pre-install,
-      install:po-grid-legacy-jboss:validation:pre-install,
+      install:po-grid-3.0-jboss:validation:pre-install,
       install:database:validation:pre-install,
       install:po-ear-jboss:stop,
-      install:po-grid-jboss:stop,
+      install:po-grid-3.2-jboss:stop,
       install:po-grid-3.1-jboss:stop,
-      install:po-grid-legacy-jboss:stop,
+      install:po-grid-3.0-jboss:stop,
       install:po-ear-jboss:validation:pre-install:ports,
-      install:po-grid-jboss:validation:pre-install:ports,
+      install:po-grid-3.2-jboss:validation:pre-install:ports,
       install:po-grid-3.1-jboss:validation:pre-install:ports,
-      install:po-grid-legacy-jboss:validation:pre-install:ports,
+      install:po-grid-3.0-jboss:validation:pre-install:ports,
       upgrade:database,
       upgrade-ncm:po-ear-jboss,
-      upgrade-ncm:po-grid-jboss,
+      upgrade-ncm:po-grid-3.2-jboss,
       upgrade-ncm:po-grid-3.1-jboss,
-      upgrade-ncm:po-grid-legacy-jboss,
+      upgrade-ncm:po-grid-3.0-jboss,
       upgrade:common:post,
       install:common:post,
       install:po-ear-jboss:start,
-      install:po-grid-jboss:start,
+      install:po-grid-3.2-jboss:start,
       install:po-grid-3.1-jboss:start,
-      install:po-grid-legacy-jboss:start,
+      install:po-grid-3.0-jboss:start,
       install:common:validation:post-install
       ">
     </target>
@@ -534,16 +534,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <target name="install:common:post" 
       depends="
       install:po-ear-jboss:post,
-      install:po-grid-jboss:post,
+      install:po-grid-3.2-jboss:post,
       install:po-grid-3.1-jboss:post,
-      install:po-grid-legacy-jboss:post"/>
+      install:po-grid-3.0-jboss:post"/>
 
   <target name="upgrade:common:init" 
       depends="
       upgrade:po-ear-jboss:init, 
-      upgrade:po-grid-jboss:init,
+      upgrade:po-grid-3.2-jboss:init,
       upgrade:po-grid-3.1-jboss:init,
-      upgrade:po-grid-legacy-jboss:init" />
+      upgrade:po-grid-3.0-jboss:init" />
 
     <target name="upgrade:database:init"
       depends="
@@ -598,7 +598,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   <target name="upgrade:common:post" 
       depends="
       upgrade:po-ear-jboss:post,
-      upgrade:po-grid-jboss:post,
+      upgrade:po-grid-3.2-jboss:post,
       upgrade:po-grid-3.1-jboss:post,
-      upgrade:po-grid-legacy-jboss:post"/>
+      upgrade:po-grid-3.0-jboss:post"/>
 </project>
